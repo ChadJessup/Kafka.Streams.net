@@ -5,4 +5,19 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Errors\" />
+    <Folder Include="KStream\Internals\Graph\" />
+    <Folder Include="KStream\Internals\Metrics\" />
+    <Folder Include="KStream\Internals\Suppress\" />
+    <Folder Include="Processor\Internals\Assignment\" />
+    <Folder Include="Processor\Internals\Metrics\" />
+    <Folder Include="State\Internals\Metrics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Confluent.Kafka" Version="1.1.0" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes" Version="1.1.0" />
+  </ItemGroup>
+
 </Project>
