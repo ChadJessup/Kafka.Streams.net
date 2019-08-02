@@ -36,14 +36,14 @@ namespace Kafka.Streams.KStream
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
     {
 
-    protected Serde<K> keySerde;
-    protected Serde<V> valueSerde;
+    protected ISerde<K> keySerde;
+    protected ISerde<V> valueSerde;
     protected ITimestampExtractor timestampExtractor;
     protected Topology.AutoOffsetReset resetPolicy;
     protected String processorName;
 
-    private Consumed(Serde<K> keySerde,
-                     Serde<V> valueSerde,
+    private Consumed(ISerde<K> keySerde,
+                     ISerde<V> valueSerde,
                      ITimestampExtractor timestampExtractor,
                      Topology.AutoOffsetReset resetPolicy,
                      String processorName)
@@ -80,8 +80,8 @@ namespace Kafka.Streams.KStream
      * @param <V>                value type
      * @return a new instance of {@link Consumed}
      */
-    public static Consumed<K, V> With(Serde<K> keySerde,
-                                      Serde<V> valueSerde,
+    public static Consumed<K, V> With(ISerde<K> keySerde,
+                                      ISerde<V> valueSerde,
                                       ITimestampExtractor timestampExtractor,
                                       Topology.AutoOffsetReset resetPolicy)
     {
@@ -98,8 +98,8 @@ namespace Kafka.Streams.KStream
      * @param <V>        value type
      * @return a new instance of {@link Consumed}
      */
-    public static Consumed<K, V> With(Serde<K> keySerde,
-                                      Serde<V> valueSerde)
+    public static Consumed<K, V> With(ISerde<K> keySerde,
+                                      ISerde<V> valueSerde)
     {
         return new Consumed<K, V>(keySerde, valueSerde, null, Topology.AutoOffsetReset.UNKNOWN, null);
     }
@@ -138,7 +138,8 @@ namespace Kafka.Streams.KStream
      * @param <V>         value type
      * @return a new instance of {@link Consumed}
      */
-    public static Consumed<K, V> As(string processorName) {
+    public static Consumed<K, V> As(string processorName)
+    {
         return new Consumed<K, V>(null, null, null, Topology.AutoOffsetReset.UNKNOWN, processorName);
     }
 
@@ -148,7 +149,7 @@ namespace Kafka.Streams.KStream
  * @param keySerde the key serde. If {@code null}the default key serde from config will be used
  * @return this
  */
-public Consumed<K, V> WithKeySerde(Serde<K> keySerde)
+public Consumed<K, V> WithKeySerde(ISerde<K> keySerde)
 {
     this.keySerde = keySerde;
     return this;
@@ -160,7 +161,7 @@ public Consumed<K, V> WithKeySerde(Serde<K> keySerde)
  * @param valueSerde the value serde. If {@code null} the default value serde from config will be used
  * @return this
  */
-public Consumed<K, V> WithValueSerde(Serde<V> valueSerde)
+public Consumed<K, V> WithValueSerde(ISerde<V> valueSerde)
 {
     this.valueSerde = valueSerde;
     return this;
