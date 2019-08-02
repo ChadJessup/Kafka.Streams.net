@@ -1,0 +1,14 @@
+﻿<Project>
+  <PropertyGroup>
+    <Authors>Chad Jessup</Authors>
+    <Company>Good Enough Industries</Company>
+    <Product>Good Enough Industries</Product>
+    <Version>0.0.1</Version>
+  </PropertyGroup>
+
+ <PropertyGroup>
+   <LangVersion>preview</LangVersion>
+   <Deterministic>true</Deterministic>
+   <NullableContextOptions>enable</NullableContextOptions>
+ </PropertyGroup>
+</Project>
