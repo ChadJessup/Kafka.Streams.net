@@ -22,10 +22,10 @@
  * interactive queries API.
  * For example:
  * <pre>{@code
- * final GlobalKTable globalOne = builder.globalTable("g1", "g1-store");
- * final GlobalKTable globalTwo = builder.globalTable("g2", "g2-store");
+ * GlobalKTable globalOne = builder.globalTable("g1", "g1-store");
+ * GlobalKTable globalTwo = builder.globalTable("g2", "g2-store");
  * ...
- * final KafkaStreams streams = ...;
+ * KafkaStreams streams = ...;
  * streams.start()
  * ...
  * ReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.keyValueStore());
@@ -39,12 +39,13 @@
  * @param <K> Type of primary keys
  * @param <V> Type of value changes
  * @see KTable
- * @see StreamsBuilder#globalTable(String)
+ * @see StreamsBuilder#globalTable(string)
  * @see KStream#join(GlobalKTable, KeyValueMapper, ValueJoiner)
  * @see KStream#leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
  */
     public interface IGlobalKTable<K, V>
-    {
+   
+{
         /**
          * Get the name of the local state store that can be used to query this {@code GlobalKTable}.
          *

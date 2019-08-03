@@ -2,7 +2,8 @@
 {
     public interface INamedOperation<TNamedOperation>
         where TNamedOperation : INamedOperation<TNamedOperation>
-    {
+   
+{
         /**
          * Sets the name to be used for an operation.
          *

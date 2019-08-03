@@ -6,6 +6,7 @@ namespace Kafka.Streams.KStream
 {
     public class Windows<TWindow>
         where TWindow : Window
-    {
+   
+{
     }
 }

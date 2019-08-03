@@ -7,7 +7,8 @@
      * @param <V>   aggregate value type
      */
     public interface IMerger<K, V>
-    {
+   
+{
 
         /**
          * Compute a new aggregate from the key and two aggregates.

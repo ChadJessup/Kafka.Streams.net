@@ -14,7 +14,8 @@
  * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
  */
     public interface IInitializer<VA>
-    {
+   
+{
 
         /**
          * Return the initial value for an aggregation.

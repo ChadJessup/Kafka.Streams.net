@@ -27,7 +27,8 @@
  * @see KTable#toStream(KeyValueMapper)
  */
     public interface IKeyValueMapper<K, V, VR>
-    {
+   
+{
 
         /**
          * Map a record with the given key and value to a new value.

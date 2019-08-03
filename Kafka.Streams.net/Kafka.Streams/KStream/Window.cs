@@ -5,6 +5,7 @@ using System.Text;
 namespace Kafka.Streams.KStream
 {
     public abstract class Window
-    {
+   
+{
     }
 }

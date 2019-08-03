@@ -6,18 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Errors\" />
-    <Folder Include="KStream\Internals\Graph\" />
-    <Folder Include="KStream\Internals\Metrics\" />
-    <Folder Include="KStream\Internals\Suppress\" />
-    <Folder Include="Processor\Internals\Assignment\" />
-    <Folder Include="Processor\Internals\Metrics\" />
-    <Folder Include="State\Internals\Metrics\" />
+    <PackageReference Include="Confluent.Kafka" Version="1.1.0" />
+    <PackageReference Include="Confluent.SchemaRegistry.Serdes" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview7.19362.4" />
+    <PackageReference Include="RocksDbSharp" Version="5.17.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.1.0" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes" Version="1.1.0" />
+    <ProjectReference Include="..\Kafka.Common\Kafka.Common.csproj" />
   </ItemGroup>
 
 </Project>

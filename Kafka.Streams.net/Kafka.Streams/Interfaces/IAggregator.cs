@@ -12,5 +12,4 @@
          */
         VA Apply(K key, V value, VA aggregate);
     }
-
 }

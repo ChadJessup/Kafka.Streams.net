@@ -14,9 +14,9 @@ namespace Kafka.Streams.KStream
      * key and value serdes like:
      * <pre>{@code
      * StreamsBuilder builder = new StreamsBuilder();
-     * KStream<String, Long> stream = builder.stream(
+     * KStream<string, Long> stream = builder.stream(
      *   "topicName",
-     *   Consumed.with(Serdes.String(), Serdes.Long())
+     *   Consumed.with(Serdes.string(), Serdes.Long())
      *           .withTimestampExtractor(new LogAndSkipOnInvalidTimestamp()));
      * }</pre>
      * Similarly, you can read a topic as {@link KTable} with a custom {@code auto.offset.reset} configuration and force a
@@ -34,20 +34,22 @@ namespace Kafka.Streams.KStream
      * @param <V> type of record value
      */
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
-    {
+   
+{
 
     protected ISerde<K> keySerde;
     protected ISerde<V> valueSerde;
     protected ITimestampExtractor timestampExtractor;
     protected Topology.AutoOffsetReset resetPolicy;
-    protected String processorName;
+    protected string processorName;
 
     private Consumed(ISerde<K> keySerde,
                      ISerde<V> valueSerde,
                      ITimestampExtractor timestampExtractor,
                      Topology.AutoOffsetReset resetPolicy,
-                     String processorName)
-    {
+                     string processorName)
+   
+{
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
         this.timestampExtractor = timestampExtractor;
@@ -66,7 +68,8 @@ namespace Kafka.Streams.KStream
              consumed.resetPolicy,
              consumed.processorName
         )
-    {
+   
+{
     }
 
     /**
@@ -84,7 +87,8 @@ namespace Kafka.Streams.KStream
                                       ISerde<V> valueSerde,
                                       ITimestampExtractor timestampExtractor,
                                       Topology.AutoOffsetReset resetPolicy)
-    {
+   
+{
         return new Consumed<K, V>(keySerde, valueSerde, timestampExtractor, resetPolicy, null);
 
     }
@@ -100,7 +104,8 @@ namespace Kafka.Streams.KStream
      */
     public static Consumed<K, V> With(ISerde<K> keySerde,
                                       ISerde<V> valueSerde)
-    {
+   
+{
         return new Consumed<K, V>(keySerde, valueSerde, null, Topology.AutoOffsetReset.UNKNOWN, null);
     }
 
@@ -113,7 +118,8 @@ namespace Kafka.Streams.KStream
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(ITimestampExtractor timestampExtractor)
-    {
+   
+{
         return new Consumed<K, V>(null, null, timestampExtractor, Topology.AutoOffsetReset.UNKNOWN, null);
     }
 
@@ -126,7 +132,8 @@ namespace Kafka.Streams.KStream
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(Topology.AutoOffsetReset resetPolicy)
-    {
+   
+{
         return new Consumed<K, V>(null, null, null, resetPolicy, null);
     }
 
@@ -139,7 +146,8 @@ namespace Kafka.Streams.KStream
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> As(string processorName)
-    {
+   
+{
         return new Consumed<K, V>(null, null, null, Topology.AutoOffsetReset.UNKNOWN, processorName);
     }
 
@@ -206,11 +214,13 @@ public Consumed<K, V> WithOffsetResetPolicy(Topology.AutoOffsetReset resetPolicy
     public override bool Equals(object o)
 {
     if (this == o)
-    {
+   
+{
         return true;
     }
     if (o == null || this.GetType() != o.GetType())
-    {
+   
+{
         return false;
     }
 
