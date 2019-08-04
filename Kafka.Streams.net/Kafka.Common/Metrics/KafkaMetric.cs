@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Kakfa.Common.Metrics
 {
-    public KafkaMetric : IMetric
+    public class KafkaMetric : IMetric
     {
         private object @lock;
         private ITime time;

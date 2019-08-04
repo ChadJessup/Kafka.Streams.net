@@ -4,7 +4,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * An instantaneous value.
      */
-    public Value : IMeasurableStat
+    public class Value : IMeasurableStat
     {
         private double value = 0;
         public double measure(MetricConfig config, long now)

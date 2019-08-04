@@ -9,7 +9,7 @@ namespace Kafka.Common.Metrics.Stats
      * the bin widths are increasing at a linear rate. However, the bin widths are scaled such that the specified range
      * of values will all fit within the bins (e.g., the upper range of the last bin is equal to the maximum value).
      */
-    public LinearBinScheme : IBinScheme
+    public class LinearBinScheme : IBinScheme
     {
         public int bins { get; private set; }
         private double max;

@@ -44,7 +44,9 @@
 ///**
 // * Register metrics in JMX as dynamic mbeans based on the metric names
 // */
-//public JmxReporter : MetricsReporter {
+//public JmxReporter : MetricsReporter
+{
+
 
 //    private static Logger log = new LoggerFactory().CreateLogger<JmxReporter);
 //    private static object LOCK = new object();
@@ -124,7 +126,9 @@
 
 //    private KafkaMbean.AddAttribute(KafkaMetric metric)
 {
-//        try {
+//        try
+{
+
 //            MetricName metricName = metric.metricName;
 //            string mBeanName = getMBeanName(prefix, metricName);
 //            if (!this.mbeans.ContainsKey(mBeanName))
@@ -172,7 +176,9 @@
 //    private void unregister(KafkaMbean mbean)
 {
 //        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-//        try {
+//        try
+{
+
 //            if (server.isRegistered(mbean.name()))
 //                server.unregisterMBean(mbean.name());
 //        } catch (JMException e)
@@ -184,7 +190,9 @@
 //    private void reregister(KafkaMbean mbean)
 {
 //        unregister(mbean);
-//        try {
+//        try
+{
+
 //            ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, mbean.name());
 //        } catch (JMException e)
 {
@@ -192,7 +200,9 @@
 //        }
 //    }
 
-//    private static KafkaMbean : DynamicMBean {
+//    private static KafkaMbean : DynamicMBean
+{
+
 //        private ObjectName objectName;
 //        private Dictionary<string, KafkaMetric> metrics;
 
@@ -225,7 +235,9 @@
 //            AttributeList list = new AttributeList();
 //            foreach (string name in names)
 {
-//                try {
+//                try
+{
+
 //                    list.Add(new Attribute(name, getAttribute(name)));
 //                } catch (Exception e)
 {
@@ -269,7 +281,9 @@
 //        public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
 //                                                     InvalidAttributeValueException,
 //                                                     MBeanException,
-//                                                     ReflectionException {
+//                                                     ReflectionException
+{
+
 //            throw new InvalidOperationException("Set not allowed.");
 //        }
 

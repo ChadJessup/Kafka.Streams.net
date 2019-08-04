@@ -9,7 +9,7 @@ namespace Kafka.Common.Utils
      * Implementations of this should be thread-safe.
      */
 
-    public abstract Time : ITime
+    public abstract class Time : ITime
     {
         public static SystemTime SYSTEM { get; } = new SystemTime();
 

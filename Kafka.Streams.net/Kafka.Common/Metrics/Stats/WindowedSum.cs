@@ -8,7 +8,7 @@ namespace Kafka.Common.Metrics.Stats
      *
      * See also {@link WindowedCount} if you want to increment the value by 1 on each recording.
      */
-    public WindowedSum : SampledStat
+    public class WindowedSum : SampledStat
     {
         public WindowedSum()
             : base(0)

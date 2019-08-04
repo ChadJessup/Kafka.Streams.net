@@ -5,7 +5,7 @@ namespace Kafka.Common.Metrics
     /**
      * Configuration values for metrics
      */
-    public MetricConfig
+    public class MetricConfig
     {
         public Quota quota { get; set; }
         public int samples { get; set; }

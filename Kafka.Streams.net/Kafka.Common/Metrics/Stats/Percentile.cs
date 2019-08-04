@@ -1,6 +1,6 @@
 namespace Kafka.Common.Metrics.Stats
 {
-    public Percentile
+    public class Percentile
     {
         public MetricName name { get; set; }
         public double percentile { get; set; }

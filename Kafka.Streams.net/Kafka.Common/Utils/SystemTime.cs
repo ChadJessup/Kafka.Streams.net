@@ -8,7 +8,7 @@ namespace Kafka.Common.Utils
      * A time implementation that uses the system clock and sleep call. Use `Time.SYSTEM` instead of creating an instance
      * of this.
      */
-    public SystemTime : ITime
+    public class SystemTime : ITime
     {
 
         public long milliseconds()

@@ -12,7 +12,7 @@ namespace Kafka.Common.Metrics.Stats
      *
      * Sues of this define different statistics measured using this basic pattern.
      */
-    public abstract SampledStat : IMeasurableStat
+    public abstract class SampledStat : IMeasurableStat
     {
         private double initialValue;
         private int current = 0;

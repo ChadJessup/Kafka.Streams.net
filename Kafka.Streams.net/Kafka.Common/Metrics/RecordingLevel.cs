@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Kafka.Common.Metrics
 {
-    public RecordingLevel
+    public class RecordingLevel
     {
         public static RecordingLevel INFO = new RecordingLevel(0, "INFO");
         public static RecordingLevel DEBUG = new RecordingLevel(1, "DEBUG");

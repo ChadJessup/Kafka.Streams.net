@@ -44,7 +44,7 @@ namespace Kafka.Common
      * sensor.record(messageSize);
      * }</pre>
      */
-    public MetricName
+    public class MetricName
     {
 
         private int hash = 0;

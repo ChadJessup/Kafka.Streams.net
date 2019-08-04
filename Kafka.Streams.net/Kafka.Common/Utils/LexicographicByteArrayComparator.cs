@@ -3,7 +3,7 @@ using Kafka.Common.Utils.Interfaces;
 
 namespace Kafka.Common.Utils
 {
-    internal LexicographicByteArrayComparator : IByteArrayComparator
+    internal class LexicographicByteArrayComparator : IByteArrayComparator
     {
         public int Compare(byte[] buffer1, byte[] buffer2)
         {

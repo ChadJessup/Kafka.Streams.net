@@ -22,7 +22,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A compound stat that includes a rate metric and a cumulative total metric.
      */
-    public Meter : ICompoundStat
+    public class Meter : ICompoundStat
     {
         private MetricName rateMetricName;
         private MetricName totalMetricName;

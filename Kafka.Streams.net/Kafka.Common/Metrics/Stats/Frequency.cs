@@ -3,7 +3,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * Definition of a frequency metric used in a {@link Frequencies} compound statistic.
      */
-    public Frequency
+    public class Frequency
     {
         /**
          * Get the value of this metrics center point.

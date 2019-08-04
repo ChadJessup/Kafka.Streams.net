@@ -22,7 +22,7 @@ namespace Kafka.Common.Metrics.Stats
      * object is a {@link CompoundStat}, and so it can be {@link org.apache.kafka.common.metrics.Sensor.Add(CompoundStat)
      *.Added directly to a Sensor} so the metrics are created automatically.
      */
-    public Frequencies : SampledStat, ICompoundStat
+    public class Frequencies : SampledStat, ICompoundStat
     {
 
         /**

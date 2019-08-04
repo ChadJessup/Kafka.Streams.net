@@ -10,7 +10,7 @@ namespace Kafka.Common
      * specified values. The order of the tags is maintained, if an ordered set
      * is provided, so that the mBean names can be compared and sorted lexicographically.
      */
-    public MetricNameTemplate
+    public class MetricNameTemplate
     {
         public string name { get; set; }
         public string group { get; set; }

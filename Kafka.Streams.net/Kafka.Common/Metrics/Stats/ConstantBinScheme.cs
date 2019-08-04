@@ -7,7 +7,7 @@ namespace Kafka.Common.Metrics.Stats
      * A scheme for calculating the bins where the width of each bin is a constant determined by the range of values
      * and the number of bins.
      */
-    public ConstantBinScheme : IBinScheme
+    public class ConstantBinScheme : IBinScheme
     {
         public int bins { get; private set; }
 

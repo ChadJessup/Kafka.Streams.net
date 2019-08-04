@@ -34,7 +34,7 @@ namespace Kafka.Common.Utils
      *     }
      * </pre>
      */
-    public Timer
+    public class Timer
     {
         private ITime time;
         private long startMs;

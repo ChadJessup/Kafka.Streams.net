@@ -8,7 +8,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A compound stat that reports one or more percentiles
      */
-    public Percentiles : SampledStat, ICompoundStat
+    public class Percentiles : SampledStat, ICompoundStat
     {
 
         public enum BucketSizing

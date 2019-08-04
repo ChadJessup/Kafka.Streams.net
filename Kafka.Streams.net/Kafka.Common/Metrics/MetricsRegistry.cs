@@ -35,7 +35,7 @@ namespace Kafka.Common.Metrics
      * sensor.record(messageSize);
      * </pre>
      */
-    public MetricsRegistry : IDisposable
+    public class MetricsRegistry : IDisposable
     {
         //private MetricConfig config;
         //private ConcurrentDictionary<MetricName, KafkaMetric> metrics;
@@ -725,7 +725,9 @@ namespace Kafka.Common.Metrics
             if (this.metricsScheduler != null)
             {
 //                this.metricsScheduler.shutdown();
-                try {
+                try
+{
+
                     //this.metricsScheduler.awaitTermination(30, TimeUnit.SECONDS);
                 } catch (ThreadInterruptedException ex)
 {

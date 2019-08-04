@@ -2,7 +2,7 @@
 
 namespace Kafka.Common.Metrics.Stats
 {
-    public HistogramSample : Sample
+    public class HistogramSample : Sample
     {
         public Histogram histogram { get; }
 
