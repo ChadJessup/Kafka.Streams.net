@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -34,10 +34,10 @@ using Kafka.Streams.State.internals.TimestampedKeyValueStoreBuilder;
 using Kafka.Streams.State.internals.TimestampedWindowStoreBuilder;
 using Kafka.Streams.State.internals.WindowStoreBuilder;
 
-import java.time.Duration;
-import java.util.Objects;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
+
+
+
 
 /**
  * Factory for creating state stores in Kafka Streams.
@@ -50,10 +50,10 @@ import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFail
  * <pre>{@code
  * StreamsBuilder builder = new StreamsBuilder();
  * KeyValueBytesStoreSupplier storeSupplier = Stores.inMemoryKeyValueStore("queryable-store-name");
- * KTable<Long,string> table = builder.table(
+ * KTable<long,string> table = builder.table(
  *   "topicName",
- *   Materialized.<Long,string>as(storeSupplier)
- *               .withKeySerde(Serdes.Long())
+ *   Materialized.<long,string>as(storeSupplier)
+ *               .withKeySerde(Serdes.long())
  *               .withValueSerde(Serdes.string())
  *               .withCachingDisabled());
  * }</pre>
@@ -63,17 +63,17 @@ import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFail
  * changelog topic configuration like:
  * <pre>{@code
  * Topology topology = new Topology();
- * topology.addProcessor("processorName", ...);
+ * topology.AddProcessor("processorName", ...);
  *
  * Dictionary<string,string> topicConfig = new HashMap<>();
- * StoreBuilder<WindowStore<Integer, Long>> storeBuilder = Stores
+ * StoreBuilder<WindowStore<Integer, long>> storeBuilder = Stores
  *   .windowStoreBuilder(
  *     Stores.persistentWindowStore("queryable-store-name", ...),
  *     Serdes.Integer(),
- *     Serdes.Long())
+ *     Serdes.long())
  *   .withLoggingEnabled(topicConfig);
  *
- * topology.addStateStore(storeBuilder, "processorName");
+ * topology.AddStateStore(storeBuilder, "processorName");
  * }</pre>
  */
 @InterfaceStability.Evolving
@@ -459,7 +459,7 @@ public class Stores
      * @param <V>           value type
      * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
      */
-    public static <K, V> StoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
+    public staticStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
                                                                                 ISerde<K> keySerde,
                                                                                 ISerde<V> valueSerde)
 {
@@ -482,7 +482,7 @@ public class Stores
      * @param <V>           value type
      * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
      */
-    public static <K, V> StoreBuilder<TimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
+    public staticStoreBuilder<TimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
                                                                                                       ISerde<K> keySerde,
                                                                                                       ISerde<V> valueSerde)
 {
@@ -504,7 +504,7 @@ public class Stores
      * @param <V>           value type
      * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
      */
-    public static <K, V> StoreBuilder<WindowStore<K, V>> windowStoreBuilder(WindowBytesStoreSupplier supplier,
+    public staticStoreBuilder<WindowStore<K, V>> windowStoreBuilder(WindowBytesStoreSupplier supplier,
                                                                             ISerde<K> keySerde,
                                                                             ISerde<V> valueSerde)
 {
@@ -527,7 +527,7 @@ public class Stores
      * @param <V>           value type
      * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
      */
-    public static <K, V> StoreBuilder<TimestampedWindowStore<K, V>> timestampedWindowStoreBuilder(WindowBytesStoreSupplier supplier,
+    public staticStoreBuilder<TimestampedWindowStore<K, V>> timestampedWindowStoreBuilder(WindowBytesStoreSupplier supplier,
                                                                                                   ISerde<K> keySerde,
                                                                                                   ISerde<V> valueSerde)
 {
@@ -546,7 +546,7 @@ public class Stores
      * @param <V>           value type
      * @return an instance of {@link StoreBuilder} than can build a {@link SessionStore}
      */
-    public static <K, V> StoreBuilder<SessionStore<K, V>> sessionStoreBuilder(SessionBytesStoreSupplier supplier,
+    public staticStoreBuilder<SessionStore<K, V>> sessionStoreBuilder(SessionBytesStoreSupplier supplier,
                                                                               ISerde<K> keySerde,
                                                                               ISerde<V> valueSerde)
 {

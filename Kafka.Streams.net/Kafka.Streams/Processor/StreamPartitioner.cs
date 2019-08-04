@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
-import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
-import org.apache.kafka.streams.Topology;
+
+
 
 /**
  * Determine how records are distributed among the partitions in a Kafka topic. If not specified, the underlying producer's
@@ -29,7 +29,7 @@ import org.apache.kafka.streams.Topology;
  * <p>
  * When a topology is instantiated, each of its sources are assigned a subset of that topic's partitions. That means that only
  * those processors in that topology instance will consume the records from those partitions. In many cases, Kafka Streams will
- * automatically manage these instances, and adjust when new topology instances are added or removed.
+ * automatically manage these instances, and adjust when new topology instances are.Added or removed.
  * <p>
  * Some topologies, though, need more control over which records appear in each partition. For example, some topologies that have
  * stateful processors may want all records within a range of keys to always be delivered to and handled by the same topology instance.
@@ -37,16 +37,16 @@ import org.apache.kafka.streams.Topology;
  * determine to which partition each record should be written.
  * <p>
  * To do this, create a <code>StreamPartitioner</code> implementation, and when you build your topology specify that custom partitioner
- * when {@link Topology#addSink(string, string, org.apache.kafka.common.serialization.Serializer, org.apache.kafka.common.serialization.Serializer, StreamPartitioner, string...) adding a sink}
+ * when {@link Topology.AddSink(string, string, org.apache.kafka.common.serialization.Serializer, org.apache.kafka.common.serialization.Serializer, StreamPartitioner, string...).Adding a sink}
  * for that topic.
  * <p>
  * All StreamPartitioner implementations should be stateless and a pure function so they can be shared across topic and sink nodes.
  * 
  * @param <K> the type of keys
  * @param <V> the type of values
- * @see Topology#addSink(string, string, org.apache.kafka.common.serialization.Serializer,
+ * @see Topology.AddSink(string, string, org.apache.kafka.common.serialization.Serializer,
  *      org.apache.kafka.common.serialization.Serializer, StreamPartitioner, string...)
- * @see Topology#addSink(string, string, StreamPartitioner, string...)
+ * @see Topology.AddSink(string, string, StreamPartitioner, string...)
  */
 public interface StreamPartitioner<K, V> {
 

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,8 +16,8 @@
  */
 namespace Kafka.streams.kstream.internals.suppress;
 
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.IProcessorContext;
+
+
 
  class TimeDefinitions {
     private TimeDefinitions() {}
@@ -40,7 +40,7 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 
         private RecordTimeDefintion() {}
 
-        @SuppressWarnings("unchecked")
+        
         public static <K> RecordTimeDefintion<K> instance()
 {
             return RecordTimeDefintion.INSTANCE;
@@ -64,7 +64,7 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 
         private WindowEndTimeDefinition() {}
 
-        @SuppressWarnings("unchecked")
+        
         public static <K : Windowed> WindowEndTimeDefinition<K> instance()
 {
             return WindowEndTimeDefinition.INSTANCE;

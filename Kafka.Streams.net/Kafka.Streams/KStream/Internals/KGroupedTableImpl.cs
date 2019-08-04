@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,24 +16,24 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KGroupedTable;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.kstream.internals.graph.GroupedTableOperationRepartitionNode;
-import org.apache.kafka.streams.kstream.internals.graph.ProcessorParameters;
-import org.apache.kafka.streams.kstream.internals.graph.StatefulProcessorNode;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.state.KeyValueStore;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * The implementation class of {@link KGroupedTable}.
@@ -49,17 +49,17 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
 
     private  string userProvidedRepartitionTopicName;
 
-    private  Initializer<Long> countInitializer = () -> 0L;
+    private  Initializer<long> countInitializer = () -> 0L;
 
-    private  Aggregator<K, V, Long> countAdder = (aggKey, value, aggregate) -> aggregate + 1L;
+    private  Aggregator<K, V, long> countAdder = (aggKey, value, aggregate) -> aggregate + 1L;
 
-    private  Aggregator<K, V, Long> countSubtractor = (aggKey, value, aggregate) -> aggregate - 1L;
+    private  Aggregator<K, V, long> countSubtractor = (aggKey, value, aggregate) -> aggregate - 1L;
 
     private StreamsGraphNode repartitionGraphNode;
 
     KGroupedTableImpl( InternalStreamsBuilder builder,
                        string name,
-                       Set<string> sourceNodes,
+                       HashSet<string> sourceNodes,
                        GroupedInternal<K, V> groupedInternal,
                        StreamsGraphNode streamsGraphNode)
 {
@@ -86,7 +86,7 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
 
 
         // the passed in StreamsGraphNode must be the parent of the repartition node
-        builder.addGraphNode(this.streamsGraphNode, repartitionGraphNode);
+        builder.AddGraphNode(this.streamsGraphNode, repartitionGraphNode);
 
          StatefulProcessorNode statefulProcessorNode = new StatefulProcessorNode<>(
             funcName,
@@ -95,7 +95,7 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
         );
 
         // now the repartition node must be the parent of the StateProcessorNode
-        builder.addGraphNode(repartitionGraphNode, statefulProcessorNode);
+        builder.AddGraphNode(repartitionGraphNode, statefulProcessorNode);
 
         // return the KTable representation with the intermediate topic as the sources
         return new KTableImpl<>(funcName,
@@ -123,11 +123,11 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
     }
 
     
-    public KTable<K, V> reduce( Reducer<V> adder,
+    public KTable<K, V> reduce( Reducer<V>.Adder,
                                 Reducer<V> subtractor,
                                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(adder, "adder can't be null");
+        Objects.requireNonNull.Adder, .Adder can't be null");
         Objects.requireNonNull(subtractor, "subtractor can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
          MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
@@ -142,22 +142,22 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
             materializedInternal.withValueSerde(valSerde);
         }
          ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableReduce<>(materializedInternal.storeName(),
-                                                                                     adder,
+                                                                                    .Adder,
                                                                                      subtractor);
         return doAggregate(aggregateSupplier, REDUCE_NAME, materializedInternal);
     }
 
     
-    public KTable<K, V> reduce( Reducer<V> adder,
+    public KTable<K, V> reduce( Reducer<V>.Adder,
                                 Reducer<V> subtractor)
 {
-        return reduce(adder, subtractor, Materialized.with(keySerde, valSerde));
+        return reduce.Adder, subtractor, Materialized.with(keySerde, valSerde));
     }
 
     
-    public KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+    public KTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-         MaterializedInternal<K, Long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
         if (materializedInternal.keySerde() == null)
@@ -166,7 +166,7 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
         }
         if (materializedInternal.valueSerde() == null)
 {
-            materializedInternal.withValueSerde(Serdes.Long());
+            materializedInternal.withValueSerde(Serdes.long());
         }
 
          ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
@@ -178,19 +178,19 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
     }
 
     
-    public KTable<K, Long> count()
+    public KTable<K, long> count()
 {
-        return count(Materialized.with(keySerde, Serdes.Long()));
+        return count(Materialized.with(keySerde, Serdes.long()));
     }
 
     
-    public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                         Aggregator<? super K, ? super V, VR> adder,
-                                         Aggregator<? super K, ? super V, VR> subtractor,
+    public KTable<K, VR> aggregate( Initializer<VR> initializer,
+                                         Aggregator<K, V, VR>.Adder,
+                                         Aggregator<K, V, VR> subtractor,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(initializer, "initializer can't be null");
-        Objects.requireNonNull(adder, "adder can't be null");
+        Objects.requireNonNull.Adder, .Adder can't be null");
         Objects.requireNonNull(subtractor, "subtractor can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
@@ -203,17 +203,17 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
         }
          ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
                                                                                         initializer,
-                                                                                        adder,
+                                                                                       .Adder,
                                                                                         subtractor);
         return doAggregate(aggregateSupplier, AGGREGATE_NAME, materializedInternal);
     }
 
     
     public <T> KTable<K, T> aggregate( Initializer<T> initializer,
-                                       Aggregator<? super K, ? super V, T> adder,
-                                       Aggregator<? super K, ? super V, T> subtractor)
+                                       Aggregator<K, V, T>.Adder,
+                                       Aggregator<K, V, T> subtractor)
 {
-        return aggregate(initializer, adder, subtractor, Materialized.with(keySerde, null));
+        return aggregate(initializer,.Adder, subtractor, Materialized.with(keySerde, null));
     }
 
 }

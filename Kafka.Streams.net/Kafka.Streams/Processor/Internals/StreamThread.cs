@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.InvalidOffsetException;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
+
+
+
+
+
+
+
+
+
 using Kafka.Common.KafkaException;
 using Kafka.Common.Metric;
 
@@ -34,34 +34,34 @@ using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.Utils.LogContext;
 using Kafka.Common.Utils.Time;
-import org.apache.kafka.streams.KafkaClientSupplier;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.StateRestoreListener;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.TaskMetadata;
-import org.apache.kafka.streams.processor.ThreadMetadata;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.internals.ThreadCache;
-import org.slf4j.Logger;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.Collections.singleton;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StreamThread : Thread {
 
@@ -129,11 +129,11 @@ public class StreamThread : Thread {
     public enum State : ThreadStateTransitionValidator {
         CREATED(1, 5), STARTING(2, 5), PARTITIONS_REVOKED(3, 5), PARTITIONS_ASSIGNED(2, 4, 5), RUNNING(2, 5), PENDING_SHUTDOWN(6), DEAD;
 
-        private Set<Integer> validTransitions = new HashSet<>();
+        private HashSet<Integer> validTransitions = new HashSet<>();
 
         State(Integer[] validTransitions)
 {
-            this.validTransitions.addAll(Arrays.asList(validTransitions));
+            this.validTransitions.AddAll(Arrays.asList(validTransitions));
         }
 
         public bool isRunning()
@@ -286,7 +286,7 @@ public class StreamThread : Thread {
 
             if (streamThread.assignmentErrorCode() == StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA.code())
 {
-                log.LogError("Received error code {} - shutdown", streamThread.assignmentErrorCode()];
+                log.LogError("Received error code {} - shutdown", streamThread.assignmentErrorCode());
                 streamThread.shutdown();
                 return;
             }
@@ -410,25 +410,25 @@ public class StreamThread : Thread {
         }
 
         Collection<T> createTasks(Consumer<byte[], byte[]> consumer,
-                                  Dictionary<TaskId, Set<TopicPartition>> tasksToBeCreated)
+                                  Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
 {
             List<T> createdTasks = new List<>();
-            foreach (Map.Entry<TaskId, Set<TopicPartition>> newTaskAndPartitions in tasksToBeCreated.entrySet())
+            foreach (Map.Entry<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated.entrySet())
 {
                 TaskId taskId = newTaskAndPartitions.getKey();
-                Set<TopicPartition> partitions = newTaskAndPartitions.getValue();
+                HashSet<TopicPartition> partitions = newTaskAndPartitions.getValue();
                 T task = createTask(consumer, taskId, partitions);
                 if (task != null)
 {
                     log.trace("Created task {} with assigned partitions {}", taskId, partitions);
-                    createdTasks.add(task);
+                    createdTasks.Add(task);
                 }
 
             }
             return createdTasks;
         }
 
-        abstract T createTask(Consumer<byte[], byte[]> consumer, TaskId id, Set<TopicPartition> partitions];
+        abstract T createTask(Consumer<byte[], byte[]> consumer, TaskId id, HashSet<TopicPartition> partitions);
 
         public void close() {}
     }
@@ -470,7 +470,7 @@ public class StreamThread : Thread {
         
         StreamTask createTask(Consumer<byte[], byte[]> consumer,
                               TaskId taskId,
-                              Set<TopicPartition> partitions)
+                              HashSet<TopicPartition> partitions)
 {
             createTaskSensor.record();
 
@@ -542,7 +542,7 @@ public class StreamThread : Thread {
         
         StandbyTask createTask(Consumer<byte[], byte[]> consumer,
                                TaskId taskId,
-                               Set<TopicPartition> partitions)
+                               HashSet<TopicPartition> partitions)
 {
             createTaskSensor.record();
 
@@ -621,13 +621,13 @@ public class StreamThread : Thread {
 {
         string threadClientId = clientId + "-StreamThread-" + threadIdx;
 
-        string logPrefix = string.Format("stream-thread [%s] ", threadClientId];
+        string logPrefix = string.Format("stream-thread [%s] ", threadClientId);
         LogContext logContext = new LogContext(logPrefix);
         Logger log = logContext.logger(StreamThread.class);
 
         log.info("Creating restore consumer client");
         Dictionary<string, object> restoreConsumerConfigs = config.getRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
-        Consumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs];
+        Consumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs);
         Duration pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
         StoreChangelogReader changelogReader = new StoreChangelogReader(restoreConsumer, pollTime, userStateRestoreListener, logContext);
 
@@ -685,11 +685,11 @@ public class StreamThread : Thread {
         string originalReset = null;
         if (!builder.latestResetTopicsPattern().pattern().Equals("") || !builder.earliestResetTopicsPattern().pattern().Equals(""))
 {
-            originalReset = (string) consumerConfigs[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG];
+            originalReset = (string) consumerConfigs[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG);
             consumerConfigs.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
         }
 
-        Consumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs];
+        Consumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs);
         taskManager.setConsumer(consumer);
 
         return new StreamThread(
@@ -736,7 +736,7 @@ public class StreamThread : Thread {
         // this object they are not recorded. The sensors are created here so that the stream threads starts with all
         // its metrics initialised. Otherwise, those sensors would have been created during processing, which could
         // lead to missing metrics. For instance, if no task were created, the metrics for created and closed
-        // tasks would never be added to the metrics.
+        // tasks would never be.Added to the metrics.
         ThreadMetrics.createTaskSensor(streamsMetrics);
         ThreadMetrics.closeTaskSensor(streamsMetrics);
         ThreadMetrics.skipRecordSensor(streamsMetrics);
@@ -766,7 +766,7 @@ public class StreamThread : Thread {
     private static class InternalConsumerConfig : ConsumerConfig {
         private InternalConsumerConfig(Dictionary<string, object> props)
 {
-            super(ConsumerConfig.addDeserializerToConfig(props, new ByteArrayDeserializer(), new ByteArrayDeserializer()), false);
+            super(ConsumerConfig.AddDeserializerToConfig(props, new ByteArrayDeserializer(), new ByteArrayDeserializer()), false);
         }
     }
 
@@ -857,7 +857,7 @@ public class StreamThread : Thread {
                 }
             } catch (TaskMigratedException ignoreAndRejoinGroup)
 {
-                log.warn("Detected task {} that got migrated to another thread. " +
+                log.LogWarning("Detected task {} that got migrated to another thread. " +
                         "This implies that this thread missed a rebalance and dropped out of the consumer group. " +
                         "Will try to rejoin the consumer group. Below is the detailed description of the task:\n{}",
                     ignoreAndRejoinGroup.migratedTask().id(), ignoreAndRejoinGroup.migratedTask().ToString(">"));
@@ -922,7 +922,7 @@ public class StreamThread : Thread {
         if (records != null && !records.isEmpty())
 {
             pollSensor.record(pollLatency, now);
-            addRecordsToTasks(records);
+           .AddRecordsToTasks(records);
         }
 
         // only try to initialize the assigned tasks
@@ -1033,19 +1033,19 @@ public class StreamThread : Thread {
 
     private void resetInvalidOffsets(InvalidOffsetException e)
 {
-        Set<TopicPartition> partitions = e.partitions();
-        Set<string> loggedTopics = new HashSet<>();
-        Set<TopicPartition> seekToBeginning = new HashSet<>();
-        Set<TopicPartition> seekToEnd = new HashSet<>();
+        HashSet<TopicPartition> partitions = e.partitions();
+        HashSet<string> loggedTopics = new HashSet<>();
+        HashSet<TopicPartition> seekToBeginning = new HashSet<>();
+        HashSet<TopicPartition> seekToEnd = new HashSet<>();
 
         foreach (TopicPartition partition in partitions)
 {
             if (builder.earliestResetTopicsPattern().matcher(partition.topic()).matches())
 {
-                addToResetList(partition, seekToBeginning, "Setting topic '{}' to consume from {} offset", "earliest", loggedTopics);
+               .AddToResetList(partition, seekToBeginning, "Setting topic '{}' to consume from {} offset", "earliest", loggedTopics);
             } else if (builder.latestResetTopicsPattern().matcher(partition.topic()).matches())
 {
-                addToResetList(partition, seekToEnd, "Setting topic '{}' to consume from {} offset", "latest", loggedTopics);
+               .AddToResetList(partition, seekToEnd, "Setting topic '{}' to consume from {} offset", "latest", loggedTopics);
             } else {
                 if (originalReset == null || (!originalReset.Equals("earliest") && !originalReset.Equals("latest")))
 {
@@ -1057,10 +1057,10 @@ public class StreamThread : Thread {
 
                 if (originalReset.Equals("earliest"))
 {
-                    addToResetList(partition, seekToBeginning, "No custom setting defined for topic '{}' using original config '{}' for offset reset", "earliest", loggedTopics);
+                   .AddToResetList(partition, seekToBeginning, "No custom setting defined for topic '{}' using original config '{}' for offset reset", "earliest", loggedTopics);
                 } else if (originalReset.Equals("latest"))
 {
-                    addToResetList(partition, seekToEnd, "No custom setting defined for topic '{}' using original config '{}' for offset reset", "latest", loggedTopics);
+                   .AddToResetList(partition, seekToEnd, "No custom setting defined for topic '{}' using original config '{}' for offset reset", "latest", loggedTopics);
                 }
             }
         }
@@ -1075,22 +1075,22 @@ public class StreamThread : Thread {
         }
     }
 
-    private void addToResetList(TopicPartition partition, Set<TopicPartition> partitions, string logMessage, string resetPolicy, Set<string> loggedTopics)
+    private void.AddToResetList(TopicPartition partition, HashSet<TopicPartition> partitions, string logMessage, string resetPolicy, HashSet<string> loggedTopics)
 {
         string topic = partition.topic();
-        if (loggedTopics.add(topic))
+        if (loggedTopics.Add(topic))
 {
             log.info(logMessage, topic, resetPolicy);
         }
-        partitions.add(partition);
+        partitions.Add(partition);
     }
 
     /**
-     * Take records and add them to each respective task
+     * Take records and.Add them to each respective task
      *
      * @param records Records, can be null
      */
-    private void addRecordsToTasks(ConsumerRecords<byte[], byte[]> records)
+    private void.AddRecordsToTasks(ConsumerRecords<byte[], byte[]> records)
 {
 
         foreach (TopicPartition partition in records.partitions())
@@ -1112,7 +1112,7 @@ public class StreamThread : Thread {
                 throw new TaskMigratedException(task);
             }
 
-            task.addRecords(partition, records.records(partition));
+            task.AddRecords(partition, records.records(partition));
         }
     }
 
@@ -1232,7 +1232,7 @@ public class StreamThread : Thread {
                 // We can afford to have slower restore (because we don't wait inside poll for results).
                 // Instead, we want to proceed to the next iteration to call the main consumer#poll()
                 // as soon as possible so as to not be kicked out of the group.
-                ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(Duration.ZERO];
+                ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(Duration.ZERO);
 
                 if (!records.isEmpty())
 {
@@ -1252,7 +1252,7 @@ public class StreamThread : Thread {
                             throw new TaskMigratedException(task);
                         }
 
-                        List<ConsumerRecord<byte[], byte[]>> remaining = task.update(partition, records.records(partition)];
+                        List<ConsumerRecord<byte[], byte[]>> remaining = task.update(partition, records.records(partition));
                         if (!remaining.isEmpty())
 {
                             restoreConsumer.pause(singleton(partition));
@@ -1262,8 +1262,8 @@ public class StreamThread : Thread {
                 }
             } catch (InvalidOffsetException recoverableException)
 {
-                log.warn("Updating StandbyTasks failed. Deleting StandbyTasks stores to recreate from scratch.", recoverableException);
-                Set<TopicPartition> partitions = recoverableException.partitions();
+                log.LogWarning("Updating StandbyTasks failed. Deleting StandbyTasks stores to recreate from scratch.", recoverableException);
+                HashSet<TopicPartition> partitions = recoverableException.partitions();
                 foreach (TopicPartition partition in partitions)
 {
                     StandbyTask task = taskManager.standbyTask(partition);
@@ -1385,17 +1385,17 @@ public class StreamThread : Thread {
     private void updateThreadMetadata(Dictionary<TaskId, StreamTask> activeTasks,
                                       Dictionary<TaskId, StandbyTask> standbyTasks)
 {
-        Set<string> producerClientIds = new HashSet<>();
-        Set<TaskMetadata> activeTasksMetadata = new HashSet<>();
+        HashSet<string> producerClientIds = new HashSet<>();
+        HashSet<TaskMetadata> activeTasksMetadata = new HashSet<>();
         foreach (Map.Entry<TaskId, StreamTask> task in activeTasks.entrySet())
 {
-            activeTasksMetadata.add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
-            producerClientIds.add(getTaskProducerClientId(getName(), task.getKey()));
+            activeTasksMetadata.Add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
+            producerClientIds.Add(getTaskProducerClientId(getName(), task.getKey()));
         }
-        Set<TaskMetadata> standbyTasksMetadata = new HashSet<>();
+        HashSet<TaskMetadata> standbyTasksMetadata = new HashSet<>();
         foreach (Map.Entry<TaskId, StandbyTask> task in standbyTasks.entrySet())
 {
-            standbyTasksMetadata.add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
+            standbyTasksMetadata.Add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
         }
 
         string adminClientId = threadMetadata.adminClientId();
@@ -1443,7 +1443,7 @@ public class StreamThread : Thread {
         LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
         if (producer != null)
 {
-            Dictionary<MetricName, ? : Metric> producerMetrics = producer.metrics();
+            Dictionary<MetricName, Metric> producerMetrics = producer.metrics();
             if (producerMetrics != null)
 {
                 result.putAll(producerMetrics);
@@ -1451,10 +1451,10 @@ public class StreamThread : Thread {
         } else {
             // When EOS is turned on, each task will have its own producer client
             // and the producer object passed in here will be null. We would then iterate through
-            // all the active tasks and add their metrics to the output metrics map.
+            // all the active tasks and.Add their metrics to the output metrics map.
             for (StreamTask task: taskManager.activeTasks().values())
 {
-                Dictionary<MetricName, ? : Metric> taskProducerMetrics = task.getProducer().metrics();
+                Dictionary<MetricName, Metric> taskProducerMetrics = task.getProducer().metrics();
                 result.putAll(taskProducerMetrics);
             }
         }
@@ -1463,8 +1463,8 @@ public class StreamThread : Thread {
 
     public Dictionary<MetricName, Metric> consumerMetrics()
 {
-        Dictionary<MetricName, ? : Metric> consumerMetrics = consumer.metrics();
-        Dictionary<MetricName, ? : Metric> restoreConsumerMetrics = restoreConsumer.metrics();
+        Dictionary<MetricName, Metric> consumerMetrics = consumer.metrics();
+        Dictionary<MetricName, Metric> restoreConsumerMetrics = restoreConsumer.metrics();
         LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
         result.putAll(consumerMetrics);
         result.putAll(restoreConsumerMetrics);
@@ -1473,7 +1473,7 @@ public class StreamThread : Thread {
 
     public Dictionary<MetricName, Metric> adminClientMetrics()
 {
-        Dictionary<MetricName, ? : Metric> adminClientMetrics = taskManager.getAdminClient().metrics();
+        Dictionary<MetricName, Metric> adminClientMetrics = taskManager.getAdminClient().metrics();
         LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
         result.putAll(adminClientMetrics);
         return result;

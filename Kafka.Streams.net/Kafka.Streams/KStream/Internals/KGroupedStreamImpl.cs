@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,24 +16,24 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KGroupedStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.kstream.SessionWindowedKStream;
-import org.apache.kafka.streams.kstream.SessionWindows;
-import org.apache.kafka.streams.kstream.TimeWindowedKStream;
-import org.apache.kafka.streams.kstream.Window;
-import org.apache.kafka.streams.kstream.Windows;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.state.KeyValueStore;
 
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
 
@@ -43,7 +43,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
     KGroupedStreamImpl( string name,
-                        Set<string> sourceNodes,
+                        HashSet<string> sourceNodes,
                         GroupedInternal<K, V> groupedInternal,
                         bool repartitionRequired,
                         StreamsGraphNode streamsGraphNode,
@@ -93,8 +93,8 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                         Aggregator<? super K, ? super V, VR> aggregator,
+    public KTable<K, VR> aggregate( Initializer<VR> initializer,
+                                         Aggregator<K, V, VR> aggregator,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(initializer, "initializer can't be null");
@@ -117,20 +117,20 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                         Aggregator<? super K, ? super V, VR> aggregator)
+    public KTable<K, VR> aggregate( Initializer<VR> initializer,
+                                         Aggregator<K, V, VR> aggregator)
 {
         return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
     }
 
     
-    public KTable<K, Long> count()
+    public KTable<K, long> count()
 {
-        return doCount(Materialized.with(keySerde, Serdes.Long()));
+        return doCount(Materialized.with(keySerde, Serdes.long()));
     }
 
     
-    public KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+    public KTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(materialized, "materialized can't be null");
 
@@ -144,9 +144,9 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
         return doCount(materialized);
     }
 
-    private KTable<K, Long> doCount( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+    private KTable<K, long> doCount( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-         MaterializedInternal<K, Long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
         if (materializedInternal.keySerde() == null)
@@ -155,7 +155,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
         }
         if (materializedInternal.valueSerde() == null)
 {
-            materializedInternal.withValueSerde(Serdes.Long());
+            materializedInternal.withValueSerde(Serdes.long());
         }
 
         return doAggregate(

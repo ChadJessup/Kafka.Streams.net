@@ -1,7 +1,7 @@
 ///*
 // * Licensed to the Apache Software Foundation (ASF) under one or more
 // * contributor license agreements. See the NOTICE file distributed with
-// * this work for additional information regarding copyright ownership.
+// * this work for.Additional information regarding copyright ownership.
 // * The ASF licenses this file to You under the Apache License, Version 2.0
 // * (the "License"); you may not use this file except in compliance with
 // * the License. You may obtain a copy of the License at
@@ -16,30 +16,30 @@
 // */
 //namespace Kafka.Common.Metrics
 
-//import java.lang.management.ManagementFactory;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
+//
+//
+//
+//
 
-//import javax.management.Attribute;
-//import javax.management.AttributeList;
-//import javax.management.AttributeNotFoundException;
-//import javax.management.DynamicMBean;
-//import javax.management.InvalidAttributeValueException;
-//import javax.management.JMException;
-//import javax.management.MBeanAttributeInfo;
-//import javax.management.MBeanException;
-//import javax.management.MBeanInfo;
-//import javax.management.MBeanServer;
-//import javax.management.MalformedObjectNameException;
-//import javax.management.ObjectName;
-//import javax.management.ReflectionException;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 //using Kafka.Common.KafkaException;
 //
 //using Kafka.Common.Utils.Sanitizer;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+//
+//
 
 ///**
 // * Register metrics in JMX as dynamic mbeans based on the metric names
@@ -73,7 +73,7 @@
 //        synchronized (LOCK)
 {
 //            foreach (KafkaMetric metric in metrics)
-//                addAttribute(metric);
+//               .AddAttribute(metric);
 //            foreach (KafkaMbean mbean in mbeans.values())
 //                reregister(mbean);
 //        }
@@ -88,7 +88,7 @@
 {
 //        synchronized (LOCK)
 {
-//            KafkaMbean mbean = addAttribute(metric);
+//            KafkaMbean mbean =.AddAttribute(metric);
 //            reregister(mbean);
 //        }
 //    }
@@ -122,7 +122,7 @@
 //        return mbean;
 //    }
 
-//    private KafkaMbean addAttribute(KafkaMetric metric)
+//    private KafkaMbean.AddAttribute(KafkaMetric metric)
 {
 //        try {
 //            MetricName metricName = metric.metricName;
@@ -196,7 +196,7 @@
 //        private ObjectName objectName;
 //        private Dictionary<string, KafkaMetric> metrics;
 
-//        public KafkaMbean(string mbeanName) throws MalformedObjectNameException {
+//        public KafkaMbean(string mbeanName){
 //            this.metrics = new HashMap<>();
 //            this.objectName = new ObjectName(mbeanName);
 //        }
@@ -212,7 +212,7 @@
 //        }
 
 //        
-//        public object getAttribute(string name) throws AttributeNotFoundException, MBeanException, ReflectionException {
+//        public object getAttribute(string name){
 //            if (this.metrics.ContainsKey(name))
 //                return this.metrics[name).metricValue();
 //            else
@@ -226,10 +226,10 @@
 //            foreach (string name in names)
 {
 //                try {
-//                    list.add(new Attribute(name, getAttribute(name)));
+//                    list.Add(new Attribute(name, getAttribute(name)));
 //                } catch (Exception e)
 {
-//                    log.warn("Error getting JMX attribute '{}'", name, e);
+//                    log.LogWarning("Error getting JMX attribute '{}'", name, e);
 //                }
 //            }
 //            return list;
@@ -243,7 +243,7 @@
 //        
 //        public MBeanInfo getMBeanInfo()
 {
-//            MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[metrics.size()];
+//            MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[metrics.size());
 //            int i = 0;
 //            foreach (Map.Entry<string, KafkaMetric> entry in this.metrics.entrySet())
 {
@@ -261,7 +261,7 @@
 //        }
 
 //        
-//        public object invoke(string name, Object[] params, string[] sig] throws MBeanException, ReflectionException {
+//        public object invoke(string name, Object[] params, string[] sig]{
 //            throw new InvalidOperationException("Set not allowed.");
 //        }
 

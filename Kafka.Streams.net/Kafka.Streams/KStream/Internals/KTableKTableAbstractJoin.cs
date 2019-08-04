@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,7 +16,7 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.ValueJoiner;
+
 
 abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
 
@@ -24,13 +24,13 @@ abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<
     private  KTableImpl<K, ?, V2> table2;
      KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
      KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
-     ValueJoiner<? super V1, ? super V2, ? : R> joiner;
+     ValueJoiner<V1, V2, R> joiner;
 
     bool sendOldValues = false;
 
     KTableKTableAbstractJoin( KTableImpl<K, ?, V1> table1,
                               KTableImpl<K, ?, V2> table2,
-                              ValueJoiner<? super V1, ? super V2, ? : R> joiner)
+                              ValueJoiner<V1, V2, R> joiner)
 {
         this.table1 = table1;
         this.table2 = table2;

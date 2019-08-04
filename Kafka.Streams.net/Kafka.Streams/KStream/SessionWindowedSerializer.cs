@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.internals.WindowedSerializer;
-import org.apache.kafka.streams.state.internals.SessionKeySchema;
 
-import java.util.Map;
+
+
+
+
+
+
+
+
 
 /**
  *  The inner serde class can be specified by setting the property
@@ -44,14 +44,14 @@ public class SessionWindowedSerializer<T> : WindowedSerializer<T> {
         this.inner = inner;
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     public void configure( Map<string, ?> configs,  bool isKey)
 {
         if (inner == null)
 {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-             string value = (string) configs[propertyName];
+             string value = (string) configs[propertyName);
             try {
                 inner = Serde.class.cast(Utils.newInstance(value, Serde.class)).serializer();
                 inner.configure(configs, isKey);

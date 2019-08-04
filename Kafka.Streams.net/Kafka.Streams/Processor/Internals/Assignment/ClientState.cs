@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals.assignment;
+namespace Kafka.Streams.Processor.Internals.assignment;
 
-import org.apache.kafka.streams.processor.TaskId;
 
-import java.util.HashSet;
-import java.util.Set;
+
+
+
 
 public class ClientState {
-    private Set<TaskId> activeTasks;
-    private Set<TaskId> standbyTasks;
-    private Set<TaskId> assignedTasks;
-    private Set<TaskId> prevActiveTasks;
-    private Set<TaskId> prevStandbyTasks;
-    private Set<TaskId> prevAssignedTasks;
+    private HashSet<TaskId> activeTasks;
+    private HashSet<TaskId> standbyTasks;
+    private HashSet<TaskId> assignedTasks;
+    private HashSet<TaskId> prevActiveTasks;
+    private HashSet<TaskId> prevStandbyTasks;
+    private HashSet<TaskId> prevAssignedTasks;
 
     private int capacity;
 
@@ -43,11 +43,11 @@ public class ClientState {
     }
 
     private ClientState(Set<TaskId> activeTasks,
-                        Set<TaskId> standbyTasks,
-                        Set<TaskId> assignedTasks,
-                        Set<TaskId> prevActiveTasks,
-                        Set<TaskId> prevStandbyTasks,
-                        Set<TaskId> prevAssignedTasks,
+                        HashSet<TaskId> standbyTasks,
+                        HashSet<TaskId> assignedTasks,
+                        HashSet<TaskId> prevActiveTasks,
+                        HashSet<TaskId> prevStandbyTasks,
+                        HashSet<TaskId> prevAssignedTasks,
                         int capacity)
 {
         this.activeTasks = activeTasks;
@@ -75,30 +75,30 @@ public class ClientState {
 {
         if (active)
 {
-            activeTasks.add(taskId);
+            activeTasks.Add(taskId);
         } else {
-            standbyTasks.add(taskId);
+            standbyTasks.Add(taskId);
         }
 
-        assignedTasks.add(taskId);
+        assignedTasks.Add(taskId);
     }
 
-    public Set<TaskId> activeTasks()
+    public HashSet<TaskId> activeTasks()
 {
         return activeTasks;
     }
 
-    public Set<TaskId> standbyTasks()
+    public HashSet<TaskId> standbyTasks()
 {
         return standbyTasks;
     }
 
-    public Set<TaskId> prevActiveTasks()
+    public HashSet<TaskId> prevActiveTasks()
 {
         return prevActiveTasks;
     }
 
-    public Set<TaskId> prevStandbyTasks()
+    public HashSet<TaskId> prevStandbyTasks()
 {
         return prevStandbyTasks;
     }
@@ -120,16 +120,16 @@ public class ClientState {
         return activeTasks.size();
     }
 
-    public void addPreviousActiveTasks(Set<TaskId> prevTasks)
+    public void.AddPreviousActiveTasks(Set<TaskId> prevTasks)
 {
-        prevActiveTasks.addAll(prevTasks);
-        prevAssignedTasks.addAll(prevTasks);
+        prevActiveTasks.AddAll(prevTasks);
+        prevAssignedTasks.AddAll(prevTasks);
     }
 
-    public void addPreviousStandbyTasks(Set<TaskId> standbyTasks)
+    public void.AddPreviousStandbyTasks(Set<TaskId> standbyTasks)
 {
-        prevStandbyTasks.addAll(standbyTasks);
-        prevAssignedTasks.addAll(standbyTasks);
+        prevStandbyTasks.AddAll(standbyTasks);
+        prevAssignedTasks.AddAll(standbyTasks);
     }
 
     
@@ -176,14 +176,14 @@ public class ClientState {
         }
     }
 
-    Set<TaskId> previousStandbyTasks()
+    HashSet<TaskId> previousStandbyTasks()
 {
-        Set<TaskId> standby = new HashSet<>(prevAssignedTasks);
+        HashSet<TaskId> standby = new HashSet<>(prevAssignedTasks);
         standby.removeAll(prevActiveTasks);
         return standby;
     }
 
-    Set<TaskId> previousActiveTasks()
+    HashSet<TaskId> previousActiveTasks()
 {
         return prevActiveTasks;
     }
@@ -194,12 +194,12 @@ public class ClientState {
     }
 
     // Visible for testing
-    Set<TaskId> assignedTasks()
+    HashSet<TaskId> assignedTasks()
 {
         return assignedTasks;
     }
 
-    Set<TaskId> previousAssignedTasks()
+    HashSet<TaskId> previousAssignedTasks()
 {
         return prevAssignedTasks;
     }

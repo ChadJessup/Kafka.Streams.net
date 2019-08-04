@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,21 +16,21 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.kstream.ValueMapper;
-import org.apache.kafka.streams.kstream.ValueMapperWithKey;
-import org.apache.kafka.streams.kstream.ValueTransformer;
-import org.apache.kafka.streams.kstream.ValueTransformerSupplier;
-import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
-import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
  * Any classes (KTable, KStream, etc) extending this class should follow the serde specification precedence ordering as:
@@ -45,7 +45,7 @@ public abstract class AbstractStream<K, V> {
     protected  string name;
     protected  ISerde<K> keySerde;
     protected  ISerde<V> valSerde;
-    protected  Set<string> sourceNodes;
+    protected  HashSet<string> sourceNodes;
     protected  StreamsGraphNode streamsGraphNode;
     protected  InternalStreamsBuilder builder;
 
@@ -64,7 +64,7 @@ public abstract class AbstractStream<K, V> {
     AbstractStream( string name,
                     ISerde<K> keySerde,
                     ISerde<V> valSerde,
-                    Set<string> sourceNodes,
+                    HashSet<string> sourceNodes,
                     StreamsGraphNode streamsGraphNode,
                     InternalStreamsBuilder builder)
 {
@@ -88,11 +88,11 @@ public abstract class AbstractStream<K, V> {
         return builder.internalTopologyBuilder;
     }
 
-    Set<string> ensureJoinableWith( AbstractStream<K, ?> other)
+    HashSet<string> ensureJoinableWith( AbstractStream<K, ?> other)
 {
-         Set<string> allSourceNodes = new HashSet<>();
-        allSourceNodes.addAll(sourceNodes);
-        allSourceNodes.addAll(other.sourceNodes);
+         HashSet<string> allSourceNodes = new HashSet<>();
+        allSourceNodes.AddAll(sourceNodes);
+        allSourceNodes.AddAll(other.sourceNodes);
 
         builder.internalTopologyBuilder.copartitionSources(allSourceNodes);
 

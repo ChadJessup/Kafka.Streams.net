@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,11 +17,11 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.streams.kstream.Joined;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.WindowStore;
+
+
+
+
+
 
 /**
  * Too much information to generalize, so Stream-Stream joins are represented by a specific node.
@@ -36,7 +36,7 @@ public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, 
 
 
     private StreamStreamJoinNode( string nodeName,
-                                  ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner,
+                                  ValueJoiner<V1, V2, VR> valueJoiner,
                                   ProcessorParameters<K, V1> joinThisProcessorParameters,
                                   ProcessorParameters<K, V2> joinOtherProcessParameters,
                                   ProcessorParameters<K, VR> joinMergeProcessorParameters,
@@ -85,11 +85,11 @@ public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, 
          string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.processorName();
          string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.processorName();
 
-        topologyBuilder.addProcessor(thisProcessorName, thisProcessorParameters().processorSupplier(), thisWindowedStreamProcessorName);
-        topologyBuilder.addProcessor(otherProcessorName, otherProcessorParameters().processorSupplier(), otherWindowedStreamProcessorName);
-        topologyBuilder.addProcessor(mergeProcessorParameters().processorName(), mergeProcessorParameters().processorSupplier(), thisProcessorName, otherProcessorName);
-        topologyBuilder.addStateStore(thisWindowStoreBuilder, thisWindowedStreamProcessorName, otherProcessorName);
-        topologyBuilder.addStateStore(otherWindowStoreBuilder, otherWindowedStreamProcessorName, thisProcessorName);
+        topologyBuilder.AddProcessor(thisProcessorName, thisProcessorParameters().processorSupplier(), thisWindowedStreamProcessorName);
+        topologyBuilder.AddProcessor(otherProcessorName, otherProcessorParameters().processorSupplier(), otherWindowedStreamProcessorName);
+        topologyBuilder.AddProcessor(mergeProcessorParameters().processorName(), mergeProcessorParameters().processorSupplier(), thisProcessorName, otherProcessorName);
+        topologyBuilder.AddStateStore(thisWindowStoreBuilder, thisWindowedStreamProcessorName, otherProcessorName);
+        topologyBuilder.AddStateStore(otherWindowStoreBuilder, otherWindowedStreamProcessorName, thisProcessorName);
     }
 
     public static <K, V1, V2, VR> StreamStreamJoinNodeBuilder<K, V1, V2, VR> streamStreamJoinNodeBuilder()
@@ -100,7 +100,7 @@ public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, 
     public static  class StreamStreamJoinNodeBuilder<K, V1, V2, VR> {
 
         private string nodeName;
-        private ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner;
+        private ValueJoiner<V1, V2, VR> valueJoiner;
         private ProcessorParameters<K, V1> joinThisProcessorParameters;
         private ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private ProcessorParameters<K, VR> joinMergeProcessorParameters;
@@ -116,7 +116,7 @@ public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, 
         }
 
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withValueJoiner( ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withValueJoiner( ValueJoiner<V1, V2, VR> valueJoiner)
 {
             this.valueJoiner = valueJoiner;
             return this;

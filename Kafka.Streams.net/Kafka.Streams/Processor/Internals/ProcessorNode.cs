@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processor.Internals
             return childByName[childName];
         }
 
-        public void addChild(ProcessorNode<K, V> child)
+        public void.AddChild(ProcessorNode<K, V> child)
 {
             children.Add(child);
             childByName.Add(child.name, child);
@@ -113,7 +113,7 @@ namespace Kafka.Streams.Processor.Internals
             StringBuilder sb = new StringBuilder(indent + name + ":\n");
             if (stateStores != null && !stateStores.isEmpty())
 {
-                sb.Append(indent).Append("\tstates:\t\t["];
+                sb.Append(indent).Append("\tstates:\t\t[");
                 foreach (string store in stateStores)
 {
                     sb.Append(store);

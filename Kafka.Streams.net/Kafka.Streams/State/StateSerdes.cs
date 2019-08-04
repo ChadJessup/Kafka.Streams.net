@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -23,7 +23,7 @@ using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.Errors.StreamsException;
 using Kafka.Streams.State.internals.ValueAndTimestampSerializer;
 
-import java.util.Objects;
+
 
 /**
  * Factory for creating serializers / deserializers for state stores in Kafka Streams.
@@ -44,7 +44,7 @@ public class StateSerdes<K, V>
      * @param <V>        the value type
      * @return a new instance of {@link StateSerdes}
      */
-    public static <K, V> StateSerdes<K, V> withBuiltinTypes(
+    public staticStateSerdes<K, V> withBuiltinTypes(
         string topic,
         Class<K> keyClass,
         Class<V> valueClass)

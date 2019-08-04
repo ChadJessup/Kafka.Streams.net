@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.metrics.Sensor;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.StreamsMetrics;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
 
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+
+
+
+
+
+
+
+
+
 
 /**
  * A StandbyTask
  */
 public class StandbyTask : AbstractTask {
 
-    private Dictionary<TopicPartition, Long> checkpointedOffsets = new HashMap<>();
+    private Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
     private Sensor closeTaskSensor;
 
     /**
@@ -177,21 +177,21 @@ public class StandbyTask : AbstractTask {
     public List<ConsumerRecord<byte[], byte[]>> update(TopicPartition partition,
                                                        List<ConsumerRecord<byte[], byte[]>> records)
 {
-        log.trace("Updating standby replicas of its state store for partition [{}]", partition];
+        log.trace("Updating standby replicas of its state store for partition [{}]", partition);
         long limit = stateMgr.offsetLimit(partition);
 
         long lastOffset = -1L;
-        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>(records.size()];
+        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>(records.size());
         List<ConsumerRecord<byte[], byte[]>> remainingRecords = new List<>();
 
         foreach (ConsumerRecord<byte[], byte[]> record in records)
 {
             if (record.offset() < limit)
 {
-                restoreRecords.add(record);
+                restoreRecords.Add(record);
                 lastOffset = record.offset();
             } else {
-                remainingRecords.add(record);
+                remainingRecords.Add(record);
             }
         }
 
@@ -205,7 +205,7 @@ public class StandbyTask : AbstractTask {
         return remainingRecords;
     }
 
-    Dictionary<TopicPartition, Long> checkpointedOffsets()
+    Dictionary<TopicPartition, long> checkpointedOffsets()
 {
         return checkpointedOffsets;
     }

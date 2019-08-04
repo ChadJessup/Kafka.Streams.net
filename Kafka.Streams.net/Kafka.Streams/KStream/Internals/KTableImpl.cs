@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,46 +16,46 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.Grouped;
-import org.apache.kafka.streams.kstream.KGroupedTable;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Named;
-import org.apache.kafka.streams.kstream.Predicate;
-import org.apache.kafka.streams.kstream.Suppressed;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.kstream.ValueMapper;
-import org.apache.kafka.streams.kstream.ValueMapperWithKey;
-import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
-import org.apache.kafka.streams.kstream.internals.graph.KTableKTableJoinNode;
-import org.apache.kafka.streams.kstream.internals.graph.ProcessorGraphNode;
-import org.apache.kafka.streams.kstream.internals.graph.ProcessorParameters;
-import org.apache.kafka.streams.kstream.internals.graph.StatefulProcessorNode;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.kstream.internals.graph.TableProcessorNode;
-import org.apache.kafka.streams.kstream.internals.suppress.FinalResultsSuppressionBuilder;
-import org.apache.kafka.streams.kstream.internals.suppress.KTableSuppressProcessorSupplier;
-import org.apache.kafka.streams.kstream.internals.suppress.NamedSuppressed;
-import org.apache.kafka.streams.kstream.internals.suppress.SuppressedInternal;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.internals.InMemoryTimeOrderedKeyValueBuffer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
 
-import static org.apache.kafka.streams.kstream.internals.graph.GraphGraceSearchUtil.findAndVerifyWindowGrace;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * The implementation class of {@link KTable}.
@@ -98,7 +98,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     public KTableImpl( string name,
                        ISerde<K> keySerde,
                        ISerde<V> valSerde,
-                       Set<string> sourceNodes,
+                       HashSet<string> sourceNodes,
                        string queryableStoreName,
                        ProcessorSupplier<?, ?> processorSupplier,
                        StreamsGraphNode streamsGraphNode,
@@ -115,7 +115,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         return queryableStoreName;
     }
 
-    private KTable<K, V> doFilter( Predicate<? super K, ? super V> predicate,
+    private KTable<K, V> doFilter( Predicate<K, V> predicate,
                                    Named named,
                                    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                    bool filterNot)
@@ -162,7 +162,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
             storeBuilder
         );
 
-        builder.addGraphNode(this.streamsGraphNode, tableNode);
+        builder.AddGraphNode(this.streamsGraphNode, tableNode);
 
         return new KTableImpl<>(name,
                                 keySerde,
@@ -175,47 +175,47 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public KTable<K, V> filter( Predicate<? super K, ? super V> predicate)
+    public KTable<K, V> filter( Predicate<K, V> predicate)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
         return doFilter(predicate, NamedInternal.empty(), null, false);
     }
 
     
-    public KTable<K, V> filter( Predicate<? super K, ? super V> predicate,  Named named)
+    public KTable<K, V> filter( Predicate<K, V> predicate,  Named named)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
         return doFilter(predicate, named, null, false);
     }
 
     
-    public KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
+    public KTable<K, V> filter( Predicate<K, V> predicate,
                                 Named named,
                                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
-         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized];
+         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized);
 
         return doFilter(predicate, named, materializedInternal, false);
     }
 
     
-    public KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
+    public KTable<K, V> filter( Predicate<K, V> predicate,
                                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return filter(predicate, NamedInternal.empty(), materialized);
     }
 
     
-    public KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate)
+    public KTable<K, V> filterNot( Predicate<K, V> predicate)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
         return doFilter(predicate, NamedInternal.empty(), null, true);
     }
 
     
-    public KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
+    public KTable<K, V> filterNot( Predicate<K, V> predicate,
                                    Named named)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
@@ -223,25 +223,25 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
+    public KTable<K, V> filterNot( Predicate<K, V> predicate,
                                    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return filterNot(predicate, NamedInternal.empty(), materialized);
     }
 
     
-    public KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
+    public KTable<K, V> filterNot( Predicate<K, V> predicate,
                                    Named named,
                                    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(predicate, "predicate can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
-         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized];
+         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized);
          NamedInternal renamed = new NamedInternal(named);
         return doFilter(predicate, renamed, materializedInternal, true);
     }
 
-    private <VR> KTable<K, VR> doMapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    private KTable<K, VR> doMapValues( ValueMapperWithKey<K, V, VR> mapper,
                                             Named named,
                                             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal)
 {
@@ -285,7 +285,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
             storeBuilder
         );
 
-        builder.addGraphNode(this.streamsGraphNode, tableNode);
+        builder.AddGraphNode(this.streamsGraphNode, tableNode);
 
         // don't inherit parent value serde, since this operation may change the value type, more specifically:
         // we preserve the key following the order of 1) materialized, 2) parent, 3) null
@@ -303,14 +303,14 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper)
+    public KTable<K, VR> mapValues( ValueMapper<V, VR> mapper)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
         return doMapValues(withKey(mapper), NamedInternal.empty(), null);
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                          Named named)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
@@ -318,14 +318,14 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper)
+    public KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
         return doMapValues(mapper, NamedInternal.empty(), null);
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                          Named named)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
@@ -333,54 +333,54 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return mapValues(mapper, NamedInternal.empty(), materialized);
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                          Named named,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized];
+         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized);
 
         return doMapValues(withKey(mapper), named, materializedInternal);
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return mapValues(mapper, NamedInternal.empty(), materialized);
     }
 
     
-    public <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    public KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                          Named named,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(mapper, "mapper can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized];
+         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized);
 
         return doMapValues(mapper, named, materializedInternal);
     }
 
     
-    public <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    public KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                string[] stateStoreNames)
 {
         return doTransformValues(transformerSupplier, null, NamedInternal.empty(), stateStoreNames);
     }
 
     
-    public <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    public KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                Named named,
                                                string[] stateStoreNames)
 {
@@ -389,7 +389,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    public KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                string[] stateStoreNames)
 {
@@ -397,19 +397,19 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    public KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                Named named,
                                                string[] stateStoreNames)
 {
         Objects.requireNonNull(materialized, "materialized can't be null");
         Objects.requireNonNull(named, "named can't be null");
-         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized];
+         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<>(materialized);
 
         return doTransformValues(transformerSupplier, materializedInternal, new NamedInternal(named), stateStoreNames);
     }
 
-    private <VR> KTable<K, VR> doTransformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    private KTable<K, VR> doTransformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                   MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                                   NamedInternal namedInternal,
                                                   string[] stateStoreNames)
@@ -455,7 +455,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
             stateStoreNames
         );
 
-        builder.addGraphNode(this.streamsGraphNode, tableNode);
+        builder.AddGraphNode(this.streamsGraphNode, tableNode);
 
         return new KTableImpl<>(
             name,
@@ -490,27 +490,27 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
             processorParameters
         );
 
-        builder.addGraphNode(this.streamsGraphNode, toStreamNode);
+        builder.AddGraphNode(this.streamsGraphNode, toStreamNode);
 
         // we can inherit parent key and value serde
         return new KStreamImpl<>(name, keySerde, valSerde, sourceNodes, false, toStreamNode, builder);
     }
 
     
-    public <K1> KStream<K1, V> toStream( IKeyValueMapper<? super K, ? super V, ? : K1> mapper)
+    public <K1> KStream<K1, V> toStream( IKeyValueMapper<K, V, K1> mapper)
 {
         return toStream().selectKey(mapper);
     }
 
     
-    public <K1> KStream<K1, V> toStream( IKeyValueMapper<? super K, ? super V, ? : K1> mapper,
+    public <K1> KStream<K1, V> toStream( IKeyValueMapper<K, V, K1> mapper,
                                          Named named)
 {
         return toStream(named).selectKey(mapper);
     }
 
     
-    public KTable<K, V> suppress( Suppressed<? super K> suppressed)
+    public KTable<K, V> suppress( Suppressed<K> suppressed)
 {
          string name;
         if (suppressed is NamedSuppressed)
@@ -538,7 +538,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
             new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valSerde)
         );
 
-        builder.addGraphNode(streamsGraphNode, node);
+        builder.AddGraphNode(streamsGraphNode, node);
 
         return new KTableImpl<K, S, V>(
             name,
@@ -552,8 +552,8 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         );
     }
 
-    @SuppressWarnings("unchecked")
-    private SuppressedInternal<K> buildSuppress( Suppressed<? super K> suppress,  string name)
+    
+    private SuppressedInternal<K> buildSuppress( Suppressed<K> suppress,  string name)
 {
         if (suppress is FinalResultsSuppressionBuilder)
 {
@@ -577,30 +577,30 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
 
     
     public <V1, R> KTable<K, R> join( KTable<K, V1> other,
-                                      ValueJoiner<? super V, ? super V1, ? : R> joiner)
+                                      ValueJoiner<V, V1, R> joiner)
 {
         return doJoin(other, joiner, NamedInternal.empty(), null, false, false);
     }
 
     
     public <V1, R> KTable<K, R> join( KTable<K, V1> other,
-                                      ValueJoiner<? super V, ? super V1, ? : R> joiner,
+                                      ValueJoiner<V, V1, R> joiner,
                                       Named named)
 {
         return doJoin(other, joiner, named, null, false, false);
     }
 
     
-    public <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                        ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> join( KTable<K, VO> other,
+                                        ValueJoiner<V, VO, VR> joiner,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return join(other, joiner, NamedInternal.empty(), materialized);
     }
 
     
-    public <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                        ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> join( KTable<K, VO> other,
+                                        ValueJoiner<V, VO, VR> joiner,
                                         Named named,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -613,30 +613,30 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
 
     
     public <V1, R> KTable<K, R> outerJoin( KTable<K, V1> other,
-                                           ValueJoiner<? super V, ? super V1, ? : R> joiner)
+                                           ValueJoiner<V, V1, R> joiner)
 {
         return outerJoin(other, joiner, NamedInternal.empty());
     }
 
     
     public <V1, R> KTable<K, R> outerJoin( KTable<K, V1> other,
-                                           ValueJoiner<? super V, ? super V1, ? : R> joiner,
+                                           ValueJoiner<V, V1, R> joiner,
                                            Named named)
 {
         return doJoin(other, joiner, named, null, true, true);
     }
 
     
-    public <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                             ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> outerJoin( KTable<K, VO> other,
+                                             ValueJoiner<V, VO, VR> joiner,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return outerJoin(other, joiner, NamedInternal.empty(), materialized);
     }
 
     
-    public <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                             ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> outerJoin( KTable<K, VO> other,
+                                             ValueJoiner<V, VO, VR> joiner,
                                              Named named,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -649,30 +649,30 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
 
     
     public <V1, R> KTable<K, R> leftJoin( KTable<K, V1> other,
-                                          ValueJoiner<? super V, ? super V1, ? : R> joiner)
+                                          ValueJoiner<V, V1, R> joiner)
 {
         return leftJoin(other, joiner, NamedInternal.empty());
     }
 
     
     public <V1, R> KTable<K, R> leftJoin( KTable<K, V1> other,
-                                          ValueJoiner<? super V, ? super V1, ? : R> joiner,
+                                          ValueJoiner<V, V1, R> joiner,
                                           Named named)
 {
         return doJoin(other, joiner, named, null, true, false);
     }
 
     
-    public <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                            ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> leftJoin( KTable<K, VO> other,
+                                            ValueJoiner<V, VO, VR> joiner,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         return leftJoin(other, joiner, NamedInternal.empty(), materialized);
     }
 
     
-    public <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                            ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+    public KTable<K, VR> leftJoin( KTable<K, VO> other,
+                                            ValueJoiner<V, VO, VR> joiner,
                                             Named named,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -683,9 +683,9 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         return doJoin(other, joiner, named, materializedInternal, true, false);
     }
 
-    @SuppressWarnings("unchecked")
+    
     private <VO, VR> KTable<K, VR> doJoin( KTable<K, VO> other,
-                                           ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                           ValueJoiner<V, VO, VR> joiner,
                                            Named joinName,
                                            MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                            bool leftOuter,
@@ -697,7 +697,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
 
          NamedInternal renamed = new NamedInternal(joinName);
          string joinMergeName = renamed.orElseGenerateWithPrefix(builder, MERGE_NAME);
-         Set<string> allSourceNodes = ensureJoinableWith((AbstractStream<K, VO>) other);
+         HashSet<string> allSourceNodes = ensureJoinableWith((AbstractStream<K, VO>) other);
 
         if (leftOuter)
 {
@@ -760,7 +760,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
                 .withQueryableStoreName(queryableStoreName)
                 .withStoreBuilder(storeBuilder)
                 .build();
-        builder.addGraphNode(this.streamsGraphNode, kTableKTableJoinNode);
+        builder.AddGraphNode(this.streamsGraphNode, kTableKTableJoinNode);
 
         // we can inherit parent key serde if user do not provide specific overrides
         return new KTableImpl<K, Change<VR>, VR>(
@@ -776,14 +776,14 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <K1, V1> KGroupedTable<K1, V1> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<K1, V1>> selector)
+    public KGroupedTable<K1, V1> groupBy( IKeyValueMapper<K, V, KeyValue<K1, V1>> selector)
 {
         return groupBy(selector, Grouped.with(null, null));
     }
 
     
     @Deprecated
-    public <K1, V1> KGroupedTable<K1, V1> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<K1, V1>> selector,
+    public KGroupedTable<K1, V1> groupBy( IKeyValueMapper<K, V, KeyValue<K1, V1>> selector,
                                                    org.apache.kafka.streams.kstream.Serialized<K1, V1> serialized)
 {
         Objects.requireNonNull(selector, "selector can't be null");
@@ -793,7 +793,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
     }
 
     
-    public <K1, V1> KGroupedTable<K1, V1> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<K1, V1>> selector,
+    public KGroupedTable<K1, V1> groupBy( IKeyValueMapper<K, V, KeyValue<K1, V1>> selector,
                                                    Grouped<K1, V1> grouped)
 {
         Objects.requireNonNull(selector, "selector can't be null");
@@ -807,7 +807,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         // select the aggregate key and values (old and new), it would require parent to send old values
          ProcessorGraphNode<K, Change<V>> groupByMapNode = new ProcessorGraphNode<>(selectName, processorParameters);
 
-        builder.addGraphNode(this.streamsGraphNode, groupByMapNode);
+        builder.AddGraphNode(this.streamsGraphNode, groupByMapNode);
 
         this.enableSendingOldValues();
         return new KGroupedTableImpl<>(
@@ -819,7 +819,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         );
     }
 
-    @SuppressWarnings("unchecked")
+    
     public KTableValueGetterSupplier<K, V> valueGetterSupplier()
 {
         if (processorSupplier is KTableSource)
@@ -836,7 +836,7 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     public void enableSendingOldValues()
 {
         if (!sendOldValues)
@@ -864,8 +864,8 @@ public class KTableImpl<K, S, V> : AbstractStream<K, V> : KTable<K, V> {
      * We conflate V with Change<V> in many places. It might be nice to fix that eventually.
      * For now, I'm just explicitly lying about the parameterized type.
      */
-    @SuppressWarnings("unchecked")
-    private <VR> ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType( ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
+    
+    private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType( ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
 {
         return (ProcessorParameters<K, VR>) kObjectProcessorParameters;
     }

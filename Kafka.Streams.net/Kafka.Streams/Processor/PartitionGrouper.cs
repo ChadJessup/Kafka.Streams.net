@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
 using Kafka.Common.Cluster;
 using Kafka.Common.TopicPartition;
 
-import java.util.Map;
-import java.util.Set;
+
+
 
 /**
  * A partition grouper that generates partition groups given the list of topic-partitions.
@@ -47,6 +47,6 @@ public interface PartitionGrouper {
      * @param metadata Metadata of the consuming cluster
      * @return a map of task ids to groups of partitions
      */
-    Dictionary<TaskId, Set<TopicPartition>> partitionGroups(Dictionary<Integer, Set<string>> topicGroups, Cluster metadata);
+    Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<Integer, HashSet<string>> topicGroups, Cluster metadata);
 
 }

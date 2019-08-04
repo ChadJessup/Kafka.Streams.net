@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.streams.internals.ApiUtils;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.state.SessionBytesStoreSupplier;
 
-import java.time.Duration;
-import java.util.Objects;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
-import static org.apache.kafka.streams.kstream.internals.WindowingDefaults.DEFAULT_RETENTION_MS;
+
+
+
+
+
+
+
 
 
 /**
@@ -129,7 +129,7 @@ public  class SessionWindows {
      *             {@link Materialized#as(SessionBytesStoreSupplier)}.
      */
     @Deprecated
-    public SessionWindows until( long durationMs) throws ArgumentException {
+    public SessionWindows until( long durationMs){
         if (durationMs < gapMs)
 {
             throw new ArgumentException("Window retention time (durationMs) cannot be smaller than window gap.");
@@ -150,7 +150,7 @@ public  class SessionWindows {
      * @return this updated builder
      * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
      */
-    public SessionWindows grace( Duration afterWindowEnd) throws ArgumentException {
+    public SessionWindows grace( Duration afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
 

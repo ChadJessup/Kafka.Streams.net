@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import java.util.Map;
 
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
+
+
+
+
+
+
 using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.serialization.ByteArraySerializer;
-import org.apache.kafka.streams.KafkaClientSupplier;
+
 
 public class DefaultKafkaClientSupplier : KafkaClientSupplier {
     

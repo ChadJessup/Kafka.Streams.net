@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.AbstractIterator;
 using Kafka.Common.Utils.Bytes;
@@ -23,27 +23,27 @@ using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Errors.ProcessorStateException;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.TimestampedBytesStore;
-import org.rocksdb.ColumnFamilyDescriptor;
-import org.rocksdb.ColumnFamilyHandle;
-import org.rocksdb.ColumnFamilyOptions;
-import org.rocksdb.DBOptions;
-import org.rocksdb.RocksDB;
-import org.rocksdb.RocksDBException;
-import org.rocksdb.RocksIterator;
-import org.rocksdb.WriteBatch;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 
-import static java.util.Arrays.asList;
-import static org.apache.kafka.streams.state.TimestampedBytesStore.convertToTimestampedFormat;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * A persistent key-(value-timestamp) store based on RocksDB.
@@ -83,11 +83,11 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             if (noTimestampsIter.isValid())
 {
                 log.info("Opening store {} in upgrade mode", name);
-                dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies[1)];
+                dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies[1));
             } else
 {
                 log.info("Opening store {} in regular mode", name);
-                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[1)];
+                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[1));
                 noTimestampColumnFamily.close();
             }
             noTimestampsIter.close();
@@ -98,13 +98,13 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                 try
 {
                     db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors.subList(0, 1), columnFamilies);
-                    columnFamilies.add(db.createColumnFamily(columnFamilyDescriptors[1))];
+                    columnFamilies.Add(db.createColumnFamily(columnFamilyDescriptors[1)));
                 } catch (RocksDBException fatal)
 {
                     throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), fatal);
                 }
                 log.info("Opening store {} in upgrade mode", name);
-                dbAccessor = new DualColumnFamilyAccessor(columnFamilies[0), columnFamilies[1)];
+                dbAccessor = new DualColumnFamilyAccessor(columnFamilies[0), columnFamilies[1));
             } else
 {
                 throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
@@ -176,7 +176,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
                 Objects.requireNonNull(entry.key, "key cannot be null");
-                addToBatch(entry.key(), entry.value, batch];
+               .AddToBatch(entry.key(), entry.value, batch);
             }
         }
 
@@ -192,7 +192,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             byte[] plainValue = db[oldColumnFamily, key];
             if (plainValue != null)
 {
-                byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue];
+                byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue);
                 // this does only work, because the changelog topic contains correct data already
                 // for other format changes, we cannot take this short cut and can only migrate data
                 // from old to new store on put()
@@ -263,12 +263,12 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
             foreach (KeyValue<byte[], byte[]> record in records)
 {
-                addToBatch(record.key, record.value, batch);
+               .AddToBatch(record.key, record.value, batch);
             }
         }
 
         
-        public void addToBatch(byte[] key,
+        public void.AddToBatch(byte[] key,
                                byte[] value,
                                WriteBatch batch) throws RocksDBException
 {
@@ -446,8 +446,8 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                                    Bytes to)
 {
             super(storeName, iterWithTimestamp, iterNoTimestamp);
-            iterWithTimestamp.seek(from()];
-            iterNoTimestamp.seek(from()];
+            iterWithTimestamp.seek(from());
+            iterNoTimestamp.seek(from());
             upperBoundKey = to[];
             if (upperBoundKey == null)
 {

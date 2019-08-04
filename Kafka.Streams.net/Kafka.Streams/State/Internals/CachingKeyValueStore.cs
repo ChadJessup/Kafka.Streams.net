@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -24,14 +24,14 @@ using Kafka.Streams.Processor.internals.InternalProcessorContext;
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+
+
+
+
+
+
+
 
 public class CachingKeyValueStore
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
@@ -63,14 +63,14 @@ public class CachingKeyValueStore
         streamThread = Thread.currentThread();
     }
 
-    @SuppressWarnings("unchecked")
+    
     private void initInternal(IProcessorContext context)
 {
         this.context = (InternalProcessorContext) context;
 
         this.cache = this.context.getCache();
         this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name());
-        cache.addDirtyEntryFlushListener(cacheName, entries ->
+        cache.AddDirtyEntryFlushListener(cacheName, entries ->
 {
             foreach (ThreadCache.DirtyEntry entry in entries)
 {
@@ -163,7 +163,7 @@ public class CachingKeyValueStore
         lock.writeLock().lock();
         try
 {
-            byte[] v = getInternal(key];
+            byte[] v = getInternal(key);
             if (v == null)
 {
                 putInternal(key, value);
@@ -208,7 +208,7 @@ public class CachingKeyValueStore
 
     private byte[] deleteInternal(Bytes key)
 {
-        byte[] v = getInternal(key];
+        byte[] v = getInternal(key);
         putInternal(key, null);
         return v;
     }
@@ -244,7 +244,7 @@ public class CachingKeyValueStore
         }
         if (entry == null)
 {
-            byte[] rawValue = wrapped()[key];
+            byte[] rawValue = wrapped()[key);
             if (rawValue == null)
 {
                 return null;
@@ -267,14 +267,14 @@ public class CachingKeyValueStore
 {
         if (from.compareTo(to) > 0)
 {
-            LOG.warn("Returning empty iterator for fetch with invalid key range: from > to. "
+            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 "Note that the built-in numerical serdes do not follow this for negative numbers");
             return KeyValueIterators.emptyIterator();
         }
 
         validateStoreOpen();
-        KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to];
+        KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
         ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
         return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
     }

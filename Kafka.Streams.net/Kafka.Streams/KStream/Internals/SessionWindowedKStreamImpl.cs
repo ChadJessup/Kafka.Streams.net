@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,40 +16,40 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Merger;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.kstream.SessionWindowedKStream;
-import org.apache.kafka.streams.kstream.SessionWindows;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.kstream.WindowedSerdes;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.state.SessionBytesStoreSupplier;
-import org.apache.kafka.streams.state.SessionStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.Stores;
 
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Set;
 
-import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.AGGREGATE_NAME;
-import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.REDUCE_NAME;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowedKStream<K, V> {
     private  SessionWindows windows;
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
-    private  Merger<K, Long> countMerger = (aggKey, aggOne, aggTwo) -> aggOne + aggTwo;
+    private  Merger<K, long> countMerger = (aggKey, aggOne, aggTwo) -> aggOne + aggTwo;
 
     SessionWindowedKStreamImpl( SessionWindows windows,
                                 InternalStreamsBuilder builder,
-                                Set<string> sourceNodes,
+                                HashSet<string> sourceNodes,
                                 string name,
                                 ISerde<K> keySerde,
                                 ISerde<V> valSerde,
@@ -63,13 +63,13 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
     }
 
     
-    public KTable<Windowed<K>, Long> count()
+    public KTable<Windowed<K>, long> count()
 {
-        return doCount(Materialized.with(keySerde, Serdes.Long()));
+        return doCount(Materialized.with(keySerde, Serdes.long()));
     }
 
     
-    public KTable<Windowed<K>, Long> count( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized)
+    public KTable<Windowed<K>, long> count( Materialized<K, long, SessionStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(materialized, "materialized can't be null");
 
@@ -83,9 +83,9 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
         return doCount(materialized);
     }
 
-    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized)
+    private KTable<Windowed<K>, long> doCount( Materialized<K, long, SessionStore<Bytes, byte[]>> materialized)
 {
-         MaterializedInternal<K, Long, SessionStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, long, SessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
         if (materializedInternal.keySerde() == null)
 {
@@ -93,7 +93,7 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
         }
         if (materializedInternal.valueSerde() == null)
 {
-            materializedInternal.withValueSerde(Serdes.Long());
+            materializedInternal.withValueSerde(Serdes.long());
         }
 
         return aggregateBuilder.build(
@@ -151,16 +151,16 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
 
     
     public <T> KTable<Windowed<K>, T> aggregate( Initializer<T> initializer,
-                                                 Aggregator<? super K, ? super V, T> aggregator,
-                                                 Merger<? super K, T> sessionMerger)
+                                                 Aggregator<K, V, T> aggregator,
+                                                 Merger<K, T> sessionMerger)
 {
         return aggregate(initializer, aggregator, sessionMerger, Materialized.with(keySerde, null));
     }
 
     
-    public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                                   Aggregator<? super K, ? super V, VR> aggregator,
-                                                   Merger<? super K, VR> sessionMerger,
+    public KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
+                                                   Aggregator<K, V, VR> aggregator,
+                                                   Merger<K, VR> sessionMerger,
                                                    Materialized<K, VR, SessionStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(initializer, "initializer can't be null");
@@ -190,7 +190,7 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
     }
 
     @SuppressWarnings("deprecation") // continuing to support SessionWindows#maintainMs in fallback mode
-    private <VR> StoreBuilder<SessionStore<K, VR>> materialize( MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materialized)
+    private StoreBuilder<SessionStore<K, VR>> materialize( MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materialized)
 {
         SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier) materialized.storeSupplier();
         if (supplier == null)

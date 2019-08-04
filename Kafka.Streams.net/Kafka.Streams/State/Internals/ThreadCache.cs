@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.LogContext;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 using Kafka.Streams.State.internals.NamedCache.LRUNode;
-import org.slf4j.Logger;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+
+
+
+
+
+
+
 
 /**
  * An in-memory LRU cache store similar to {@link MemoryLRUCache} but byte-based, not
@@ -98,7 +98,7 @@ public class ThreadCache
      */
     public static string taskIDfromCacheName(string cacheName)
 {
-        string[] tokens = cacheName.split("-", 2];
+        string[] tokens = cacheName.split("-", 2);
         return tokens[0];
     }
 
@@ -109,7 +109,7 @@ public class ThreadCache
      */
     public static string underlyingStoreNamefromCacheName(string cacheName)
 {
-        string[] tokens = cacheName.split("-", 2];
+        string[] tokens = cacheName.split("-", 2);
         return tokens[1];
     }
 
@@ -120,7 +120,7 @@ public class ThreadCache
      * @param namespace
      * @param listener
      */
-    public void addDirtyEntryFlushListener(string namespace, DirtyEntryFlushListener listener)
+    public void.AddDirtyEntryFlushListener(string namespace, DirtyEntryFlushListener listener)
 {
         NamedCache cache = getOrCreateCache(namespace);
         cache.setListener(listener);
@@ -230,7 +230,7 @@ public class ThreadCache
             size += cache.size();
             if (isOverflowing(size))
 {
-                return Long.MAX_VALUE;
+                return long.MAX_VALUE;
             }
         }
         return size;
@@ -249,7 +249,7 @@ public class ThreadCache
             sizeInBytes += namedCache.sizeInBytes();
             if (isOverflowing(sizeInBytes))
 {
-                return Long.MAX_VALUE;
+                return long.MAX_VALUE;
             }
         }
         return sizeInBytes;

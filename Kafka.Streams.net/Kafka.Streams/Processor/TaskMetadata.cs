@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
 using Kafka.Common.TopicPartition;
-import org.apache.kafka.streams.KafkaStreams;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
 
 /**
  * Represents the state of a single task running within a {@link KafkaStreams} application.
@@ -30,10 +30,10 @@ public class TaskMetadata {
 
     private string taskId;
 
-    private Set<TopicPartition> topicPartitions;
+    private HashSet<TopicPartition> topicPartitions;
 
     public TaskMetadata(string taskId,
-                        Set<TopicPartition> topicPartitions)
+                        HashSet<TopicPartition> topicPartitions)
 {
         this.taskId = taskId;
         this.topicPartitions = Collections.unmodifiableSet(topicPartitions);
@@ -44,7 +44,7 @@ public class TaskMetadata {
         return taskId;
     }
 
-    public Set<TopicPartition> topicPartitions()
+    public HashSet<TopicPartition> topicPartitions()
 {
         return topicPartitions;
     }

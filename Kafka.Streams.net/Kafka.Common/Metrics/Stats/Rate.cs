@@ -64,7 +64,7 @@ namespace Kafka.Common.Metrics.Stats
              * window, the measured rate will be very high.
              * Hence we assume that the elapsed time is always N-1 complete windows plus whatever fraction of the window is complete.
              *
-             * Note that we could simply count the amount of time elapsed in the current window and add n-1 windows to get the total time,
+             * Note that we could simply count the amount of time elapsed in the current window and.Add n-1 windows to get the total time,
              * but this approach does not account for sleeps. SampledStat only creates samples whenever record is called,
              * if no record is called for a period of time that time is not accounted for in windowSize and produces incorrect results.
              */
@@ -73,7 +73,7 @@ namespace Kafka.Common.Metrics.Stats
             int numFullWindows = (int)(totalElapsedTimeMs / config.timeWindowMs);
             int minFullWindows = config.samples - 1;
 
-            // If the available windows are less than the minimum required, add the difference to the totalElapsedTime
+            // If the available windows are less than the minimum required,.Add the difference to the totalElapsedTime
             if (numFullWindows < minFullWindows)
                 totalElapsedTimeMs += (minFullWindows - numFullWindows) * config.timeWindowMs;
 

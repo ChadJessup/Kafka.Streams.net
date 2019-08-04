@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
 using Kafka.Common.Cluster;
 using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
 
 /**
  * Default implementation of the {@link PartitionGrouper} interface that groups partitions by the partition id.
@@ -47,27 +47,27 @@ public class DefaultPartitionGrouper : PartitionGrouper {
      * @param metadata      metadata of the consuming cluster
      * @return The map from generated task ids to the assigned partitions
      */
-    public Dictionary<TaskId, Set<TopicPartition>> partitionGroups(Dictionary<Integer, Set<string>> topicGroups, Cluster metadata)
+    public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<Integer, HashSet<string>> topicGroups, Cluster metadata)
 {
-        Dictionary<TaskId, Set<TopicPartition>> groups = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> groups = new HashMap<>();
 
-        foreach (Map.Entry<Integer, Set<string>> entry in topicGroups.entrySet())
+        foreach (Map.Entry<Integer, HashSet<string>> entry in topicGroups.entrySet())
 {
             Integer topicGroupId = entry.getKey();
-            Set<string> topicGroup = entry.getValue();
+            HashSet<string> topicGroup = entry.getValue();
 
             int maxNumPartitions = maxNumPartitions(metadata, topicGroup);
 
             for (int partitionId = 0; partitionId < maxNumPartitions; partitionId++)
 {
-                Set<TopicPartition> group = new HashSet<>(topicGroup.size());
+                HashSet<TopicPartition> group = new HashSet<>(topicGroup.size());
 
                 foreach (string topic in topicGroup)
 {
                     List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
                     if (partitionId < partitions.size())
 {
-                        group.add(new TopicPartition(topic, partitionId));
+                        group.Add(new TopicPartition(topic, partitionId));
                     }
                 }
                 groups.Add(new TaskId(topicGroupId, partitionId), Collections.unmodifiableSet(group));
@@ -80,7 +80,7 @@ public class DefaultPartitionGrouper : PartitionGrouper {
     /**
      * @throws StreamsException if no metadata can be received for a topic
      */
-    protected int maxNumPartitions(Cluster metadata, Set<string> topics)
+    protected int maxNumPartitions(Cluster metadata, HashSet<string> topics)
 {
         int maxNumPartitions = 0;
         foreach (string topic in topics)

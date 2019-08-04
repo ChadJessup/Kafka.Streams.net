@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,24 +16,24 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.internals.ApiUtils;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.SessionBytesStoreSupplier;
-import org.apache.kafka.streams.state.SessionStore;
-import org.apache.kafka.streams.state.StoreSupplier;
-import org.apache.kafka.streams.state.WindowBytesStoreSupplier;
-import org.apache.kafka.streams.state.WindowStore;
 
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Used to describe how a {@link IStateStore} should be materialized.
@@ -119,7 +119,7 @@ public class Materialized<K, V, S : IStateStore> {
      * @param <V>      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
-    public static <K, V> Materialized<K, V, WindowStore<Bytes, byte[]>> as( WindowBytesStoreSupplier supplier)
+    public staticMaterialized<K, V, WindowStore<Bytes, byte[]>> as( WindowBytesStoreSupplier supplier)
 {
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
@@ -138,7 +138,7 @@ public class Materialized<K, V, S : IStateStore> {
      * @return a new {@link Materialized} instance with the given sup
      * plier
      */
-    public static <K, V> Materialized<K, V, SessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier)
+    public staticMaterialized<K, V, SessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier)
 {
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
@@ -152,7 +152,7 @@ public class Materialized<K, V, S : IStateStore> {
      * @param <V>      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
-    public static <K, V> Materialized<K, V, IKeyValueStore<Bytes, byte[]>> as( KeyValueBytesStoreSupplier supplier)
+    public staticMaterialized<K, V, IKeyValueStore<Bytes, byte[]>> as( KeyValueBytesStoreSupplier supplier)
 {
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
@@ -262,7 +262,7 @@ public class Materialized<K, V, S : IStateStore> {
      * @return itself
      * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
      */
-    public Materialized<K, V, S> withRetention( Duration retention) throws ArgumentException {
+    public Materialized<K, V, S> withRetention( Duration retention){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
          long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
 

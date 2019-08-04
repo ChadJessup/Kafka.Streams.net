@@ -1,37 +1,17 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-namespace Kafka.streams.kstream.internals;
+using Kafka.Common.Metrics;
+using Kafka.streams.kstream;
+using Kafka.streams.kstream.internals;
+using Kafka.Streams.Processor.Internals.metrics;
+using Kafka.streams.state;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Microsoft.Extensions.Logging;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
-
-public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
-    private static  Logger LOG = LoggerFactory.getLogger(KStreamReduce.class);
+namespace Kafka.Streams.KStream.Internals
+{
+public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
+    {
+    private static  ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
 
     private  string storeName;
     private  Reducer<V> reducer;
@@ -44,13 +24,13 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
         this.reducer = reducer;
     }
 
-    
+
     public Processor<K, V> get()
 {
         return new KStreamReduceProcessor();
     }
 
-    
+
     public void enableSendingOldValues()
 {
         sendOldValues = true;
@@ -63,28 +43,26 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        @SuppressWarnings("unchecked")
-        
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
-            tupleForwarder = new TimestampedTupleForwarder<>(
+            tupleForwarder = new TimestampedTupleForwarder<K, V>(
                 store,
                 context,
-                new TimestampedCacheFlushListener<>(context),
+                new TimestampedCacheFlushListener<K, V>(context),
                 sendOldValues);
         }
 
-        
+
         public void process( K key,  V value)
 {
             // If the key or value is null we don't need to proceed
             if (key == null || value == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     key, value, context().topic(), context().partition(), context().offset()
                 );
@@ -112,7 +90,7 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
         }
     }
 
-    
+
     public KTableValueGetterSupplier<K, V> view()
 {
         return new KTableValueGetterSupplier<K, V>()
@@ -123,7 +101,7 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
                 return new KStreamReduceValueGetter();
             }
 
-            
+
             public string[] storeNames()
 {
                 return new string[]{storeName};
@@ -132,24 +110,24 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
     }
 
 
-    private class KStreamReduceValueGetter : KTableValueGetter<K, V> {
+    private class KStreamReduceValueGetter : KTableValueGetter<K, V>
+    {
         private TimestampedKeyValueStore<K, V> store;
 
-        @SuppressWarnings("unchecked")
-        
+
+
         public void init( IProcessorContext context)
 {
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
         }
 
-        
+
         public ValueAndTimestamp<V> get( K key)
 {
             return store[key];
         }
 
-        
+
         public void close() {}
     }
 }
-

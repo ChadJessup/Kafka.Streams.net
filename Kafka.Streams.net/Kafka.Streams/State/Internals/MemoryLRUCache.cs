@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Internals
         {
             //        this.name = name;
 
-            //            // leave room for one extra entry to handle adding an entry before the oldest can be removed
+            //            // leave room for one extra entry to handle.Adding an entry before the oldest can be removed
             //            this.map = new Dictionary<Bytes, byte[]>(maxCacheSize + 1, 1.01f, true);
             //{
             //            private static long serialVersionUID = 1L;
@@ -97,7 +97,7 @@ namespace Kafka.Streams.State.Internals
             //    public override synchronized byte[] putIfAbsent(Bytes key, byte[] value)
             //{
             //        Objects.requireNonNull(key);
-            //        byte[] originalValue = get(key];
+            //        byte[] originalValue = get(key);
             //        if (originalValue == null)
             //{
             //            put(key, value);

@@ -93,7 +93,7 @@ public class Bytes : Comparable<Bytes> {
             return false;
 
         if (other instanceof Bytes)
-            return Arrays.Equals(this.bytes, ((Bytes) other)()];
+            return Arrays.Equals(this.bytes, ((Bytes) other)());
 
         return false;
     }
@@ -144,8 +144,8 @@ public class Bytes : Comparable<Bytes> {
                 result.Append((char) ch);
             } else {
                 result.Append("\\x");
-                result.Append(HEX_CHARS_UPPER[ch / 0x10]];
-                result.Append(HEX_CHARS_UPPER[ch % 0x10]];
+                result.Append(HEX_CHARS_UPPER[ch / 0x10]);
+                result.Append(HEX_CHARS_UPPER[ch % 0x10]);
             }
         }
         return result.ToString();

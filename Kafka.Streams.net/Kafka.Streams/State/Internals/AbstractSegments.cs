@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,31 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.ProcessorStateException;
 using Kafka.Streams.Processor.internals.InternalProcessorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.SimpleTimeZone;
-import java.util.TreeMap;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 abstract class AbstractSegments<S : Segment> : Segments<S>
 {
     private static Logger log = LoggerFactory.getLogger(AbstractSegments.class);
 
-    TreeMap<Long, S> segments = new TreeMap<>();
+    TreeMap<long, S> segments = new TreeMap<>();
     string name;
     private long retentionPeriod;
     private long segmentInterval;
@@ -70,7 +70,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override S getSegmentForTimestamp(long timestamp)
 {
-        return segments[segmentId(timestamp)];
+        return segments[segmentId(timestamp));
     }
 
     public override S getOrCreateSegmentIfLive(long segmentId,
@@ -107,7 +107,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
                     long[] segmentIds = new long[list.Length];
                     for (int i = 0; i < list.Length; i++)
 {
-                        segmentIds[i] = segmentIdFromSegmentName(list[i], dir];
+                        segmentIds[i] = segmentIdFromSegmentName(list[i], dir);
                     }
 
                     // open segments in the id order
@@ -139,7 +139,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     public override List<S> segments(long timeFrom, long timeTo)
 {
         List<S> result = new List<>();
-        NavigableMap<Long, S> segmentsInRange = segments.subMap(
+        NavigableMap<long, S> segmentsInRange = segments.subMap(
             segmentId(timeFrom), true,
             segmentId(timeTo), true
         );
@@ -147,7 +147,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 {
             if (segment.isOpen())
 {
-                result.add(segment);
+                result.Add(segment);
             }
         }
         return result;
@@ -160,7 +160,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 {
             if (segment.isOpen())
 {
-                result.add(segment);
+                result.Add(segment);
             }
         }
         return result;
@@ -185,12 +185,12 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     private void cleanupEarlierThan(long minLiveSegment)
 {
-        Iterator<Map.Entry<Long, S>> toRemove =
+        Iterator<Map.Entry<long, S>> toRemove =
             segments.headMap(minLiveSegment, false).entrySet().iterator();
 
         while (toRemove.hasNext())
 {
-            Map.Entry<Long, S> next = toRemove.next();
+            Map.Entry<long, S> next = toRemove.next();
             toRemove.Remove();
             S segment = next.getValue();
             segment.close();
@@ -220,7 +220,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
                 segmentId = formatter.parse(segmentIdString).getTime() / segmentInterval;
             } catch (ParseException e)
 {
-                log.warn("Unable to parse segmentName {} to a date. This segment will be skipped", segmentName);
+                log.LogWarning("Unable to parse segmentName {} to a date. This segment will be skipped", segmentName);
                 return -1L;
             }
             renameSegmentFile(parent, segmentName, segmentId);
@@ -229,7 +229,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
             // for both new formats (with : or .) parse segment ID identically
             try
 {
-                segmentId = Long.parseLong(segmentIdString) / segmentInterval;
+                segmentId = long.parseLong(segmentIdString) / segmentInterval;
             } catch (NumberFormatException e)
 {
                 throw new ProcessorStateException("Unable to parse segment id as long from segmentName: " + segmentName);

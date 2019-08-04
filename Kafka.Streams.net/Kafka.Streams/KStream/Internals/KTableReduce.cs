@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,28 +16,28 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
 
 public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
 
     private  string storeName;
-    private  Reducer<V> addReducer;
+    private  Reducer<V>.AddReducer;
     private  Reducer<V> removeReducer;
 
     private bool sendOldValues = false;
 
-    KTableReduce( string storeName,  Reducer<V> addReducer,  Reducer<V> removeReducer)
+    KTableReduce( string storeName,  Reducer<V>.AddReducer,  Reducer<V> removeReducer)
 {
         this.storeName = storeName;
-        this.addReducer = addReducer;
+        this.AddReducer =.AddReducer;
         this.removeReducer = removeReducer;
     }
 
@@ -58,7 +58,7 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -98,7 +98,7 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
                 newTimestamp = context().timestamp();
             }
 
-            // then try to add the new value
+            // then try to.Add the new value
              V newAgg;
             if (value.newValue != null)
 {
@@ -106,7 +106,7 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
 {
                     newAgg = value.newValue;
                 } else {
-                    newAgg = addReducer.apply(intermediateAgg, value.newValue);
+                    newAgg =.AddReducer.apply(intermediateAgg, value.newValue);
                     newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
                 }
             } else {

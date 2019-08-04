@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
+
 using Kafka.Common.Cluster;
 using Kafka.Common.serialization.Serializer;
-import org.apache.kafka.streams.processor.StreamPartitioner;
+
 
 public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
 
@@ -37,7 +37,7 @@ public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
     
     public Integer partition(string topic, K key, V value, int numPartitions)
 {
-        byte[] keyBytes = keySerializer.serialize(topic, key];
+        byte[] keyBytes = keySerializer.serialize(topic, key);
         return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
     }
 }

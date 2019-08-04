@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.annotation.InterfaceStability;
-import org.apache.kafka.streams.errors.StreamsException;
+
 
 /**
  * Retrieves embedded metadata timestamps from Kafka messages.
@@ -59,7 +59,7 @@ public class UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp 
     public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
-            throws StreamsException {
+           {
         if (partitionTime < 0)
 {
             throw new StreamsException("Could not infer new timestamp for input record " + record

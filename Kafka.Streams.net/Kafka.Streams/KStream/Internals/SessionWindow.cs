@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,7 +16,7 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.Window;
+
 
 /**
  * A session window covers a closed time interval with its start and end timestamp both being an inclusive boundary.
@@ -37,7 +37,7 @@ public  class SessionWindow : Window {
      * @param endMs   the end timestamp of the window
      * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
      */
-    public SessionWindow( long startMs,  long endMs) throws ArgumentException {
+    public SessionWindow( long startMs,  long endMs){
         super(startMs, endMs);
     }
 
@@ -48,7 +48,7 @@ public  class SessionWindow : Window {
      * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
      * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
      */
-    public bool overlap( Window other) throws ArgumentException {
+    public bool overlap( Window other){
         if (getClass() != other.getClass())
 {
             throw new ArgumentException("Cannot compare windows of different type. Other window has type "

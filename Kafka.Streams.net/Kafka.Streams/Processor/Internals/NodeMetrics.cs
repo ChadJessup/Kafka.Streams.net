@@ -89,12 +89,12 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, string> nodeTags)
         {
             Sensor parent = metrics.taskLevelSensor(taskName, operation, RecordingLevel.DEBUG);
-            addAvgMaxLatency(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
-            addInvocationRateAndCount(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
+           .AddAvgMaxLatency(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
+           .AddInvocationRateAndCount(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
 
             Sensor sensor = metrics.nodeLevelSensor(taskName, processorNodeName, operation, RecordingLevel.DEBUG, parent);
-            addAvgMaxLatency(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
-            addInvocationRateAndCount(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
+           .AddAvgMaxLatency(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
+           .AddInvocationRateAndCount(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
 
             return sensor;
         }

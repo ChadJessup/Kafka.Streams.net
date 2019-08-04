@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serializer;
@@ -24,10 +24,10 @@ using Kafka.Streams.kstream.Windowed;
 using Kafka.Streams.kstream.internals.TimeWindow;
 using Kafka.Streams.State.StateSerdes;
 
-import java.nio.ByteBuffer;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
+
+
 
 public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 {
@@ -66,7 +66,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
     public override long segmentTimestamp(Bytes key)
 {
-        return WindowKeySchema.extractStoreTimestamp(key()];
+        return WindowKeySchema.extractStoreTimestamp(key());
     }
 
     public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom,
@@ -79,8 +79,8 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
             while (iterator.hasNext())
 {
                 Bytes bytes = iterator.peekNextKey();
-                Bytes keyBytes = Bytes.wrap(WindowKeySchema.extractStoreKeyBytes(bytes())];
-                long time = WindowKeySchema.extractStoreTimestamp(bytes()];
+                Bytes keyBytes = Bytes.wrap(WindowKeySchema.extractStoreKeyBytes(bytes()));
+                long time = WindowKeySchema.extractStoreTimestamp(bytes());
                 if ((binaryKeyFrom == null || keyBytes.compareTo(binaryKeyFrom) >= 0)
                     && (binaryKeyTo == null || keyBytes.compareTo(binaryKeyTo) <= 0)
                     && time >= from
@@ -103,7 +103,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
     /**
      * Safely construct a time window of the given size,
-     * taking care of bounding endMs to Long.MAX_VALUE if necessary
+     * taking care of bounding endMs to long.MAX_VALUE if necessary
      */
     static TimeWindow timeWindowForSize(long startMs,
                                         long windowSize)
@@ -112,8 +112,8 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
         if (endMs < 0)
 {
-            LOG.warn("Warning: window end time was truncated to Long.MAX");
-            endMs = Long.MAX_VALUE;
+            LOG.LogWarning("Warning: window end time was truncated to long.MAX");
+            endMs = long.MAX_VALUE;
         }
         return new TimeWindow(startMs, endMs);
     }
@@ -124,7 +124,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                       Serializer<K> serializer,
                                       string topic)
 {
-        byte[] bytes = serializer.serialize(topic, timeKey.key()];
+        byte[] bytes = serializer.serialize(topic, timeKey.key());
         ByteBuffer buf = ByteBuffer.allocate(bytes.Length + TIMESTAMP_SIZE);
         buf.Add(bytes);
         buf.putLong(timeKey.window().start());
@@ -167,14 +167,14 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                              int seqnum,
                                              StateSerdes<K, ?> serdes)
 {
-        byte[] serializedKey = serdes.rawKey(key];
+        byte[] serializedKey = serdes.rawKey(key);
         return toStoreKeyBinary(serializedKey, timestamp, seqnum);
     }
 
     public static Bytes toStoreKeyBinary(Windowed<Bytes> timeKey,
                                          int seqnum)
 {
-        byte[] bytes = timeKey.key()[];
+        byte[] bytes = timeKey.key()[);
         return toStoreKeyBinary(bytes, timeKey.window().start(), seqnum);
     }
 
@@ -182,7 +182,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                              int seqnum,
                                              StateSerdes<K, ?> serdes)
 {
-        byte[] serializedKey = serdes.rawKey(timeKey.key()];
+        byte[] serializedKey = serdes.rawKey(timeKey.key());
         return toStoreKeyBinary(serializedKey, timeKey.window().start(), seqnum);
     }
 
@@ -238,7 +238,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                                Deserializer<K> deserializer,
                                                string topic)
 {
-        K key = deserializer.deserialize(topic, windowedKey.key()()];
+        K key = deserializer.deserialize(topic, windowedKey.key()());
         return new Windowed<>(key, windowedKey.window());
     }
 

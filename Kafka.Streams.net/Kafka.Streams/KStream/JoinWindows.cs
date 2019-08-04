@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.streams.internals.ApiUtils;
-import org.apache.kafka.streams.processor.TimestampExtractor;
 
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
-import static org.apache.kafka.streams.kstream.internals.WindowingDefaults.DEFAULT_RETENTION_MS;
+
+
+
+
+
+
+
 
 /**
  * The window specifications used for joins.
@@ -122,7 +122,7 @@ public  class JoinWindows : Windows<Window> {
      * @deprecated Use {@link #of(Duration)} instead.
      */
     @Deprecated
-    public static JoinWindows of( long timeDifferenceMs) throws ArgumentException {
+    public static JoinWindows of( long timeDifferenceMs){
         // This is a static factory method, so we initialize grace and retention to the defaults.
         return new JoinWindows(timeDifferenceMs, timeDifferenceMs, -1L, DEFAULT_RETENTION_MS);
     }
@@ -135,7 +135,7 @@ public  class JoinWindows : Windows<Window> {
      * @param timeDifference join window interval
      * @throws ArgumentException if {@code timeDifference} is negative or can't be represented as {@code long milliseconds}
      */
-    public static JoinWindows of( Duration timeDifference) throws ArgumentException {
+    public static JoinWindows of( Duration timeDifference){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(timeDifference, "timeDifference");
         return of(ApiUtils.validateMillisecondDuration(timeDifference, msgPrefix));
     }
@@ -152,7 +152,7 @@ public  class JoinWindows : Windows<Window> {
      * @deprecated Use {@link #before(Duration)} instead.
      */
     @Deprecated
-    public JoinWindows before( long timeDifferenceMs) throws ArgumentException {
+    public JoinWindows before( long timeDifferenceMs){
         return new JoinWindows(timeDifferenceMs, afterMs, graceMs, maintainDurationMs, segments);
     }
 
@@ -166,7 +166,7 @@ public  class JoinWindows : Windows<Window> {
      * @param timeDifference relative window start time
      * @throws ArgumentException if the resulting window size is negative or {@code timeDifference} can't be represented as {@code long milliseconds}
      */
-    public JoinWindows before( Duration timeDifference) throws ArgumentException {
+    public JoinWindows before( Duration timeDifference){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(timeDifference, "timeDifference");
         return before(ApiUtils.validateMillisecondDuration(timeDifference, msgPrefix));
     }
@@ -183,7 +183,7 @@ public  class JoinWindows : Windows<Window> {
      * @deprecated Use {@link #after(Duration)} instead
      */
     @Deprecated
-    public JoinWindows after( long timeDifferenceMs) throws ArgumentException {
+    public JoinWindows after( long timeDifferenceMs){
         return new JoinWindows(beforeMs, timeDifferenceMs, graceMs, maintainDurationMs, segments);
     }
 
@@ -197,7 +197,7 @@ public  class JoinWindows : Windows<Window> {
      * @param timeDifference relative window end time
      * @throws ArgumentException if the resulting window size is negative or {@code timeDifference} can't be represented as {@code long milliseconds}
      */
-    public JoinWindows after( Duration timeDifference) throws ArgumentException {
+    public JoinWindows after( Duration timeDifference){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(timeDifference, "timeDifference");
         return after(ApiUtils.validateMillisecondDuration(timeDifference, msgPrefix));
     }
@@ -209,7 +209,7 @@ public  class JoinWindows : Windows<Window> {
      * @throws InvalidOperationException at every invocation
      */
     
-    public Map<Long, Window> windowsFor( long timestamp)
+    public Map<long, Window> windowsFor( long timestamp)
 {
         throw new InvalidOperationException("windowsFor() is not supported by JoinWindows.");
     }
@@ -231,7 +231,7 @@ public  class JoinWindows : Windows<Window> {
      * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
      */
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    public JoinWindows grace( Duration afterWindowEnd) throws ArgumentException {
+    public JoinWindows grace( Duration afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
         if (afterWindowEndMs < 0)
@@ -258,7 +258,7 @@ public  class JoinWindows : Windows<Window> {
      */
     
     @Deprecated
-    public JoinWindows until( long durationMs) throws ArgumentException {
+    public JoinWindows until( long durationMs){
         if (durationMs < size())
 {
             throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");

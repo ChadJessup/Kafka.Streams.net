@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Deserializer;
-import org.apache.kafka.streams.kstream.internals.ChangedDeserializer;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.TimestampExtractor;
 
-import java.util.List;
+
+
+
+
 
 public class SourceNode<K, V> : ProcessorNode<K, V> {
 
@@ -64,7 +64,7 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
         return valDeserializer.deserialize(topic, headers, data);
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     public void init(InternalProcessorContext context)
 {
@@ -112,7 +112,7 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
     public string ToString(string indent)
 {
         StringBuilder sb = new StringBuilder(super.ToString(indent));
-        sb.Append(indent).Append("\ttopics:\t\t["];
+        sb.Append(indent).Append("\ttopics:\t\t[");
         foreach (string topic in topics)
 {
             sb.Append(topic);

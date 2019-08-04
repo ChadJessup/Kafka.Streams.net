@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -18,11 +18,11 @@
 namespace Kafka.streams.kstream.internals.graph;
 
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.streams.processor.FailOnInvalidTimestamp;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
+
+
+
+
+
 
 public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
 
@@ -86,15 +86,15 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
          Serializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
          Deserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
 
-        topologyBuilder.addInternalTopic(repartitionTopic);
+        topologyBuilder.AddInternalTopic(repartitionTopic);
 
-        topologyBuilder.addProcessor(
+        topologyBuilder.AddProcessor(
             processorParameters.processorName(),
             processorParameters.processorSupplier(),
             parentNodeNames()
         );
 
-        topologyBuilder.addSink(
+        topologyBuilder.AddSink(
             sinkName,
             repartitionTopic,
             keySerializer,
@@ -103,7 +103,7 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
             processorParameters.processorName()
         );
 
-        topologyBuilder.addSource(
+        topologyBuilder.AddSource(
             null,
             sourceName,
             new FailOnInvalidTimestamp(),
@@ -114,7 +114,7 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
 
     }
 
-    public static <K, V> OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
+    public staticOptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
 {
         return new OptimizableRepartitionNodeBuilder<>();
     }

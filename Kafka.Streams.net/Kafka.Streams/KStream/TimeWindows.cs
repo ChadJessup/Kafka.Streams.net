@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,18 +16,18 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.streams.internals.ApiUtils;
-import org.apache.kafka.streams.kstream.internals.TimeWindow;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.state.WindowBytesStoreSupplier;
 
-import java.time.Duration;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Objects;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
-import static org.apache.kafka.streams.kstream.internals.WindowingDefaults.DEFAULT_RETENTION_MS;
+
+
+
+
+
+
+
+
+
+
 
 /**
  * The fixed-size time-based window specifications used for aggregations.
@@ -108,7 +108,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @deprecated Use {@link #of(Duration)} instead
      */
     @Deprecated
-    public static TimeWindows of( long sizeMs) throws ArgumentException {
+    public static TimeWindows of( long sizeMs){
         if (sizeMs <= 0)
 {
             throw new ArgumentException("Window size (sizeMs) must be larger than zero.");
@@ -130,7 +130,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if the specified window size is zero or negative or can't be represented as {@code long milliseconds}
      */
     @SuppressWarnings("deprecation") // removing #of( long sizeMs) will fix this
-    public static TimeWindows of( Duration size) throws ArgumentException {
+    public static TimeWindows of( Duration size){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(size, "size");
         return of(ApiUtils.validateMillisecondDuration(size, msgPrefix));
     }
@@ -177,10 +177,10 @@ public  class TimeWindows : Windows<TimeWindow> {
     }
 
     
-    public Map<Long, TimeWindow> windowsFor( long timestamp)
+    public Map<long, TimeWindow> windowsFor( long timestamp)
 {
         long windowStart = (Math.Max(0, timestamp - sizeMs + advanceMs) / advanceMs) * advanceMs;
-         Map<Long, TimeWindow> windows = new LinkedHashMap<>();
+         Map<long, TimeWindow> windows = new LinkedHashMap<>();
         while (windowStart <= timestamp)
 {
              TimeWindow window = new TimeWindow(windowStart, windowStart + sizeMs);
@@ -207,7 +207,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if {@code afterWindowEnd} is negative or can't be represented as {@code long milliseconds}
      */
     @SuppressWarnings("deprecation") // will be fixed when we Remove segments from Windows
-    public TimeWindows grace( Duration afterWindowEnd) throws ArgumentException {
+    public TimeWindows grace( Duration afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
         if (afterWindowEndMs < 0)
@@ -238,7 +238,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      */
     
     @Deprecated
-    public TimeWindows until( long durationMs) throws ArgumentException {
+    public TimeWindows until( long durationMs){
         if (durationMs < sizeMs)
 {
             throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");

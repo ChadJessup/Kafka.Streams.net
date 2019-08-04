@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals.metrics;
+namespace Kafka.Streams.State.Internals.metrics;
 
 
 using Kafka.Common.metrics.Sensor;
@@ -25,10 +25,10 @@ using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.internals.InternalProcessorContext;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 
-import java.util.Map;
 
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.addAvgMaxLatency;
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.addInvocationRateAndCount;
+
+
+
 
 public class Sensors {
     private Sensors() {}
@@ -43,11 +43,11 @@ public class Sensors {
                                                                        Dictionary<string, string> storeTags)
 {
         Sensor taskSensor = metrics.taskLevelSensor(taskName, operation, level);
-        addAvgMaxLatency(taskSensor, metricsGroup, taskTags, operation);
-        addInvocationRateAndCount(taskSensor, metricsGroup, taskTags, operation);
+       .AddAvgMaxLatency(taskSensor, metricsGroup, taskTags, operation);
+       .AddInvocationRateAndCount(taskSensor, metricsGroup, taskTags, operation);
         Sensor sensor = metrics.storeLevelSensor(taskName, storeName, operation, level, taskSensor);
-        addAvgMaxLatency(sensor, metricsGroup, storeTags, operation);
-        addInvocationRateAndCount(sensor, metricsGroup, storeTags, operation);
+       .AddAvgMaxLatency(sensor, metricsGroup, storeTags, operation);
+       .AddInvocationRateAndCount(sensor, metricsGroup, storeTags, operation);
         return sensor;
     }
 
@@ -85,7 +85,7 @@ public class Sensors {
             "buffer-id", store.name()
         );
 
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 sensorName + "-current",
                 metricsGroup,
@@ -95,7 +95,7 @@ public class Sensors {
         );
 
 
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 sensorName + "-avg",
                 metricsGroup,
@@ -104,7 +104,7 @@ public class Sensors {
             new Avg()
         );
 
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 sensorName + "-max",
                 metricsGroup,

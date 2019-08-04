@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
-import java.util.NoSuchElementException;
+
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -31,8 +31,8 @@ using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.StateSerdes;
 using Kafka.Streams.State.WindowStore;
 using Kafka.Streams.State.WindowStoreIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 class CachingWindowStore
     : WrappedStateStore<WindowStore<Bytes, byte[]>, byte[], byte[]>
@@ -71,7 +71,7 @@ class CachingWindowStore
         super.init(context, root);
     }
 
-    @SuppressWarnings("unchecked")
+    
     private void initInternal(InternalProcessorContext context)
 {
         this.context = context;
@@ -84,7 +84,7 @@ class CachingWindowStore
         name = context.taskId() + "-" + name();
         cache = this.context.getCache();
 
-        cache.addDirtyEntryFlushListener(name, entries ->
+        cache.AddDirtyEntryFlushListener(name, entries ->
 {
             foreach (ThreadCache.DirtyEntry entry in entries)
 {
@@ -96,7 +96,7 @@ class CachingWindowStore
     private void putAndMaybeForward(ThreadCache.DirtyEntry entry,
                                     InternalProcessorContext context)
 {
-        byte[] binaryWindowKey = cacheFunction.key(entry.key())[];
+        byte[] binaryWindowKey = cacheFunction.key(entry.key())[);
         Windowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
         long windowStartTimestamp = windowedKeyBytes.window().start();
         Bytes binaryKey = windowedKeyBytes.key();
@@ -200,7 +200,7 @@ class CachingWindowStore
         // if store is open outside as well.
         validateStoreOpen();
 
-        WindowStoreIterator<byte[]> underlyingIterator = wrapped().fetch(key, timeFrom, timeTo];
+        WindowStoreIterator<byte[]> underlyingIterator = wrapped().fetch(key, timeFrom, timeTo);
         if (cache == null)
 {
             return underlyingIterator;
@@ -229,7 +229,7 @@ class CachingWindowStore
 {
         if (from.compareTo(to) > 0)
 {
-            LOG.warn("Returning empty iterator for fetch with invalid key range: from > to. "
+            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 "Note that the built-in numerical serdes do not follow this for negative numbers");
             return KeyValueIterators.emptyIterator();
@@ -271,7 +271,7 @@ class CachingWindowStore
 {
         validateStoreOpen();
 
-        KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo];
+        KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo);
         ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
         HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Serde;
-import org.apache.kafka.streams.StreamsMetrics;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.StateRestoreCallback;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.To;
 
-import java.io.File;
-import java.time.Duration;
-import java.util.Map;
-import java.util.Objects;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * {@code IProcessorContext} implementation that will throw on any forward call.
@@ -106,32 +106,32 @@ public class ForwardingDisabledProcessorContext : IProcessorContext {
     
     public ICancellable schedule(Duration interval,
                                 PunctuationType type,
-                                Punctuator callback) throws ArgumentException {
+                                Punctuator callback){
         return delegate.schedule(interval, type, callback);
     }
 
     
-    public <K, V> void forward(K key, V value)
+    publicvoid forward(K key, V value)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
     
-    public <K, V> void forward(K key, V value, To to)
-{
-        throw new StreamsException("IProcessorContext#forward() not supported.");
-    }
-
-    
-    @Deprecated
-    public <K, V> void forward(K key, V value, int childIndex)
+    publicvoid forward(K key, V value, To to)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
     
     @Deprecated
-    public <K, V> void forward(K key, V value, string childName)
+    publicvoid forward(K key, V value, int childIndex)
+{
+        throw new StreamsException("IProcessorContext#forward() not supported.");
+    }
+
+    
+    @Deprecated
+    publicvoid forward(K key, V value, string childName)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }

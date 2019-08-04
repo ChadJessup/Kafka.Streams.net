@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -24,10 +24,10 @@ using Kafka.Streams.State.internals.CompositeReadOnlySessionStore;
 using Kafka.Streams.State.internals.CompositeReadOnlyWindowStore;
 using Kafka.Streams.State.internals.StateStoreProvider;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+
+
+
 
 /**
  * Provides access to the {@link QueryableStoreType}s provided with {@link KafkaStreams}.
@@ -44,7 +44,7 @@ public class QueryableStoreTypes
      * @param <V> value type of the store
      * @return {@link QueryableStoreTypes.KeyValueStoreType}
      */
-    public static <K, V> QueryableStoreType<IReadOnlyKeyValueStore<K, V>> keyValueStore()
+    public staticQueryableStoreType<IReadOnlyKeyValueStore<K, V>> keyValueStore()
 {
         return new KeyValueStoreType<>();
     }
@@ -56,7 +56,7 @@ public class QueryableStoreTypes
      * @param <V> value type of the store
      * @return {@link QueryableStoreTypes.TimestampedKeyValueStoreType}
      */
-    public static <K, V> QueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> timestampedKeyValueStore()
+    public staticQueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> timestampedKeyValueStore()
 {
         return new TimestampedKeyValueStoreType<>();
     }
@@ -68,7 +68,7 @@ public class QueryableStoreTypes
      * @param <V> value type of the store
      * @return {@link QueryableStoreTypes.WindowStoreType}
      */
-    public static <K, V> QueryableStoreType<ReadOnlyWindowStore<K, V>> windowStore()
+    public staticQueryableStoreType<ReadOnlyWindowStore<K, V>> windowStore()
 {
         return new WindowStoreType<>();
     }
@@ -80,7 +80,7 @@ public class QueryableStoreTypes
      * @param <V> value type of the store
      * @return {@link QueryableStoreTypes.TimestampedWindowStoreType}
      */
-    public static <K, V> QueryableStoreType<ReadOnlyWindowStore<K, ValueAndTimestamp<V>>> timestampedWindowStore()
+    public staticQueryableStoreType<ReadOnlyWindowStore<K, ValueAndTimestamp<V>>> timestampedWindowStore()
 {
         return new TimestampedWindowStoreType<>();
     }
@@ -92,7 +92,7 @@ public class QueryableStoreTypes
      * @param <V> value type of the store
      * @return {@link QueryableStoreTypes.SessionStoreType}
      */
-    public static <K, V> QueryableStoreType<ReadOnlySessionStore<K, V>> sessionStore()
+    public staticQueryableStoreType<ReadOnlySessionStore<K, V>> sessionStore()
 {
         return new SessionStoreType<>();
     }
@@ -100,14 +100,14 @@ public class QueryableStoreTypes
     private static abstract class QueryableStoreTypeMatcher<T> : QueryableStoreType<T>
 {
 
-        private Set<Class> matchTo;
+        private HashSet<Class> matchTo;
 
         QueryableStoreTypeMatcher(Set<Class> matchTo)
 {
             this.matchTo = matchTo;
         }
 
-        @SuppressWarnings("unchecked")
+        
         
         public bool accepts(IStateStore stateStore)
 {

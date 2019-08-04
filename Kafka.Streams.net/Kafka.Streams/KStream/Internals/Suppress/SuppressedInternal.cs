@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,14 +16,14 @@
  */
 namespace Kafka.streams.kstream.internals.suppress;
 
-import org.apache.kafka.streams.kstream.Suppressed;
-import org.apache.kafka.streams.kstream.internals.suppress.TimeDefinitions.TimeDefinition;
 
-import java.time.Duration;
-import java.util.Objects;
+
+
+
+
 
 public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
-    private static  Duration DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(Long.MAX_VALUE);
+    private static  Duration DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MAX_VALUE);
     private static  StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl) BufferConfig.unbounded();
 
     private  string name;

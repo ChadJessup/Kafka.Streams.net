@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,12 +16,12 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.streams.kstream.internals.suppress.EagerBufferConfigImpl;
-import org.apache.kafka.streams.kstream.internals.suppress.FinalResultsSuppressionBuilder;
-import org.apache.kafka.streams.kstream.internals.suppress.StrictBufferConfigImpl;
-import org.apache.kafka.streams.kstream.internals.suppress.SuppressedInternal;
 
-import java.time.Duration;
+
+
+
+
+
 
 public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
 
@@ -48,7 +48,7 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
          */
         static EagerBufferConfig maxRecords( long recordLimit)
 {
-            return new EagerBufferConfigImpl(recordLimit, Long.MAX_VALUE);
+            return new EagerBufferConfigImpl(recordLimit, long.MAX_VALUE);
         }
 
         /**
@@ -61,7 +61,7 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
          */
         static EagerBufferConfig maxBytes( long byteLimit)
 {
-            return new EagerBufferConfigImpl(Long.MAX_VALUE, byteLimit);
+            return new EagerBufferConfigImpl(long.MAX_VALUE, byteLimit);
         }
 
         /**
@@ -134,8 +134,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      * requires a hard guarantee that only the  result is propagated. For example, sending alerts.
      *
      * To accomplish this, the operator will buffer events from the window until the window close (that is,
-     * until the end-time passes, and additionally until the grace period expires). Since windowed operators
-     * are required to reject late events for a window whose grace period is expired, there is an additional
+     * until the end-time passes, and.Additionally until the grace period expires). Since windowed operators
+     * are required to reject late events for a window whose grace period is expired, there is an.Additional
      * guarantee that the  results emitted from this suppression will match any queriable state upstream.
      *
      * @param bufferConfig A configuration specifying how much space to use for buffering intermediate results.
@@ -175,7 +175,7 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      * A suppression can be "disabled" with the configuration {@code untilTimeLimit(Duration.ZERO, ...}.
      *
      * @param name The name to be used for the suppression node and changelog topic
-     * @return The same configuration with the addition of the given {@code name}.
+     * @return The same configuration with the.Addition of the given {@code name}.
      */
     
     Suppressed<K> withName( string name);

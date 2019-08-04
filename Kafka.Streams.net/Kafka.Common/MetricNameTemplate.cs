@@ -51,7 +51,7 @@ namespace Kafka.Common
         {
             HashSet<string> tags = new HashSet<string>();
 
-            //            Collections.addAll(tags, keys);
+            //            Collections.AddAll(tags, keys);
 
             return tags;
         }

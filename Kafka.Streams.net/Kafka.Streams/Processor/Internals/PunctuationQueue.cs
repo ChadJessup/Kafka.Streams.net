@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.PunctuationType;
 
-import java.util.PriorityQueue;
+
+
+
+
 
 public class PunctuationQueue {
 
@@ -30,7 +30,7 @@ public class PunctuationQueue {
 {
         synchronized (pq)
 {
-            pq.add(sched);
+            pq.Add(sched);
         }
         return sched.cancellable();
     }
@@ -63,7 +63,7 @@ public class PunctuationQueue {
                     // sched can be cancelled from within the punctuator
                     if (!sched.isCancelled())
 {
-                        pq.add(sched.next(timestamp));
+                        pq.Add(sched.next(timestamp));
                     }
                     punctuated = true;
                 }

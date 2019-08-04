@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals.assignment;
+namespace Kafka.Streams.Processor.Internals.assignment;
 
-import org.apache.kafka.streams.errors.TaskAssignmentException;
-import org.apache.kafka.streams.processor.TaskId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+
+
+
+
+
+
+
+
+
+
 
 public class SubscriptionInfo {
 
@@ -38,8 +38,8 @@ public class SubscriptionInfo {
     private int usedVersion;
     private int latestSupportedVersion;
     private UUID processId;
-    private Set<TaskId> prevTasks;
-    private Set<TaskId> standbyTasks;
+    private HashSet<TaskId> prevTasks;
+    private HashSet<TaskId> standbyTasks;
     private string userEndPoint;
 
     // used for decoding; don't apply version checks
@@ -51,8 +51,8 @@ public class SubscriptionInfo {
     }
 
     public SubscriptionInfo(UUID processId,
-                            Set<TaskId> prevTasks,
-                            Set<TaskId> standbyTasks,
+                            HashSet<TaskId> prevTasks,
+                            HashSet<TaskId> standbyTasks,
                             string userEndPoint)
 {
         this(LATEST_SUPPORTED_VERSION, processId, prevTasks, standbyTasks, userEndPoint);
@@ -60,8 +60,8 @@ public class SubscriptionInfo {
 
     public SubscriptionInfo(int version,
                             UUID processId,
-                            Set<TaskId> prevTasks,
-                            Set<TaskId> standbyTasks,
+                            HashSet<TaskId> prevTasks,
+                            HashSet<TaskId> standbyTasks,
                             string userEndPoint)
 {
         this(version, LATEST_SUPPORTED_VERSION, processId, prevTasks, standbyTasks, userEndPoint);
@@ -77,8 +77,8 @@ public class SubscriptionInfo {
     protected SubscriptionInfo(int version,
                                int latestSupportedVersion,
                                UUID processId,
-                               Set<TaskId> prevTasks,
-                               Set<TaskId> standbyTasks,
+                               HashSet<TaskId> prevTasks,
+                               HashSet<TaskId> standbyTasks,
                                string userEndPoint)
 {
         this.usedVersion = version;
@@ -104,12 +104,12 @@ public class SubscriptionInfo {
         return processId;
     }
 
-    public Set<TaskId> prevTasks()
+    public HashSet<TaskId> prevTasks()
 {
         return prevTasks;
     }
 
-    public Set<TaskId> standbyTasks()
+    public HashSet<TaskId> standbyTasks()
 {
         return standbyTasks;
     }
@@ -328,14 +328,14 @@ public class SubscriptionInfo {
         int numPrevTasks = data.getInt();
         for (int i = 0; i < numPrevTasks; i++)
 {
-            subscriptionInfo.prevTasks.add(TaskId.readFrom(data));
+            subscriptionInfo.prevTasks.Add(TaskId.readFrom(data));
         }
 
         subscriptionInfo.standbyTasks = new HashSet<>();
         int numStandbyTasks = data.getInt();
         for (int i = 0; i < numStandbyTasks; i++)
 {
-            subscriptionInfo.standbyTasks.add(TaskId.readFrom(data));
+            subscriptionInfo.standbyTasks.Add(TaskId.readFrom(data));
         }
     }
 

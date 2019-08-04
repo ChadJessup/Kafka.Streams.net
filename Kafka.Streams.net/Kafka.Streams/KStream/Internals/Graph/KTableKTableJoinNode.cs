@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,15 +17,15 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.streams.kstream.internals.Change;
-import org.apache.kafka.streams.kstream.internals.KTableKTableJoinMerger;
-import org.apache.kafka.streams.kstream.internals.KTableProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
 
-import java.util.Arrays;
+
+
+
+
+
+
+
+
 
 /**
  * Too much specific information to generalize so the KTable-KTable join requires a specific node.
@@ -106,17 +106,17 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
          string otherProcessorName = otherProcessorParameters().processorName();
          string mergeProcessorName = mergeProcessorParameters().processorName();
 
-        topologyBuilder.addProcessor(
+        topologyBuilder.AddProcessor(
             thisProcessorName,
             thisProcessorParameters().processorSupplier(),
             thisJoinSideNodeName());
 
-        topologyBuilder.addProcessor(
+        topologyBuilder.AddProcessor(
             otherProcessorName,
             otherProcessorParameters().processorSupplier(),
             otherJoinSideNodeName());
 
-        topologyBuilder.addProcessor(
+        topologyBuilder.AddProcessor(
             mergeProcessorName,
             mergeProcessorParameters().processorSupplier(),
             thisProcessorName,
@@ -127,7 +127,7 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
 
         if (storeBuilder != null)
 {
-            topologyBuilder.addStateStore(storeBuilder, mergeProcessorName);
+            topologyBuilder.AddStateStore(storeBuilder, mergeProcessorName);
         }
     }
 
@@ -228,7 +228,7 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
             return this;
         }
 
-        @SuppressWarnings("unchecked")
+        
         public KTableKTableJoinNode<K, V1, V2, VR> build()
 {
             return new KTableKTableJoinNode<>(nodeName,

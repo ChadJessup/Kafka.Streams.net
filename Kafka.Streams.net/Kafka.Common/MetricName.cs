@@ -11,7 +11,7 @@ namespace Kafka.Common
      *  <b>name</b> The name of the metric
      *  <b>group</b> logical group name of the metrics to which this metric belongs.
      *  <b>description</b> A human-readable description to include in the metric. This is optional.
-     *  <b>tags</b> additional key/value attributes of the metric. This is optional.
+     *  <b>tags</b>.Additional key/value attributes of the metric. This is optional.
      * </pre>
      * group, tags parameters can be used to create unique metric names while reporting in JMX or any custom reporting.
      * <p>
@@ -32,13 +32,13 @@ namespace Kafka.Common
      * Sensor sensor = metrics.sensor("message-sizes");
      *
      * MetricName metricName = metrics.metricName("message-size-avg", "producer-metrics", "average message size");
-     * sensor.add(metricName, new Avg());
+     * sensor.Add(metricName, new Avg());
      *
      * metricName = metrics.metricName("message-size-max", "producer-metrics");
-     * sensor.add(metricName, new Max());
+     * sensor.Add(metricName, new Max());
      *
      * metricName = metrics.metricName("message-size-min", "producer-metrics", "message minimum size", "client-id", "my-client", "topic", "my-topic");
-     * sensor.add(metricName, new Min());
+     * sensor.Add(metricName, new Min());
      *
      * // as messages are sent we record the sizes
      * sensor.record(messageSize);
@@ -55,7 +55,7 @@ namespace Kafka.Common
          * @param name        The name of the metric
          * @param group       logical group name of the metrics to which this metric belongs
          * @param description A human-readable description to include in the metric
-         * @param tags        additional key/value attributes of the metric
+         * @param tags       .Additional key/value attributes of the metric
          */
         public MetricName(string name, string group, string description, Dictionary<string, string> tags)
 {

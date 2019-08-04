@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,22 +16,22 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.Predicate;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
+
+
+
+
+
+
 
 class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
     private  KTableImpl<K, ?, V> parent;
-    private  Predicate<? super K, ? super V> predicate;
+    private  Predicate<K, V> predicate;
     private  bool filterNot;
     private  string queryableName;
     private bool sendOldValues = false;
 
     KTableFilter( KTableImpl<K, ?, V> parent,
-                  Predicate<? super K, ? super V> predicate,
+                  Predicate<K, V> predicate,
                   bool filterNot,
                   string queryableName)
 {
@@ -87,7 +87,7 @@ class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -139,7 +139,7 @@ class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
 
                 public KTableValueGetter<K, V> get()
 {
-                    return new KTableFilterValueGetter(parentValueGetterSupplier()];
+                    return new KTableFilterValueGetter(parentValueGetterSupplier());
                 }
 
                 
@@ -160,7 +160,7 @@ class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
             this.parentGetter = parentGetter;
         }
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -170,7 +170,7 @@ class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
         
         public ValueAndTimestamp<V> get( K key)
 {
-            return computeValue(key, parentGetter[key)];
+            return computeValue(key, parentGetter[key));
         }
 
         

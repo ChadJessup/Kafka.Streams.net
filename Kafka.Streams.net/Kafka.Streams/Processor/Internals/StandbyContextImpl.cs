@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,53 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.producer.Producer;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Serializer;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.state.internals.ThreadCache;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.Map;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
 
     private static RecordCollector NO_OP_COLLECTOR = new RecordCollector()
 {
         
-        public <K, V> void send(string topic,
+        publicvoid send(string topic,
                                 K key,
                                 V value,
                                 Headers headers,
                                 Integer partition,
-                                Long timestamp,
+                                long timestamp,
                                 Serializer<K> keySerializer,
                                 Serializer<V> valueSerializer)
 {
         }
 
         
-        public <K, V> void send(string topic,
+        publicvoid send(string topic,
                                 K key,
                                 V value,
                                 Headers headers,
-                                Long timestamp,
+                                long timestamp,
                                 Serializer<K> keySerializer,
                                 Serializer<V> valueSerializer,
-                                StreamPartitioner<? super K, ? super V> partitioner) {}
+                                StreamPartitioner<K, V> partitioner) {}
 
         
         public void init(Producer<byte[], byte[]> producer] {}
@@ -72,7 +72,7 @@ class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
         public void close() {}
 
         
-        public Dictionary<TopicPartition, Long> offsets()
+        public Dictionary<TopicPartition, long> offsets()
 {
             return Collections.emptyMap();
         }
@@ -157,7 +157,7 @@ class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
      * @throws InvalidOperationException on every invocation
      */
     
-    public <K, V> void forward(K key, V value)
+    publicvoid forward(K key, V value)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
     }
@@ -166,17 +166,7 @@ class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
      * @throws InvalidOperationException on every invocation
      */
     
-    public <K, V> void forward(K key, V value, To to)
-{
-        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-    }
-
-    /**
-     * @throws InvalidOperationException on every invocation
-     */
-    
-    @Deprecated
-    public <K, V> void forward(K key, V value, int childIndex)
+    publicvoid forward(K key, V value, To to)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
     }
@@ -186,7 +176,17 @@ class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
      */
     
     @Deprecated
-    public <K, V> void forward(K key, V value, string childName)
+    publicvoid forward(K key, V value, int childIndex)
+{
+        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+    }
+
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
+    
+    @Deprecated
+    publicvoid forward(K key, V value, string childName)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
     }
@@ -214,7 +214,7 @@ class StandbyContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
      * @throws InvalidOperationException on every invocation
      */
     
-    public ICancellable schedule(Duration interval, PunctuationType type, Punctuator callback) throws ArgumentException {
+    public ICancellable schedule(Duration interval, PunctuationType type, Punctuator callback){
         throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
     }
 

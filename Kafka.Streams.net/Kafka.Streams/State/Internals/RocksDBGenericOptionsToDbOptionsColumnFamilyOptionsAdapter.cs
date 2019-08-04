@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,40 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
-import org.rocksdb.AbstractCompactionFilter;
-import org.rocksdb.AbstractCompactionFilterFactory;
-import org.rocksdb.AbstractComparator;
-import org.rocksdb.AbstractSlice;
-import org.rocksdb.AccessHint;
-import org.rocksdb.BuiltinComparator;
-import org.rocksdb.Cache;
-import org.rocksdb.ColumnFamilyOptions;
-import org.rocksdb.CompactionOptionsFIFO;
-import org.rocksdb.CompactionOptionsUniversal;
-import org.rocksdb.CompactionPriority;
-import org.rocksdb.CompactionStyle;
-import org.rocksdb.CompressionOptions;
-import org.rocksdb.CompressionType;
-import org.rocksdb.DBOptions;
-import org.rocksdb.DbPath;
-import org.rocksdb.Env;
-import org.rocksdb.InfoLogLevel;
-import org.rocksdb.Logger;
-import org.rocksdb.MemTableConfig;
-import org.rocksdb.MergeOperator;
-import org.rocksdb.Options;
-import org.rocksdb.RateLimiter;
-import org.rocksdb.SstFileManager;
-import org.rocksdb.Statistics;
-import org.rocksdb.TableFormatConfig;
-import org.rocksdb.WALRecoveryMode;
 
-import java.util.Collection;
-import java.util.List;
-import org.rocksdb.WriteBufferManager;
-import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * The generic {@link Options} class allows users to set all configs on one object if only default column family
@@ -493,7 +493,7 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
 
     public override Options setWalTtlSeconds(long walTtlSeconds)
 {
-        LOG.warn("option walTtlSeconds will be ignored: Streams does not expose RocksDB ttl functionality");
+        LOG.LogWarning("option walTtlSeconds will be ignored: Streams does not expose RocksDB ttl functionality");
         dbOptions.setWalTtlSeconds(walTtlSeconds);
         return this;
     }

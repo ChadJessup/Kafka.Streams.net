@@ -19,8 +19,8 @@ namespace Kafka.Common.Metrics.Stats
      * This can be accomplish by created a {@link org.apache.kafka.common.metrics.Sensor Sensor} to record the values,
      * with 0.0 for false and 1.0 for true. Then, create a single {@link Frequencies} object that has two
      * {@link Frequency} metrics: one centered around 0.0 and another centered around 1.0. The {@link Frequencies}
-     * object is a {@link CompoundStat}, and so it can be {@link org.apache.kafka.common.metrics.Sensor#add(CompoundStat)
-     * added directly to a Sensor} so the metrics are created automatically.
+     * object is a {@link CompoundStat}, and so it can be {@link org.apache.kafka.common.metrics.Sensor.Add(CompoundStat)
+     *.Added directly to a Sensor} so the metrics are created automatically.
      */
     public class Frequencies : SampledStat, ICompoundStat
     {
@@ -109,7 +109,7 @@ namespace Kafka.Common.Metrics.Stats
             foreach (Frequency freq in frequencies)
             {
                 double center = freq.centerValue;
-                //ms.add(new NamedMeasurable(frequency.name(), new IMeasurable()
+                //ms.Add(new NamedMeasurable(frequency.name(), new IMeasurable()
                 //{
                 //    public double measure(MetricConfig config, long now)
                 //{

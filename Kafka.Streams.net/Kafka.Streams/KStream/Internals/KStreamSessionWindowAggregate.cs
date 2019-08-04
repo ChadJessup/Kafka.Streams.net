@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,29 +16,29 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.Merger;
-import org.apache.kafka.streams.kstream.SessionWindows;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.kstream.internals.metrics.Sensors;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.InternalProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.KeyValueIterator;
-import org.apache.kafka.streams.state.SessionStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.List;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamSessionWindowAggregate.class);
@@ -46,16 +46,16 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
     private  string storeName;
     private  SessionWindows windows;
     private  Initializer<Agg> initializer;
-    private  Aggregator<? super K, ? super V, Agg> aggregator;
-    private  Merger<? super K, Agg> sessionMerger;
+    private  Aggregator<K, V, Agg> aggregator;
+    private  Merger<K, Agg> sessionMerger;
 
     private bool sendOldValues = false;
 
     public KStreamSessionWindowAggregate( SessionWindows windows,
                                           string storeName,
                                           Initializer<Agg> initializer,
-                                          Aggregator<? super K, ? super V, Agg> aggregator,
-                                          Merger<? super K, Agg> sessionMerger)
+                                          Aggregator<K, V, Agg> aggregator,
+                                          Merger<K, Agg> sessionMerger)
 {
         this.windows = windows;
         this.storeName = storeName;
@@ -91,7 +91,7 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -112,7 +112,7 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
             // the record with the table
             if (key == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     value, context().topic(), context().partition(), context().offset()
                 );
@@ -140,7 +140,7 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
                 while (iterator.hasNext())
 {
                      KeyValue<Windowed<K>, Agg> next = iterator.next();
-                    merged.add(next);
+                    merged.Add(next);
                     agg = sessionMerger.apply(key, agg, next.value);
                     mergedWindow = mergeSessionWindow(mergedWindow, (SessionWindow) next.key.window());
                 }
@@ -216,7 +216,7 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
     private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg> {
         private SessionStore<K, Agg> store;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {

@@ -43,7 +43,7 @@ public class Sanitizer {
      * string containing special characters to be safe. All characters in strings sanitized
      * using {@link #sanitize(String)} are safe for JMX and hence included here.
      */
-    private static final Pattern MBEAN_PATTERN = Pattern.compile("[\\w-%\\. \t]*"];
+    private static final Pattern MBEAN_PATTERN = Pattern.compile("[\\w-%\\. \t]*");
 
     /**
      * Sanitize `name` for safe use as JMX metric name as well as ZooKeeper node name

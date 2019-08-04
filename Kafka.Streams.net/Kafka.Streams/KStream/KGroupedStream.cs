@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,14 +16,14 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.annotation.InterfaceStability;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.QueryableStoreType;
+
+
+
+
+
+
+
+
 
 /**
  * {@code KGroupedStream} is an abstraction of a <i>grouped</i> record stream of {@link KeyValue} pairs.
@@ -65,10 +65,10 @@ public interface KGroupedStream<K, V> {
      *
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.
      *
-     * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
+     * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<K, Long> count();
+    KTable<K, long> count();
 
     /**
      * Count the number of records in this stream by the grouped key.
@@ -89,9 +89,9 @@ public interface KGroupedStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // counting words
      * string queryableStoreName = "storeName"; // the store name should be the name of the store as defined by the Materialized instance
-     * ReadOnlyKeyValueStore<string,Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
+     * ReadOnlyKeyValueStore<string,long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
      * string key = "some-word";
-     * Long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -108,12 +108,12 @@ public interface KGroupedStream<K, V> {
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.
      *
      * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-     *                      Note: the valueSerde will be automatically set to {@link org.apache.kafka.common.serialization.Serdes#Long() Serdes#Long()}
+     *                      Note: the valueSerde will be automatically set to {@link org.apache.kafka.common.serialization.Serdes#long() Serdes#long()}
      *                      if there is no valueSerde provided
-     * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
+     * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized];
+    KTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Combine the values of records in this stream by the grouped key.
@@ -165,10 +165,10 @@ public interface KGroupedStream<K, V> {
      * The specified {@link Reducer} is applied for each input record and computes a new aggregate using the current
      * aggregate (first argument) and the record's value (second argument):
      * <pre>{@code
-     * // At the example of a Reducer<Long>
-     * new Reducer<Long>()
+     * // At the example of a Reducer<long>
+     * new Reducer<long>()
 {
-     *   public Long apply(Long aggValue, Long currValue)
+     *   public long apply(long aggValue, long currValue)
 {
      *     return aggValue + currValue;
      *   }
@@ -192,9 +192,9 @@ public interface KGroupedStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // compute sum
      * string queryableStoreName = "storeName" // the store name should be the name of the store as defined by the Materialized instance
-     * ReadOnlyKeyValueStore<string, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
+     * ReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
      * string key = "some-key";
-     * Long sumForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * long sumForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -262,7 +262,7 @@ public interface KGroupedStream<K, V> {
      * will be handled as newly initialized value.
      */
     <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                  Aggregator<? super K, ? super V, VR> aggregator);
+                                  Aggregator<K, V, VR> aggregator);
 
     /**
      * Aggregate the values of records in this stream by the grouped key.
@@ -293,9 +293,9 @@ public interface KGroupedStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // some aggregation on value type double
      * string queryableStoreName = "storeName" // the store name should be the name of the store as defined by the Materialized instance
-     * ReadOnlyKeyValueStore<string, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
+     * ReadOnlyKeyValueStore<string, long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>keyValueStore());
      * string key = "some-key";
-     * Long aggForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * long aggForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -321,7 +321,7 @@ public interface KGroupedStream<K, V> {
      * will be handled as newly initialized value.
      */
     <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                  Aggregator<? super K, ? super V, VR> aggregator,
+                                  Aggregator<K, V, VR> aggregator,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**

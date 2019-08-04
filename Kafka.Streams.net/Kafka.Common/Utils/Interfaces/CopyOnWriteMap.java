@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,12 +16,12 @@
  */
 namespace Kafka.common.utils;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
+
+
+
+
+
+
 
 /**
  * A simple read-optimized map implementation that synchronizes only writes and does a full copy on each modification
@@ -53,7 +53,7 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public Set<java.util.Map.Entry<K, V>> entrySet()
+    public HashSet<java.util.Map.Entry<K, V>> entrySet()
 {
         return map.entrySet();
     }
@@ -71,7 +71,7 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public Set<K> keySet()
+    public HashSet<K> keySet()
 {
         return map.keySet();
     }

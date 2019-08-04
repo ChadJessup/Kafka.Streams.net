@@ -154,8 +154,8 @@ namespace Kafka.Common.Utils
                 else
                 {
                     result.Append("\\x");
-                    result.Append(HEX_CHARS_UPPER[ch / 0x10]];
-                    result.Append(HEX_CHARS_UPPER[ch % 0x10]];
+                    result.Append(HEX_CHARS_UPPER[ch / 0x10]);
+                    result.Append(HEX_CHARS_UPPER[ch % 0x10]);
                 }
             }
             return result.ToString();

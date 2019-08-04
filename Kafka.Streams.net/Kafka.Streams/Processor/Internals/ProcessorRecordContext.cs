@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.header.Header;
 using Kafka.Common.header.Headers;
 using Kafka.Common.header.internals.RecordHeader;
 using Kafka.Common.header.internals.RecordHeaders;
-import org.apache.kafka.streams.processor.RecordContext;
 
-import java.nio.ByteBuffer;
-import java.util.Objects;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+
+
+
+
 
 public class ProcessorRecordContext : RecordContext {
 
@@ -82,8 +82,8 @@ public class ProcessorRecordContext : RecordContext {
     public long residentMemorySizeEstimate()
 {
         long size = 0;
-        size += Long.BYTES; // value.context.timestamp
-        size += Long.BYTES; // value.context.offset
+        size += long.BYTES; // value.context.timestamp
+        size += long.BYTES; // value.context.offset
         if (topic != null)
 {
             size += topic.toCharArray().Length;
@@ -106,14 +106,14 @@ public class ProcessorRecordContext : RecordContext {
 
     public byte[] serialize()
 {
-        byte[] topicBytes = topic.getBytes(UTF_8];
+        byte[] topicBytes = topic.getBytes(UTF_8);
         byte[][] headerKeysBytes;
         byte[][] headerValuesBytes;
 
 
         int size = 0;
-        size += Long.BYTES; // value.context.timestamp
-        size += Long.BYTES; // value.context.offset
+        size += long.BYTES; // value.context.timestamp
+        size += long.BYTES; // value.context.offset
         size += Integer.BYTES; // size of topic
         size += topicBytes.Length;
         size += Integer.BYTES; // partition
@@ -131,7 +131,7 @@ public class ProcessorRecordContext : RecordContext {
 {
                 size += 2 * Integer.BYTES; // sizes of key and value
 
-                byte[] keyBytes = headers[i].key().getBytes(UTF_8];
+                byte[] keyBytes = headers[i].key().getBytes(UTF_8);
                 size += keyBytes.Length;
                 byte[] valueBytes = headers[i].value();
                 if (valueBytes != null)
@@ -160,13 +160,13 @@ public class ProcessorRecordContext : RecordContext {
             buffer.putInt(headerKeysBytes.Length);
             for (int i = 0; i < headerKeysBytes.Length; i++)
 {
-                buffer.putInt(headerKeysBytes[i].Length];
-                buffer.Add(headerKeysBytes[i]];
+                buffer.putInt(headerKeysBytes[i].Length);
+                buffer.Add(headerKeysBytes[i]);
 
                 if (headerValuesBytes[i] != null)
 {
-                    buffer.putInt(headerValuesBytes[i].Length];
-                    buffer.Add(headerValuesBytes[i]];
+                    buffer.putInt(headerValuesBytes[i].Length);
+                    buffer.Add(headerValuesBytes[i]);
                 } else {
                     buffer.putInt(-1);
                 }
@@ -212,7 +212,7 @@ public class ProcessorRecordContext : RecordContext {
                     buffer[valueBytes];
                 }
 
-                headerArr[i] = new RecordHeader(new string(keyBytes, UTF_8), valueBytes];
+                headerArr[i] = new RecordHeader(new string(keyBytes, UTF_8), valueBytes);
             }
             headers = new RecordHeaders(headerArr);
         }

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,12 +16,12 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.state.internals.CacheFlushListener;
-import org.apache.kafka.streams.state.internals.WrappedStateStore;
+
+
+
+
+
+
 
 /**
  * This class is used to determine if a processor should forward values to child nodes.
@@ -36,7 +36,7 @@ class SessionTupleForwarder<K, V> {
     private  bool sendOldValues;
     private  bool cachingEnabled;
 
-    @SuppressWarnings("unchecked")
+    
     SessionTupleForwarder( IStateStore store,
                            IProcessorContext context,
                            CacheFlushListener<Windowed<K>, V> flushListener,

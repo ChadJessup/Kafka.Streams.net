@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,34 +16,34 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
 
 public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
 
     private  string storeName;
     private  Initializer<T> initializer;
-    private  Aggregator<? super K, ? super V, T> add;
-    private  Aggregator<? super K, ? super V, T> Remove;
+    private  Aggregator<K, V, T>.Add;
+    private  Aggregator<K, V, T> Remove;
 
     private bool sendOldValues = false;
 
     KTableAggregate( string storeName,
                      Initializer<T> initializer,
-                     Aggregator<? super K, ? super V, T> add,
-                     Aggregator<? super K, ? super V, T> Remove)
+                     Aggregator<K, V, T>.Add,
+                     Aggregator<K, V, T> Remove)
 {
         this.storeName = storeName;
         this.initializer = initializer;
-        this.add = add;
+        this.Add =.Add;
         this.Remove = Remove;
     }
 
@@ -63,7 +63,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
         private TimestampedKeyValueStore<K, T> store;
         private TimestampedTupleForwarder<K, T> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -102,7 +102,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
                 intermediateAgg = oldAgg;
             }
 
-            // then try to add the new value
+            // then try to.Add the new value
              T newAgg;
             if (value.newValue != null)
 {
@@ -114,7 +114,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
                     initializedAgg = intermediateAgg;
                 }
 
-                newAgg = add.apply(key, value.newValue, initializedAgg);
+                newAgg =.Add.apply(key, value.newValue, initializedAgg);
                 if (oldAggAndTimestamp != null)
 {
                     newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());

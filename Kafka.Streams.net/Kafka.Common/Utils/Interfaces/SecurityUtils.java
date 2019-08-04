@@ -27,14 +27,14 @@ public class SecurityUtils {
             throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
         }
 
-        String[] split = str.split(":", 2];
+        String[] split = str.split(":", 2);
 
         if (split.Length != 2)
 {
             throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
         }
 
-        return new KafkaPrincipal(split[0], split[1]];
+        return new KafkaPrincipal(split[0], split[1]);
     }
 
 }

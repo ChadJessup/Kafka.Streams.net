@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,13 +17,13 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.streams.kstream.internals.ChangedDeserializer;
-import org.apache.kafka.streams.kstream.internals.ChangedSerializer;
-import org.apache.kafka.streams.processor.FailOnInvalidTimestamp;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
+
+
+
+
+
+
+
 
 public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
 
@@ -55,7 +55,7 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
         return unsafeCastChangedToValueSerializer(valueSerializer);
     }
 
-    @SuppressWarnings("unchecked")
+    
     private Serializer<V> unsafeCastChangedToValueSerializer( Serializer<V> valueSerializer)
 {
         return (Serializer<V>) new ChangedSerializer<>(valueSerializer);
@@ -68,7 +68,7 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
         return unsafeCastChangedToValueDeserializer(valueDeserializer);
     }
 
-    @SuppressWarnings("unchecked")
+    
     private Deserializer<V> unsafeCastChangedToValueDeserializer( Deserializer<? : V> valueDeserializer)
 {
         return (Deserializer<V>) new ChangedDeserializer<>(valueDeserializer);
@@ -87,9 +87,9 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
          Deserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
 
 
-        topologyBuilder.addInternalTopic(repartitionTopic);
+        topologyBuilder.AddInternalTopic(repartitionTopic);
 
-        topologyBuilder.addSink(
+        topologyBuilder.AddSink(
             sinkName,
             repartitionTopic,
             keySerializer,
@@ -98,7 +98,7 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
             parentNodeNames()
         );
 
-        topologyBuilder.addSource(
+        topologyBuilder.AddSource(
             null,
             sourceName,
             new FailOnInvalidTimestamp(),

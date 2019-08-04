@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,28 +16,28 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
-import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.ForwardingDisabledProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-import java.util.Objects;
 
-import static org.apache.kafka.streams.processor.internals.RecordQueue.UNKNOWN;
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
+
+
 
 class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     private  KTableImpl<K, ?, V> parent;
-    private  ValueTransformerWithKeySupplier<? super K, ? super V, ? : V1> transformerSupplier;
+    private  ValueTransformerWithKeySupplier<K, V, V1> transformerSupplier;
     private  string queryableName;
     private bool sendOldValues = false;
 
     KTableTransformValues( KTableImpl<K, ?, V> parent,
-                           ValueTransformerWithKeySupplier<? super K, ? super V, ? : V1> transformerSupplier,
+                           ValueTransformerWithKeySupplier<K, V, V1> transformerSupplier,
                            string queryableName)
 {
         this.parent = Objects.requireNonNull(parent, "parent");
@@ -48,7 +48,7 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     
     public Processor<K, Change<V>> get()
 {
-        return new KTableTransformValuesProcessor(transformerSupplier()];
+        return new KTableTransformValuesProcessor(transformerSupplier());
     }
 
     
@@ -67,7 +67,7 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 {
                 return new KTableTransformValuesGetter(
                     parentValueGetterSupplier[],
-                    transformerSupplier()];
+                    transformerSupplier());
             }
 
             
@@ -87,16 +87,16 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 
 
     private class KTableTransformValuesProcessor : AbstractProcessor<K, Change<V>> {
-        private  ValueTransformerWithKey<? super K, ? super V, ? : V1> valueTransformer;
+        private  ValueTransformerWithKey<K, V, V1> valueTransformer;
         private TimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
 
-        private KTableTransformValuesProcessor( ValueTransformerWithKey<? super K, ? super V, ? : V1> valueTransformer)
+        private KTableTransformValuesProcessor( ValueTransformerWithKey<K, V, V1> valueTransformer)
 {
             this.valueTransformer = Objects.requireNonNull(valueTransformer, "valueTransformer");
         }
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -139,10 +139,10 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 
     private class KTableTransformValuesGetter : KTableValueGetter<K, V1> {
         private  KTableValueGetter<K, V> parentGetter;
-        private  ValueTransformerWithKey<? super K, ? super V, ? : V1> valueTransformer;
+        private  ValueTransformerWithKey<K, V, V1> valueTransformer;
 
         KTableTransformValuesGetter( KTableValueGetter<K, V> parentGetter,
-                                     ValueTransformerWithKey<? super K, ? super V, ? : V1> valueTransformer)
+                                     ValueTransformerWithKey<K, V, V1> valueTransformer)
 {
             this.parentGetter = Objects.requireNonNull(parentGetter, "parentGetter");
             this.valueTransformer = Objects.requireNonNull(valueTransformer, "valueTransformer");

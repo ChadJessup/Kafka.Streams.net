@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.CommitFailedException;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.clients.producer.Producer;
+
+
+
+
+
 using Kafka.Common.KafkaException;
 
 using Kafka.Common.TopicPartition;
@@ -33,32 +33,32 @@ using Kafka.Common.metrics.stats.Max;
 using Kafka.Common.metrics.stats.Rate;
 using Kafka.Common.metrics.stats.WindowedCount;
 using Kafka.Common.Utils.Time;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler;
-import org.apache.kafka.streams.errors.ProcessorStateException;
-import org.apache.kafka.streams.errors.ProductionExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.internals.ThreadCache;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import static java.lang.string.Format;
-import static java.util.Collections.singleton;
-import static org.apache.kafka.streams.kstream.internals.metrics.Sensors.recordLatenessSensor;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
@@ -74,7 +74,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
     private PartitionGroup partitionGroup;
     private RecordCollector recordCollector;
     private PartitionGroup.RecordInfo recordInfo;
-    private Dictionary<TopicPartition, Long> consumedOffsets;
+    private Dictionary<TopicPartition, long> consumedOffsets;
     private PunctuationQueue streamTimePunctuationQueue;
     private PunctuationQueue systemTimePunctuationQueue;
     private ProducerSupplier producerSupplier;
@@ -97,36 +97,36 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
             this.metrics = metrics;
             string group = "stream-task-metrics";
 
-            // first add the global operation metrics if not yet, with the global tags only
+            // first.Add the global operation metrics if not yet, with the global tags only
             Sensor parent = ThreadMetrics.commitOverTasksSensor(metrics);
 
-            // add the operation metrics with additional tags
+            //.Add the operation metrics with.Additional tags
             Dictionary<string, string> tagMap = metrics.tagMap("task-id", taskName);
             taskCommitTimeSensor = metrics.taskLevelSensor(taskName, "commit", RecordingLevel.DEBUG, parent);
-            taskCommitTimeSensor.add(
+            taskCommitTimeSensor.Add(
                 new MetricName("commit-latency-avg", group, "The average latency of commit operation.", tagMap),
                 new Avg()
             );
-            taskCommitTimeSensor.add(
+            taskCommitTimeSensor.Add(
                 new MetricName("commit-latency-max", group, "The max latency of commit operation.", tagMap),
                 new Max()
             );
-            taskCommitTimeSensor.add(
+            taskCommitTimeSensor.Add(
                 new MetricName("commit-rate", group, "The average number of occurrence of commit operation per second.", tagMap),
                 new Rate(TimeUnit.SECONDS, new WindowedCount())
             );
-            taskCommitTimeSensor.add(
+            taskCommitTimeSensor.Add(
                 new MetricName("commit-total", group, "The total number of occurrence of commit operations.", tagMap),
                 new CumulativeCount()
             );
 
-            // add the metrics for enforced processing
+            //.Add the metrics for enforced processing
             taskEnforcedProcessSensor = metrics.taskLevelSensor(taskName, "enforced-processing", RecordingLevel.DEBUG, parent);
-            taskEnforcedProcessSensor.add(
+            taskEnforcedProcessSensor.Add(
                     new MetricName("enforced-processing-rate", group, "The average number of occurrence of enforced-processing operation per second.", tagMap),
                     new Rate(TimeUnit.SECONDS, new WindowedCount())
             );
-            taskEnforcedProcessSensor.add(
+            taskEnforcedProcessSensor.Add(
                     new MetricName("enforced-processing-total", group, "The total number of occurrence of enforced-processing operations.", tagMap),
                     new CumulativeCount()
             );
@@ -344,7 +344,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
      * @return true if this method processes a record, false if it does not process a record.
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    @SuppressWarnings("unchecked")
+    
     public bool process()
 {
         // get the next record to process
@@ -361,12 +361,12 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
             ProcessorNode currNode = recordInfo.node();
             TopicPartition partition = recordInfo.partition();
 
-            log.trace("Start processing one record [{}]", record];
+            log.trace("Start processing one record [{}]", record);
 
             updateProcessorContext(record, currNode);
             currNode.process(record.key(), record.value());
 
-            log.trace("Completed processing one record [{}]", record];
+            log.trace("Completed processing one record [{}]", record);
 
             // update the consumed offset map after processing is done
             consumedOffsets.Add(partition, record.offset());
@@ -493,7 +493,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
         }
 
         Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
-        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+        foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
             TopicPartition partition = entry.getKey();
             long offset = entry.getValue() + 1;
@@ -526,10 +526,10 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
     }
 
     
-    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets()
+    protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
 {
-        Dictionary<TopicPartition, Long> checkpointableOffsets = recordCollector.offsets();
-        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+        Dictionary<TopicPartition, long> checkpointableOffsets = recordCollector.offsets();
+        foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
             checkpointableOffsets.putIfAbsent(entry.getKey(), entry.getValue());
         }
@@ -550,10 +550,10 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
         }
     }
 
-    Dictionary<TopicPartition, Long> purgableOffsets()
+    Dictionary<TopicPartition, long> purgableOffsets()
 {
-        Dictionary<TopicPartition, Long> purgableConsumedOffsets = new HashMap<>();
-        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+        Dictionary<TopicPartition, long> purgableConsumedOffsets = new HashMap<>();
+        foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
             TopicPartition tp = entry.getKey();
             if (topology.isRepartitionTopic(tp.topic()))
@@ -791,21 +791,21 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
 
     /**
      * Adds records to queues. If a record has an invalid (i.e., negative) timestamp, the record is skipped
-     * and not added to the queue for processing
+     * and not.Added to the queue for processing
      *
      * @param partition the partition
      * @param records   the records
      */
-    public void addRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> records)
+    public void.AddRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> records)
 {
-        int newQueueSize = partitionGroup.addRawRecords(partition, records);
+        int newQueueSize = partitionGroup.AddRawRecords(partition, records);
 
         if (log.isTraceEnabled())
 {
             log.trace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
         }
 
-        // if after adding these records, its partition queue's buffered size has been
+        // if after.Adding these records, its partition queue's buffered size has been
         // increased beyond the threshold, we can then pause the consumption for this partition
         if (newQueueSize > maxBufferedSize)
 {

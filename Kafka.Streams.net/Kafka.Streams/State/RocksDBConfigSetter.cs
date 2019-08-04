@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,12 +16,12 @@
  */
 namespace Kafka.streams.state;
 
-import org.rocksdb.Options;
 
-import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
+
+
 
 /**
  * An interface to that allows developers to customize the RocksDB settings for a given Store.
@@ -60,6 +60,6 @@ public interface RocksDBConfigSetter
      */
     default void close(string storeName, Options options)
 {
-        LOG.warn("The default close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDBConfigSetter");
+        LOG.LogWarning("The default close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDBConfigSetter");
     }
 }

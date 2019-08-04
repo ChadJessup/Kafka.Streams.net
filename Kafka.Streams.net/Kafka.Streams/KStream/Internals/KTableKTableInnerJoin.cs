@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,20 +16,20 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2> {
     private static  Logger LOG = LoggerFactory.getLogger(KTableKTableInnerJoin.class);
@@ -38,7 +38,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 
     KTableKTableInnerJoin( KTableImpl<K, ?, V1> table1,
                            KTableImpl<K, ?, V2> table2,
-                           ValueJoiner<? super V1, ? super V2, ? : R> joiner)
+                           ValueJoiner<V1, V2, R> joiner)
 {
         super(table1, table2, joiner);
     }
@@ -46,7 +46,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
     
     public Processor<K, Change<V1>> get()
 {
-        return new KTableKTableJoinProcessor(valueGetterSupplier2()];
+        return new KTableKTableJoinProcessor(valueGetterSupplier2());
     }
 
     
@@ -65,7 +65,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 
         public KTableValueGetter<K, R> get()
 {
-            return new KTableKTableInnerJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2()];
+            return new KTableKTableInnerJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2());
         }
     }
 
@@ -95,7 +95,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             if (key == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     change, context().topic(), context().partition(), context().offset()
                 );
@@ -163,7 +163,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 
             if (value1 != null)
 {
-                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1)];
+                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1));
                  V2 value2 = getValueOrNull(valueAndTimestamp2);
 
                 if (value2 != null)

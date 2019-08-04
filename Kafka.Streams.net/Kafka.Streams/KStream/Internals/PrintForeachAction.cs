@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,30 +16,30 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.ForeachAction;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+
+
+
+
+
+
 
 public class PrintForeachAction<K, V> : ForeachAction<K, V> {
 
     private  string label;
     private  PrintWriter printWriter;
     private  bool closable;
-    private  IKeyValueMapper<? super K, ? super V, string> mapper;
+    private  IKeyValueMapper<K, V, string> mapper;
 
     /**
-     * Print customized output with given writer. The {@link OutputStream} can be {@link System#out} or the others.
+     * Print customized output with given writer. The {@link Stream} can be {@link System#out} or the others.
      *
      * @param outputStream The output stream to write to.
      * @param mapper The mapper which can allow user to customize output will be printed.
      * @param label The given name will be printed.
      */
-    PrintForeachAction( OutputStream outputStream,
-                        IKeyValueMapper<? super K, ? super V, string> mapper,
+    PrintForeachAction( Stream outputStream,
+                        IKeyValueMapper<K, V, string> mapper,
                         string label)
 {
         this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
@@ -51,7 +51,7 @@ public class PrintForeachAction<K, V> : ForeachAction<K, V> {
     
     public void apply( K key,  V value)
 {
-         string data = string.Format("[%s]: %s", label, mapper.apply(key, value)];
+         string data = string.Format("[%s]: %s", label, mapper.apply(key, value));
         printWriter.println(data);
         if (!closable)
 {

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,36 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.FixedOrderMap;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.ProcessorStateException;
-import org.apache.kafka.streams.processor.StateRestoreCallback;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.state.internals.OffsetCheckpoint;
-import org.apache.kafka.streams.state.internals.RecordConverter;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.unmodifiableList;
-import static org.apache.kafka.streams.processor.internals.StateManagerUtil.CHECKPOINT_FILE_NAME;
-import static org.apache.kafka.streams.processor.internals.StateManagerUtil.converterForStore;
-import static org.apache.kafka.streams.processor.internals.StateRestoreCallbackAdapter.adapt;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 public class ProcessorStateManager : StateManager {
@@ -54,8 +54,8 @@ public class ProcessorStateManager : StateManager {
     private string logPrefix;
     private bool isStandby;
     private ChangelogReader changelogReader;
-    private Dictionary<TopicPartition, Long> offsetLimits;
-    private Dictionary<TopicPartition, Long> standbyRestoredOffsets;
+    private Dictionary<TopicPartition, long> offsetLimits;
+    private Dictionary<TopicPartition, long> standbyRestoredOffsets;
     private Dictionary<string, StateRestoreCallback> restoreCallbacks; // used for standby tasks, keyed by state topic name
     private Dictionary<string, RecordConverter> recordConverters; // used for standby tasks, keyed by state topic name
     private Dictionary<string, string> storeToChangelogTopic;
@@ -73,8 +73,8 @@ public class ProcessorStateManager : StateManager {
     private bool eosEnabled;
     private File baseDir;
     private OffsetCheckpoint checkpointFile;
-    private Dictionary<TopicPartition, Long> checkpointFileCache = new HashMap<>();
-    private Dictionary<TopicPartition, Long> initialLoadedCheckpoints;
+    private Dictionary<TopicPartition, long> checkpointFileCache = new HashMap<>();
+    private Dictionary<TopicPartition, long> initialLoadedCheckpoints;
 
     /**
      * @throws ProcessorStateException if the task directory does not exist and could not be created
@@ -87,13 +87,13 @@ public class ProcessorStateManager : StateManager {
                                  Dictionary<string, string> storeToChangelogTopic,
                                  ChangelogReader changelogReader,
                                  bool eosEnabled,
-                                 LogContext logContext) throws IOException {
+                                 LogContext logContext){
         this.eosEnabled = eosEnabled;
 
         log = logContext.logger(ProcessorStateManager.class);
         this.taskId = taskId;
         this.changelogReader = changelogReader;
-        logPrefix = string.Format("task [%s] ", taskId];
+        logPrefix = string.Format("task [%s] ", taskId);
 
         partitionForTopic = new HashMap<>();
         foreach (TopicPartition source in sources)
@@ -169,7 +169,7 @@ public class ProcessorStateManager : StateManager {
                 restoreCallbacks.Add(topic, stateRestoreCallback);
                 recordConverters.Add(topic, recordConverter);
             } else {
-                Long restoreCheckpoint = store.persistent() ? initialLoadedCheckpoints[storePartition] : null;
+                long restoreCheckpoint = store.persistent() ? initialLoadedCheckpoints[storePartition] : null;
                 if (restoreCheckpoint != null)
 {
                     checkpointFileCache.Add(storePartition, restoreCheckpoint);
@@ -188,7 +188,7 @@ public class ProcessorStateManager : StateManager {
 
                 changelogReader.register(restorer);
             }
-            changelogPartitions.add(storePartition);
+            changelogPartitions.Add(storePartition);
         }
 
         registeredStores.Add(storeName, Optional.of(store));
@@ -210,7 +210,7 @@ public class ProcessorStateManager : StateManager {
         );
     }
 
-    void clearCheckpoints() throws IOException {
+    void clearCheckpoints(){
         if (checkpointFile != null)
 {
             checkpointFile.delete();
@@ -221,10 +221,10 @@ public class ProcessorStateManager : StateManager {
     }
 
     
-    public Dictionary<TopicPartition, Long> checkpointed()
+    public Dictionary<TopicPartition, long> checkpointed()
 {
         updateCheckpointFileCache(emptyMap());
-        Dictionary<TopicPartition, Long> partitionsAndOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> partitionsAndOffsets = new HashMap<>();
 
         foreach (Map.Entry<string, StateRestoreCallback> entry in restoreCallbacks.entrySet())
 {
@@ -242,15 +242,15 @@ public class ProcessorStateManager : StateManager {
                              long lastOffset)
 {
         // restore states from changelog records
-        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.topic())];
+        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.topic()));
 
         if (!restoreRecords.isEmpty())
 {
-            RecordConverter converter = recordConverters[storePartition.topic()];
-            List<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size()];
+            RecordConverter converter = recordConverters[storePartition.topic());
+            List<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size());
             foreach (ConsumerRecord<byte[], byte[]> record in restoreRecords)
 {
-                convertedRecords.add(converter.convert(record));
+                convertedRecords.Add(converter.convert(record));
             }
 
             try {
@@ -274,8 +274,8 @@ public class ProcessorStateManager : StateManager {
 
     long offsetLimit(TopicPartition partition)
 {
-        Long limit = offsetLimits[partition];
-        return limit != null ? limit : Long.MAX_VALUE;
+        long limit = offsetLimits[partition];
+        return limit != null ? limit : long.MAX_VALUE;
     }
 
     
@@ -296,7 +296,7 @@ public class ProcessorStateManager : StateManager {
 {
                 if (entry.getValue().isPresent())
 {
-                    IStateStore store = entry.getValue()[];
+                    IStateStore store = entry.getValue()[);
                     log.trace("Flushing store {}", store.name());
                     try {
                         store.flush();
@@ -327,7 +327,7 @@ public class ProcessorStateManager : StateManager {
      * @throws ProcessorStateException if any error happens when closing the state stores
      */
     
-    public void close(bool clean) throws ProcessorStateException {
+    public void close(bool clean){
         ProcessorStateException firstException = null;
         // attempting to close the stores, just in case they
         // are not closed by a ProcessorNode yet
@@ -338,7 +338,7 @@ public class ProcessorStateManager : StateManager {
 {
                 if (entry.getValue().isPresent())
 {
-                    IStateStore store = entry.getValue()[];
+                    IStateStore store = entry.getValue()[);
                     log.LogDebug("Closing storage engine {}", store.name());
                     try {
                         store.close();
@@ -375,7 +375,7 @@ public class ProcessorStateManager : StateManager {
     }
 
     
-    public void checkpoint(Dictionary<TopicPartition, Long> checkpointableOffsetsFromProcessing)
+    public void checkpoint(Dictionary<TopicPartition, long> checkpointableOffsetsFromProcessing)
 {
         ensureStoresRegistered();
 
@@ -394,14 +394,14 @@ public class ProcessorStateManager : StateManager {
             checkpointFile.write(checkpointFileCache);
         } catch (IOException e)
 {
-            log.warn("Failed to write offset checkpoint file to [{}]", checkpointFile, e];
+            log.LogWarning("Failed to write offset checkpoint file to [{}]", checkpointFile, e);
         }
     }
 
-    private void updateCheckpointFileCache(Dictionary<TopicPartition, Long> checkpointableOffsetsFromProcessing)
+    private void updateCheckpointFileCache(Dictionary<TopicPartition, long> checkpointableOffsetsFromProcessing)
 {
-        Set<TopicPartition> validCheckpointableTopics = validCheckpointableTopics();
-        Dictionary<TopicPartition, Long> restoredOffsets = validCheckpointableOffsets(
+        HashSet<TopicPartition> validCheckpointableTopics = validCheckpointableTopics();
+        Dictionary<TopicPartition, long> restoredOffsets = validCheckpointableOffsets(
             changelogReader.restoredOffsets(),
             validCheckpointableTopics
         );
@@ -412,23 +412,23 @@ public class ProcessorStateManager : StateManager {
 {
                 // if we have just recently processed some offsets,
                 // store the last offset + 1 (the log position after restoration)
-                checkpointFileCache.Add(topicPartition, checkpointableOffsetsFromProcessing[topicPartition) + 1];
+                checkpointFileCache.Add(topicPartition, checkpointableOffsetsFromProcessing[topicPartition) + 1);
             } else if (standbyRestoredOffsets.ContainsKey(topicPartition))
 {
                 // or if we restored some offset as a standby task, use it
-                checkpointFileCache.Add(topicPartition, standbyRestoredOffsets[topicPartition)];
+                checkpointFileCache.Add(topicPartition, standbyRestoredOffsets[topicPartition));
             } else if (restoredOffsets.ContainsKey(topicPartition))
 {
                 // or if we restored some offset as an active task, use it
-                checkpointFileCache.Add(topicPartition, restoredOffsets[topicPartition)];
+                checkpointFileCache.Add(topicPartition, restoredOffsets[topicPartition));
             } else if (checkpointFileCache.ContainsKey(topicPartition))
 {
                 // or if we have a prior value we've cached (and written to the checkpoint file), then keep it
             } else {
                 // As a last resort, fall back to the offset we loaded from the checkpoint file at startup, but
                 // only if the offset is actually valid for our current state stores.
-                Long loadedOffset =
-                    validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics)[topicPartition];
+                long loadedOffset =
+                    validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics)[topicPartition);
                 if (loadedOffset != null)
 {
                     checkpointFileCache.Add(topicPartition, loadedOffset);
@@ -476,11 +476,11 @@ public class ProcessorStateManager : StateManager {
         }
     }
 
-    private Set<TopicPartition> validCheckpointableTopics()
+    private HashSet<TopicPartition> validCheckpointableTopics()
 {
         // it's only valid to record checkpoints for registered stores that are both persistent and change-logged
 
-        Set<TopicPartition> result = new HashSet<>(storeToChangelogTopic.size());
+        HashSet<TopicPartition> result = new HashSet<>(storeToChangelogTopic.size());
         foreach (Map.Entry<string, string> storeToChangelog in storeToChangelogTopic.entrySet())
 {
             string storeName = storeToChangelog.getKey();
@@ -490,25 +490,25 @@ public class ProcessorStateManager : StateManager {
 {
 
                 string changelogTopic = storeToChangelog.getValue();
-                result.add(new TopicPartition(changelogTopic, getPartition(changelogTopic)));
+                result.Add(new TopicPartition(changelogTopic, getPartition(changelogTopic)));
             }
         }
         return result;
     }
 
-    private static Dictionary<TopicPartition, Long> validCheckpointableOffsets(
-        Dictionary<TopicPartition, Long> checkpointableOffsets,
-        Set<TopicPartition> validCheckpointableTopics)
+    private static Dictionary<TopicPartition, long> validCheckpointableOffsets(
+        Dictionary<TopicPartition, long> checkpointableOffsets,
+        HashSet<TopicPartition> validCheckpointableTopics)
 {
 
-        Dictionary<TopicPartition, Long> result = new HashMap<>(checkpointableOffsets.size());
+        Dictionary<TopicPartition, long> result = new HashMap<>(checkpointableOffsets.size());
 
-        foreach (Map.Entry<TopicPartition, Long> topicToCheckpointableOffset in checkpointableOffsets.entrySet())
+        foreach (Map.Entry<TopicPartition, long> topicToCheckpointableOffset in checkpointableOffsets.entrySet())
 {
             TopicPartition topic = topicToCheckpointableOffset.getKey();
             if (validCheckpointableTopics.contains(topic))
 {
-                Long checkpointableOffset = topicToCheckpointableOffset.getValue();
+                long checkpointableOffset = topicToCheckpointableOffset.getValue();
                 result.Add(topic, checkpointableOffset);
             }
         }

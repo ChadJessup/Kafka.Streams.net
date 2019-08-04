@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,45 +16,45 @@
  */
 namespace Kafka.streams;
 
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.AbstractConfig;
-import org.apache.kafka.common.config.ConfigDef;
-import org.apache.kafka.common.config.ConfigDef.Importance;
-import org.apache.kafka.common.config.ConfigDef.Type;
-import org.apache.kafka.common.config.ConfigException;
-import org.apache.kafka.common.config.TopicConfig;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler;
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler;
-import org.apache.kafka.streams.errors.LogAndFailExceptionHandler;
-import org.apache.kafka.streams.errors.ProductionExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.DefaultPartitionGrouper;
-import org.apache.kafka.streams.processor.FailOnInvalidTimestamp;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.processor.internals.StreamsPartitionAssignor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
-import static org.apache.kafka.common.config.ConfigDef.Range.atLeast;
-import static org.apache.kafka.common.config.ConfigDef.Range.between;
-import static org.apache.kafka.common.config.ConfigDef.ValidString.in;
-import static org.apache.kafka.common.requests.IsolationLevel.READ_COMMITTED;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Configuration for a {@link KafkaStreams} instance.
@@ -153,7 +153,7 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Prefix used to isolate {@link KafkaConsumer consumer} configs from other client configs.
-     * It is recommended to use {@link #consumerPrefix(string)} to add this prefix to {@link ConsumerConfig consumer
+     * It is recommended to use {@link #consumerPrefix(string)} to.Add this prefix to {@link ConsumerConfig consumer
      * properties}.
      */
     @SuppressWarnings("WeakerAccess")
@@ -191,7 +191,7 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Prefix used to isolate {@link KafkaProducer producer} configs from other client configs.
-     * It is recommended to use {@link #producerPrefix(string)} to add this prefix to {@link ProducerConfig producer
+     * It is recommended to use {@link #producerPrefix(string)} to.Add this prefix to {@link ProducerConfig producer
      * properties}.
      */
     @SuppressWarnings("WeakerAccess")
@@ -199,7 +199,7 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Prefix used to isolate {@link Admin admin} configs from other client configs.
-     * It is recommended to use {@link #adminClientPrefix(string)} to add this prefix to {@link ProducerConfig producer
+     * It is recommended to use {@link #adminClientPrefix(string)} to.Add this prefix to {@link ProducerConfig producer
      * properties}.
      */
     @SuppressWarnings("WeakerAccess")
@@ -464,9 +464,9 @@ public class StreamsConfig : AbstractConfig {
         "When upgrading from 1.2 to a newer version it is not required to specify this config." +
         "Default is null. Accepted values are \"" + UPGRADE_FROM_0100 + "\", \"" + UPGRADE_FROM_0101 + "\", \"" + UPGRADE_FROM_0102 + "\", \"" + UPGRADE_FROM_0110 + "\", \"" + UPGRADE_FROM_10 + "\", \"" + UPGRADE_FROM_11 + "\" (for upgrading from the corresponding old version).";
 
-    /** {@code windowstore.changelog.additional.retention.ms} */
+    /** {@code windowstore.changelog.Additional.retention.ms} */
     @SuppressWarnings("WeakerAccess")
-    public static  string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG = "windowstore.changelog.additional.retention.ms";
+    public static  string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG = "windowstore.changelog.Additional.retention.ms";
     private static  string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOC = "Added to a windows maintainMs to ensure data is not deleted from the log prematurely. Allows for clock drift. Default is 1 day";
 
     private static  string[] NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS = new string[] {ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG};
@@ -861,7 +861,7 @@ public class StreamsConfig : AbstractConfig {
          Map<string, object> configUpdates =
             CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
-         bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG)];
+         bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG));
         if (eosEnabled && !originals().ContainsKey(COMMIT_INTERVAL_MS_CONFIG))
 {
             log.LogDebug("Using {} default value of {} as exactly once is enabled.",
@@ -884,7 +884,7 @@ public class StreamsConfig : AbstractConfig {
         consumerProps.putAll(clientProvidedProps);
 
         // bootstrap.servers should be from StreamsConfig
-        consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG)];
+        consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG));
 
         return consumerProps;
     }
@@ -937,7 +937,7 @@ public class StreamsConfig : AbstractConfig {
 {
                     if (!clientProvidedProps[config).Equals(CONSUMER_DEFAULT_OVERRIDES[config)))
 {
-                        log.warn(string.Format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps[config),  CONSUMER_DEFAULT_OVERRIDES[config))];
+                        log.LogWarning(string.Format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps[config),  CONSUMER_DEFAULT_OVERRIDES[config)));
                         clientProvidedProps.Remove(config);
                     }
                 } else if (eosEnabled)
@@ -946,7 +946,7 @@ public class StreamsConfig : AbstractConfig {
 {
                         if (!clientProvidedProps[config).Equals(CONSUMER_EOS_OVERRIDES[config)))
 {
-                            log.warn(string.Format(nonConfigurableConfigMessage,
+                            log.LogWarning(string.Format(nonConfigurableConfigMessage,
                                     "consumer", config, eosMessage, clientProvidedProps[config), CONSUMER_EOS_OVERRIDES[config))];
                             clientProvidedProps.Remove(config);
                         }
@@ -954,7 +954,7 @@ public class StreamsConfig : AbstractConfig {
 {
                         if (!clientProvidedProps[config).Equals(PRODUCER_EOS_OVERRIDES[config)))
 {
-                            log.warn(string.Format(nonConfigurableConfigMessage,
+                            log.LogWarning(string.Format(nonConfigurableConfigMessage,
                                     "producer", config, eosMessage, clientProvidedProps[config), PRODUCER_EOS_OVERRIDES[config))];
                             clientProvidedProps.Remove(config);
                         }
@@ -1013,17 +1013,17 @@ public class StreamsConfig : AbstractConfig {
         // this is a hack to work around StreamsConfig constructor inside StreamsPartitionAssignor to avoid casting
         consumerProps.Add(APPLICATION_ID_CONFIG, groupId);
 
-        // add group id, client id with stream client id prefix, and group instance id
+        //.Add group id, client id with stream client id prefix, and group instance id
         consumerProps.Add(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         consumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
-         string groupInstanceId = (string) consumerProps[ConsumerConfig.GROUP_INSTANCE_ID_CONFIG];
+         string groupInstanceId = (string) consumerProps[ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
         // Suffix each thread consumer with thread.id to enforce uniqueness of group.instance.id.
         if (groupInstanceId != null)
 {
             consumerProps.Add(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, groupInstanceId + "-" + threadIdx);
         }
 
-        // add configs required for stream partition assignor
+        //.Add configs required for stream partition assignor
         consumerProps.Add(UPGRADE_FROM_CONFIG, getString(UPGRADE_FROM_CONFIG));
         consumerProps.Add(REPLICATION_FACTOR_CONFIG, getInt(REPLICATION_FACTOR_CONFIG));
         consumerProps.Add(APPLICATION_SERVER_CONFIG, getString(APPLICATION_SERVER_CONFIG));
@@ -1031,20 +1031,20 @@ public class StreamsConfig : AbstractConfig {
         consumerProps.Add(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.class.getName());
         consumerProps.Add(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getLong(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
-        // add admin retries configs for creating topics
+        //.Add admin retries configs for creating topics
          AdminClientConfig adminClientDefaultConfig = new AdminClientConfig(getClientPropsWithPrefix(ADMIN_CLIENT_PREFIX, AdminClientConfig.configNames()));
         consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
         consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
-        // verify that producer batch config is no larger than segment size, then add topic configs required for creating topics
+        // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
          Map<string, object> topicProps = originalsWithPrefix(TOPIC_PREFIX, false);
          Map<string, object> producerProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
         if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
             producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
 {
-             int segmentSize = Integer.parseInt(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString()];
-             int batchSize = Integer.parseInt(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString()];
+             int segmentSize = Integer.parseInt(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString());
+             int batchSize = Integer.parseInt(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString());
 
             if (segmentSize < batchSize)
 {
@@ -1086,7 +1086,7 @@ public class StreamsConfig : AbstractConfig {
 
         // no need to set group id for a restore consumer
         baseConsumerProps.Remove(ConsumerConfig.GROUP_ID_CONFIG);
-        // add client id with stream client id prefix
+        //.Add client id with stream client id prefix
         baseConsumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
         baseConsumerProps.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
 
@@ -1120,7 +1120,7 @@ public class StreamsConfig : AbstractConfig {
 
         // no need to set group id for a global consumer
         baseConsumerProps.Remove(ConsumerConfig.GROUP_ID_CONFIG);
-        // add client id with stream client id prefix
+        //.Add client id with stream client id prefix
         baseConsumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId + "-global-consumer");
         baseConsumerProps.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
 
@@ -1148,8 +1148,8 @@ public class StreamsConfig : AbstractConfig {
         props.putAll(getClientCustomProps());
         props.putAll(clientProvidedProps);
 
-        props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG)];
-        // add client id with stream client id prefix
+        props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG));
+        //.Add client id with stream client id prefix
         props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
 
         return props;
@@ -1169,14 +1169,14 @@ public class StreamsConfig : AbstractConfig {
         props.putAll(getClientCustomProps());
         props.putAll(clientProvidedProps);
 
-        // add client id with stream client id prefix
+        //.Add client id with stream client id prefix
         props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
 
         return props;
     }
 
     private Map<string, object> getClientPropsWithPrefix( string prefix,
-                                                          Set<string> configNames)
+                                                          HashSet<string> configNames)
 {
          Map<string, object> props = clientProps(configNames, originals());
         props.putAll(originalsWithPrefix(prefix));
@@ -1185,7 +1185,7 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Get a map of custom configs by removing from the originals all the Streams, Consumer, Producer, and AdminClient configs.
-     * Prefixed properties are also removed because they are already added by {@link #getClientPropsWithPrefix(string, Set)}.
+     * Prefixed properties are also removed because they are already.Added by {@link #getClientPropsWithPrefix(string, Set)}.
      * This allows to set a custom property for a specific client alone if specified using a prefix, or for all
      * when no prefix is used.
      *
@@ -1271,7 +1271,7 @@ public class StreamsConfig : AbstractConfig {
      * @param originals   The original configs to be filtered.
      * @return client config with any overrides
      */
-    private Map<string, object> clientProps( Set<string> configNames,
+    private Map<string, object> clientProps( HashSet<string> configNames,
                                              Map<string, object> originals)
 {
         // iterate all client config names, filter out non-client configs from the original
@@ -1281,7 +1281,7 @@ public class StreamsConfig : AbstractConfig {
 {
             if (originals.ContainsKey(configName))
 {
-                parsed.Add(configName, originals[configName)];
+                parsed.Add(configName, originals[configName));
             }
         }
 

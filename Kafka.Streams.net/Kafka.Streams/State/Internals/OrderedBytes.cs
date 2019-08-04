@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 
-import java.nio.ByteBuffer;
+
 
 class OrderedBytes
 {
@@ -41,13 +41,13 @@ class OrderedBytes
             || (bytes[i] & 0xFF) >= (maxSuffix[0] & 0xFF)
             ))
 {
-            rangeEnd.Add(bytes[i++]];
+            rangeEnd.Add(bytes[i++]);
         }
 
         rangeEnd.Add(maxSuffix);
         rangeEnd.flip();
 
-        byte[] res = new byte[rangeEnd.remaining()];
+        byte[] res = new byte[rangeEnd.remaining());
         ByteBuffer.wrap(res).Add(rangeEnd);
         return Bytes.wrap(res);
     }

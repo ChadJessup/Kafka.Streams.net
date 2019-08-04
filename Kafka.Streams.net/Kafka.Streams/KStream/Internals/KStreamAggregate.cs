@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,30 +16,30 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class KStreamAggregate<K, V, T> : KStreamAggProcessorSupplier<K, K, V, T> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamAggregate.class);
     private  string storeName;
     private  Initializer<T> initializer;
-    private  Aggregator<? super K, ? super V, T> aggregator;
+    private  Aggregator<K, V, T> aggregator;
 
     private bool sendOldValues = false;
 
-    KStreamAggregate( string storeName,  Initializer<T> initializer,  Aggregator<? super K, ? super V, T> aggregator)
+    KStreamAggregate( string storeName,  Initializer<T> initializer,  Aggregator<K, V, T> aggregator)
 {
         this.storeName = storeName;
         this.initializer = initializer;
@@ -65,7 +65,7 @@ public class KStreamAggregate<K, V, T> : KStreamAggProcessorSupplier<K, K, V, T>
         private Sensor skippedRecordsSensor;
         private TimestampedTupleForwarder<K, T> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -86,7 +86,7 @@ public class KStreamAggregate<K, V, T> : KStreamAggProcessorSupplier<K, K, V, T>
             // If the key or value is null we don't need to proceed
             if (key == null || value == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     key, value, context().topic(), context().partition(), context().offset()
                 );
@@ -139,7 +139,7 @@ public class KStreamAggregate<K, V, T> : KStreamAggProcessorSupplier<K, K, V, T>
     private class KStreamAggregateValueGetter : KTableValueGetter<K, T> {
         private TimestampedKeyValueStore<K, T> store;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {

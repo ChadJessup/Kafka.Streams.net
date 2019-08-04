@@ -165,7 +165,7 @@ public class LogContext {
 {
             if (logger.isTraceEnabled())
 {
-                writeLog(null, LocationAwareLogger.TRACE_INT, format, new Object[]{arg}, null];
+                writeLog(null, LocationAwareLogger.TRACE_INT, format, new Object[]{arg}, null);
             }
         }
 
@@ -174,7 +174,7 @@ public class LogContext {
 {
             if (logger.isTraceEnabled())
 {
-                writeLog(null, LocationAwareLogger.TRACE_INT, format, new Object[]{arg1, arg2}, null];
+                writeLog(null, LocationAwareLogger.TRACE_INT, format, new Object[]{arg1, arg2}, null);
             }
         }
 
@@ -210,7 +210,7 @@ public class LogContext {
 {
             if (logger.isTraceEnabled())
 {
-                writeLog(marker, LocationAwareLogger.TRACE_INT, format, new Object[]{arg}, null];
+                writeLog(marker, LocationAwareLogger.TRACE_INT, format, new Object[]{arg}, null);
             }
         }
 
@@ -219,7 +219,7 @@ public class LogContext {
 {
             if (logger.isTraceEnabled())
 {
-                writeLog(marker, LocationAwareLogger.TRACE_INT, format, new Object[]{arg1, arg2}, null];
+                writeLog(marker, LocationAwareLogger.TRACE_INT, format, new Object[]{arg1, arg2}, null);
             }
         }
 
@@ -255,7 +255,7 @@ public class LogContext {
 {
             if (logger.isDebugEnabled())
 {
-                writeLog(null, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg}, null];
+                writeLog(null, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg}, null);
             }
         }
 
@@ -264,7 +264,7 @@ public class LogContext {
 {
             if (logger.isDebugEnabled())
 {
-                writeLog(null, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg1, arg2}, null];
+                writeLog(null, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg1, arg2}, null);
             }
         }
 
@@ -300,7 +300,7 @@ public class LogContext {
 {
             if (logger.isDebugEnabled())
 {
-                writeLog(marker, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg}, null];
+                writeLog(marker, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg}, null);
             }
         }
 
@@ -309,7 +309,7 @@ public class LogContext {
 {
             if (logger.isDebugEnabled())
 {
-                writeLog(marker, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg1, arg2}, null];
+                writeLog(marker, LocationAwareLogger.DEBUG_INT, format, new Object[]{arg1, arg2}, null);
             }
         }
 
@@ -332,61 +332,61 @@ public class LogContext {
         }
 
         
-        public void warn(String message)
+        public void LogWarning(String message)
 {
             writeLog(null, LocationAwareLogger.WARN_INT, message, null, null);
         }
 
         
-        public void warn(String format, Object arg)
+        public void LogWarning(String format, Object arg)
 {
-            writeLog(null, LocationAwareLogger.WARN_INT, format, new Object[]{arg}, null];
+            writeLog(null, LocationAwareLogger.WARN_INT, format, new Object[]{arg}, null);
         }
 
         
-        public void warn(String message, Object arg1, Object arg2)
+        public void LogWarning(String message, Object arg1, Object arg2)
 {
-            writeLog(null, LocationAwareLogger.WARN_INT, message, new Object[]{arg1, arg2}, null];
+            writeLog(null, LocationAwareLogger.WARN_INT, message, new Object[]{arg1, arg2}, null);
         }
 
         
-        public void warn(String format, Object[] args)
+        public void LogWarning(String format, Object[] args)
 {
             writeLog(null, LocationAwareLogger.WARN_INT, format, args, null);
         }
 
         
-        public void warn(String msg, Throwable t)
+        public void LogWarning(String msg, Throwable t)
 {
             writeLog(null, LocationAwareLogger.WARN_INT, msg, null, t);
         }
 
         
-        public void warn(Marker marker, String msg)
+        public void LogWarning(Marker marker, String msg)
 {
             writeLog(marker, LocationAwareLogger.WARN_INT, msg, null, null);
         }
 
         
-        public void warn(Marker marker, String format, Object arg)
+        public void LogWarning(Marker marker, String format, Object arg)
 {
-            writeLog(marker, LocationAwareLogger.WARN_INT, format, new Object[]{arg}, null];
+            writeLog(marker, LocationAwareLogger.WARN_INT, format, new Object[]{arg}, null);
         }
 
         
-        public void warn(Marker marker, String format, Object arg1, Object arg2)
+        public void LogWarning(Marker marker, String format, Object arg1, Object arg2)
 {
-            writeLog(marker, LocationAwareLogger.WARN_INT, format, new Object[]{arg1, arg2}, null];
+            writeLog(marker, LocationAwareLogger.WARN_INT, format, new Object[]{arg1, arg2}, null);
         }
 
         
-        public void warn(Marker marker, String format, Object[] arguments)
+        public void LogWarning(Marker marker, String format, Object[] arguments)
 {
             writeLog(marker, LocationAwareLogger.WARN_INT, format, arguments, null);
         }
 
         
-        public void warn(Marker marker, String msg, Throwable t)
+        public void LogWarning(Marker marker, String msg, Throwable t)
 {
             writeLog(marker, LocationAwareLogger.WARN_INT, msg, null, t);
         }
@@ -400,13 +400,13 @@ public class LogContext {
         
         public void error(String format, Object arg)
 {
-            writeLog(null, LocationAwareLogger.ERROR_INT, format, new Object[]{arg}, null];
+            writeLog(null, LocationAwareLogger.ERROR_INT, format, new Object[]{arg}, null);
         }
 
         
         public void error(String format, Object arg1, Object arg2)
 {
-            writeLog(null, LocationAwareLogger.ERROR_INT, format, new Object[]{arg1, arg2}, null];
+            writeLog(null, LocationAwareLogger.ERROR_INT, format, new Object[]{arg1, arg2}, null);
         }
 
         
@@ -430,13 +430,13 @@ public class LogContext {
         
         public void error(Marker marker, String format, Object arg)
 {
-            writeLog(marker, LocationAwareLogger.ERROR_INT, format, new Object[]{arg}, null];
+            writeLog(marker, LocationAwareLogger.ERROR_INT, format, new Object[]{arg}, null);
         }
 
         
         public void error(Marker marker, String format, Object arg1, Object arg2)
 {
-            writeLog(marker, LocationAwareLogger.ERROR_INT, format, new Object[]{arg1, arg2}, null];
+            writeLog(marker, LocationAwareLogger.ERROR_INT, format, new Object[]{arg1, arg2}, null);
         }
 
         
@@ -460,13 +460,13 @@ public class LogContext {
         
         public void info(String format, Object arg)
 {
-            writeLog(null, LocationAwareLogger.INFO_INT, format, new Object[]{arg}, null];
+            writeLog(null, LocationAwareLogger.INFO_INT, format, new Object[]{arg}, null);
         }
 
         
         public void info(String format, Object arg1, Object arg2)
 {
-            writeLog(null, LocationAwareLogger.INFO_INT, format, new Object[]{arg1, arg2}, null];
+            writeLog(null, LocationAwareLogger.INFO_INT, format, new Object[]{arg1, arg2}, null);
         }
 
         
@@ -490,13 +490,13 @@ public class LogContext {
         
         public void info(Marker marker, String format, Object arg)
 {
-            writeLog(marker, LocationAwareLogger.INFO_INT, format, new Object[]{arg}, null];
+            writeLog(marker, LocationAwareLogger.INFO_INT, format, new Object[]{arg}, null);
         }
 
         
         public void info(Marker marker, String format, Object arg1, Object arg2)
 {
-            writeLog(marker, LocationAwareLogger.INFO_INT, format, new Object[]{arg1, arg2}, null];
+            writeLog(marker, LocationAwareLogger.INFO_INT, format, new Object[]{arg1, arg2}, null);
         }
 
         
@@ -783,63 +783,63 @@ public class LogContext {
         }
 
         
-        public void warn(String message)
+        public void LogWarning(String message)
 {
-            logger.warn(addPrefix(message));
+            logger.LogWarning(addPrefix(message));
         }
 
         
-        public void warn(String message, Object arg)
+        public void LogWarning(String message, Object arg)
 {
-            logger.warn(addPrefix(message), arg);
+            logger.LogWarning(addPrefix(message), arg);
         }
 
         
-        public void warn(String message, Object arg1, Object arg2)
+        public void LogWarning(String message, Object arg1, Object arg2)
 {
-            logger.warn(addPrefix(message), arg1, arg2);
+            logger.LogWarning(addPrefix(message), arg1, arg2);
         }
 
         
-        public void warn(String message, Object[] args)
+        public void LogWarning(String message, Object[] args)
 {
-            logger.warn(addPrefix(message), args);
+            logger.LogWarning(addPrefix(message), args);
         }
 
         
-        public void warn(String msg, Throwable t)
+        public void LogWarning(String msg, Throwable t)
 {
-            logger.warn(addPrefix(msg), t);
+            logger.LogWarning(addPrefix(msg), t);
         }
 
         
-        public void warn(Marker marker, String msg)
+        public void LogWarning(Marker marker, String msg)
 {
-            logger.warn(marker, addPrefix(msg));
+            logger.LogWarning(marker, addPrefix(msg));
         }
 
         
-        public void warn(Marker marker, String format, Object arg)
+        public void LogWarning(Marker marker, String format, Object arg)
 {
-            logger.warn(marker, addPrefix(format), arg);
+            logger.LogWarning(marker, addPrefix(format), arg);
         }
 
         
-        public void warn(Marker marker, String format, Object arg1, Object arg2)
+        public void LogWarning(Marker marker, String format, Object arg1, Object arg2)
 {
-            logger.warn(marker, addPrefix(format), arg1, arg2);
+            logger.LogWarning(marker, addPrefix(format), arg1, arg2);
         }
 
         
-        public void warn(Marker marker, String format, Object[] arguments)
+        public void LogWarning(Marker marker, String format, Object[] arguments)
 {
-            logger.warn(marker, addPrefix(format), arguments);
+            logger.LogWarning(marker, addPrefix(format), arguments);
         }
 
         
-        public void warn(Marker marker, String msg, Throwable t)
+        public void LogWarning(Marker marker, String msg, Throwable t)
 {
-            logger.warn(marker, addPrefix(msg), t);
+            logger.LogWarning(marker, addPrefix(msg), t);
         }
 
         

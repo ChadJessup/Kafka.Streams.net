@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -20,8 +20,8 @@ using Kafka.Common.TopicPartition;
 using Kafka.Common.annotation.InterfaceStability;
 using Kafka.Streams.KafkaStreams;
 
-import java.util.Collections;
-import java.util.Set;
+
+
 
 /**
  * Represents the state of an instance (process) in a {@link KafkaStreams} application.
@@ -42,12 +42,12 @@ public class StreamsMetadata
                                                                             Collections.emptySet());
 
     private HostInfo hostInfo;
-    private Set<string> stateStoreNames;
-    private Set<TopicPartition> topicPartitions;
+    private HashSet<string> stateStoreNames;
+    private HashSet<TopicPartition> topicPartitions;
 
     public StreamsMetadata(HostInfo hostInfo,
-                           Set<string> stateStoreNames,
-                           Set<TopicPartition> topicPartitions)
+                           HashSet<string> stateStoreNames,
+                           HashSet<TopicPartition> topicPartitions)
 {
 
         this.hostInfo = hostInfo;
@@ -60,12 +60,12 @@ public class StreamsMetadata
         return hostInfo;
     }
 
-    public Set<string> stateStoreNames()
+    public HashSet<string> stateStoreNames()
 {
         return stateStoreNames;
     }
 
-    public Set<TopicPartition> topicPartitions()
+    public HashSet<TopicPartition> topicPartitions()
 {
         return topicPartitions;
     }

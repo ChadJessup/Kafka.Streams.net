@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.Utils.Time;
 using Kafka.Common.Utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.ProcessorStateException;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.TaskId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.channels.OverlappingFileLockException;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.regex.Pattern;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Manages the directories where the state of Tasks owned by a {@link StreamThread} are
@@ -85,13 +85,13 @@ public class StateDirectory {
         if (this.createStateDirectory && !baseDir.exists() && !baseDir.mkdirs())
 {
             throw new ProcessorStateException(
-                string.Format("base state directory [%s] doesn't exist and couldn't be created", stateDirName)];
+                string.Format("base state directory [%s] doesn't exist and couldn't be created", stateDirName));
         }
         stateDir = new File(baseDir, config.getString(StreamsConfig.APPLICATION_ID_CONFIG));
         if (this.createStateDirectory && !stateDir.exists() && !stateDir.mkdir())
 {
             throw new ProcessorStateException(
-                string.Format("state directory [%s] doesn't exist and couldn't be created", stateDir.getPath())];
+                string.Format("state directory [%s] doesn't exist and couldn't be created", stateDir.getPath()));
         }
     }
 
@@ -106,7 +106,7 @@ public class StateDirectory {
         if (createStateDirectory && !taskDir.exists() && !taskDir.mkdir())
 {
             throw new ProcessorStateException(
-                string.Format("task directory [%s] doesn't exist and couldn't be created", taskDir.getPath())];
+                string.Format("task directory [%s] doesn't exist and couldn't be created", taskDir.getPath()));
         }
         return taskDir;
     }
@@ -122,14 +122,14 @@ public class StateDirectory {
         if (createStateDirectory && !dir.exists() && !dir.mkdir())
 {
             throw new ProcessorStateException(
-                string.Format("global state directory [%s] doesn't exist and couldn't be created", dir.getPath())];
+                string.Format("global state directory [%s] doesn't exist and couldn't be created", dir.getPath()));
         }
         return dir;
     }
 
     private string logPrefix()
 {
-        return string.Format("stream-thread [%s]", Thread.currentThread().getName()];
+        return string.Format("stream-thread [%s]", Thread.currentThread().getName());
     }
 
     /**
@@ -138,7 +138,7 @@ public class StateDirectory {
      * @return true if successful
      * @throws IOException
      */
-    synchronized bool lock(TaskId taskId) throws IOException {
+    synchronized bool lock(TaskId taskId){
         if (!createStateDirectory)
 {
             return true;
@@ -188,7 +188,7 @@ public class StateDirectory {
         return lock != null;
     }
 
-    synchronized bool lockGlobalState() throws IOException {
+    synchronized bool lockGlobalState(){
         if (!createStateDirectory)
 {
             return true;
@@ -225,7 +225,7 @@ public class StateDirectory {
         return true;
     }
 
-    synchronized void unlockGlobalState() throws IOException {
+    synchronized void unlockGlobalState(){
         if (globalStateLock == null)
 {
             return;
@@ -241,7 +241,7 @@ public class StateDirectory {
     /**
      * Unlock the state directory for the given {@link TaskId}.
      */
-    synchronized void unlock(TaskId taskId) throws IOException {
+    synchronized void unlock(TaskId taskId){
         LockAndOwner lockAndOwner = locks[taskId];
         if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.currentThread().getName()))
 {
@@ -296,7 +296,7 @@ public class StateDirectory {
     }
 
     private synchronized void cleanRemovedTasks(long cleanupDelayMs,
-                                                bool manualUserCall) throws Exception {
+                                                bool manualUserCall){
         File[] taskDirs = listTaskDirectories();
         if (taskDirs == null || taskDirs.Length == 0)
 {
@@ -377,7 +377,7 @@ public class StateDirectory {
     }
 
     private FileChannel getOrCreateFileChannel(TaskId taskId,
-                                               Path lockPath) throws IOException {
+                                               Path lockPath){
         if (!channels.ContainsKey(taskId))
 {
             channels.Add(taskId, FileChannel.open(lockPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
@@ -385,7 +385,7 @@ public class StateDirectory {
         return channels[taskId];
     }
 
-    private FileLock tryLock(FileChannel channel) throws IOException {
+    private FileLock tryLock(FileChannel channel){
         try {
             return channel.tryLock();
         } catch (OverlappingFileLockException e)

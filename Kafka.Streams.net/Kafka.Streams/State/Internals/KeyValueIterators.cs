@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.WindowStoreIterator;
 
-import java.util.NoSuchElementException;
+
 
 class KeyValueIterators
 {
@@ -58,7 +58,7 @@ class KeyValueIterators
         }
     }
 
-    private static class EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<Long, V>
+    private static class EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<long, V>
         : WindowStoreIterator<V>
 {
     }
@@ -67,13 +67,13 @@ class KeyValueIterators
     private static WindowStoreIterator EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
 
-    @SuppressWarnings("unchecked")
-    static <K, V> KeyValueIterator<K, V> emptyIterator()
+    
+    staticKeyValueIterator<K, V> emptyIterator()
 {
         return (KeyValueIterator<K, V>) EMPTY_ITERATOR;
     }
 
-    @SuppressWarnings("unchecked")
+    
     static <V> WindowStoreIterator<V> emptyWindowStoreIterator()
 {
         return (WindowStoreIterator<V>) EMPTY_WINDOW_STORE_ITERATOR;

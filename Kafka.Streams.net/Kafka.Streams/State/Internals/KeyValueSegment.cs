@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Utils;
 using Kafka.Streams.Processor.IProcessorContext;
 
-import java.io.IOException;
-import java.util.Objects;
+
+
 
 class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
 {
@@ -41,7 +41,7 @@ class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
 
     public override int compareTo(KeyValueSegment segment)
 {
-        return Long.compare(id, segment.id);
+        return long.compare(id, segment.id);
     }
 
     public override void openDB(IProcessorContext context)

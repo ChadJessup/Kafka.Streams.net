@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.Time;
@@ -52,9 +52,9 @@ class MeteredWindowStoreIterator<V> : WindowStoreIterator<V>
         return iter.hasNext();
     }
 
-    public override KeyValue<Long, V> next()
+    public override KeyValue<long, V> next()
 {
-        KeyValue<Long, byte[]> next = iter.next();
+        KeyValue<long, byte[]> next = iter.next();
         return KeyValue.pair(next.key, serdes.valueFrom(next.value));
     }
 
@@ -74,7 +74,7 @@ class MeteredWindowStoreIterator<V> : WindowStoreIterator<V>
         }
     }
 
-    public override Long peekNextKey()
+    public override long peekNextKey()
 {
         return iter.peekNextKey();
     }

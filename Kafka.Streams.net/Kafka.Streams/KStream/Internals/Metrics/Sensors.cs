@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,22 +16,22 @@
  */
 namespace Kafka.streams.kstream.internals.metrics;
 
-import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.common.metrics.stats.Avg;
-import org.apache.kafka.common.metrics.stats.CumulativeSum;
-import org.apache.kafka.common.metrics.stats.Max;
-import org.apache.kafka.common.metrics.stats.Rate;
-import org.apache.kafka.common.metrics.stats.WindowedSum;
-import org.apache.kafka.streams.processor.internals.InternalProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
 
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.LATE_RECORD_DROP;
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG;
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.PROCESSOR_NODE_METRICS_GROUP;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class Sensors {
     private Sensors() {}
@@ -45,7 +45,7 @@ public class Sensors {
             LATE_RECORD_DROP,
             RecordingLevel.INFO
         );
-        StreamsMetricsImpl.addInvocationRateAndCount(
+        StreamsMetricsImpl.AddInvocationRateAndCount(
             sensor,
             PROCESSOR_NODE_METRICS_GROUP,
             metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, context.currentNode().name()),
@@ -67,7 +67,7 @@ public class Sensors {
          Map<string, string> tags = metrics.tagMap(
             "task-id", context.taskId().ToString()
         );
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 "record-lateness-avg",
                 "stream-task-metrics",
@@ -75,7 +75,7 @@ public class Sensors {
                 tags),
             new Avg()
         );
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 "record-lateness-max",
                 "stream-task-metrics",
@@ -102,7 +102,7 @@ public class Sensors {
             PROCESSOR_NODE_ID_TAG, context.currentNode().name()
         );
 
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 "suppression-emit-rate",
                 PROCESSOR_NODE_METRICS_GROUP,
@@ -111,7 +111,7 @@ public class Sensors {
             ),
             new Rate(TimeUnit.SECONDS, new WindowedSum())
         );
-        sensor.add(
+        sensor.Add(
             new MetricName(
                 "suppression-emit-total",
                 PROCESSOR_NODE_METRICS_GROUP,

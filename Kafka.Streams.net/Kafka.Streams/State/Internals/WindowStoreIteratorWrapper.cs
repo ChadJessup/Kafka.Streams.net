@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -56,9 +56,9 @@ class WindowStoreIteratorWrapper
         }
 
         
-        public Long peekNextKey()
+        public long peekNextKey()
 {
-            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()()];
+            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()());
         }
 
         
@@ -68,10 +68,10 @@ class WindowStoreIteratorWrapper
         }
 
         
-        public KeyValue<Long, byte[]> next()
+        public KeyValue<long, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key()];
+            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key());
             return KeyValue.pair(timestamp, next.value);
         }
 
@@ -103,7 +103,7 @@ class WindowStoreIteratorWrapper
         
         public Windowed<Bytes> peekNextKey()
 {
-            byte[] nextKey = bytesIterator.peekNextKey()[];
+            byte[] nextKey = bytesIterator.peekNextKey()[);
             return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
         }
 
@@ -117,7 +117,7 @@ class WindowStoreIteratorWrapper
         public KeyValue<Windowed<Bytes>, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value];
+            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
         }
 
         

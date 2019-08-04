@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.ReadOnlyKeyValueStore;
 using Kafka.Streams.State.TimestampedKeyValueStore;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
 
 public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
 {
@@ -33,7 +33,7 @@ public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
 
     public override V get(K key)
 {
-        return getValueOrNull(inner[key)];
+        return getValueOrNull(inner[key));
     }
 
     public override KeyValueIterator<K, V> range(K from,

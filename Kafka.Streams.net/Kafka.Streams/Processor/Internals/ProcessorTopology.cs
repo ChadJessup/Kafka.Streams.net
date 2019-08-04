@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Internals
         private List<IStateStore> stateStores;
         private List<IStateStore> globalStateStores;
         private Dictionary<string, string> storeToChangelogTopic;
-        private Set<string> repartitionTopics;
+        private HashSet<string> repartitionTopics;
 
         public ProcessorTopology(List<ProcessorNode> processorNodes,
                                  Dictionary<string, SourceNode> sourcesByTopic,
@@ -39,7 +39,7 @@ namespace Kafka.Streams.Processor.Internals
                                  List<IStateStore> stateStores,
                                  List<IStateStore> globalStateStores,
                                  Dictionary<string, string> storeToChangelogTopic,
-                                 Set<string> repartitionTopics)
+                                 HashSet<string> repartitionTopics)
 {
             this.processorNodes = Collections.unmodifiableList(processorNodes);
             this.sourcesByTopic = Collections.unmodifiableMap(sourcesByTopic);
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Processor.Internals
             this.repartitionTopics = Collections.unmodifiableSet(repartitionTopics);
         }
 
-        public Set<string> sourceTopics()
+        public HashSet<string> sourceTopics()
 {
             return sourcesByTopic.keySet();
         }
@@ -60,12 +60,12 @@ namespace Kafka.Streams.Processor.Internals
             return sourcesByTopic[topic];
         }
 
-        public Set<SourceNode> sources()
+        public HashSet<SourceNode> sources()
 {
             return new HashSet<>(sourcesByTopic.values());
         }
 
-        public Set<string> sinkTopics()
+        public HashSet<string> sinkTopics()
 {
             return sinksByTopic.keySet();
         }
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Processor.Internals
                 return "";
             }
 
-            StringBuilder sb = new StringBuilder(indent + "\tchildren:\t["];
+            StringBuilder sb = new StringBuilder(indent + "\tchildren:\t[");
             foreach (var child in children)
 {
                 sb.Append(child.name);

@@ -27,9 +27,9 @@ namespace Kafka.Common.Metrics
      * Metrics metrics = new Metrics(); // this is the global repository of metrics and sensors
      * Sensor sensor = metrics.sensor(&quot;message-sizes&quot;);
      * MetricName metricName = new MetricName(&quot;message-size-avg&quot;, &quot;producer-metrics&quot;);
-     * sensor.add(metricName, new Avg());
+     * sensor.Add(metricName, new Avg());
      * metricName = new MetricName(&quot;message-size-max&quot;, &quot;producer-metrics&quot;);
-     * sensor.add(metricName, new Max());
+     * sensor.Add(metricName, new Max());
      *
      * // as messages are sent we record the sizes
      * sensor.record(messageSize);
@@ -163,7 +163,7 @@ namespace Kafka.Common.Metrics
         //   Dispose(false);
         // }
 
-        // This code added to correctly implement the disposable pattern.
+        // This code.Added to correctly implement the disposable pattern.
         public void Dispose()
         {
             // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
@@ -172,7 +172,7 @@ namespace Kafka.Common.Metrics
             // GC.SuppressFinalize(this);
         }
 
-        //void addMetric(metricName("count", "kafka-metrics-count", "total number of registered metrics"),
+        //void.AddMetric(metricName("count", "kafka-metrics-count", "total number of registered metrics"),
         //    new Measurable()
         //    {
         //        public double measure(MetricConfig config, long now)
@@ -188,7 +188,7 @@ namespace Kafka.Common.Metrics
          * @param name        The name of the metric
          * @param group       logical group name of the metrics to which this metric belongs
          * @param description A human-readable description to include in the metric
-         * @param tags        additional key/value attributes of the metric
+         * @param tags       .Additional key/value attributes of the metric
          */
         public MetricName metricName(string name, string group, string description, Dictionary<string, string> tags)
         {
@@ -229,7 +229,7 @@ namespace Kafka.Common.Metrics
          * @param name          The name of the metric
          * @param group         logical group name of the metrics to which this metric belongs
          * @param description   A human-readable description to include in the metric
-         * @param keyValue      additional key/value attributes of the metric (must come in pairs)
+         * @param keyValue     .Additional key/value attributes of the metric (must come in pairs)
          */
         public MetricName metricName(string name, string group, string description, string[] keyValue)
         {
@@ -260,7 +260,7 @@ namespace Kafka.Common.Metrics
 
             for (int i = 0; i < keyValue.Length; i += 2)
             {
-                tags.Add(keyValue[i], keyValue[i + 1]];
+                tags.Add(keyValue[i], keyValue[i + 1]);
             }
 
             return tags;
@@ -412,7 +412,7 @@ namespace Kafka.Common.Metrics
          * @param parents The parent sensors
          * @return The sensor that is created
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public Sensor sensor(string name, MetricConfig config, List<Sensor> parents)
         {
             return this.sensor(name, config, RecordingLevel.INFO, parents);
@@ -428,7 +428,7 @@ namespace Kafka.Common.Metrics
          * @param parents The parent sensors
          * @return The sensor that is created
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public Sensor sensor(string name, MetricConfig config, RecordingLevel recordingLevel, List<Sensor> parents)
         {
             return sensor(name, config, long.MaxValue, recordingLevel, parents);
@@ -445,7 +445,7 @@ namespace Kafka.Common.Metrics
          * @param recordingLevel The recording level.
          * @return The sensor that is created
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, RecordingLevel recordingLevel, List<Sensor> parents)
         {
             Sensor s = getSensor(name);
@@ -484,7 +484,7 @@ namespace Kafka.Common.Metrics
          * @param parents The parent sensors
          * @return The sensor that is created
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, List<Sensor> parents)
 {
             return this.sensor(name, config, inactiveSensorExpirationTimeSeconds, RecordingLevel.INFO, parents);
@@ -540,14 +540,14 @@ namespace Kafka.Common.Metrics
          * This is a way to expose existing values as metrics.
          *
          * This method is kept for binary compatibility purposes, it has the same behaviour as
-         * {@link #addMetric(MetricName, MetricValueProvider)}.
+         * {@link .AddMetric(MetricName, MetricValueProvider)}.
          *
          * @param metricName The name of the metric
          * @param measurable The measurable that will be measured by this metric
          */
-        public void addMetric(MetricName metricName, IMeasurable measurable)
+        public void.AddMetric(MetricName metricName, IMeasurable measurable)
 {
-            addMetric(metricName, null, measurable);
+           .AddMetric(metricName, null, measurable);
         }
 
         /**
@@ -555,26 +555,26 @@ namespace Kafka.Common.Metrics
          * This is a way to expose existing values as metrics.
          *
          * This method is kept for binary compatibility purposes, it has the same behaviour as
-         * {@link #addMetric(MetricName, MetricConfig, MetricValueProvider)}.
+         * {@link .AddMetric(MetricName, MetricConfig, MetricValueProvider)}.
          *
          * @param metricName The name of the metric
          * @param config The configuration to use when measuring this measurable
          * @param measurable The measurable that will be measured by this metric
          */
-        public void addMetric(MetricName metricName, MetricConfig config, IMeasurable measurable)
+        public void.AddMetric(MetricName metricName, MetricConfig config, IMeasurable measurable)
         {
-            addMetric(metricName, config, (IMetricValueProvider)measurable);
+           .AddMetric(metricName, config, (IMetricValueProvider)measurable);
         }
 
         /**
          * Add a metric to monitor an object that : MetricValueProvider. This metric won't be associated with any
-         * sensor. This is a way to expose existing values as metrics. User is expected to add any additional
+         * sensor. This is a way to expose existing values as metrics. User is expected to.Add any.Additional
          * synchronization to update and access metric values, if required.
          *
          * @param metricName The name of the metric
          * @param metricValueProvider The metric value provider associated with this metric
          */
-        public void addMetric(MetricName metricName, MetricConfig config, IMetricValueProvider metricValueProvider)
+        public void.AddMetric(MetricName metricName, MetricConfig config, IMetricValueProvider metricValueProvider)
         {
             var m = new KafkaMetric(
                 new object(),
@@ -588,15 +588,15 @@ namespace Kafka.Common.Metrics
 
         /**
          * Add a metric to monitor an object that : MetricValueProvider. This metric won't be associated with any
-         * sensor. This is a way to expose existing values as metrics. User is expected to add any additional
+         * sensor. This is a way to expose existing values as metrics. User is expected to.Add any.Additional
          * synchronization to update and access metric values, if required.
          *
          * @param metricName The name of the metric
          * @param metricValueProvider The metric value provider associated with this metric
          */
-        public void addMetric(MetricName metricName, IMetricValueProvider metricValueProvider)
+        public void.AddMetric(MetricName metricName, IMetricValueProvider metricValueProvider)
         {
-            addMetric(metricName, null, metricValueProvider);
+           .AddMetric(metricName, null, metricValueProvider);
         }
 
         /**
@@ -606,7 +606,7 @@ namespace Kafka.Common.Metrics
          * @param metricName The name of the metric
          * @return the removed `KafkaMetric` or null if no such metric exists
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public KafkaMetric removeMetric(MetricName metricName)
         {
             if (this.metrics.TryRemove(metricName, out var metric))
@@ -637,8 +637,8 @@ namespace Kafka.Common.Metrics
         /**
          * Add a MetricReporter
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
-        public void addReporter(IMetricsReporter reporter)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void.AddReporter(IMetricsReporter reporter)
         {
             reporter.init(new List<KafkaMetric>(metrics.Values));
             this.reporters.Add(reporter);
@@ -647,7 +647,7 @@ namespace Kafka.Common.Metrics
         /**
          * Remove a MetricReporter
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void removeReporter(IMetricsReporter reporter)
         {
             if (this.reporters.Remove(reporter))
@@ -656,7 +656,7 @@ namespace Kafka.Common.Metrics
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void registerMetric(KafkaMetric metric)
         {
             MetricName metricName = metric.metricName;

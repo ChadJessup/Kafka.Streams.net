@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,20 +16,20 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.annotation.InterfaceStability;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.QueryableStoreType;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * {@code KTable} is an abstraction of a <i>changelog stream</i> from a primary-keyed table.
@@ -88,7 +88,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that satisfy the given predicate
      * @see #filterNot(Predicate)
      */
-    KTable<K, V> filter( Predicate<? super K, ? super V> predicate);
+    KTable<K, V> filter( Predicate<K, V> predicate);
 
     /**
      * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -111,7 +111,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that satisfy the given predicate
      * @see #filterNot(Predicate)
      */
-    KTable<K, V> filter( Predicate<? super K, ? super V> predicate,  Named named);
+    KTable<K, V> filter( Predicate<K, V> predicate,  Named named);
 
     /**
      * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -149,7 +149,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that satisfy the given predicate
      * @see #filterNot(Predicate, Materialized)
      */
-    KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
+    KTable<K, V> filter( Predicate<K, V> predicate,
                          Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -189,7 +189,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that satisfy the given predicate
      * @see #filterNot(Predicate, Materialized)
      */
-    KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
+    KTable<K, V> filter( Predicate<K, V> predicate,
                          Named named,
                          Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -213,7 +213,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
      * @see #filter(Predicate)
      */
-    KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate);
+    KTable<K, V> filterNot( Predicate<K, V> predicate);
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -236,7 +236,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
      * @see #filter(Predicate)
      */
-    KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,  Named named);
+    KTable<K, V> filterNot( Predicate<K, V> predicate,  Named named);
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -273,7 +273,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
      * @see #filter(Predicate, Materialized)
      */
-    KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
+    KTable<K, V> filterNot( Predicate<K, V> predicate,
                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -312,7 +312,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
      * @see #filter(Predicate, Materialized)
      */
-    KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
+    KTable<K, V> filterNot( Predicate<K, V> predicate,
                             Named named,
                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -344,7 +344,7 @@ public interface KTable<K, V> {
      * @param <VR>   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper);
+    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -375,7 +375,7 @@ public interface KTable<K, V> {
      * @param <VR>   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                   Named named);
 
     /**
@@ -408,7 +408,7 @@ public interface KTable<K, V> {
      * @param <VR>   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper);
+    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -441,7 +441,7 @@ public interface KTable<K, V> {
      * @param <VR>   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                   Named named);
 
     /**
@@ -488,7 +488,7 @@ public interface KTable<K, V> {
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -536,7 +536,7 @@ public interface KTable<K, V> {
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                   Named named,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -585,7 +585,7 @@ public interface KTable<K, V> {
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -634,7 +634,7 @@ public interface KTable<K, V> {
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
+    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                   Named named,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -686,7 +686,7 @@ public interface KTable<K, V> {
      * @param <KR> the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( IKeyValueMapper<? super K, ? super V, ? : KR> mapper);
+    <KR> KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper);
 
     /**
      * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
@@ -715,7 +715,7 @@ public interface KTable<K, V> {
      * @param <KR> the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( IKeyValueMapper<? super K, ? super V, ? : KR> mapper,
+    <KR> KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper,
                                   Named named);
 
     /**
@@ -726,7 +726,7 @@ public interface KTable<K, V> {
      * @param suppressed Configuration object determining what, if any, updates to suppress
      * @return A new KTable with the desired suppression characteristics.
      */
-    KTable<K, V> suppress( Suppressed<? super K> suppressed);
+    KTable<K, V> suppress( Suppressed<K> suppressed);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -734,9 +734,9 @@ public interface KTable<K, V> {
      * A {@link ValueTransformerWithKey} (provided by the given {@link ValueTransformerWithKeySupplier}) is applied to each input
      * record value and computes a new value for it.
      * Thus, an input record {@code <K,V>} can be transformed into an output record {@code <K:V'>}.
-     * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing access to additional state-stores,
+     * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing access to.Additional state-stores,
      * and access to the {@link IProcessorContext}.
-     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and additional
+     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
      * periodic actions can be performed.
      * <p>
      * If the downstream topology uses aggregation functions, (e.g. {@link KGroupedTable#reduce}, {@link KGroupedTable#aggregate}, etc),
@@ -752,9 +752,9 @@ public interface KTable<K, V> {
      *                 Serdes.string(),
      *                 Serdes.string());
      * // register store
-     * builder.addStateStore(keyValueStoreBuilder);
+     * builder.AddStateStore(keyValueStoreBuilder);
      *
-     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
+     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState");
      * }</pre>
      * <p>
      * Within the {@link ValueTransformerWithKey}, the state is obtained via the
@@ -804,7 +804,7 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         string[] stateStoreNames];
 
     /**
@@ -813,9 +813,9 @@ public interface KTable<K, V> {
      * A {@link ValueTransformerWithKey} (provided by the given {@link ValueTransformerWithKeySupplier}) is applied to each input
      * record value and computes a new value for it.
      * Thus, an input record {@code <K,V>} can be transformed into an output record {@code <K:V'>}.
-     * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing access to additional state-stores,
+     * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing access to.Additional state-stores,
      * and access to the {@link IProcessorContext}.
-     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and additional
+     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
      * periodic actions can be performed.
      * <p>
      * If the downstream topology uses aggregation functions, (e.g. {@link KGroupedTable#reduce}, {@link KGroupedTable#aggregate}, etc),
@@ -831,9 +831,9 @@ public interface KTable<K, V> {
      *                 Serdes.string(),
      *                 Serdes.string());
      * // register store
-     * builder.addStateStore(keyValueStoreBuilder);
+     * builder.AddStateStore(keyValueStoreBuilder);
      *
-     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
+     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState");
      * }</pre>
      * <p>
      * Within the {@link ValueTransformerWithKey}, the state is obtained via the
@@ -884,7 +884,7 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Named named,
                                         string[] stateStoreNames];
 
@@ -895,10 +895,10 @@ public interface KTable<K, V> {
      * A {@link ValueTransformerWithKey} (provided by the given {@link ValueTransformerWithKeySupplier}) is applied to each input
      * record value and computes a new value for it.
      * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing stateful, rather than stateless,
-     * record-by-record operation, access to additional state-stores, and access to the {@link IProcessorContext}.
-     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and additional
+     * record-by-record operation, access to.Additional state-stores, and access to the {@link IProcessorContext}.
+     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
      * periodic actions can be performed.
-     * The resulting {@code KTable} is materialized into another state store (additional to the provided state store names)
+     * The resulting {@code KTable} is materialized into another state store .Additional to the provided state store names)
      * as specified by the user via {@link Materialized} parameter, and is queryable through its given name.
      * <p>
      * In order to assign a state, the state must be created and registered beforehand:
@@ -909,7 +909,7 @@ public interface KTable<K, V> {
      *                 Serdes.string(),
      *                 Serdes.string());
      * // register store
-     * builder.addStateStore(keyValueStoreBuilder);
+     * builder.AddStateStore(keyValueStoreBuilder);
      *
      * KTable outputTable = inputTable.transformValues(
      *     new ValueTransformerWithKeySupplier() { [] },
@@ -969,7 +969,7 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                         string[] stateStoreNames];
 
@@ -980,10 +980,10 @@ public interface KTable<K, V> {
      * A {@link ValueTransformerWithKey} (provided by the given {@link ValueTransformerWithKeySupplier}) is applied to each input
      * record value and computes a new value for it.
      * This is similar to {@link #mapValues(ValueMapperWithKey)}, but more flexible, allowing stateful, rather than stateless,
-     * record-by-record operation, access to additional state-stores, and access to the {@link IProcessorContext}.
-     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and additional
+     * record-by-record operation, access to.Additional state-stores, and access to the {@link IProcessorContext}.
+     * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress can be observed and.Additional
      * periodic actions can be performed.
-     * The resulting {@code KTable} is materialized into another state store (additional to the provided state store names)
+     * The resulting {@code KTable} is materialized into another state store .Additional to the provided state store names)
      * as specified by the user via {@link Materialized} parameter, and is queryable through its given name.
      * <p>
      * In order to assign a state, the state must be created and registered beforehand:
@@ -994,7 +994,7 @@ public interface KTable<K, V> {
      *                 Serdes.string(),
      *                 Serdes.string());
      * // register store
-     * builder.addStateStore(keyValueStoreBuilder);
+     * builder.AddStateStore(keyValueStoreBuilder);
      *
      * KTable outputTable = inputTable.transformValues(
      *     new ValueTransformerWithKeySupplier() { [] },
@@ -1055,7 +1055,7 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
+    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                         Named named,
                                         string[] stateStoreNames];
@@ -1090,7 +1090,7 @@ public interface KTable<K, V> {
      * @param <VR>     the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector);
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector);
 
     /**
      * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
@@ -1123,7 +1123,7 @@ public interface KTable<K, V> {
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KTable#groupBy(KeyValueMapper, Grouped)} instead
      */
     @Deprecated
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
                                             Serialized<KR, VR> serialized);
 
     /**
@@ -1156,7 +1156,7 @@ public interface KTable<K, V> {
      * @param <VR>          the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
                                             Grouped<KR, VR> grouped);
 
     /**
@@ -1232,7 +1232,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                 ValueJoiner<? super V, ? super VO, ? : VR> joiner);
+                                 ValueJoiner<V, VO, VR> joiner);
 
     /**
      * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1308,7 +1308,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                 ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                 ValueJoiner<V, VO, VR> joiner,
                                  Named named);
 
     /**
@@ -1387,7 +1387,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                 ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                 ValueJoiner<V, VO, VR> joiner,
                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -1467,7 +1467,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
-                                 ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                 ValueJoiner<V, VO, VR> joiner,
                                  Named named,
                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -1551,7 +1551,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                     ValueJoiner<? super V, ? super VO, ? : VR> joiner);
+                                     ValueJoiner<V, VO, VR> joiner);
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1634,7 +1634,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                     ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                     ValueJoiner<V, VO, VR> joiner,
                                      Named named);
 
     /**
@@ -1720,7 +1720,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                     ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                     ValueJoiner<V, VO, VR> joiner,
                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
@@ -1807,7 +1807,7 @@ public interface KTable<K, V> {
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
-                                     ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                     ValueJoiner<V, VO, VR> joiner,
                                      Named named,
                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
@@ -1890,7 +1890,7 @@ public interface KTable<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner);
+                                      ValueJoiner<V, VO, VR> joiner);
 
 
     /**
@@ -1973,7 +1973,7 @@ public interface KTable<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                      ValueJoiner<V, VO, VR> joiner,
                                       Named named);
 
     /**
@@ -2058,7 +2058,7 @@ public interface KTable<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                      ValueJoiner<V, VO, VR> joiner,
                                       Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
 
@@ -2145,7 +2145,7 @@ public interface KTable<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      */
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
-                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner,
+                                      ValueJoiner<V, VO, VR> joiner,
                                       Named named,
                                       Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 

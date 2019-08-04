@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,12 +17,12 @@
 namespace Kafka.Streams.Errors {
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+
+
+
+
+
 
 /**
  * Deserialization handler that logs a deserialization exception and then
@@ -37,7 +37,7 @@ public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler {
                                                   Exception exception)
 {
 
-        log.warn("Exception caught during Deserialization, " +
+        log.LogWarning("Exception caught during Deserialization, " +
                  "taskId: {}, topic: {}, partition: {}, offset: {}",
                  context.taskId(), record.topic(), record.partition(), record.offset(),
                  exception);

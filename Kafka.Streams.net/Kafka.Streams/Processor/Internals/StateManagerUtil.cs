@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.FixedOrderMap;
 using Kafka.Common.Utils.Utils;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.state.internals.OffsetCheckpoint;
-import org.apache.kafka.streams.state.internals.RecordConverter;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
-import static org.apache.kafka.streams.state.internals.RecordConverters.identity;
-import static org.apache.kafka.streams.state.internals.RecordConverters.rawValueToTimestampedValue;
-import static org.apache.kafka.streams.state.internals.WrappedStateStore.isTimestamped;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class StateManagerUtil {
     static string CHECKPOINT_FILE_NAME = ".checkpoint";
@@ -56,15 +56,15 @@ class StateManagerUtil {
                                                             Collection<TopicPartition> partitions,
                                                             InternalProcessorContext processorContext,
                                                             OffsetCheckpoint checkpointFile,
-                                                            Dictionary<TopicPartition, Long> checkpointFileCache)
+                                                            Dictionary<TopicPartition, long> checkpointFileCache)
 {
         Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
-        Set<string> storesToBeReinitialized = new HashSet<>();
+        HashSet<string> storesToBeReinitialized = new HashSet<>();
 
         foreach (TopicPartition topicPartition in partitions)
 {
             checkpointFileCache.Remove(topicPartition);
-            storesToBeReinitialized.add(changelogTopicToStore[topicPartition.topic())];
+            storesToBeReinitialized.Add(changelogTopicToStore[topicPartition.topic()));
         }
 
         if (!eosEnabled)

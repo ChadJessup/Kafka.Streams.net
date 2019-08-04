@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.Serde;
@@ -31,10 +31,10 @@ using Kafka.Streams.State.StateSerdes;
 using Kafka.Streams.State.WindowStore;
 using Kafka.Streams.State.WindowStoreIterator;
 
-import java.util.Map;
 
-import static org.apache.kafka.common.metrics.RecordingLevel.DEBUG;
-import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTaskAndStoreLatencyAndThroughputSensors;
+
+
+
 
 public class MeteredWindowStore<K, V>
     : WrappedStateStore<WindowStore<Bytes, byte[]>, Windowed<K>, V>
@@ -101,7 +101,7 @@ public class MeteredWindowStore<K, V>
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     void initStoreSerde(IProcessorContext context)
 {
         serdes = new StateSerdes<>(
@@ -110,7 +110,7 @@ public class MeteredWindowStore<K, V>
             valueSerde == null ? (ISerde<V>) context.valueSerde() : valueSerde);
     }
 
-    @SuppressWarnings("unchecked")
+    
     public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                     bool sendOldValues)
 {
@@ -159,7 +159,7 @@ public class MeteredWindowStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            byte[] result = wrapped().fetch(keyBytes(key), timestamp];
+            byte[] result = wrapped().fetch(keyBytes(key), timestamp);
             if (result == null)
 {
                 return null;

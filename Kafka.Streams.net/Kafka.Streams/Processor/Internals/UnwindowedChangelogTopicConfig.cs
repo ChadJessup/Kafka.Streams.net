@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.config.TopicConfig;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+
+
+
+
 
 /**
  * UnwindowedChangelogTopicConfig captures the properties required for configuring
@@ -42,12 +42,12 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
 
     /**
      * Get the configured properties for this topic. If retentionMs is set then
-     * we add additionalRetentionMs to work out the desired retention when cleanup.policy=compact,delete
+     * we.Add.AdditionalRetentionMs to work out the desired retention when cleanup.policy=compact,delete
      *
-     * @param additionalRetentionMs - added to retention to allow for clock drift etc
+     * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
      * @return Properties to be used when creating the topic
      */
-    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
+    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs)
 {
         // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
         Dictionary<string, string> topicConfig = new HashMap<>(UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);

@@ -16,7 +16,7 @@ namespace Kafka.Streams.Errors.Interfaces
          * @param record The record that failed to produce
          * @param exception The exception that occurred during production
          */
-        ProductionExceptionHandlerResponse handle(DeliveryReport<byte[], byte[]> record, Exception exception];
+        ProductionExceptionHandlerResponse handle(DeliveryReport<byte[], byte[]> record, Exception exception);
 
         public enum ProductionExceptionHandlerResponse
         {

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,9 +16,9 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+
+
 
 public abstract class KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> : KTableValueGetterSupplier<K, R> {
      KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
@@ -36,10 +36,10 @@ public abstract class KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> 
 {
          string[] storeNames1 = valueGetterSupplier1.storeNames();
          string[] storeNames2 = valueGetterSupplier2.storeNames();
-         Set<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
-        Collections.addAll(stores, storeNames1);
-        Collections.addAll(stores, storeNames2);
-        return stores.toArray(new string[stores.size()]];
+         HashSet<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
+        Collections.AddAll(stores, storeNames1);
+        Collections.AddAll(stores, storeNames2);
+        return stores.toArray(new string[stores.size()]);
     }
 
 }

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,32 +16,32 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Reducer;
-import org.apache.kafka.streams.kstream.TimeWindowedKStream;
-import org.apache.kafka.streams.kstream.Window;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.kstream.Windows;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.Stores;
-import org.apache.kafka.streams.state.TimestampedWindowStore;
-import org.apache.kafka.streams.state.WindowBytesStoreSupplier;
-import org.apache.kafka.streams.state.WindowStore;
-import org.apache.kafka.streams.state.internals.RocksDbWindowBytesStoreSupplier;
 
-import java.time.Duration;
-import java.util.Objects;
-import java.util.Set;
 
-import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.AGGREGATE_NAME;
-import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.REDUCE_NAME;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWindowedKStream<K, V> {
 
@@ -50,7 +50,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
 
     TimeWindowedKStreamImpl( Windows<W> windows,
                              InternalStreamsBuilder builder,
-                             Set<string> sourceNodes,
+                             HashSet<string> sourceNodes,
                              string name,
                              ISerde<K> keySerde,
                              ISerde<V> valSerde,
@@ -63,13 +63,13 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
     }
 
     
-    public KTable<Windowed<K>, Long> count()
+    public KTable<Windowed<K>, long> count()
 {
-        return doCount(Materialized.with(keySerde, Serdes.Long()));
+        return doCount(Materialized.with(keySerde, Serdes.long()));
     }
 
     
-    public KTable<Windowed<K>, Long> count( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized)
+    public KTable<Windowed<K>, long> count( Materialized<K, long, WindowStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(materialized, "materialized can't be null");
 
@@ -83,9 +83,9 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
         return doCount(materialized);
     }
 
-    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized)
+    private KTable<Windowed<K>, long> doCount( Materialized<K, long, WindowStore<Bytes, byte[]>> materialized)
 {
-         MaterializedInternal<K, Long, WindowStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, long, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
         if (materializedInternal.keySerde() == null)
@@ -94,7 +94,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
         }
         if (materializedInternal.valueSerde() == null)
 {
-            materializedInternal.withValueSerde(Serdes.Long());
+            materializedInternal.withValueSerde(Serdes.long());
         }
 
         return aggregateBuilder.build(
@@ -107,15 +107,15 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
     }
 
     
-    public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                                   Aggregator<? super K, ? super V, VR> aggregator)
+    public KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
+                                                   Aggregator<K, V, VR> aggregator)
 {
         return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
     }
 
     
-    public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                                   Aggregator<? super K, ? super V, VR> aggregator,
+    public KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
+                                                   Aggregator<K, V, VR> aggregator,
                                                    Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull(initializer, "initializer can't be null");
@@ -170,7 +170,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
     }
 
     @SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-    private <VR> StoreBuilder<TimestampedWindowStore<K, VR>> materialize( MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized)
+    private StoreBuilder<TimestampedWindowStore<K, VR>> materialize( MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized)
 {
         WindowBytesStoreSupplier supplier = (WindowBytesStoreSupplier) materialized.storeSupplier();
         if (supplier == null)
@@ -208,7 +208,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
                                                            + name + " must be no smaller than its window size plus the grace period."
                                                            + " Got size=[" + windows.size() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"
-                                                           + " retention=[" + windows.maintainMs() + "]"];
+                                                           + " retention=[" + windows.maintainMs() + "]");
                 }
 
                 supplier = new RocksDbWindowBytesStoreSupplier(

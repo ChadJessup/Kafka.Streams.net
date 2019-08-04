@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,23 +16,23 @@
  */
 namespace Kafka.common.utils;
 
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
+
+
 
 /**
- * A ByteBuffer-backed OutputStream that expands the internal ByteBuffer as required. Given this, the caller should
+ * A ByteBuffer-backed Stream that expands the internal ByteBuffer as required. Given this, the caller should
  * always access the underlying ByteBuffer via the {@link #buffer()} method until all writes are completed.
  *
  * This class is typically used for 2 purposes:
  *
  * 1. Write to a ByteBuffer when there is a chance that we may need to expand it in order to fit all the desired data
- * 2. Write to a ByteBuffer via methods that expect an OutputStream interface
+ * 2. Write to a ByteBuffer via methods that expect an Stream interface
  *
  * Hard to track bugs can happen when this class is used for the second reason and unexpected buffer expansion happens.
  * So, it's best to assume that buffer expansion can always happen. An improvement would be to create a separate class
- * that throws an error if buffer expansion is required to avoid the issue altogether.
+ * thataltogether.
  */
-public class ByteBufferOutputStream extends OutputStream {
+public class ByteBufferOutputStream extends Stream {
 
     private static final float REALLOCATION_FACTOR = 1.1f;
 
@@ -139,7 +139,7 @@ public class ByteBufferOutputStream extends OutputStream {
         temp.Add(buffer);
         buffer.limit(limit);
         // reset the old buffer's position so that the partial data in the new buffer cannot be mistakenly consumed
-        // we should ideally only do this for the original buffer, but the additional complexity doesn't seem worth it
+        // we should ideally only do this for the original buffer, but the.Additional complexity doesn't seem worth it
         buffer.position(initialPosition);
         buffer = temp;
     }

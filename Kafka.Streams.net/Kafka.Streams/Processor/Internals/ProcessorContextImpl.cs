@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,36 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.internals.ApiUtils;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.state.KeyValueIterator;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.SessionStore;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.TimestampedWindowStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.apache.kafka.streams.state.WindowStore;
-import org.apache.kafka.streams.state.WindowStoreIterator;
-import org.apache.kafka.streams.state.internals.ThreadCache;
-import org.apache.kafka.streams.state.internals.WrappedStateStore;
 
-import java.time.Duration;
-import java.util.List;
 
-import static org.apache.kafka.streams.internals.ApiUtils.prepareMillisCheckFailMsgPrefix;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
 
@@ -79,7 +79,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
     /**
      * @throws StreamsException if an attempt is made to access this state store from an unknown node
      */
-    @SuppressWarnings("unchecked")
+    
     
     public IStateStore getStateStore(string name)
 {
@@ -114,11 +114,11 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         if (!currentNode().stateStores.contains(name))
 {
             throw new StreamsException("Processor " + currentNode().name() + " has no access to IStateStore " + name +
-                " as the store is not connected to the processor. If you add stores manually via '.addStateStore()' " +
-                "make sure to connect the added store to the processor by providing the processor name to " +
-                "'.addStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
+                " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
+                "make sure to connect the.Added store to the processor by providing the processor name to " +
+                "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
                 "DSL users need to provide the store name to '.process()', '.transform()', or '.transformValues()' " +
-                "to connect the store to the corresponding operator. If you do not add stores manually, " +
+                "to connect the store to the corresponding operator. If you do not.Add stores manually, " +
                 "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
         }
 
@@ -143,40 +143,40 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         return store;
     }
 
-    @SuppressWarnings("unchecked")
     
-    public <K, V> void forward(K key,
+    
+    public void forward(K key,
                                V value)
 {
         forward(key, value, SEND_TO_ALL);
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     @Deprecated
-    public <K, V> void forward(K key,
+    public void forward(K key,
                                V value,
                                int childIndex)
 {
         forward(
             key,
             value,
-            To.child(((List<ProcessorNode>) currentNode().children())[childIndex).name())];
+            To.child(((List<ProcessorNode>) currentNode().children())[childIndex).name()));
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     @Deprecated
-    public <K, V> void forward(K key,
+    public void forward(K key,
                                V value,
                                string childName)
 {
         forward(key, value, To.child(childName));
     }
 
-    @SuppressWarnings("unchecked")
     
-    public <K, V> void forward(K key,
+    
+    public void forward(K key,
                                V value,
                                To to)
 {
@@ -218,8 +218,8 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private <K, V> void forward(ProcessorNode child,
+    
+    private void forward(ProcessorNode child,
                                 K key,
                                 V value)
 {
@@ -250,7 +250,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
     
     public ICancellable schedule(Duration interval,
                                 PunctuationType type,
-                                Punctuator callback) throws ArgumentException {
+                                Punctuator callback){
         string msgPrefix = prepareMillisCheckFailMsgPrefix(interval, "interval");
         return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
     }
@@ -297,7 +297,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         
         public V get(K key)
 {
-            return wrapped()[key];
+            return wrapped()[key);
         }
 
         
@@ -526,7 +526,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         
         public V get(K key)
 {
-            return wrapped()[key];
+            return wrapped()[key);
         }
 
         

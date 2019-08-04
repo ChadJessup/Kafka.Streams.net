@@ -19,7 +19,7 @@ namespace Kafka.Common.Metrics.Interfaces
         void init(List<KafkaMetric> metrics);
 
         /**
-         * This is called whenever a metric is updated or added
+         * This is called whenever a metric is updated or.Added
          * @param metric
          */
         void metricChange(KafkaMetric metric);

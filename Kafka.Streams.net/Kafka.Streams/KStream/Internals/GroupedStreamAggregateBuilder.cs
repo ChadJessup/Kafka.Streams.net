@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,22 +16,22 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.internals.graph.ProcessorParameters;
-import org.apache.kafka.streams.kstream.internals.graph.StatefulProcessorNode;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-
-import static org.apache.kafka.streams.kstream.internals.graph.OptimizableRepartitionNode.OptimizableRepartitionNodeBuilder;
-import static org.apache.kafka.streams.kstream.internals.graph.OptimizableRepartitionNode.optimizableRepartitionNodeBuilder;
 
 
-import java.util.Collections;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class GroupedStreamAggregateBuilder<K, V> {
 
@@ -40,21 +40,21 @@ class GroupedStreamAggregateBuilder<K, V> {
     private  ISerde<V> valueSerde;
     private  bool repartitionRequired;
     private  string userProvidedRepartitionTopicName;
-    private  Set<string> sourceNodes;
+    private  HashSet<string> sourceNodes;
     private  string name;
     private  StreamsGraphNode streamsGraphNode;
     private StreamsGraphNode repartitionNode;
 
-     Initializer<Long> countInitializer = () -> 0L;
+     Initializer<long> countInitializer = () -> 0L;
 
-     Aggregator<K, V, Long> countAggregator = (aggKey, value, aggregate) -> aggregate + 1;
+     Aggregator<K, V, long> countAggregator = (aggKey, value, aggregate) -> aggregate + 1;
 
      Initializer<V> reduceInitializer = () -> null;
 
     GroupedStreamAggregateBuilder( InternalStreamsBuilder builder,
                                    GroupedInternal<K, V> groupedInternal,
                                    bool repartitionRequired,
-                                   Set<string> sourceNodes,
+                                   HashSet<string> sourceNodes,
                                    string name,
                                    StreamsGraphNode streamsGraphNode)
 {
@@ -98,7 +98,7 @@ class GroupedStreamAggregateBuilder<K, V> {
                 repartitionNode = repartitionNodeBuilder.build();
             }
 
-            builder.addGraphNode(parentNode, repartitionNode);
+            builder.AddGraphNode(parentNode, repartitionNode);
             parentNode = repartitionNode;
         }
 
@@ -109,7 +109,7 @@ class GroupedStreamAggregateBuilder<K, V> {
                 storeBuilder
             );
 
-        builder.addGraphNode(parentNode, statefulProcessorNode);
+        builder.AddGraphNode(parentNode, statefulProcessorNode);
 
         return new KTableImpl<>(aggFunctionName,
                                 keySerde,

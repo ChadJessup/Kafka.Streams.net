@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.CreateTopicsResult;
-import org.apache.kafka.clients.admin.DescribeTopicsResult;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.admin.TopicDescription;
+
+
+
+
+
+
 using Kafka.Common.KafkaFuture;
 using Kafka.Common.errors.LeaderNotAvailableException;
 using Kafka.Common.errors.TopicExistsException;
 using Kafka.Common.errors.UnknownTopicOrPartitionException;
 using Kafka.Common.Utils.LogContext;
 using Kafka.Common.Utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
+
+
+
+
+
+
+
+
 
 public class InternalTopicManager {
     private static string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
@@ -64,7 +64,7 @@ public class InternalTopicManager {
 {
         this.adminClient = adminClient;
 
-        LogContext logContext = new LogContext(string.Format("stream-thread [%s] ", Thread.currentThread().getName())];
+        LogContext logContext = new LogContext(string.Format("stream-thread [%s] ", Thread.currentThread().getName()));
         log = logContext.logger(GetType());
 
         replicationFactor = streamsConfig.getInt(StreamsConfig.REPLICATION_FACTOR_CONFIG).shortValue();
@@ -103,7 +103,7 @@ public class InternalTopicManager {
         // have existed with the expected number of partitions, or some create topic returns fatal errors.
 
         int remainingRetries = retries;
-        Set<string> topicsNotReady = new HashSet<>(topics.keySet());
+        HashSet<string> topicsNotReady = new HashSet<>(topics.keySet());
 
         while (!topicsNotReady.isEmpty() && remainingRetries >= 0)
 {
@@ -111,11 +111,11 @@ public class InternalTopicManager {
 
             if (topicsNotReady.size() > 0)
 {
-                Set<NewTopic> newTopics = new HashSet<>();
+                HashSet<NewTopic> newTopics = new HashSet<>();
 
                 foreach (string topicName in topicsNotReady)
 {
-                    InternalTopicConfig internalTopicConfig = Utils.notNull(topics[topicName)];
+                    InternalTopicConfig internalTopicConfig = Utils.notNull(topics[topicName));
                     Dictionary<string, string> topicConfig = internalTopicConfig.getProperties(defaultTopicConfigs, windowChangeLogAdditionalRetention);
 
                     log.LogDebug("Going to create topic {} with {} partitions and config {}.",
@@ -123,7 +123,7 @@ public class InternalTopicManager {
                         internalTopicConfig.numberOfPartitions(),
                         topicConfig);
 
-                    newTopics.add(
+                    newTopics.Add(
                         new NewTopic(
                             internalTopicConfig.name(),
                             internalTopicConfig.numberOfPartitions(),
@@ -137,7 +137,7 @@ public class InternalTopicManager {
 {
                     string topicName = createTopicResult.getKey();
                     try {
-                        createTopicResult.getValue()[];
+                        createTopicResult.getValue()[);
                         topicsNotReady.Remove(topicName);
                     } catch (InterruptedException fatalException)
 {
@@ -202,7 +202,7 @@ public class InternalTopicManager {
 {
             string topicName = topicFuture.getKey();
             try {
-                TopicDescription topicDescription = topicFuture.getValue()[];
+                TopicDescription topicDescription = topicFuture.getValue()[);
                 existedTopicPartition.Add(
                     topicFuture.getKey(),
                     topicDescription.partitions().size());
@@ -234,13 +234,13 @@ public class InternalTopicManager {
     /**
      * Check the existing topics to have correct number of partitions; and return the remaining topics that needs to be created
      */
-    private Set<string> validateTopics(Set<string> topicsToValidate,
+    private HashSet<string> validateTopics(Set<string> topicsToValidate,
                                        Dictionary<string, InternalTopicConfig> topicsMap)
 {
 
         Dictionary<string, Integer> existedTopicPartition = getNumPartitions(topicsToValidate);
 
-        Set<string> topicsToCreate = new HashSet<>();
+        HashSet<string> topicsToCreate = new HashSet<>();
         foreach (Map.Entry<string, InternalTopicConfig> entry in topicsMap.entrySet())
 {
             string topicName = entry.getKey();
@@ -257,7 +257,7 @@ public class InternalTopicManager {
                     throw new StreamsException(errorMsg);
                 }
             } else {
-                topicsToCreate.add(topicName);
+                topicsToCreate.Add(topicName);
             }
         }
 

@@ -176,7 +176,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
             lastReturnedSlot = cur.next();
             cur = indexToElement(head, elements, cur.next());
             ++cursor;
-            @SuppressWarnings("unchecked")
+            
             E returnValue = (E) cur;
             return returnValue;
         }
@@ -188,7 +188,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
 {
                 throw new NoSuchElementException();
             }
-            @SuppressWarnings("unchecked")
+            
             E returnValue = (E) cur;
             cur = indexToElement(head, elements, cur.prev());
             lastReturnedSlot = cur.next();
@@ -375,8 +375,8 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
 {
             return null;
         }
-        @SuppressWarnings("unchecked")
-        E result = (E) elements[index];
+        
+        E result = (E) elements[index);
         return result;
     }
 
@@ -639,7 +639,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
             this.size = 0;
         } else {
             this.head = new HeadElement();
-            this.elements = new Element[calculateCapacity(expectedNumElements]];
+            this.elements = new Element[calculateCapacity(expectedNumElements]);
             this.size = 0;
         }
     }

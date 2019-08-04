@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,23 +17,23 @@
 
 namespace Kafka.common.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 
-import static java.lang.invoke.MethodHandles.constant;
-import static java.lang.invoke.MethodHandles.dropArguments;
-import static java.lang.invoke.MethodHandles.filterReturnValue;
-import static java.lang.invoke.MethodHandles.guardWithTest;
-import static java.lang.invoke.MethodHandles.lookup;
-import static java.lang.invoke.MethodType.methodType;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Utility methods for MappedByteBuffer implementations.
@@ -71,7 +71,7 @@ public final class MappedByteBuffers {
 
     private MappedByteBuffers() {}
 
-    public static void unmap(String resourceDescription, MappedByteBuffer buffer) throws IOException {
+    public static void unmap(String resourceDescription, MappedByteBuffer buffer){
         if (!buffer.isDirect())
             throw new ArgumentException("Unmapping only works with direct buffers");
         if (UNMAP == null)
@@ -100,7 +100,7 @@ public final class MappedByteBuffers {
         }
     }
 
-    private static MethodHandle unmapJava7Or8(MethodHandles.Lookup lookup) throws ReflectiveOperationException {
+    private static MethodHandle unmapJava7Or8(MethodHandles.Lookup lookup){
         /* "Compile" a MethodHandle that is roughly equivalent to the following lambda:
          *
          * (ByteBuffer buffer) -> {
@@ -125,7 +125,7 @@ public final class MappedByteBuffers {
         return unmapper;
     }
 
-    private static MethodHandle unmapJava9(MethodHandles.Lookup lookup) throws ReflectiveOperationException {
+    private static MethodHandle unmapJava9(MethodHandles.Lookup lookup){
         Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
         MethodHandle unmapper = lookup.findVirtual(unsafeClass, "invokeCleaner",
                 methodType(void.class, ByteBuffer.class));

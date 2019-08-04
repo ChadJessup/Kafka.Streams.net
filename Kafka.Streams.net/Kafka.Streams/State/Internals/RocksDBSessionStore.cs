@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
@@ -60,17 +60,17 @@ public class RocksDBSessionStore
 
     public override byte[] fetchSession(Bytes key, long startTime, long endTime)
 {
-        return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime)];
+        return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime));
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 {
-        return findSessions(key, 0, Long.MAX_VALUE);
+        return findSessions(key, 0, long.MAX_VALUE);
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 {
-        return findSessions(from, to, 0, Long.MAX_VALUE);
+        return findSessions(from, to, 0, long.MAX_VALUE);
     }
 
     public override void Remove(Windowed<Bytes> key)

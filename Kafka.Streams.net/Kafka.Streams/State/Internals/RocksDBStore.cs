@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.Bytes;
@@ -30,39 +30,39 @@ using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using Kafka.Streams.State.RocksDBConfigSetter;
-import org.rocksdb.BlockBasedTableConfig;
-import org.rocksdb.BloomFilter;
-import org.rocksdb.Cache;
-import org.rocksdb.ColumnFamilyDescriptor;
-import org.rocksdb.ColumnFamilyHandle;
-import org.rocksdb.ColumnFamilyOptions;
-import org.rocksdb.CompactionStyle;
-import org.rocksdb.CompressionType;
-import org.rocksdb.DBOptions;
-import org.rocksdb.FlushOptions;
-import org.rocksdb.InfoLogLevel;
-import org.rocksdb.LRUCache;
-import org.rocksdb.Options;
-import org.rocksdb.RocksDB;
-import org.rocksdb.RocksDBException;
-import org.rocksdb.RocksIterator;
-import org.rocksdb.WriteBatch;
-import org.rocksdb.WriteOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.regex.Pattern;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * A persistent key-value store based on RocksDB.
@@ -83,7 +83,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 
     string name;
     private string parentDir;
-    Set<KeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<>()];
+    HashSet<KeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<>());
 
     File dbDir;
     RocksDB db;
@@ -118,7 +118,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     }
 
 
-    @SuppressWarnings("unchecked")
+    
     void openDB(IProcessorContext context)
 {
         // initialize the default rocksdb options
@@ -161,7 +161,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 
         Dictionary<string, object> configs = context.appConfigs();
         Class<RocksDBConfigSetter> configSetterClass =
-            (Class<RocksDBConfigSetter>) configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
+            (Class<RocksDBConfigSetter>) configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG);
 
         if (configSetterClass != null)
 {
@@ -199,7 +199,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         try
 {
             db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors, columnFamilies);
-            dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0)];
+            dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0));
         } catch (RocksDBException e)
 {
             throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
@@ -248,20 +248,20 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     public override synchronized void put(Bytes key,
                                  byte[] value)
 {
         Objects.requireNonNull(key, "key cannot be null");
         validateStoreOpen();
-        dbAccessor.Add(key(), value];
+        dbAccessor.Add(key(), value);
     }
 
     public override synchronized byte[] putIfAbsent(Bytes key,
                                            byte[] value)
 {
         Objects.requireNonNull(key, "key cannot be null");
-        byte[] originalValue = get(key];
+        byte[] originalValue = get(key);
         if (originalValue == null)
 {
             put(key, value);
@@ -286,7 +286,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         validateStoreOpen();
         try
 {
-            return dbAccessor[key()];
+            return dbAccessor[key());
         } catch (RocksDBException e)
 {
             // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -300,7 +300,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         byte[] oldValue;
         try
 {
-            oldValue = dbAccessor.getOnly(key()];
+            oldValue = dbAccessor.getOnly(key());
         } catch (RocksDBException e)
 {
             // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -318,7 +318,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 
         if (from.compareTo(to) > 0)
 {
-            log.warn("Returning empty iterator for fetch with invalid key range: from > to. "
+            log.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 "Note that the built-in numerical serdes do not follow this for negative numbers");
             return KeyValueIterators.emptyIterator();
@@ -326,8 +326,8 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 
         validateStoreOpen();
 
-        KeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to];
-        openIterators.add(rocksDBRangeIterator);
+        KeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to);
+        openIterators.Add(rocksDBRangeIterator);
 
         return rocksDBRangeIterator;
     }
@@ -336,7 +336,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 {
         validateStoreOpen();
         KeyValueIterator<Bytes, byte[]> rocksDbIterator = dbAccessor.all();
-        openIterators.add(rocksDbIterator);
+        openIterators.Add(rocksDbIterator);
         return rocksDbIterator;
     }
 
@@ -364,7 +364,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         }
         if (isOverflowing(numEntries))
 {
-            return Long.MAX_VALUE;
+            return long.MAX_VALUE;
         }
         return numEntries;
     }
@@ -396,7 +396,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         if (prepareForBulkload)
 {
             // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-            string[] sstFileNames = dbDir.list((dir, name) -> SST_FILE_EXTENSION.matcher(name).matches()];
+            string[] sstFileNames = dbDir.list((dir, name) -> SST_FILE_EXTENSION.matcher(name).matches());
 
             if (sstFileNames != null && sstFileNames.Length > 0)
 {
@@ -409,10 +409,10 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         openDB(internalProcessorContext);
     }
 
-    public override void addToBatch(KeyValue<byte[], byte[]> record,
+    public override void.AddToBatch(KeyValue<byte[], byte[]> record,
                            WriteBatch batch) throws RocksDBException
 {
-        dbAccessor.addToBatch(record.key, record.value, batch);
+        dbAccessor.AddToBatch(record.key, record.value, batch);
     }
 
     public override void write(WriteBatch batch) throws RocksDBException
@@ -464,7 +464,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         }
         if (iterators.size() != 0)
 {
-            log.warn("Closing {} open iterators for store {}", iterators.size(), name);
+            log.LogWarning("Closing {} open iterators for store {}", iterators.size(), name);
             foreach (KeyValueIterator<Bytes, byte[]> iterator in iterators)
 {
                 iterator.close();
@@ -504,7 +504,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
         void prepareBatchForRestore(Collection<KeyValue<byte[], byte[]>> records,
                                     WriteBatch batch) throws RocksDBException;
 
-        void addToBatch(byte[] key,
+        void.AddToBatch(byte[] key,
                         byte[] value,
                         WriteBatch batch) throws RocksDBException;
 
@@ -556,7 +556,7 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
             foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
                 Objects.requireNonNull(entry.key, "key cannot be null");
-                addToBatch(entry.key(), entry.value, batch];
+               .AddToBatch(entry.key(), entry.value, batch);
             }
         }
 
@@ -610,12 +610,12 @@ public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 {
             foreach (KeyValue<byte[], byte[]> record in records)
 {
-                addToBatch(record.key, record.value, batch);
+               .AddToBatch(record.key, record.value, batch);
             }
         }
 
         
-        public void addToBatch(byte[] key,
+        public void.AddToBatch(byte[] key,
                                byte[] value,
                                WriteBatch batch) throws RocksDBException
 {

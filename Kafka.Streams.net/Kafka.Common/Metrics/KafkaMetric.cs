@@ -84,7 +84,7 @@ namespace Kakfa.Common.Metrics
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         public void Config(MetricConfig config)
 {
             this.config = config;

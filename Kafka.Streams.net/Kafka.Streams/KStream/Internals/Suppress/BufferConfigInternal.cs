@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,9 +16,9 @@
  */
 namespace Kafka.streams.kstream.internals.suppress;
 
-import org.apache.kafka.streams.kstream.Suppressed;
 
-import static org.apache.kafka.streams.kstream.internals.suppress.BufferFullStrategy.SHUT_DOWN;
+
+
 
 abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppressed.BufferConfig<BC> {
     public abstract long maxRecords();
@@ -32,8 +32,8 @@ abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppress
     public Suppressed.StrictBufferConfig withNoBound()
 {
         return new StrictBufferConfigImpl(
-            Long.MAX_VALUE,
-            Long.MAX_VALUE,
+            long.MAX_VALUE,
+            long.MAX_VALUE,
             SHUT_DOWN // doesn't matter, given the bounds
         );
     }

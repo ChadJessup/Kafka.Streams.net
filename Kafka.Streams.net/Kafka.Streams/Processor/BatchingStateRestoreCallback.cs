@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
 
-import org.apache.kafka.streams.KeyValue;
 
-import java.util.Collection;
+
+
 
 /**
  * Interface for batching restoration of a {@link IStateStore}
@@ -36,6 +36,6 @@ public interface BatchingStateRestoreCallback : StateRestoreCallback {
      *
      * @param records the records to restore.
      */
-    void restoreAll(Collection<KeyValue<byte[], byte[]>> records];
+    void restoreAll(Collection<KeyValue<byte[], byte[]>> records);
 
 }

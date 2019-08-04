@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
-import java.util.NavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
+
+
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.metrics.stats.Avg;
@@ -26,22 +26,22 @@ using Kafka.Common.metrics.stats.Min;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Iterator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
+
 
 class NamedCache
 {
     private static Logger log = LoggerFactory.getLogger(NamedCache.class);
     private string name;
     private NavigableMap<Bytes, LRUNode> cache = new ConcurrentSkipListMap<>();
-    private Set<Bytes> dirtyKeys = new HashSet<>();
+    private HashSet<Bytes> dirtyKeys = new HashSet<>();
     private ThreadCache.DirtyEntryFlushListener listener;
     private LRUNode tail;
     private LRUNode head;
@@ -134,11 +134,11 @@ class NamedCache
         List<ThreadCache.DirtyEntry> entries = new List<>();
         List<Bytes> deleted = new List<>();
 
-        // evicted already been removed from the cache so add it to the list of
+        // evicted already been removed from the cache so.Add it to the list of
         // flushed entries and Remove from dirtyKeys.
         if (evicted != null)
 {
-            entries.add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
+            entries.Add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
             dirtyKeys.Remove(evicted.key);
         }
 
@@ -149,11 +149,11 @@ class NamedCache
 {
                 throw new InvalidOperationException("Key = " + key + " found in dirty key set, but entry is null");
             }
-            entries.add(new ThreadCache.DirtyEntry(key, node.entry.value(), node.entry));
+            entries.Add(new ThreadCache.DirtyEntry(key, node.entry.value(), node.entry));
             node.entry.markClean();
             if (node.entry.value() == null)
 {
-                deleted.add(node.key);
+                deleted.Add(node.key);
             }
         }
         // clear dirtyKeys before the listener is applied as it may be re-entrant.
@@ -193,9 +193,9 @@ class NamedCache
         }
         if (value.isDirty())
 {
-            // first Remove and then add so we can maintain ordering as the arrival order of the records.
+            // first Remove and then.Add so we can maintain ordering as the arrival order of the records.
             dirtyKeys.Remove(key);
-            dirtyKeys.add(key);
+            dirtyKeys.Add(key);
         }
         currentSizeBytes += node.size();
     }
@@ -429,26 +429,26 @@ class NamedCache
             this.metrics = metrics;
             string group = "stream-record-cache-metrics";
 
-            // add parent
+            //.Add parent
             Dictionary<string, string> allMetricTags = metrics.tagMap(
                  "task-id", taskName,
                 "record-cache-id", "all"
             );
             Sensor taskLevelHitRatioSensor = metrics.taskLevelSensor(taskName, "hitRatio", RecordingLevel.DEBUG);
-            taskLevelHitRatioSensor.add(
+            taskLevelHitRatioSensor.Add(
                 new MetricName("hitRatio-avg", group, "The average cache hit ratio.", allMetricTags),
                 new Avg()
             );
-            taskLevelHitRatioSensor.add(
+            taskLevelHitRatioSensor.Add(
                 new MetricName("hitRatio-min", group, "The minimum cache hit ratio.", allMetricTags),
                 new Min()
             );
-            taskLevelHitRatioSensor.add(
+            taskLevelHitRatioSensor.Add(
                 new MetricName("hitRatio-max", group, "The maximum cache hit ratio.", allMetricTags),
                 new Max()
             );
 
-            // add child
+            //.Add child
             Dictionary<string, string> metricTags = metrics.tagMap(
                  "task-id", taskName,
                 "record-cache-id", ThreadCache.underlyingStoreNamefromCacheName(cacheName)
@@ -461,15 +461,15 @@ class NamedCache
                 RecordingLevel.DEBUG,
                 taskLevelHitRatioSensor
             );
-            hitRatioSensor.add(
+            hitRatioSensor.Add(
                 new MetricName("hitRatio-avg", group, "The average cache hit ratio.", metricTags),
                 new Avg()
             );
-            hitRatioSensor.add(
+            hitRatioSensor.Add(
                 new MetricName("hitRatio-min", group, "The minimum cache hit ratio.", metricTags),
                 new Min()
             );
-            hitRatioSensor.add(
+            hitRatioSensor.Add(
                 new MetricName("hitRatio-max", group, "The maximum cache hit ratio.", metricTags),
                 new Max()
             );

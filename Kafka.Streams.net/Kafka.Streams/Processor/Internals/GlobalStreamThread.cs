@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.InvalidOffsetException;
+
+
+
+
 using Kafka.Common.Metric;
 
 using Kafka.Common.TopicPartition;
@@ -27,24 +27,24 @@ using Kafka.Common.metrics.Metrics;
 using Kafka.Common.Utils.LogContext;
 using Kafka.Common.Utils.Time;
 using Kafka.Common.Utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.LockException;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.StateRestoreListener;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.state.internals.ThreadCache;
-import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import static org.apache.kafka.streams.processor.internals.GlobalStreamThread.State.DEAD;
-import static org.apache.kafka.streams.processor.internals.GlobalStreamThread.State.PENDING_SHUTDOWN;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * This is the thread responsible for keeping all Global State Stores updated.
@@ -97,11 +97,11 @@ public class GlobalStreamThread : Thread {
     public enum State : ThreadStateTransitionValidator {
         CREATED(1, 2), RUNNING(2), PENDING_SHUTDOWN(3), DEAD;
 
-        private Set<Integer> validTransitions = new HashSet<>();
+        private HashSet<Integer> validTransitions = new HashSet<>();
 
         State(Integer[] validTransitions)
 {
-            this.validTransitions.addAll(Arrays.asList(validTransitions));
+            this.validTransitions.AddAll(Arrays.asList(validTransitions));
         }
 
         public bool isRunning()
@@ -204,7 +204,7 @@ public class GlobalStreamThread : Thread {
         this.globalConsumer = globalConsumer;
         this.stateDirectory = stateDirectory;
         this.streamsMetrics = new StreamsMetricsImpl(metrics, threadClientId);
-        this.logPrefix = string.Format("global-stream-thread [%s] ", threadClientId];
+        this.logPrefix = string.Format("global-stream-thread [%s] ", threadClientId);
         this.logContext = new LogContext(logPrefix);
         this.log = logContext.logger(GetType());
         this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
@@ -242,9 +242,9 @@ public class GlobalStreamThread : Thread {
          */
         void initialize()
 {
-            Dictionary<TopicPartition, Long> partitionOffsets = stateMaintainer.initialize();
+            Dictionary<TopicPartition, long> partitionOffsets = stateMaintainer.initialize();
             globalConsumer.assign(partitionOffsets.keySet());
-            foreach (Map.Entry<TopicPartition, Long> entry in partitionOffsets.entrySet())
+            foreach (Map.Entry<TopicPartition, long> entry in partitionOffsets.entrySet())
 {
                 globalConsumer.seek(entry.getKey(), entry.getValue());
             }
@@ -254,7 +254,7 @@ public class GlobalStreamThread : Thread {
         void pollAndUpdate()
 {
             try {
-                ConsumerRecords<byte[], byte[]> received = globalConsumer.poll(pollTime];
+                ConsumerRecords<byte[], byte[]> received = globalConsumer.poll(pollTime);
                 foreach (ConsumerRecord<byte[], byte[]> record in received)
 {
                     stateMaintainer.update(record);
@@ -273,12 +273,12 @@ public class GlobalStreamThread : Thread {
             }
         }
 
-        public void close() throws IOException {
+        public void close(){
             try {
                 globalConsumer.close();
             } catch (RuntimeException e)
 {
-                // just log an error if the consumer throws an exception during close
+                // just log an error if the consumerclose
                 // so we can always attempt to close the state stores.
                 log.LogError("Failed to close global consumer due to the following error:", e);
             }
@@ -302,7 +302,7 @@ public class GlobalStreamThread : Thread {
             setState(State.PENDING_SHUTDOWN);
             setState(State.DEAD);
 
-            log.warn("Error happened during initialization of the global state store; this thread has shutdown");
+            log.LogWarning("Error happened during initialization of the global state store; this thread has shutdown");
             streamsMetrics.removeAllThreadLevelSensors();
 
             return;

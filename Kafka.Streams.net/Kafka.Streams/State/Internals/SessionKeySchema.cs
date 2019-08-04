@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serializer;
@@ -23,8 +23,8 @@ using Kafka.Streams.kstream.Window;
 using Kafka.Streams.kstream.Windowed;
 using Kafka.Streams.kstream.internals.SessionWindow;
 
-import java.nio.ByteBuffer;
-import java.util.List;
+
+
 
 
 public class SessionKeySchema : SegmentedBytesStore.KeySchema
@@ -36,7 +36,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public override Bytes upperRangeFixedSize(Bytes key, long to)
 {
-        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(to, Long.MAX_VALUE));
+        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(to, long.MAX_VALUE));
         return SessionKeySchema.toBinary(sessionKey);
     }
 
@@ -50,7 +50,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 {
         byte[] maxSuffix = ByteBuffer.allocate(SUFFIX_SIZE)
             // the end timestamp can be as large as possible as long as it's larger than start time
-            .putLong(Long.MAX_VALUE)
+            .putLong(long.MAX_VALUE)
             // this is the start timestamp
             .putLong(to)
             .array();
@@ -64,7 +64,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public override long segmentTimestamp(Bytes key)
 {
-        return SessionKeySchema.extractEndTimestamp(key()];
+        return SessionKeySchema.extractEndTimestamp(key());
     }
 
     public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
@@ -92,7 +92,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                                         long from,
                                                         long to)
 {
-        return segments.segments(from, Long.MAX_VALUE);
+        return segments.segments(from, long.MAX_VALUE);
     }
 
     private static <K> K extractKey(byte[] binaryKey,
@@ -147,7 +147,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                        Deserializer<K> keyDeserializer,
                                        string topic)
 {
-        K key = keyDeserializer.deserialize(topic, keyBytes.key()()];
+        K key = keyDeserializer.deserialize(topic, keyBytes.key()());
         return new Windowed<>(key, keyBytes.window());
     }
 
@@ -155,8 +155,8 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                       Serializer<K> serializer,
                                       string topic)
 {
-        byte[] bytes = serializer.serialize(topic, sessionKey.key()];
-        return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[];
+        byte[] bytes = serializer.serialize(topic, sessionKey.key());
+        return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[);
     }
 
     public static Bytes toBinary(Windowed<Bytes> sessionKey)

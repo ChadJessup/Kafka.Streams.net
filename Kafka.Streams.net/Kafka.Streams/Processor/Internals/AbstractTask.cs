@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+
+
 using Kafka.Common.KafkaException;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.errors.AuthorizationException;
 using Kafka.Common.errors.WakeupException;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.LockException;
-import org.apache.kafka.streams.errors.ProcessorStateException;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.slf4j.Logger;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public abstract class AbstractTask : Task {
 
@@ -45,7 +45,7 @@ public abstract class AbstractTask : Task {
     string applicationId;
     ProcessorTopology topology;
     ProcessorStateManager stateMgr;
-    Set<TopicPartition> partitions;
+    HashSet<TopicPartition> partitions;
     Consumer<byte[], byte[]> consumer;
     string logPrefix;
     bool eosEnabled;
@@ -79,7 +79,7 @@ public abstract class AbstractTask : Task {
         this.eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
         this.stateDirectory = stateDirectory;
 
-        this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id];
+        this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id);
         this.logContext = new LogContext(logPrefix);
         this.log = logContext.logger(GetType());
 
@@ -113,7 +113,7 @@ public abstract class AbstractTask : Task {
     }
 
     
-    public Set<TopicPartition> partitions()
+    public HashSet<TopicPartition> partitions()
 {
         return partitions;
     }
@@ -176,7 +176,7 @@ public abstract class AbstractTask : Task {
         // print assigned partitions
         if (partitions != null && !partitions.isEmpty())
 {
-            sb.Append(indent).Append("Partitions ["];
+            sb.Append(indent).Append("Partitions [");
             foreach (TopicPartition topicPartition in partitions)
 {
                 sb.Append(topicPartition.ToString()).Append(", ");
@@ -187,7 +187,7 @@ public abstract class AbstractTask : Task {
         return sb.ToString();
     }
 
-    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets()
+    protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
 {
         return Collections.emptyMap();
     }
@@ -207,13 +207,13 @@ public abstract class AbstractTask : Task {
                 }
             } catch (AuthorizationException e)
 {
-                throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e];
+                throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
             } catch (WakeupException e)
 {
                 throw e;
             } catch (KafkaException e)
 {
-                throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e];
+                throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
             }
         }
     }
@@ -270,7 +270,7 @@ public abstract class AbstractTask : Task {
     /**
      * @throws ProcessorStateException if there is an error while closing the state manager
      */
-    void closeStateManager(bool clean) throws ProcessorStateException {
+    void closeStateManager(bool clean){
         ProcessorStateException exception = null;
         log.trace("Closing state manager");
         try {

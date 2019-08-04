@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,19 +16,19 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.Transformer;
-import org.apache.kafka.streams.kstream.TransformerSupplier;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+
+
+
+
+
+
+
 
 public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn> {
 
-    private  TransformerSupplier<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
+    private  TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
 
-    public KStreamFlatTransform( TransformerSupplier<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
+    public KStreamFlatTransform( TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
 {
         this.transformerSupplier = transformerSupplier;
     }
@@ -36,14 +36,14 @@ public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn,
     
     public Processor<KIn, VIn> get()
 {
-        return new KStreamFlatTransformProcessor<>(transformerSupplier()];
+        return new KStreamFlatTransformProcessor<>(transformerSupplier());
     }
 
     public static class KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
 
-        private  Transformer<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
+        private  Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
 
-        public KStreamFlatTransformProcessor( Transformer<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
+        public KStreamFlatTransformProcessor( Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
 {
             this.transformer = transformer;
         }

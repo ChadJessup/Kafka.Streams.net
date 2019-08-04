@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ package org.apache.kafka.streams.state.internals;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.KeyValueIterator;
 
-import static org.apache.kafka.streams.state.TimestampedBytesStore.convertToTimestampedFormat;
+
 
 /**
  * This class is used to ensure backward compatibility at DSL level between
@@ -54,7 +54,7 @@ class KeyValueToTimestampedKeyValueIteratorAdapter<K> : KeyValueIterator<K, byte
 
     public override KeyValue<K, byte[]> next()
 {
-        KeyValue<K, byte[]> plainKeyValue = innerIterator.next(];
+        KeyValue<K, byte[]> plainKeyValue = innerIterator.next();
         return KeyValue.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
     }
 }

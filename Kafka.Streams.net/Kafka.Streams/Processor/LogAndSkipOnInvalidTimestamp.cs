@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.annotation.InterfaceStability;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Retrieves embedded metadata timestamps from Kafka messages.
  * If a record has a negative (invalid) timestamp value the timestamp is returned as-is;
- * in addition, a WARN message is logged in your application.
+ * in.Addition, a WARN message is logged in your application.
  * Returning the timestamp as-is results in dropping the record, i.e., the record will not be processed.
  * <p>
  * Embedded metadata timestamp was introduced in "KIP-32: Add timestamps to Kafka message" for the new
@@ -64,7 +64,7 @@ public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
                                    long recordTimestamp,
                                    long partitionTime)
 {
-        log.warn("Input record {} will be dropped because it has an invalid (negative) timestamp.", record);
+        log.LogWarning("Input record {} will be dropped because it has an invalid (negative) timestamp.", record);
         return recordTimestamp;
     }
 

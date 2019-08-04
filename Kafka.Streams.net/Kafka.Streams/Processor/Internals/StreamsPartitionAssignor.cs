@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import java.nio.ByteBuffer;
-import org.apache.kafka.clients.CommonClientConfigs;
-import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
-import org.apache.kafka.clients.consumer.ConsumerPartitionAssignor;
+
+
+
+
 using Kafka.Common.Cluster;
 using Kafka.Common.Configurable;
 using Kafka.Common.KafkaException;
@@ -29,34 +29,34 @@ using Kafka.Common.TopicPartition;
 using Kafka.Common.config.ConfigException;
 using Kafka.Common.Utils.LogContext;
 using Kafka.Common.Utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskAssignmentException;
-import org.apache.kafka.streams.processor.PartitionGrouper;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.internals.assignment.AssignmentInfo;
-import org.apache.kafka.streams.processor.internals.assignment.ClientState;
-import org.apache.kafka.streams.processor.internals.assignment.StickyTaskAssignor;
-import org.apache.kafka.streams.processor.internals.assignment.SubscriptionInfo;
-import org.apache.kafka.streams.state.HostInfo;
-import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.apache.kafka.common.utils.Utils.getHost;
-import static org.apache.kafka.common.utils.Utils.getPort;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
 
@@ -66,7 +66,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     private static int VERSION_THREE = 3;
     private static int VERSION_FOUR = 4;
     private static int EARLIEST_PROBEABLE_VERSION = VERSION_THREE;
-    protected Set<Integer> supportedVersions = new HashSet<>();
+    protected HashSet<Integer> supportedVersions = new HashSet<>();
 
     private Logger log;
     private string logPrefix;
@@ -141,7 +141,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
     private static class ClientMetadata {
         HostInfo hostInfo;
-        Set<string> consumers;
+        HashSet<string> consumers;
         ClientState state;
 
         ClientMetadata(string endPoint)
@@ -155,7 +155,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
                 if (host == null || port == null)
 {
-                    throw new ConfigException(string.Format("Error parsing host address %s. Expected format host:port.", endPoint));
+                    throw new ConfigException(string.Format("Error parsing host.Address %s. Expected format host:port.", endPoint));
                 }
 
                 hostInfo = new HostInfo(host, port);
@@ -170,12 +170,12 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             state = new ClientState();
         }
 
-        void addConsumer(string consumerMemberId,
+        void.AddConsumer(string consumerMemberId,
                          SubscriptionInfo info)
 {
-            consumers.add(consumerMemberId);
-            state.addPreviousActiveTasks(info.prevTasks());
-            state.addPreviousStandbyTasks(info.standbyTasks());
+            consumers.Add(consumerMemberId);
+            state.AddPreviousActiveTasks(info.prevTasks());
+            state.AddPreviousStandbyTasks(info.standbyTasks());
             state.incrementCapacity();
         }
 
@@ -233,7 +233,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     /**
      * We need to have the PartitionAssignor and its StreamThread to be mutually accessible
      * since the former needs later's cached metadata while sending subscriptions,
-     * and the latter needs former's returned assignment when adding tasks.
+     * and the latter needs former's returned assignment when.Adding tasks.
      * @throws KafkaException if the stream thread is not specified
      */
     
@@ -242,7 +242,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         StreamsConfig streamsConfig = new InternalStreamsConfig(configs);
 
         // Setting the logger with the passed in client thread name
-        logPrefix = string.Format("stream-thread [%s] ", streamsConfig.getString(CommonClientConfigs.CLIENT_ID_CONFIG)];
+        logPrefix = string.Format("stream-thread [%s] ", streamsConfig.getString(CommonClientConfigs.CLIENT_ID_CONFIG));
         LogContext logContext = new LogContext(logPrefix);
         log = logContext.logger(GetType());
 
@@ -347,8 +347,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // 2. Task ids of previously running tasks
         // 3. Task ids of valid local states on the client's state directory.
 
-        Set<TaskId> previousActiveTasks = taskManager.prevActiveTaskIds();
-        Set<TaskId> standbyTasks = taskManager.cachedTasksIds();
+        HashSet<TaskId> previousActiveTasks = taskManager.prevActiveTaskIds();
+        HashSet<TaskId> standbyTasks = taskManager.cachedTasksIds();
         standbyTasks.removeAll(previousActiveTasks);
         SubscriptionInfo data = new SubscriptionInfo(
             usedSubscriptionMetadataVersion,
@@ -411,7 +411,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         Dictionary<string, Subscription> subscriptions = groupSubscription.groupSubscription();
         // construct the client metadata from the decoded subscription info
         Dictionary<UUID, ClientMetadata> clientMetadataMap = new HashMap<>();
-        Set<string> futureConsumers = new HashSet<>();
+        HashSet<string> futureConsumers = new HashSet<>();
 
         int minReceivedMetadataVersion = SubscriptionInfo.LATEST_SUPPORTED_VERSION;
 
@@ -424,11 +424,11 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
             SubscriptionInfo info = SubscriptionInfo.decode(subscription.userData());
             int usedVersion = info.version();
-            supportedVersions.add(info.latestSupportedVersion());
+            supportedVersions.Add(info.latestSupportedVersion());
             if (usedVersion > SubscriptionInfo.LATEST_SUPPORTED_VERSION)
 {
                 futureMetadataVersion = usedVersion;
-                futureConsumers.add(consumerId);
+                futureConsumers.Add(consumerId);
                 continue;
             }
             if (usedVersion < minReceivedMetadataVersion)
@@ -437,7 +437,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             }
 
             // create the new client metadata if necessary
-            ClientMetadata clientMetadata = clientMetadataMap[info.processId()];
+            ClientMetadata clientMetadata = clientMetadataMap[info.processId());
 
             if (clientMetadata == null)
 {
@@ -445,8 +445,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                 clientMetadataMap.Add(info.processId(), clientMetadata);
             }
 
-            // add the consumer to the client
-            clientMetadata.addConsumer(consumerId, info);
+            //.Add the consumer to the client
+            clientMetadata.AddConsumer(consumerId, info);
         }
 
         bool versionProbing;
@@ -516,7 +516,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                         // try set the number of partitions for this repartition topic if it is not set yet
                         foreach (InternalTopologyBuilder.TopicsInfo otherTopicsInfo in topicGroups.values())
 {
-                            Set<string> otherSinkTopics = otherTopicsInfo.sinkTopics;
+                            HashSet<string> otherSinkTopics = otherTopicsInfo.sinkTopics;
 
                             if (otherSinkTopics.contains(topicName))
 {
@@ -547,7 +547,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
                             numPartitionsNeeded = true;
                         } else {
-                            repartitionTopicMetadata[topicName).setNumberOfPartitions(numPartitions];
+                            repartitionTopicMetadata[topicName).setNumberOfPartitions(numPartitions);
                         }
                     }
                 }
@@ -575,7 +575,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             for (int partition = 0; partition < numPartitions; partition++)
 {
                 allRepartitionTopicPartitions.Add(new TopicPartition(topic, partition),
-                        new PartitionInfo(topic, partition, null, new Node[0], new Node[0])];
+                        new PartitionInfo(topic, partition, null, new Node[0], new Node[0]));
             }
         }
 
@@ -587,33 +587,33 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // ---------------- Step One ---------------- //
 
         // get the tasks as partition groups from the partition grouper
-        Set<string> allSourceTopics = new HashSet<>();
-        Dictionary<Integer, Set<string>> sourceTopicsByGroup = new HashMap<>();
+        HashSet<string> allSourceTopics = new HashSet<>();
+        Dictionary<Integer, HashSet<string>> sourceTopicsByGroup = new HashMap<>();
         foreach (Map.Entry<Integer, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
 {
-            allSourceTopics.addAll(entry.getValue().sourceTopics);
+            allSourceTopics.AddAll(entry.getValue().sourceTopics);
             sourceTopicsByGroup.Add(entry.getKey(), entry.getValue().sourceTopics);
         }
 
-        Dictionary<TaskId, Set<TopicPartition>> partitionsForTask = partitionGrouper.partitionGroups(sourceTopicsByGroup, fullMetadata);
+        Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask = partitionGrouper.partitionGroups(sourceTopicsByGroup, fullMetadata);
 
         // check if all partitions are assigned, and there are no duplicates of partitions in multiple tasks
-        Set<TopicPartition> allAssignedPartitions = new HashSet<>();
-        Dictionary<Integer, Set<TaskId>> tasksByTopicGroup = new HashMap<>();
-        foreach (Map.Entry<TaskId, Set<TopicPartition>> entry in partitionsForTask.entrySet())
+        HashSet<TopicPartition> allAssignedPartitions = new HashSet<>();
+        Dictionary<Integer, HashSet<TaskId>> tasksByTopicGroup = new HashMap<>();
+        foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in partitionsForTask.entrySet())
 {
-            Set<TopicPartition> partitions = entry.getValue();
+            HashSet<TopicPartition> partitions = entry.getValue();
             foreach (TopicPartition partition in partitions)
 {
                 if (allAssignedPartitions.contains(partition))
 {
-                    log.warn("Partition {} is assigned to more than one tasks: {}", partition, partitionsForTask);
+                    log.LogWarning("Partition {} is assigned to more than one tasks: {}", partition, partitionsForTask);
                 }
             }
-            allAssignedPartitions.addAll(partitions);
+            allAssignedPartitions.AddAll(partitions);
 
             TaskId id = entry.getKey();
-            tasksByTopicGroup.computeIfAbsent(id.topicGroupId, k -> new HashSet<>()).add(id);
+            tasksByTopicGroup.computeIfAbsent(id.topicGroupId, k -> new HashSet<>()).Add(id);
         }
         foreach (string topic in allSourceTopics)
 {
@@ -625,7 +625,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                     TopicPartition partition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
                     if (!allAssignedPartitions.contains(partition))
 {
-                        log.warn("Partition {} is not assigned to any tasks: {}"
+                        log.LogWarning("Partition {} is not assigned to any tasks: {}"
                                  + " Possible causes of a partition not getting assigned"
                                  + " is that another topic defined in the topology has not been"
                                  + " created when starting your streams application,"
@@ -633,11 +633,11 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                     }
                 }
             } else {
-                log.warn("No partitions found for topic {}", topic);
+                log.LogWarning("No partitions found for topic {}", topic);
             }
         }
 
-        // add tasks to state change log topic subscribers
+        //.Add tasks to state change log topic subscribers
         Dictionary<string, InternalTopicConfig> changelogTopicMetadata = new HashMap<>();
         foreach (Map.Entry<Integer, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
 {
@@ -690,7 +690,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // ---------------- Step Three ---------------- //
 
         // construct the global partition assignment per host map
-        Dictionary<HostInfo, Set<TopicPartition>> partitionsByHostState = new HashMap<>();
+        Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState = new HashMap<>();
         if (minReceivedMetadataVersion >= 2)
 {
             foreach (Map.Entry<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
@@ -699,12 +699,12 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
                 if (hostInfo != null)
 {
-                    Set<TopicPartition> topicPartitions = new HashSet<>();
+                    HashSet<TopicPartition> topicPartitions = new HashSet<>();
                     ClientState state = entry.getValue().state;
 
                     foreach (TaskId id in state.activeTasks())
 {
-                        topicPartitions.addAll(partitionsForTask[id)];
+                        topicPartitions.AddAll(partitionsForTask[id));
                     }
 
                     partitionsByHostState.Add(hostInfo, topicPartitions);
@@ -725,8 +725,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     }
 
     private Dictionary<string, Assignment> computeNewAssignment(Dictionary<UUID, ClientMetadata> clientsMetadata,
-                                                         Dictionary<TaskId, Set<TopicPartition>> partitionsForTask,
-                                                         Dictionary<HostInfo, Set<TopicPartition>> partitionsByHostState,
+                                                         Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask,
+                                                         Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState,
                                                          int minUserMetadataVersion)
 {
         Dictionary<string, Assignment> assignment = new HashMap<>();
@@ -734,7 +734,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // within the client, distribute tasks to its owned consumers
         foreach (Map.Entry<UUID, ClientMetadata> entry in clientsMetadata.entrySet())
 {
-            Set<string> consumers = entry.getValue().consumers;
+            HashSet<string> consumers = entry.getValue().consumers;
             ClientState state = entry.getValue().state;
 
             List<List<TaskId>> interleavedActive = interleaveTasksByGroupId(state.activeTasks(), consumers.size());
@@ -744,7 +744,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
             foreach (string consumer in consumers)
 {
-                Dictionary<TaskId, Set<TopicPartition>> standby = new HashMap<>();
+                Dictionary<TaskId, HashSet<TopicPartition>> standby = new HashMap<>();
                 List<AssignedPartition> assignedPartitions = new List<>();
 
                 List<TaskId> assignedActiveList = interleavedActive[consumerTaskIndex];
@@ -753,7 +753,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
                     foreach (TopicPartition partition in partitionsForTask[taskId))
 {
-                        assignedPartitions.add(new AssignedPartition(taskId, partition));
+                        assignedPartitions.Add(new AssignedPartition(taskId, partition));
                     }
                 }
 
@@ -762,7 +762,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                     List<TaskId> assignedStandbyList = interleavedStandby[consumerTaskIndex];
                     foreach (TaskId taskId in assignedStandbyList)
 {
-                        standby.computeIfAbsent(taskId, k -> new HashSet<>()).addAll(partitionsForTask[taskId)];
+                        standby.computeIfAbsent(taskId, k -> new HashSet<>()).AddAll(partitionsForTask[taskId));
                     }
                 }
 
@@ -773,8 +773,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                 List<TopicPartition> activePartitions = new List<>();
                 foreach (AssignedPartition partition in assignedPartitions)
 {
-                    active.add(partition.taskId);
-                    activePartitions.add(partition.partition);
+                    active.Add(partition.taskId);
+                    activePartitions.Add(partition.partition);
                 }
 
                 // finally, encode the assignment before sending back to coordinator
@@ -788,9 +788,9 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     }
 
     private Dictionary<string, Assignment> versionProbingAssignment(Dictionary<UUID, ClientMetadata> clientsMetadata,
-                                                             Dictionary<TaskId, Set<TopicPartition>> partitionsForTask,
-                                                             Dictionary<HostInfo, Set<TopicPartition>> partitionsByHostState,
-                                                             Set<string> futureConsumers,
+                                                             Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask,
+                                                             Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState,
+                                                             HashSet<string> futureConsumers,
                                                              int minUserMetadataVersion)
 {
         Dictionary<string, Assignment> assignment = new HashMap<>();
@@ -811,13 +811,13 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                 List<TopicPartition> assignedPartitions = new List<>();
                 foreach (TaskId taskId in activeTasks)
 {
-                    assignedPartitions.addAll(partitionsForTask[taskId)];
+                    assignedPartitions.AddAll(partitionsForTask[taskId));
                 }
 
-                Dictionary<TaskId, Set<TopicPartition>> standbyTasks = new HashMap<>();
+                Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
                 foreach (TaskId taskId in clientMetadata.state.prevStandbyTasks())
 {
-                    standbyTasks.Add(taskId, partitionsForTask[taskId)];
+                    standbyTasks.Add(taskId, partitionsForTask[taskId));
                 }
 
                 assignment.Add(consumerId, new Assignment(
@@ -833,7 +833,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             }
         }
 
-        // add empty assignment for "future version" clients (ie, empty version probing response)
+        //.Add empty assignment for "future version" clients (ie, empty version probing response)
         foreach (string consumerId in futureConsumers)
 {
             assignment.Add(consumerId, new Assignment(
@@ -853,7 +853,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         List<List<TaskId>> taskIdsForConsumerAssignment = new List<>(numberThreads);
         for (int i = 0; i < numberThreads; i++)
 {
-            taskIdsForConsumerAssignment.add(new List<>());
+            taskIdsForConsumerAssignment.Add(new List<>());
         }
         while (!sortedTasks.isEmpty())
 {
@@ -864,7 +864,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
                     break;
                 }
-                taskIdList.add(taskId);
+                taskIdList.Add(taskId);
             }
         }
         return taskIdsForConsumerAssignment;
@@ -920,10 +920,10 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         }
 
         // version 1 field
-        Dictionary<TaskId, Set<TopicPartition>> activeTasks = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();
         // version 2 fields
         Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo = new HashMap<>();
-        Dictionary<HostInfo, Set<TopicPartition>> partitionsByHost;
+        Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost;
 
         switch (receivedAssignmentMetadataVersion)
 {
@@ -973,7 +973,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
     private void processVersionOneAssignment(AssignmentInfo info,
                                              List<TopicPartition> partitions,
-                                             Dictionary<TaskId, Set<TopicPartition>> activeTasks)
+                                             Dictionary<TaskId, HashSet<TopicPartition>> activeTasks)
 {
         // the number of assigned partitions should be the same as number of active tasks, which
         // could be duplicated if one task has more than one assigned partitions
@@ -988,34 +988,34 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         for (int i = 0; i < partitions.size(); i++)
 {
             TopicPartition partition = partitions[i];
-            TaskId id = info.activeTasks()[i];
-            activeTasks.computeIfAbsent(id, k -> new HashSet<>()).add(partition);
+            TaskId id = info.activeTasks()[i);
+            activeTasks.computeIfAbsent(id, k -> new HashSet<>()).Add(partition);
         }
     }
 
     private void processVersionTwoAssignment(AssignmentInfo info,
                                              List<TopicPartition> partitions,
-                                             Dictionary<TaskId, Set<TopicPartition>> activeTasks,
+                                             Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,
                                              Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo)
 {
         processVersionOneAssignment(info, partitions, activeTasks);
 
         // process partitions by host
-        Dictionary<HostInfo, Set<TopicPartition>> partitionsByHost = info.partitionsByHost();
+        Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHost = info.partitionsByHost();
         foreach (Set<TopicPartition> value in partitionsByHost.values())
 {
             foreach (TopicPartition topicPartition in value)
 {
                 topicToPartitionInfo.Add(
                     topicPartition,
-                    new PartitionInfo(topicPartition.topic(), topicPartition.partition(), null, new Node[0], new Node[0])];
+                    new PartitionInfo(topicPartition.topic(), topicPartition.partition(), null, new Node[0], new Node[0]));
             }
         }
     }
 
     private void processVersionThreeAssignment(AssignmentInfo info,
                                                List<TopicPartition> partitions,
-                                               Dictionary<TaskId, Set<TopicPartition>> activeTasks,
+                                               Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,
                                                Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo)
 {
         processVersionTwoAssignment(info, partitions, activeTasks, topicToPartitionInfo);
@@ -1023,7 +1023,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
     private void processVersionFourAssignment(AssignmentInfo info,
                                               List<TopicPartition> partitions,
-                                              Dictionary<TaskId, Set<TopicPartition>> activeTasks,
+                                              Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,
                                               Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo)
 {
         processVersionThreeAssignment(info, partitions, activeTasks, topicToPartitionInfo);
@@ -1032,7 +1032,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     // for testing
     protected void processLatestVersionAssignment(AssignmentInfo info,
                                                   List<TopicPartition> partitions,
-                                                  Dictionary<TaskId, Set<TopicPartition>> activeTasks,
+                                                  Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,
                                                   Dictionary<TopicPartition, PartitionInfo> topicToPartitionInfo)
 {
         processVersionThreeAssignment(info, partitions, activeTasks, topicToPartitionInfo);
@@ -1055,7 +1055,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             int numPartitions = topic.numberOfPartitions();
             if (numPartitions == UNKNOWN)
 {
-                throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.name())];
+                throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.name()));
             }
 
             topic.setNumberOfPartitions(numPartitions);
@@ -1114,9 +1114,9 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                         numPartitions = partitions;
                     } else if (numPartitions != partitions)
 {
-                        string[] topics = copartitionGroup.toArray(new string[0]];
+                        string[] topics = copartitionGroup.toArray(new string[0]);
                         Arrays.sort(topics);
-                        throw new org.apache.kafka.streams.errors.TopologyException(string.Format("%sTopics not co-partitioned: [%s]", logPrefix, Utils.join(Arrays.asList(topics), ","))];
+                        throw new org.apache.kafka.streams.errors.TopologyException(string.Format("%sTopics not co-partitioned: [%s]", logPrefix, Utils.join(Arrays.asList(topics), ",")));
                     }
                 }
             }

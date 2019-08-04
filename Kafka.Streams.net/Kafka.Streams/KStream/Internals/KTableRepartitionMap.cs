@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
 
 /**
  * KTable repartition map functions are not exposed to public APIs, but only used for keyed aggregations.
@@ -34,9 +34,9 @@ import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
 public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, KeyValue<K1, V1>> {
 
     private  KTableImpl<K, ?, V> parent;
-    private  IKeyValueMapper<? super K, ? super V, KeyValue<K1, V1>> mapper;
+    private  IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
-    KTableRepartitionMap( KTableImpl<K, ?, V> parent,  IKeyValueMapper<? super K, ? super V, KeyValue<K1, V1>> mapper)
+    KTableRepartitionMap( KTableImpl<K, ?, V> parent,  IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper)
 {
         this.parent = parent;
         this.mapper = mapper;
@@ -58,7 +58,7 @@ public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, 
 
             public KTableValueGetter<K, KeyValue<K1, V1>> get()
 {
-                return new KTableMapValueGetter(parentValueGetterSupplier()];
+                return new KTableMapValueGetter(parentValueGetterSupplier());
             }
 
             
@@ -94,8 +94,8 @@ public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, 
             }
 
             // if the value is null, we do not need to forward its selected key-value further
-             KeyValue<? : K1, ? : V1> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
-             KeyValue<? : K1, ? : V1> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
+             KeyValue<? : K1, V1> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
+             KeyValue<? : K1, V1> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
 
             // if the selected repartition key or value is null, skip
             // forward oldPair first, to be consistent with reduce and aggregate

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
@@ -64,7 +64,7 @@ public class RocksDBWindowStore
 
     public override byte[] fetch(Bytes key, long timestamp)
 {
-        byte[] bytesValue = wrapped()[WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum)];
+        byte[] bytesValue = wrapped()[WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
         if (bytesValue == null)
 {
             return null;
@@ -75,7 +75,7 @@ public class RocksDBWindowStore
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
     public override WindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo];
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo);
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
     }
 
@@ -85,7 +85,7 @@ public class RocksDBWindowStore
                                                            long timeFrom,
                                                            long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo];
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo);
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
     }
 
@@ -98,7 +98,7 @@ public class RocksDBWindowStore
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo];
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo);
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
     }
 

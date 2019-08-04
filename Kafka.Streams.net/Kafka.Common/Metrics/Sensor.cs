@@ -181,11 +181,11 @@ namespace Kafka.Common.Metrics
         /**
          * Register a compound statistic with this sensor with no config override
          * @param stat The stat to register
-         * @return true if stat is added to sensor, false if sensor is expired
+         * @return true if stat is.Added to sensor, false if sensor is expired
          */
-        public bool add(ICompoundStat stat)
+        public bool Add(ICompoundStat stat)
         {
-            return add(stat, null);
+            return Add(stat, null);
         }
 
         /**
@@ -193,10 +193,10 @@ namespace Kafka.Common.Metrics
          * @param stat The stat to register
          * @param config The configuration for this stat. If null then the stat will use the default configuration for this
          *        sensor.
-         * @return true if stat is added to sensor, false if sensor is expired
+         * @return true if stat is.Added to sensor, false if sensor is expired
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
-        public bool add(ICompoundStat stat, MetricConfig config)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public bool Add(ICompoundStat stat, MetricConfig config)
         {
             if (hasExpired())
                 return false;
@@ -222,11 +222,11 @@ namespace Kafka.Common.Metrics
          * Register a metric with this sensor
          * @param metricName The name of the metric
          * @param stat The statistic to keep
-         * @return true if metric is added to sensor, false if sensor is expired
+         * @return true if metric is.Added to sensor, false if sensor is expired
          */
-        public bool add(MetricName metricName, IMeasurableStat stat)
+        public bool Add(MetricName metricName, IMeasurableStat stat)
         {
-            return add(metricName, stat, null);
+            return Add(metricName, stat, null);
         }
 
         /**
@@ -235,10 +235,10 @@ namespace Kafka.Common.Metrics
          * @param metricName The name of the metric
          * @param stat       The statistic to keep
          * @param config     A special configuration for this metric. If null use the sensor default configuration.
-         * @return true if metric is added to sensor, false if sensor is expired
+         * @return true if metric is.Added to sensor, false if sensor is expired
          */
-        [MethodImpl(MethodImplOptions.Synchronized])
-        public bool add(
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public bool Add(
             MetricName metricName,
             IMeasurableStat stat,
             MetricConfig config)
@@ -276,7 +276,7 @@ namespace Kafka.Common.Metrics
             return (time.milliseconds() - this.lastRecordTime) > this.inactiveSensorExpirationTimeMs;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized])
+        [MethodImpl(MethodImplOptions.Synchronized)]
         IReadOnlyList<KafkaMetric> GetMetrics()
         {
             return this.metrics.Values
@@ -290,14 +290,14 @@ namespace Kafka.Common.Metrics
          * all sensors are synchronized on this object.
          * <p>
          * Sensor object is not used as a lock for reading metric value since metrics reporter is
-         * invoked while holding Sensor and Metrics locks to report addition and removal of metrics
+         * invoked while holding Sensor and Metrics locks to report.Addition and removal of metrics
          * and synchronized reporters may deadlock if Sensor lock is used for reading metrics values.
          * Note that Sensor object itself is used as a lock to protect the access to stats and metrics
-         * while recording metric values, adding and deleting sensors.
+         * while recording metric values,.Adding and deleting sensors.
          * </p><p>
          * Locking order (assume all MetricsReporter methods may be synchronized):
          * <ul>
-         *   <li>Sensor#add: Sensor -> Metrics -> MetricsReporter</li>
+         *   <li>Sensor.Add: Sensor -> Metrics -> MetricsReporter</li>
          *   <li>Metrics#removeSensor: Sensor -> Metrics -> MetricsReporter</li>
          *   <li>KafkaMetric#metricValue: MetricsReporter -> Sensor#metricLock</li>
          *   <li>Sensor#record: Sensor -> Sensor#metricLock</li>

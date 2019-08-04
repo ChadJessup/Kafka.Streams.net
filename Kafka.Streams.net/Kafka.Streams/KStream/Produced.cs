@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,13 +16,13 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.streams.kstream.internals.WindowedSerializer;
-import org.apache.kafka.streams.kstream.internals.WindowedStreamPartitioner;
-import org.apache.kafka.streams.processor.StreamPartitioner;
 
-import java.util.Objects;
+
+
+
+
+
+
 
 /**
  * This class is used to provide the optional parameters when producing to new topics
@@ -34,12 +34,12 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
 
     protected ISerde<K> keySerde;
     protected ISerde<V> valueSerde;
-    protected StreamPartitioner<? super K, ? super V> partitioner;
+    protected StreamPartitioner<K, V> partitioner;
     protected string processorName;
 
     private Produced( ISerde<K> keySerde,
                       ISerde<V> valueSerde,
-                      StreamPartitioner<? super K, ? super V> partitioner,
+                      StreamPartitioner<K, V> partitioner,
                       string processorName)
 {
         this.keySerde = keySerde;
@@ -66,7 +66,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> with( ISerde<K> keySerde,
+    public staticProduced<K, V> with( ISerde<K> keySerde,
                                               ISerde<V> valueSerde)
 {
         return new Produced<>(keySerde, valueSerde, null, null);
@@ -86,9 +86,9 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> with( ISerde<K> keySerde,
+    public staticProduced<K, V> with( ISerde<K> keySerde,
                                               ISerde<V> valueSerde,
-                                              StreamPartitioner<? super K, ? super V> partitioner)
+                                              StreamPartitioner<K, V> partitioner)
 {
         return new Produced<>(keySerde, valueSerde, partitioner, null);
     }
@@ -101,7 +101,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @param <V>         value type
      * @return a new instance of {@link Produced}
      */
-    public static <K, V> Produced<K, V> as( string processorName)
+    public staticProduced<K, V> as( string processorName)
 {
         return new Produced<>(null, null, null, processorName);
     }
@@ -115,7 +115,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> keySerde( ISerde<K> keySerde)
+    public staticProduced<K, V> keySerde( ISerde<K> keySerde)
 {
         return new Produced<>(keySerde, null, null, null);
     }
@@ -129,7 +129,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> valueSerde( ISerde<V> valueSerde)
+    public staticProduced<K, V> valueSerde( ISerde<V> valueSerde)
 {
         return new Produced<>(null, valueSerde, null, null);
     }
@@ -145,7 +145,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> streamPartitioner( StreamPartitioner<? super K, ? super V> partitioner)
+    public staticProduced<K, V> streamPartitioner( StreamPartitioner<K, V> partitioner)
 {
         return new Produced<>(null, null, partitioner, null);
     }
@@ -157,7 +157,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} wil be used
      * @return this
      */
-    public Produced<K, V> withStreamPartitioner( StreamPartitioner<? super K, ? super V> partitioner)
+    public Produced<K, V> withStreamPartitioner( StreamPartitioner<K, V> partitioner)
 {
         this.partitioner = partitioner;
         return this;

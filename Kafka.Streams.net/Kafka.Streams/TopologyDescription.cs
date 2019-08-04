@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,19 +16,19 @@
  */
 namespace Kafka.streams;
 
-import org.apache.kafka.streams.processor.TopicNameExtractor;
-import org.apache.kafka.streams.processor.internals.StreamTask;
 
-import java.util.Set;
-import java.util.regex.Pattern;
+
+
+
+
 
 /**
  * A meta representation of a {@link Topology topology}.
  * <p>
  * The nodes of a topology are grouped into {@link Subtopology sub-topologies} if they are connected.
  * In contrast, two sub-topologies are not connected but can be linked to each other via topics, i.e., if one
- * sub-topology {@link Topology#addSink(string, string, string...) writes} into a topic and another sub-topology
- * {@link Topology#addSource(string, string...) reads} from the same topic.
+ * sub-topology {@link Topology.AddSink(string, string, string...) writes} into a topic and another sub-topology
+ * {@link Topology.AddSource(string, string...) reads} from the same topic.
  * <p>
  * When {@link KafkaStreams#start()} is called, different sub-topologies will be constructed and executed as independent
  * {@link StreamTask tasks}.
@@ -37,7 +37,7 @@ public interface TopologyDescription {
     /**
      * A connected sub-graph of a {@link Topology}.
      * <p>
-     * Nodes of a {@code Subtopology} are connected {@link Topology#addProcessor(string,
+     * Nodes of a {@code Subtopology} are connected {@link Topology.AddProcessor(string,
      * org.apache.kafka.streams.processor.ProcessorSupplier, string...) directly} or indirectly via
      * {@link Topology#connectProcessorAndStateStores(string, string...) state stores}
      * (i.e., if multiple processors share the same state).
@@ -53,15 +53,15 @@ public interface TopologyDescription {
          * All nodes of this sub-topology.
          * @return set of all nodes within the sub-topology
          */
-        Set<Node> nodes();
+        HashSet<Node> nodes();
     }
 
     /**
-     * Represents a {@link Topology#addGlobalStore(org.apache.kafka.streams.state.StoreBuilder, string,
+     * Represents a {@link Topology.AddGlobalStore(org.apache.kafka.streams.state.StoreBuilder, string,
      * org.apache.kafka.common.serialization.Deserializer, org.apache.kafka.common.serialization.Deserializer, string,
      * string, org.apache.kafka.streams.processor.ProcessorSupplier) global store}.
-     * Adding a global store results in adding a source node and one stateful processor node.
-     * Note, that all added global stores form a single unit (similar to a {@link Subtopology}) even if different
+     * Adding a global store results in.Adding a source node and one stateful processor node.
+     * Note, that all.Added global stores form a single unit (similar to a {@link Subtopology}) even if different
      * global stores are not connected to each other.
      * Furthermore, global stores are available to all processors without connecting them explicitly, and thus global
      * stores will never be part of any {@link Subtopology}.
@@ -97,14 +97,14 @@ public interface TopologyDescription {
          * Will never be {@code null}.
          * @return set of all predecessors
          */
-        Set<Node> predecessors();
+        HashSet<Node> predecessors();
         /**
          * The successor of this node within a sub-topology.
          * Note, sinks do not have any successors.
          * Will never be {@code null}.
          * @return set of all successor
          */
-        Set<Node> successors();
+        HashSet<Node> successors();
     }
 
 
@@ -124,7 +124,7 @@ public interface TopologyDescription {
          * The topic names this source node is reading from.
          * @return a set of topic names
          */
-        Set<string> topicSet();
+        HashSet<string> topicSet();
 
         /**
          * The pattern used to match topic names that is reading from.
@@ -141,7 +141,7 @@ public interface TopologyDescription {
          * The names of all connected stores.
          * @return set of store names
          */
-        Set<string> stores();
+        HashSet<string> stores();
     }
 
     /**
@@ -167,13 +167,13 @@ public interface TopologyDescription {
      * All sub-topologies of the represented topology.
      * @return set of all sub-topologies
      */
-    Set<Subtopology> subtopologies();
+    HashSet<Subtopology> subtopologies();
 
     /**
      * All global stores of the represented topology.
      * @return set of all global stores
      */
-    Set<GlobalStore> globalStores();
+    HashSet<GlobalStore> globalStores();
 
 }
 

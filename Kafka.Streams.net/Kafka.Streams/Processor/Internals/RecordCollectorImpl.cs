@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+
+
+
+
 using Kafka.Common.KafkaException;
 using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
@@ -37,22 +37,22 @@ using Kafka.Common.metrics.Sensor;
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Serializer;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.ProductionExceptionHandler;
-import org.apache.kafka.streams.errors.ProductionExceptionHandler.ProductionExceptionHandlerResponse;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.slf4j.Logger;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+
+
+
+
+
+
+
 
 public class RecordCollectorImpl : RecordCollector {
     private Logger log;
     private string logPrefix;
     private Sensor skippedRecordsSensor;
     private Producer<byte[], byte[]> producer;
-    private Dictionary<TopicPartition, Long> offsets;
+    private Dictionary<TopicPartition, long> offsets;
     private ProductionExceptionHandler productionExceptionHandler;
 
     private static string LOG_MESSAGE = "Error sending record to topic {} due to {}; " +
@@ -70,7 +70,7 @@ public class RecordCollectorImpl : RecordCollector {
                                Sensor skippedRecordsSensor)
 {
         this.offsets = new HashMap<>();
-        this.logPrefix = string.Format("task [%s] ", streamTaskId];
+        this.logPrefix = string.Format("task [%s] ", streamTaskId);
         this.log = logContext.logger(GetType());
         this.productionExceptionHandler = productionExceptionHandler;
         this.skippedRecordsSensor = skippedRecordsSensor;
@@ -83,14 +83,14 @@ public class RecordCollectorImpl : RecordCollector {
     }
 
     
-    public <K, V> void send(string topic,
+    public void send(string topic,
                             K key,
                             V value,
                             Headers headers,
-                            Long timestamp,
+                            long timestamp,
                             Serializer<K> keySerializer,
                             Serializer<V> valueSerializer,
-                            StreamPartitioner<? super K, ? super V> partitioner)
+                            StreamPartitioner<K, V> partitioner)
 {
         Integer partition = null;
 
@@ -124,10 +124,10 @@ public class RecordCollectorImpl : RecordCollector {
         return securityException || communicationException;
     }
 
-    private <K, V> void recordSendError(
+    private void recordSendError(
         K key,
         V value,
-        Long timestamp,
+        long timestamp,
         string topic,
         Exception exception
     )
@@ -159,20 +159,20 @@ public class RecordCollectorImpl : RecordCollector {
     }
 
     
-    public <K, V> void send(string topic,
+    public void send(string topic,
                             K key,
                             V value,
                             Headers headers,
                             Integer partition,
-                            Long timestamp,
+                            long timestamp,
                             Serializer<K> keySerializer,
                             Serializer<V> valueSerializer)
 {
         checkForException();
-        byte[] keyBytes = keySerializer.serialize(topic, headers, key];
-        byte[] valBytes = valueSerializer.serialize(topic, headers, value];
+        byte[] keyBytes = keySerializer.serialize(topic, headers, key);
+        byte[] valBytes = valueSerializer.serialize(topic, headers, value);
 
-        ProducerRecord<byte[], byte[]> serializedRecord = new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes, headers];
+        ProducerRecord<byte[], byte[]> serializedRecord = new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes, headers);
 
         try {
             producer.send(serializedRecord, new Callback()
@@ -194,10 +194,10 @@ public class RecordCollectorImpl : RecordCollector {
 {
                             if (exception is ProducerFencedException)
 {
-                                log.warn(LOG_MESSAGE, topic, exception.getMessage(), exception);
+                                log.LogWarning(LOG_MESSAGE, topic, exception.getMessage(), exception);
 
                                 // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
-                                log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition];
+                                log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
 
                                 sendException = new ProducerFencedException(
                                     string.Format(
@@ -217,7 +217,7 @@ public class RecordCollectorImpl : RecordCollector {
 {
                                     recordSendError(key, value, timestamp, topic, exception);
                                 } else {
-                                    log.warn(
+                                    log.LogWarning(
                                         "Error sending records topic=[{}] and partition=[{}]; " +
                                             "The exception handler chose to CONTINUE processing in spite of this error. " +
                                             "Enable TRACE logging to view failed messages key and value.",
@@ -225,7 +225,7 @@ public class RecordCollectorImpl : RecordCollector {
                                     );
 
                                     // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
-                                    log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition];
+                                    log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
 
                                     skippedRecordsSensor.record();
                                 }
@@ -303,7 +303,7 @@ public class RecordCollectorImpl : RecordCollector {
     }
 
     
-    public Dictionary<TopicPartition, Long> offsets()
+    public Dictionary<TopicPartition, long> offsets()
 {
         return offsets;
     }

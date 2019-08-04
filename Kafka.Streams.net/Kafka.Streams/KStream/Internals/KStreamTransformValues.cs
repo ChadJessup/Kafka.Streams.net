@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,12 +16,12 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
-import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.ForwardingDisabledProcessorContext;
+
+
+
+
+
+
 
 public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
 
@@ -35,7 +35,7 @@ public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
     
     public Processor<K, V> get()
 {
-        return new KStreamTransformValuesProcessor<>(valueTransformerSupplier()];
+        return new KStreamTransformValuesProcessor<>(valueTransformerSupplier());
     }
 
     public static class KStreamTransformValuesProcessor<K, V, R> : Processor<K, V> {

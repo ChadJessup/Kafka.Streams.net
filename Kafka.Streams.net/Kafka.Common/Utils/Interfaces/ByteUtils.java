@@ -79,7 +79,7 @@ public final class ByteUtils {
         return (buffer[offset] << 0 & 0xff)
                 | ((buffer[offset + 1] & 0xff) << 8)
                 | ((buffer[offset + 2] & 0xff) << 16)
-                | ((buffer[offset + 3] & 0xff) << 24];
+                | ((buffer[offset + 3] & 0xff) << 24);
     }
 
     /**
@@ -129,9 +129,9 @@ public final class ByteUtils {
     public static void writeUnsignedIntLE(byte[] buffer, int offset, int value)
 {
         buffer[offset] = (byte] value;
-        buffer[offset + 1] = (byte) (value >>> 8];
-        buffer[offset + 2] = (byte) (value >>> 16];
-        buffer[offset + 3]   = (byte) (value >>> 24];
+        buffer[offset + 1] = (byte) (value >>> 8);
+        buffer[offset + 2] = (byte) (value >>> 16);
+        buffer[offset + 3]   = (byte) (value >>> 24);
     }
 
     /**

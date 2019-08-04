@@ -14,7 +14,7 @@ namespace Kafka.Streams.KStream
      * @param <K> the key type
      * @param <V> the value type
      */
-    public class Grouped<K, V> : INamedOperation<Grouped<K, V>>
+    public class Grouped<K, V> : Interfaces.INamedOperation<Grouped<K, V>>
    
 {
         protected ISerde<K> keySerde;

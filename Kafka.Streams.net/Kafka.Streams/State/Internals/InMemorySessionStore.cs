@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.EXPIRED_WINDOW_RECORD_DROP;
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.addInvocationRateAndCount;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentNavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+
+
+
+
+
+
+
+
+
+
+
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -40,8 +40,8 @@ using Kafka.Streams.Processor.internals.InternalProcessorContext;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.SessionStore;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
 
 public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 {
@@ -55,8 +55,8 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 
     private long retentionPeriod;
 
-    private ConcurrentNavigableMap<Long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>>> endTimeMap = new ConcurrentSkipListMap<>();
-    private Set<InMemorySessionStoreIterator> openIterators  = ConcurrentHashMap.newKeySet();
+    private ConcurrentNavigableMap<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> endTimeMap = new ConcurrentSkipListMap<>();
+    private HashSet<InMemorySessionStoreIterator> openIterators  = ConcurrentHashMap.newKeySet();
 
     private volatile bool open = false;
 
@@ -84,7 +84,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             EXPIRED_WINDOW_RECORD_DROP,
             RecordingLevel.INFO
         );
-        addInvocationRateAndCount(
+       .AddInvocationRateAndCount(
             expiredRecordSensor,
             "stream-" + metricScope + "-metrics",
             metrics.tagMap("task-id", taskName, metricScope + "-id", name()),
@@ -114,9 +114,9 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             if (aggregate != null)
 {
                 endTimeMap.computeIfAbsent(windowEndTimestamp, t -> new ConcurrentSkipListMap<>());
-                ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
+                ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
                 keyMap.computeIfAbsent(sessionKey.key(), t -> new ConcurrentSkipListMap<>());
-                keyMap[sessionKey.key()).Add(sessionKey.window().start(), aggregate];
+                keyMap[sessionKey.key()).Add(sessionKey.window().start(), aggregate);
             } else
 {
                 Remove(sessionKey);
@@ -126,13 +126,13 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 
     public override void Remove(Windowed<Bytes> sessionKey)
 {
-        ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>> keyMap = endTimeMap[sessionKey.window().end()];
+        ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[sessionKey.window().end());
         if (keyMap == null)
 {
             return;
         }
 
-        ConcurrentNavigableMap<Long, byte[]> startTimeMap = keyMap[sessionKey.key()];
+        ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[sessionKey.key());
         if (startTimeMap == null)
 {
             return;
@@ -159,10 +159,10 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         // Only need to search if the record hasn't expired yet
         if (endTime > observedStreamTime - retentionPeriod)
 {
-            ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>> keyMap = endTimeMap[endTime];
+            ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[endTime];
             if (keyMap != null)
 {
-                ConcurrentNavigableMap<Long, byte[]> startTimeMap = keyMap[key];
+                ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[key];
                 if (startTimeMap != null)
 {
                     return startTimeMap[startTime];
@@ -200,7 +200,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 
         if (keyFrom.compareTo(keyTo) > 0)
 {
-            LOG.warn("Returning empty iterator for fetch with invalid key range: from > to. "
+            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 "Note that the built-in numerical serdes do not follow this for negative numbers");
             return KeyValueIterators.emptyIterator();
@@ -219,7 +219,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 
         removeExpiredSegments();
 
-        return registerNewIterator(key, key, Long.MAX_VALUE, endTimeMap.entrySet().iterator());
+        return registerNewIterator(key, key, long.MAX_VALUE, endTimeMap.entrySet().iterator());
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
@@ -231,7 +231,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         removeExpiredSegments();
 
 
-        return registerNewIterator(from, to, Long.MAX_VALUE, endTimeMap.entrySet().iterator());
+        return registerNewIterator(from, to, long.MAX_VALUE, endTimeMap.entrySet().iterator());
     }
 
     public override bool persistent()
@@ -253,7 +253,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 {
         if (openIterators.size() != 0)
 {
-            LOG.warn("Closing {} open iterators for store {}", openIterators.size(), name);
+            LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), name);
             foreach (InMemorySessionStoreIterator it in openIterators)
 {
                 it.close();
@@ -280,10 +280,10 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
     private InMemorySessionStoreIterator registerNewIterator(Bytes keyFrom,
                                                              Bytes keyTo,
                                                              long latestSessionStartTime,
-                                                             Iterator<Entry<Long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>>>> endTimeIterator)
+                                                             Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator)
 {
         InMemorySessionStoreIterator iterator = new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it -> openIterators.Remove(it));
-        openIterators.add(iterator);
+        openIterators.Add(iterator);
         return iterator;
     }
 
@@ -295,9 +295,9 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
     private static class InMemorySessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
 {
 
-        private Iterator<Entry<Long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>>>> endTimeIterator;
-        private Iterator<Entry<Bytes, ConcurrentNavigableMap<Long, byte[]>>> keyIterator;
-        private Iterator<Entry<Long, byte[]>> recordIterator;
+        private Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator;
+        private Iterator<Entry<Bytes, ConcurrentNavigableMap<long, byte[]>>> keyIterator;
+        private Iterator<Entry<long, byte[]>> recordIterator;
 
         private KeyValue<Windowed<Bytes>, byte[]> next;
         private Bytes currentKey;
@@ -312,7 +312,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         InMemorySessionStoreIterator(Bytes keyFrom,
                                      Bytes keyTo,
                                      long latestSessionStartTime,
-                                     Iterator<Entry<Long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>>>> endTimeIterator,
+                                     Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator,
                                      ClosingCallback callback)
 {
             this.keyFrom = keyFrom;
@@ -371,7 +371,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             callback.deregisterIterator(this);
         }
 
-        Long minTime()
+        long minTime()
 {
             return currentEndTime;
         }
@@ -390,7 +390,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
                 return null;
             }
 
-            Map.Entry<Long, byte[]> nextRecord = recordIterator.next();
+            Map.Entry<long, byte[]> nextRecord = recordIterator.next();
             SessionWindow sessionWindow = new SessionWindow(nextRecord.getKey(), currentEndTime);
             Windowed<Bytes> windowedKey = new Windowed<>(currentKey, sessionWindow);
 
@@ -404,7 +404,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 {
             while (endTimeIterator.hasNext())
 {
-                Entry<Long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<Long, byte[]>>> nextEndTimeEntry = endTimeIterator.next();
+                Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> nextEndTimeEntry = endTimeIterator.next();
                 currentEndTime = nextEndTimeEntry.getKey();
                 keyIterator = nextEndTimeEntry.getValue().subMap(keyFrom, true, keyTo, true).entrySet().iterator();
 
@@ -422,10 +422,10 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 {
             while (keyIterator.hasNext())
 {
-                Entry<Bytes, ConcurrentNavigableMap<Long, byte[]>> nextKeyEntry = keyIterator.next();
+                Entry<Bytes, ConcurrentNavigableMap<long, byte[]>> nextKeyEntry = keyIterator.next();
                 currentKey = nextKeyEntry.getKey();
 
-                if (latestSessionStartTime == Long.MAX_VALUE)
+                if (latestSessionStartTime == long.MAX_VALUE)
 {
                     recordIterator = nextKeyEntry.getValue().entrySet().iterator();
                 } else

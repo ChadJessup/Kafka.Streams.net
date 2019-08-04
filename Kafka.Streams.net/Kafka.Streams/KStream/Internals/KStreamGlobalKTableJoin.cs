@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,21 +16,21 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+
+
+
+
 
 class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : ProcessorSupplier<K1, V1> {
 
     private  KTableValueGetterSupplier<K2, V2> valueGetterSupplier;
-    private  ValueJoiner<? super V1, ? super V2, ? : R> joiner;
-    private  IKeyValueMapper<? super K1, ? super V1, ? : K2> mapper;
+    private  ValueJoiner<V1, V2, R> joiner;
+    private  IKeyValueMapper<K1, V1, K2> mapper;
     private  bool leftJoin;
 
     KStreamGlobalKTableJoin( KTableValueGetterSupplier<K2, V2> valueGetterSupplier,
-                             ValueJoiner<? super V1, ? super V2, ? : R> joiner,
-                             IKeyValueMapper<? super K1, ? super V1, ? : K2> mapper,
+                             ValueJoiner<V1, V2, R> joiner,
+                             IKeyValueMapper<K1, V1, K2> mapper,
                              bool leftJoin)
 {
         this.valueGetterSupplier = valueGetterSupplier;
@@ -42,6 +42,6 @@ class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : ProcessorSupplier<K1, V1> {
     
     public Processor<K1, V1> get()
 {
-        return new KStreamKTableJoinProcessor<>(valueGetterSupplier(), mapper, joiner, leftJoin];
+        return new KStreamKTableJoinProcessor<>(valueGetterSupplier(), mapper, joiner, leftJoin);
     }
 }

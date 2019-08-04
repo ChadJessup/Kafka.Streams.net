@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
@@ -25,9 +25,9 @@ using Kafka.Streams.State.QueryableStoreTypes;
 using Kafka.Streams.State.TimestampedKeyValueStore;
 using Kafka.Streams.State.TimestampedWindowStore;
 
-import java.util.List;
-import java.util.Collections;
-import java.util.List;
+
+
+
 
 /**
  * Wrapper over StreamThread that : StateStoreProvider
@@ -42,7 +42,7 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
         this.streamThread = streamThread;
     }
 
-    @SuppressWarnings("unchecked")
+    
     public override <T> List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
 {
         if (streamThread.state() == StreamThread.State.DEAD)
@@ -67,13 +67,13 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
                 }
                 if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
 {
-                    stores.add((T) new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<Object, object>) store));
+                    stores.Add((T) new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<Object, object>) store));
                 } else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
 {
-                    stores.add((T) new ReadOnlyWindowStoreFacade((TimestampedWindowStore<Object, object>) store));
+                    stores.Add((T) new ReadOnlyWindowStoreFacade((TimestampedWindowStore<Object, object>) store));
                 } else
 {
-                    stores.add((T) store);
+                    stores.Add((T) store);
                 }
             }
         }

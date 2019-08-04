@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,7 +16,7 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.serialization.Serde;
+
 
 /**
  * The class that is used to capture the key and value {@link Serde}s used when performing
@@ -57,7 +57,7 @@ public class Serialized<K, V> {
      * @param <V>        the value type
      * @return a new instance of {@link Serialized} configured with the provided serdes
      */
-    public static <K, V> Serialized<K, V> with( ISerde<K> keySerde,
+    public staticSerialized<K, V> with( ISerde<K> keySerde,
                                                 ISerde<V> valueSerde)
 {
         return new Serialized<>(keySerde, valueSerde);

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.kstream.Windowed;
@@ -24,9 +24,9 @@ using Kafka.Streams.State.TimestampedWindowStore;
 using Kafka.Streams.State.ValueAndTimestamp;
 using Kafka.Streams.State.WindowStoreIterator;
 
-import java.time.Instant;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
 
 public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
 {
@@ -100,9 +100,9 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
 
     private static class WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
 {
-        KeyValueIterator<Long, ValueAndTimestamp<V>> innerIterator;
+        KeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
 
-        WindowStoreIteratorFacade(KeyValueIterator<Long, ValueAndTimestamp<V>> iterator)
+        WindowStoreIteratorFacade(KeyValueIterator<long, ValueAndTimestamp<V>> iterator)
 {
             innerIterator = iterator;
         }
@@ -114,7 +114,7 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
         }
 
         
-        public Long peekNextKey()
+        public long peekNextKey()
 {
             return innerIterator.peekNextKey();
         }
@@ -126,9 +126,9 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
         }
 
         
-        public KeyValue<Long, V> next()
+        public KeyValue<long, V> next()
 {
-            KeyValue<Long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
+            KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
             return KeyValue.pair(innerKeyValue.key, getValueOrNull(innerKeyValue.value));
         }
     }

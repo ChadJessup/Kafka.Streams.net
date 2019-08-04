@@ -110,14 +110,14 @@ public class Crc32 : Checksum {
             final int c1 = (b[off + 1] ^ (localCrc >>>= 8)] & 0xff;
             final int c2 = (b[off + 2] ^ (localCrc >>>= 8)] & 0xff;
             final int c3 = (b[off + 3] ^ (localCrc >>>= 8)] & 0xff;
-            localCrc = (T[T8_7_START + c0] ^ T[T8_6_START + c1]) ^ (T[T8_5_START + c2] ^ T[T8_4_START + c3]];
+            localCrc = (T[T8_7_START + c0] ^ T[T8_6_START + c1]) ^ (T[T8_5_START + c2] ^ T[T8_4_START + c3]);
 
             final int c4 = b[off + 4] & 0xff;
             final int c5 = b[off + 5] & 0xff;
             final int c6 = b[off + 6] & 0xff;
             final int c7 = b[off + 7] & 0xff;
 
-            localCrc ^= (T[T8_3_START + c4] ^ T[T8_2_START + c5]) ^ (T[T8_1_START + c6] ^ T[T8_0_START + c7]];
+            localCrc ^= (T[T8_3_START + c4] ^ T[T8_2_START + c5]) ^ (T[T8_1_START + c6] ^ T[T8_0_START + c7]);
 
             off += 8;
             len -= 8;
@@ -127,19 +127,19 @@ public class Crc32 : Checksum {
         switch (len)
 {
             case 7:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 6:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 5:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 4:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 3:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 2:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             case 1:
-                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]];
+                localCrc = (localCrc >>> 8) ^ T[T8_0_START + ((localCrc ^ b[off++]) & 0xff]);
             default:
                 /* nothing */
         }
@@ -151,7 +151,7 @@ public class Crc32 : Checksum {
     
     final public void update(int b)
 {
-        crc = (crc >>> 8) ^ T[T8_0_START + ((crc ^ b) & 0xff]];
+        crc = (crc >>> 8) ^ T[T8_0_START + ((crc ^ b) & 0xff]);
     }
 
     /*

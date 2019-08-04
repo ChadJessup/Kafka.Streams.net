@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
-import org.apache.kafka.streams.KafkaStreams;
 
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
 
 /**
  * Represents the state of a single thread running within a {@link KafkaStreams} application.
@@ -31,15 +31,15 @@ public class ThreadMetadata {
 
     private string threadState;
 
-    private Set<TaskMetadata> activeTasks;
+    private HashSet<TaskMetadata> activeTasks;
 
-    private Set<TaskMetadata> standbyTasks;
+    private HashSet<TaskMetadata> standbyTasks;
 
     private string mainConsumerClientId;
 
     private string restoreConsumerClientId;
 
-    private Set<string> producerClientIds;
+    private HashSet<string> producerClientIds;
 
     // the admin client should be shared among all threads, so the client id should be the same;
     // we keep it at the thread-level for user's convenience and possible extensions in the future
@@ -49,10 +49,10 @@ public class ThreadMetadata {
                           string threadState,
                           string mainConsumerClientId,
                           string restoreConsumerClientId,
-                          Set<string> producerClientIds,
+                          HashSet<string> producerClientIds,
                           string adminClientId,
-                          Set<TaskMetadata> activeTasks,
-                          Set<TaskMetadata> standbyTasks)
+                          HashSet<TaskMetadata> activeTasks,
+                          HashSet<TaskMetadata> standbyTasks)
 {
         this.mainConsumerClientId = mainConsumerClientId;
         this.restoreConsumerClientId = restoreConsumerClientId;
@@ -74,12 +74,12 @@ public class ThreadMetadata {
         return threadName;
     }
 
-    public Set<TaskMetadata> activeTasks()
+    public HashSet<TaskMetadata> activeTasks()
 {
         return activeTasks;
     }
 
-    public Set<TaskMetadata> standbyTasks()
+    public HashSet<TaskMetadata> standbyTasks()
 {
         return standbyTasks;
     }
@@ -94,7 +94,7 @@ public class ThreadMetadata {
         return restoreConsumerClientId;
     }
 
-    public Set<string> producerClientIds()
+    public HashSet<string> producerClientIds()
 {
         return producerClientIds;
     }

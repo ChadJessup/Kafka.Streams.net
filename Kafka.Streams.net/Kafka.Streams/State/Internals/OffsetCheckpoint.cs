@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Pattern;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * This class saves out a map of topic/partition=&gt;offsets to a file. The format of the file is UTF-8 text containing the following:
@@ -71,7 +71,7 @@ public class OffsetCheckpoint
     /**
      * @throws IOException if any file operation fails with an IO exception
      */
-    public void write(Dictionary<TopicPartition, Long> offsets) throws IOException
+    public void write(Dictionary<TopicPartition, long> offsets) throws IOException
 {
         // if there is no offsets, skip writing the file to save disk IOs
         if (offsets.isEmpty())
@@ -92,7 +92,7 @@ public class OffsetCheckpoint
                 writeIntLine(writer, VERSION);
                 writeIntLine(writer, offsets.size());
 
-                foreach (Map.Entry<TopicPartition, Long> entry in offsets.entrySet())
+                foreach (Map.Entry<TopicPartition, long> entry in offsets.entrySet())
 {
                     writeEntry(writer, entry.getKey(), entry.getValue());
                 }
@@ -127,7 +127,7 @@ public class OffsetCheckpoint
         writer.write(' ');
         writer.write(Integer.ToString(part.partition()));
         writer.write(' ');
-        writer.write(Long.ToString(offset));
+        writer.write(long.ToString(offset));
         writer.newLine();
     }
 
@@ -136,7 +136,7 @@ public class OffsetCheckpoint
      * @throws IOException if any file operation fails with an IO exception
      * @throws ArgumentException if the offset checkpoint version is unknown
      */
-    public Dictionary<TopicPartition, Long> read() throws IOException
+    public Dictionary<TopicPartition, long> read() throws IOException
 {
         synchronized (lock)
 {
@@ -147,11 +147,11 @@ public class OffsetCheckpoint
 {
                     case 0:
                         int expectedSize = readInt(reader);
-                        Dictionary<TopicPartition, Long> offsets = new HashMap<>();
+                        Dictionary<TopicPartition, long> offsets = new HashMap<>();
                         string line = reader.readLine();
                         while (line != null)
 {
-                            string[] pieces = WHITESPACE_MINIMUM_ONCE.split(line];
+                            string[] pieces = WHITESPACE_MINIMUM_ONCE.split(line);
                             if (pieces.Length != 3)
 {
                                 throw new IOException(
@@ -159,8 +159,8 @@ public class OffsetCheckpoint
                             }
 
                             string topic = pieces[0];
-                            int partition = Integer.parseInt(pieces[1]];
-                            long offset = Long.parseLong(pieces[2]];
+                            int partition = Integer.parseInt(pieces[1]);
+                            long offset = long.parseLong(pieces[2]);
                             offsets.Add(new TopicPartition(topic, partition), offset);
                             line = reader.readLine();
                         }

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,11 +16,11 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.StreamPartitioner;
 
-import static org.apache.kafka.common.utils.Utils.toPositive;
+
+
+
+
 
 public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V> {
 
@@ -45,7 +45,7 @@ public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V>
     
     public Integer partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions)
 {
-         byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey];
+         byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
 
         // hash the keyBytes to choose a partition
         return toPositive(Utils.murmur2(keyBytes)) % numPartitions;

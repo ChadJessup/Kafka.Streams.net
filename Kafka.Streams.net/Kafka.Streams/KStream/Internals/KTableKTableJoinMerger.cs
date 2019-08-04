@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+
+
+
+
+
+
+
+
 
 public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 
@@ -67,7 +67,7 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 
                 public KTableValueGetter<K, V> get()
 {
-                    return parent1.view()[];
+                    return parent1.view()[);
                 }
 
                 
@@ -75,10 +75,10 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 {
                      string[] storeNames1 = parent1.view().storeNames();
                      string[] storeNames2 = parent2.view().storeNames();
-                     Set<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
-                    Collections.addAll(stores, storeNames1);
-                    Collections.addAll(stores, storeNames2);
-                    return stores.toArray(new string[stores.size()]];
+                     HashSet<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
+                    Collections.AddAll(stores, storeNames1);
+                    Collections.AddAll(stores, storeNames2);
+                    return stores.toArray(new string[stores.size()]);
                 }
             };
         }
@@ -92,13 +92,13 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         sendOldValues = true;
     }
 
-    public static <K, V> KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
+    public static KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
                                                           KTableProcessorSupplier<K, ?, V> parent2)
 {
         return of(parent1, parent2, null);
     }
 
-    public static <K, V> KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
+    public static KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
                                                           KTableProcessorSupplier<K, ?, V> parent2,
                                                           string queryableName)
 {
@@ -109,7 +109,7 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {

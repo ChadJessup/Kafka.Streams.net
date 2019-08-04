@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,10 +17,10 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
 
-import java.util.Arrays;
+
+
+
 
 /**
  * Represents a join between a KStream and a KTable or GlobalKTable
@@ -62,7 +62,7 @@ public class StreamTableJoinNode<K, V> : StreamsGraphNode {
          ProcessorSupplier processorSupplier = processorParameters.processorSupplier();
 
         // Stream - Table join (Global or KTable)
-        topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
+        topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
 
         // Steam - KTable join only
         if (otherJoinSideNodeName != null)

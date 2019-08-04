@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Objects;
+
+
+
 
 public class ContextualRecord
 {
@@ -48,14 +48,14 @@ public class ContextualRecord
         return (value == null ? 0 : value.Length) + recordContext.residentMemorySizeEstimate();
     }
 
-    ByteBuffer serialize(int endPadding)
+    ByteBuffer serialize(int end.Adding)
 {
         byte[] serializedContext = recordContext.serialize();
 
         int sizeOfContext = serializedContext.Length;
         int sizeOfValueLength = Integer.BYTES;
         int sizeOfValue = value == null ? 0 : value.Length;
-        ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + endPadding);
+        ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + end.Adding);
 
         buffer.Add(serializedContext);
         if (value == null)

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,17 +17,17 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
-import org.apache.kafka.streams.kstream.internals.KTableSource;
-import org.apache.kafka.streams.kstream.internals.MaterializedInternal;
-import org.apache.kafka.streams.kstream.internals.TimestampedKeyValueStoreMaterializer;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
 
-import java.util.Collections;
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Used to represent either a KTable source or a GlobalKTable source. A bool flag is used to indicate if this represents a GlobalKTable a {@link
@@ -77,13 +77,13 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
                "} " + super.ToString();
     }
 
-    public static <K, V> TableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
+    public staticTableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
 {
         return new TableSourceNodeBuilder<>();
     }
 
     
-    @SuppressWarnings("unchecked")
+    
     public void writeToTopology( InternalTopologyBuilder topologyBuilder)
 {
          string topicName = getTopicNames().iterator().next();
@@ -95,7 +95,7 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
 
         if (isGlobalKTable)
 {
-            topologyBuilder.addGlobalStore(storeBuilder,
+            topologyBuilder.AddGlobalStore(storeBuilder,
                                            sourceName,
                                            consumedInternal().timestampExtractor(),
                                            consumedInternal().keyDeserializer(),
@@ -104,20 +104,20 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
                                            processorParameters.processorName(),
                                            processorParameters.processorSupplier());
         } else {
-            topologyBuilder.addSource(consumedInternal().offsetResetPolicy(),
+            topologyBuilder.AddSource(consumedInternal().offsetResetPolicy(),
                                       sourceName,
                                       consumedInternal().timestampExtractor(),
                                       consumedInternal().keyDeserializer(),
                                       consumedInternal().valueDeserializer(),
                                       topicName);
 
-            topologyBuilder.addProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), sourceName);
+            topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), sourceName);
 
-            // only add state store if the source KTable should be materialized
+            // only.Add state store if the source KTable should be materialized
              KTableSource<K, V> ktableSource = (KTableSource<K, V>) processorParameters.processorSupplier();
             if (ktableSource.queryableName() != null)
 {
-                topologyBuilder.addStateStore(storeBuilder, nodeName());
+                topologyBuilder.AddStateStore(storeBuilder, nodeName());
 
                 if (shouldReuseSourceTopicForChangelog)
 {

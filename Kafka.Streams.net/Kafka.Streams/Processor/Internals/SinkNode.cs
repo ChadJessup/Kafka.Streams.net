@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.serialization.Serializer;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.internals.ChangedSerializer;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.apache.kafka.streams.processor.TopicNameExtractor;
+
+
+
+
 
 public class SinkNode<K, V> : ProcessorNode<K, V> {
 
     private Serializer<K> keySerializer;
     private Serializer<V> valSerializer;
     private TopicNameExtractor<K, V> topicExtractor;
-    private StreamPartitioner<? super K, ? super V> partitioner;
+    private StreamPartitioner<K, V> partitioner;
 
     private InternalProcessorContext context;
 
@@ -35,7 +35,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
              TopicNameExtractor<K, V> topicExtractor,
              Serializer<K> keySerializer,
              Serializer<V> valSerializer,
-             StreamPartitioner<? super K, ? super V> partitioner)
+             StreamPartitioner<K, V> partitioner)
 {
         super(name);
 
@@ -46,15 +46,15 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
     }
 
     /**
-     * @throws InvalidOperationException if this method adds a child to a sink node
+     * @throws InvalidOperationException if this method.Adds a child to a sink node
      */
     
-    public void addChild(ProcessorNode<?, ?> child)
+    public void.AddChild(ProcessorNode<?, ?> child)
 {
-        throw new InvalidOperationException("sink node does not allow addChild");
+        throw new InvalidOperationException("sink node does not allow.AddChild");
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     public void init(InternalProcessorContext context)
 {

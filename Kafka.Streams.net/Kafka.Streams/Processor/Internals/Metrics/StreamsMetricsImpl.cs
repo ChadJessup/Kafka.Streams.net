@@ -48,8 +48,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
         public StreamsMetricsImpl(MetricsRegistry metrics, string threadName)
         {
-            // Objects.requireNonNull(metrics, "Metrics cannot be null");
-            this.metrics = metrics;
+            this.metrics = metrics ?? throw new ArgumentNullException("Metrics cannot be null", nameof(metrics));
             this.threadName = threadName;
 
             this.parentSensors = new Dictionary<Sensor, Sensor>();
@@ -58,7 +57,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         public Sensor threadLevelSensor(
             string sensorName,
             RecordingLevel recordingLevel,
-            Sensor[] parents)
+            List<Sensor> parents)
         {
 
             lock (threadLevelSensors)
@@ -77,7 +76,8 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
         public Dictionary<string, string> threadLevelTagMap()
         {
-            Dictionary<string, string> tagMap = new LinkedHashMap<>();
+            Dictionary<string, string> tagMap = new Dictionary<string, string>();
+
             tagMap.Add(THREAD_ID_TAG, threadName);
             return tagMap;
         }
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
                 for (int i = 0; i < tags.Length; i += 2)
                 {
-                    tagMap.Add(tags[i], tags[i + 1]];
+                    tagMap.Add(tags[i], tags[i + 1]);
                 }
             }
             return tagMap;
@@ -104,31 +104,35 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         {
             lock (threadLevelSensors)
             {
-                while (!threadLevelSensors.isEmpty())
+                while (threadLevelSensors.Any())
                 {
-                    metrics.removeSensor(threadLevelSensors.pop());
+                    var sensor = threadLevelSensors[0];
+                    threadLevelSensors.RemoveAt(0);
+
+                    metrics.removeSensor(sensor);
                 }
             }
         }
 
-        public Sensor taskLevelSensor(string taskName,
-                                            string sensorName,
-                                            RecordingLevel recordingLevel,
-                                            Sensor[] parents)
+        public Sensor taskLevelSensor(
+            string taskName,
+            string sensorName,
+            RecordingLevel recordingLevel,
+            List<Sensor> parents)
         {
             string key = taskSensorPrefix(taskName);
             lock (taskLevelSensors)
             {
                 if (!taskLevelSensors.ContainsKey(key))
                 {
-                    taskLevelSensors.Add(key, new LinkedList<>());
+                    taskLevelSensors.Add(key, new List<string>());
                 }
 
                 string fullSensorName = key + SENSOR_NAME_DELIMITER + sensorName;
 
                 Sensor sensor = metrics.sensor(fullSensorName, recordingLevel, parents);
 
-                taskLevelSensors[key].push(fullSensorName];
+                taskLevelSensors[key].Add(fullSensorName);
 
                 return sensor;
             }
@@ -161,7 +165,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string processorNodeName,
             string sensorName,
             RecordingLevel recordingLevel,
-            Sensor[] parents)
+            List<Sensor> parents)
         {
             string key = nodeSensorPrefix(taskName, processorNodeName);
             lock (nodeLevelSensors)
@@ -175,7 +179,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
                 Sensor sensor = metrics.sensor(fullSensorName, recordingLevel, parents);
 
-                nodeLevelSensors[key].Add(fullSensorName];
+                nodeLevelSensors[key].Add(fullSensorName);
 
                 return sensor;
             }
@@ -186,10 +190,14 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string key = nodeSensorPrefix(taskName, processorNodeName);
             lock (nodeLevelSensors)
             {
-                Deque<string> sensors = nodeLevelSensors.Remove(key);
-                while (sensors != null && !sensors.isEmpty())
+                var sensors = nodeLevelSensors[key];
+                nodeLevelSensors.Remove(key);
+
+                while (sensors != null && sensors.Any())
                 {
-                    metrics.removeSensor(sensors.pop());
+                    var sensor = sensors[0];
+                    sensors.RemoveAt(0);
+                    metrics.removeSensor(sensor);
                 }
             }
         }
@@ -199,25 +207,26 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             return taskSensorPrefix(taskName) + SENSOR_PREFIX_DELIMITER + "node" + SENSOR_PREFIX_DELIMITER + processorNodeName;
         }
 
-        public Sensor cacheLevelSensor(string taskName,
-                                             string cacheName,
-                                             string sensorName,
-                                             RecordingLevel recordingLevel,
-                                             Sensor[] parents)
+        public Sensor cacheLevelSensor(
+            string taskName,
+            string cacheName,
+            string sensorName,
+            RecordingLevel recordingLevel,
+            List<Sensor> parents)
         {
             string key = cacheSensorPrefix(taskName, cacheName);
             lock (cacheLevelSensors)
             {
                 if (!cacheLevelSensors.ContainsKey(key))
                 {
-                    cacheLevelSensors.Add(key, new LinkedList<>());
+                    cacheLevelSensors.Add(key, new List<string>());
                 }
 
                 string fullSensorName = key + SENSOR_NAME_DELIMITER + sensorName;
 
                 Sensor sensor = metrics.sensor(fullSensorName, recordingLevel, parents);
 
-                cacheLevelSensors[key].push(fullSensorName];
+                cacheLevelSensors[key].Add(fullSensorName);
 
                 return sensor;
             }
@@ -264,7 +273,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
                 Sensor sensor = metrics.sensor(fullSensorName, recordingLevel, parents);
 
-                storeLevelSensors[key].Add(fullSensorName];
+                storeLevelSensors[key].Add(fullSensorName);
 
                 return sensor;
             }
@@ -291,12 +300,12 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         }
 
 
-        public Sensor addSensor(string name, RecordingLevel recordingLevel)
+        public Sensor AddSensor(string name, RecordingLevel recordingLevel)
         {
             return metrics.sensor(name, recordingLevel);
         }
 
-        public Sensor addSensor(string name, RecordingLevel recordingLevel, List<Sensor> parents)
+        public Sensor AddSensor(string name, RecordingLevel recordingLevel, List<Sensor> parents)
         {
             return metrics.sensor(name, recordingLevel, parents);
         }
@@ -305,7 +314,6 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         {
             sensor.record(endNs - startNs);
         }
-
 
         public void recordThroughput(Sensor sensor, long value)
         {
@@ -325,7 +333,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 
                 for (int i = 0; i < tags.Length; i += 2)
                 {
-                    tagMap.Add(tags[i], tags[i + 1]];
+                    tagMap.Add(tags[i], tags[i + 1]);
                 }
             }
             return tagMap;
@@ -340,6 +348,11 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             updatedTags[tags.Length + 1] = entityName;
 
             return tagMap(updatedTags);
+        }
+
+        public void removeSensor(Sensor sensor)
+        {
+            throw new NotImplementedException();
         }
 
 
@@ -359,15 +372,15 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tagMap = constructTags(scopeName, entityName, tags);
             Dictionary<string, string> allTagMap = constructTags(scopeName, "all", tags);
 
-            // first add the global operation metrics if not yet, with the global tags only
+            // first.Add the global operation metrics if not yet, with the global tags only
             Sensor parent = metrics.sensor(externalParentSensorName(operationName), recordingLevel);
-            addAvgMaxLatency(parent, group, allTagMap, operationName);
-            addInvocationRateAndCount(parent, group, allTagMap, operationName);
+           addAvgMaxLatency(parent, group, allTagMap, operationName);
+           addInvocationRateAndCount(parent, group, allTagMap, operationName);
 
-            // add the operation metrics with additional tags
+            //.Add the operation metrics with.Additional tags
             Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, new List<Sensor> { parent });
-            addAvgMaxLatency(sensor, group, tagMap, operationName);
-            addInvocationRateAndCount(sensor, group, tagMap, operationName);
+           addAvgMaxLatency(sensor, group, tagMap, operationName);
+           addInvocationRateAndCount(sensor, group, tagMap, operationName);
 
             parentSensors.Add(sensor, parent);
 
@@ -390,11 +403,11 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tagMap = constructTags(scopeName, entityName, tags);
             Dictionary<string, string> allTagMap = constructTags(scopeName, "all", tags);
 
-            // first add the global operation metrics if not yet, with the global tags only
+            // first.Add the global operation metrics if not yet, with the global tags only
             Sensor parent = metrics.sensor(externalParentSensorName(operationName), recordingLevel);
             addInvocationRateAndCount(parent, group, allTagMap, operationName);
 
-            // add the operation metrics with additional tags
+            //.Add the operation metrics with.Additional tags
             Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, new List<Sensor> { parent });
             addInvocationRateAndCount(sensor, group, tagMap, operationName);
 
@@ -421,7 +434,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tags,
             string operation)
         {
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + AVG_SUFFIX,
                     group,
@@ -429,7 +442,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                     tags),
                 new Avg());
 
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + MAX_SUFFIX,
                     group,
@@ -444,7 +457,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tags,
             string operation)
         {
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + "-latency-avg",
                     group,
@@ -452,7 +465,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                     tags),
                 new Avg());
 
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + "-latency-max",
                     group,
@@ -469,7 +482,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string descriptionOfInvocation,
             string descriptionOfRate)
         {
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + TOTAL_SUFFIX,
                     group,
@@ -477,7 +490,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                     tags),
                 new CumulativeCount());
 
-            sensor.add(
+            sensor.Add(
                 new MetricName(
                     operation + RATE_SUFFIX,
                     group,
@@ -492,7 +505,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tags,
             string operation)
         {
-            addInvocationRateAndCount(
+           addInvocationRateAndCount(
                 sensor,
                 group,
                 tags,
@@ -504,23 +517,23 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         /**
          * Deletes a sensor and its parents, if any
          */
-        public void removeSensor(Sensor sensor)
-        {
-            //   Objects.requireNonNull(sensor, "Sensor is null");
-            metrics.removeSensor(sensor.name);
+        //public void removeSensor(Sensor sensor)
+        //{
+        //    //   Objects.requireNonNull(sensor, "Sensor is null");
+        //    metrics.removeSensor(sensor.name);
 
-            if (parentSensors.TryGetValue(sensor, out var parent))
-            {
-                metrics.removeSensor(parent.name);
-            }
-        }
+        //    if (parentSensors.TryGetValue(sensor, out var parent))
+        //    {
+        //        metrics.removeSensor(parent.name);
+        //    }
+        //}
 
         private static string groupNameFromScope(string scopeName)
         {
             return "stream-" + scopeName + "-metrics";
         }
 
-        public Sensor addSensor(string name, RecordingLevel recordingLevel, Sensor[] parents)
+        public Sensor addSensor(string name, RecordingLevel recordingLevel, List<Sensor> parents)
         {
             throw new NotImplementedException();
         }

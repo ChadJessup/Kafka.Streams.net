@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,19 +16,19 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class KTableSource<K, V> : ProcessorSupplier<K, V> {
     private static  Logger LOG = LoggerFactory.getLogger(KTableSource.class);
@@ -79,7 +79,7 @@ public class KTableSource<K, V> : ProcessorSupplier<K, V> {
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -103,7 +103,7 @@ public class KTableSource<K, V> : ProcessorSupplier<K, V> {
             // if the key is null, then ignore the record
             if (key == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key. topic=[{}] partition=[{}] offset=[{}]",
                     context().topic(), context().partition(), context().offset()
                 );
@@ -120,7 +120,7 @@ public class KTableSource<K, V> : ProcessorSupplier<K, V> {
                     oldValue = oldValueAndTimestamp.value();
                     if (context().timestamp() < oldValueAndTimestamp.timestamp())
 {
-                        LOG.warn("Detected out-of-order KTable update for {} at offset {}, partition {}.",
+                        LOG.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
                             store.name(), context().offset(), context().partition());
                     }
                 } else {

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,42 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.InvalidOffsetException;
+
+
+
+
 using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.errors.TimeoutException;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.StateRestoreListener;
-import org.slf4j.Logger;
 
-import java.time.Duration;
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StoreChangelogReader : ChangelogReader {
 
     private Logger log;
     private Consumer<byte[], byte[]> restoreConsumer;
     private StateRestoreListener userStateRestoreListener;
-    private Dictionary<TopicPartition, Long> endOffsets = new HashMap<>();
+    private Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
     private Dictionary<string, List<PartitionInfo>> partitionInfo = new HashMap<>();
     private Dictionary<TopicPartition, StateRestorer> stateRestorers = new HashMap<>();
-    private Set<TopicPartition> needsRestoring = new HashSet<>();
-    private Set<TopicPartition> needsInitializing = new HashSet<>();
-    private Set<TopicPartition> completedRestorers = new HashSet<>();
+    private HashSet<TopicPartition> needsRestoring = new HashSet<>();
+    private HashSet<TopicPartition> needsInitializing = new HashSet<>();
+    private HashSet<TopicPartition> completedRestorers = new HashSet<>();
     private Duration pollTime;
 
     public StoreChangelogReader(Consumer<byte[], byte[]> restoreConsumer,
@@ -74,7 +74,7 @@ public class StoreChangelogReader : ChangelogReader {
             log.trace("Added restorer for changelog {}", restorer.partition());
         }
 
-        needsInitializing.add(restorer.partition());
+        needsInitializing.Add(restorer.partition());
     }
 
     public Collection<TopicPartition> restore(RestoringTasks active)
@@ -91,24 +91,24 @@ public class StoreChangelogReader : ChangelogReader {
         }
 
         try {
-            ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(pollTime];
+            ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(pollTime);
 
             foreach (TopicPartition partition in needsRestoring)
 {
                 StateRestorer restorer = stateRestorers[partition];
-                long pos = processNext(records.records(partition), restorer, endOffsets[partition)];
+                long pos = processNext(records.records(partition), restorer, endOffsets[partition));
                 restorer.setRestoredOffset(pos);
                 if (restorer.hasCompleted(pos, endOffsets[partition)))
 {
                     restorer.restoreDone();
                     endOffsets.Remove(partition);
-                    completedRestorers.add(partition);
+                    completedRestorers.Add(partition);
                 }
             }
         } catch (InvalidOffsetException recoverableException)
 {
-            log.warn("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
-            Set<TopicPartition> partitions = recoverableException.partitions();
+            log.LogWarning("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
+            HashSet<TopicPartition> partitions = recoverableException.partitions();
             foreach (TopicPartition partition in partitions)
 {
                 StreamTask task = active.restoringTaskFor(partition);
@@ -145,12 +145,12 @@ public class StoreChangelogReader : ChangelogReader {
         // the needsInitializing map is not empty, meaning we do not know the metadata for some of them yet
         refreshChangelogInfo();
 
-        Set<TopicPartition> initializable = new HashSet<>();
+        HashSet<TopicPartition> initializable = new HashSet<>();
         foreach (TopicPartition topicPartition in needsInitializing)
 {
             if (hasPartition(topicPartition))
 {
-                initializable.add(topicPartition);
+                initializable.Add(topicPartition);
             }
         }
 
@@ -169,10 +169,10 @@ public class StoreChangelogReader : ChangelogReader {
         while (iter.hasNext())
 {
             TopicPartition topicPartition = iter.next();
-            Long endOffset = endOffsets[topicPartition];
+            long endOffset = endOffsets[topicPartition];
 
             // offset should not be null; but since the consumer API does not guarantee it
-            // we add this check just in case
+            // we.Add this check just in case
             if (endOffset != null)
 {
                 StateRestorer restorer = stateRestorers[topicPartition];
@@ -180,12 +180,12 @@ public class StoreChangelogReader : ChangelogReader {
 {
                     restorer.setRestoredOffset(restorer.checkpoint());
                     iter.Remove();
-                    completedRestorers.add(topicPartition);
+                    completedRestorers.Add(topicPartition);
                 } else if (restorer.offsetLimit() == 0 || endOffset == 0)
 {
                     restorer.setRestoredOffset(0);
                     iter.Remove();
-                    completedRestorers.add(topicPartition);
+                    completedRestorers.Add(topicPartition);
                 } else {
                     restorer.setEndingOffset(endOffset);
                 }
@@ -208,8 +208,8 @@ public class StoreChangelogReader : ChangelogReader {
 {
         log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 
-        Set<TopicPartition> assignment = new HashSet<>(restoreConsumer.assignment());
-        assignment.addAll(initialized);
+        HashSet<TopicPartition> assignment = new HashSet<>(restoreConsumer.assignment());
+        assignment.AddAll(initialized);
         restoreConsumer.assign(assignment);
 
         List<StateRestorer> needsPositionUpdate = new List<>();
@@ -231,7 +231,7 @@ public class StoreChangelogReader : ChangelogReader {
                 log.trace("Did not find checkpoint from changelog {} for store {}, rewinding to beginning.", partition, restorer.storeName());
 
                 restoreConsumer.seekToBeginning(Collections.singletonList(partition));
-                needsPositionUpdate.add(restorer);
+                needsPositionUpdate.Add(restorer);
             }
         }
 
@@ -258,18 +258,18 @@ public class StoreChangelogReader : ChangelogReader {
                 long position = restoreConsumer.position(restorer.partition());
                 logRestoreOffsets(restorer.partition(),
                         position,
-                        endOffsets[restorer.partition())];
+                        endOffsets[restorer.partition()));
                 restorer.setStartingOffset(position);
                 restorer.restoreStarted();
             }
         }
 
-        needsRestoring.addAll(initialized);
+        needsRestoring.AddAll(initialized);
     }
 
     private void logRestoreOffsets(TopicPartition partition,
                                    long startingOffset,
-                                   Long endOffset)
+                                   long endOffset)
 {
         log.LogDebug("Restoring partition {} from offset {} to endOffset {}",
                   partition,
@@ -293,9 +293,9 @@ public class StoreChangelogReader : ChangelogReader {
     }
 
     
-    public Dictionary<TopicPartition, Long> restoredOffsets()
+    public Dictionary<TopicPartition, long> restoredOffsets()
 {
-        Dictionary<TopicPartition, Long> restoredOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
         foreach (Map.Entry<TopicPartition, StateRestorer> entry in stateRestorers.entrySet())
 {
             StateRestorer restorer = entry.getValue();
@@ -320,7 +320,7 @@ public class StoreChangelogReader : ChangelogReader {
 
     private long processNext(List<ConsumerRecord<byte[], byte[]>> records,
                              StateRestorer restorer,
-                             Long endOffset)
+                             long endOffset)
 {
         List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>();
         long nextPosition = -1;
@@ -339,7 +339,7 @@ public class StoreChangelogReader : ChangelogReader {
             numberRestored++;
             if (record.key() != null)
 {
-                restoreRecords.add(record);
+                restoreRecords.Add(record);
             }
         }
 
@@ -347,7 +347,7 @@ public class StoreChangelogReader : ChangelogReader {
         // if we have changelog topic then we should have restored all records in the list
         // otherwise if we did not fully restore to that point we need to set nextPosition
         // to the position of the restoreConsumer and we'll cause a TaskMigratedException exception
-        if (nextPosition == -1 || (restorer.offsetLimit() == Long.MAX_VALUE && numberRecords != numberRestored))
+        if (nextPosition == -1 || (restorer.offsetLimit() == long.MAX_VALUE && numberRecords != numberRestored))
 {
             nextPosition = restoreConsumer.position(restorer.partition());
         }
@@ -368,7 +368,7 @@ public class StoreChangelogReader : ChangelogReader {
 
     private bool hasPartition(TopicPartition topicPartition)
 {
-        List<PartitionInfo> partitions = partitionInfo[topicPartition.topic()];
+        List<PartitionInfo> partitions = partitionInfo[topicPartition.topic());
 
         if (partitions == null)
 {

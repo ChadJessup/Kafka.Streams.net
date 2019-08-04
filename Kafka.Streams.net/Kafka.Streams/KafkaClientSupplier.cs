@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,13 +16,13 @@
  */
 namespace Kafka.streams;
 
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.streams.kstream.GlobalKTable;
-import org.apache.kafka.streams.processor.IStateStore;
 
-import java.util.Map;
+
+
+
+
+
+
 
 /**
  * {@code KafkaClientSupplier} can be used to provide custom Kafka clients to a {@link KafkaStreams} instance.
@@ -45,7 +45,7 @@ public interface KafkaClientSupplier {
      *               {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka producer
      */
-    Producer<byte[], byte[]> getProducer( Map<string, object> config];
+    Producer<byte[], byte[]> getProducer( Map<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to read records of source topics.
@@ -54,7 +54,7 @@ public interface KafkaClientSupplier {
      *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getConsumer( Map<string, object> config];
+    Consumer<byte[], byte[]> getConsumer( Map<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.
@@ -63,7 +63,7 @@ public interface KafkaClientSupplier {
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getRestoreConsumer( Map<string, object> config];
+    Consumer<byte[], byte[]> getRestoreConsumer( Map<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.
@@ -72,5 +72,5 @@ public interface KafkaClientSupplier {
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getGlobalConsumer( Map<string, object> config];
+    Consumer<byte[], byte[]> getGlobalConsumer( Map<string, object> config);
 }

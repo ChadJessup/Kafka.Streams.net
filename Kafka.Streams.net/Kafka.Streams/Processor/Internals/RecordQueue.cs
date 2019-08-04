@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.slf4j.Logger;
 
-import java.util.ArrayDeque;
+
+
+
+
+
+
+
 
 /**
  * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumerRecord + timestamp). It also keeps track of the
@@ -99,11 +99,11 @@ public class RecordQueue {
      * @param rawRecords the raw records
      * @return the size of this queue
      */
-    int addRawRecords(Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
+    int.AddRawRecords(Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
 {
         foreach (ConsumerRecord<byte[], byte[]> rawRecord in rawRecords)
 {
-            fifoQueue.addLast(rawRecord);
+            fifoQueue.AddLast(rawRecord);
         }
 
         updateHead();
@@ -207,7 +207,7 @@ public class RecordQueue {
             // drop message if TS is invalid, i.e., negative
             if (timestamp < 0)
 {
-                log.warn(
+                log.LogWarning(
                         "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
                         deserialized.topic(), deserialized.partition(), deserialized.offset(), timestamp, timestampExtractor.GetType().getCanonicalName()
                 );

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -24,10 +24,10 @@ using Kafka.Streams.State.KeyValueBytesStoreSupplier;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 
-import java.util.List;
 
-import static org.apache.kafka.streams.state.TimestampedBytesStore.convertToTimestampedFormat;
-import static org.apache.kafka.streams.state.internals.ValueAndTimestampDeserializer.rawValue;
+
+
+
 
 /**
  * This class is used to ensure backward compatibility at DSL level between
@@ -113,7 +113,7 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Byte
 
     public override byte[] get(Bytes key)
 {
-        return convertToTimestampedFormat(store[key)];
+        return convertToTimestampedFormat(store[key));
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

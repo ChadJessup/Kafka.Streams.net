@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,38 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.WindowStoreIterator;
 
-import static org.apache.kafka.streams.state.internals.SegmentedCacheFunction.bytesFromCacheKey;
+
 
 /**
  * Merges two iterators. Assumes each of them is sorted by key
  *
  */
-class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<Long, Long, byte[], byte[]> : WindowStoreIterator<byte[]>
+class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<long, long, byte[], byte[]> : WindowStoreIterator<byte[]>
 {
 
 
     MergedSortedCacheWindowStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                         KeyValueIterator<Long, byte[]> storeIterator)
+                                         KeyValueIterator<long, byte[]> storeIterator)
 {
         super(cacheIterator, storeIterator);
     }
 
-    public override KeyValue<Long, byte[]> deserializeStorePair(KeyValue<Long, byte[]> pair)
+    public override KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
 {
         return pair;
     }
 
     
-    Long deserializeCacheKey(Bytes cacheKey)
+    long deserializeCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = bytesFromCacheKey(cacheKey];
+        byte[] binaryKey = bytesFromCacheKey(cacheKey);
         return WindowKeySchema.extractStoreTimestamp(binaryKey);
     }
 
@@ -55,16 +55,16 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
         return cacheEntry.value();
     }
 
-    public override Long deserializeStoreKey(Long key)
+    public override long deserializeStoreKey(long key)
 {
         return key;
     }
 
-    public override int compare(Bytes cacheKey, Long storeKey)
+    public override int compare(Bytes cacheKey, long storeKey)
 {
-        byte[] binaryKey = bytesFromCacheKey(cacheKey];
+        byte[] binaryKey = bytesFromCacheKey(cacheKey);
 
-        Long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
+        long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
         return cacheTimestamp.compareTo(storeKey);
     }
 }

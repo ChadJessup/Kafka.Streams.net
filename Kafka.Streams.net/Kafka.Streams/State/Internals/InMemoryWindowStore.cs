@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
-import java.nio.ByteBuffer;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentNavigableMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+
+
+
+
+
+
+
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -36,16 +36,16 @@ using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 using Kafka.Streams.State.WindowStore;
 using Kafka.Streams.State.WindowStoreIterator;
 using Kafka.Streams.State.KeyValueIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
 
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.EXPIRED_WINDOW_RECORD_DROP;
-import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl.addInvocationRateAndCount;
-import static org.apache.kafka.streams.state.internals.WindowKeySchema.extractStoreKeyBytes;
-import static org.apache.kafka.streams.state.internals.WindowKeySchema.extractStoreTimestamp;
+
+
+
+
+
+
+
+
 
 
 public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
@@ -65,8 +65,8 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
     private long windowSize;
     private bool retainDuplicates;
 
-    private ConcurrentNavigableMap<Long, ConcurrentNavigableMap<Bytes, byte[]>> segmentMap = new ConcurrentSkipListMap<>();
-    private Set<InMemoryWindowStoreIteratorWrapper> openIterators = ConcurrentHashMap.newKeySet();
+    private ConcurrentNavigableMap<long, ConcurrentNavigableMap<Bytes, byte[]>> segmentMap = new ConcurrentSkipListMap<>();
+    private HashSet<InMemoryWindowStoreIteratorWrapper> openIterators = ConcurrentHashMap.newKeySet();
 
     private volatile bool open = false;
 
@@ -100,7 +100,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             EXPIRED_WINDOW_RECORD_DROP,
             RecordingLevel.INFO
         );
-        addInvocationRateAndCount(
+       .AddInvocationRateAndCount(
             expiredRecordSensor,
             "stream-" + metricScope + "-metrics",
             metrics.tagMap("task-id", taskName, metricScope + "-id", name()),
@@ -133,13 +133,13 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         if (windowStartTimestamp <= observedStreamTime - retentionPeriod)
 {
             expiredRecordSensor.record();
-            LOG.warn("Skipping record for expired segment.");
+            LOG.LogWarning("Skipping record for expired segment.");
         } else
 {
             if (value != null)
 {
                 segmentMap.computeIfAbsent(windowStartTimestamp, t -> new ConcurrentSkipListMap<>());
-                segmentMap[windowStartTimestamp).Add(keyBytes, value];
+                segmentMap[windowStartTimestamp).Add(keyBytes, value);
             } else
 {
                 segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap) ->
@@ -185,7 +185,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
         removeExpiredSegments();
 
-        // add one b/c records expire exactly retentionPeriod ms after created
+        //.Add one b/c records expire exactly retentionPeriod ms after created
         long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
@@ -210,13 +210,13 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
         if (from.compareTo(to) > 0)
 {
-            LOG.warn("Returning empty iterator for fetch with invalid key range: from > to. "
+            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
                 "Note that the built-in numerical serdes do not follow this for negative numbers");
             return KeyValueIterators.emptyIterator();
         }
 
-        // add one b/c records expire exactly retentionPeriod ms after created
+        //.Add one b/c records expire exactly retentionPeriod ms after created
         long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
@@ -233,7 +233,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 {
         removeExpiredSegments();
 
-        // add one b/c records expire exactly retentionPeriod ms after created
+        //.Add one b/c records expire exactly retentionPeriod ms after created
         long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
@@ -274,7 +274,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 {
         if (openIterators.size() != 0)
 {
-            LOG.warn("Closing {} open iterators for store {}", openIterators.size(), name);
+            LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), name);
             foreach (InMemoryWindowStoreIteratorWrapper it in openIterators)
 {
                 it.close();
@@ -305,8 +305,8 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
     private static Bytes wrapForDups(Bytes key, int seqnum)
 {
-        ByteBuffer buf = ByteBuffer.allocate(key().Length + SEQNUM_SIZE];
-        buf.Add(key()];
+        ByteBuffer buf = ByteBuffer.allocate(key().Length + SEQNUM_SIZE);
+        buf.Add(key());
         buf.putInt(seqnum);
 
         return Bytes.wrap(buf.array());
@@ -315,13 +315,13 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
     private static Bytes getKey(Bytes keyBytes)
 {
         byte[] bytes = new byte[keyBytes[].Length  - SEQNUM_SIZE];
-        System.arraycopy(keyBytes(), 0, bytes, 0, bytes.Length];
+        System.arraycopy(keyBytes(), 0, bytes, 0, bytes.Length);
         return Bytes.wrap(bytes);
 
     }
 
     private WrappedInMemoryWindowStoreIterator registerNewWindowStoreIterator(Bytes key,
-                                                                              Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+                                                                              Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
 {
         Bytes keyFrom = retainDuplicates ? wrapForDups(key, 0) : key;
         Bytes keyTo = retainDuplicates ? wrapForDups(key, Integer.MAX_VALUE) : key;
@@ -329,13 +329,13 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         WrappedInMemoryWindowStoreIterator iterator =
             new WrappedInMemoryWindowStoreIterator(keyFrom, keyTo, segmentIterator, openIterators::Remove, retainDuplicates);
 
-        openIterators.add(iterator);
+        openIterators.Add(iterator);
         return iterator;
     }
 
     private WrappedWindowedKeyValueIterator registerNewWindowedKeyValueIterator(Bytes keyFrom,
                                                                                 Bytes keyTo,
-                                                                                Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+                                                                                Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
 {
         Bytes from = (retainDuplicates && keyFrom != null) ? wrapForDups(keyFrom, 0) : keyFrom;
         Bytes to = (retainDuplicates && keyTo != null) ? wrapForDups(keyTo, Integer.MAX_VALUE) : keyTo;
@@ -347,7 +347,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
                                                 openIterators::Remove,
                                                 retainDuplicates,
                                                 windowSize);
-        openIterators.add(iterator);
+        openIterators.Add(iterator);
         return iterator;
     }
 
@@ -360,7 +360,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
     private static abstract class InMemoryWindowStoreIteratorWrapper
 {
 
-        private Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
+        private Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
         private Iterator<Map.Entry<Bytes, byte[]>> recordIterator;
         private KeyValue<Bytes, byte[]> next;
         private long currentTime;
@@ -373,7 +373,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
         InMemoryWindowStoreIteratorWrapper(Bytes keyFrom,
                                            Bytes keyTo,
-                                           Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                           Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                            ClosingCallback callback,
                                            bool retainDuplicates)
 {
@@ -452,7 +452,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
                 return null;
             }
 
-            Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.next();
+            Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.next();
             currentTime = currentSegment.getKey();
 
             if (allKeys)
@@ -464,7 +464,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             }
         }
 
-        Long minTime()
+        long minTime()
 {
             return currentTime;
         }
@@ -475,7 +475,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
         WrappedInMemoryWindowStoreIterator(Bytes keyFrom,
                                            Bytes keyTo,
-                                           Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                           Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                            ClosingCallback callback,
                                            bool retainDuplicates) 
 {
@@ -483,7 +483,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         }
 
         
-        public Long peekNextKey()
+        public long peekNextKey()
 {
             if (!hasNext())
 {
@@ -493,14 +493,14 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         }
 
         
-        public KeyValue<Long, byte[]> next()
+        public KeyValue<long, byte[]> next()
 {
             if (!hasNext())
 {
                 throw new NoSuchElementException();
             }
 
-            KeyValue<Long, byte[]> result = new KeyValue<>(super.currentTime, super.next.value];
+            KeyValue<long, byte[]> result = new KeyValue<>(super.currentTime, super.next.value);
             super.next = null;
             return result;
         }
@@ -518,7 +518,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
         WrappedWindowedKeyValueIterator(Bytes keyFrom,
                                         Bytes keyTo,
-                                        Iterator<Map.Entry<Long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                        Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                         ClosingCallback callback,
                                         bool retainDuplicates,
                                         long windowSize)
@@ -543,7 +543,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
                 throw new NoSuchElementException();
             }
 
-            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), super.next.value];
+            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), super.next.value);
             super.next = null;
             return result;
         }
@@ -555,8 +555,8 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
             if (endTime < 0)
 {
-                LOG.warn("Warning: window end time was truncated to Long.MAX");
-                endTime = Long.MAX_VALUE;
+                LOG.LogWarning("Warning: window end time was truncated to long.MAX");
+                endTime = long.MAX_VALUE;
             }
 
             TimeWindow timeWindow = new TimeWindow(super.currentTime, endTime);

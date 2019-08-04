@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -97,7 +97,7 @@ namespace Kafka.Streams.State.Internals
 
             return new SegmentIterator<>(
                 searchSpace.iterator(),
-                keySchema.hasNextCondition(null, null, 0, Long.MAX_VALUE),
+                keySchema.hasNextCondition(null, null, 0, long.MAX_VALUE),
                 null,
                 null);
         }
@@ -172,7 +172,7 @@ namespace Kafka.Streams.State.Internals
                 EXPIRED_WINDOW_RECORD_DROP,
                 RecordingLevel.INFO
             );
-            addInvocationRateAndCount(
+           .AddInvocationRateAndCount(
                 expiredRecordSensor,
                 "stream-" + metricScope + "-metrics",
                 metrics.tagMap("task-id", taskName, metricScope + "-id", name()),
@@ -268,7 +268,7 @@ namespace Kafka.Streams.State.Internals
                     try
                     {
                         WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s-> new WriteBatch());
-                        segment.addToBatch(record, batch);
+                        segment.AddToBatch(record, batch);
                     } catch (RocksDbException e)
                     {
                         throw new ProcessorStateException("Error restoring batch to store " + this.name, e);

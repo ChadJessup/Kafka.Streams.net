@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,28 +16,28 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.Window;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.kstream.Windows;
-import org.apache.kafka.streams.kstream.internals.metrics.Sensors;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.InternalProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.TimestampedWindowStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
     private  Logger log = LoggerFactory.getLogger(getClass());
@@ -45,14 +45,14 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
     private  string storeName;
     private  Windows<W> windows;
     private  Initializer<Agg> initializer;
-    private  Aggregator<? super K, ? super V, Agg> aggregator;
+    private  Aggregator<K, V, Agg> aggregator;
 
     private bool sendOldValues = false;
 
     public KStreamWindowAggregate( Windows<W> windows,
                                    string storeName,
                                    Initializer<Agg> initializer,
-                                   Aggregator<? super K, ? super V, Agg> aggregator)
+                                   Aggregator<K, V, Agg> aggregator)
 {
         this.windows = windows;
         this.storeName = storeName;
@@ -87,7 +87,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -111,7 +111,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
 {
             if (key == null)
 {
-                log.warn(
+                log.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     value, context().topic(), context().partition(), context().offset()
                 );
@@ -124,12 +124,12 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
              long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-             Map<Long, W> matchedWindows = windows.windowsFor(timestamp);
+             Map<long, W> matchedWindows = windows.windowsFor(timestamp);
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
-            foreach ( Map.Entry<Long, W> entry in matchedWindows.entrySet())
+            foreach ( Map.Entry<long, W> entry in matchedWindows.entrySet())
 {
-                 Long windowStart = entry.getKey();
+                 long windowStart = entry.getKey();
                  long windowEnd = entry.getValue().end();
                 if (windowEnd > closeTime)
 {
@@ -205,14 +205,14 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
     private class KStreamWindowAggregateValueGetter : KTableValueGetter<Windowed<K>, Agg> {
         private TimestampedWindowStore<K, Agg> windowStore;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
             windowStore = (TimestampedWindowStore<K, Agg>) context.getStateStore(storeName);
         }
 
-        @SuppressWarnings("unchecked")
+        
         
         public ValueAndTimestamp<Agg> get( Windowed<K> windowedKey)
 {

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,34 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.LockException;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.TaskId;
-import org.slf4j.Logger;
 
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 abstract class AssignedTasks<T : Task> {
     Logger log;
     private string taskTypeName;
     private Dictionary<TaskId, T> created = new HashMap<>();
     private Dictionary<TaskId, T> suspended = new HashMap<>();
-    private Set<TaskId> previousActiveTasks = new HashSet<>();
+    private HashSet<TaskId> previousActiveTasks = new HashSet<>();
 
     // IQ may access this map.
     Dictionary<TaskId, T> running = new ConcurrentHashMap<>();
@@ -54,7 +54,7 @@ abstract class AssignedTasks<T : Task> {
         this.log = logContext.logger(GetType());
     }
 
-    void addNewTask(T task)
+    void.AddNewTask(T task)
 {
         created.Add(task.id(), task);
     }
@@ -77,7 +77,7 @@ abstract class AssignedTasks<T : Task> {
                 if (!entry.getValue().initializeStateStores())
 {
                     log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.getKey());
-                    ((AssignedStreamsTasks) this).addToRestoring((StreamTask) entry.getValue());
+                    ((AssignedStreamsTasks) this).AddToRestoring((StreamTask) entry.getValue());
                 } else {
                     transitionToRunning(entry.getValue());
                 }
@@ -108,7 +108,7 @@ abstract class AssignedTasks<T : Task> {
         log.trace("Close created {} {}", taskTypeName, created.keySet());
         firstException.compareAndSet(null, closeNonRunningTasks(created.values()));
         previousActiveTasks.clear();
-        previousActiveTasks.addAll(running.keySet());
+        previousActiveTasks.AddAll(running.keySet());
         running.clear();
         created.clear();
         runningByPartition.clear();
@@ -171,7 +171,7 @@ abstract class AssignedTasks<T : Task> {
             task.close(false, true);
         } catch (RuntimeException e)
 {
-            log.warn("Failed to close zombie {} {} due to {}; ignore and proceed.", taskTypeName, task.id(), e.ToString());
+            log.LogWarning("Failed to close zombie {} {} due to {}; ignore and proceed.", taskTypeName, task.id(), e.ToString());
             return e;
         }
         return null;
@@ -185,7 +185,7 @@ abstract class AssignedTasks<T : Task> {
     /**
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    bool maybeResumeSuspendedTask(TaskId taskId, Set<TopicPartition> partitions)
+    bool maybeResumeSuspendedTask(TaskId taskId, HashSet<TopicPartition> partitions)
 {
         if (suspended.ContainsKey(taskId))
 {
@@ -214,7 +214,7 @@ abstract class AssignedTasks<T : Task> {
                 log.trace("Resuming suspended {} {}", taskTypeName, task.id());
                 return true;
             } else {
-                log.warn("Couldn't resume task {} assigned partitions {}, task partitions {}", taskId, partitions, task.partitions());
+                log.LogWarning("Couldn't resume task {} assigned partitions {}, task partitions {}", taskId, partitions, task.partitions());
             }
         }
         return false;
@@ -243,7 +243,7 @@ abstract class AssignedTasks<T : Task> {
         return runningByPartition[partition];
     }
 
-    Set<TaskId> runningTaskIds()
+    HashSet<TaskId> runningTaskIds()
 {
         return running.keySet();
     }
@@ -284,18 +284,18 @@ abstract class AssignedTasks<T : Task> {
     List<T> allTasks()
 {
         List<T> tasks = new List<>();
-        tasks.addAll(running.values());
-        tasks.addAll(suspended.values());
-        tasks.addAll(created.values());
+        tasks.AddAll(running.values());
+        tasks.AddAll(suspended.values());
+        tasks.AddAll(created.values());
         return tasks;
     }
 
-    Set<TaskId> allAssignedTaskIds()
+    HashSet<TaskId> allAssignedTaskIds()
 {
-        Set<TaskId> taskIds = new HashSet<>();
-        taskIds.addAll(running.keySet());
-        taskIds.addAll(suspended.keySet());
-        taskIds.addAll(created.keySet());
+        HashSet<TaskId> taskIds = new HashSet<>();
+        taskIds.AddAll(running.keySet());
+        taskIds.AddAll(suspended.keySet());
+        taskIds.AddAll(created.keySet());
         return taskIds;
     }
 
@@ -307,7 +307,7 @@ abstract class AssignedTasks<T : Task> {
         suspended.clear();
     }
 
-    Set<TaskId> previousTaskIds()
+    HashSet<TaskId> previousTaskIds()
 {
         return previousActiveTasks;
     }
@@ -361,7 +361,7 @@ abstract class AssignedTasks<T : Task> {
         return committed;
     }
 
-    void closeNonAssignedSuspendedTasks(Dictionary<TaskId, Set<TopicPartition>> newAssignment)
+    void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
 {
         Iterator<T> standByTaskIterator = suspended.values().iterator();
         while (standByTaskIterator.hasNext())

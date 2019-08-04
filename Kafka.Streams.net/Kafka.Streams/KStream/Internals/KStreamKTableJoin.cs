@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,10 +16,10 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+
+
+
+
 
 class KStreamKTableJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
 
@@ -32,10 +32,10 @@ class KStreamKTableJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
         }
     };
     private  KTableValueGetterSupplier<K, V2> valueGetterSupplier;
-    private  ValueJoiner<? super V1, ? super V2, R> joiner;
+    private  ValueJoiner<V1, V2, R> joiner;
     private  bool leftJoin;
 
-    KStreamKTableJoin( KTableValueGetterSupplier<K, V2> valueGetterSupplier,  ValueJoiner<? super V1, ? super V2, R> joiner,  bool leftJoin)
+    KStreamKTableJoin( KTableValueGetterSupplier<K, V2> valueGetterSupplier,  ValueJoiner<V1, V2, R> joiner,  bool leftJoin)
 {
         this.valueGetterSupplier = valueGetterSupplier;
         this.joiner = joiner;
@@ -45,7 +45,7 @@ class KStreamKTableJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
     
     public Processor<K, V1> get()
 {
-        return new KStreamKTableJoinProcessor<>(valueGetterSupplier(), keyValueMapper, joiner, leftJoin];
+        return new KStreamKTableJoinProcessor<>(valueGetterSupplier(), keyValueMapper, joiner, leftJoin);
     }
 
 }

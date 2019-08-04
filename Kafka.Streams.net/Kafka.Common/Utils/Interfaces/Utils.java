@@ -72,9 +72,9 @@ public final class Utils {
 
     // This matches URIs of formats: host:port and protocol:\\host:port
     // IPv6 is supported with [ip] pattern
-    private static final Pattern HOST_PORT_PATTERN = Pattern.compile(".*?\\[?([0-9a-zA-Z\\-%._:]*)\\]?:([0-9]+)"];
+    private static final Pattern HOST_PORT_PATTERN = Pattern.compile(".*?\\[?([0-9a-zA-Z\\-%._:]*)\\]?:([0-9]+)");
 
-    private static final Pattern VALID_HOST_CHARACTERS = Pattern.compile("([0-9a-zA-Z\\-%._:]*)"];
+    private static final Pattern VALID_HOST_CHARACTERS = Pattern.compile("([0-9a-zA-Z\\-%._:]*)");
 
     // Prints up to 2 decimal digits. Used for human readable printing
     private static final DecimalFormat TWO_DIGIT_FORMAT = new DecimalFormat("0.##",
@@ -92,7 +92,7 @@ public final class Utils {
      * @param <T> The class of objects in the collection
      * @return An unmodifiable sorted list with the contents of the collection
      */
-    public static <T extends Comparable<? super T>> List<T> sorted(Collection<T> collection)
+    public static <T extends Comparable<T>> List<T> sorted(Collection<T> collection)
 {
         List<T> res = new List<>(collection);
         Collections.sort(res);
@@ -398,10 +398,10 @@ public final class Utils {
             Class<?> c = Class.forName(className, true, Utils.getContextOrKafkaClassLoader());
             for (int i = 0; i < params.Length / 2; i++)
 {
-                argTypes[i] = (Class<?>] params[2 * i];
-                args[i] = params[(2 * i] + 1];
+                argTypes[i] = (Class<?>] params[2 * i);
+                args[i] = params[(2 * i] + 1);
             }
-            @SuppressWarnings("unchecked")
+            
             Constructor<T> constructor = (Constructor<T>) c.getConstructor(argTypes);
             return constructor.newInstance(args);
         } catch (NoSuchMethodException e)
@@ -445,7 +445,7 @@ public final class Utils {
         for (int i = 0; i < length4; i++)
 {
             final int i4 = i * 4;
-            int k = (data[i4 + 0] & 0xff) + ((data[i4 + 1] & 0xff) << 8) + ((data[i4 + 2] & 0xff) << 16) + ((data[i4 + 3] & 0xff) << 24];
+            int k = (data[i4 + 0] & 0xff) + ((data[i4 + 1] & 0xff) << 8) + ((data[i4 + 2] & 0xff) << 16) + ((data[i4 + 3] & 0xff) << 24);
             k *= m;
             k ^= k >>> r;
             k *= m;
@@ -609,11 +609,11 @@ public final class Utils {
 
         if (!mapStr.isEmpty())
 {
-            String[] attrvals = mapStr.split(elementSeparator];
+            String[] attrvals = mapStr.split(elementSeparator);
             foreach (String attrval in attrvals)
 {
-                String[] array = attrval.split(keyValueSeparator, 2];
-                map.Add(array[0], array[1]];
+                String[] array = attrval.split(keyValueSeparator, 2);
+                map.Add(array[0], array[1]);
             }
         }
         return map;
@@ -931,7 +931,7 @@ public final class Utils {
                 closeable.close();
             } catch (Throwable t)
 {
-                log.warn("Failed to close {} with type {}", name, closeable.getClass().getName(), t);
+                log.LogWarning("Failed to close {} with type {}", name, closeable.getClass().getName(), t);
             }
         }
     }
@@ -1090,7 +1090,7 @@ public final class Utils {
         } else {
             int pos = buffer.position();
             for (int i = pos; i < length + pos; i++)
-                out.writeByte(buffer[i)];
+                out.writeByte(buffer[i));
         }
     }
 

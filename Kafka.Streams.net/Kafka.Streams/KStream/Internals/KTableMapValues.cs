@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,22 +16,22 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.streams.kstream.ValueMapperWithKey;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
+
+
+
+
+
+
 
 
 class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     private  KTableImpl<K, ?, V> parent;
-    private  ValueMapperWithKey<? super K, ? super V, ? : V1> mapper;
+    private  ValueMapperWithKey<K, V, V1> mapper;
     private  string queryableName;
     private bool sendOldValues = false;
 
     KTableMapValues( KTableImpl<K, ?, V> parent,
-                     ValueMapperWithKey<? super K, ? super V, ? : V1> mapper,
+                     ValueMapperWithKey<K, V, V1> mapper,
                      string queryableName)
 {
         this.parent = parent;
@@ -60,7 +60,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 
                 public KTableValueGetter<K, V1> get()
 {
-                    return new KTableMapValuesValueGetter(parentValueGetterSupplier()];
+                    return new KTableMapValuesValueGetter(parentValueGetterSupplier());
                 }
 
                 
@@ -110,7 +110,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
         private TimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -160,7 +160,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
         
         public ValueAndTimestamp<V1> get( K key)
 {
-            return computeValueAndTimestamp(key, parentGetter[key)];
+            return computeValueAndTimestamp(key, parentGetter[key));
         }
 
         

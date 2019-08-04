@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,20 +16,20 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.apache.kafka.streams.state.WindowStore;
-import org.apache.kafka.streams.state.WindowStoreIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamKStreamJoin.class);
@@ -38,10 +38,10 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
     private  long joinBeforeMs;
     private  long joinAfterMs;
 
-    private  ValueJoiner<? super V1, ? super V2, ? : R> joiner;
+    private  ValueJoiner<V1, V2, R> joiner;
     private  bool outer;
 
-    KStreamKStreamJoin( string otherWindowName,  long joinBeforeMs,  long joinAfterMs,  ValueJoiner<? super V1, ? super V2, ? : R> joiner,  bool outer)
+    KStreamKStreamJoin( string otherWindowName,  long joinBeforeMs,  long joinAfterMs,  ValueJoiner<V1, V2, R> joiner,  bool outer)
 {
         this.otherWindowName = otherWindowName;
         this.joinBeforeMs = joinBeforeMs;
@@ -62,7 +62,7 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        @SuppressWarnings("unchecked")
+        
         
         public void init( IProcessorContext context)
 {
@@ -85,7 +85,7 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
             // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
             if (key == null || value == null)
 {
-                LOG.warn(
+                LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     key, value, context().topic(), context().partition(), context().offset()
                 );
@@ -104,7 +104,7 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
                 while (iter.hasNext())
 {
                     needOuterJoin = false;
-                     KeyValue<Long, V2> otherRecord = iter.next();
+                     KeyValue<long, V2> otherRecord = iter.next();
                     context().forward(
                         key,
                         joiner.apply(value, otherRecord.value),

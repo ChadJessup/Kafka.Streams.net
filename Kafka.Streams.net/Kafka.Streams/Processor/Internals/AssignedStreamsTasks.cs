@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.KafkaException;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.TaskId;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
 
 class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     private Dictionary<TaskId, StreamTask> restoring = new HashMap<>();
-    private Set<TopicPartition> restoredPartitions = new HashSet<>();
+    private HashSet<TopicPartition> restoredPartitions = new HashSet<>();
     private Dictionary<TopicPartition, StreamTask> restoringByPartition = new HashMap<>();
 
     AssignedStreamsTasks(LogContext logContext)
@@ -51,15 +51,15 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     List<StreamTask> allTasks()
 {
         List<StreamTask> tasks = super.allTasks();
-        tasks.addAll(restoring.values());
+        tasks.AddAll(restoring.values());
         return tasks;
     }
 
     
-    Set<TaskId> allAssignedTaskIds()
+    HashSet<TaskId> allAssignedTaskIds()
 {
-        Set<TaskId> taskIds = super.allAssignedTaskIds();
-        taskIds.addAll(restoring.keySet());
+        HashSet<TaskId> taskIds = super.allAssignedTaskIds();
+        taskIds.AddAll(restoring.keySet());
         return taskIds;
     }
 
@@ -107,7 +107,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
             return;
         }
         log.trace("Stream task changelog partitions that have completed restoring so far: {}", restored);
-        restoredPartitions.addAll(restored);
+        restoredPartitions.AddAll(restored);
         for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
 {
             Map.Entry<TaskId, StreamTask> entry = it.next();
@@ -136,7 +136,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         }
     }
 
-    void addToRestoring(StreamTask task)
+    void.AddToRestoring(StreamTask task)
 {
         restoring.Add(task.id(), task);
         foreach (TopicPartition topicPartition in task.partitions())
@@ -203,9 +203,9 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
      * Returns a map of offsets up to which the records can be deleted; this function should only be called
      * after the commit call to make sure all consumed offsets are actually committed as well
      */
-    Dictionary<TopicPartition, Long> recordsToDelete()
+    Dictionary<TopicPartition, long> recordsToDelete()
 {
-        Dictionary<TopicPartition, Long> recordsToDelete = new HashMap<>();
+        Dictionary<TopicPartition, long> recordsToDelete = new HashMap<>();
         foreach (StreamTask task in running.values())
 {
             recordsToDelete.putAll(task.purgableOffsets());

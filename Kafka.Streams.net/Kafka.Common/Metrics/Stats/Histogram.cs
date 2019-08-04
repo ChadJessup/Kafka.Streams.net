@@ -64,13 +64,13 @@ namespace Kafka.Common.Metrics.Stats
             {
                 b.Append(string.Format("%.10f", binScheme.fromBin(i)));
                 b.Append(':');
-                b.Append(string.Format("%.0f", this.hist[i])];
+                b.Append(string.Format("%.0f", this.hist[i]));
                 b.Append(',');
             }
 
             b.Append(float.PositiveInfinity);
             b.Append(':');
-            b.Append(string.Format("%.0f", this.hist[this.hist.Length - 1])];
+            b.Append(string.Format("%.0f", this.hist[this.hist.Length - 1]));
             b.Append('}');
 
             return b.ToString();

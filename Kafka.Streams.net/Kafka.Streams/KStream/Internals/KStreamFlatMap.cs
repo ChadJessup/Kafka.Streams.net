@@ -6,7 +6,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private IKeyValueMapper<K,V, KeyValuePair<K1, V1>> mapper;
 
-        KStreamFlatMap(IKeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : K1, ? : V1>>> mapper)
+        KStreamFlatMap(IKeyValueMapper<K, V, Iterable<? : KeyValue<? : K1, V1>>> mapper)
 {
             this.mapper = mapper;
         }

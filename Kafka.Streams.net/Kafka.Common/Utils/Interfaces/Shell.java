@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,15 +16,15 @@
  */
 namespace Kafka.common.utils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
 
 /**
  * A base class for running a Unix command.
@@ -74,13 +74,13 @@ abstract public class Shell {
         return process;
     }
 
-    protected void run() throws IOException {
+    protected void run(){
         exitCode = 0; // reset for next run
         runCommand();
     }
 
     /** Run a command */
-    private void runCommand() throws IOException {
+    private void runCommand(){
         ProcessBuilder builder = new ProcessBuilder(execString());
         Timer timeoutTimer = null;
         completed = new AtomicBoolean(false);
@@ -115,7 +115,7 @@ abstract public class Shell {
                     }
                 } catch (IOException ioe)
 {
-                    LOG.warn("Error reading the error stream", ioe);
+                    LOG.LogWarning("Error reading the error stream", ioe);
                 }
             }
         });
@@ -130,7 +130,7 @@ abstract public class Shell {
                 errThread.join();
             } catch (InterruptedException ie)
 {
-                LOG.warn("Interrupted while reading the error stream", ie);
+                LOG.LogWarning("Interrupted while reading the error stream", ie);
             }
             completed.set(true);
             //the timeout thread handling
@@ -151,7 +151,7 @@ abstract public class Shell {
                 inReader.close();
             } catch (IOException ioe)
 {
-                LOG.warn("Error while closing the input stream", ioe);
+                LOG.LogWarning("Error while closing the input stream", ioe);
             }
             if (!completed())
                 errThread.interrupt();
@@ -160,7 +160,7 @@ abstract public class Shell {
                 errReader.close();
             } catch (IOException ioe)
 {
-                LOG.warn("Error while closing the error stream", ioe);
+                LOG.LogWarning("Error while closing the error stream", ioe);
             }
 
             process.destroy();
@@ -169,7 +169,7 @@ abstract public class Shell {
 
 
     /**
-     * This is an IOException with exit code added.
+     * This is an IOException with exit code.Added.
      */
     @SuppressWarnings("serial")
     public static class ExitCodeException extends IOException {
@@ -216,7 +216,7 @@ abstract public class Shell {
 
 
         /** Execute the shell command. */
-        public void execute() throws IOException {
+        public void execute(){
             this.run();
         }
 
@@ -225,7 +225,7 @@ abstract public class Shell {
             return command;
         }
 
-        protected void parseExecResult(BufferedReader reader) throws IOException {
+        protected void parseExecResult(BufferedReader reader){
             output = new StringBuffer();
             char[] buf = new char[512];
             int nRead;
@@ -273,7 +273,7 @@ abstract public class Shell {
      * @param cmd shell command to execute.
      * @return the output of the executed command.
      */
-    public static String execCommand(String[] cmd] throws IOException {
+    public static String execCommand(String[] cmd]{
         return execCommand(cmd, -1);
     }
 
@@ -285,7 +285,7 @@ abstract public class Shell {
      * @param timeout time in milliseconds after which script should be killed. -1 means no timeout.
      * @return the output of the executed command.
      */
-    public static String execCommand(String[] cmd, long timeout] throws IOException {
+    public static String execCommand(String[] cmd, long timeout]{
         ShellCommandExecutor exec = new ShellCommandExecutor(cmd, timeout);
         exec.execute();
         return exec.output();

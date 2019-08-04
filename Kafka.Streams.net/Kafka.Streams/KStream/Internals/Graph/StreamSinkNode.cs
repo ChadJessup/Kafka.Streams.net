@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,13 +17,13 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.streams.kstream.internals.ProducedInternal;
-import org.apache.kafka.streams.kstream.internals.WindowedSerializer;
-import org.apache.kafka.streams.kstream.internals.WindowedStreamPartitioner;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.apache.kafka.streams.processor.TopicNameExtractor;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
+
+
+
+
+
+
+
 
 public class StreamSinkNode<K, V> : StreamsGraphNode {
 
@@ -56,16 +56,16 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
 {
          Serializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().serializer();
          Serializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().serializer();
-         StreamPartitioner<? super K, ? super V> partitioner = producedInternal.streamPartitioner();
+         StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
          string[] parentNames = parentNodeNames();
 
         if (partitioner == null && keySerializer is WindowedSerializer)
 {
-            @SuppressWarnings("unchecked")
+            
              StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<Object, V>((WindowedSerializer) keySerializer);
-            topologyBuilder.addSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
+            topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
         } else {
-            topologyBuilder.addSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner,  parentNames);
+            topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner,  parentNames);
         }
     }
 

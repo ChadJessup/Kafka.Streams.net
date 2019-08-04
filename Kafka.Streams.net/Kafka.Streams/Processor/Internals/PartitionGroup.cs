@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.metrics.Sensor;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Set;
+
+
+
+
+
 
 /**
  * PartitionGroup is used to buffer all co-partitioned records for processing.
@@ -138,14 +138,14 @@ public class PartitionGroup {
      * @param rawRecords  the raw records
      * @return the queue size for the partition
      */
-    int addRawRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
+    int.AddRawRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
 {
         RecordQueue recordQueue = partitionQueues[partition];
 
         int oldSize = recordQueue.size();
-        int newSize = recordQueue.addRawRecords(rawRecords);
+        int newSize = recordQueue.AddRawRecords(rawRecords);
 
-        // add this record queue to be considered for processing in the future if it was empty before
+        //.Add this record queue to be considered for processing in the future if it was empty before
         if (oldSize == 0 && newSize > 0)
 {
             nonEmptyQueuesByTime.offer(recordQueue);
@@ -164,7 +164,7 @@ public class PartitionGroup {
         return newSize;
     }
 
-    public Set<TopicPartition> partitions()
+    public HashSet<TopicPartition> partitions()
 {
         return Collections.unmodifiableSet(partitionQueues.keySet());
     }

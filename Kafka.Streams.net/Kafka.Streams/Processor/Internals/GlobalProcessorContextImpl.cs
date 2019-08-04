@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl.KeyValueStoreReadWriteDecorator;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl.SessionStoreReadWriteDecorator;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl.TimestampedKeyValueStoreReadWriteDecorator;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl.TimestampedWindowStoreReadWriteDecorator;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl.WindowStoreReadWriteDecorator;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.SessionStore;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.TimestampedWindowStore;
-import org.apache.kafka.streams.state.WindowStore;
-import org.apache.kafka.streams.state.internals.ThreadCache;
 
-import java.time.Duration;
-import java.util.List;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class GlobalProcessorContextImpl : AbstractProcessorContext {
 
@@ -50,7 +50,7 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
         super(new TaskId(-1, -1), config, metrics, stateMgr, cache);
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     public IStateStore getStateStore(string name)
 {
@@ -76,9 +76,9 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
         return store;
     }
 
-    @SuppressWarnings("unchecked")
     
-    public <K, V> void forward(K key, V value)
+    
+    publicvoid forward(K key, V value)
 {
         ProcessorNode previousNode = currentNode();
         try {
@@ -96,7 +96,7 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
      * No-op. This should only be called on GlobalStateStore#flush and there should be no child nodes
      */
     
-    public <K, V> void forward(K key, V value, To to)
+    publicvoid forward(K key, V value, To to)
 {
         if (!currentNode().children().isEmpty())
 {
@@ -109,7 +109,7 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
      */
     
     @Deprecated
-    public <K, V> void forward(K key, V value, int childIndex)
+    publicvoid forward(K key, V value, int childIndex)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in global processor context.");
     }
@@ -119,7 +119,7 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
      */
     
     @Deprecated
-    public <K, V> void forward(K key, V value, string childName)
+    publicvoid forward(K key, V value, string childName)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in global processor context.");
     }

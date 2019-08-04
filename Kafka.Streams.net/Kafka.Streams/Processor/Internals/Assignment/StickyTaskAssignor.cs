@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,33 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals.assignment;
+namespace Kafka.Streams.Processor.Internals.assignment;
 
-import org.apache.kafka.streams.processor.TaskId;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 
     private static Logger log = LoggerFactory.getLogger(StickyTaskAssignor.class);
     private Dictionary<ID, ClientState> clients;
-    private Set<TaskId> taskIds;
+    private HashSet<TaskId> taskIds;
     private Dictionary<TaskId, ID> previousActiveTaskAssignment = new HashMap<>();
-    private Dictionary<TaskId, Set<ID>> previousStandbyTaskAssignment = new HashMap<>();
+    private Dictionary<TaskId, HashSet<ID>> previousStandbyTaskAssignment = new HashMap<>();
     private TaskPairs taskPairs;
 
-    public StickyTaskAssignor(Dictionary<ID, ClientState> clients, Set<TaskId> taskIds)
+    public StickyTaskAssignor(Dictionary<ID, ClientState> clients, HashSet<TaskId> taskIds)
 {
         this.clients = clients;
         this.taskIds = taskIds;
@@ -61,10 +61,10 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 {
             for (int i = 0; i < numStandbyReplicas; i++)
 {
-                Set<ID> ids = findClientsWithoutAssignedTask(taskId);
+                HashSet<ID> ids = findClientsWithoutAssignedTask(taskId);
                 if (ids.isEmpty())
 {
-                    log.warn("Unable to assign {} of {} standby tasks for task [{}]. " +
+                    log.LogWarning("Unable to assign {} of {} standby tasks for task [{}]. " +
                                      "There is not enough available capacity. You should " +
                                      "increase the number of threads and/or application instances " +
                                      "to maintain the requested number of standby replicas.",
@@ -81,7 +81,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 {
         int totalCapacity = sumCapacity(clients.values());
         int tasksPerThread = taskIds.size() / totalCapacity;
-        Set<TaskId> assigned = new HashSet<>();
+        HashSet<TaskId> assigned = new HashSet<>();
 
         // first try and re-assign existing active tasks to clients that previously had
         // the same active task
@@ -90,7 +90,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             TaskId taskId = entry.getKey();
             if (taskIds.contains(taskId))
 {
-                ClientState client = clients[entry.getValue()];
+                ClientState client = clients[entry.getValue());
                 if (client.hasUnfulfilledQuota(tasksPerThread))
 {
                     assignTaskToClient(assigned, taskId, client);
@@ -98,7 +98,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             }
         }
 
-        Set<TaskId> unassigned = new HashSet<>(taskIds);
+        HashSet<TaskId> unassigned = new HashSet<>(taskIds);
         unassigned.removeAll(assigned);
 
         // try and assign any remaining unassigned tasks to clients that previously
@@ -106,7 +106,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         for (Iterator<TaskId> iterator = unassigned.iterator(); iterator.hasNext(); )
 {
             TaskId taskId = iterator.next();
-            Set<ID> clientIds = previousStandbyTaskAssignment[taskId];
+            HashSet<ID> clientIds = previousStandbyTaskAssignment[taskId];
             if (clientIds != null)
 {
                 foreach (ID clientId in clientIds)
@@ -131,41 +131,41 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         }
     }
 
-    private void allocateTaskWithClientCandidates(TaskId taskId, Set<ID> clientsWithin, bool active)
+    private void allocateTaskWithClientCandidates(TaskId taskId, HashSet<ID> clientsWithin, bool active)
 {
         ClientState client = findClient(taskId, clientsWithin);
-        taskPairs.addPairs(taskId, client.assignedTasks());
+        taskPairs.AddPairs(taskId, client.assignedTasks());
         client.assign(taskId, active);
     }
 
     private void assignTaskToClient(Set<TaskId> assigned, TaskId taskId, ClientState client)
 {
-        taskPairs.addPairs(taskId, client.assignedTasks());
+        taskPairs.AddPairs(taskId, client.assignedTasks());
         client.assign(taskId, true);
-        assigned.add(taskId);
+        assigned.Add(taskId);
     }
 
-    private Set<ID> findClientsWithoutAssignedTask(TaskId taskId)
+    private HashSet<ID> findClientsWithoutAssignedTask(TaskId taskId)
 {
-        Set<ID> clientIds = new HashSet<>();
+        HashSet<ID> clientIds = new HashSet<>();
         foreach (Map.Entry<ID, ClientState> client in clients.entrySet())
 {
             if (!client.getValue().hasAssignedTask(taskId))
 {
-                clientIds.add(client.getKey());
+                clientIds.Add(client.getKey());
             }
         }
         return clientIds;
     }
 
 
-    private ClientState findClient(TaskId taskId, Set<ID> clientsWithin)
+    private ClientState findClient(TaskId taskId, HashSet<ID> clientsWithin)
 {
 
         // optimize the case where there is only 1 id to search within.
         if (clientsWithin.size() == 1)
 {
-            return clients[clientsWithin.iterator().next()];
+            return clients[clientsWithin.iterator().next());
         }
 
         ClientState previous = findClientsWithPreviousAssignedTask(taskId, clientsWithin);
@@ -206,7 +206,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
     }
 
     private ClientState findClientsWithPreviousAssignedTask(TaskId taskId,
-                                                                    Set<ID> clientsWithin)
+                                                                    HashSet<ID> clientsWithin)
 {
         ID previous = previousActiveTaskAssignment[taskId];
         if (previous != null && clientsWithin.contains(previous))
@@ -216,9 +216,9 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         return findLeastLoadedClientWithPreviousStandByTask(taskId, clientsWithin);
     }
 
-    private ClientState findLeastLoadedClientWithPreviousStandByTask(TaskId taskId, Set<ID> clientsWithin)
+    private ClientState findLeastLoadedClientWithPreviousStandByTask(TaskId taskId, HashSet<ID> clientsWithin)
 {
-        Set<ID> ids = previousStandbyTaskAssignment[taskId];
+        HashSet<ID> ids = previousStandbyTaskAssignment[taskId];
         if (ids == null)
 {
             return null;
@@ -228,7 +228,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         return leastLoaded(taskId, constrainTo);
     }
 
-    private ClientState leastLoaded(TaskId taskId, Set<ID> clientIds)
+    private ClientState leastLoaded(TaskId taskId, HashSet<ID> clientIds)
 {
         ClientState leastLoaded = findLeastLoaded(taskId, clientIds, true);
         if (leastLoaded == null)
@@ -239,7 +239,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
     }
 
     private ClientState findLeastLoaded(TaskId taskId,
-                                        Set<ID> clientIds,
+                                        HashSet<ID> clientIds,
                                         bool checkTaskPairs)
 {
         ClientState leastLoaded = null;
@@ -282,7 +282,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 {
                     previousStandbyTaskAssignment.Add(prevAssignedTask, new HashSet<>());
                 }
-                previousStandbyTaskAssignment[prevAssignedTask).add(clientState.getKey()];
+                previousStandbyTaskAssignment[prevAssignedTask).Add(clientState.getKey());
             }
         }
 
@@ -299,7 +299,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
     }
 
     private static class TaskPairs {
-        private Set<Pair> pairs;
+        private HashSet<Pair> pairs;
         private int maxPairs;
 
         TaskPairs(int maxPairs)
@@ -309,7 +309,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         }
 
         bool hasNewPair(TaskId task1,
-                           Set<TaskId> taskIds)
+                           HashSet<TaskId> taskIds)
 {
             if (pairs.size() == maxPairs)
 {
@@ -325,11 +325,11 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             return false;
         }
 
-        void addPairs(TaskId taskId, Set<TaskId> assigned)
+        void.AddPairs(TaskId taskId, HashSet<TaskId> assigned)
 {
             foreach (TaskId id in assigned)
 {
-                pairs.add(pair(id, taskId));
+                pairs.Add(pair(id, taskId));
             }
         }
 

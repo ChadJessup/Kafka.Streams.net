@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,33 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.DeleteRecordsResult;
-import org.apache.kafka.clients.admin.RecordsToDelete;
-import org.apache.kafka.clients.consumer.Consumer;
+
+
+
+
 using Kafka.Common.Cluster;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskIdFormatException;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.state.HostInfo;
-import org.slf4j.Logger;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
-import static java.util.Collections.singleton;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class TaskManager {
     // initialize the task list
@@ -62,8 +62,8 @@ public class TaskManager {
 
     // following information is updated during rebalance phase by the partition assignor
     private Cluster cluster;
-    private Dictionary<TaskId, Set<TopicPartition>> assignedActiveTasks;
-    private Dictionary<TaskId, Set<TopicPartition>> assignedStandbyTasks;
+    private Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks;
+    private Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks;
 
     private Consumer<byte[], byte[]> consumer;
 
@@ -99,7 +99,7 @@ public class TaskManager {
 {
         if (consumer == null)
 {
-            throw new InvalidOperationException(logPrefix + "consumer has not been initialized while adding stream tasks. This should not happen.");
+            throw new InvalidOperationException(logPrefix + "consumer has not been initialized while.Adding stream tasks. This should not happen.");
         }
 
         // do this first as we may have suspended standby tasks that
@@ -107,26 +107,26 @@ public class TaskManager {
         standby.closeNonAssignedSuspendedTasks(assignedStandbyTasks);
         active.closeNonAssignedSuspendedTasks(assignedActiveTasks);
 
-        addStreamTasks(assignment);
-        addStandbyTasks();
+       .AddStreamTasks(assignment);
+       .AddStandbyTasks();
         // Pause all the partitions until the underlying state store is ready for all the active tasks.
         log.trace("Pausing partitions: {}", assignment);
         consumer.pause(assignment);
     }
 
-    private void addStreamTasks(Collection<TopicPartition> assignment)
+    private void.AddStreamTasks(Collection<TopicPartition> assignment)
 {
         if (assignedActiveTasks.isEmpty())
 {
             return;
         }
-        Dictionary<TaskId, Set<TopicPartition>> newTasks = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new HashMap<>();
         // collect newly assigned tasks and reopen re-assigned tasks
         log.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
-        foreach (Map.Entry<TaskId, Set<TopicPartition>> entry in assignedActiveTasks.entrySet())
+        foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks.entrySet())
 {
             TaskId taskId = entry.getKey();
-            Set<TopicPartition> partitions = entry.getValue();
+            HashSet<TopicPartition> partitions = entry.getValue();
 
             if (assignment.containsAll(partitions))
 {
@@ -141,7 +141,7 @@ public class TaskManager {
                     throw e;
                 }
             } else {
-                log.warn("Task {} owned partitions {} are not contained in the assignment {}", taskId, partitions, assignment);
+                log.LogWarning("Task {} owned partitions {} are not contained in the assignment {}", taskId, partitions, assignment);
             }
         }
 
@@ -157,24 +157,24 @@ public class TaskManager {
 
         foreach (StreamTask task in taskCreator.createTasks(consumer, newTasks))
 {
-            active.addNewTask(task);
+            active.AddNewTask(task);
         }
     }
 
-    private void addStandbyTasks()
+    private void.AddStandbyTasks()
 {
-        Dictionary<TaskId, Set<TopicPartition>> assignedStandbyTasks = this.assignedStandbyTasks;
+        Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks = this.assignedStandbyTasks;
         if (assignedStandbyTasks.isEmpty())
 {
             return;
         }
         log.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
-        Dictionary<TaskId, Set<TopicPartition>> newStandbyTasks = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new HashMap<>();
         // collect newly assigned standby tasks and reopen re-assigned standby tasks
-        foreach (Map.Entry<TaskId, Set<TopicPartition>> entry in assignedStandbyTasks.entrySet())
+        foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks.entrySet())
 {
             TaskId taskId = entry.getKey();
-            Set<TopicPartition> partitions = entry.getValue();
+            HashSet<TopicPartition> partitions = entry.getValue();
             if (!standby.maybeResumeSuspendedTask(taskId, partitions))
 {
                 newStandbyTasks.Add(taskId, partitions);
@@ -192,21 +192,21 @@ public class TaskManager {
 
         foreach (StandbyTask task in standbyTaskCreator.createTasks(consumer, newStandbyTasks))
 {
-            standby.addNewTask(task);
+            standby.AddNewTask(task);
         }
     }
 
-    Set<TaskId> activeTaskIds()
+    HashSet<TaskId> activeTaskIds()
 {
         return active.allAssignedTaskIds();
     }
 
-    Set<TaskId> standbyTaskIds()
+    HashSet<TaskId> standbyTaskIds()
 {
         return standby.allAssignedTaskIds();
     }
 
-    public Set<TaskId> prevActiveTaskIds()
+    public HashSet<TaskId> prevActiveTaskIds()
 {
         return active.previousTaskIds();
     }
@@ -214,7 +214,7 @@ public class TaskManager {
     /**
      * Returns ids of tasks whose states are kept on the local storage.
      */
-    public Set<TaskId> cachedTasksIds()
+    public HashSet<TaskId> cachedTasksIds()
 {
         // A client could contain some inactive tasks whose states are still kept on the local storage in the following scenarios:
         // 1) the client is actively maintaining standby tasks by maintaining their states from the change log.
@@ -233,7 +233,7 @@ public class TaskManager {
                     // if the checkpoint file exists, the state is valid.
                     if (new File(dir, StateManagerUtil.CHECKPOINT_FILE_NAME).exists())
 {
-                        tasks.add(id);
+                        tasks.Add(id);
                     }
                 } catch (TaskIdFormatException e)
 {
@@ -269,7 +269,7 @@ public class TaskManager {
         firstException.compareAndSet(null, active.suspend());
         // close all restoring tasks as well and then reset changelog reader;
         // for those restoring and still assigned tasks, they will be re-created
-        // in addStreamTasks.
+        // in.AddStreamTasks.
         firstException.compareAndSet(null, active.closeAllRestoringTasks());
         changelogReader.reset();
 
@@ -322,12 +322,12 @@ public class TaskManager {
         return adminClient;
     }
 
-    Set<TaskId> suspendedActiveTaskIds()
+    HashSet<TaskId> suspendedActiveTaskIds()
 {
         return active.previousTaskIds();
     }
 
-    Set<TaskId> suspendedStandbyTaskIds()
+    HashSet<TaskId> suspendedStandbyTaskIds()
 {
         return standby.previousTaskIds();
     }
@@ -372,7 +372,7 @@ public class TaskManager {
 
         if (active.allTasksRunning())
 {
-            Set<TopicPartition> assignment = consumer.assignment();
+            HashSet<TopicPartition> assignment = consumer.assignment();
             log.trace("Resuming partitions {}", assignment);
             consumer.resume(assignment);
             assignStandbyPartitions();
@@ -394,14 +394,14 @@ public class TaskManager {
     private void assignStandbyPartitions()
 {
         Collection<StandbyTask> running = standby.running();
-        Dictionary<TopicPartition, Long> checkpointedOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
         foreach (StandbyTask standbyTask in running)
 {
             checkpointedOffsets.putAll(standbyTask.checkpointedOffsets());
         }
 
         restoreConsumer.assign(checkpointedOffsets.keySet());
-        foreach (Map.Entry<TopicPartition, Long> entry in checkpointedOffsets.entrySet())
+        foreach (Map.Entry<TopicPartition, long> entry in checkpointedOffsets.entrySet())
 {
             TopicPartition partition = entry.getKey();
             long offset = entry.getValue();
@@ -419,13 +419,13 @@ public class TaskManager {
         this.cluster = cluster;
     }
 
-    public void setPartitionsByHostState(Dictionary<HostInfo, Set<TopicPartition>> partitionsByHostState)
+    public void setPartitionsByHostState(Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState)
 {
         this.streamsMetadataState.onChange(partitionsByHostState, cluster);
     }
 
-    public void setAssignmentMetadata(Dictionary<TaskId, Set<TopicPartition>> activeTasks,
-                                      Dictionary<TaskId, Set<TopicPartition>> standbyTasks)
+    public void setAssignmentMetadata(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,
+                                      Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks)
 {
         this.assignedActiveTasks = activeTasks;
         this.assignedStandbyTasks = standbyTasks;
@@ -435,16 +435,16 @@ public class TaskManager {
 {
         if (builder().sourceTopicPattern() != null)
 {
-            Set<string> assignedTopics = new HashSet<>();
+            HashSet<string> assignedTopics = new HashSet<>();
             foreach (TopicPartition topicPartition in partitions)
 {
-                assignedTopics.add(topicPartition.topic());
+                assignedTopics.Add(topicPartition.topic());
             }
 
             Collection<string> existingTopics = builder().subscriptionUpdates().getUpdates();
             if (!existingTopics.containsAll(assignedTopics))
 {
-                assignedTopics.addAll(existingTopics);
+                assignedTopics.AddAll(existingTopics);
                 builder().updateSubscribedTopics(assignedTopics, logPrefix);
             }
         }
@@ -511,7 +511,7 @@ public class TaskManager {
             }
 
             Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new HashMap<>();
-            foreach (Map.Entry<TopicPartition, Long> entry in active.recordsToDelete().entrySet())
+            foreach (Map.Entry<TopicPartition, long> entry in active.recordsToDelete().entrySet())
 {
                 recordsToDelete.Add(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue()));
             }
@@ -547,12 +547,12 @@ public class TaskManager {
     }
 
     // the following functions are for testing only
-    Dictionary<TaskId, Set<TopicPartition>> assignedActiveTasks()
+    Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks()
 {
         return assignedActiveTasks;
     }
 
-    Dictionary<TaskId, Set<TopicPartition>> assignedStandbyTasks()
+    Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks()
 {
         return assignedStandbyTasks;
     }

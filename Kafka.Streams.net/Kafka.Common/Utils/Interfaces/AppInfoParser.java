@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,20 +16,20 @@
  */
 namespace Kafka.common.utils;
 
-import java.io.InputStream;
-import java.lang.management.ManagementFactory;
-import java.util.Properties;
 
-import javax.management.JMException;
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
-import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.metrics.Gauge;
-import org.apache.kafka.common.metrics.MetricConfig;
-import org.apache.kafka.common.metrics.Metrics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class AppInfoParser {
     private static final Logger log = LoggerFactory.getLogger(AppInfoParser.class);
@@ -45,7 +45,7 @@ public class AppInfoParser {
             props.load(resourceStream);
         } catch (Exception e)
 {
-            log.warn("Error while loading kafka-version.properties: {}", e.getMessage());
+            log.LogWarning("Error while loading kafka-version.properties: {}", e.getMessage());
         }
         VERSION = props.getProperty("version", DEFAULT_VALUE).trim();
         COMMIT_ID = props.getProperty("commitId", DEFAULT_VALUE).trim();
@@ -68,10 +68,10 @@ public class AppInfoParser {
             AppInfo mBean = new AppInfo(nowMs);
             ManagementFactory.getPlatformMBeanServer().registerMBean(mBean, name);
 
-            registerMetrics(metrics, mBean); // prefix will be added later by JmxReporter
+            registerMetrics(metrics, mBean); // prefix will be.Added later by JmxReporter
         } catch (JMException e)
 {
-            log.warn("Error registering AppInfo mbean", e);
+            log.LogWarning("Error registering AppInfo mbean", e);
         }
     }
 
@@ -86,7 +86,7 @@ public class AppInfoParser {
             unregisterMetrics(metrics);
         } catch (JMException e)
 {
-            log.warn("Error unregistering AppInfo mbean", e);
+            log.LogWarning("Error unregistering AppInfo mbean", e);
         }
     }
 
@@ -99,9 +99,9 @@ public class AppInfoParser {
 {
         if (metrics != null)
 {
-            metrics.addMetric(metricName(metrics, "version"), new ImmutableValue<>(appInfo.getVersion()));
-            metrics.addMetric(metricName(metrics, "commit-id"), new ImmutableValue<>(appInfo.getCommitId()));
-            metrics.addMetric(metricName(metrics, "start-time-ms"), new ImmutableValue<>(appInfo.getStartTimeMs()));
+            metrics.AddMetric(metricName(metrics, "version"), new ImmutableValue<>(appInfo.getVersion()));
+            metrics.AddMetric(metricName(metrics, "commit-id"), new ImmutableValue<>(appInfo.getCommitId()));
+            metrics.AddMetric(metricName(metrics, "start-time-ms"), new ImmutableValue<>(appInfo.getStartTimeMs()));
         }
     }
 
@@ -118,12 +118,12 @@ public class AppInfoParser {
     public interface AppInfoMBean {
         String getVersion();
         String getCommitId();
-        Long getStartTimeMs();
+        long getStartTimeMs();
     }
 
     public static class AppInfo : AppInfoMBean {
 
-        private final Long startTimeMs;
+        private final long startTimeMs;
 
         public AppInfo(long startTimeMs)
 {
@@ -146,7 +146,7 @@ public class AppInfoParser {
         }
 
         
-        public Long getStartTimeMs()
+        public long getStartTimeMs()
 {
             return startTimeMs;
         }

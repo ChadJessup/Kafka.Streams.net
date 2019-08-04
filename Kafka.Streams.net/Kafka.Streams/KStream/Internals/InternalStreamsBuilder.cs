@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,44 +16,44 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.GlobalKTable;
-import org.apache.kafka.streams.kstream.Grouped;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.internals.graph.GlobalStoreNode;
-import org.apache.kafka.streams.kstream.internals.graph.OptimizableRepartitionNode;
-import org.apache.kafka.streams.kstream.internals.graph.ProcessorParameters;
-import org.apache.kafka.streams.kstream.internals.graph.StateStoreNode;
-import org.apache.kafka.streams.kstream.internals.graph.StreamSourceNode;
-import org.apache.kafka.streams.kstream.internals.graph.StreamsGraphNode;
-import org.apache.kafka.streams.kstream.internals.graph.TableSourceNode;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.PriorityQueue;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class InternalStreamsBuilder : InternalNameProvider {
 
@@ -82,14 +82,14 @@ public class InternalStreamsBuilder : InternalNameProvider {
         this.internalTopologyBuilder = internalTopologyBuilder;
     }
 
-    public <K, V> KStream<K, V> stream( Collection<string> topics,
+    public KStream<K, V> stream( Collection<string> topics,
                                         ConsumedInternal<K, V> consumed)
 {
 
          string name = new NamedInternal(consumed.name()).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
          StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<>(name, topics, consumed);
 
-        addGraphNode(root, streamSourceNode);
+       .AddGraphNode(root, streamSourceNode);
 
         return new KStreamImpl<>(name,
                                  consumed.keySerde(),
@@ -100,13 +100,13 @@ public class InternalStreamsBuilder : InternalNameProvider {
                                  this);
     }
 
-    public <K, V> KStream<K, V> stream( Pattern topicPattern,
+    public KStream<K, V> stream( Pattern topicPattern,
                                         ConsumedInternal<K, V> consumed)
 {
          string name = newProcessorName(KStreamImpl.SOURCE_NAME);
          StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<>(name, topicPattern, consumed);
 
-        addGraphNode(root, streamPatternSourceNode);
+       .AddGraphNode(root, streamPatternSourceNode);
 
         return new KStreamImpl<>(name,
                                  consumed.keySerde(),
@@ -117,7 +117,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
                                  this);
     }
 
-    public <K, V> KTable<K, V> table( string topic,
+    public KTable<K, V> table( string topic,
                                       ConsumedInternal<K, V> consumed,
                                       MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -137,7 +137,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
             .withProcessorParameters(processorParameters)
             .build();
 
-        addGraphNode(root, tableSourceNode);
+       .AddGraphNode(root, tableSourceNode);
 
         return new KTableImpl<>(tableSourceName,
                                 consumed.keySerde(),
@@ -149,7 +149,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
                                 this);
     }
 
-    public <K, V> GlobalKTable<K, V> globalTable( string topic,
+    public GlobalKTable<K, V> globalTable( string topic,
                                                   ConsumedInternal<K, V> consumed,
                                                   MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -174,7 +174,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
             .withProcessorParameters(processorParameters)
             .build();
 
-        addGraphNode(root, tableSourceNode);
+       .AddGraphNode(root, tableSourceNode);
 
         return new GlobalKTableImpl<>(new KTableSourceValueGetterSupplier<>(storeName), materialized.queryableStoreName());
     }
@@ -191,12 +191,12 @@ public class InternalStreamsBuilder : InternalNameProvider {
         return prefix + string.Format(KTableImpl.STATE_STORE_NAME + "%010d", index.getAndIncrement());
     }
 
-    public synchronized void addStateStore( StoreBuilder builder)
+    public synchronized void.AddStateStore( StoreBuilder builder)
 {
-        addGraphNode(root, new StateStoreNode(builder));
+       .AddGraphNode(root, new StateStoreNode(builder));
     }
 
-    public synchronized void addGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
+    public synchronized void.AddGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
                                              string sourceName,
                                              string topic,
                                              ConsumedInternal consumed,
@@ -211,10 +211,10 @@ public class InternalStreamsBuilder : InternalNameProvider {
                                                                      processorName,
                                                                      stateUpdateSupplier);
 
-        addGraphNode(root, globalStoreNode);
+       .AddGraphNode(root, globalStoreNode);
     }
 
-    public synchronized void addGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
+    public synchronized void.AddGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
                                              string topic,
                                              ConsumedInternal consumed,
                                              ProcessorSupplier stateUpdateSupplier)
@@ -223,7 +223,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
         storeBuilder.withLoggingDisabled();
          string sourceName = newProcessorName(KStreamImpl.SOURCE_NAME);
          string processorName = newProcessorName(KTableImpl.SOURCE_NAME);
-        addGlobalStore(storeBuilder,
+       .AddGlobalStore(storeBuilder,
                        sourceName,
                        topic,
                        consumed,
@@ -231,17 +231,17 @@ public class InternalStreamsBuilder : InternalNameProvider {
                        stateUpdateSupplier);
     }
 
-    void addGraphNode( StreamsGraphNode parent,
+    void.AddGraphNode( StreamsGraphNode parent,
                        StreamsGraphNode child)
 {
         Objects.requireNonNull(parent, "parent node can't be null");
         Objects.requireNonNull(child, "child node can't be null");
-        parent.addChild(child);
+        parent.AddChild(child);
         maybeAddNodeForOptimizationMetadata(child);
     }
 
 
-    void addGraphNode( Collection<StreamsGraphNode> parents,
+    void.AddGraphNode( Collection<StreamsGraphNode> parents,
                        StreamsGraphNode child)
 {
         Objects.requireNonNull(parents, "parent node can't be null");
@@ -254,7 +254,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
 
         foreach ( StreamsGraphNode parent in parents)
 {
-            addGraphNode(parent, child);
+           .AddGraphNode(parent, child);
         }
     }
 
@@ -277,14 +277,14 @@ public class InternalStreamsBuilder : InternalNameProvider {
              StreamsGraphNode parentNode = getKeyChangingParentNode(node);
             if (parentNode != null)
 {
-                keyChangingOperationsToOptimizableRepartitionNodes[parentNode).add((OptimizableRepartitionNode) node];
+                keyChangingOperationsToOptimizableRepartitionNodes[parentNode).Add((OptimizableRepartitionNode) node);
             }
         } else if (node.isMergeNode())
 {
-            mergeNodes.add(node);
+            mergeNodes.Add(node);
         } else if (node is TableSourceNode)
 {
-            tableSourceNodes.add(node);
+            tableSourceNodes.Add(node);
         }
     }
 
@@ -342,7 +342,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
         tableSourceNodes.forEach(node -> ((TableSourceNode) node).reuseSourceTopicForChangeLog(true));
     }
 
-    @SuppressWarnings("unchecked")
+    
     private void maybeOptimizeRepartitionOperations()
 {
         maybeUpdateKeyChangingRepartitionNodeMap();
@@ -382,9 +382,9 @@ public class InternalStreamsBuilder : InternalNameProvider {
 
                 LOG.debug("Found the child node of the key changer {} from the repartition {}.", keyChangingNodeChild, repartitionNodeToBeReplaced);
 
-                // need to add children of key-changing node as children of optimized repartition
+                // need to.Add children of key-changing node as children of optimized repartition
                 // in order to process records from re-partitioning
-                optimizedSingleRepartition.addChild(keyChangingNodeChild);
+                optimizedSingleRepartition.AddChild(keyChangingNodeChild);
 
                 LOG.debug("Removing {} from {}  children {}", keyChangingNodeChild, keyChangingNode, keyChangingNode.children());
                 // now Remove children from key-changing node
@@ -398,7 +398,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
 {
                     foreach ( StreamsGraphNode parentNode in parentsOfRepartitionNodeToBeReplaced)
 {
-                        parentNode.addChild(repartitionNodeToBeReplacedChild);
+                        parentNode.AddChild(repartitionNodeToBeReplacedChild);
                     }
                 }
 
@@ -411,14 +411,14 @@ public class InternalStreamsBuilder : InternalNameProvider {
                 LOG.debug("Updated node {} children {}", optimizedSingleRepartition, optimizedSingleRepartition.children());
             }
 
-            keyChangingNode.addChild(optimizedSingleRepartition);
+            keyChangingNode.AddChild(optimizedSingleRepartition);
             entryIterator.Remove();
         }
     }
 
     private void maybeUpdateKeyChangingRepartitionNodeMap()
 {
-         Map<StreamsGraphNode, Set<StreamsGraphNode>> mergeNodesToKeyChangers = new HashMap<>();
+         Map<StreamsGraphNode, HashSet<StreamsGraphNode>> mergeNodesToKeyChangers = new HashMap<>();
         foreach ( StreamsGraphNode mergeNode in mergeNodes)
 {
             mergeNodesToKeyChangers.Add(mergeNode, new HashSet<>());
@@ -428,19 +428,19 @@ public class InternalStreamsBuilder : InternalNameProvider {
                  StreamsGraphNode maybeParentKey = findParentNodeMatching(mergeNode, node -> node.parentNodes().contains(key));
                 if (maybeParentKey != null)
 {
-                    mergeNodesToKeyChangers[mergeNode).add(key];
+                    mergeNodesToKeyChangers[mergeNode).Add(key);
                 }
             }
         }
 
-        foreach ( Map.Entry<StreamsGraphNode, Set<StreamsGraphNode>> entry in mergeNodesToKeyChangers.entrySet())
+        foreach ( Map.Entry<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers.entrySet())
 {
              StreamsGraphNode mergeKey = entry.getKey();
              Collection<StreamsGraphNode> keyChangingParents = entry.getValue();
              HashSet<OptimizableRepartitionNode> repartitionNodes = new HashSet<>();
             foreach ( StreamsGraphNode keyChangingParent in keyChangingParents)
 {
-                repartitionNodes.addAll(keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent)];
+                repartitionNodes.AddAll(keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent));
                 keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
             }
 
@@ -448,7 +448,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     private OptimizableRepartitionNode createRepartitionNode( string repartitionTopicName,
                                                               Serde keySerde,
                                                               Serde valueSerde)
@@ -487,7 +487,7 @@ public class InternalStreamsBuilder : InternalNameProvider {
         return repartitionNodes.iterator().next().repartitionTopic();
     }
 
-    @SuppressWarnings("unchecked")
+    
     private GroupedInternal getRepartitionSerdes( Collection<OptimizableRepartitionNode> repartitionNodes)
 {
         Serde keySerde = null;

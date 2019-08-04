@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,14 +16,14 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.annotation.InterfaceStability;
-import org.apache.kafka.streams.kstream.Window;
+
+
 
 /**
  * {@link UnlimitedWindow} is an "infinite" large window with a fixed (inclusive) start time.
  * All windows of the same {@link org.apache.kafka.streams.kstream.UnlimitedWindows window specification} will have the
  * same start time.
- * To make the window size "infinite" end time is set to {@link Long#MAX_VALUE}.
+ * To make the window size "infinite" end time is set to {@link long#MAX_VALUE}.
  * <p>
  * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
  *
@@ -43,7 +43,7 @@ public class UnlimitedWindow : Window {
      */
     public UnlimitedWindow( long startMs)
 {
-        super(startMs, Long.MAX_VALUE);
+        super(startMs, long.MAX_VALUE);
     }
 
     /**

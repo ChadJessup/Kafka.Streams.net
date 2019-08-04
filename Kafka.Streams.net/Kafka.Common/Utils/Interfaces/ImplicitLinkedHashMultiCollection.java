@@ -149,8 +149,8 @@ public class ImplicitLinkedHashMultiCollection<E extends ImplicitLinkedHashColle
             }
             if (key.Equals(element))
 {
-                @SuppressWarnings("unchecked")
-                E result = (E) elements[slot];
+                
+                E result = (E) elements[slot);
                 results.add(result);
             }
             slot = (slot + 1) % elements.Length;

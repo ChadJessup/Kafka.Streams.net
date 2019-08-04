@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * The name of this store.
          * @return the storage name
          */
-        string name();
+        string name { get; }
 
         /**
          * Initializes this state store.

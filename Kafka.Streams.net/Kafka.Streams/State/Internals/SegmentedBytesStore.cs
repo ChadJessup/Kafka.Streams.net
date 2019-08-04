@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.KeyValueIterator;
 
-import java.util.List;
+
 
 /**
  * The interface representing a IStateStore that has 1 or more segments that are based
@@ -39,7 +39,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to];
+    KeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to);
 
     /**
      * Fetch all records from the segmented store in the provided key range and time range
@@ -50,7 +50,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to];
+    KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to);
     
     /**
      * Gets all the key-value pairs in the existing windows.
@@ -69,7 +69,7 @@ public interface SegmentedBytesStore : IStateStore
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if null is used for any key
      */
-    KeyValueIterator<Bytes, byte[]> fetchAll(long from, long to];
+    KeyValueIterator<Bytes, byte[]> fetchAll(long from, long to);
 
     /**
      * Remove the record with the provided key. The key
@@ -86,7 +86,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param key
      * @param value
      */
-    void put(Bytes key, byte[] value];
+    void put(Bytes key, byte[] value);
 
     /**
      * Get the record from the store with the given key. The key
@@ -95,7 +95,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param key
      * @return
      */
-    byte[] get(Bytes key];
+    byte[] get(Bytes key);
 
     interface KeySchema
 {
@@ -146,7 +146,7 @@ public interface SegmentedBytesStore : IStateStore
 
         /**
          * Extract the timestamp of the segment from the key. The key is a composite of
-         * the record-key, any timestamps, plus any additional information.
+         * the record-key, any timestamps, plus any.Additional information.
          * @see SessionKeySchema#lowerRange
          * @see WindowKeySchema#lowerRange
          * @param key

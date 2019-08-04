@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.Serde;
@@ -30,12 +30,12 @@ using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using Kafka.Streams.State.StateSerdes;
 
-import java.util.List;
-import java.util.List;
-import java.util.Map;
 
-import static org.apache.kafka.common.metrics.RecordingLevel.DEBUG;
-import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTaskAndStoreLatencyAndThroughputSensors;
+
+
+
+
+
 
 /**
  * A Metered {@link KeyValueStore} wrapper that is used for recording operation metrics, and hence its
@@ -118,7 +118,7 @@ public class MeteredKeyValueStore<K, V>
         }
     }
 
-    @SuppressWarnings("unchecked")
+    
     void initStoreSerde(IProcessorContext context)
 {
         serdes = new StateSerdes<>(
@@ -127,7 +127,7 @@ public class MeteredKeyValueStore<K, V>
             valueSerde == null ? (ISerde<V>) context.valueSerde() : valueSerde);
     }
 
-    @SuppressWarnings("unchecked")
+    
     public override bool setFlushListener(CacheFlushListener<K, V> listener,
                                     bool sendOldValues)
 {
@@ -152,10 +152,10 @@ public class MeteredKeyValueStore<K, V>
 {
             if (getTime.shouldRecord())
 {
-                return measureLatency(() -> outerValue(wrapped()[keyBytes(key))), getTime];
+                return measureLatency(() -> outerValue(wrapped()[keyBytes(key))), getTime);
             } else
 {
-                return outerValue(wrapped()[keyBytes(key))];
+                return outerValue(wrapped()[keyBytes(key)));
             }
         } catch (ProcessorStateException e)
 {
@@ -310,7 +310,7 @@ public class MeteredKeyValueStore<K, V>
         List<KeyValue<Bytes, byte[]>> byteEntries = new List<>();
         foreach (KeyValue<K, V> entry in from)
 {
-            byteEntries.add(KeyValue.pair(Bytes.wrap(serdes.rawKey(entry.key)), serdes.rawValue(entry.value)));
+            byteEntries.Add(KeyValue.pair(Bytes.wrap(serdes.rawKey(entry.key)), serdes.rawValue(entry.value)));
         }
         return byteEntries;
     }
@@ -366,7 +366,7 @@ public class MeteredKeyValueStore<K, V>
         
         public K peekNextKey()
 {
-            return serdes.keyFrom(iter.peekNextKey()()];
+            return serdes.keyFrom(iter.peekNextKey()());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Kafka.Streams
 {
         /**
  * Sets the {@code auto.offset.reset} configuration when
- * {@link #addSource(AutoOffsetReset, string, string...) adding a source processor} or when creating {@link KStream}
+ * {@link .AddSource(AutoOffsetReset, string, string...).Adding a source processor} or when creating {@link KStream}
  * or {@link KTable} via {@link StreamsBuilder}.
  */
         public enum AutoOffsetReset

@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.Cluster;
 using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.serialization.Serializer;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.processor.IStateStore;
-import org.apache.kafka.streams.processor.StreamPartitioner;
-import org.apache.kafka.streams.state.HostInfo;
-import org.apache.kafka.streams.state.StreamsMetadata;
 
-import java.util.List;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -45,7 +45,7 @@ public class StreamsMetadataState {
     public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
     private InternalTopologyBuilder builder;
     private List<StreamsMetadata> allMetadata = new List<>();
-    private Set<string> globalStores;
+    private HashSet<string> globalStores;
     private HostInfo thisHost;
     private Cluster clusterMetadata;
     private StreamsMetadata myMetadata;
@@ -105,7 +105,7 @@ public class StreamsMetadataState {
             return allMetadata;
         }
 
-        List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
+        List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName);
         if (sourceTopics == null)
 {
             return Collections.emptyList();
@@ -116,7 +116,7 @@ public class StreamsMetadataState {
 {
             if (metadata.stateStoreNames().contains(storeName))
 {
-                results.add(metadata);
+                results.Add(metadata);
             }
         }
         return results;
@@ -192,7 +192,7 @@ public class StreamsMetadataState {
      */
     public synchronized <K> StreamsMetadata getMetadataWithKey(string storeName,
                                                                K key,
-                                                               StreamPartitioner<? super K, ?> partitioner)
+                                                               StreamPartitioner<K, ?> partitioner)
 {
         Objects.requireNonNull(storeName, "storeName can't be null");
         Objects.requireNonNull(key, "key can't be null");
@@ -228,13 +228,13 @@ public class StreamsMetadataState {
      * @param currentState       the current mapping of {@link HostInfo} -> {@link TopicPartition}s
      * @param clusterMetadata    the current clusterMetadata {@link Cluster}
      */
-    synchronized void onChange(Dictionary<HostInfo, Set<TopicPartition>> currentState, Cluster clusterMetadata)
+    synchronized void onChange(Dictionary<HostInfo, HashSet<TopicPartition>> currentState, Cluster clusterMetadata)
 {
         this.clusterMetadata = clusterMetadata;
         rebuildMetadata(currentState);
     }
 
-    private bool hasPartitionsForAnyTopics(List<string> topicNames, Set<TopicPartition> partitionForHost)
+    private bool hasPartitionsForAnyTopics(List<string> topicNames, HashSet<TopicPartition> partitionForHost)
 {
         foreach (TopicPartition topicPartition in partitionForHost)
 {
@@ -246,7 +246,7 @@ public class StreamsMetadataState {
         return false;
     }
 
-    private void rebuildMetadata(Dictionary<HostInfo, Set<TopicPartition>> currentState)
+    private void rebuildMetadata(Dictionary<HostInfo, HashSet<TopicPartition>> currentState)
 {
         allMetadata.clear();
         if (currentState.isEmpty())
@@ -254,22 +254,22 @@ public class StreamsMetadataState {
             return;
         }
         Dictionary<string, List<string>> stores = builder.stateStoreNameToSourceTopics();
-        foreach (Map.Entry<HostInfo, Set<TopicPartition>> entry in currentState.entrySet())
+        foreach (Map.Entry<HostInfo, HashSet<TopicPartition>> entry in currentState.entrySet())
 {
             HostInfo key = entry.getKey();
-            Set<TopicPartition> partitionsForHost = new HashSet<>(entry.getValue());
-            Set<string> storesOnHost = new HashSet<>();
+            HashSet<TopicPartition> partitionsForHost = new HashSet<>(entry.getValue());
+            HashSet<string> storesOnHost = new HashSet<>();
             foreach (Map.Entry<string, List<string>> storeTopicEntry in stores.entrySet())
 {
                 List<string> topicsForStore = storeTopicEntry.getValue();
                 if (hasPartitionsForAnyTopics(topicsForStore, partitionsForHost))
 {
-                    storesOnHost.add(storeTopicEntry.getKey());
+                    storesOnHost.Add(storeTopicEntry.getKey());
                 }
             }
-            storesOnHost.addAll(globalStores);
+            storesOnHost.AddAll(globalStores);
             StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
-            allMetadata.add(metadata);
+            allMetadata.Add(metadata);
             if (key.Equals(thisHost))
 {
                 myMetadata = metadata;
@@ -279,21 +279,21 @@ public class StreamsMetadataState {
 
     private <K> StreamsMetadata getStreamsMetadataForKey(string storeName,
                                                          K key,
-                                                         StreamPartitioner<? super K, ?> partitioner,
+                                                         StreamPartitioner<K, ?> partitioner,
                                                          SourceTopicsInfo sourceTopicsInfo)
 {
 
         Integer partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, null, sourceTopicsInfo.maxPartitions);
-        Set<TopicPartition> matchingPartitions = new HashSet<>();
+        HashSet<TopicPartition> matchingPartitions = new HashSet<>();
         foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
 {
-            matchingPartitions.add(new TopicPartition(sourceTopic, partition));
+            matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
         }
 
         foreach (StreamsMetadata streamsMetadata in allMetadata)
 {
-            Set<string> stateStoreNames = streamsMetadata.stateStoreNames();
-            Set<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
+            HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames();
+            HashSet<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
             topicPartitions.retainAll(matchingPartitions);
             if (stateStoreNames.contains(storeName)
                     && !topicPartitions.isEmpty())
@@ -306,7 +306,7 @@ public class StreamsMetadataState {
 
     private SourceTopicsInfo getSourceTopicsInfo(string storeName)
 {
-        List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
+        List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName);
         if (sourceTopics == null || sourceTopics.isEmpty())
 {
             return null;

@@ -28,20 +28,20 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param entityName     name of the entity, could be the name of the state store instance, etc.
          * @param operationName  name of the operation, could be get / put / delete / etc.
          * @param recordingLevel the recording level (e.g., INFO or DEBUG) for this sensor.
-         * @param tags           additional tags of the sensor
-         * @return The added sensor.
+         * @param tags          .Additional tags of the sensor
+         * @return The.Added sensor.
          */
-        Sensor addLatencyAndThroughputSensor(
-            string scopeName,
-            string entityName,
-            string operationName,
-            RecordingLevel recordingLevel,
-            string[] tags];
+        //Sensor.AddLatencyAndThroughputSensor(
+        //    string scopeName,
+        //    string entityName,
+        //    string operationName,
+        //    RecordingLevel recordingLevel,
+        //    string[] tags);
 
         /**
          * Record the given latency value of the sensor.
          * If the passed sensor includes throughput metrics, e.g., when created by the
-         * {@link #addLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} method, then the
+         * {@link .AddLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} method, then the
          * throughput metrics will also be recorded from this event.
          *
          * @param sensor  sensor whose latency we are recording.
@@ -61,26 +61,26 @@ namespace Kafka.Streams.Processor.Interfaces
          * Also create a parent sensor with the same metrics that aggregates all entities with the same operation under the
          * same scope if it has not been created.
          * This sensor is a strict subset of the sensors created by
-         * {@link #addLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)}.
+         * {@link .AddLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)}.
          *
          * @param scopeName      name of the scope, could be the type of the state store, etc.
          * @param entityName     name of the entity, could be the name of the state store instance, etc.
          * @param operationName  name of the operation, could be get / put / delete / etc.
          * @param recordingLevel the recording level (e.g., INFO or DEBUG) for this sensor.
-         * @param tags           additional tags of the sensor
-         * @return The added sensor.
+         * @param tags          .Additional tags of the sensor
+         * @return The.Added sensor.
          */
-        Sensor addThroughputSensor(
-            string scopeName,
-            string entityName,
-            string operationName,
-            RecordingLevel recordingLevel,
-            string[] tags];
+        //Sensor.AddThroughputSensor(
+        //    string scopeName,
+        //    string entityName,
+        //    string operationName,
+        //    RecordingLevel recordingLevel,
+        //    string[] tags);
 
         /**
          * Record the throughput value of a sensor.
          *
-         * @param sensor add Sensor whose throughput we are recording
+         * @param sensor.Add Sensor whose throughput we are recording
          * @param value  throughput value
          */
         void recordThroughput(
@@ -91,35 +91,35 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * Generic method to create a sensor.
          * Note that for most cases it is advisable to use
-         * {@link #addThroughputSensor(string, string, string, RecordingLevel, string...)}
-         * or {@link #addLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} to ensure
+         * {@link .AddThroughputSensor(string, string, string, RecordingLevel, string...)}
+         * or {@link .AddLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} to ensure
          * metric name well-formedness and conformity with the rest of the streams code base.
          * However, if the above two methods are not sufficient, this method can also be used.
          *
          * @param name           name of the sensor.
          * @param recordingLevel the recording level (e.g., INFO or DEBUG) for this sensor
-         * @return The added sensor.
+         * @return The.Added sensor.
          */
-        Sensor addSensor(
-            string name,
-            RecordingLevel recordingLevel);
+        //Sensor.AddSensor(
+        //    string name,
+        //    RecordingLevel recordingLevel);
 
         /**
          * Generic method to create a sensor with parent sensors.
          * Note that for most cases it is advisable to use
-         * {@link #addThroughputSensor(string, string, string, RecordingLevel, string...)}
-         * or {@link #addLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} to ensure
+         * {@link .AddThroughputSensor(string, string, string, RecordingLevel, string...)}
+         * or {@link .AddLatencyAndThroughputSensor(string, string, string, RecordingLevel, string...)} to ensure
          * metric name well-formedness and conformity with the rest of the streams code base.
          * However, if the above two methods are not sufficient, this method can also be used.
          *
          * @param name           name of the sensor
          * @param recordingLevel the recording level (e.g., INFO or DEBUG) for this sensor
-         * @return The added sensor.
+         * @return The.Added sensor.
          */
-        Sensor addSensor(
-            string name,
-            RecordingLevel recordingLevel,
-            Sensor[] parents];
+        //Sensor.AddSensor(
+        //    string name,
+        //    RecordingLevel recordingLevel,
+        //    List<Sensor> parents);
 
         /**
          * Remove a sensor.

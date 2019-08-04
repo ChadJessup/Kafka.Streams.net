@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,17 +16,17 @@
  */
 namespace Kafka.streams.kstream;
 
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.Topology;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.QueryableStoreType;
-import org.apache.kafka.streams.state.SessionStore;
 
-import java.time.Duration;
+
+
+
+
+
+
+
+
+
+
 
 /**
  * {@code SessionWindowedKStream} is an abstraction of a <i>windowed</i> record stream of {@link KeyValue} pairs.
@@ -38,7 +38,7 @@ import java.time.Duration;
  * They have no fixed time boundaries, rather the size of the window is determined by the records.
  * Please see {@link SessionWindows} for more details.
  * <p>
- * New events are added to {@link SessionWindows} until their grace period ends (see {@link SessionWindows#grace(Duration)}).
+ * New events are.Added to {@link SessionWindows} until their grace period ends (see {@link SessionWindows#grace(Duration)}).
  *
  * Furthermore, updates are sent downstream into a windowed {@link KTable} changelog stream, where
  * "windowed" implies that the {@link KTable} key is a combined key of the original record key and a window ID.
@@ -64,10 +64,10 @@ public interface SessionWindowedKStream<K, V> {
      * {@link StreamsConfig#CACHE_MAX_BYTES_BUFFERING_CONFIG cache size}, and
      * {@link StreamsConfig#COMMIT_INTERVAL_MS_CONFIG commit intervall}.
      *
-     * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link Long} values
+     * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
      * that represent the latest (rolling) count (i.e., number of records) for each key within a window
      */
-    KTable<Windowed<K>, Long> count();
+    KTable<Windowed<K>, long> count();
 
     /**
      * Count the number of records in this stream by the grouped key into {@link SessionWindows}.
@@ -87,9 +87,9 @@ public interface SessionWindowedKStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // compute sum
      * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
-     * ReadOnlySessionStore<string,Long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>ReadOnlySessionStore<string, Long>);
+     * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
      * string key = "some-key";
-     * KeyValueIterator<Windowed<string>, Long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -106,11 +106,11 @@ public interface SessionWindowedKStream<K, V> {
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.
      *
      * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-     *                      Note: the valueSerde will be automatically set to {@link Serdes#Long()} if there is no valueSerde provided
-     * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link Long} values
+     *                      Note: the valueSerde will be automatically set to {@link Serdes#long()} if there is no valueSerde provided
+     * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
      * that represent the latest (rolling) count (i.e., number of records) for each key within a window
      */
-    KTable<Windowed<K>, Long> count( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized];
+    KTable<Windowed<K>, long> count( Materialized<K, long, SessionStore<Bytes, byte[]>> materialized);
 
     /**
      * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
@@ -146,8 +146,8 @@ public interface SessionWindowedKStream<K, V> {
      * the latest (rolling) aggregate for each key within a window
      */
     <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                            Aggregator<? super K, ? super V, VR> aggregator,
-                                            Merger<? super K, VR> sessionMerger);
+                                            Aggregator<K, V, VR> aggregator,
+                                            Merger<K, VR> sessionMerger);
 
     /**
      * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
@@ -178,9 +178,9 @@ public interface SessionWindowedKStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // some windowed aggregation on value type double
      * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
-     * ReadOnlySessionStore<string, Long> sessionStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>sessionStore());
+     * ReadOnlySessionStore<string, long> sessionStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>sessionStore());
      * string key = "some-key";
-     * KeyValueIterator<Windowed<string>, Long> aggForKeyForSession = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * KeyValueIterator<Windowed<string>, long> aggForKeyForSession = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      *
      * <p>
@@ -203,8 +203,8 @@ public interface SessionWindowedKStream<K, V> {
      * the latest (rolling) aggregate for each key within a window
      */
     <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                            Aggregator<? super K, ? super V, VR> aggregator,
-                                            Merger<? super K, VR> sessionMerger,
+                                            Aggregator<K, V, VR> aggregator,
+                                            Merger<K, VR> sessionMerger,
                                             Materialized<K, VR, SessionStore<Bytes, byte[]>> materialized];
 
     /**
@@ -246,10 +246,10 @@ public interface SessionWindowedKStream<K, V> {
      * The specified {@link Reducer} is applied for each input record and computes a new aggregate using the current
      * aggregate (first argument) and the record's value (second argument):
      * <pre>{@code
-     * // At the example of a Reducer<Long>
-     * new Reducer<Long>()
+     * // At the example of a Reducer<long>
+     * new Reducer<long>()
 {
-     *   public Long apply(Long aggValue, Long currValue)
+     *   public long apply(long aggValue, long currValue)
 {
      *     return aggValue + currValue;
      *   }
@@ -273,9 +273,9 @@ public interface SessionWindowedKStream<K, V> {
      * <pre>{@code
      * KafkaStreams streams = [] // compute sum
      * Sting queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
-     * ReadOnlySessionStore<string,Long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>ReadOnlySessionStore<string, Long>);
+     * ReadOnlySessionStore<string,long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, long>ReadOnlySessionStore<string, long>);
      * string key = "some-key";
-     * KeyValueIterator<Windowed<string>, Long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * KeyValueIterator<Windowed<string>, long> sumForKeyForWindows = localWindowStore.fetch(key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.

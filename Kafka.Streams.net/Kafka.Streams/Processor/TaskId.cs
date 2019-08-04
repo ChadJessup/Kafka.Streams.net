@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor;
+namespace Kafka.Streams.Processor;
 
-import org.apache.kafka.streams.errors.TaskIdFormatException;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
+
+
+
+
+
 
 /**
  * The task ID representation composed as topic group ID plus the assigned partition ID.
@@ -69,7 +69,7 @@ public class TaskId : Comparable<TaskId> {
     /**
      * @throws IOException if cannot write to output stream
      */
-    public void writeTo(DataOutputStream out) throws IOException {
+    public void writeTo(DataOutputStream out){
         out.writeInt(topicGroupId);
         out.writeInt(partition);
     }
@@ -77,7 +77,7 @@ public class TaskId : Comparable<TaskId> {
     /**
      * @throws IOException if cannot read from input stream
      */
-    public static TaskId readFrom(DataInputStream in) throws IOException {
+    public static TaskId readFrom(DataInputStream in){
         return new TaskId(in.readInt(), in.readInt());
     }
 

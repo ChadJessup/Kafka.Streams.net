@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.internals.SegmentedBytesStore.KeySchema;
 
-import java.nio.ByteBuffer;
+
 
 class SegmentedCacheFunction : CacheFunction
 {
@@ -57,7 +57,7 @@ class SegmentedCacheFunction : CacheFunction
     static byte[] bytesFromCacheKey(Bytes cacheKey)
 {
         byte[] binaryKey = new byte[cacheKey[].Length - SEGMENT_ID_BYTES];
-        System.arraycopy(cacheKey(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length];
+        System.arraycopy(cacheKey(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length);
         return binaryKey;
     }
 
@@ -81,7 +81,7 @@ class SegmentedCacheFunction : CacheFunction
         long storeSegmentId = segmentId(storeKey);
         long cacheSegmentId = ByteBuffer.wrap(cacheKey()).getLong();
 
-        int segmentCompare = Long.compare(cacheSegmentId, storeSegmentId);
+        int segmentCompare = long.compare(cacheSegmentId, storeSegmentId);
         if (segmentCompare == 0)
 {
             byte[] cacheKeyBytes = cacheKey[];

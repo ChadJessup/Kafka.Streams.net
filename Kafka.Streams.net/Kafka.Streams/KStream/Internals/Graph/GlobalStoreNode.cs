@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,11 +17,11 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.StoreBuilder;
+
+
+
+
+
 
 public class GlobalStoreNode : StateStoreNode {
 
@@ -51,11 +51,11 @@ public class GlobalStoreNode : StateStoreNode {
 
 
     
-    @SuppressWarnings("unchecked")
+    
     public void writeToTopology( InternalTopologyBuilder topologyBuilder)
 {
         storeBuilder.withLoggingDisabled();
-        topologyBuilder.addGlobalStore(storeBuilder,
+        topologyBuilder.AddGlobalStore(storeBuilder,
                                        sourceName,
                                        consumed.timestampExtractor(),
                                        consumed.keyDeserializer(),

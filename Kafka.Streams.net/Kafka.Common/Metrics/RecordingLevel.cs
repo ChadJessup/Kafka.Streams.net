@@ -64,7 +64,7 @@ namespace Kafka.Common.Metrics
         /** Case insensitive lookup by protocol name */
         public static RecordingLevel forName(string name)
         {
-            return levels[name.ToUpper(CultureInfo.InvariantCulture]];
+            return levels[name.ToUpper(CultureInfo.InvariantCulture]);
         }
 
         public bool shouldRecord(int configId)

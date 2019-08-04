@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,19 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.LogContext;
-import org.apache.kafka.streams.errors.DeserializationExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+
+
+
+
+
+
+
 
 /**
  * Updates the state for all Global State Stores.
@@ -35,7 +35,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer {
 
     private ProcessorTopology topology;
     private InternalProcessorContext processorContext;
-    private Dictionary<TopicPartition, Long> offsets = new HashMap<>();
+    private Dictionary<TopicPartition, long> offsets = new HashMap<>();
     private Dictionary<string, RecordDeserializer> deserializers = new HashMap<>();
     private GlobalStateManager stateMgr;
     private DeserializationExceptionHandler deserializationExceptionHandler;
@@ -59,9 +59,9 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer {
      * @throws StreamsException      If the store's change log does not contain the partition
      */
     
-    public Dictionary<TopicPartition, Long> initialize()
+    public Dictionary<TopicPartition, long> initialize()
 {
-        Set<string> storeNames = stateMgr.initialize();
+        HashSet<string> storeNames = stateMgr.initialize();
         Dictionary<string, string> storeNameToTopic = topology.storeToChangelogTopic();
         foreach (string storeName in storeNames)
 {
@@ -82,11 +82,11 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer {
         return stateMgr.checkpointed();
     }
 
-    @SuppressWarnings("unchecked")
+    
     
     public void update(ConsumerRecord<byte[], byte[]> record)
 {
-        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
+        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic());
         ConsumerRecord<Object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
 
         if (deserialized != null)
@@ -111,7 +111,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer {
         stateMgr.checkpoint(offsets);
     }
 
-    public void close() throws IOException {
+    public void close(){
         stateMgr.close(true);
     }
 

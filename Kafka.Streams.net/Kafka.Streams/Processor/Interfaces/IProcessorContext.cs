@@ -1,4 +1,6 @@
+using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,7 +9,7 @@ namespace Kafka.Streams.Processor.Interfaces
     /**
      * Processor context interface.
      */
-    public interface IProcessorContext
+    public interface IProcessorContext<K, V>
     {
 
         /**
@@ -29,14 +31,14 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the key serializer
          */
-        ISerde<?> keySerde();
+        ISerde<K> keySerde();
 
         /**
          * Returns the default value serde
          *
          * @return the value serializer
          */
-        ISerde<?> valueSerde();
+        ISerde<V> valueSerde();
 
         /**
          * Returns the state directory for the partition.
@@ -103,9 +105,10 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param callback a function consuming timestamps representing the current stream or system time
          * @return a handle allowing cancellation of the punctuation schedule established by this method
          */
-        ICancellable schedule(Duration interval,
-                             PunctuationType type,
-                             Punctuator callback);
+        ICancellable schedule(
+            TimeSpan interval,
+            PunctuationType type,
+            Punctuator callback);
 
     /**
      * Forwards a key/value pair to all downstream processors.
@@ -211,6 +214,5 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          */
         Dictionary<string, object> appConfigsWithPrefix(string prefix);
-
     }
 }

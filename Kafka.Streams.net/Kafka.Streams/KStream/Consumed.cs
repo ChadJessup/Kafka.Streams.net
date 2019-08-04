@@ -14,9 +14,9 @@ namespace Kafka.Streams.KStream
      * key and value serdes like:
      * <pre>{@code
      * StreamsBuilder builder = new StreamsBuilder();
-     * KStream<string, Long> stream = builder.stream(
+     * KStream<string, long> stream = builder.stream(
      *   "topicName",
-     *   Consumed.with(Serdes.string(), Serdes.Long())
+     *   Consumed.with(Serdes.string(), Serdes.long())
      *           .withTimestampExtractor(new LogAndSkipOnInvalidTimestamp()));
      * }</pre>
      * Similarly, you can read a topic as {@link KTable} with a custom {@code auto.offset.reset} configuration and force a
@@ -33,7 +33,7 @@ namespace Kafka.Streams.KStream
      * @param <K> type of record key
      * @param <V> type of record value
      */
-    public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
+    public class Consumed<K, V> : Interfaces.INamedOperation<Consumed<K, V>>
    
 {
 

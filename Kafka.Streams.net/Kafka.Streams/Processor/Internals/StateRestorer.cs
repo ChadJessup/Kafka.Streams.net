@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.processor.internals;
+namespace Kafka.Streams.Processor.Internals;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
+
 using Kafka.Common.TopicPartition;
-import org.apache.kafka.streams.processor.StateRestoreListener;
-import org.apache.kafka.streams.state.internals.RecordConverter;
 
-import java.util.List;
-import java.util.Collection;
+
+
+
+
 
 public class StateRestorer {
 
@@ -42,7 +42,7 @@ public class StateRestorer {
 
     StateRestorer(TopicPartition partition,
                   CompositeRestoreListener compositeRestoreListener,
-                  Long checkpoint,
+                  long checkpoint,
                   long offsetLimit,
                   bool persistent,
                   string storeName,
@@ -94,10 +94,10 @@ public class StateRestorer {
 
     void restore(Collection<ConsumerRecord<byte[], byte[]>> records)
 {
-        Collection<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(records.size()];
+        Collection<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(records.size());
         foreach (ConsumerRecord<byte[], byte[]> record in records)
 {
-            convertedRecords.add(recordConverter.convert(record));
+            convertedRecords.Add(recordConverter.convert(record));
         }
         compositeRestoreListener.restoreBatch(convertedRecords);
     }
@@ -137,7 +137,7 @@ public class StateRestorer {
         return endOffset == 0 || recordOffset >= readTo(endOffset);
     }
 
-    Long restoredOffset()
+    long restoredOffset()
 {
         return restoredOffset;
     }
@@ -152,7 +152,7 @@ public class StateRestorer {
         return offsetLimit;
     }
 
-    private Long readTo(long endOffset)
+    private long readTo(long endOffset)
 {
         return endOffset < offsetLimit ? endOffset : offsetLimit;
     }

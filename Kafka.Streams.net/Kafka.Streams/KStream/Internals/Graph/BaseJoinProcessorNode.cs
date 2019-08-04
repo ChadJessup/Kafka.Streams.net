@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -17,7 +17,7 @@
 
 namespace Kafka.streams.kstream.internals.graph;
 
-import org.apache.kafka.streams.kstream.ValueJoiner;
+
 
 /**
  * Utility base class containing the common fields between
@@ -28,13 +28,13 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
     private  ProcessorParameters<K, V1> joinThisProcessorParameters;
     private  ProcessorParameters<K, V2> joinOtherProcessorParameters;
     private  ProcessorParameters<K, VR> joinMergeProcessorParameters;
-    private  ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner;
+    private  ValueJoiner<V1, V2, VR> valueJoiner;
     private  string thisJoinSideNodeName;
     private  string otherJoinSideNodeName;
 
 
     BaseJoinProcessorNode( string nodeName,
-                           ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner,
+                           ValueJoiner<V1, V2, VR> valueJoiner,
                            ProcessorParameters<K, V1> joinThisProcessorParameters,
                            ProcessorParameters<K, V2> joinOtherProcessorParameters,
                            ProcessorParameters<K, VR> joinMergeProcessorParameters,
@@ -67,7 +67,7 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
         return joinMergeProcessorParameters;
     }
 
-    ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner()
+    ValueJoiner<V1, V2, VR> valueJoiner()
 {
         return valueJoiner;
     }

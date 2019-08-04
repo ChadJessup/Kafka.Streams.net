@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state.internals;
+namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.Utils.Bytes;
@@ -26,7 +26,7 @@ using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using Kafka.Streams.State.StateSerdes;
 
-import java.util.List;
+
 
 public class ChangeLoggingKeyValueBytesStore
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
@@ -50,7 +50,7 @@ public class ChangeLoggingKeyValueBytesStore
             context,
             new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
 
-        // if the inner store is an LRU cache, add the eviction listener to log removed record
+        // if the inner store is an LRU cache,.Add the eviction listener to log removed record
         if (wrapped() is MemoryLRUCache)
 {
             ((MemoryLRUCache) wrapped()).setWhenEldestRemoved((key, value) ->
@@ -76,7 +76,7 @@ public class ChangeLoggingKeyValueBytesStore
     public override byte[] putIfAbsent(Bytes key,
                               byte[] value)
 {
-        byte[] previous = wrapped().putIfAbsent(key, value];
+        byte[] previous = wrapped().putIfAbsent(key, value);
         if (previous == null)
 {
             // then it was absent
@@ -96,14 +96,14 @@ public class ChangeLoggingKeyValueBytesStore
 
     public override byte[] delete(Bytes key)
 {
-        byte[] oldValue = wrapped().delete(key];
+        byte[] oldValue = wrapped().delete(key);
         log(key, null);
         return oldValue;
     }
 
     public override byte[] get(Bytes key)
 {
-        return wrapped()[key];
+        return wrapped()[key);
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

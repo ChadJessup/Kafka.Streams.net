@@ -1,7 +1,7 @@
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
+ * this work for.Additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -16,31 +16,31 @@
  */
 namespace Kafka.streams.kstream.internals;
 
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.IProcessorContext;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.metrics.ThreadMetrics;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
+
+
+
+
+
+
+
+
+
+
 
 class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamKTableJoinProcessor.class);
 
     private  KTableValueGetter<K2, V2> valueGetter;
-    private  IKeyValueMapper<? super K1, ? super V1, ? : K2> keyMapper;
-    private  ValueJoiner<? super V1, ? super V2, ? : R> joiner;
+    private  IKeyValueMapper<K1, V1, K2> keyMapper;
+    private  ValueJoiner<V1, V2, R> joiner;
     private  bool leftJoin;
     private StreamsMetricsImpl metrics;
     private Sensor skippedRecordsSensor;
 
     KStreamKTableJoinProcessor( KTableValueGetter<K2, V2> valueGetter,
-                                IKeyValueMapper<? super K1, ? super V1, ? : K2> keyMapper,
-                                ValueJoiner<? super V1, ? super V2, ? : R> joiner,
+                                IKeyValueMapper<K1, V1, K2> keyMapper,
+                                ValueJoiner<V1, V2, R> joiner,
                                 bool leftJoin)
 {
         this.valueGetter = valueGetter;
@@ -72,14 +72,14 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
         // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
         if (key == null || value == null)
 {
-            LOG.warn(
+            LOG.LogWarning(
                 "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                 key, value, context().topic(), context().partition(), context().offset()
             );
             skippedRecordsSensor.record();
         } else {
              K2 mappedKey = keyMapper.apply(key, value);
-             V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey)];
+             V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey));
             if (leftJoin || value2 != null)
 {
                 context().forward(key, joiner.apply(value, value2));
