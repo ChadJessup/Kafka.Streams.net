@@ -22,7 +22,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A compound stat that includes a rate metric and a cumulative total metric.
      */
-    public class Meter : ICompoundStat
+    public Meter : ICompoundStat
     {
         private MetricName rateMetricName;
         private MetricName totalMetricName;
@@ -60,7 +60,7 @@ namespace Kafka.Common.Metrics.Stats
         {
             if (!(rateStat is WindowedSum))
             {
-                throw new ArgumentException("Meter is supported only for WindowedCount or WindowedSum.");
+                throw new System.ArgumentException("Meter is supported only for WindowedCount or WindowedSum.");
             }
             this.total = new CumulativeSum();
             this.rate = new Rate(unit, rateStat);

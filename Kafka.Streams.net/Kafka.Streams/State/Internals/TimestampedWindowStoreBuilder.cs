@@ -32,7 +32,7 @@ using Kafka.Streams.State.WindowStoreIterator;
 
 
 
-public class TimestampedWindowStoreBuilder<K, V>
+public TimestampedWindowStoreBuilder<K, V>
     : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedWindowStore<K, V>>
 {
 
@@ -43,8 +43,8 @@ public class TimestampedWindowStoreBuilder<K, V>
                                          ISerde<V> valueSerde,
                                          ITime time)
 {
-        super(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time);
-        Objects.requireNonNull(storeSupplier, "bytesStoreSupplier can't be null");
+        base(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time);
+        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
         this.storeSupplier = storeSupplier;
     }
 
@@ -97,7 +97,7 @@ public class TimestampedWindowStoreBuilder<K, V>
     }
 
 
-    private static class InMemoryTimestampedWindowStoreMarker
+    private static InMemoryTimestampedWindowStoreMarker
         : WindowStore<Bytes, byte[]>, TimestampedBytesStore
 {
 
@@ -107,7 +107,7 @@ public class TimestampedWindowStoreBuilder<K, V>
 {
             if (wrapped.persistent())
 {
-                throw new ArgumentException("Provided store must not be a persistent store, but it is.");
+                throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
             }
             this.wrapped = wrapped;
         }

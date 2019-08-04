@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+using Kafka.Streams.State.Interfaces;
+
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -42,7 +44,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowedKStream<K, V> {
+public SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowedKStream<K, V> {
     private  SessionWindows windows;
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
     private  Merger<K, long> countMerger = (aggKey, aggOne, aggTwo) -> aggOne + aggTwo;
@@ -56,22 +58,22 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
                                 GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
                                 StreamsGraphNode streamsGraphNode)
 {
-        super(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
-        Objects.requireNonNull(windows, "windows can't be null");
+        base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
+        windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
         this.windows = windows;
         this.aggregateBuilder = aggregateBuilder;
     }
 
-    
+
     public KTable<Windowed<K>, long> count()
 {
         return doCount(Materialized.with(keySerde, Serdes.long()));
     }
 
-    
-    public KTable<Windowed<K>, long> count( Materialized<K, long, SessionStore<Bytes, byte[]>> materialized)
+
+    public KTable<Windowed<K>, long> count( Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
         // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
@@ -83,9 +85,9 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
         return doCount(materialized);
     }
 
-    private KTable<Windowed<K>, long> doCount( Materialized<K, long, SessionStore<Bytes, byte[]>> materialized)
+    private KTable<Windowed<K>, long> doCount( Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
 {
-         MaterializedInternal<K, long, SessionStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, long, ISessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
         if (materializedInternal.keySerde() == null)
 {
@@ -110,20 +112,20 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
             materializedInternal.valueSerde());
     }
 
-    
+
     public KTable<Windowed<K>, V> reduce( Reducer<V> reducer)
 {
         return reduce(reducer, Materialized.with(keySerde, valSerde));
     }
 
-    
+
     public KTable<Windowed<K>, V> reduce( Reducer<V> reducer,
-                                          Materialized<K, V, SessionStore<Bytes, byte[]>> materialized)
+                                          Materialized<K, V, ISessionStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(reducer, "reducer can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
          Aggregator<K, V, V> reduceAggregator = aggregatorForReducer(reducer);
-         MaterializedInternal<K, V, SessionStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, V, ISessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
         if (materializedInternal.keySerde() == null)
 {
@@ -149,25 +151,27 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
             materializedInternal.valueSerde());
     }
 
-    
-    public <T> KTable<Windowed<K>, T> aggregate( Initializer<T> initializer,
-                                                 Aggregator<K, V, T> aggregator,
-                                                 Merger<K, T> sessionMerger)
+
+    public KTable<Windowed<K>, T> aggregate(
+        Initializer<T> initializer,
+        Aggregator<K, V, T> aggregator,
+        Merger<K, T> sessionMerger)
 {
         return aggregate(initializer, aggregator, sessionMerger, Materialized.with(keySerde, null));
     }
 
-    
-    public KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                                   Aggregator<K, V, VR> aggregator,
-                                                   Merger<K, VR> sessionMerger,
-                                                   Materialized<K, VR, SessionStore<Bytes, byte[]>> materialized)
+
+    public KTable<Windowed<K>, VR> aggregate(
+        Initializer<VR> initializer,
+        Aggregator<K, V, VR> aggregator,
+        Merger<K, VR> sessionMerger,
+        Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(initializer, "initializer can't be null");
-        Objects.requireNonNull(aggregator, "aggregator can't be null");
-        Objects.requireNonNull(sessionMerger, "sessionMerger can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
-         MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materializedInternal =
+        initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
+        aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
+        sessionMerger = sessionMerger ?? throw new System.ArgumentNullException("sessionMerger can't be null", nameof(sessionMerger));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+         MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
         if (materializedInternal.keySerde() == null)
@@ -190,7 +194,7 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
     }
 
     @SuppressWarnings("deprecation") // continuing to support SessionWindows#maintainMs in fallback mode
-    private StoreBuilder<SessionStore<K, VR>> materialize( MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materialized)
+    private StoreBuilder<ISessionStore<K, VR>> materialize( MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
 {
         SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier) materialized.storeSupplier();
         if (supplier == null)
@@ -201,7 +205,7 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
 
             if ((windows.inactivityGap() + windows.gracePeriodMs()) > retentionPeriod)
 {
-                throw new ArgumentException("The retention period of the session store "
+                throw new System.ArgumentException("The retention period of the session store "
                                                        + materialized.storeName()
                                                        + " must be no smaller than the session inactivity gap plus the"
                                                        + " grace period."
@@ -214,7 +218,7 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWi
                 Duration.ofMillis(retentionPeriod)
             );
         }
-         StoreBuilder<SessionStore<K, VR>> builder = Stores.sessionStoreBuilder(
+         StoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(
             supplier,
             materialized.keySerde(),
             materialized.valueSerde()

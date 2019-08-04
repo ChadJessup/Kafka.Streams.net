@@ -45,7 +45,7 @@ class WindowStoreIteratorWrapper
         return new WrappedKeyValueIterator(bytesIterator, windowSize);
     }
 
-    private static class WrappedWindowStoreIterator : WindowStoreIterator<byte[]>
+    private static WrappedWindowStoreIterator : WindowStoreIterator<byte[]>
 {
         KeyValueIterator<Bytes, byte[]> bytesIterator;
 
@@ -88,7 +88,7 @@ class WindowStoreIteratorWrapper
         }
     }
 
-    private static class WrappedKeyValueIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+    private static WrappedKeyValueIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
 {
         KeyValueIterator<Bytes, byte[]> bytesIterator;
         long windowSize;

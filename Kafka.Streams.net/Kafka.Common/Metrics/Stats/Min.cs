@@ -6,7 +6,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A {@link SampledStat} that gives the min over its samples.
      */
-    public class Min : SampledStat
+    public Min : SampledStat
     {
         public Min() : base(double.MaxValue)
         {

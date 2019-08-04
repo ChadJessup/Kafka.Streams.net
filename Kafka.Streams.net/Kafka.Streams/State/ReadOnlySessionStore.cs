@@ -24,7 +24,7 @@ using Kafka.Streams.kstream.Windowed;
  * Implementations should be thread-safe as concurrent reads and writes
  * are expected.
  *
- * @param <K> the key type
+ * @param the key type
  * @param <AGG> the aggregated value type
  */
 public interface ReadOnlySessionStore<K, AGG>

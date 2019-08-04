@@ -45,7 +45,7 @@ class ChangeLoggingWindowBytesStore
     ChangeLoggingWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
                                   bool retainDuplicates)
 {
-        super(bytesStore);
+        base(bytesStore);
         this.retainDuplicates = retainDuplicates;
     }
 
@@ -53,7 +53,7 @@ class ChangeLoggingWindowBytesStore
                      IStateStore root)
 {
         this.context = context;
-        super.init(context, root);
+        base.init(context, root);
         string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
         changeLogger = new StoreChangeLogger<>(
             name(),
@@ -67,7 +67,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().fetch(key, timestamp);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override WindowStoreIterator<byte[]> fetch(Bytes key,
                                              long from,
                                              long to)
@@ -75,7 +75,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().fetch(key, from, to);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes keyFrom,
                                                            Bytes keyTo,
                                                            long from,
@@ -89,7 +89,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().all();
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {

@@ -5,7 +5,7 @@ namespace Kafka.Streams.State.Interfaces
 {
     public interface ISegment : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
-        void destroy();// throws IOException;
+        void destroy();//;
 
         KeyValueIterator<Bytes, byte[]> all();
 

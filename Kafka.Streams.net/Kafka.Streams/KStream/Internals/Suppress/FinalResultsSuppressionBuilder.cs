@@ -22,7 +22,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public class FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, NamedSuppressed<K> {
+public FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, NamedSuppressed<K> {
     private  string name;
     private  StrictBufferConfig bufferConfig;
 
@@ -32,7 +32,7 @@ public class FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, Named
         this.bufferConfig = bufferConfig;
     }
 
-    public SuppressedInternal<K> buildFinalResultsSuppression( Duration gracePeriod)
+    public SuppressedInternal<K> buildFinalResultsSuppression( TimeSpan gracePeriod)
 {
         return new SuppressedInternal<>(
             name,
@@ -50,7 +50,7 @@ public class FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, Named
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

@@ -30,11 +30,11 @@ class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegme
                        string windowName,
                        long id)
 {
-        super(segmentName, windowName);
+        base(segmentName, windowName);
         this.id = id;
     }
 
-    public override void destroy() throws IOException
+    public override void destroy()
 {
         Utils.delete(dbDir);
     }
@@ -46,7 +46,7 @@ class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegme
 
     public override void openDB(IProcessorContext context)
 {
-        super.openDB(context);
+        base.openDB(context);
         // skip the registering step
         internalProcessorContext = context;
     }

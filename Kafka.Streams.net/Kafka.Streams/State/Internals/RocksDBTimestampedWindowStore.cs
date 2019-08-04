@@ -25,7 +25,7 @@ class RocksDBTimestampedWindowStore : RocksDBWindowStore : TimestampedBytesStore
                                   bool retainDuplicates,
                                   long windowSize)
 {
-        super(bytesStore, retainDuplicates, windowSize);
+        base(bytesStore, retainDuplicates, windowSize);
     }
 
 }

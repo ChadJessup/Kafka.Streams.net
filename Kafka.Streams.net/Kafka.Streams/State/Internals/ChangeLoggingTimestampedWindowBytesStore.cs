@@ -28,7 +28,7 @@ class ChangeLoggingTimestampedWindowBytesStore : ChangeLoggingWindowBytesStore
     ChangeLoggingTimestampedWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
                                              bool retainDuplicates)
 {
-        super(bytesStore, retainDuplicates);
+        base(bytesStore, retainDuplicates);
     }
 
     

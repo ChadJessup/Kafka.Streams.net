@@ -41,7 +41,7 @@ using Kafka.Common.serialization.Serializer;
  * to discover the locations of {@link org.apache.kafka.streams.processor.IStateStore}s
  * in a KafkaStreams application
  */
-public class StreamsMetadataState {
+public StreamsMetadataState {
     public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
     private InternalTopologyBuilder builder;
     private List<StreamsMetadata> allMetadata = new List<>();
@@ -93,7 +93,7 @@ public class StreamsMetadataState {
      */
     public synchronized Collection<StreamsMetadata> getAllMetadataForStore(string storeName)
 {
-        Objects.requireNonNull(storeName, "storeName cannot be null");
+        storeName = storeName ?? throw new System.ArgumentNullException("storeName cannot be null", nameof(storeName));
 
         if (!isInitialized())
 {
@@ -125,7 +125,7 @@ public class StreamsMetadataState {
     /**
      * Find the {@link StreamsMetadata}s for a given storeName and key. This method will use the
      * {@link DefaultStreamPartitioner} to locate the store. If a custom partitioner has been used
-     * please use {@link StreamsMetadataState#getMetadataWithKey(string, Object, StreamPartitioner)}
+     * please use {@link StreamsMetadataState#getMetadataWithKey(string, object, StreamPartitioner)}
      *
      * Note: the key may not exist in the {@link org.apache.kafka.streams.processor.IStateStore},
      * this method provides a way of finding which {@link StreamsMetadata} it would exist on.
@@ -133,17 +133,17 @@ public class StreamsMetadataState {
      * @param storeName     Name of the store
      * @param key           Key to use
      * @param keySerializer Serializer for the key
-     * @param <K>           key type
+     * @param           key type
      * @return The {@link StreamsMetadata} for the storeName and key or {@link StreamsMetadata#NOT_AVAILABLE}
      * if streams is (re-)initializing
      */
-    public synchronized <K> StreamsMetadata getMetadataWithKey(string storeName,
+    public synchronized StreamsMetadata getMetadataWithKey(string storeName,
                                                                K key,
                                                                Serializer<K> keySerializer)
 {
-        Objects.requireNonNull(keySerializer, "keySerializer can't be null");
-        Objects.requireNonNull(storeName, "storeName can't be null");
-        Objects.requireNonNull(key, "key can't be null");
+        keySerializer = keySerializer ?? throw new System.ArgumentNullException("keySerializer can't be null", nameof(keySerializer));
+        storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
+        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
 
         if (!isInitialized())
 {
@@ -186,17 +186,17 @@ public class StreamsMetadataState {
      * @param storeName   Name of the store
      * @param key         Key to use
      * @param partitioner partitioner to use to find correct partition for key
-     * @param <K>         key type
+     * @param         key type
      * @return The {@link StreamsMetadata} for the storeName and key or {@link StreamsMetadata#NOT_AVAILABLE}
      * if streams is (re-)initializing
      */
-    public synchronized <K> StreamsMetadata getMetadataWithKey(string storeName,
+    public synchronized StreamsMetadata getMetadataWithKey(string storeName,
                                                                K key,
                                                                StreamPartitioner<K, ?> partitioner)
 {
-        Objects.requireNonNull(storeName, "storeName can't be null");
-        Objects.requireNonNull(key, "key can't be null");
-        Objects.requireNonNull(partitioner, "partitioner can't be null");
+        storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
+        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
+        partitioner = partitioner ?? throw new System.ArgumentNullException("partitioner can't be null", nameof(partitioner));
 
         if (!isInitialized())
 {
@@ -256,15 +256,15 @@ public class StreamsMetadataState {
         Dictionary<string, List<string>> stores = builder.stateStoreNameToSourceTopics();
         foreach (Map.Entry<HostInfo, HashSet<TopicPartition>> entry in currentState.entrySet())
 {
-            HostInfo key = entry.getKey();
-            HashSet<TopicPartition> partitionsForHost = new HashSet<>(entry.getValue());
+            HostInfo key = entry.Key;
+            HashSet<TopicPartition> partitionsForHost = new HashSet<>(entry.Value);
             HashSet<string> storesOnHost = new HashSet<>();
             foreach (Map.Entry<string, List<string>> storeTopicEntry in stores.entrySet())
 {
-                List<string> topicsForStore = storeTopicEntry.getValue();
+                List<string> topicsForStore = storeTopicEntry.Value;
                 if (hasPartitionsForAnyTopics(topicsForStore, partitionsForHost))
 {
-                    storesOnHost.Add(storeTopicEntry.getKey());
+                    storesOnHost.Add(storeTopicEntry.Key);
                 }
             }
             storesOnHost.AddAll(globalStores);
@@ -277,13 +277,13 @@ public class StreamsMetadataState {
         }
     }
 
-    private <K> StreamsMetadata getStreamsMetadataForKey(string storeName,
+    private StreamsMetadata getStreamsMetadataForKey(string storeName,
                                                          K key,
                                                          StreamPartitioner<K, ?> partitioner,
                                                          SourceTopicsInfo sourceTopicsInfo)
 {
 
-        Integer partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, null, sourceTopicsInfo.maxPartitions);
+        int partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, null, sourceTopicsInfo.maxPartitions);
         HashSet<TopicPartition> matchingPartitions = new HashSet<>();
         foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
 {
@@ -319,7 +319,7 @@ public class StreamsMetadataState {
         return clusterMetadata != null && !clusterMetadata.topics().isEmpty();
     }
 
-    private class SourceTopicsInfo {
+    private SourceTopicsInfo {
         private List<string> sourceTopics;
         private int maxPartitions;
         private string topicWithMostPartitions;

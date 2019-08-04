@@ -27,7 +27,7 @@ using Kafka.Common.config.TopicConfig;
  * UnwindowedChangelogTopicConfig captures the properties required for configuring
  * the un-windowed store changelog topics.
  */
-public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
+public UnwindowedChangelogTopicConfig : InternalTopicConfig {
     private static Dictionary<string, string> UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
     static {
         Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
@@ -37,7 +37,7 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
 
     UnwindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
 {
-        super(name, topicConfigs);
+        base(name, topicConfigs);
     }
 
     /**

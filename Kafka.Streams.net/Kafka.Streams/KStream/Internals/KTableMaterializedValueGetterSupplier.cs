@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
 
-public class KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
+public KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
     private  string storeName;
 
     KTableMaterializedValueGetterSupplier( string storeName)
@@ -39,7 +39,7 @@ public class KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupp
         return new string[]{storeName};
     }
 
-    private class KTableMaterializedValueGetter : KTableValueGetter<K, V> {
+    private KTableMaterializedValueGetter : KTableValueGetter<K, V> {
         private TimestampedKeyValueStore<K, V> store;
 
         

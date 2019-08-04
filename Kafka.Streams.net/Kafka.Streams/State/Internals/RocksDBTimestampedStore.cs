@@ -48,19 +48,19 @@ using Kafka.Streams.State.TimestampedBytesStore;
 /**
  * A persistent key-(value-timestamp) store based on RocksDB.
  */
-public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
+public RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
-    private static Logger log = LoggerFactory.getLogger(RocksDBTimestampedStore.class);
+    private static Logger log = new LoggerFactory().CreateLogger<RocksDBTimestampedStore);
 
     RocksDBTimestampedStore(string name)
 {
-        super(name);
+        base(name);
     }
 
     RocksDBTimestampedStore(string name,
                             string parentDir)
 {
-        super(name, parentDir);
+        base(name, parentDir);
     }
 
     
@@ -69,12 +69,12 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
         List<ColumnFamilyDescriptor> columnFamilyDescriptors = asList(
             new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions),
-            new ColumnFamilyDescriptor("keyValueWithTimestamp".getBytes(StandardCharsets.UTF_8), columnFamilyOptions));
+            new ColumnFamilyDescriptor("keyValueWithTimestamp".getBytes(System.Text.Encoding.UTF8), columnFamilyOptions));
         List<ColumnFamilyHandle> columnFamilies = new List<>(columnFamilyDescriptors.size());
 
         try
 {
-            db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors, columnFamilies);
+            db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
 
             ColumnFamilyHandle noTimestampColumnFamily = columnFamilies[0];
 
@@ -97,7 +97,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
                 try
 {
-                    db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors.subList(0, 1), columnFamilies);
+                    db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors.subList(0, 1), columnFamilies);
                     columnFamilies.Add(db.createColumnFamily(columnFamilyDescriptors[1)));
                 } catch (RocksDBException fatal)
 {
@@ -114,7 +114,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 
 
 
-    private class DualColumnFamilyAccessor : RocksDBAccessor
+    private DualColumnFamilyAccessor : RocksDBAccessor
 {
         private ColumnFamilyHandle oldColumnFamily;
         private ColumnFamilyHandle newColumnFamily;
@@ -175,7 +175,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
             foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
-                Objects.requireNonNull(entry.key, "key cannot be null");
+                entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
                .AddToBatch(entry.key(), entry.value, batch);
             }
         }
@@ -311,7 +311,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
         }
     }
 
-    private class RocksDBDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
+    private RocksDBDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
         : KeyValueIterator<Bytes, byte[]>
 {
 
@@ -346,13 +346,13 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
 {
                 throw new InvalidStateStoreException(string.Format("RocksDB iterator for store %s has closed", storeName));
             }
-            return super.hasNext();
+            return base.hasNext();
         }
 
         
         public synchronized KeyValue<Bytes, byte[]> next()
 {
-            return super.next();
+            return base.next();
         }
 
         
@@ -431,7 +431,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
         }
     }
 
-    private class RocksDBDualCFRangeIterator : RocksDBDualCFIterator
+    private RocksDBDualCFRangeIterator : RocksDBDualCFIterator
 {
         // RocksDB's JNI interface does not expose getters/setters that allow the
         // comparator to be pluggable, and the default is lexicographic, so it's
@@ -445,7 +445,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                                    Bytes from,
                                    Bytes to)
 {
-            super(storeName, iterWithTimestamp, iterNoTimestamp);
+            base(storeName, iterWithTimestamp, iterNoTimestamp);
             iterWithTimestamp.seek(from());
             iterNoTimestamp.seek(from());
             upperBoundKey = to[];
@@ -458,7 +458,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
         
         public KeyValue<Bytes, byte[]> makeNext()
 {
-            KeyValue<Bytes, byte[]> next = super.makeNext();
+            KeyValue<Bytes, byte[]> next = base.makeNext();
 
             if (next == null)
 {

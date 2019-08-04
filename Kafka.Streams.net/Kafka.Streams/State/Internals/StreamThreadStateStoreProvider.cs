@@ -32,7 +32,7 @@ using Kafka.Streams.State.TimestampedWindowStore;
 /**
  * Wrapper over StreamThread that : StateStoreProvider
  */
-public class StreamThreadStateStoreProvider : StateStoreProvider
+public StreamThreadStateStoreProvider : StateStoreProvider
 {
 
     private StreamThread streamThread;
@@ -43,7 +43,7 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
     }
 
     
-    public override <T> List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
+    public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
 {
         if (streamThread.state() == StreamThread.State.DEAD)
 {
@@ -67,10 +67,10 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
                 }
                 if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
 {
-                    stores.Add((T) new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<Object, object>) store));
+                    stores.Add((T) new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>) store));
                 } else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
 {
-                    stores.Add((T) new ReadOnlyWindowStoreFacade((TimestampedWindowStore<Object, object>) store));
+                    stores.Add((T) new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>) store));
                 } else
 {
                     stores.Add((T) store);

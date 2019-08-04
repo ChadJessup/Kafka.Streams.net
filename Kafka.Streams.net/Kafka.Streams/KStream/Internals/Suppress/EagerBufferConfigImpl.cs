@@ -20,7 +20,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig {
+public EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig {
 
     private  long maxRecords;
     private  long maxBytes;
@@ -62,7 +62,7 @@ public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBuffer
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

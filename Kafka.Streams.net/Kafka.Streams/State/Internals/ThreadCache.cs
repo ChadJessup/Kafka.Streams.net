@@ -34,7 +34,7 @@ using Kafka.Streams.State.internals.NamedCache.LRUNode;
  * An in-memory LRU cache store similar to {@link MemoryLRUCache} but byte-based, not
  * record based
  */
-public class ThreadCache
+public ThreadCache
 {
     private Logger log;
     private long maxCacheSizeBytes;
@@ -230,7 +230,7 @@ public class ThreadCache
             size += cache.size();
             if (isOverflowing(size))
 {
-                return long.MAX_VALUE;
+                return long.MaxValue;
             }
         }
         return size;
@@ -249,7 +249,7 @@ public class ThreadCache
             sizeInBytes += namedCache.sizeInBytes();
             if (isOverflowing(sizeInBytes))
 {
-                return long.MAX_VALUE;
+                return long.MaxValue;
             }
         }
         return sizeInBytes;
@@ -304,7 +304,7 @@ public class ThreadCache
         return cache;
     }
 
-    static class MemoryLRUCacheBytesIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    static MemoryLRUCacheBytesIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
 {
         private Iterator<Map.Entry<Bytes, LRUNode>> underlying;
         private KeyValue<Bytes, LRUCacheEntry> nextEntry;
@@ -364,8 +364,8 @@ public class ThreadCache
         private void internalNext()
 {
             Map.Entry<Bytes, LRUNode> mapEntry = underlying.next();
-            Bytes cacheKey = mapEntry.getKey();
-            LRUCacheEntry entry = mapEntry.getValue().entry();
+            Bytes cacheKey = mapEntry.Key;
+            LRUCacheEntry entry = mapEntry.Value.entry();
             if (entry == null)
 {
                 return;
@@ -387,7 +387,7 @@ public class ThreadCache
         }
     }
 
-    static class DirtyEntry
+    static DirtyEntry
 {
         private Bytes key;
         private byte[] newValue;

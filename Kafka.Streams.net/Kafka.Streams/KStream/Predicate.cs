@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
 /**
  * The {@code Predicate} interface represents a predicate (boolean-valued function) of a {@link KeyValue} pair.
- * This is a stateless record-by-record operation, i.e, {@link #test(Object, Object)} is invoked individually for each
+ * This is a stateless record-by-record operation, i.e, {@link #test(object, object)} is invoked individually for each
  * record of a stream.
  *
- * @param <K> key type
- * @param <V> value type
+ * @param key type
+ * @param value type
  * @see KStream#filter(Predicate)
  * @see KStream#filterNot(Predicate)
  * @see KStream#branch(Predicate[])

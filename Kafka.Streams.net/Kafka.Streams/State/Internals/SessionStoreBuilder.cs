@@ -20,12 +20,12 @@ using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.Time;
 using Kafka.Streams.State.SessionBytesStoreSupplier;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 
 
 
 
-public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore<K, V>>
+public SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, ISessionStore<K, V>>
 {
 
     private SessionBytesStoreSupplier storeSupplier;
@@ -35,11 +35,11 @@ public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore
                                ISerde<V> valueSerde,
                                ITime time)
 {
-        super(Objects.requireNonNull(storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde, time);
+        base(storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde = storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde ?? throw new System.ArgumentNullException(time, nameof(storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde));
         this.storeSupplier = storeSupplier;
     }
 
-    public override SessionStore<K, V> build()
+    public override ISessionStore<K, V> build()
 {
         return new MeteredSessionStore<>(
             maybeWrapCaching(maybeWrapLogging(storeSupplier())],
@@ -49,7 +49,7 @@ public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore
             time);
     }
 
-    private SessionStore<Bytes, byte[]> maybeWrapCaching(SessionStore<Bytes, byte[]> inner)
+    private ISessionStore<Bytes, byte[]> maybeWrapCaching(ISessionStore<Bytes, byte[]> inner)
 {
         if (!enableCaching)
 {
@@ -58,7 +58,7 @@ public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore
         return new CachingSessionStore(inner, storeSupplier.segmentIntervalMs());
     }
 
-    private SessionStore<Bytes, byte[]> maybeWrapLogging(SessionStore<Bytes, byte[]> inner)
+    private ISessionStore<Bytes, byte[]> maybeWrapLogging(ISessionStore<Bytes, byte[]> inner)
 {
         if (!enableLogging)
 {

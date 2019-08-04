@@ -21,13 +21,13 @@ namespace Kafka.common.utils;
  *
  * This is cheaper than using Atomic references.
  */
-public class PrimitiveRef {
+public PrimitiveRef {
     public static IntRef ofInt(int value)
 {
         return new IntRef(value);
     }
 
-    public static class IntRef {
+    public static IntRef {
         public int value;
 
         IntRef(int value)

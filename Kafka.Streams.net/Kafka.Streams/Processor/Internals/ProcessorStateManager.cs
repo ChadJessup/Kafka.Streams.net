@@ -46,7 +46,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public class ProcessorStateManager : StateManager {
+public ProcessorStateManager : StateManager {
     private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
 
     private Logger log;
@@ -90,7 +90,7 @@ public class ProcessorStateManager : StateManager {
                                  LogContext logContext){
         this.eosEnabled = eosEnabled;
 
-        log = logContext.logger(ProcessorStateManager.class);
+        log = logContext.logger(ProcessorStateManager);
         this.taskId = taskId;
         this.changelogReader = changelogReader;
         logPrefix = string.Format("task [%s] ", taskId);
@@ -146,12 +146,12 @@ public class ProcessorStateManager : StateManager {
 
         if (CHECKPOINT_FILE_NAME.Equals(storeName))
 {
-            throw new ArgumentException(string.Format("%sIllegal store name: %s", logPrefix, storeName));
+            throw new System.ArgumentException(string.Format("%sIllegal store name: %s", logPrefix, storeName));
         }
 
         if (registeredStores.ContainsKey(storeName) && registeredStores[storeName).isPresent())
 {
-            throw new ArgumentException(string.Format("%sStore %s has already been registered.", logPrefix, storeName));
+            throw new System.ArgumentException(string.Format("%sStore %s has already been registered.", logPrefix, storeName));
         }
 
         // check that the underlying change log topic exist or not
@@ -228,7 +228,7 @@ public class ProcessorStateManager : StateManager {
 
         foreach (Map.Entry<string, StateRestoreCallback> entry in restoreCallbacks.entrySet())
 {
-            string topicName = entry.getKey();
+            string topicName = entry.Key;
             int partition = getPartition(topicName);
             TopicPartition storePartition = new TopicPartition(topicName, partition);
 
@@ -275,7 +275,7 @@ public class ProcessorStateManager : StateManager {
     long offsetLimit(TopicPartition partition)
 {
         long limit = offsetLimits[partition];
-        return limit != null ? limit : long.MAX_VALUE;
+        return limit != null ? limit : long.MaxValue;
     }
 
     
@@ -294,9 +294,9 @@ public class ProcessorStateManager : StateManager {
             log.LogDebug("Flushing all stores registered in the state manager");
             foreach (Map.Entry<string, Optional<IStateStore>> entry in registeredStores.entrySet())
 {
-                if (entry.getValue().isPresent())
+                if (entry.Value.isPresent())
 {
-                    IStateStore store = entry.getValue()[);
+                    IStateStore store = entry.Value[);
                     log.trace("Flushing store {}", store.name());
                     try {
                         store.flush();
@@ -309,7 +309,7 @@ public class ProcessorStateManager : StateManager {
                         log.LogError("Failed to flush state store {}: ", store.name(), e);
                     }
                 } else {
-                    throw new InvalidOperationException("Expected " + entry.getKey() + " to have been initialized");
+                    throw new InvalidOperationException("Expected " + entry.Key + " to have been initialized");
                 }
             }
         }
@@ -336,9 +336,9 @@ public class ProcessorStateManager : StateManager {
             log.LogDebug("Closing its state manager and all the registered state stores");
             foreach (Map.Entry<string, Optional<IStateStore>> entry in registeredStores.entrySet())
 {
-                if (entry.getValue().isPresent())
+                if (entry.Value.isPresent())
 {
-                    IStateStore store = entry.getValue()[);
+                    IStateStore store = entry.Value[);
                     log.LogDebug("Closing storage engine {}", store.name());
                     try {
                         store.close();
@@ -352,7 +352,7 @@ public class ProcessorStateManager : StateManager {
                         log.LogError("Failed to close state store {}: ", store.name(), e);
                     }
                 } else {
-                    log.info("Skipping to close non-initialized store {}", entry.getKey());
+                    log.info("Skipping to close non-initialized store {}", entry.Key);
                 }
             }
         }
@@ -467,10 +467,10 @@ public class ProcessorStateManager : StateManager {
 {
         foreach (Map.Entry<string, Optional<IStateStore>> entry in registeredStores.entrySet())
 {
-            if (!entry.getValue().isPresent())
+            if (!entry.Value.isPresent())
 {
                 throw new InvalidOperationException(
-                    "store [" + entry.getKey() + "] has not been correctly registered. This is a bug in Kafka Streams."
+                    "store [" + entry.Key + "] has not been correctly registered. This is a bug in Kafka Streams."
                 );
             }
         }
@@ -483,13 +483,13 @@ public class ProcessorStateManager : StateManager {
         HashSet<TopicPartition> result = new HashSet<>(storeToChangelogTopic.size());
         foreach (Map.Entry<string, string> storeToChangelog in storeToChangelogTopic.entrySet())
 {
-            string storeName = storeToChangelog.getKey();
+            string storeName = storeToChangelog.Key;
             if (registeredStores.ContainsKey(storeName)
                 && registeredStores[storeName).isPresent()
                 && registeredStores[storeName)().persistent())
 {
 
-                string changelogTopic = storeToChangelog.getValue();
+                string changelogTopic = storeToChangelog.Value;
                 result.Add(new TopicPartition(changelogTopic, getPartition(changelogTopic)));
             }
         }
@@ -505,10 +505,10 @@ public class ProcessorStateManager : StateManager {
 
         foreach (Map.Entry<TopicPartition, long> topicToCheckpointableOffset in checkpointableOffsets.entrySet())
 {
-            TopicPartition topic = topicToCheckpointableOffset.getKey();
+            TopicPartition topic = topicToCheckpointableOffset.Key;
             if (validCheckpointableTopics.contains(topic))
 {
-                long checkpointableOffset = topicToCheckpointableOffset.getValue();
+                long checkpointableOffset = topicToCheckpointableOffset.Value;
                 result.Add(topic, checkpointableOffset);
             }
         }

@@ -34,7 +34,7 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
     MergedSortedCacheWindowStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
                                          KeyValueIterator<long, byte[]> storeIterator)
 {
-        super(cacheIterator, storeIterator);
+        base(cacheIterator, storeIterator);
     }
 
     public override KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)

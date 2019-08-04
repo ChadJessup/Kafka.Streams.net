@@ -23,12 +23,12 @@ import java.util.zip.Checksum;
  * Utility methods for `Checksum` instances.
  *
  * Implementation note: we can add methods to our implementations of CRC32 and CRC32C, but we cannot do the same for
- * the Java implementations (we prefer the Java 9 implementation of CRC32C if available). A utility class is the
+ * the Java implementations (we prefer the Java 9 implementation of CRC32C if available). A utility is the
  * simplest way to add methods that are useful for all Checksum implementations.
  *
- * NOTE: This class is intended for INTERNAL usage only within Kafka.
+ * NOTE: This is intended for INTERNAL usage only within Kafka.
  */
-public final class Checksums {
+public final Checksums {
 
     private Checksums()
 {

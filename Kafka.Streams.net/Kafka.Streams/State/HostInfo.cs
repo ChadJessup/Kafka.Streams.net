@@ -23,11 +23,11 @@ using Kafka.Streams.Processor.internals.StreamsPartitionAssignor;
 
 /**
  * Represents a user defined endpoint in a {@link org.apache.kafka.streams.KafkaStreams} application.
- * Instances of this class can be obtained by calling one of:
+ * Instances of this can be obtained by calling one of:
  *  {@link KafkaStreams#allMetadata()}
  *  {@link KafkaStreams#allMetadataForStore(string)}
- *  {@link KafkaStreams#metadataForKey(string, Object, StreamPartitioner)}
- *  {@link KafkaStreams#metadataForKey(string, Object, Serializer)}
+ *  {@link KafkaStreams#metadataForKey(string, object, StreamPartitioner)}
+ *  {@link KafkaStreams#metadataForKey(string, object, Serializer)}
  *
  *  The HostInfo is constructed during Partition Assignment
  *  see {@link StreamsPartitionAssignor}
@@ -36,7 +36,7 @@ using Kafka.Streams.Processor.internals.StreamsPartitionAssignor;
  *  If developers wish to expose an endpoint in their KafkaStreams applications they should provide the above
  *  config.
  */
-public class HostInfo
+public HostInfo
 {
     private string host;
     private int port;

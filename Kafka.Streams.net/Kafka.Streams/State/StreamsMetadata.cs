@@ -31,7 +31,7 @@ using Kafka.Streams.KafkaStreams;
  * NOTE: This is a point in time view. It may change when rebalances happen.
  */
 @InterfaceStability.Evolving
-public class StreamsMetadata
+public StreamsMetadata
 {
     /**
      * Sentinel to indicate that the StreamsMetadata is currently unavailable. This can occur during rebalance

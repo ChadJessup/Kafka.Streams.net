@@ -24,7 +24,7 @@ using Kafka.Common.TopicPartition;
 
 
 
-public class StateRestorer {
+public StateRestorer {
 
     static int NO_CHECKPOINT = -1;
 

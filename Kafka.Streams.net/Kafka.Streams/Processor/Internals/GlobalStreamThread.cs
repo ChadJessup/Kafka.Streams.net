@@ -48,9 +48,9 @@ using Kafka.Common.Utils.Utils;
 
 /**
  * This is the thread responsible for keeping all Global State Stores updated.
- * It delegates most of the responsibility to the internal class StateConsumer
+ * It delegates most of the responsibility to the internal StateConsumer
  */
-public class GlobalStreamThread : Thread {
+public GlobalStreamThread : Thread {
 
     private Logger log;
     private LogContext logContext;
@@ -97,9 +97,9 @@ public class GlobalStreamThread : Thread {
     public enum State : ThreadStateTransitionValidator {
         CREATED(1, 2), RUNNING(2), PENDING_SHUTDOWN(3), DEAD;
 
-        private HashSet<Integer> validTransitions = new HashSet<>();
+        private HashSet<int> validTransitions = new HashSet<>();
 
-        State(Integer[] validTransitions)
+        State(int[] validTransitions)
 {
             this.validTransitions.AddAll(Arrays.asList(validTransitions));
         }
@@ -118,7 +118,7 @@ public class GlobalStreamThread : Thread {
     }
 
     private volatile State state = State.CREATED;
-    private object stateLock = new Object();
+    private object stateLock = new object();
     private StreamThread.StateListener stateListener = null;
     private string logPrefix;
     private StateRestoreListener stateRestoreListener;
@@ -197,7 +197,7 @@ public class GlobalStreamThread : Thread {
                               string threadClientId,
                               StateRestoreListener stateRestoreListener)
 {
-        super(threadClientId);
+        base(threadClientId);
         this.time = time;
         this.config = config;
         this.topology = topology;
@@ -211,11 +211,11 @@ public class GlobalStreamThread : Thread {
         this.stateRestoreListener = stateRestoreListener;
     }
 
-    static class StateConsumer {
+    static StateConsumer {
         private Consumer<byte[], byte[]> globalConsumer;
         private GlobalStateMaintainer stateMaintainer;
         private ITime time;
-        private Duration pollTime;
+        private TimeSpan pollTime;
         private long flushInterval;
         private Logger log;
 
@@ -225,7 +225,7 @@ public class GlobalStreamThread : Thread {
                       Consumer<byte[], byte[]> globalConsumer,
                       GlobalStateMaintainer stateMaintainer,
                       ITime time,
-                      Duration pollTime,
+                      TimeSpan pollTime,
                       long flushInterval)
 {
             this.log = logContext.logger(GetType());
@@ -246,7 +246,7 @@ public class GlobalStreamThread : Thread {
             globalConsumer.assign(partitionOffsets.keySet());
             foreach (Map.Entry<TopicPartition, long> entry in partitionOffsets.entrySet())
 {
-                globalConsumer.seek(entry.getKey(), entry.getValue());
+                globalConsumer.seek(entry.Key, entry.Value);
             }
             lastFlush = time.milliseconds();
         }
@@ -391,7 +391,7 @@ public class GlobalStreamThread : Thread {
     
     public synchronized void start()
 {
-        super.start();
+        base.start();
         while (!stillRunning())
 {
             Utils.sleep(1);

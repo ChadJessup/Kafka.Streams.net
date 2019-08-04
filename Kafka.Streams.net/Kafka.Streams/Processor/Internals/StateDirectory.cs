@@ -38,15 +38,15 @@ using Kafka.Common.Utils.Utils;
 
 /**
  * Manages the directories where the state of Tasks owned by a {@link StreamThread} are
- * stored. Handles creation/locking/unlocking/cleaning of the Task Directories. This class is not
+ * stored. Handles creation/locking/unlocking/cleaning of the Task Directories. This is not
  * thread-safe.
  */
-public class StateDirectory {
+public StateDirectory {
 
     private static Pattern PATH_NAME = Pattern.compile("\\d+_\\d+");
 
     static string LOCK_FILE_NAME = ".lock";
-    private static Logger log = LoggerFactory.getLogger(StateDirectory.class);
+    private static Logger log = new LoggerFactory().CreateLogger<StateDirectory);
 
     private File stateDir;
     private bool createStateDirectory;
@@ -57,7 +57,7 @@ public class StateDirectory {
     private FileChannel globalStateChannel;
     private FileLock globalStateLock;
 
-    private static class LockAndOwner {
+    private static LockAndOwner {
         FileLock lock;
         string owningThread;
 

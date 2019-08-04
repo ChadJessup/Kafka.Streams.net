@@ -9,7 +9,7 @@ namespace Kafka.Common.Metrics.Stats
      *
      * See also {@link CumulativeCount} for a non-sampled version of this metric.
      */
-    public class WindowedCount : WindowedSum
+    public WindowedCount : WindowedSum
     {
         protected override void update(Sample sample, MetricConfig config, double value, long now)
 {

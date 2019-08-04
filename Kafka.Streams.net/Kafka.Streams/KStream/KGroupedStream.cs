@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -36,8 +36,8 @@ namespace Kafka.streams.kstream;
  * A {@code KGroupedStream} must be obtained from a {@link KStream} via {@link KStream#groupByKey() groupByKey()} or
  * {@link KStream#groupBy(KeyValueMapper) groupBy(...)}.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  * @see KStream
  */
 @InterfaceStability.Evolving
@@ -217,7 +217,7 @@ public interface KGroupedStream<K, V> {
      * will be handled as newly initialized value.
      */
     KTable<K, V> reduce( Reducer<V> reducer,
-                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Aggregate the values of records in this stream by the grouped key.
@@ -255,13 +255,13 @@ public interface KGroupedStream<K, V> {
      *
      * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
      * @param aggregator    an {@link Aggregator} that computes a new aggregate result
-     * @param <VR>          the value type of the resulting {@link KTable}
+     * @param          the value type of the resulting {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key. If the aggregate function returns {@code null}, it is then interpreted as
      * deletion for the key, and future messages of the same key coming from upstream operators
      * will be handled as newly initialized value.
      */
-    <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
+    KTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<K, V, VR> aggregator);
 
     /**
@@ -314,23 +314,24 @@ public interface KGroupedStream<K, V> {
      * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
      * @param aggregator    an {@link Aggregator} that computes a new aggregate result
      * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-     * @param <VR>          the value type of the resulting {@link KTable}
+     * @param          the value type of the resulting {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key. If the aggregate function returns {@code null}, it is then interpreted as
      * deletion for the key, and future messages of the same key coming from upstream operators
      * will be handled as newly initialized value.
      */
-    <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                  Aggregator<K, V, VR> aggregator,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+    KTable<K, VR> aggregate(
+        Initializer<VR> initializer,
+        Aggregator<K, V, VR> aggregator,
+        Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@link TimeWindowedKStream} instance that can be used to perform windowed aggregations.
      * @param windows the specification of the aggregation {@link Windows}
-     * @param <W>     the window type
+     * @param     the window type
      * @return an instance of {@link TimeWindowedKStream}
      */
-    <W : Window> TimeWindowedKStream<K, V> windowedBy( Windows<W> windows);
+    TimeWindowedKStream<K, V> windowedBy( Windows<W> windows);
 
     /**
      * Create a new {@link SessionWindowedKStream} instance that can be used to perform session windowed aggregations.

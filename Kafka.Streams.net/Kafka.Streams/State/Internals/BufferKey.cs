@@ -20,7 +20,7 @@ using Kafka.Common.Utils.Bytes;
 
 
 
-public class BufferKey : Comparable<BufferKey>
+public BufferKey : Comparable<BufferKey>
 {
     private long time;
     private Bytes key;

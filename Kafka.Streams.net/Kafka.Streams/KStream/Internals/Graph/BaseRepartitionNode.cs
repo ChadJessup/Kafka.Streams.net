@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
 
 
-public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
+public abstract BaseRepartitionNode<K, V> : StreamsGraphNode {
 
     protected  ISerde<K> keySerde;
     protected  ISerde<V> valueSerde;
@@ -40,7 +40,7 @@ public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
                          string repartitionTopic)
 {
 
-        super(nodeName);
+        base(nodeName);
 
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
@@ -64,6 +64,6 @@ public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
                ", sourceName='" + sourceName + '\'' +
                ", repartitionTopic='" + repartitionTopic + '\'' +
                ", processorParameters=" + processorParameters +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 }

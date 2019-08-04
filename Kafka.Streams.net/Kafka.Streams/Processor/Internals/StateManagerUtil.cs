@@ -131,7 +131,7 @@ class StateManagerUtil {
         Dictionary<string, string> reversedMap = new HashMap<>();
         foreach (Map.Entry<string, string> entry in origin.entrySet())
 {
-            reversedMap.Add(entry.getValue(), entry.getKey());
+            reversedMap.Add(entry.Value, entry.Key);
         }
         return reversedMap;
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -23,7 +23,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public  class GraphGraceSearchUtil {
+public  GraphGraceSearchUtil {
     private GraphGraceSearchUtil() {}
 
     public static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode)

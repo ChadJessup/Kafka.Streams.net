@@ -34,9 +34,9 @@ using Kafka.Streams.Processor.internals.InternalProcessorContext;
 
 
 
-abstract class AbstractSegments<S : Segment> : Segments<S>
+abstract AbstractSegments<S : Segment> : Segments<S>
 {
-    private static Logger log = LoggerFactory.getLogger(AbstractSegments.class);
+    private static Logger log = new LoggerFactory().CreateLogger<AbstractSegments);
 
     TreeMap<long, S> segments = new TreeMap<>();
     string name;
@@ -192,7 +192,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 {
             Map.Entry<long, S> next = toRemove.next();
             toRemove.Remove();
-            S segment = next.getValue();
+            S segment = next.Value;
             segment.close();
             try
 {
@@ -229,7 +229,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
             // for both new formats (with : or .) parse segment ID identically
             try
 {
-                segmentId = long.parseLong(segmentIdString) / segmentInterval;
+                segmentId = long.Parse(segmentIdString) / segmentInterval;
             } catch (NumberFormatException e)
 {
                 throw new ProcessorStateException("Unable to parse segment id as long from segmentName: " + segmentName);

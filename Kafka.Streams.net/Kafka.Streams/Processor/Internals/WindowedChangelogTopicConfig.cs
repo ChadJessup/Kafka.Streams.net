@@ -27,7 +27,7 @@ using Kafka.Common.config.TopicConfig;
  * WindowedChangelogTopicConfig captures the properties required for configuring
  * the windowed store changelog topics.
  */
-public class WindowedChangelogTopicConfig : InternalTopicConfig {
+public WindowedChangelogTopicConfig : InternalTopicConfig {
     private static Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
     static {
         Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
@@ -39,7 +39,7 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
 
     WindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
 {
-        super(name, topicConfigs);
+        base(name, topicConfigs);
     }
 
     /**
@@ -65,7 +65,7 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
                 retentionValue = Math.AddExact(retentionMs,.AdditionalRetentionMs);
             } catch (ArithmeticException swallow)
 {
-                retentionValue = long.MAX_VALUE;
+                retentionValue = long.MaxValue;
             }
             topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(retentionValue));
         }

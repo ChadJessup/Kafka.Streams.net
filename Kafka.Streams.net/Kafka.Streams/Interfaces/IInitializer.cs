@@ -4,7 +4,7 @@
  * The {@code Initializer} interface for creating an initial value in aggregations.
  * {@code Initializer} is used in combination with {@link Aggregator}.
  *
- * @param <VA> aggregate value type
+ * @param aggregate value type
  * @see Aggregator
  * @see KGroupedStream#aggregate(Initializer, Aggregator)
  * @see KGroupedStream#aggregate(Initializer, Aggregator, Materialized)

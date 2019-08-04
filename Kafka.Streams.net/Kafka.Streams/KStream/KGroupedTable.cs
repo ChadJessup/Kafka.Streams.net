@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -34,8 +34,8 @@ namespace Kafka.streams.kstream;
  * A {@code KGroupedTable} must be obtained from a {@link KTable} via {@link KTable#groupBy(KeyValueMapper)
  * groupBy(...)}.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  * @see KTable
  */
 @InterfaceStability.Evolving
@@ -134,15 +134,15 @@ public interface KGroupedTable<K, V> {
      * Thus, {@code reduce(Reducer, Reducer, string)} can be used to compute aggregate functions like sum.
      * For sum, the.Adder and subtractor would work as follows:
      * <pre>{@code
-     * public class SumAdder : Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer newValue)
+     * public SumAdder : Reducer<int> {
+     *   public int apply(int currentAgg, int newValue)
 {
      *     return currentAgg + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor : Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer oldValue)
+     * public SumSubtractor : Reducer<int> {
+     *   public int apply(int currentAgg, int oldValue)
 {
      *     return currentAgg - oldValue;
      *   }
@@ -184,7 +184,7 @@ public interface KGroupedTable<K, V> {
      */
     KTable<K, V> reduce( Reducer<V>.Adder,
                          Reducer<V> subtractor,
-                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
     /**
      * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
      * mapped} to the same key into a new instance of {@link KTable}.
@@ -205,15 +205,15 @@ public interface KGroupedTable<K, V> {
      * Thus, {@code reduce(Reducer, Reducer)} can be used to compute aggregate functions like sum.
      * For sum, the.Adder and subtractor would work as follows:
      * <pre>{@code
-     * public class SumAdder : Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer newValue)
+     * public SumAdder : Reducer<int> {
+     *   public int apply(int currentAgg, int newValue)
 {
      *     return currentAgg + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor : Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer oldValue)
+     * public SumSubtractor : Reducer<int> {
+     *   public int apply(int currentAgg, int oldValue)
 {
      *     return currentAgg - oldValue;
      *   }
@@ -266,23 +266,23 @@ public interface KGroupedTable<K, V> {
      * like sum.
      * For sum, the initializer,.Adder, and subtractor would work as follows:
      * <pre>{@code
-     * // in this example, LongSerde.class must be set as value serde in Materialized#withValueSerde
-     * public class SumInitializer : Initializer<long> {
+     * // in this example, LongSerde must be set as value serde in Materialized#withValueSerde
+     * public SumInitializer : Initializer<long> {
      *   public long apply()
 {
      *     return 0L;
      *   }
      * }
      *
-     * public class SumAdder : Aggregator<string, Integer, long> {
-     *   public long apply(string key, Integer newValue, long aggregate)
+     * public SumAdder : Aggregator<string, int, long> {
+     *   public long apply(string key, int newValue, long aggregate)
 {
      *     return aggregate + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor : Aggregator<string, Integer, long> {
-     *   public long apply(string key, Integer oldValue, long aggregate)
+     * public SumSubtractor : Aggregator<string, int, long> {
+     *   public long apply(string key, int oldValue, long aggregate)
 {
      *     return aggregate - oldValue;
      *   }
@@ -320,14 +320,14 @@ public interface KGroupedTable<K, V> {
      * @param.Adder         an {@link Aggregator} that.Adds a new record to the aggregate result
      * @param subtractor    an {@link Aggregator} that removed an old record from the aggregate result
      * @param materialized  the instance of {@link Materialized} used to materialize the state store. Cannot be {@code null}
-     * @param <VR>          the value type of the aggregated {@link KTable}
+     * @param          the value type of the aggregated {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
+    KTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<K, V, VR>.Adder,
                                   Aggregator<K, V, VR> subtractor,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -353,23 +353,23 @@ public interface KGroupedTable<K, V> {
      * like sum.
      * For sum, the initializer,.Adder, and subtractor would work as follows:
      * <pre>{@code
-     * // in this example, LongSerde.class must be set as default value serde in StreamsConfig
-     * public class SumInitializer : Initializer<long> {
+     * // in this example, LongSerde must be set as default value serde in StreamsConfig
+     * public SumInitializer : Initializer<long> {
      *   public long apply()
 {
      *     return 0L;
      *   }
      * }
      *
-     * public class SumAdder : Aggregator<string, Integer, long> {
-     *   public long apply(string key, Integer newValue, long aggregate)
+     * public SumAdder : Aggregator<string, int, long> {
+     *   public long apply(string key, int newValue, long aggregate)
 {
      *     return aggregate + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor : Aggregator<string, Integer, long> {
-     *   public long apply(string key, Integer oldValue, long aggregate)
+     * public SumSubtractor : Aggregator<string, int, long> {
+     *   public long apply(string key, int oldValue, long aggregate)
 {
      *     return aggregate - oldValue;
      *   }
@@ -393,11 +393,11 @@ public interface KGroupedTable<K, V> {
      * @param initializer a {@link Initializer} that provides an initial aggregate result value
      * @param.Adder       a {@link Aggregator} that.Adds a new record to the aggregate result
      * @param subtractor  a {@link Aggregator} that removed an old record from the aggregate result
-     * @param <VR>        the value type of the aggregated {@link KTable}
+     * @param        the value type of the aggregated {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
+    KTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<K, V, VR>.Adder,
                                   Aggregator<K, V, VR> subtractor);
 

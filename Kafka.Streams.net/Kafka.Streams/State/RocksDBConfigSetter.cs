@@ -34,7 +34,7 @@ namespace Kafka.streams.state;
 public interface RocksDBConfigSetter
 {
 
-    Logger LOG = LoggerFactory.getLogger(RocksDBConfigSetter.class);
+    ILogger LOG= new LoggerFactory().CreateLogger<RocksDBConfigSetter);
 
     /**
      * Set the rocks db options for the provided storeName.

@@ -23,28 +23,28 @@ using Kafka.Streams.Processor.internals.ProcessorStateManager;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 using Kafka.Streams.State.StateSerdes;
 
 /**
- * Simple wrapper around a {@link SessionStore} to support writing
+ * Simple wrapper around a {@link ISessionStore} to support writing
  * updates to a changelog
  */
 class ChangeLoggingSessionBytesStore
-    : WrappedStateStore<SessionStore<Bytes, byte[]>, byte[], byte[]>
-    : SessionStore<Bytes, byte[]>
+    : WrappedStateStore<ISessionStore<Bytes, byte[]>, byte[], byte[]>
+    : ISessionStore<Bytes, byte[]>
 {
 
     private StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-    ChangeLoggingSessionBytesStore(SessionStore<Bytes, byte[]> bytesStore)
+    ChangeLoggingSessionBytesStore(ISessionStore<Bytes, byte[]> bytesStore)
 {
-        super(bytesStore);
+        base(bytesStore);
     }
 
     public override void init(IProcessorContext context, IStateStore root)
 {
-        super.init(context, root);
+        base.init(context, root);
         string topic = ProcessorStateManager.storeChangelogTopic(
                 context.applicationId(),
                 name());

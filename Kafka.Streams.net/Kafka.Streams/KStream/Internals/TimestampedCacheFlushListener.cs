@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    public class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
+    public TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
     {
         private InternalProcessorContext context;
         private ProcessorNode myNode;

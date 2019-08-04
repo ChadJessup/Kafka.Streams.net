@@ -48,7 +48,7 @@ using Kafka.Common.metrics.Sensor;
  * As a consequence of the definition, the PartitionGroup's stream-time is non-decreasing
  * (i.e., it increases or stays the same over time).
  */
-public class PartitionGroup {
+public PartitionGroup {
 
     private Dictionary<TopicPartition, RecordQueue> partitionQueues;
     private Sensor recordLatenessSensor;
@@ -59,7 +59,7 @@ public class PartitionGroup {
     private bool allBuffered;
 
 
-    public static class RecordInfo {
+    public static RecordInfo {
         RecordQueue queue;
 
         public ProcessorNode node()

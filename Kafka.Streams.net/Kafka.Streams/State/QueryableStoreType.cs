@@ -23,7 +23,7 @@ using Kafka.Streams.State.internals.StateStoreProvider;
 /**
  * Used to enable querying of custom {@link IStateStore} types via the {@link KafkaStreams} API.
  *
- * @param <T> The store type
+ * @param The store type
  * @see QueryableStoreTypes
  */
 public interface QueryableStoreType<T>

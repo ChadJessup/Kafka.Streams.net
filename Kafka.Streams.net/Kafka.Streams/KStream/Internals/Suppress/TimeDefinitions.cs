@@ -19,7 +19,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
- class TimeDefinitions {
+ TimeDefinitions {
     private TimeDefinitions() {}
 
     enum TimeDefinitionType {
@@ -27,7 +27,7 @@ namespace Kafka.streams.kstream.internals.suppress;
     }
 
     /**
-     * This interface should never be instantiated outside of this class.
+     * This interface should never be instantiated outside of this.
      */
     interface TimeDefinition<K> {
         long time( IProcessorContext context,  K key);
@@ -35,13 +35,13 @@ namespace Kafka.streams.kstream.internals.suppress;
         TimeDefinitionType type();
     }
 
-    public static class RecordTimeDefintion<K> : TimeDefinition<K> {
+    public static RecordTimeDefintion<K> : TimeDefinition<K> {
         private static  RecordTimeDefintion INSTANCE = new RecordTimeDefintion();
 
         private RecordTimeDefintion() {}
 
         
-        public static <K> RecordTimeDefintion<K> instance()
+        public static RecordTimeDefintion<K> instance()
 {
             return RecordTimeDefintion.INSTANCE;
         }
@@ -59,7 +59,7 @@ namespace Kafka.streams.kstream.internals.suppress;
         }
     }
 
-    public static class WindowEndTimeDefinition<K : Windowed> : TimeDefinition<K> {
+    public static WindowEndTimeDefinition<K : Windowed> : TimeDefinition<K> {
         private static  WindowEndTimeDefinition INSTANCE = new WindowEndTimeDefinition();
 
         private WindowEndTimeDefinition() {}

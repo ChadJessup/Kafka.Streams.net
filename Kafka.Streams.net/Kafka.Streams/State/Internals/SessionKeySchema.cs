@@ -27,7 +27,7 @@ using Kafka.Streams.kstream.internals.SessionWindow;
 
 
 
-public class SessionKeySchema : SegmentedBytesStore.KeySchema
+public SessionKeySchema : SegmentedBytesStore.KeySchema
 {
 
     private static int TIMESTAMP_SIZE = 8;
@@ -36,7 +36,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public override Bytes upperRangeFixedSize(Bytes key, long to)
 {
-        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(to, long.MAX_VALUE));
+        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(to, long.MaxValue));
         return SessionKeySchema.toBinary(sessionKey);
     }
 
@@ -50,7 +50,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 {
         byte[] maxSuffix = ByteBuffer.allocate(SUFFIX_SIZE)
             // the end timestamp can be as large as possible as long as it's larger than start time
-            .putLong(long.MAX_VALUE)
+            .putLong(long.MaxValue)
             // this is the start timestamp
             .putLong(to)
             .array();
@@ -92,10 +92,10 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                                         long from,
                                                         long to)
 {
-        return segments.segments(from, long.MAX_VALUE);
+        return segments.segments(from, long.MaxValue);
     }
 
-    private static <K> K extractKey(byte[] binaryKey,
+    private static K extractKey(byte[] binaryKey,
                                     Deserializer<K> deserializer,
                                     string topic)
 {
@@ -127,7 +127,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
         return new SessionWindow(start, end);
     }
 
-    public static <K> Windowed<K> from(byte[] binaryKey,
+    public static Windowed<K> from(byte[] binaryKey,
                                        Deserializer<K> keyDeserializer,
                                        string topic)
 {
@@ -143,7 +143,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
         return new Windowed<>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
     }
 
-    public static <K> Windowed<K> from(Windowed<Bytes> keyBytes,
+    public static Windowed<K> from(Windowed<Bytes> keyBytes,
                                        Deserializer<K> keyDeserializer,
                                        string topic)
 {
@@ -151,7 +151,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
         return new Windowed<>(key, keyBytes.window());
     }
 
-    public static <K> byte[] toBinary(Windowed<K> sessionKey,
+    public static byte[] toBinary(Windowed<K> sessionKey,
                                       Serializer<K> serializer,
                                       string topic)
 {

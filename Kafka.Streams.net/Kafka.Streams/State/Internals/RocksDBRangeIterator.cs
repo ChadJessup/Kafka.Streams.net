@@ -38,7 +38,7 @@ class RocksDBRangeIterator : RocksDbIterator
                          Bytes from,
                          Bytes to)
 {
-        super(storeName, iter, openIterators);
+        base(storeName, iter, openIterators);
         iter.seek(from());
         rawToKey = to[];
         if (rawToKey == null)
@@ -49,7 +49,7 @@ class RocksDBRangeIterator : RocksDbIterator
 
     public override KeyValue<Bytes, byte[]> makeNext()
 {
-        KeyValue<Bytes, byte[]> next = super.makeNext();
+        KeyValue<Bytes, byte[]> next = base.makeNext();
 
         if (next == null)
 {

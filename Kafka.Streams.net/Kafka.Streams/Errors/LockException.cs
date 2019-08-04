@@ -22,23 +22,23 @@ namespace Kafka.Streams.Errors {
  *
  * @see org.apache.kafka.streams.processor.IStateStore
  */
-public class LockException : StreamsException {
+public LockException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
     public LockException( string message)
 {
-        super(message);
+        base(message);
     }
 
     public LockException( string message,  Throwable throwable)
 {
-        super(message, throwable);
+        base(message, throwable);
     }
 
     public LockException( Throwable throwable)
 {
-        super(throwable);
+        base(throwable);
     }
 
 }

@@ -27,7 +27,7 @@ using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.serialization.ByteArraySerializer;
 
 
-public class DefaultKafkaClientSupplier : KafkaClientSupplier {
+public DefaultKafkaClientSupplier : KafkaClientSupplier {
     
     public Admin getAdminClient(Dictionary<string, object> config)
 {

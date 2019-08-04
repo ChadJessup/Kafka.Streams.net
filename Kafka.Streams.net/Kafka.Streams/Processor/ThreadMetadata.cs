@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processor;
 /**
  * Represents the state of a single thread running within a {@link KafkaStreams} application.
  */
-public class ThreadMetadata {
+public ThreadMetadata {
 
     private string threadName;
 

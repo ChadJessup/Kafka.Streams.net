@@ -26,7 +26,7 @@ using Kafka.Streams.State.QueryableStoreType;
 /**
  * Provides a wrapper over multiple underlying {@link StateStoreProvider}s
  */
-public class WrappingStoreProvider : StateStoreProvider
+public WrappingStoreProvider : StateStoreProvider
 {
 
     private List<StateStoreProvider> storeProviders;
@@ -41,10 +41,10 @@ public class WrappingStoreProvider : StateStoreProvider
      * by {@link QueryableStoreType#accepts(IStateStore)}
      * @param storeName  name of the store
      * @param type      The {@link QueryableStoreType}
-     * @param <T>       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
+     * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
      * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
      */
-    public <T> List<T> stores(string storeName,
+    public List<T> stores(string storeName,
                               QueryableStoreType<T> type)
 {
         List<T> allStores = new List<>();

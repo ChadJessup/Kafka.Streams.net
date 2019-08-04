@@ -22,7 +22,7 @@ namespace Kafka.common.utils;
 /**
  * A byte buffer backed input inputStream
  */
-public final class ByteBufferInputStream extends InputStream {
+public final ByteBufferInputStream extends InputStream {
     private final ByteBuffer buffer;
 
     public ByteBufferInputStream(ByteBuffer buffer)

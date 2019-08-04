@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -58,8 +58,8 @@ namespace Kafka.streams.kstream;
  *<p>
  * Records from the source topic that have null keys are dropped.
  *
- * @param <K> Type of primary keys
- * @param <V> Type of value changes
+ * @param Type of primary keys
+ * @param Type of value changes
  * @see KStream
  * @see KGroupedTable
  * @see GlobalKTable
@@ -150,7 +150,7 @@ public interface KTable<K, V> {
      * @see #filterNot(Predicate, Materialized)
      */
     KTable<K, V> filter( Predicate<K, V> predicate,
-                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -191,7 +191,7 @@ public interface KTable<K, V> {
      */
     KTable<K, V> filter( Predicate<K, V> predicate,
                          Named named,
-                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -274,7 +274,7 @@ public interface KTable<K, V> {
      * @see #filter(Predicate, Materialized)
      */
     KTable<K, V> filterNot( Predicate<K, V> predicate,
-                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -314,7 +314,7 @@ public interface KTable<K, V> {
      */
     KTable<K, V> filterNot( Predicate<K, V> predicate,
                             Named named,
-                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
+                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -327,7 +327,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").Length);
+     * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length);
      * }</pre>
      * <p>
      * This operation preserves data co-location with respect to the key.
@@ -341,10 +341,10 @@ public interface KTable<K, V> {
      * delete the corresponding record in the result {@code KTable}.
      *
      * @param mapper a {@link ValueMapper} that computes a new output value
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper);
+    KTable<K, VR> mapValues( ValueMapper<V, VR> mapper);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -357,7 +357,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.as("countTokenValue"));
+     * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.as("countTokenValue"));
      * }</pre>
      * <p>
      * This operation preserves data co-location with respect to the key.
@@ -372,10 +372,10 @@ public interface KTable<K, V> {
      *
      * @param mapper a {@link ValueMapper} that computes a new output value
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
+    KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                   Named named);
 
     /**
@@ -389,7 +389,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of value and key strings.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable =
+     * KTable<string, int> outputTable =
      *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length);
      * }</pre>
      * <p>
@@ -405,10 +405,10 @@ public interface KTable<K, V> {
      * delete the corresponding record in the result {@code KTable}.
      *
      * @param mapper a {@link ValueMapperWithKey} that computes a new output value
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper);
+    KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -421,7 +421,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of value and key strings.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable =
+     * KTable<string, int> outputTable =
      *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length, Named.as("countTokenValueAndKey"));
      * }</pre>
      * <p>
@@ -438,10 +438,10 @@ public interface KTable<K, V> {
      *
      * @param mapper a {@link ValueMapperWithKey} that computes a new output value
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
+    KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                   Named named);
 
     /**
@@ -457,8 +457,8 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapper<string, Integer> {
-     *     Integer apply(string value)
+     * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapper<string, int> {
+     *     int apply(string value)
 {
      *         return value.split(" ").Length;
      *     }
@@ -484,12 +484,12 @@ public interface KTable<K, V> {
      * @param mapper a {@link ValueMapper} that computes a new output value
      * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
      *                      should be materialized. Cannot be {@code null}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+    KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -504,8 +504,8 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapper<string, Integer> {
-     *     Integer apply(string value)
+     * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapper<string, int> {
+     *     int apply(string value)
 {
      *         return value.split(" ").Length;
      *     }
@@ -532,13 +532,13 @@ public interface KTable<K, V> {
      * @param named  a {@link Named} config used to name the processor in the topology
      * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
      *                      should be materialized. Cannot be {@code null}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
+    KTable<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                   Named named,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -553,8 +553,8 @@ public interface KTable<K, V> {
      * The example below counts the number of token of value and key strings.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value)
+     * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, int> {
+     *     int apply(string readOnlyKey, string value)
 {
      *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
@@ -581,12 +581,12 @@ public interface KTable<K, V> {
      * @param mapper a {@link ValueMapperWithKey} that computes a new output value
      * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
      *                      should be materialized. Cannot be {@code null}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+    KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -601,8 +601,8 @@ public interface KTable<K, V> {
      * The example below counts the number of token of value and key strings.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value)
+     * KTable<string, int> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, int> {
+     *     int apply(string readOnlyKey, string value)
 {
      *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
@@ -630,13 +630,13 @@ public interface KTable<K, V> {
      * @param named  a {@link Named} config used to name the processor in the topology
      * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
      *                      should be materialized. Cannot be {@code null}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the result {@code KTable}
      *
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
-    <VR> KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
+    KTable<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                   Named named,
-                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Convert this changelog stream to a {@link KStream}.
@@ -666,8 +666,8 @@ public interface KTable<K, V> {
      * For example, you can compute the new key as the length of the value string.
      * <pre>{@code
      * KTable<string, string> table = builder.table("topic");
-     * KTable<Integer, string> keyedStream = table.toStream(new KeyValueMapper<string, string, Integer> {
-     *     Integer apply(string key, string value)
+     * KTable<int, string> keyedStream = table.toStream(new KeyValueMapper<string, string, int> {
+     *     int apply(string key, string value)
 {
      *         return value.Length;
      *     }
@@ -683,10 +683,10 @@ public interface KTable<K, V> {
      * each record of this changelog stream is no longer treated as an updated record (cf. {@link KStream} vs {@code KTable}).
      *
      * @param mapper a {@link KeyValueMapper} that computes a new key for each record
-     * @param <KR> the new key type of the result stream
+     * @param the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper);
+    KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper);
 
     /**
      * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
@@ -694,8 +694,8 @@ public interface KTable<K, V> {
      * For example, you can compute the new key as the length of the value string.
      * <pre>{@code
      * KTable<string, string> table = builder.table("topic");
-     * KTable<Integer, string> keyedStream = table.toStream(new KeyValueMapper<string, string, Integer> {
-     *     Integer apply(string key, string value)
+     * KTable<int, string> keyedStream = table.toStream(new KeyValueMapper<string, string, int> {
+     *     int apply(string key, string value)
 {
      *         return value.Length;
      *     }
@@ -712,10 +712,10 @@ public interface KTable<K, V> {
      *
      * @param mapper a {@link KeyValueMapper} that computes a new key for each record
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <KR> the new key type of the result stream
+     * @param the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper,
+    KStream<KR, V> toStream( IKeyValueMapper<K, V, KR> mapper,
                                   Named named);
 
     /**
@@ -799,13 +799,13 @@ public interface KTable<K, V> {
      *                            At least one transformer instance will be created per streaming task.
      *                            Transformers do not need to be thread-safe.
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <VR>                the value type of the result table
+     * @param                the value type of the result table
      * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
-                                        string[] stateStoreNames];
+    KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+                                        string[] stateStoreNames);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -879,14 +879,14 @@ public interface KTable<K, V> {
      *                            Transformers do not need to be thread-safe.
      * @param named               a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <VR>                the value type of the result table
+     * @param                the value type of the result table
      * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+    KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Named named,
-                                        string[] stateStoreNames];
+                                        string[] stateStoreNames);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -964,14 +964,14 @@ public interface KTable<K, V> {
      *                            resulting table should be materialized.
      *                            Cannot be {@code null}
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <VR>                the value type of the result table
+     * @param                the value type of the result table
      * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+    KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
-                                        string[] stateStoreNames];
+                                        string[] stateStoreNames);
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -1050,15 +1050,15 @@ public interface KTable<K, V> {
      *                            Cannot be {@code null}
      * @param named               a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <VR>                the value type of the result table
+     * @param                the value type of the result table
      * @return a {@code KTable} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      */
-    <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+    KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                         Named named,
-                                        string[] stateStoreNames];
+                                        string[] stateStoreNames);
 
     /**
      * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper} and default serializers
@@ -1086,11 +1086,11 @@ public interface KTable<K, V> {
      * instead.
      *
      * @param selector a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
-     * @param <KR>     the key type of the result {@link KGroupedTable}
-     * @param <VR>     the value type of the result {@link KGroupedTable}
+     * @param     the key type of the result {@link KGroupedTable}
+     * @param     the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector);
+    KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector);
 
     /**
      * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
@@ -1116,14 +1116,14 @@ public interface KTable<K, V> {
      *
      * @param selector      a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
      * @param serialized    the {@link Serialized} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
-     * @param <KR>          the key type of the result {@link KGroupedTable}
-     * @param <VR>          the value type of the result {@link KGroupedTable}
+     * @param          the key type of the result {@link KGroupedTable}
+     * @param          the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      *
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KTable#groupBy(KeyValueMapper, Grouped)} instead
      */
-    @Deprecated
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
+    [System.Obsolete]
+    KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
                                             Serialized<KR, VR> serialized);
 
     /**
@@ -1152,11 +1152,11 @@ public interface KTable<K, V> {
      * @param selector      a {@link KeyValueMapper} that computes a new grouping key and value to be aggregated
      * @param grouped       the {@link Grouped} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
      *                      and the name for a repartition topic if repartitioning is required.
-     * @param <KR>          the key type of the result {@link KGroupedTable}
-     * @param <VR>          the value type of the result {@link KGroupedTable}
+     * @param          the key type of the result {@link KGroupedTable}
+     * @param          the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
+    KGroupedTable<KR, VR> groupBy( IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
                                             Grouped<KR, VR> grouped);
 
     /**
@@ -1224,14 +1224,14 @@ public interface KTable<K, V> {
      *
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner)
      * @see #outerJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
+    KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<V, VO, VR> joiner);
 
     /**
@@ -1300,14 +1300,14 @@ public interface KTable<K, V> {
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner)
      * @see #outerJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
+    KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<V, VO, VR> joiner,
                                  Named named);
 
@@ -1379,16 +1379,16 @@ public interface KTable<K, V> {
      * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner, Materialized)
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
-    <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
+    KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<V, VO, VR> joiner,
-                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1459,17 +1459,17 @@ public interface KTable<K, V> {
      * @param named         a {@link Named} config used to name the processor in the topology
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner, Materialized)
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
-    <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
+    KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<V, VO, VR> joiner,
                                  Named named,
-                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1542,15 +1542,15 @@ public interface KTable<K, V> {
      *
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * left {@code KTable}
      * @see #join(KTable, ValueJoiner)
      * @see #outerJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
+    KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<V, VO, VR> joiner);
 
     /**
@@ -1625,15 +1625,15 @@ public interface KTable<K, V> {
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * left {@code KTable}
      * @see #join(KTable, ValueJoiner)
      * @see #outerJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
+    KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<V, VO, VR> joiner,
                                      Named named);
 
@@ -1711,17 +1711,17 @@ public interface KTable<K, V> {
      * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * left {@code KTable}
      * @see #join(KTable, ValueJoiner, Materialized)
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
-    <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
+    KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<V, VO, VR> joiner,
-                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1798,18 +1798,18 @@ public interface KTable<K, V> {
      * @param named         a {@link Named} config used to name the processor in the topology
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * left {@code KTable}
      * @see #join(KTable, ValueJoiner, Materialized)
      * @see #outerJoin(KTable, ValueJoiner, Materialized)
      */
-    <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
+    KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<V, VO, VR> joiner,
                                      Named named,
-                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1881,15 +1881,15 @@ public interface KTable<K, V> {
      *
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KTable}s
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
+    KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<V, VO, VR> joiner);
 
 
@@ -1964,15 +1964,15 @@ public interface KTable<K, V> {
      * @param other  the other {@code KTable} to be joined with this {@code KTable}
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VO>   the value type of the other {@code KTable}
-     * @param <VR>   the value type of the result {@code KTable}
+     * @param   the value type of the other {@code KTable}
+     * @param   the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KTable}s
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
+    KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<V, VO, VR> joiner,
                                       Named named);
 
@@ -2049,17 +2049,17 @@ public interface KTable<K, V> {
      * @param joiner        a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KTable}s
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
+    KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<V, VO, VR> joiner,
-                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
 
     /**
@@ -2136,18 +2136,18 @@ public interface KTable<K, V> {
      * @param named         a {@link Named} config used to name the processor in the topology
      * @param materialized  an instance of {@link Materialized} used to describe how the state store should be materialized.
      *                      Cannot be {@code null}
-     * @param <VO>          the value type of the other {@code KTable}
-     * @param <VR>          the value type of the result {@code KTable}
+     * @param          the value type of the other {@code KTable}
+     * @param          the value type of the result {@code KTable}
      * @return a {@code KTable} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KTable}s
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(KTable, ValueJoiner)
      */
-    <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
+    KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<V, VO, VR> joiner,
                                       Named named,
-                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
+                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Get the name of the local state store used that can be used to query this {@code KTable}.

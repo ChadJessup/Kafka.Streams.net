@@ -5,14 +5,14 @@ using Kafka.Streams.State.Internals;
 namespace Kafka.Streams.KStream.Internals
 {
     /**
-     * This class is used to determine if a processor should forward values to child nodes.
-     * Forwarding by this class only occurs when caching is not enabled. If caching is enabled,
+     * This is used to determine if a processor should forward values to child nodes.
+     * Forwarding by this only occurs when caching is not enabled. If caching is enabled,
      * forwarding occurs in the flush listener when the cached store flushes.
      *
-     * @param <K> the type of the key
-     * @param <V> the type of the value
+     * @param the type of the key
+     * @param the type of the value
      */
-    public class TimestampedTupleForwarder<K, V>
+    public TimestampedTupleForwarder<K, V>
     {
         private IProcessorContext context;
         private bool sendOldValues;

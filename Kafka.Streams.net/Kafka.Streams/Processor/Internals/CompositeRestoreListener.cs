@@ -28,7 +28,7 @@ using Kafka.Common.TopicPartition;
 
 
 
-public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateRestoreListener {
+public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateRestoreListener {
 
     public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
     private RecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
@@ -117,7 +117,7 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
                                                     + "through the delegated StateRestoreCallback instance");
     }
 
-    private static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : RecordBatchingStateRestoreCallback {
+    private static NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : RecordBatchingStateRestoreCallback {
         
         public void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records)
 {

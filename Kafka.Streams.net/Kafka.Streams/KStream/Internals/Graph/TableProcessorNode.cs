@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -23,7 +23,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class TableProcessorNode<K, V> : StreamsGraphNode {
+public TableProcessorNode<K, V> : StreamsGraphNode {
 
     private  ProcessorParameters<K, V> processorParameters;
     private  StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
@@ -41,7 +41,7 @@ public class TableProcessorNode<K, V> : StreamsGraphNode {
                                StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
                                string[] storeNames)
 {
-        super(nodeName);
+        base(nodeName);
         this.processorParameters = processorParameters;
         this.storeBuilder = storeBuilder;
         this.storeNames = storeNames != null ? storeNames : new string[] {};
@@ -54,7 +54,7 @@ public class TableProcessorNode<K, V> : StreamsGraphNode {
             ", processorParameters=" + processorParameters +
             ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name()) +
             ", storeNames=" + Arrays.ToString(storeNames) +
-            "} " + super.ToString();
+            "} " + base.ToString();
     }
 
     

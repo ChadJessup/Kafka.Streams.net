@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -22,7 +22,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class ChangedSerializer<T> : Serializer<Change<T>> {
+public ChangedSerializer<T> : Serializer<Change<T>> {
 
     private static  int NEWFLAG_SIZE = 1;
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -33,7 +33,7 @@ namespace Kafka.streams.kstream.internals.graph;
  * Used to represent either a KTable source or a GlobalKTable source. A bool flag is used to indicate if this represents a GlobalKTable a {@link
  * org.apache.kafka.streams.kstream.GlobalKTable}
  */
-public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
+public TableSourceNode<K, V> : StreamSourceNode<K, V> {
 
     private  MaterializedInternal<K, V, ?> materializedInternal;
     private  ProcessorParameters<K, V> processorParameters;
@@ -50,7 +50,7 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
                              bool isGlobalKTable)
 {
 
-        super(nodeName,
+        base(nodeName,
               Collections.singletonList(topic),
               consumedInternal);
 
@@ -74,7 +74,7 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
                ", processorParameters=" + processorParameters +
                ", sourceName='" + sourceName + '\'' +
                ", isGlobalKTable=" + isGlobalKTable +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 
     public staticTableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
@@ -129,7 +129,7 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
 
     }
 
-    public static  class TableSourceNodeBuilder<K, V> {
+    public static  TableSourceNodeBuilder<K, V> {
 
         private string nodeName;
         private string sourceName;

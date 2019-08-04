@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -26,7 +26,7 @@ namespace Kafka.streams.kstream.internals.graph;
  * Used by the Join nodes as there are several parameters, this abstraction helps
  * keep the number of arguments more reasonable.
  */
-public class ProcessorParameters<K, V> {
+public ProcessorParameters<K, V> {
 
     private  ProcessorSupplier<K, V> processorSupplier;
     private  string processorName;
@@ -53,7 +53,7 @@ public class ProcessorParameters<K, V> {
     public string ToString()
 {
         return "ProcessorParameters{" +
-            "processor class=" + processorSupplier().getClass() +
+            "processor=" + processorSupplier().getClass() +
             ", processor name='" + processorName + '\'' +
             '}';
     }

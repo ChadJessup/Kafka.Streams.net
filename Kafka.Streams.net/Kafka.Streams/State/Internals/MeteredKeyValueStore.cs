@@ -40,12 +40,12 @@ using Kafka.Streams.State.StateSerdes;
 /**
  * A Metered {@link KeyValueStore} wrapper that is used for recording operation metrics, and hence its
  * inner KeyValueStore implementation do not need to provide its own metrics collecting functionality.
- * The inner {@link KeyValueStore} of this class is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
+ * The inner {@link KeyValueStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
  * to convert from &lt;K,V&gt; to &lt;Bytes,byte[]&gt;
  * @param <K>
  * @param <V>
  */
-public class MeteredKeyValueStore<K, V>
+public MeteredKeyValueStore<K, V>
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, K, V>
     : IKeyValueStore<K, V>
 {
@@ -73,7 +73,7 @@ public class MeteredKeyValueStore<K, V>
                          ISerde<K> keySerde,
                          ISerde<V> valueSerde)
 {
-        super(inner);
+        base(inner);
         this.metricScope = metricScope;
         this.time = time != null ? time : ITime.SYSTEM;
         this.keySerde = keySerde;
@@ -108,13 +108,13 @@ public class MeteredKeyValueStore<K, V>
             measureLatency(
                 () ->
 {
-                    super.init(context, root);
+                    base.init(context, root);
                     return null;
                 },
                 restoreTime);
         } else
 {
-            super.init(context, root);
+            base.init(context, root);
         }
     }
 
@@ -256,13 +256,13 @@ public class MeteredKeyValueStore<K, V>
             measureLatency(
                 () ->
 {
-                    super.flush();
+                    base.flush();
                     return null;
                 },
                 flushTime);
         } else
 {
-            super.flush();
+            base.flush();
         }
     }
 
@@ -273,7 +273,7 @@ public class MeteredKeyValueStore<K, V>
 
     public override void close()
 {
-        super.close();
+        base.close();
         metrics.removeAllStoreLevelSensors(taskName, name());
     }
 
@@ -315,7 +315,7 @@ public class MeteredKeyValueStore<K, V>
         return byteEntries;
     }
 
-    private class MeteredKeyValueIterator : KeyValueIterator<K, V>
+    private MeteredKeyValueIterator : KeyValueIterator<K, V>
 {
 
         private KeyValueIterator<Bytes, byte[]> iter;

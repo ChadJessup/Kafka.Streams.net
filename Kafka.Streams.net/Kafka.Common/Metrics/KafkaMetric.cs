@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 
 namespace Kakfa.Common.Metrics
 {
-    public class KafkaMetric : IMetric
+    public KafkaMetric : IMetric
     {
         private object @lock;
         private ITime time;
@@ -25,7 +25,7 @@ namespace Kakfa.Common.Metrics
             this.@lock = @lock;
             if (!(valueProvider is IMeasurable) && !(valueProvider is IGauge))
             {
-                throw new ArgumentException("Unsupported metric value provider of class " + valueProvider.GetType());
+                throw new System.ArgumentException("Unsupported metric value provider of " + valueProvider.GetType());
             }
 
             this.metricValueProvider = valueProvider;

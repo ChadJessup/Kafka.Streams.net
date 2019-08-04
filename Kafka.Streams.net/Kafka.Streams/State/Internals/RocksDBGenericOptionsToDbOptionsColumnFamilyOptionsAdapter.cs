@@ -50,18 +50,18 @@ namespace Kafka.Streams.State.Internals;
 
 
 /**
- * The generic {@link Options} class allows users to set all configs on one object if only default column family
+ * The generic {@link Options} allows users to set all configs on one object if only default column family
  * is used. Because we use multiple column families, we need to use {@link DBOptions} and {@link ColumnFamilyOptions}
  * that cover a part of all options each.
  *
- * This class do the translation between generic {@link Options} into {@link DBOptions} and {@link ColumnFamilyOptions}.
+ * This do the translation between generic {@link Options} into {@link DBOptions} and {@link ColumnFamilyOptions}.
  */
 class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
 {
     private DBOptions dbOptions;
     private ColumnFamilyOptions columnFamilyOptions;
 
-    private static org.slf4j.Logger LOG = LoggerFactory.getLogger(RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter.class);
+    private static org.slf4j.ILogger LOG= new LoggerFactory().CreateLogger<RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter);
 
     RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(DBOptions dbOptions,
                                                                ColumnFamilyOptions columnFamilyOptions)
@@ -186,7 +186,7 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return this;
     }
 
-    public override Options setComparator(AbstractComparator<? : AbstractSlice<?>> comparator)
+    public override Options setComparator(AbstractComparator<AbstractSlice<?>> comparator)
 {
         columnFamilyOptions.setComparator(comparator);
         return this;
@@ -1375,13 +1375,13 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return dbOptions.writeBufferManager();
     }
 
-    public Options setCompactionFilter(AbstractCompactionFilter<? : AbstractSlice<?>> compactionFilter)
+    public Options setCompactionFilter(AbstractCompactionFilter<AbstractSlice<?>> compactionFilter)
 {
         columnFamilyOptions.setCompactionFilter(compactionFilter);
         return this;
     }
 
-    public Options setCompactionFilterFactory(AbstractCompactionFilterFactory<? : AbstractCompactionFilter<?>> compactionFilterFactory)
+    public Options setCompactionFilterFactory(AbstractCompactionFilterFactory<AbstractCompactionFilter<?>> compactionFilterFactory)
 {
         columnFamilyOptions.setCompactionFilterFactory(compactionFilterFactory);
         return this;

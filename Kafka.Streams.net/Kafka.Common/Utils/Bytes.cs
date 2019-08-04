@@ -6,7 +6,7 @@ using System.Text;
 namespace Kafka.Common.Utils
 {
     /**
-    * Utility class that handles immutable byte arrays.
+    * Utility that handles immutable byte arrays.
     */
 
     //TODO: chad - 8/3/2019 - ReadOnlySpan should work here.
@@ -101,7 +101,7 @@ namespace Kafka.Common.Utils
 
             if (other is Bytes)
             {
-                return Enumerable.SequenceEqual(this.bytes, (Bytes)other);
+                return Enumerable.SequenceEqual(this.bytes, ((Bytes)other).bytes);
             }
 
             return false;
@@ -109,7 +109,7 @@ namespace Kafka.Common.Utils
 
         public int CompareTo(Bytes that)
         {
-            return BYTES_LEXICO_COMPARATOR.Compare(this.bytes, that.bytes);
+            return 0; //BYTES_LEXICO_COMPARATOR.Compare(this.bytes, that.bytes);
         }
 
 
@@ -158,12 +158,13 @@ namespace Kafka.Common.Utils
                     result.Append(HEX_CHARS_UPPER[ch % 0x10]);
                 }
             }
+
             return result.ToString();
         }
 
         /**
          * A byte array comparator based on lexicographic ordering.
          */
-        public static IByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
+        //public static IByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
     }
 }

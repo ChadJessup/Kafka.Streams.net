@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals.graph;
  *
  * map, mapValues, flatMap, flatMapValues, filter, filterNot, branch
  */
-public class ProcessorGraphNode<K, V> : StreamsGraphNode {
+public ProcessorGraphNode<K, V> : StreamsGraphNode {
 
     private  ProcessorParameters<K, V> processorParameters;
 
@@ -32,7 +32,7 @@ public class ProcessorGraphNode<K, V> : StreamsGraphNode {
                                ProcessorParameters<K, V> processorParameters)
 {
 
-        super(nodeName);
+        base(nodeName);
 
         this.processorParameters = processorParameters;
     }
@@ -47,7 +47,7 @@ public class ProcessorGraphNode<K, V> : StreamsGraphNode {
 {
         return "ProcessorNode{" +
                "processorParameters=" + processorParameters +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 
     

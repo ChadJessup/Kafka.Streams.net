@@ -6,7 +6,7 @@ namespace Kafka.Common.Metrics.Stats
      *
      * See also {@link CumulativeCount} if you just want to increment the value by 1 on each recording.
      */
-    public class CumulativeSum : IMeasurableStat
+    public CumulativeSum : IMeasurableStat
     {
         private double total;
 

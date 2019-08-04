@@ -27,7 +27,7 @@ using Kafka.Streams.State.TimestampedWindowStore;
 
 
 
-public class GlobalStateStoreProvider : StateStoreProvider
+public GlobalStateStoreProvider : StateStoreProvider
 {
     private Dictionary<string, IStateStore> globalStateStores;
 
@@ -37,7 +37,7 @@ public class GlobalStateStoreProvider : StateStoreProvider
     }
 
     
-    public override <T> List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
+    public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
 {
         IStateStore store = globalStateStores[storeName];
         if (store == null || !queryableStoreType.accepts(store))
@@ -50,10 +50,10 @@ public class GlobalStateStoreProvider : StateStoreProvider
         }
         if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
 {
-            return (List<T>) Collections.singletonList(new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<Object, object>) store));
+            return (List<T>) Collections.singletonList(new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>) store));
         } else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
 {
-            return (List<T>) Collections.singletonList(new ReadOnlyWindowStoreFacade((TimestampedWindowStore<Object, object>) store));
+            return (List<T>) Collections.singletonList(new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>) store));
         }
         return (List<T>) Collections.singletonList(store);
     }

@@ -22,12 +22,12 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public class ChangeLoggingTimestampedKeyValueBytesStore : ChangeLoggingKeyValueBytesStore
+public ChangeLoggingTimestampedKeyValueBytesStore : ChangeLoggingKeyValueBytesStore
 {
 
     ChangeLoggingTimestampedKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
 {
-        super(inner);
+        base(inner);
     }
 
     

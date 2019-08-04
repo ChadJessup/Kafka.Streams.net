@@ -39,9 +39,9 @@ namespace Kafka.Common.Utils.Interfaces
 
         /**
          * Wait for a condition using the monitor of a given object. This avoids the implicit
-         * dependence on system time when calling {@link Object#wait()}.
+         * dependence on system time when calling {@link object#wait()}.
          *
-         * @param obj The object that will be waited with {@link Object#wait()}. Note that it is the responsibility
+         * @param obj The object that will be waited with {@link object#wait()}. Note that it is the responsibility
          *      of the caller to call notify on this object when the condition is satisfied.
          * @param condition The condition we are awaiting
          * @param timeoutMs How long to wait in milliseconds

@@ -63,9 +63,9 @@ using Kafka.Common.Utils.Time;
 /**
  * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
  */
-public class StreamTask : AbstractTask : ProcessorNodePunctuator {
+public StreamTask : AbstractTask : ProcessorNodePunctuator {
 
-    private static ConsumerRecord<Object, object> DUMMY_RECORD = new ConsumerRecord<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
+    private static ConsumerRecord<object, object> DUMMY_RECORD = new ConsumerRecord<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
     private ITime time;
     private long maxTaskIdleMs;
@@ -85,7 +85,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
     private bool commitRequested = false;
     private bool transactionInFlight = false;
 
-    protected static class TaskMetrics {
+    protected static TaskMetrics {
         StreamsMetricsImpl metrics;
         Sensor taskCommitTimeSensor;
         Sensor taskEnforcedProcessSensor;
@@ -171,7 +171,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
                       ProducerSupplier producerSupplier,
                       RecordCollector recordCollector)
 {
-        super(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config);
+        base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config);
 
         this.time = time;
         this.producerSupplier = producerSupplier;
@@ -495,8 +495,8 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
         Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
         foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
-            TopicPartition partition = entry.getKey();
-            long offset = entry.getValue() + 1;
+            TopicPartition partition = entry.Key;
+            long offset = entry.Value + 1;
             consumedOffsetsAndMetadata.Add(partition, new OffsetAndMetadata(offset));
             stateMgr.putOffsetLimit(partition, offset);
         }
@@ -531,7 +531,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
         Dictionary<TopicPartition, long> checkpointableOffsets = recordCollector.offsets();
         foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
-            checkpointableOffsets.putIfAbsent(entry.getKey(), entry.getValue());
+            checkpointableOffsets.putIfAbsent(entry.Key, entry.Value);
         }
 
         return checkpointableOffsets;
@@ -541,7 +541,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
     protected void flushState()
 {
         log.trace("Flushing state and producer");
-        super.flushState();
+        base.flushState();
         try {
             recordCollector.flush();
         } catch (ProducerFencedException fatal)
@@ -555,10 +555,10 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
         Dictionary<TopicPartition, long> purgableConsumedOffsets = new HashMap<>();
         foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
 {
-            TopicPartition tp = entry.getKey();
+            TopicPartition tp = entry.Key;
             if (topology.isRepartitionTopic(tp.topic()))
 {
-                purgableConsumedOffsets.Add(tp, entry.getValue() + 1);
+                purgableConsumedOffsets.Add(tp, entry.Value + 1);
             }
         }
 
@@ -831,7 +831,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
                 // align punctuation to now, punctuate after interval has elapsed
                 return schedule(time.milliseconds() + interval, interval, type, punctuator);
             default:
-                throw new ArgumentException("Unrecognized PunctuationType: " + type);
+                throw new System.ArgumentException("Unrecognized PunctuationType: " + type);
         }
     }
 
@@ -862,7 +862,7 @@ public class StreamTask : AbstractTask : ProcessorNodePunctuator {
                 // WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
                 return systemTimePunctuationQueue.schedule(schedule);
             default:
-                throw new ArgumentException("Unrecognized PunctuationType: " + type);
+                throw new System.ArgumentException("Unrecognized PunctuationType: " + type);
         }
     }
 

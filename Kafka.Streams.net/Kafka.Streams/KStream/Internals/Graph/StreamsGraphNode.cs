@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public abstract class StreamsGraphNode {
+public abstract StreamsGraphNode {
 
     private  Collection<StreamsGraphNode> childNodes = new HashSet<>();
     private  Collection<StreamsGraphNode> parentNodes = new HashSet<>();
@@ -32,7 +32,7 @@ public abstract class StreamsGraphNode {
     private bool keyChangingOperation;
     private bool valueChangingOperation;
     private bool mergeNode;
-    private Integer buildPriority;
+    private int buildPriority;
     private bool hasWrittenToTopology = false;
 
     public StreamsGraphNode( string nodeName)
@@ -133,7 +133,7 @@ public abstract class StreamsGraphNode {
         this.buildPriority = buildPriority;
     }
 
-    public Integer buildPriority()
+    public int buildPriority()
 {
         return this.buildPriority;
     }

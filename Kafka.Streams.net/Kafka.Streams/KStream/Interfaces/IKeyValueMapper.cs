@@ -8,13 +8,13 @@ namespace Kafka.Streams.KStream
      *     (for this case output type {@code VR == }{@link KeyValue KeyValue&lt;NewKeyType,NewValueType&gt;})</li>
      * <li>map from an input record to a new key (with arbitrary key type as specified by {@code VR})</li>
      * </ul>
-     * This is a stateless record-by-record operation, i.e, {@link #apply(Object, Object)} is invoked individually for each
+     * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
      * record of a stream (cf. {@link Transformer} for stateful record transformation).
      * {@code KeyValueMapper} is a generalization of {@link ValueMapper}.
      *
-     * @param <K>  key type
-     * @param <V>  value type
-     * @param <VR> mapped value type
+     * @param  key type
+     * @param  value type
+     * @param mapped value type
      * @see ValueMapper
      * @see Transformer
      * @see KStream#map(KeyValueMapper)

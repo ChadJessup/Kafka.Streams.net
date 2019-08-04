@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn> {
+public KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn> {
 
     private  TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
 
@@ -39,7 +39,7 @@ public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn,
         return new KStreamFlatTransformProcessor<>(transformerSupplier());
     }
 
-    public static class KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
+    public static KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
 
         private  Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
 
@@ -51,7 +51,7 @@ public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn,
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             transformer.init(context);
         }
 

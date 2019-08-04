@@ -35,7 +35,7 @@ class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIter
                                           KeyValueIterator<Windowed<Bytes>, byte[]> storeIterator,
                                           SegmentedCacheFunction cacheFunction)
 {
-        super(cacheIterator, storeIterator);
+        base(cacheIterator, storeIterator);
         this.cacheFunction = cacheFunction;
     }
 

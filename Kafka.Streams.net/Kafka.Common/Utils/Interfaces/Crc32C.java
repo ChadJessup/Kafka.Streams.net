@@ -24,15 +24,15 @@ namespace Kafka.common.utils;
 
 
 /**
- * A class that can be used to compute the CRC32C (Castagnoli) of a ByteBuffer or array of bytes.
+ * A that can be used to compute the CRC32C (Castagnoli) of a ByteBuffer or array of bytes.
  *
  * We use java.util.zip.CRC32C (introduced in Java 9) if it is available and fallback to PureJavaCrc32C, otherwise.
  * java.util.zip.CRC32C is significantly faster on reasonably modern CPUs as it uses the CRC32 instruction introduced
  * in SSE4.2.
  *
- * NOTE: This class is intended for INTERNAL usage only within Kafka.
+ * NOTE: This is intended for INTERNAL usage only within Kafka.
  */
-public final class Crc32C {
+public final Crc32C {
 
     private static final ChecksumFactory CHECKSUM_FACTORY;
 
@@ -57,7 +57,7 @@ public final class Crc32C {
 {
         Checksum crc = create();
         crc.update(bytes, offset, size);
-        return crc.getValue();
+        return crc.Value;
     }
 
     /**
@@ -72,7 +72,7 @@ public final class Crc32C {
 {
         Checksum crc = create();
         Checksums.update(crc, buffer, offset, size);
-        return crc.getValue();
+        return crc.Value;
     }
 
     public static Checksum create()
@@ -84,13 +84,13 @@ public final class Crc32C {
         Checksum create();
     }
 
-    private static class Java9ChecksumFactory : ChecksumFactory {
+    private static Java9ChecksumFactory : ChecksumFactory {
         private static final MethodHandle CONSTRUCTOR;
 
         static {
             try {
                 Class<?> cls = Class.forName("java.util.zip.CRC32C");
-                CONSTRUCTOR = MethodHandles.publicLookup().findConstructor(cls, MethodType.methodType(void.class));
+                CONSTRUCTOR = MethodHandles.publicLookup().findConstructor(cls, MethodType.methodType(void));
             } catch (ReflectiveOperationException e)
 {
                 // Should never happen
@@ -111,7 +111,7 @@ public final class Crc32C {
         }
     }
 
-    private static class PureJavaChecksumFactory : ChecksumFactory {
+    private static PureJavaChecksumFactory : ChecksumFactory {
         
         public Checksum create()
 {

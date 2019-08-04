@@ -37,8 +37,8 @@ public interface StateStoreProvider
      *
      * @param storeName             name of the store
      * @param queryableStoreType    filter stores based on this queryableStoreType
-     * @param <T>                   The type of the Store
+     * @param                   The type of the Store
      * @return  List of the instances of the store in this topology. Empty List if not found
      */
-    <T> List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType);
+    List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType);
 }

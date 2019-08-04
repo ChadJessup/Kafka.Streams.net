@@ -37,7 +37,7 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
 {
         if (!store.persistent())
 {
-            throw new ArgumentException("Provided store must be a persistent store, but it is not.");
+            throw new System.ArgumentException("Provided store must be a persistent store, but it is not.");
         }
         this.store = store;
     }
@@ -146,14 +146,14 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
     }
 
 
-    private static class WindowToTimestampedWindowIteratorAdapter
+    private static WindowToTimestampedWindowIteratorAdapter
         : KeyValueToTimestampedKeyValueIteratorAdapter<long>
         : WindowStoreIterator<byte[]>
 {
 
         WindowToTimestampedWindowIteratorAdapter(KeyValueIterator<long, byte[]> innerIterator)
 {
-            super(innerIterator);
+            base(innerIterator);
         }
     }
 

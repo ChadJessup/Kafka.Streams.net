@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.Processor.Internals.assignment;
 
 
@@ -28,9 +30,9 @@ namespace Kafka.Streams.Processor.Internals.assignment;
 
 
 
-public class SubscriptionInfo {
+public SubscriptionInfo {
 
-    private static Logger log = LoggerFactory.getLogger(SubscriptionInfo.class);
+    private static ILogger log = new LoggerFactory().CreateLogger<SubscriptionInfo>();
 
     public static int LATEST_SUPPORTED_VERSION = 4;
     static int UNKNOWN = -1;
@@ -68,7 +70,7 @@ public class SubscriptionInfo {
 
         if (version < 1 || version > LATEST_SUPPORTED_VERSION)
 {
-            throw new ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
+            throw new System.ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
                 + "; was: " + version);
         }
     }
@@ -191,7 +193,7 @@ public class SubscriptionInfo {
 {
             return new byte[0];
         } else {
-            return userEndPoint.getBytes(StandardCharsets.UTF_8);
+            return userEndPoint.getBytes(System.Text.Encoding.UTF8);
         }
     }
 
@@ -355,7 +357,7 @@ public class SubscriptionInfo {
 {
             byte[] bytes = new byte[bytesLength];
             data[bytes];
-            subscriptionInfo.userEndPoint = new string(bytes, StandardCharsets.UTF_8);
+            subscriptionInfo.userEndPoint = new string(bytes, System.Text.Encoding.UTF8);
         }
     }
 
@@ -367,7 +369,7 @@ public class SubscriptionInfo {
         decodeUserEndPoint(subscriptionInfo, data);
     }
 
-    
+
     public int GetHashCode()
 {
         int GetHashCode() = usedVersion ^ latestSupportedVersion ^ processId.GetHashCode() ^ prevTasks.GetHashCode() ^ standbyTasks.GetHashCode();
@@ -378,7 +380,7 @@ public class SubscriptionInfo {
         return GetHashCode() ^ userEndPoint.GetHashCode();
     }
 
-    
+
     public bool Equals(object o)
 {
         if (o is SubscriptionInfo)
@@ -395,7 +397,7 @@ public class SubscriptionInfo {
         }
     }
 
-    
+
     public string ToString()
 {
         return "[version=" + usedVersion

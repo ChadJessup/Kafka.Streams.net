@@ -25,7 +25,7 @@ using Kafka.Streams.KeyValue;
  *
  * @param <V>
  */
-public class ValueAndTimestamp<V>
+public ValueAndTimestamp<V>
 {
     private V value;
     private long timestamp;
@@ -43,11 +43,11 @@ public class ValueAndTimestamp<V>
      *
      * @param value      the value
      * @param timestamp  the timestamp
-     * @param <V> the type of the value
+     * @param the type of the value
      * @return a new {@link ValueAndTimestamp} instance if the provide {@code value} is not {@code null};
      *         otherwise {@code null} is returned
      */
-    public static <V> ValueAndTimestamp<V> make(V value,
+    public static ValueAndTimestamp<V> make(V value,
                                                 long timestamp)
 {
         return value == null ? null : new ValueAndTimestamp<>(value, timestamp);
@@ -58,10 +58,10 @@ public class ValueAndTimestamp<V>
      * if the parameter is not {@code null}.
      *
      * @param valueAndTimestamp a {@link ValueAndTimestamp} instance; can be {@code null}
-     * @param <V> the type of the value
+     * @param the type of the value
      * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
      */
-    public static <V> V getValueOrNull(ValueAndTimestamp<V> valueAndTimestamp)
+    public static V getValueOrNull(ValueAndTimestamp<V> valueAndTimestamp)
 {
         return valueAndTimestamp == null ? null : valueAndTimestamp.value();
     }

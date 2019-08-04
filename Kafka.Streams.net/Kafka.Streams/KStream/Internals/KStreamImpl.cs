@@ -1,77 +1,15 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Kafka.streams.kstream;
 using Kafka.streams.kstream.internals;
-using Kafka.streams.kstream.internals.graph;
 using Kafka.streams.state;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processor;
-using static Kafka.streams.kstream.internals.graph.OptimizableRepartitionNode<K, V>;
+using System.Collections.Generic;
 
-namespace Kafka.streams.kstream.internals;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
+namespace Kafka.Streams.KStream.Internals
+{
+    public KStreamImpl<K, V> : AbstractStream<K, V>, KStream<K, V>
+{
 
     static  string SOURCE_NAME = "KSTREAM-SOURCE-";
 
@@ -133,7 +71,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                  StreamsGraphNode streamsGraphNode,
                  InternalStreamsBuilder builder)
 {
-        super(name, keySerde, valueSerde, sourceNodes, streamsGraphNode, builder);
+        base(name, keySerde, valueSerde, sourceNodes, streamsGraphNode, builder);
         this.repartitionRequired = repartitionRequired;
     }
 
@@ -146,8 +84,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, V> filter( Predicate<K, V> predicate,  Named named)
 {
-        Objects.requireNonNull(predicate, "predicate can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FILTER_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamFilter<>(predicate, false), name);
          ProcessorGraphNode<K, V> filterProcessorNode = new ProcessorGraphNode<>(name, processorParameters);
@@ -172,8 +110,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, V> filterNot( Predicate<K, V> predicate,  Named named)
 {
-        Objects.requireNonNull(predicate, "predicate can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FILTER_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamFilter<>(predicate, true), name);
          ProcessorGraphNode<K, V> filterNotProcessorNode = new ProcessorGraphNode<>(name, processorParameters);
@@ -191,16 +129,16 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     }
 
 
-    public <KR> KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper)
+    public KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper)
 {
         return selectKey(mapper, NamedInternal.empty());
     }
 
 
-    public <KR> KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper,  Named named)
+    public KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper,  Named named)
 {
-        Objects.requireNonNull(mapper, "mapper can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
 
          ProcessorGraphNode<K, V> selectKeyProcessorNode = internalSelectKey(mapper, new NamedInternal(named));
 
@@ -211,7 +149,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
         return new KStreamImpl<>(selectKeyProcessorNode.nodeName(), null, valSerde, sourceNodes, true, selectKeyProcessorNode, builder);
     }
 
-    private <KR> ProcessorGraphNode<K, V> internalSelectKey( IKeyValueMapper<K, V, KR> mapper,
+    private ProcessorGraphNode<K, V> internalSelectKey( IKeyValueMapper<K, V, KR> mapper,
                                                              NamedInternal named)
 {
          string name = named.orElseGenerateWithPrefix(builder, KEY_SELECT_NAME);
@@ -223,16 +161,16 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     }
 
 
-    public  KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<? : KR, VR>> mapper)
+    public  KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper)
 {
         return map(mapper, NamedInternal.empty());
     }
 
 
-    public  KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<? : KR, VR>> mapper,  Named named)
+    public  KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper,  Named named)
 {
-        Objects.requireNonNull(mapper, "mapper can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, MAP_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamMap<>(mapper), name);
 
@@ -273,8 +211,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,  Named named)
 {
-        Objects.requireNonNull(mapper, "mapper can't be null");
-        Objects.requireNonNull(mapper, "named can't be null");
+        mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
+        mapper = mapper ?? throw new System.ArgumentNullException("named can't be null", nameof(mapper));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, MAPVALUES_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamMapValues<>(mapper), name);
          ProcessorGraphNode<K, V> mapValuesProcessorNode = new ProcessorGraphNode<>(name, processorParameters);
@@ -296,7 +234,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public void print( Printed<K, V> printed)
 {
-        Objects.requireNonNull(printed, "printed can't be null");
+        printed = printed ?? throw new System.ArgumentNullException("printed can't be null", nameof(printed));
          PrintedInternal<K, V> printedInternal = new PrintedInternal<>(printed);
          string name = new NamedInternal(printedInternal.name()).orElseGenerateWithPrefix(builder, PRINTING_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(printedInternal.build(this.name), name);
@@ -306,17 +244,17 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     }
 
 
-    public  KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<? : KeyValue<? : KR, VR>>> mapper)
+    public  KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper)
 {
         return flatMap(mapper, NamedInternal.empty());
     }
 
 
-    public  KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<? : KeyValue<? : KR, VR>>> mapper,
+    public  KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper,
                                              Named named)
 {
-        Objects.requireNonNull(mapper, "mapper can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FLATMAP_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamFlatMap<>(mapper), name);
          ProcessorGraphNode<K, V> flatMapNode = new ProcessorGraphNode<>(name, processorParameters);
@@ -329,30 +267,30 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     }
 
 
-    public KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<? : VR>> mapper)
+    public KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper)
 {
         return flatMapValues(withKey(mapper));
     }
 
 
-    public KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<? : VR>> mapper,
+    public KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper,
                                               Named named)
 {
         return flatMapValues(withKey(mapper), named);
     }
 
 
-    public KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<? : VR>> mapper)
+    public KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper)
 {
         return flatMapValues(mapper, NamedInternal.empty());
     }
 
 
-    public KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<? : VR>> mapper,
+    public KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper,
                                               Named named)
 {
-        Objects.requireNonNull(mapper, "mapper can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FLATMAPVALUES_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamFlatMapValues<>(mapper), name);
          ProcessorGraphNode<K, V> flatMapValuesNode = new ProcessorGraphNode<>(name, processorParameters);
@@ -375,7 +313,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, V>[] branch( Named name,  Predicate<K, V>[] predicates)
 {
-        Objects.requireNonNull(name, "name can't be null");
+        name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
         return doBranch(new NamedInternal(name), predicates);
     }
 
@@ -385,11 +323,11 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 {
         if (predicates.Length == 0)
 {
-            throw new ArgumentException("you must provide at least one predicate");
+            throw new System.ArgumentException("you must provide at least one predicate");
         }
         foreach ( Predicate<K, V> predicate in predicates)
 {
-            Objects.requireNonNull(predicate, "predicates can't have null values");
+            predicate = predicate ?? throw new System.ArgumentNullException("predicates can't have null values", nameof(predicate));
         }
 
          string branchName = named.orElseGenerateWithPrefix(builder, BRANCH_NAME);
@@ -404,7 +342,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
          ProcessorGraphNode<K, V> branchNode = new ProcessorGraphNode<>(branchName, processorParameters);
         builder.AddGraphNode(this.streamsGraphNode, branchNode);
 
-         KStream<K, V>[] branchChildren = (KStream<K, V>[]) Array.newInstance(KStream.class, predicates.Length);
+         KStream<K, V>[] branchChildren = (KStream<K, V>[]) Array.newInstance(KStream, predicates.Length);
 
         for (int i = 0; i < predicates.Length; i++)
 {
@@ -463,7 +401,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public void foreach( ForeachAction<K, V> action,  Named named)
 {
-        Objects.requireNonNull(action, "action can't be null");
+        action = action ?? throw new System.ArgumentNullException("action can't be null", nameof(action));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FOREACH_NAME);
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(
                 new KStreamPeek<>(action, false),
@@ -483,8 +421,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, V> peek( ForeachAction<K, V> action,  Named named)
 {
-        Objects.requireNonNull(action, "action can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        action = action ?? throw new System.ArgumentNullException("action can't be null", nameof(action));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, PEEK_NAME);
 
          ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(
@@ -508,8 +446,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public KStream<K, V> through( string topic,  Produced<K, V> produced)
 {
-        Objects.requireNonNull(topic, "topic can't be null");
-        Objects.requireNonNull(produced, "Produced can't be null");
+        topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
+        produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
          ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
         if (producedInternal.keySerde() == null)
 {
@@ -540,8 +478,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public void to( string topic,  Produced<K, V> produced)
 {
-        Objects.requireNonNull(topic, "topic can't be null");
-        Objects.requireNonNull(produced, "Produced can't be null");
+        topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
+        produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
          ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
         if (producedInternal.keySerde() == null)
 {
@@ -563,8 +501,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
 
     public void to( TopicNameExtractor<K, V> topicExtractor,  Produced<K, V> produced)
 {
-        Objects.requireNonNull(topicExtractor, "topic extractor can't be null");
-        Objects.requireNonNull(produced, "Produced can't be null");
+        topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor can't be null", nameof(topicExtractor));
+        produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
          ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
         if (producedInternal.keySerde() == null)
 {
@@ -593,7 +531,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public  KStream<KR, VR> transform( TransformerSupplier<K, V, KeyValue<KR, VR>> transformerSupplier,
                                                string[] stateStoreNames)
 {
-        Objects.requireNonNull(transformerSupplier, "transformerSupplier can't be null");
+        transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
          string name = builder.newProcessorName(TRANSFORM_NAME);
         return flatTransform(new TransformerSupplierAdapter<>(transformerSupplier), Named.as(name), stateStoreNames);
     }
@@ -603,7 +541,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                Named named,
                                                string[] stateStoreNames)
 {
-        Objects.requireNonNull(transformerSupplier, "transformerSupplier can't be null");
+        transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
         return flatTransform(new TransformerSupplierAdapter<>(transformerSupplier), named, stateStoreNames);
     }
 
@@ -611,7 +549,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
                                                    string[] stateStoreNames)
 {
-        Objects.requireNonNull(transformerSupplier, "transformerSupplier can't be null");
+        transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
          string name = builder.newProcessorName(TRANSFORM_NAME);
         return flatTransform(transformerSupplier, Named.as(name), stateStoreNames);
     }
@@ -621,8 +559,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                    Named named,
                                                    string[] stateStoreNames)
 {
-        Objects.requireNonNull(transformerSupplier, "transformerSupplier can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
 
          string name = new NamedInternal(named).name();
          StatefulProcessorNode<K, V> transformNode = new StatefulProcessorNode<>(
@@ -642,7 +580,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public KStream<K, VR> transformValues( ValueTransformerSupplier<V, VR> valueTransformerSupplier,
                                                 string[] stateStoreNames)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
         return doTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), NamedInternal.empty(), stateStoreNames);
     }
 
@@ -651,8 +589,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                 Named named,
                                                 string[] stateStoreNames)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformSupplier can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformSupplier can't be null", nameof(valueTransformerSupplier));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
         return doTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier),
                 new NamedInternal(named), stateStoreNames);
     }
@@ -661,7 +599,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                 string[] stateStoreNames)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
         return doTransformValues(valueTransformerSupplier, NamedInternal.empty(), stateStoreNames);
     }
 
@@ -670,8 +608,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                 Named named,
                                                 string[] stateStoreNames)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformSupplier can't be null");
-        Objects.requireNonNull(named, "named can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformSupplier can't be null", nameof(valueTransformerSupplier));
+        named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
         return doTransformValues(valueTransformerSupplier, new NamedInternal(named), stateStoreNames);
     }
 
@@ -698,7 +636,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
                                                     string[] stateStoreNames)
 {
-        //Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        //valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
 
         return doFlatTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), NamedInternal.empty(), stateStoreNames);
     }
@@ -708,7 +646,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                     Named named,
                                                     string[] stateStoreNames)
 {
-        //Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        //valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
 
         return doFlatTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), named, stateStoreNames);
     }
@@ -717,7 +655,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
                                                     string[] stateStoreNames)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
 
         return doFlatTransformValues(valueTransformerSupplier, NamedInternal.empty(), stateStoreNames);
     }
@@ -727,7 +665,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                                     Named named,
                                                     string[] stateStoreNames)
 {
-        //Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        //valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
 
         return doFlatTransformValues(valueTransformerSupplier, named, stateStoreNames);
     }
@@ -755,7 +693,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
     public void process( ProcessorSupplier<K, V> processorSupplier,
                          string[] stateStoreNames)
 {
-        //Objects.requireNonNull(processorSupplier, "ProcessSupplier cant' be null");
+        //processorSupplier = processorSupplier ?? throw new System.ArgumentNullException("ProcessSupplier cant' be null", nameof(processorSupplier));
          string name = builder.newProcessorName(PROCESSOR_NAME);
         process(processorSupplier, Named.as(name), stateStoreNames);
     }
@@ -765,8 +703,8 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                          Named named,
                          string[] stateStoreNames)
 {
-        //Objects.requireNonNull(processorSupplier, "ProcessSupplier cant' be null");
-        //Objects.requireNonNull(named, "named cant' be null");
+        //processorSupplier = processorSupplier ?? throw new System.ArgumentNullException("ProcessSupplier cant' be null", nameof(processorSupplier));
+        //named = named ?? throw new System.ArgumentNullException("named cant' be null", nameof(named));
 
          string name = new NamedInternal(named).name();
          StatefulProcessorNode<K, V> processNode = new StatefulProcessorNode<>(
@@ -824,10 +762,10 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
                                             Joined<K, V, VO> joined,
                                             KStreamImplJoin join)
 {
-        //Objects.requireNonNull(other, "other KStream can't be null");
-        //Objects.requireNonNull(joiner, "joiner can't be null");
-        //Objects.requireNonNull(windows, "windows can't be null");
-        //Objects.requireNonNull(joined, "joined can't be null");
+        //other = other ?? throw new System.ArgumentNullException("other KStream can't be null", nameof(other));
+        //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+        //windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
+        //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
 
         KStreamImpl<K, V> joinThis = this;
         KStreamImpl<K, VO> joinOther = (KStreamImpl<K, VO>) other;
@@ -932,7 +870,7 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
         JoinWindows windows,
         Joined<K, V, VO> joined)
 {
-        //Objects.requireNonNull(joined, "joined can't be null");
+        //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
         return doJoin(
             other,
             joiner,
@@ -956,9 +894,9 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
         ValueJoiner<V, VO, VR> joiner,
         Joined<K, V, VO> joined)
 {
-        //Objects.requireNonNull(other, "other can't be null");
-        //Objects.requireNonNull(joiner, "joiner can't be null");
-        //Objects.requireNonNull(joined, "joined can't be null");
+        //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
+        //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+        //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
 
          JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<K, V, VO>(joined);
          string name = joinedInternal.name();
@@ -987,9 +925,9 @@ public class KStreamImpl<K, V> : AbstractStream<K, V> : KStream<K, V> {
         ValueJoiner<V, VO, VR> joiner,
         Joined<K, V, VO> joined)
 {
-        //Objects.requireNonNull(other, "other can't be null");
-        //Objects.requireNonNull(joiner, "joiner can't be null");
-        //Objects.requireNonNull(joined, "joined can't be null");
+        //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
+        //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+        //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
          JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<>(joined);
          string internalName = joinedInternal.name();
         if (repartitionRequired)
@@ -1049,10 +987,10 @@ public KStream<K, VR> leftJoin(
         bool leftJoin,
         Named named)
 {
-        //Objects.requireNonNull(globalTable, "globalTable can't be null");
-        //Objects.requireNonNull(keyMapper, "keyMapper can't be null");
-        //Objects.requireNonNull(joiner, "joiner can't be null");
-        //Objects.requireNonNull(named, "named can't be null");
+        //globalTable = globalTable ?? throw new System.ArgumentNullException("globalTable can't be null", nameof(globalTable));
+        //keyMapper = keyMapper ?? throw new System.ArgumentNullException("keyMapper can't be null", nameof(keyMapper));
+        //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+        //named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
 
          KTableValueGetterSupplier<KG, VG> valueGetterSupplier = ((GlobalKTableImpl<KG, VG>) globalTable).valueGetterSupplier();
          string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, LEFTJOIN_NAME);
@@ -1084,8 +1022,8 @@ public KStream<K, VR> leftJoin(
         Joined<K, V, VO> joined,
         bool leftJoin)
 {
-        Objects.requireNonNull(other, "other KTable can't be null");
-        Objects.requireNonNull(joiner, "joiner can't be null");
+        other = other ?? throw new System.ArgumentNullException("other KTable can't be null", nameof(other));
+        joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
 
          HashSet<string> allSourceNodes = ensureJoinableWith((AbstractStream<K, VO>) other);
 
@@ -1124,8 +1062,8 @@ public KStream<K, VR> leftJoin(
         IKeyValueMapper<K, V, KR> selector,
         Grouped<KR, V> grouped)
 {
-        Objects.requireNonNull(selector, "selector can't be null");
-        Objects.requireNonNull(grouped, "grouped can't be null");
+        selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
+        grouped = grouped ?? throw new System.ArgumentNullException("grouped can't be null", nameof(grouped));
          GroupedInternal<KR, V> groupedInternal = new GroupedInternal<>(grouped);
          ProcessorGraphNode<K, V> selectKeyMapNode = internalSelectKey(selector, new NamedInternal(groupedInternal.name()));
         selectKeyMapNode.keyChangingOperation(true);
@@ -1179,7 +1117,7 @@ public KStream<K, VR> leftJoin(
         );
     }
 
-    private class KStreamImplJoin {
+    private KStreamImplJoin {
 
         private  bool leftOuter;
         private  bool rightOuter;
@@ -1192,7 +1130,7 @@ public KStream<K, VR> leftJoin(
             this.rightOuter = rightOuter;
         }
 
-        public <K1, R, V1, V2> KStream<K1, R> join( KStream<K1, V1> lhs,
+        public KStream<K1, R> join( KStream<K1, V1> lhs,
                                                     KStream<K1, V2> other,
                                                     ValueJoiner<V1, V2, R> joiner,
                                                     JoinWindows windows,
@@ -1283,4 +1221,5 @@ public KStream<K, VR> leftJoin(
         }
     }
 
+}
 }

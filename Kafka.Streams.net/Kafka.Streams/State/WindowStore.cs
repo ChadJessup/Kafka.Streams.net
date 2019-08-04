@@ -30,17 +30,17 @@ using Kafka.Streams.Processor.IStateStore;
  * <p>
  * Note, that the stores's physical key type is {@link Windowed Windowed&lt;K&gt;}.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  */
 public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
 {
 
     /**
      * Use the current record timestamp as the {@code windowStartTimestamp} and
-     * delegate to {@link WindowStore#put(Object, Object, long)}.
+     * delegate to {@link WindowStore#put(object, object, long)}.
      *
-     * It's highly recommended to use {@link WindowStore#put(Object, Object, long)} instead, as the record timestamp
+     * It's highly recommended to use {@link WindowStore#put(object, object, long)} instead, as the record timestamp
      * is unlikely to be the correct windowStartTimestamp in general.
      *
      * @param key The key to associate the value to
@@ -92,7 +92,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if the given key is {@code null}
      */
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     WindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo);
 
     
@@ -119,7 +119,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if one of the given keys is {@code null}
      */
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     KeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
 
     
@@ -143,7 +143,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
      * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      */
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
     KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo);
 
     

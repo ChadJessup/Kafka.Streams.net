@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -38,7 +38,7 @@ class KStreamPeek<K, V> : ProcessorSupplier<K, V> {
         return new KStreamPeekProcessor();
     }
 
-    private class KStreamPeekProcessor : AbstractProcessor<K, V> {
+    private KStreamPeekProcessor : AbstractProcessor<K, V> {
         
         public void process( K key,  V value)
 {

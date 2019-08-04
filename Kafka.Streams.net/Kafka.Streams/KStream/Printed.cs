@@ -10,11 +10,11 @@ namespace Kafka.Streams.KStream
     /**
      * An object to define the options used when printing a {@link KStream}.
      *
-     * @param <K> key type
-     * @param <V> value type
+     * @param key type
+     * @param value type
      * @see KStream#print(Printed)
      */
-    public class Printed<K, V> : INamedOperation<Printed<K, V>>
+    public Printed<K, V> : INamedOperation<Printed<K, V>>
     {
         protected Stream outputStream;
         protected string label;
@@ -47,8 +47,8 @@ namespace Kafka.Streams.KStream
          * Print the records of a {@link KStream} to a file.
          *
          * @param filePath path of the file
-         * @param <K>      key type
-         * @param <V>      value type
+         * @param      key type
+         * @param      value type
          * @return a new Printed instance
          */
         public static Printed<K, V> toFile(string filePath)
@@ -73,8 +73,8 @@ namespace Kafka.Streams.KStream
         /**
          * Print the records of a {@link KStream} to system out.
          *
-         * @param <K> key type
-         * @param <V> value type
+         * @param key type
+         * @param value type
          * @return a new Printed instance
          */
         public static Printed<K, V> toSysOut()
@@ -101,9 +101,9 @@ namespace Kafka.Streams.KStream
          * <p>
          * The example below shows how to customize output data.
          * <pre>{@code
-         *  KeyValueMapper<Integer, string, string> mapper = new KeyValueMapper<Integer, string, string>()
+         *  KeyValueMapper<int, string, string> mapper = new KeyValueMapper<int, string, string>()
 {
-         *     public string apply(Integer key, string value)
+         *     public string apply(int key, string value)
 {
          *         return string.Format("(%d, %s)", key, value);
          *     }
@@ -111,7 +111,7 @@ namespace Kafka.Streams.KStream
          * }</pre>
          *
          * Implementors will need to override {@code ToString()} for keys and values that are not of type {@link string},
-         * {@link Integer} etc. to get meaningful information.
+         * {@link int} etc. to get meaningful information.
          *
          * @param mapper mapper to use
          * @return this

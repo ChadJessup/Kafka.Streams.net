@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -25,7 +25,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class StreamSinkNode<K, V> : StreamsGraphNode {
+public StreamSinkNode<K, V> : StreamsGraphNode {
 
     private  TopicNameExtractor<K, V> topicNameExtractor;
     private  ProducedInternal<K, V> producedInternal;
@@ -35,7 +35,7 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
                            ProducedInternal<K, V> producedInternal)
 {
 
-        super(nodeName);
+        base(nodeName);
 
         this.topicNameExtractor = topicNameExtractor;
         this.producedInternal = producedInternal;
@@ -48,7 +48,7 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
         return "StreamSinkNode{" +
                "topicNameExtractor=" + topicNameExtractor +
                ", producedInternal=" + producedInternal +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 
     
@@ -62,7 +62,7 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
         if (partitioner == null && keySerializer is WindowedSerializer)
 {
             
-             StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<Object, V>((WindowedSerializer) keySerializer);
+             StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<object, V>((WindowedSerializer) keySerializer);
             topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
         } else {
             topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner,  parentNames);

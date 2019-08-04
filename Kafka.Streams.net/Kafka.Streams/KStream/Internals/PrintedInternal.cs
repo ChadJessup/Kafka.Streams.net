@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
-public class PrintedInternal<K, V> : Printed<K, V> {
+public PrintedInternal<K, V> : Printed<K, V> {
     public PrintedInternal( Printed<K, V> printed)
 {
-        super(printed);
+        base(printed);
     }
 
     public ProcessorSupplier<K, V> build( string processorName)

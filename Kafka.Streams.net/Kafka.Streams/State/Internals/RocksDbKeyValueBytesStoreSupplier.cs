@@ -20,7 +20,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.KeyValueBytesStoreSupplier;
 using Kafka.Streams.State.KeyValueStore;
 
-public class RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
+public RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
 {
 
     private string name;

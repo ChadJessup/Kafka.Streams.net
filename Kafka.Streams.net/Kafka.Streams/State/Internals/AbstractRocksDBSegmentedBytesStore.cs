@@ -25,7 +25,7 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class AbstractRocksDBSegmentedBytesStore<S> : SegmentedBytesStore
+    public AbstractRocksDBSegmentedBytesStore<S> : SegmentedBytesStore
         where S : ISegment
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDBSegmentedBytesStore<S>>();
@@ -97,7 +97,7 @@ namespace Kafka.Streams.State.Internals
 
             return new SegmentIterator<>(
                 searchSpace.iterator(),
-                keySchema.hasNextCondition(null, null, 0, long.MAX_VALUE),
+                keySchema.hasNextCondition(null, null, 0, long.MaxValue),
                 null,
                 null);
         }
@@ -224,8 +224,8 @@ namespace Kafka.Streams.State.Internals
                 Dictionary<S, WriteBatch> writeBatchMap = getWriteBatches(records);
                 foreach (var entry in writeBatchMap.entrySet())
                 {
-                    S segment = entry.getKey();
-                    WriteBatch batch = entry.getValue();
+                    S segment = entry.Key;
+                    WriteBatch batch = entry.Value;
                     segment.write(batch);
                     batch.close();
                 }
@@ -286,7 +286,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private class RocksDBSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
+        private RocksDBSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
         {
             public override void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
             {

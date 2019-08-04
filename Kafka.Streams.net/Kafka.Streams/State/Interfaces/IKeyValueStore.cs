@@ -6,8 +6,8 @@ namespace Kafka.Streams.State.Internals
     /**
      * A key-value store that supports put/get/delete and range queries.
      *
-     * @param <K> The key type
-     * @param <V> The value type
+     * @param The key type
+     * @param The value type
      */
     public interface IKeyValueStore<K, V> : IStateStore, IReadOnlyKeyValueStore<K, V>
     {

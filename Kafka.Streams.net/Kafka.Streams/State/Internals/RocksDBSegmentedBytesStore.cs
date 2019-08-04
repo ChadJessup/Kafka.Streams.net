@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-public class RocksDBSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<KeyValueSegment>
+public RocksDBSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<KeyValueSegment>
 {
 
     RocksDBSegmentedBytesStore(string name,
@@ -25,6 +25,6 @@ public class RocksDBSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<Key
                                long segmentInterval,
                                KeySchema keySchema)
 {
-        super(name, metricScope, keySchema, new KeyValueSegments(name, retention, segmentInterval));
+        base(name, metricScope, keySchema, new KeyValueSegments(name, retention, segmentInterval));
     }
 }

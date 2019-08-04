@@ -39,7 +39,7 @@ class CachingWindowStore
     : WindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(CachingWindowStore.class);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<CachingWindowStore);
 
     private long windowSize;
     private SegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
@@ -59,7 +59,7 @@ class CachingWindowStore
                        long windowSize,
                        long segmentInterval)
 {
-        super(underlying);
+        base(underlying);
         this.windowSize = windowSize;
         this.cacheFunction = new SegmentedCacheFunction(keySchema, segmentInterval);
         this.maxObservedTimestamp = RecordQueue.UNKNOWN;
@@ -68,7 +68,7 @@ class CachingWindowStore
     public override void init(IProcessorContext context, IStateStore root)
 {
         initInternal((InternalProcessorContext) context);
-        super.init(context, root);
+        base.init(context, root);
     }
 
     
@@ -191,7 +191,7 @@ class CachingWindowStore
         }
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override synchronized WindowStoreIterator<byte[]> fetch(Bytes key,
                                                           long timeFrom,
                                                           long timeTo)
@@ -221,7 +221,7 @@ class CachingWindowStore
         return new MergedSortedCacheWindowStoreIterator(filteredCacheIterator, underlyingIterator);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                            Bytes to,
                                                            long timeFrom,
@@ -265,7 +265,7 @@ class CachingWindowStore
         );
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {
@@ -315,7 +315,7 @@ class CachingWindowStore
         wrapped().close();
     }
 
-    private class CacheIteratorWrapper : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    private CacheIteratorWrapper : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
 {
 
         private long segmentInterval;
@@ -468,7 +468,7 @@ class CachingWindowStore
 
         private Bytes segmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
 {
-            return WindowKeySchema.toStoreKeyBinary(key, segmentEndTime, Integer.MAX_VALUE);
+            return WindowKeySchema.toStoreKeyBinary(key, segmentEndTime, int.MaxValue);
         }
     }
 }

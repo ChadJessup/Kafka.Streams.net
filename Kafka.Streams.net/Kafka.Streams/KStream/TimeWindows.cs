@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -55,7 +55,7 @@ namespace Kafka.streams.kstream;
  * @see KGroupedStream#windowedBy(Windows)
  * @see TimestampExtractor
  */
-public  class TimeWindows : Windows<TimeWindow> {
+public  TimeWindows : Windows<TimeWindow> {
 
     private  long maintainDurationMs;
 
@@ -80,14 +80,14 @@ public  class TimeWindows : Windows<TimeWindow> {
     }
 
     /** Private constructor for preserving segments. Can be removed along with Windows.segments. **/
-    @Deprecated
+    [System.Obsolete]
     private TimeWindows( long sizeMs,
                          long advanceMs,
                          long graceMs,
                          long maintainDurationMs,
                          int segments)
 {
-        super(segments);
+        base(segments);
         this.sizeMs = sizeMs;
         this.advanceMs = advanceMs;
         this.graceMs = graceMs;
@@ -107,11 +107,11 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if the specified window size is zero or negative
      * @deprecated Use {@link #of(Duration)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     public static TimeWindows of( long sizeMs){
         if (sizeMs <= 0)
 {
-            throw new ArgumentException("Window size (sizeMs) must be larger than zero.");
+            throw new System.ArgumentException("Window size (sizeMs) must be larger than zero.");
         }
         // This is a static factory method, so we initialize grace and retention to the defaults.
         return new TimeWindows(sizeMs, sizeMs, -1, DEFAULT_RETENTION_MS);
@@ -130,7 +130,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if the specified window size is zero or negative or can't be represented as {@code long milliseconds}
      */
     @SuppressWarnings("deprecation") // removing #of( long sizeMs) will fix this
-    public static TimeWindows of( Duration size){
+    public static TimeWindows of( TimeSpan size){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(size, "size");
         return of(ApiUtils.validateMillisecondDuration(size, msgPrefix));
     }
@@ -147,12 +147,12 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if the advance interval is negative, zero, or larger than the window size
      * @deprecated Use {@link #advanceBy(Duration)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     public TimeWindows advanceBy( long advanceMs)
 {
         if (advanceMs <= 0 || advanceMs > sizeMs)
 {
-            throw new ArgumentException(string.Format("Window advancement interval should be more than zero " +
+            throw new System.ArgumentException(string.Format("Window advancement interval should be more than zero " +
                     "and less than window duration which is %d ms, but given advancement interval is: %d ms", sizeMs, advanceMs));
         }
         return new TimeWindows(sizeMs, advanceMs, graceMs, maintainDurationMs, segments);
@@ -170,7 +170,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if the advance interval is negative, zero, or larger than the window size
      */
     @SuppressWarnings("deprecation") // removing #advanceBy( long advanceMs) will fix this
-    public TimeWindows advanceBy( Duration advance)
+    public TimeWindows advanceBy( TimeSpan advance)
 {
          string msgPrefix = prepareMillisCheckFailMsgPrefix(advance, "advance");
         return advanceBy(ApiUtils.validateMillisecondDuration(advance, msgPrefix));
@@ -207,12 +207,12 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if {@code afterWindowEnd} is negative or can't be represented as {@code long milliseconds}
      */
     @SuppressWarnings("deprecation") // will be fixed when we Remove segments from Windows
-    public TimeWindows grace( Duration afterWindowEnd){
+    public TimeWindows grace( TimeSpan afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
         if (afterWindowEndMs < 0)
 {
-            throw new ArgumentException("Grace period must not be negative.");
+            throw new System.ArgumentException("Grace period must not be negative.");
         }
 
         return new TimeWindows(sizeMs, advanceMs, afterWindowEndMs, maintainDurationMs, segments);
@@ -224,7 +224,7 @@ public  class TimeWindows : Windows<TimeWindow> {
 {
         // NOTE: in the future, when we Remove maintainMs,
         // we should default the grace period to 24h to maintain the default behavior,
-        // or we can default to (24h - size) if you want to be super accurate.
+        // or we can default to (24h - size) if you want to be base.accurate.
         return graceMs != -1 ? graceMs : maintainMs() - size();
     }
 
@@ -237,11 +237,11 @@ public  class TimeWindows : Windows<TimeWindow> {
      *             and use {@link Materialized#as(WindowBytesStoreSupplier)}.
      */
     
-    @Deprecated
+    [System.Obsolete]
     public TimeWindows until( long durationMs){
         if (durationMs < sizeMs)
 {
-            throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");
+            throw new System.ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");
         }
         return new TimeWindows(sizeMs, advanceMs, graceMs, durationMs, segments);
     }
@@ -255,7 +255,7 @@ public  class TimeWindows : Windows<TimeWindow> {
      * @deprecated since 2.1. Use {@link Materialized#retention} instead.
      */
     
-    @Deprecated
+    [System.Obsolete]
     public long maintainMs()
 {
         return Math.Max(maintainDurationMs, sizeMs);
@@ -263,7 +263,7 @@ public  class TimeWindows : Windows<TimeWindow> {
 
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

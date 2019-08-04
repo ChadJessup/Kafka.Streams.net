@@ -24,7 +24,7 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
+public KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
 {
 
     private KeyValueBytesStoreSupplier storeSupplier;
@@ -34,8 +34,8 @@ public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueSt
                                 ISerde<V> valueSerde,
                                 ITime time)
 {
-        super(storeSupplier.name(), keySerde, valueSerde, time);
-        Objects.requireNonNull(storeSupplier, "bytesStoreSupplier can't be null");
+        base(storeSupplier.name(), keySerde, valueSerde, time);
+        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
         this.storeSupplier = storeSupplier;
     }
 

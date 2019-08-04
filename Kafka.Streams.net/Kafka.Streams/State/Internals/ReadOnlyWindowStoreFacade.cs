@@ -28,7 +28,7 @@ using Kafka.Streams.State.WindowStoreIterator;
 
 
 
-public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
+public ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
 {
     protected TimestampedWindowStore<K, V> inner;
 
@@ -98,7 +98,7 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
         return new KeyValueIteratorFacade<>(innerIterator);
     }
 
-    private static class WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
+    private static WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
 {
         KeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
 

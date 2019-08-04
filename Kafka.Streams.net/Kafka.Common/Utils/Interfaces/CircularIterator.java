@@ -19,7 +19,7 @@ namespace Kafka.common.utils;
 
 
 
-public class CircularIterator<T> : Iterator<T> {
+public CircularIterator<T> : Iterator<T> {
     int i = 0;
     private List<T> list;
 
@@ -27,7 +27,7 @@ public class CircularIterator<T> : Iterator<T> {
 {
         if (list.isEmpty())
 {
-            throw new ArgumentException("CircularIterator can only be used on non-empty lists");
+            throw new System.ArgumentException("CircularIterator can only be used on non-empty lists");
         }
         this.list = list;
     }

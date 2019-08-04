@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -29,7 +29,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> {
-    private static  Logger LOG = LoggerFactory.getLogger(KStreamKTableJoinProcessor.class);
+    private static  ILogger LOG= new LoggerFactory().CreateLogger<KStreamKTableJoinProcessor);
 
     private  KTableValueGetter<K2, V2> valueGetter;
     private  IKeyValueMapper<K1, V1, K2> keyMapper;
@@ -52,7 +52,7 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
     
     public void init( IProcessorContext context)
 {
-        super.init(context);
+        base.init(context);
         metrics = (StreamsMetricsImpl) context.metrics();
         skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 

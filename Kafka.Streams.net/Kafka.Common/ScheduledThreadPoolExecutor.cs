@@ -8,7 +8,7 @@ namespace Kafka.Common
     // TODO: chad - 8/3/19 - shamelessly taken from:
     // https://blog.adamfurmanek.pl/2018/08/18/trivial-scheduledthreadpoolexecutor-in-c/
     // to unblock initial port...
-    public class ScheduledThreadPoolExecutor
+    public ScheduledThreadPoolExecutor
     {
         public int ThreadCount => threads.Length;
         public EventHandler<Exception> OnException;

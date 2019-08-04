@@ -26,7 +26,7 @@ import java.util.List;
  * A memory-efficient hash multiset which tracks the order of insertion of elements.
  * See org.apache.kafka.common.utils.ImplicitLinkedHashCollection for implementation details.
  *
- * This class is a multi-set because it allows multiple elements to be inserted that are
+ * This is a multi-set because it allows multiple elements to be inserted that are
  * equal to each other.
  *
  * We use reference equality when adding elements to the set.  A new element A can
@@ -37,26 +37,26 @@ import java.util.List;
  * that A == B.  If no such element can be found, we will try to delete an element B
  * such that A.Equals(B).
  *
- * contains() and find() are unchanged from the base class-- they will look for element
+ * contains() and find() are unchanged from the base-- they will look for element
  * based on object equality, not reference equality.
  *
  * This multiset does not allow null elements.  It does not have internal synchronization.
  */
-public class ImplicitLinkedHashMultiCollection<E extends ImplicitLinkedHashCollection.Element>
+public ImplicitLinkedHashMultiCollection<E extends ImplicitLinkedHashCollection.Element>
         extends ImplicitLinkedHashCollection<E> {
     public ImplicitLinkedHashMultiCollection()
 {
-        super(0);
+        base(0);
     }
 
     public ImplicitLinkedHashMultiCollection(int expectedNumElements)
 {
-        super(expectedNumElements);
+        base(expectedNumElements);
     }
 
     public ImplicitLinkedHashMultiCollection(Iterator<E> iter)
 {
-        super(iter);
+        base(iter);
     }
 
 
@@ -97,7 +97,7 @@ public class ImplicitLinkedHashMultiCollection<E extends ImplicitLinkedHashColle
      * @return                  The match index, or INVALID_INDEX if no match was found.
      */
     
-    int findElementToRemove(Object key)
+    int findElementToRemove(object key)
 {
         if (key == null)
 {

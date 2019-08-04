@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
-public class Change<T> {
+public Change<T> {
 
     public  T newValue;
     public  T oldValue;
@@ -36,7 +36,7 @@ public class Change<T> {
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -25,12 +25,12 @@ namespace Kafka.streams.kstream;
 
 
 /**
- * This class is used to provide the optional parameters when producing to new topics
+ * This is used to provide the optional parameters when producing to new topics
  * using {@link KStream#through(string, Produced)} or {@link KStream#to(string, Produced)}.
- * @param <K> key type
- * @param <V> value type
+ * @param key type
+ * @param value type
  */
-public class Produced<K, V> : NamedOperation<Produced<K, V>> {
+public Produced<K, V> : NamedOperation<Produced<K, V>> {
 
     protected ISerde<K> keySerde;
     protected ISerde<V> valueSerde;
@@ -60,8 +60,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * Create a Produced instance with provided keySerde and valueSerde.
      * @param keySerde      Serde to use for serializing the key
      * @param valueSerde    Serde to use for serializing the value
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return  A new {@link Produced} instance configured with keySerde and valueSerde
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
@@ -80,8 +80,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      *                      if not specified and {@code keySerde} provides a {@link WindowedSerializer} for the key
      *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner}
      *                      will be used
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return  A new {@link Produced} instance configured with keySerde, valueSerde, and partitioner
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
@@ -97,8 +97,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * Create an instance of {@link Produced} with provided processor name.
      *
      * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
-     * @param <K>         key type
-     * @param <V>         value type
+     * @param         key type
+     * @param         value type
      * @return a new instance of {@link Produced}
      */
     public staticProduced<K, V> as( string processorName)
@@ -109,8 +109,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
     /**
      * Create a Produced instance with provided keySerde.
      * @param keySerde      Serde to use for serializing the key
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return  A new {@link Produced} instance configured with keySerde
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
@@ -123,8 +123,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
     /**
      * Create a Produced instance with provided valueSerde.
      * @param valueSerde    Serde to use for serializing the key
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return  A new {@link Produced} instance configured with valueSerde
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
@@ -139,8 +139,8 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
      * @param partitioner   the function used to determine how records are distributed among partitions of the topic,
      *                      if not specified and the key serde provides a {@link WindowedSerializer} for the key
      *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} will be used
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return  A new {@link Produced} instance configured with partitioner
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
@@ -186,7 +186,7 @@ public class Produced<K, V> : NamedOperation<Produced<K, V>> {
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class PrintForeachAction<K, V> : ForeachAction<K, V> {
+public PrintForeachAction<K, V> : ForeachAction<K, V> {
 
     private  string label;
     private  PrintWriter printWriter;
@@ -42,7 +42,7 @@ public class PrintForeachAction<K, V> : ForeachAction<K, V> {
                         IKeyValueMapper<K, V, string> mapper,
                         string label)
 {
-        this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
+        this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, System.Text.Encoding.UTF8));
         this.closable = outputStream != System.out && outputStream != System.err;
         this.mapper = mapper;
         this.label = label;

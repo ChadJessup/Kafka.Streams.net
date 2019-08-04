@@ -20,7 +20,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppressed.BufferConfig<BC> {
+abstract BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppressed.BufferConfig<BC> {
     public abstract long maxRecords();
 
     public abstract long maxBytes();
@@ -32,8 +32,8 @@ abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppress
     public Suppressed.StrictBufferConfig withNoBound()
 {
         return new StrictBufferConfigImpl(
-            long.MAX_VALUE,
-            long.MAX_VALUE,
+            long.MaxValue,
+            long.MaxValue,
             SHUT_DOWN // doesn't matter, given the bounds
         );
     }

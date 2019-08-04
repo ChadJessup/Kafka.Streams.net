@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Kafka.Common.Metrics
 {
-    public class RecordingLevel
+    public RecordingLevel
     {
         public static RecordingLevel INFO = new RecordingLevel(0, "INFO");
         public static RecordingLevel DEBUG = new RecordingLevel(1, "DEBUG");
@@ -54,7 +54,7 @@ namespace Kafka.Common.Metrics
         {
             if (id < MIN_RECORDING_LEVEL_KEY || id > MAX_RECORDING_LEVEL_KEY)
             {
-                throw new ArgumentException(string.Format("Unexpected RecordLevel id `%d`, it should be between `%d` " +
+                throw new System.ArgumentException(string.Format("Unexpected RecordLevel id `%d`, it should be between `%d` " +
                     "and `%d` (inclusive)", id, MIN_RECORDING_LEVEL_KEY, MAX_RECORDING_LEVEL_KEY));
             }
 

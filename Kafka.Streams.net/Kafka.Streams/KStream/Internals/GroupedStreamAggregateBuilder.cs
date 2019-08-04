@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -69,8 +69,8 @@ class GroupedStreamAggregateBuilder<K, V> {
         this.userProvidedRepartitionTopicName = groupedInternal.name();
     }
 
-    <KR, VR> KTable<KR, VR> build( string functionName,
-                                   StoreBuilder<? : IStateStore> storeBuilder,
+    KTable<KR, VR> build( string functionName,
+                                   StoreBuilder<IStateStore> storeBuilder,
                                    KStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
                                    string queryableStoreName,
                                    ISerde<KR> keySerde,

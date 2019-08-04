@@ -25,7 +25,7 @@ namespace Kafka.common.utils;
 
 
 
-public final class CollectionUtils {
+public final CollectionUtils {
 
     private CollectionUtils() {}
 
@@ -35,7 +35,7 @@ public final class CollectionUtils {
     public staticMap<K, V> subtractMap(Map<? extends K, ? extends V> minuend, Map<? extends K, ? extends V> subtrahend)
 {
         return minuend.entrySet().stream()
-                .filter(entry -> !subtrahend.ContainsKey(entry.getKey()))
+                .filter(entry -> !subtrahend.ContainsKey(entry.Key))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -43,18 +43,18 @@ public final class CollectionUtils {
      * group data by topic
      *
      * @param data Data to be partitioned
-     * @param <T> Partition data type
+     * @param Partition data type
      * @return partitioned data
      */
-    public static <T> Map<String, Map<Integer, T>> groupPartitionDataByTopic(Map<TopicPartition, ? extends T> data)
+    public static Map<String, Map<int, T>> groupPartitionDataByTopic(Map<TopicPartition, ? extends T> data)
 {
-        Map<String, Map<Integer, T>> dataByTopic = new HashMap<>();
+        Map<String, Map<int, T>> dataByTopic = new HashMap<>();
         foreach (Map.Entry<TopicPartition, ? extends T> entry in data.entrySet())
 {
-            String topic = entry.getKey().topic();
-            int partition = entry.getKey().partition();
-            Map<Integer, T> topicData = dataByTopic.computeIfAbsent(topic, t -> new HashMap<>());
-            topicData.Add(partition, entry.getValue());
+            String topic = entry.Key.topic();
+            int partition = entry.Key.partition();
+            Map<int, T> topicData = dataByTopic.computeIfAbsent(topic, t -> new HashMap<>());
+            topicData.Add(partition, entry.Value);
         }
         return dataByTopic;
     }
@@ -65,13 +65,13 @@ public final class CollectionUtils {
      * @param partitions The partitions to collect
      * @return partitions per topic
      */
-    public static Map<String, List<Integer>> groupPartitionsByTopic(Collection<TopicPartition> partitions)
+    public static Map<String, List<int>> groupPartitionsByTopic(Collection<TopicPartition> partitions)
 {
-        Map<String, List<Integer>> partitionsByTopic = new HashMap<>();
+        Map<String, List<int>> partitionsByTopic = new HashMap<>();
         foreach (TopicPartition tp in partitions)
 {
             String topic = tp.topic();
-            List<Integer> topicData = partitionsByTopic.computeIfAbsent(topic, t -> new List<>());
+            List<int> topicData = partitionsByTopic.computeIfAbsent(topic, t -> new List<>());
             topicData.Add(tp.partition());
         }
         return partitionsByTopic;

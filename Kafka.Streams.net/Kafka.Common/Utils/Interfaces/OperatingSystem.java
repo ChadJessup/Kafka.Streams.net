@@ -18,7 +18,7 @@ namespace Kafka.common.utils;
 
 
 
-public final class OperatingSystem {
+public final OperatingSystem {
 
     private OperatingSystem()
 {

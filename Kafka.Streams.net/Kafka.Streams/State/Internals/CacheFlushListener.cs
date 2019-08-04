@@ -18,8 +18,8 @@ namespace Kafka.Streams.State.Internals;
 
 /**
  * Listen to cache flush events
- * @param <K> key type
- * @param <V> value type
+ * @param key type
+ * @param value type
  */
 public interface CacheFlushListener<K, V>
 {

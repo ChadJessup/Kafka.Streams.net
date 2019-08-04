@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processor;
 /**
  * The task ID representation composed as topic group ID plus the assigned partition ID.
  */
-public class TaskId : Comparable<TaskId> {
+public TaskId : Comparable<TaskId> {
 
     /** The ID of the topic group. */
     public int topicGroupId;
@@ -56,8 +56,8 @@ public class TaskId : Comparable<TaskId> {
         }
 
         try {
-            int topicGroupId = Integer.parseInt(taskIdStr.substring(0, index));
-            int partition = Integer.parseInt(taskIdStr.substring(index + 1));
+            int topicGroupId = int.Parse(taskIdStr.substring(0, index));
+            int partition = int.Parse(taskIdStr.substring(index + 1));
 
             return new TaskId(topicGroupId, partition);
         } catch (Exception e)
@@ -119,7 +119,7 @@ public class TaskId : Comparable<TaskId> {
     
     public int compareTo(TaskId other)
 {
-        int compare = Integer.compare(this.topicGroupId, other.topicGroupId);
-        return compare != 0 ? compare : Integer.compare(this.partition, other.partition);
+        int compare = int.compare(this.topicGroupId, other.topicGroupId);
+        return compare != 0 ? compare : int.compare(this.partition, other.partition);
     }
 }

@@ -10,7 +10,7 @@ namespace Kafka.Common.Metrics.Stats
      * an artificially high rate when the gap between readings
      * is close to 0.
      */
-    public class SimpleRate : Rate
+    public SimpleRate : Rate
     {
         public long windowSize(MetricConfig config, long now)
         {

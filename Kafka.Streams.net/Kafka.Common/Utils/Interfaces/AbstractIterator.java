@@ -20,10 +20,10 @@ namespace Kafka.common.utils;
 
 
 /**
- * A base class that simplifies implementing an iterator
- * @param <T> The type of thing we are iterating over
+ * A base that simplifies implementing an iterator
+ * @param The type of thing we are iterating over
  */
-public abstract class AbstractIterator<T> : Iterator<T> {
+public abstract AbstractIterator<T> : Iterator<T> {
 
     private enum State {
         READY, NOT_READY, DONE, FAILED

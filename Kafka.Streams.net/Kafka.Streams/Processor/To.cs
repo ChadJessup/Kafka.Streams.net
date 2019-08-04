@@ -19,10 +19,10 @@ namespace Kafka.Streams.Processor;
 
 
 /**
- * This class is used to provide the optional parameters when sending output records to downstream processor
- * using {@link IProcessorContext#forward(Object, Object, To)}.
+ * This is used to provide the optional parameters when sending output records to downstream processor
+ * using {@link IProcessorContext#forward(object, object, To)}.
  */
-public class To {
+public To {
     protected string childName;
     protected long timestamp;
 
@@ -91,7 +91,7 @@ public class To {
     }
 
     /**
-     * Equality is implemented in support of tests, *not* for use in Hash collections, since this class is mutable.
+     * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
      */
     
     public int GetHashCode()

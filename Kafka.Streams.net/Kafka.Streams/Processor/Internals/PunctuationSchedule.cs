@@ -19,7 +19,7 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public class PunctuationSchedule : Stamped<ProcessorNode> {
+public PunctuationSchedule : Stamped<ProcessorNode> {
 
     private long interval;
     private Punctuator punctuator;
@@ -42,7 +42,7 @@ public class PunctuationSchedule : Stamped<ProcessorNode> {
                                 Punctuator punctuator,
                                 RepointableCancellable cancellable)
 {
-        super(node, time);
+        base(node, time);
         this.interval = interval;
         this.punctuator = punctuator;
         this.cancellable = cancellable;
@@ -97,16 +97,16 @@ public class PunctuationSchedule : Stamped<ProcessorNode> {
     
     public bool Equals(object other)
 {
-        return super.Equals(other);
+        return base.Equals(other);
     }
 
     
     public int GetHashCode()
 {
-        return super.GetHashCode();
+        return base.GetHashCode();
     }
 
-    private static class RepointableCancellable : Cancellable {
+    private static RepointableCancellable : Cancellable {
         private PunctuationSchedule schedule;
 
         synchronized void setSchedule(PunctuationSchedule schedule)

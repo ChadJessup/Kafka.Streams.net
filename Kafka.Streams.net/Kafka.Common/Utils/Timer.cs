@@ -4,12 +4,12 @@ using System;
 namespace Kafka.Common.Utils
 {
     /**
-     * This is a helper class which makes blocking methods with a timeout easier to implement.
+     * This is a helper which makes blocking methods with a timeout easier to implement.
      * In particular it enables use cases where a high-level blocking call with a timeout is
      * composed of several lower level calls, each of which has their own respective timeouts. The idea
      * is to create a single timer object for the high level timeout and carry it along to
-     * all of the lower level methods. This class also handles common problems such as integer overflow.
-     * This class also ensures monotonic updates to the timer even if the underlying clock is subject
+     * all of the lower level methods. This also handles common problems such as integer overflow.
+     * This also ensures monotonic updates to the timer even if the underlying clock is subject
      * to non-monotonic behavior. For example, the remaining time returned by {@link #remainingMs()} is
      * guaranteed to decrease monotonically until it hits zero.
      *
@@ -34,7 +34,7 @@ namespace Kafka.Common.Utils
      *     }
      * </pre>
      */
-    public class Timer
+    public Timer
     {
         private ITime time;
         private long startMs;
@@ -91,7 +91,7 @@ namespace Kafka.Common.Utils
         public void reset(long timeoutMs)
         {
             if (timeoutMs < 0)
-                throw new ArgumentException("Invalid negative timeout " + timeoutMs);
+                throw new System.ArgumentException("Invalid negative timeout " + timeoutMs);
 
             this.startMs = this.currentTimeMs;
 

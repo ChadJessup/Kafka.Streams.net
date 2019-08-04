@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+using Kafka.Streams.KStream;
+
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -49,7 +51,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
                         StreamsGraphNode streamsGraphNode,
                         InternalStreamsBuilder builder)
 {
-        super(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
+        base(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
         this.aggregateBuilder = new GroupedStreamAggregateBuilder<>(
             builder,
             groupedInternal,
@@ -70,8 +72,8 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     public KTable<K, V> reduce( Reducer<V> reducer,
                                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(reducer, "reducer can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
          MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
@@ -97,9 +99,9 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
                                          Aggregator<K, V, VR> aggregator,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(initializer, "initializer can't be null");
-        Objects.requireNonNull(aggregator, "aggregator can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
+        aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
          MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
@@ -132,7 +134,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     
     public KTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
         // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
@@ -165,7 +167,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
     }
 
     
-    public <W : Window> TimeWindowedKStream<K, V> windowedBy( Windows<W> windows)
+    public TimeWindowedKStream<K, V> windowedBy( Windows<W> windows)
 {
 
         return new TimeWindowedKStreamImpl<>(
@@ -196,7 +198,7 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
         );
     }
 
-    private <T> KTable<K, T> doAggregate( KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
+    private KTable<K, T> doAggregate( KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
                                           string functionName,
                                           MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
 {

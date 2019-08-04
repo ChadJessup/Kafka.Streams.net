@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -23,7 +23,7 @@ namespace Kafka.streams.kstream.internals;
  * {@link UnlimitedWindow} is an "infinite" large window with a fixed (inclusive) start time.
  * All windows of the same {@link org.apache.kafka.streams.kstream.UnlimitedWindows window specification} will have the
  * same start time.
- * To make the window size "infinite" end time is set to {@link long#MAX_VALUE}.
+ * To make the window size "infinite" end time is set to {@link long#MaxValue}.
  * <p>
  * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
  *
@@ -33,7 +33,7 @@ namespace Kafka.streams.kstream.internals;
  * @see org.apache.kafka.streams.processor.TimestampExtractor
  */
 @InterfaceStability.Unstable
-public class UnlimitedWindow : Window {
+public UnlimitedWindow : Window {
 
     /**
      * Create a new window for the given start time (inclusive).
@@ -43,7 +43,7 @@ public class UnlimitedWindow : Window {
      */
     public UnlimitedWindow( long startMs)
 {
-        super(startMs, long.MAX_VALUE);
+        base(startMs, long.MaxValue);
     }
 
     /**
@@ -59,7 +59,7 @@ public class UnlimitedWindow : Window {
 {
         if (getClass() != other.getClass())
 {
-            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
+            throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
         return true;

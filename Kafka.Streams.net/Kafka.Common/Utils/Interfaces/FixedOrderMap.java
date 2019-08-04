@@ -24,36 +24,36 @@ namespace Kafka.common.utils;
  * To accomplish this, all methods of removing mappings are disabled (they are marked
  * deprecated and throw an exception).
  *
- * This class is final to prevent subclasses from violating the desired property.
+ * This is final to prevent sues from violating the desired property.
  *
- * @param <K> The key type
- * @param <V> The value type
+ * @param The key type
+ * @param The value type
  */
-public final class FixedOrderMap<K, V> extends LinkedHashMap<K, V> {
+public final FixedOrderMap<K, V> extends LinkedHashMap<K, V> {
     private static final long serialVersionUID = -6504110858733236170L;
 
-    @Deprecated
+    [System.Obsolete]
     
     protected boolean removeEldestEntry(final Map.Entry<K, V> eldest)
 {
         return false;
     }
 
-    @Deprecated
+    [System.Obsolete]
     
-    public V Remove(final Object key)
+    public V Remove(final object key)
 {
         throw new InvalidOperationException("Removing from registeredStores is not allowed");
     }
 
-    @Deprecated
+    [System.Obsolete]
     
-    public boolean Remove(final Object key, final Object value)
+    public boolean Remove(final object key, final object value)
 {
         throw new InvalidOperationException("Removing from registeredStores is not allowed");
     }
 
-    @Deprecated
+    [System.Obsolete]
     
     public void clear()
 {

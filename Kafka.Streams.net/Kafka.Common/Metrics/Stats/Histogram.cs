@@ -5,7 +5,7 @@ using System.Text;
 namespace Kafka.Common.Metrics.Stats
 {
 
-    public partial class Histogram
+    public partial Histogram
     {
         private IBinScheme binScheme;
         private float[] hist;

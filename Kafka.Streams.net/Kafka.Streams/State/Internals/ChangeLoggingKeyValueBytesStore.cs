@@ -28,7 +28,7 @@ using Kafka.Streams.State.StateSerdes;
 
 
 
-public class ChangeLoggingKeyValueBytesStore
+public ChangeLoggingKeyValueBytesStore
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
     : IKeyValueStore<Bytes, byte[]>
 {
@@ -37,13 +37,13 @@ public class ChangeLoggingKeyValueBytesStore
 
     ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
 {
-        super(inner);
+        base(inner);
     }
 
     public override void init(IProcessorContext context,
                      IStateStore root)
 {
-        super.init(context, root);
+        base.init(context, root);
         string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
         changeLogger = new StoreChangeLogger<>(
             name(),

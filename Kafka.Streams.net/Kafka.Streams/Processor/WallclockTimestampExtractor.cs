@@ -32,7 +32,7 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see UsePreviousTimeOnInvalidTimestamp
  */
 @InterfaceStability.Evolving
-public class WallclockTimestampExtractor : TimestampExtractor {
+public WallclockTimestampExtractor : TimestampExtractor {
 
     /**
      * Return the current wall clock time as timestamp.
@@ -42,7 +42,7 @@ public class WallclockTimestampExtractor : TimestampExtractor {
      * @return the current wall clock time, expressed in milliseconds since midnight, January 1, 1970 UTC
      */
     
-    public long extract(ConsumerRecord<Object, object> record, long partitionTime)
+    public long extract(ConsumerRecord<object, object> record, long partitionTime)
 {
         return System.currentTimeMillis();
     }

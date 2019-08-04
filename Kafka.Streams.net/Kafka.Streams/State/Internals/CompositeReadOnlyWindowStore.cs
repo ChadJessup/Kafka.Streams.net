@@ -34,7 +34,7 @@ using Kafka.Streams.State.WindowStoreIterator;
  * Wrapper over the underlying {@link ReadOnlyWindowStore}s found in a {@link
  * org.apache.kafka.streams.processor.internals.ProcessorTopology}
  */
-public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
+public CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
 {
 
     private QueryableStoreType<ReadOnlyWindowStore<K, V>> windowStoreType;
@@ -52,7 +52,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
 
     public override V fetch(K key, long time)
 {
-        Objects.requireNonNull(key, "key can't be null");
+        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
         List<ReadOnlyWindowStore<K, V>> stores = provider.stores(storeName, windowStoreType);
         foreach (ReadOnlyWindowStore<K, V> windowStore in stores)
 {
@@ -74,12 +74,12 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     }
 
     
-    @Deprecated
+    [System.Obsolete]
     public WindowStoreIterator<V> fetch(K key,
                                         long timeFrom,
                                         long timeTo)
 {
-        Objects.requireNonNull(key, "key can't be null");
+        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
         List<ReadOnlyWindowStore<K, V>> stores = provider.stores(storeName, windowStoreType);
         foreach (ReadOnlyWindowStore<K, V> windowStore in stores)
 {
@@ -120,8 +120,8 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
                                                   long timeFrom,
                                                   long timeTo)
 {
-        Objects.requireNonNull(from, "from can't be null");
-        Objects.requireNonNull(to, "to can't be null");
+        from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
+        to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
         NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
             store -> store.fetch(from, to, timeFrom, timeTo);
         return new DelegatingPeekingKeyValueIterator<>(
@@ -155,7 +155,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     }
 
     
-    @Deprecated
+    [System.Obsolete]
     public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                      long timeTo)
 {

@@ -39,14 +39,14 @@ using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.internals.InternalProcessorContext;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 
 
 
-public class InMemorySessionStore : SessionStore<Bytes, byte[]>
+public InMemorySessionStore : ISessionStore<Bytes, byte[]>
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(InMemorySessionStore.class);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<InMemorySessionStore);
 
     private string name;
     private string metricScope;
@@ -108,7 +108,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         if (windowEndTimestamp <= observedStreamTime - retentionPeriod)
 {
             expiredRecordSensor.record();
-            LOG.debug("Skipping record for expired segment.");
+            LOG.LogDebug("Skipping record for expired segment.");
         } else
 {
             if (aggregate != null)
@@ -154,7 +154,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
 {
         removeExpiredSegments();
 
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
 
         // Only need to search if the record hasn't expired yet
         if (endTime > observedStreamTime - retentionPeriod)
@@ -172,12 +172,12 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         return null;
     }
 
-    @Deprecated
+    [System.Obsolete]
     public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
                                                                   long earliestSessionEndTime,
                                                                   long latestSessionStartTime)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
 
         removeExpiredSegments();
 
@@ -187,14 +187,14 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
                                    endTimeMap.tailMap(earliestSessionEndTime, true).entrySet().iterator());
     }
 
-    @Deprecated
+    [System.Obsolete]
     public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
                                                                   Bytes keyTo,
                                                                   long earliestSessionEndTime,
                                                                   long latestSessionStartTime)
 {
-        Objects.requireNonNull(keyFrom, "from key cannot be null");
-        Objects.requireNonNull(keyTo, "to key cannot be null");
+        keyFrom = keyFrom ?? throw new System.ArgumentNullException("from key cannot be null", nameof(keyFrom));
+        keyTo = keyTo ?? throw new System.ArgumentNullException("to key cannot be null", nameof(keyTo));
 
         removeExpiredSegments();
 
@@ -215,23 +215,23 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 {
 
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
 
         removeExpiredSegments();
 
-        return registerNewIterator(key, key, long.MAX_VALUE, endTimeMap.entrySet().iterator());
+        return registerNewIterator(key, key, long.MaxValue, endTimeMap.entrySet().iterator());
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 {
 
-        Objects.requireNonNull(from, "from key cannot be null");
-        Objects.requireNonNull(to, "to key cannot be null");
+        from = from ?? throw new System.ArgumentNullException("from key cannot be null", nameof(from));
+        to = to ?? throw new System.ArgumentNullException("to key cannot be null", nameof(to));
 
         removeExpiredSegments();
 
 
-        return registerNewIterator(from, to, long.MAX_VALUE, endTimeMap.entrySet().iterator());
+        return registerNewIterator(from, to, long.MaxValue, endTimeMap.entrySet().iterator());
     }
 
     public override bool persistent()
@@ -292,7 +292,7 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
         void deregisterIterator(InMemorySessionStoreIterator iterator);
     }
 
-    private static class InMemorySessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+    private static InMemorySessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
 {
 
         private Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator;
@@ -391,10 +391,10 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             }
 
             Map.Entry<long, byte[]> nextRecord = recordIterator.next();
-            SessionWindow sessionWindow = new SessionWindow(nextRecord.getKey(), currentEndTime);
+            SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, currentEndTime);
             Windowed<Bytes> windowedKey = new Windowed<>(currentKey, sessionWindow);
 
-            return new KeyValue<>(windowedKey, nextRecord.getValue());
+            return new KeyValue<>(windowedKey, nextRecord.Value);
         }
 
         // Called when the inner two (key and starttime) iterators are empty to roll to the next endTimestamp
@@ -405,8 +405,8 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             while (endTimeIterator.hasNext())
 {
                 Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> nextEndTimeEntry = endTimeIterator.next();
-                currentEndTime = nextEndTimeEntry.getKey();
-                keyIterator = nextEndTimeEntry.getValue().subMap(keyFrom, true, keyTo, true).entrySet().iterator();
+                currentEndTime = nextEndTimeEntry.Key;
+                keyIterator = nextEndTimeEntry.Value.subMap(keyFrom, true, keyTo, true).entrySet().iterator();
 
                 if (setInnerIterators())
 {
@@ -423,14 +423,14 @@ public class InMemorySessionStore : SessionStore<Bytes, byte[]>
             while (keyIterator.hasNext())
 {
                 Entry<Bytes, ConcurrentNavigableMap<long, byte[]>> nextKeyEntry = keyIterator.next();
-                currentKey = nextKeyEntry.getKey();
+                currentKey = nextKeyEntry.Key;
 
-                if (latestSessionStartTime == long.MAX_VALUE)
+                if (latestSessionStartTime == long.MaxValue)
 {
-                    recordIterator = nextKeyEntry.getValue().entrySet().iterator();
+                    recordIterator = nextKeyEntry.Value.entrySet().iterator();
                 } else
 {
-                    recordIterator = nextKeyEntry.getValue().headMap(latestSessionStartTime, true).entrySet().iterator();
+                    recordIterator = nextKeyEntry.Value.headMap(latestSessionStartTime, true).entrySet().iterator();
                 }
 
                 if (recordIterator.hasNext())

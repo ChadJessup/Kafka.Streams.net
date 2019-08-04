@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processor.Internals.assignment;
 
 
 
-public class ClientState {
+public ClientState {
     private HashSet<TaskId> activeTasks;
     private HashSet<TaskId> standbyTasks;
     private HashSet<TaskId> assignedTasks;

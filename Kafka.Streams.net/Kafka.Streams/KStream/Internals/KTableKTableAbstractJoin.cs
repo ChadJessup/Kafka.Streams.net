@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
-abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
+abstract KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
 
     private  KTableImpl<K, ?, V1> table1;
     private  KTableImpl<K, ?, V2> table2;

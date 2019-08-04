@@ -15,7 +15,7 @@ namespace Kafka.Common.Metrics
      * message size would record a sequence of message sizes using the {@link #record(double)} api and would maintain a set
      * of metrics about request sizes such as the average or max.
      */
-    public class Sensor
+    public Sensor
     {
         public static RecordingLevel RecordingLevel;
 
@@ -57,7 +57,7 @@ namespace Kafka.Common.Metrics
         {
             if (!sensors.Add(this))
             {
-                throw new ArgumentException("Circular dependency in sensors: " + name + " is its own parent.");
+                throw new System.ArgumentException("Circular dependency in sensors: " + name + " is its own parent.");
             }
 
             foreach (Sensor parent in parents)

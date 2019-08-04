@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace Kafka.Common
 {
     /**
-     * The <code>MetricName</code> class encapsulates a metric's name, logical group and its related attributes. It should be constructed using metrics.MetricName(...).
+     * The <code>MetricName</code> encapsulates a metric's name, logical group and its related attributes. It should be constructed using metrics.MetricName(...).
      * <p>
-     * This class captures the following parameters
+     * This captures the following parameters
      * <pre>
      *  <b>name</b> The name of the metric
      *  <b>group</b> logical group name of the metrics to which this metric belongs.
@@ -44,7 +44,7 @@ namespace Kafka.Common
      * sensor.record(messageSize);
      * }</pre>
      */
-    public class MetricName
+    public MetricName
     {
 
         private int hash = 0;

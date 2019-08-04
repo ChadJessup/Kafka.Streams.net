@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processor;
 /**
  * Interface for batching restoration of a {@link IStateStore}
  *
- * It is expected that implementations of this class will not call the {@link StateRestoreCallback#restore(byte[],
+ * It is expected that implementations of this will not call the {@link StateRestoreCallback#restore(byte[],
  * byte[]]} method.
  */
 public interface BatchingStateRestoreCallback : StateRestoreCallback {

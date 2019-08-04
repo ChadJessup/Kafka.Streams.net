@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
-public class GlobalKTableImpl<K, V> : GlobalKTable<K, V> {
+public GlobalKTableImpl<K, V> : GlobalKTable<K, V> {
 
     private  KTableValueGetterSupplier<K, V> valueGetterSupplier;
     private  string queryableStoreName;

@@ -28,8 +28,8 @@ using Kafka.Streams.Errors.InvalidStateStoreException;
  * between the read and write operations on different IStateStore instances can cause concurrency
  * problems like deadlock.
  *
- * @param <K> the key type
- * @param <V> the value type
+ * @param the key type
+ * @param the value type
  */
 public interface IReadOnlyKeyValueStore<K, V>
 {

@@ -40,9 +40,9 @@ namespace Kafka.common.utils;
  *
  * The unmap implementation was inspired by the one in Lucene's MMapDirectory.
  */
-public final class MappedByteBuffers {
+public final MappedByteBuffers {
 
-    private static final Logger log = LoggerFactory.getLogger(MappedByteBuffers.class);
+    private static final Logger log = new LoggerFactory().CreateLogger<MappedByteBuffers);
 
     // null if unmap is not supported
     private static final MethodHandle UNMAP;
@@ -51,7 +51,7 @@ public final class MappedByteBuffers {
     private static final RuntimeException UNMAP_NOT_SUPPORTED_EXCEPTION;
 
     static {
-        Object unmap = null;
+        object unmap = null;
         RuntimeException exception = null;
         try {
             unmap = lookupUnmapMethodHandle();
@@ -73,7 +73,7 @@ public final class MappedByteBuffers {
 
     public static void unmap(String resourceDescription, MappedByteBuffer buffer){
         if (!buffer.isDirect())
-            throw new ArgumentException("Unmapping only works with direct buffers");
+            throw new System.ArgumentException("Unmapping only works with direct buffers");
         if (UNMAP == null)
             throw UNMAP_NOT_SUPPORTED_EXCEPTION;
 
@@ -116,26 +116,26 @@ public final class MappedByteBuffers {
         m.setAccessible(true);
         MethodHandle directBufferCleanerMethod = lookup.unreflect(m);
         Class<?> cleanerClass = directBufferCleanerMethod.type().returnType();
-        MethodHandle cleanMethod = lookup.findVirtual(cleanerClass, "clean", methodType(void.class));
-        MethodHandle nonNullTest = lookup.findStatic(MappedByteBuffers.class, "nonNull",
-                methodType(boolean.class, Object.class)).asType(methodType(boolean.class, cleanerClass));
-        MethodHandle noop = dropArguments(constant(Void.class, null).asType(methodType(void.class)), 0, cleanerClass);
+        MethodHandle cleanMethod = lookup.findVirtual(cleanerClass, "clean", methodType(void));
+        MethodHandle nonNullTest = lookup.findStatic(MappedByteBuffers, "nonNull",
+                methodType(boolean, object)).asType(methodType(boolean, cleanerClass));
+        MethodHandle noop = dropArguments(constant(Void, null).asType(methodType(void)), 0, cleanerClass);
         MethodHandle unmapper = filterReturnValue(directBufferCleanerMethod, guardWithTest(nonNullTest, cleanMethod, noop))
-                .asType(methodType(void.class, ByteBuffer.class));
+                .asType(methodType(void, ByteBuffer));
         return unmapper;
     }
 
     private static MethodHandle unmapJava9(MethodHandles.Lookup lookup){
         Class<?> unsafeClass = Class.forName("sun.misc.Unsafe");
         MethodHandle unmapper = lookup.findVirtual(unsafeClass, "invokeCleaner",
-                methodType(void.class, ByteBuffer.class));
+                methodType(void, ByteBuffer));
         Field f = unsafeClass.getDeclaredField("theUnsafe");
         f.setAccessible(true);
-        Object theUnsafe = f[null];
+        object theUnsafe = f[null];
         return unmapper.bindTo(theUnsafe);
     }
 
-    private static boolean nonNull(Object o)
+    private static boolean nonNull(object o)
 {
         return o != null;
     }

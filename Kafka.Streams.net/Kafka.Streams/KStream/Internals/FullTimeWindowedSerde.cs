@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -25,7 +25,7 @@ namespace Kafka.streams.kstream.internals;
 class FullTimeWindowedSerde<T> : Serdes.WrapperSerde<Windowed<T>> {
     FullTimeWindowedSerde( ISerde<T> inner,  long windowSize)
 {
-        super(
+        base(
             new TimeWindowedSerializer<>(inner.serializer()),
             new TimeWindowedDeserializer<>(inner.deserializer(), windowSize)
         );

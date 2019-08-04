@@ -25,7 +25,7 @@ using Kafka.Streams.State.KeyValueIterator;
 /**
  * Optimized {@link KeyValueIterator} used when the same element could be peeked multiple times.
  */
-public class DelegatingPeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>, PeekingKeyValueIterator<K, V>
+public DelegatingPeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>, PeekingKeyValueIterator<K, V>
 {
     private KeyValueIterator<K, V> underlying;
     private string storeName;

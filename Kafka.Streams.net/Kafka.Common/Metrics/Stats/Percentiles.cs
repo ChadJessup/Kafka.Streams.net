@@ -8,7 +8,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A compound stat that reports one or more percentiles
      */
-    public class Percentiles : SampledStat, ICompoundStat
+    public Percentiles : SampledStat, ICompoundStat
     {
 
         public enum BucketSizing
@@ -37,12 +37,12 @@ namespace Kafka.Common.Metrics.Stats
             else if (bucketing == BucketSizing.LINEAR)
             {
                 if (min != 0.0d)
-                    throw new ArgumentException("Linear bucket sizing requires min to be 0.0.");
+                    throw new System.ArgumentException("Linear bucket sizing requires min to be 0.0.");
                 this.binScheme = new LinearBinScheme(buckets, max);
             }
             else
             {
-                throw new ArgumentException("Unknown bucket type: " + bucketing);
+                throw new System.ArgumentException("Unknown bucket type: " + bucketing);
             }
         }
 

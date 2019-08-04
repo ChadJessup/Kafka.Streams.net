@@ -23,7 +23,7 @@ namespace Kafka.common.utils;
 /**
  * An interface for scheduling tasks for the future.
  *
- * Implementations of this class should be thread-safe.
+ * Implementations of this should be thread-safe.
  */
 public interface Scheduler {
     Scheduler SYSTEM = new SystemScheduler();
@@ -41,9 +41,9 @@ public interface Scheduler {
      * @param executor      The executor to use.
      * @param callable      The callable to execute.
      * @param delayMs       The delay to use, in milliseconds.
-     * @param <T>           The return type of the callable.
+     * @param           The return type of the callable.
      * @return              A future which will complete when the callable is finished.
      */
-    <T> Future<T> schedule(final ScheduledExecutorService executor,
+    Future<T> schedule(final ScheduledExecutorService executor,
                            final Callable<T> callable, long delayMs);
 }

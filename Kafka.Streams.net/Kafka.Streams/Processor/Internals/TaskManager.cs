@@ -42,7 +42,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public class TaskManager {
+public TaskManager {
     // initialize the task list
     // activeTasks needs to be concurrent as it can be accessed
     // by QueryableState
@@ -125,8 +125,8 @@ public class TaskManager {
         log.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
         foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks.entrySet())
 {
-            TaskId taskId = entry.getKey();
-            HashSet<TopicPartition> partitions = entry.getValue();
+            TaskId taskId = entry.Key;
+            HashSet<TopicPartition> partitions = entry.Value;
 
             if (assignment.containsAll(partitions))
 {
@@ -173,8 +173,8 @@ public class TaskManager {
         // collect newly assigned standby tasks and reopen re-assigned standby tasks
         foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks.entrySet())
 {
-            TaskId taskId = entry.getKey();
-            HashSet<TopicPartition> partitions = entry.getValue();
+            TaskId taskId = entry.Key;
+            HashSet<TopicPartition> partitions = entry.Value;
             if (!standby.maybeResumeSuspendedTask(taskId, partitions))
 {
                 newStandbyTasks.Add(taskId, partitions);
@@ -403,8 +403,8 @@ public class TaskManager {
         restoreConsumer.assign(checkpointedOffsets.keySet());
         foreach (Map.Entry<TopicPartition, long> entry in checkpointedOffsets.entrySet())
 {
-            TopicPartition partition = entry.getKey();
-            long offset = entry.getValue();
+            TopicPartition partition = entry.Key;
+            long offset = entry.Value;
             if (offset >= 0)
 {
                 restoreConsumer.seek(partition, offset);
@@ -513,7 +513,7 @@ public class TaskManager {
             Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new HashMap<>();
             foreach (Map.Entry<TopicPartition, long> entry in active.recordsToDelete().entrySet())
 {
-                recordsToDelete.Add(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue()));
+                recordsToDelete.Add(entry.Key, RecordsToDelete.beforeOffset(entry.Value));
             }
             deleteRecordsResult = adminClient.deleteRecords(recordsToDelete);
 

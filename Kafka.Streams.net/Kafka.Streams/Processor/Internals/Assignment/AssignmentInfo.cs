@@ -37,9 +37,9 @@ using Kafka.Common.Utils.ByteBufferInputStream;
 
 
 
-public class AssignmentInfo {
+public AssignmentInfo {
 
-    private static Logger log = LoggerFactory.getLogger(AssignmentInfo.class);
+    private static Logger log = new LoggerFactory().CreateLogger<AssignmentInfo);
 
     public static int LATEST_SUPPORTED_VERSION = 4;
     static int UNKNOWN = -1;
@@ -85,7 +85,7 @@ public class AssignmentInfo {
         this(version, LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, hostState, errCode);
         if (version < 1 || version > LATEST_SUPPORTED_VERSION)
 {
-            throw new ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
+            throw new System.ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
                 + "; was: " + version);
         }
     }
@@ -192,10 +192,10 @@ public class AssignmentInfo {
         out.writeInt(standbyTasks.size());
         foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in standbyTasks.entrySet())
 {
-            TaskId id = entry.getKey();
+            TaskId id = entry.Key;
             id.writeTo(out);
 
-            HashSet<TopicPartition> partitions = entry.getValue();
+            HashSet<TopicPartition> partitions = entry.Value;
             writeTopicPartitions(out, partitions);
         }
     }
@@ -211,10 +211,10 @@ public class AssignmentInfo {
         out.writeInt(partitionsByHost.size());
         foreach (Map.Entry<HostInfo, HashSet<TopicPartition>> entry in partitionsByHost.entrySet())
 {
-            HostInfo hostInfo = entry.getKey();
+            HostInfo hostInfo = entry.Key;
             out.writeUTF(hostInfo.host());
             out.writeInt(hostInfo.port());
-            writeTopicPartitions(out, entry.getValue());
+            writeTopicPartitions(out, entry.Value);
         }
     }
 

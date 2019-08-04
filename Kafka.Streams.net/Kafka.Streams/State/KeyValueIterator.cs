@@ -25,10 +25,10 @@ using Kafka.Streams.KeyValue;
  * Iterator interface of {@link KeyValue}.
  *
  * Users must call its {@code close} method explicitly upon completeness to release resources,
- * or use try-with-resources statement (available since JDK7) for this {@link Closeable} class.
+ * or use try-with-resources statement (available since JDK7) for this {@link Closeable}.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  */
 public interface KeyValueIterator<K, V> : Iterator<KeyValue<K, V>>, Closeable
 {

@@ -22,7 +22,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
 
 
 
-public class KeyValueIteratorFacade<K, V> : KeyValueIterator<K, V>
+public KeyValueIteratorFacade<K, V> : KeyValueIterator<K, V>
 {
     private KeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
 

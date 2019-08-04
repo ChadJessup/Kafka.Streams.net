@@ -20,7 +20,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.WindowBytesStoreSupplier;
 using Kafka.Streams.State.WindowStore;
 
-public class InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
+public InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
 {
     private string name;
     private long retentionPeriod;
@@ -57,7 +57,7 @@ public class InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
         return "in-memory-window-state";
     }
 
-    @Deprecated
+    [System.Obsolete]
     public override int segments()
 {
         throw new InvalidOperationException("Segments is deprecated and should not be called");

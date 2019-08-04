@@ -24,7 +24,7 @@ using Kafka.Common.serialization.Deserializer;
 
 
 
-public class SourceNode<K, V> : ProcessorNode<K, V> {
+public SourceNode<K, V> : ProcessorNode<K, V> {
 
     private List<string> topics;
 
@@ -39,7 +39,7 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
                       Deserializer<K> keyDeserializer,
                       Deserializer<V> valDeserializer)
 {
-        super(name);
+        base(name);
         this.topics = topics;
         this.timestampExtractor = timestampExtractor;
         this.keyDeserializer = keyDeserializer;
@@ -68,7 +68,7 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
     
     public void init(InternalProcessorContext context)
 {
-        super.init(context);
+        base.init(context);
         this.context = context;
 
         // if deserializers are null, get the default ones from the context
@@ -111,7 +111,7 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
      */
     public string ToString(string indent)
 {
-        StringBuilder sb = new StringBuilder(super.ToString(indent));
+        StringBuilder sb = new StringBuilder(base.ToString(indent));
         sb.Append(indent).Append("\ttopics:\t\t[");
         foreach (string topic in topics)
 {

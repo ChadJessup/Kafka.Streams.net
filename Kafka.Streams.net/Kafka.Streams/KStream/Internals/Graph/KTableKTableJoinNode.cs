@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -30,7 +30,7 @@ namespace Kafka.streams.kstream.internals.graph;
 /**
  * Too much specific information to generalize so the KTable-KTable join requires a specific node.
  */
-public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Change<V1>, Change<V2>, Change<VR>> {
+public KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Change<V1>, Change<V2>, Change<VR>> {
 
     private  ISerde<K> keySerde;
     private  ISerde<VR> valueSerde;
@@ -51,7 +51,7 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
                           StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
 {
 
-        super(nodeName,
+        base(nodeName,
             null,
             joinThisProcessorParameters,
             joinOtherProcessorParameters,
@@ -137,15 +137,15 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
         return "KTableKTableJoinNode{" +
             "joinThisStoreNames=" + Arrays.ToString(joinThisStoreNames()) +
             ", joinOtherStoreNames=" + Arrays.ToString(joinOtherStoreNames()) +
-            "} " + super.ToString();
+            "} " + base.ToString();
     }
 
-    public static <K, V1, V2, VR> KTableKTableJoinNodeBuilder<K, V1, V2, VR> kTableKTableJoinNodeBuilder()
+    public static KTableKTableJoinNodeBuilder<K, V1, V2, VR> kTableKTableJoinNodeBuilder()
 {
-        return new KTableKTableJoinNodeBuilder<>();
+        return new KTableKTableJoinNodeBuilder<K, V1, V2, VR>();
     }
 
-    public static  class KTableKTableJoinNodeBuilder<K, V1, V2, VR> {
+    public static  KTableKTableJoinNodeBuilder<K, V1, V2, VR> {
         private string nodeName;
         private ProcessorParameters<K, Change<V1>> joinThisProcessorParameters;
         private ProcessorParameters<K, Change<V2>> joinOtherProcessorParameters;

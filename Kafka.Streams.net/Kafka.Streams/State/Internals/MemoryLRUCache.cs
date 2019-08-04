@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Internals
     /**
      * An in-memory LRU cache store based on HashSet and HashMap.
      */
-    public class MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
+    public MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
     {
         private string name;
         protected Dictionary<Bytes, byte[]> map;
@@ -30,10 +30,10 @@ namespace Kafka.Streams.State.Internals
 
             //            protected bool removeEldestEntry(Map.Entry<Bytes, byte[]> eldest)
             //{
-            //                bool evict = super.size() > maxCacheSize;
+            //                bool evict = base.size() > maxCacheSize;
             //                if (evict && !restoring && listener != null)
             //{
-            //                    listener.apply(eldest.getKey(), eldest.getValue());
+            //                    listener.apply(eldest.Key, eldest.Value);
             //                }
             //                return evict;
             //            }

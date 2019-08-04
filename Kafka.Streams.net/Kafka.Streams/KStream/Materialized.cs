@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+using Kafka.Streams.Processor.Interfaces;
+
+namespace Kafka.Streams.KStream {
 
 
 
@@ -44,18 +46,18 @@ namespace Kafka.streams.kstream;
  * via Interactive Queries API:
  * <pre>{@code
  * StreamsBuilder builder = new StreamsBuilder();
- * KTable<Integer, Integer> table = builder.table(
+ * KTable<int, int> table = builder.table(
  *   "topicName",
  *   Materialized.as("queryable-store-name"));
  * }</pre>
  *
- * @param <K> type of record key
- * @param <V> type of record value
- * @param <S> type of state store (note: state stores always have key/value types {@code <Bytes,byte[]>}
+ * @param type of record key
+ * @param type of record value
+ * @param type of state store (note: state stores always have key/value types {@code <Bytes,byte[]>}
  *
  * @see org.apache.kafka.streams.state.Stores
  */
-public class Materialized<K, V, S : IStateStore> {
+public Materialized<K, V, S : IStateStore> {
     protected StoreSupplier<S> storeSupplier;
     protected string storeName;
     protected ISerde<V> valueSerde;
@@ -63,7 +65,7 @@ public class Materialized<K, V, S : IStateStore> {
     protected bool loggingEnabled = true;
     protected bool cachingEnabled = true;
     protected Map<string, string> topicConfig = new HashMap<>();
-    protected Duration retention;
+    protected TimeSpan retention;
 
     private Materialized( StoreSupplier<S> storeSupplier)
 {
@@ -96,12 +98,13 @@ public class Materialized<K, V, S : IStateStore> {
      *
      * @param storeName  the name of the underlying {@link KTable} state store; valid characters are ASCII
      * alphanumerics, '.', '_' and '-'.
-     * @param <K>       key type of the store
-     * @param <V>       value type of the store
-     * @param <S>       type of the {@link IStateStore}
+     * @param       key type of the store
+     * @param       value type of the store
+     * @param       type of the {@link IStateStore}
      * @return a new {@link Materialized} instance with the given storeName
      */
-    public static <K, V, S : IStateStore> Materialized<K, V, S> as( string storeName)
+    public static Materialized<K, V, S> As( string storeName)
+        where S : IStateStore
 {
         Named.validate(storeName);
         return new Materialized<>(storeName);
@@ -110,37 +113,37 @@ public class Materialized<K, V, S : IStateStore> {
     /**
      * Materialize a {@link WindowStore} using the provided {@link WindowBytesStoreSupplier}.
      *
-     * Important: Custom subclasses are allowed here, but they should respect the retention contract:
+     * Important: Custom sues are allowed here, but they should respect the retention contract:
      * Window stores are required to retain windows at least as long as (window size + window grace period).
      * Stores constructed via {@link org.apache.kafka.streams.state.Stores} already satisfy this contract.
      *
      * @param supplier the {@link WindowBytesStoreSupplier} used to materialize the store
-     * @param <K>      key type of the store
-     * @param <V>      value type of the store
+     * @param      key type of the store
+     * @param      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
     public staticMaterialized<K, V, WindowStore<Bytes, byte[]>> as( WindowBytesStoreSupplier supplier)
 {
-        Objects.requireNonNull(supplier, "supplier can't be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
         return new Materialized<>(supplier);
     }
 
     /**
-     * Materialize a {@link SessionStore} using the provided {@link SessionBytesStoreSupplier}.
+     * Materialize a {@link ISessionStore} using the provided {@link SessionBytesStoreSupplier}.
      *
-     * Important: Custom subclasses are allowed here, but they should respect the retention contract:
+     * Important: Custom sues are allowed here, but they should respect the retention contract:
      * Session stores are required to retain windows at least as long as (session inactivity gap + session grace period).
      * Stores constructed via {@link org.apache.kafka.streams.state.Stores} already satisfy this contract.
      *
      * @param supplier the {@link SessionBytesStoreSupplier} used to materialize the store
-     * @param <K>      key type of the store
-     * @param <V>      value type of the store
+     * @param      key type of the store
+     * @param      value type of the store
      * @return a new {@link Materialized} instance with the given sup
      * plier
      */
-    public staticMaterialized<K, V, SessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier)
+    public staticMaterialized<K, V, ISessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier)
 {
-        Objects.requireNonNull(supplier, "supplier can't be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
         return new Materialized<>(supplier);
     }
 
@@ -148,13 +151,13 @@ public class Materialized<K, V, S : IStateStore> {
      * Materialize a {@link KeyValueStore} using the provided {@link KeyValueBytesStoreSupplier}.
      *
      * @param supplier the {@link KeyValueBytesStoreSupplier} used to materialize the store
-     * @param <K>      key type of the store
-     * @param <V>      value type of the store
+     * @param      key type of the store
+     * @param      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
     public staticMaterialized<K, V, IKeyValueStore<Bytes, byte[]>> as( KeyValueBytesStoreSupplier supplier)
 {
-        Objects.requireNonNull(supplier, "supplier can't be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
         return new Materialized<>(supplier);
     }
 
@@ -166,9 +169,9 @@ public class Materialized<K, V, S : IStateStore> {
      *                      serde from configs will be used
      * @param valueSerde    the value {@link Serde} to use. If the {@link Serde} is null, then the default value
      *                      serde from configs will be used
-     * @param <K>           key type
-     * @param <V>           value type
-     * @param <S>           store type
+     * @param           key type
+     * @param           value type
+     * @param           store type
      * @return a new {@link Materialized} instance with the given key and value serdes
      */
     public static <K, V, S : IStateStore> Materialized<K, V, S> with( ISerde<K> keySerde,
@@ -262,13 +265,13 @@ public class Materialized<K, V, S : IStateStore> {
      * @return itself
      * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
      */
-    public Materialized<K, V, S> withRetention( Duration retention){
+    public Materialized<K, V, S> withRetention( TimeSpan retention){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
          long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
 
         if (retenationMs < 0)
 {
-            throw new ArgumentException("Retention must not be negative.");
+            throw new System.ArgumentException("Retention must not be negative.");
         }
         this.retention = retention;
         return this;

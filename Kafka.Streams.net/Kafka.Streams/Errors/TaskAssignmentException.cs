@@ -21,22 +21,22 @@ namespace Kafka.Streams.Errors {
  * {@link org.apache.kafka.streams.processor.internals.StreamTask stream tasks} to
  * {@link org.apache.kafka.streams.processor.internals.StreamThread threads}.
  */
-public class TaskAssignmentException : StreamsException {
+public TaskAssignmentException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
     public TaskAssignmentException( string message)
 {
-        super(message);
+        base(message);
     }
 
     public TaskAssignmentException( string message,  Throwable throwable)
 {
-        super(message, throwable);
+        base(message, throwable);
     }
 
     public TaskAssignmentException( Throwable throwable)
 {
-        super(throwable);
+        base(throwable);
     }
 }

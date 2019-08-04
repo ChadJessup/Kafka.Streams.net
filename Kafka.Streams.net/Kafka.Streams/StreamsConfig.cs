@@ -80,7 +80,7 @@ namespace Kafka.streams;
  * StreamsConfig streamsConfig = new StreamsConfig(streamsProperties);
  * }</pre>
  *
- * This instance can also be used to pass in custom configurations to different modules (e.g. passing a special config in your customized serde class).
+ * This instance can also be used to pass in custom configurations to different modules (e.g. passing a special config in your customized serde).
  * The consumer/producer/admin prefix can also be used to distinguish these custom config values passed to different clients with the same config name.
  * * Example:
  * <pre>{@code
@@ -92,7 +92,7 @@ namespace Kafka.streams;
  * // sets "my.custom.config2" to "boom" for all clients universally
  * streamsProperties.Add("my.custom.config2", "boom");
  *
- * // as a result, inside producer's serde class configure(..) function,
+ * // as a result, inside producer's serde configure(..) function,
  * // users can now read both key-value pairs "my.custom.config" -> "foo"
  * // and "my.custom.config2" -> "boom" from the config map
  * StreamsConfig streamsConfig = new StreamsConfig(streamsProperties);
@@ -129,9 +129,9 @@ namespace Kafka.streams;
  * @see ConsumerConfig
  * @see ProducerConfig
  */
-public class StreamsConfig : AbstractConfig {
+public StreamsConfig : AbstractConfig {
 
-    private  static Logger log = LoggerFactory.getLogger(StreamsConfig.class);
+    private  static Logger log = new LoggerFactory().CreateLogger<StreamsConfig);
 
     private static  ConfigDef CONFIG;
 
@@ -314,14 +314,14 @@ public class StreamsConfig : AbstractConfig {
      */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG = "default.deserialization.exception.handler";
-    private static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that : the <code>org.apache.kafka.streams.errors.DeserializationExceptionHandler</code> interface.";
+    private static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling that : the <code>org.apache.kafka.streams.errors.DeserializationExceptionHandler</code> interface.";
 
     /**
      * {@code default.production.exception.handler}
      */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG = "default.production.exception.handler";
-    private static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that : the <code>org.apache.kafka.streams.errors.ProductionExceptionHandler</code> interface.";
+    private static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling that : the <code>org.apache.kafka.streams.errors.ProductionExceptionHandler</code> interface.";
 
     /**
      * {@code default.windowed.key.serde.inner}
@@ -338,21 +338,21 @@ public class StreamsConfig : AbstractConfig {
     /** {@code default key.serde} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_KEY_SERDE_CLASS_CONFIG = "default.key.serde";
-    private static  string DEFAULT_KEY_SERDE_CLASS_DOC = " Default serializer / deserializer class for key that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
-            + "Note when windowed serde class is used, one needs to set the inner serde class that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
+    private static  string DEFAULT_KEY_SERDE_CLASS_DOC = " Default serializer / deserializer for key that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
+            + "Note when windowed serde is used, one needs to set the inner serde that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
             + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
     /** {@code default value.serde} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_VALUE_SERDE_CLASS_CONFIG = "default.value.serde";
-    private static  string DEFAULT_VALUE_SERDE_CLASS_DOC = "Default serializer / deserializer class for value that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
-            + "Note when windowed serde class is used, one needs to set the inner serde class that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
+    private static  string DEFAULT_VALUE_SERDE_CLASS_DOC = "Default serializer / deserializer for value that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
+            + "Note when windowed serde is used, one needs to set the inner serde that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
             + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
     /** {@code default.timestamp.extractor} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG = "default.timestamp.extractor";
-    private static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor class that : the <code>org.apache.kafka.streams.processor.TimestampExtractor</code> interface.";
+    private static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor that : the <code>org.apache.kafka.streams.processor.TimestampExtractor</code> interface.";
 
     /** {@code metadata.max.age.ms} */
     @SuppressWarnings("WeakerAccess")
@@ -387,7 +387,7 @@ public class StreamsConfig : AbstractConfig {
     /** {@code partition.grouper} */
     @SuppressWarnings("WeakerAccess")
     public static  string PARTITION_GROUPER_CLASS_CONFIG = "partition.grouper";
-    private static  string PARTITION_GROUPER_CLASS_DOC = "Partition grouper class that : the <code>org.apache.kafka.streams.processor.PartitionGrouper</code> interface.";
+    private static  string PARTITION_GROUPER_CLASS_DOC = "Partition grouper that : the <code>org.apache.kafka.streams.processor.PartitionGrouper</code> interface.";
 
     /** {@code poll.ms} */
     @SuppressWarnings("WeakerAccess")
@@ -433,7 +433,7 @@ public class StreamsConfig : AbstractConfig {
     /** {@code rocksdb.config.setter} */
     @SuppressWarnings("WeakerAccess")
     public static  string ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
-    private static  string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter class or class name that : the <code>org.apache.kafka.streams.state.RocksDBConfigSetter</code> interface";
+    private static  string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter or name that : the <code>org.apache.kafka.streams.state.RocksDBConfigSetter</code> interface";
 
     /** {@code security.protocol} */
     @SuppressWarnings("WeakerAccess")
@@ -513,27 +513,27 @@ public class StreamsConfig : AbstractConfig {
                     CLIENT_ID_DOC)
             .define(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG,
                     Type.CLASS,
-                    LogAndFailExceptionHandler.class.getName(),
+                    LogAndFailExceptionHandler.getName(),
                     Importance.MEDIUM,
                     DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC)
             .define(DEFAULT_KEY_SERDE_CLASS_CONFIG,
                     Type.CLASS,
-                    Serdes.ByteArraySerde.class.getName(),
+                    Serdes.ByteArraySerde.getName(),
                     Importance.MEDIUM,
                     DEFAULT_KEY_SERDE_CLASS_DOC)
             .define(DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG,
                     Type.CLASS,
-                    DefaultProductionExceptionHandler.class.getName(),
+                    DefaultProductionExceptionHandler.getName(),
                     Importance.MEDIUM,
                     DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_DOC)
             .define(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG,
                     Type.CLASS,
-                    FailOnInvalidTimestamp.class.getName(),
+                    FailOnInvalidTimestamp.getName(),
                     Importance.MEDIUM,
                     DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC)
             .define(DEFAULT_VALUE_SERDE_CLASS_CONFIG,
                     Type.CLASS,
-                    Serdes.ByteArraySerde.class.getName(),
+                    Serdes.ByteArraySerde.getName(),
                     Importance.MEDIUM,
                     DEFAULT_VALUE_SERDE_CLASS_DOC)
             .define(NUM_STANDBY_REPLICAS_CONFIG,
@@ -623,7 +623,7 @@ public class StreamsConfig : AbstractConfig {
                     CommonClientConfigs.METRICS_SAMPLE_WINDOW_MS_DOC)
             .define(PARTITION_GROUPER_CLASS_CONFIG,
                     Type.CLASS,
-                    DefaultPartitionGrouper.class.getName(),
+                    DefaultPartitionGrouper.getName(),
                     Importance.LOW,
                     PARTITION_GROUPER_CLASS_DOC)
             .define(POLL_MS_CONFIG,
@@ -652,7 +652,7 @@ public class StreamsConfig : AbstractConfig {
             .define(RETRIES_CONFIG,
                     Type.INT,
                     0,
-                    between(0, Integer.MAX_VALUE),
+                    between(0, int.MaxValue),
                     ConfigDef.Importance.LOW,
                     CommonClientConfigs.RETRIES_DOC)
             .define(RETRY_BACKOFF_MS_CONFIG,
@@ -708,7 +708,7 @@ public class StreamsConfig : AbstractConfig {
     private static  Map<string, object> PRODUCER_EOS_OVERRIDES;
     static {
          Map<string, object> tempProducerDefaultOverrides = new HashMap<>(PRODUCER_DEFAULT_OVERRIDES);
-        tempProducerDefaultOverrides.Add(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, Integer.MAX_VALUE);
+        tempProducerDefaultOverrides.Add(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, int.MaxValue);
         tempProducerDefaultOverrides.Add(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
         PRODUCER_EOS_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
@@ -731,7 +731,7 @@ public class StreamsConfig : AbstractConfig {
         CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
     }
 
-    public static class InternalConfig {
+    public static InternalConfig {
         public static  string TASK_MANAGER_FOR_PARTITION_ASSIGNOR = "__task.manager.instance__";
         public static  string ASSIGNMENT_ERROR_CODE = "__assignment.error.code__";
     }
@@ -851,7 +851,7 @@ public class StreamsConfig : AbstractConfig {
     protected StreamsConfig( Map<?, ?> props,
                              bool doLog)
 {
-        super(CONFIG, props, doLog);
+        base(CONFIG, props, doLog);
         eosEnabled = EXACTLY_ONCE.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
     }
 
@@ -899,18 +899,18 @@ public class StreamsConfig : AbstractConfig {
 
         if (eosEnabled)
 {
-             Object maxInFlightRequests = clientProvidedProps[ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION];
+             object maxInFlightRequests = clientProvidedProps[ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION];
 
             if (maxInFlightRequests != null)
 {
                  int maxInFlightRequestsAsInteger;
-                if (maxInFlightRequests is Integer)
+                if (maxInFlightRequests is int)
 {
-                    maxInFlightRequestsAsInteger = (Integer) maxInFlightRequests;
+                    maxInFlightRequestsAsInteger = (int) maxInFlightRequests;
                 } else if (maxInFlightRequests is string)
 {
                     try {
-                        maxInFlightRequestsAsInteger = Integer.parseInt(((string) maxInFlightRequests).trim());
+                        maxInFlightRequestsAsInteger = int.Parse(((string) maxInFlightRequests).trim());
                     } catch ( NumberFormatException e)
 {
                         throw new ConfigException(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, maxInFlightRequests, "string value could not be parsed as 32-bit integer");
@@ -977,7 +977,7 @@ public class StreamsConfig : AbstractConfig {
      * @deprecated use {@link StreamsConfig#getMainConsumerConfigs(string, string, int)}
      */
     @SuppressWarnings("WeakerAccess")
-    @Deprecated
+    [System.Obsolete]
     public Map<string, object> getConsumerConfigs( string groupId,  string clientId)
 {
         return getMainConsumerConfigs(groupId, clientId, DUMMY_THREAD_INDEX);
@@ -1007,7 +1007,7 @@ public class StreamsConfig : AbstractConfig {
          Map<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
         for ( Map.Entry<string, object> entry: mainConsumerProps.entrySet())
 {
-            consumerProps.Add(entry.getKey(), entry.getValue());
+            consumerProps.Add(entry.Key, entry.Value);
         }
 
         // this is a hack to work around StreamsConfig constructor inside StreamsPartitionAssignor to avoid casting
@@ -1028,7 +1028,7 @@ public class StreamsConfig : AbstractConfig {
         consumerProps.Add(REPLICATION_FACTOR_CONFIG, getInt(REPLICATION_FACTOR_CONFIG));
         consumerProps.Add(APPLICATION_SERVER_CONFIG, getString(APPLICATION_SERVER_CONFIG));
         consumerProps.Add(NUM_STANDBY_REPLICAS_CONFIG, getInt(NUM_STANDBY_REPLICAS_CONFIG));
-        consumerProps.Add(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.class.getName());
+        consumerProps.Add(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.getName());
         consumerProps.Add(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getLong(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
         //.Add admin retries configs for creating topics
@@ -1043,12 +1043,12 @@ public class StreamsConfig : AbstractConfig {
         if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
             producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
 {
-             int segmentSize = Integer.parseInt(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString());
-             int batchSize = Integer.parseInt(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString());
+             int segmentSize = int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString());
+             int batchSize = int.Parse(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString());
 
             if (segmentSize < batchSize)
 {
-                throw new ArgumentException(string.Format("Specified topic segment size %d is is smaller than the configured producer batch size %d, this will cause produced batch not able to be appended to the topic",
+                throw new System.ArgumentException(string.Format("Specified topic segment size %d is is smaller than the configured producer batch size %d, this will cause produced batch not able to be appended to the topic",
                         segmentSize,
                         batchSize));
             }
@@ -1081,7 +1081,7 @@ public class StreamsConfig : AbstractConfig {
          Map<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
         for ( Map.Entry<string, object> entry: restoreConsumerProps.entrySet())
 {
-            baseConsumerProps.Add(entry.getKey(), entry.getValue());
+            baseConsumerProps.Add(entry.Key, entry.Value);
         }
 
         // no need to set group id for a restore consumer
@@ -1115,7 +1115,7 @@ public class StreamsConfig : AbstractConfig {
          Map<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
         for ( Map.Entry<string, object> entry: globalConsumerProps.entrySet())
 {
-            baseConsumerProps.Add(entry.getKey(), entry.getValue());
+            baseConsumerProps.Add(entry.Key, entry.Value);
         }
 
         // no need to set group id for a global consumer
@@ -1206,16 +1206,16 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Return an {@link Serde#configure(Map, boolean) configured} instance of {@link #DEFAULT_KEY_SERDE_CLASS_CONFIG key Serde
-     * class}.
+     *}.
      *
-     * @return an configured instance of key Serde class
+     * @return an configured instance of key Serde
      */
     @SuppressWarnings("WeakerAccess")
     public Serde defaultKeySerde()
 {
-         Object keySerdeConfigSetting = get(DEFAULT_KEY_SERDE_CLASS_CONFIG);
+         object keySerdeConfigSetting = get(DEFAULT_KEY_SERDE_CLASS_CONFIG);
         try {
-             ISerde<?> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde.class);
+             ISerde<?> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde);
             serde.configure(originals(), true);
             return serde;
         } catch ( Exception e)
@@ -1227,16 +1227,16 @@ public class StreamsConfig : AbstractConfig {
 
     /**
      * Return an {@link Serde#configure(Map, boolean) configured} instance of {@link #DEFAULT_VALUE_SERDE_CLASS_CONFIG value
-     * Serde class}.
+     * Serde}.
      *
-     * @return an configured instance of value Serde class
+     * @return an configured instance of value Serde
      */
     @SuppressWarnings("WeakerAccess")
     public Serde defaultValueSerde()
 {
-         Object valueSerdeConfigSetting = get(DEFAULT_VALUE_SERDE_CLASS_CONFIG);
+         object valueSerdeConfigSetting = get(DEFAULT_VALUE_SERDE_CLASS_CONFIG);
         try {
-             ISerde<?> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde.class);
+             ISerde<?> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde);
             serde.configure(originals(), false);
             return serde;
         } catch ( Exception e)
@@ -1249,19 +1249,19 @@ public class StreamsConfig : AbstractConfig {
     @SuppressWarnings("WeakerAccess")
     public TimestampExtractor defaultTimestampExtractor()
 {
-        return getConfiguredInstance(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TimestampExtractor.class);
+        return getConfiguredInstance(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TimestampExtractor);
     }
 
     @SuppressWarnings("WeakerAccess")
     public DeserializationExceptionHandler defaultDeserializationExceptionHandler()
 {
-        return getConfiguredInstance(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, DeserializationExceptionHandler.class);
+        return getConfiguredInstance(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, DeserializationExceptionHandler);
     }
 
     @SuppressWarnings("WeakerAccess")
     public ProductionExceptionHandler defaultProductionExceptionHandler()
 {
-        return getConfiguredInstance(DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG, ProductionExceptionHandler.class);
+        return getConfiguredInstance(DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG, ProductionExceptionHandler);
     }
 
     /**

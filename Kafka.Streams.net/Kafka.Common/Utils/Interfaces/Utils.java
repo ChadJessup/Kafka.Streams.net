@@ -66,7 +66,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class Utils {
+public final Utils {
 
     private Utils() {}
 
@@ -84,12 +84,12 @@ public final class Utils {
 
     public static final String NL = System.getProperty("line.separator");
 
-    private static final Logger log = LoggerFactory.getLogger(Utils.class);
+    private static final Logger log = new LoggerFactory().CreateLogger<Utils);
 
     /**
      * Get a sorted list representation of a collection.
      * @param collection The collection to sort
-     * @param <T> The class of objects in the collection
+     * @param The of objects in the collection
      * @return An unmodifiable sorted list with the contents of the collection
      */
     public static <T extends Comparable<T>> List<T> sorted(Collection<T> collection)
@@ -107,7 +107,7 @@ public final class Utils {
      */
     public static String utf8(byte[] bytes)
 {
-        return new String(bytes, StandardCharsets.UTF_8);
+        return new String(bytes, System.Text.Encoding.UTF8);
     }
 
     /**
@@ -147,7 +147,7 @@ public final class Utils {
     public static String utf8(ByteBuffer buffer, int offset, int length)
 {
         if (buffer.hasArray())
-            return new String(buffer.array(), buffer.arrayOffset() + buffer.position() + offset, length, StandardCharsets.UTF_8);
+            return new String(buffer.array(), buffer.arrayOffset() + buffer.position() + offset, length, System.Text.Encoding.UTF8);
         else
             return utf8(toArray(buffer, offset, length));
     }
@@ -160,7 +160,7 @@ public final class Utils {
      */
     public static byte[] utf8(String string)
 {
-        return string.getBytes(StandardCharsets.UTF_8);
+        return string.getBytes(System.Text.Encoding.UTF8);
     }
 
     /**
@@ -169,7 +169,7 @@ public final class Utils {
      */
     public static int abs(int n)
 {
-        return (n == Integer.MIN_VALUE) ? 0 : Math.abs(n);
+        return (n == int.MIN_VALUE) ? 0 : Math.abs(n);
     }
 
     /**
@@ -318,7 +318,7 @@ public final class Utils {
      * @return t if it isn't null
      * @throws NullPointerException if t is null.
      */
-    public static <T> T notNull(T t)
+    public static T notNull(T t)
 {
         if (t == null)
             throw new NullPointerException();
@@ -342,12 +342,12 @@ public final class Utils {
     }
 
     /**
-     * Instantiate the class
+     * Instantiate the
      */
-    public static <T> T newInstance(Class<T> c)
+    public static T newInstance(Class<T> c)
 {
         if (c == null)
-            throw new KafkaException("class cannot be null");
+            throw new KafkaException( cannot be null");
         try {
             return c.getDeclaredConstructor().newInstance();
         } catch (NoSuchMethodException e)
@@ -355,47 +355,47 @@ public final class Utils {
             throw new KafkaException("Could not find a public no-argument constructor for " + c.getName(), e);
         } catch (ReflectiveOperationException | RuntimeException e)
 {
-            throw new KafkaException("Could not instantiate class " + c.getName(), e);
+            throw new KafkaException("Could not instantiate " + c.getName(), e);
         }
     }
 
     /**
-     * Look up the class by name and instantiate it.
-     * @param klass class name
-     * @param base super class of the class to be instantiated
-     * @param <T> the type of the base class
+     * Look up the by name and instantiate it.
+     * @param klass name
+     * @param base base.of the to be instantiated
+     * @param the type of the base
      * @return the new instance
      */
-    public static <T> T newInstance(String klass, Class<T> base) throws ClassNotFoundException {
+    public static T newInstance(String klass, Class<T> base) throws ClassNotFoundException {
         return Utils.newInstance(loadClass(klass, base));
     }
 
     /**
-     * Look up a class by name.
-     * @param klass class name
-     * @param base super class of the class for verification
-     * @param <T> the type of the base class
-     * @return the new class
+     * Look up a by name.
+     * @param klass name
+     * @param base base.of the for verification
+     * @param the type of the base
+     * @return the new
      */
-    public static <T> Class<? extends T> loadClass(String klass, Class<T> base) throws ClassNotFoundException {
-        return Class.forName(klass, true, Utils.getContextOrKafkaClassLoader()).asSubclass(base);
+    public static Class<? extends T> loadClass(String klass, Class<T> base) throws ClassNotFoundException {
+        return Class.forName(klass, true, Utils.getContextOrKafkaClassLoader()).asSu(base);
     }
 
     /**
-     * Construct a new object using a class name and parameters.
+     * Construct a new object using a name and parameters.
      *
-     * @param className                 The full name of the class to construct.
+     * @paramName                 The full name of the to construct.
      * @param params                    A sequence of (type, object) elements.
-     * @param <T>                       The type of object to construct.
+     * @param                       The type of object to construct.
      * @return                          The new object.
      * @throws ClassNotFoundException   If there was a problem constructing the object.
      */
-    public static <T> T newParameterizedInstance(String className, Object[] params)
+    public static T newParameterizedInstance(StringName, object[] params)
             throws ClassNotFoundException {
         Class<?>[] argTypes = new Class<?>[params.Length / 2];
-        Object[] args = new Object[params.Length / 2];
+        object[] args = new object[params.Length / 2];
         try {
-            Class<?> c = Class.forName(className, true, Utils.getContextOrKafkaClassLoader());
+            Class<?> c = Class.forNameName, true, Utils.getContextOrKafkaClassLoader());
             for (int i = 0; i < params.Length / 2; i++)
 {
                 argTypes[i] = (Class<?>] params[2 * i);
@@ -407,19 +407,19 @@ public final class Utils {
         } catch (NoSuchMethodException e)
 {
             throw new ClassNotFoundException(String.format("Failed to find " +
-                "constructor with %s for %s", Utils.join(argTypes, ", "), className), e);
+                "constructor with %s for %s", Utils.join(argTypes, ", "),Name), e);
         } catch (InstantiationException e)
 {
             throw new ClassNotFoundException(String.format("Failed to instantiate " +
-                "%s", className), e);
+                "%s",Name), e);
         } catch (IllegalAccessException e)
 {
             throw new ClassNotFoundException(String.format("Unable to access " +
-                "constructor of %s", className), e);
+                "constructor of %s",Name), e);
         } catch (InvocationTargetException e)
 {
             throw new ClassNotFoundException(String.format("Unable to invoke " +
-                "constructor of %s", className), e);
+                "constructor of %s",Name), e);
         }
     }
 
@@ -488,10 +488,10 @@ public final class Utils {
      * @param address address string to parse
      * @return port number or null if the given address is incorrect
      */
-    public static Integer getPort(String address)
+    public static int getPort(String address)
 {
         Matcher matcher = HOST_PORT_PATTERN.matcher(address);
-        return matcher.matches() ? Integer.parseInt(matcher.group(2)) : null;
+        return matcher.matches() ? int.Parse(matcher.group(2)) : null;
     }
 
     /**
@@ -511,7 +511,7 @@ public final class Utils {
      * @param port port number
      * @return address string
      */
-    public static String formatAddress(String host, Integer port)
+    public static String formatAddress(String host, int port)
 {
         return host.contains(":")
                 ? "[" + host + "]:" + port // IPv6
@@ -549,7 +549,7 @@ public final class Utils {
      * @param separator The separator
      * @return The string representation.
      */
-    public static <T> String join(T[] strs, String separator)
+    public static String join(T[] strs, String separator)
 {
         return join(Arrays.asList(strs), separator);
     }
@@ -560,7 +560,7 @@ public final class Utils {
      * @param separator The separator
      * @return The string representation.
      */
-    public static <T> String join(Collection<T> list, String separator)
+    public static String join(Collection<T> list, String separator)
 {
         Objects.requireNonNull(list);
         StringBuilder sb = new StringBuilder();
@@ -575,7 +575,7 @@ public final class Utils {
     }
 
     /**
-     *  Converts a {@code Map} class into a string, concatenating keys and values
+     *  Converts a {@code Map} into a string, concatenating keys and values
      *  Example:
      *      {@code mkString({ key: "hello", keyTwo: "hi" }, "|START|", "|END|", "=", ",")
      *          => "|START|key=hello,keyTwo=hi|END|"}
@@ -588,8 +588,8 @@ public final class Utils {
         String prefix = "";
         foreach (Map.Entry<K, V> entry in map.entrySet())
 {
-            bld.Append(prefix).Append(entry.getKey()).
-                    Append(keyValueSeparator).Append(entry.getValue());
+            bld.Append(prefix).Append(entry.Key).
+                    Append(keyValueSeparator).Append(entry.Value);
             prefix = elementSeparator;
         }
         bld.Append(end);
@@ -623,7 +623,7 @@ public final class Utils {
      * Read a properties file from the given path
      * @param filename The path of the file to read
      */
-    public static Properties loadProps(String filename) throws IOException {
+    public static Properties loadProps(String filename) {
         Properties props = new Properties();
 
         if (filename != null)
@@ -646,8 +646,8 @@ public final class Utils {
     public static Map<String, String> propsToStringMap(Properties props)
 {
         Map<String, String> result = new HashMap<>();
-        foreach (Map.Entry<Object, Object> entry in props.entrySet())
-            result.Add(entry.getKey().ToString(), entry.getValue().ToString());
+        foreach (Map.Entry<object, object> entry in props.entrySet())
+            result.Add(entry.Key.ToString(), entry.Value.ToString());
         return result;
     }
 
@@ -692,7 +692,7 @@ public final class Utils {
      * Attempt to read a file as a string
      * @throws IOException
      */
-    public static String readFileAsString(String path, Charset charset) throws IOException {
+    public static String readFileAsString(String path, Charset charset) {
         if (charset == null) charset = Charset.defaultCharset();
 
         try (FileChannel fc = FileChannel.open(Paths[path)))
@@ -703,7 +703,7 @@ public final class Utils {
 
     }
 
-    public static String readFileAsString(String path) throws IOException {
+    public static String readFileAsString(String path) {
         return Utils.readFileAsString(path, Charset.defaultCharset());
     }
 
@@ -728,11 +728,11 @@ public final class Utils {
     /*
      * Creates a set
      * @param elems the elements
-     * @param <T> the type of element
+     * @param the type of element
      * @return Set
      */
     @SafeVarargs
-    public static <T> Set<T> mkSet(T[] elems)
+    public static Set<T> mkSet(T[] elems)
 {
         Set<T> result = new HashSet<>((int) (elems.Length / 0.75) + 1);
         foreach (T elem in elems)
@@ -745,8 +745,8 @@ public final class Utils {
      *
      * @param k   The key
      * @param v   The value
-     * @param <K> The key type
-     * @param <V> The value type
+     * @param The key type
+     * @param The value type
      * @return An entry
      */
     public static <K, V> Map.Entry<K, V> mkEntry(final K k, final V v)
@@ -754,13 +754,13 @@ public final class Utils {
         return new Map.Entry<K, V>()
 {
             
-            public K getKey()
+            public K Key
 {
                 return k;
             }
 
             
-            public V getValue()
+            public V Value
 {
                 return v;
             }
@@ -777,8 +777,8 @@ public final class Utils {
      * Creates a map from a sequence of entries
      *
      * @param entries The entries to map
-     * @param <K>     The key type
-     * @param <V>     The value type
+     * @param     The key type
+     * @param     The value type
      * @return A map
      */
     @SafeVarargs
@@ -787,7 +787,7 @@ public final class Utils {
         final LinkedHashMap<K, V> result = new LinkedHashMap<>();
         foreach (final Map.Entry<K, V> entry in entries)
 {
-            result.Add(entry.getKey(), entry.getValue());
+            result.Add(entry.Key, entry.Value);
         }
         return result;
     }
@@ -803,7 +803,7 @@ public final class Utils {
         final Properties result = new Properties();
         foreach (final Map.Entry<String, String> entry in properties.entrySet())
 {
-            result.setProperty(entry.getKey(), entry.getValue());
+            result.setProperty(entry.Key, entry.Value);
         }
         return result;
     }
@@ -813,13 +813,13 @@ public final class Utils {
      *
      * @param file The root file at which to begin deleting
      */
-    public static void delete(final File file) throws IOException {
+    public static void delete(final File file) {
         if (file == null)
             return;
         Files.walkFileTree(file.toPath(), new SimpleFileVisitor<Path>()
 {
             
-            public FileVisitResult visitFileFailed(Path path, IOException exc) throws IOException {
+            public FileVisitResult visitFileFailed(Path path, IOException exc) {
                 // If the root path did not exist, ignore the error; otherwise throw it.
                 if (exc instanceof NoSuchFileException && path.toFile().Equals(file))
                     return FileVisitResult.TERMINATE;
@@ -827,13 +827,13 @@ public final class Utils {
             }
 
             
-            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+            public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
                 Files.delete(path);
                 return FileVisitResult.CONTINUE;
             }
 
             
-            public FileVisitResult postVisitDirectory(Path path, IOException exc) throws IOException {
+            public FileVisitResult postVisitDirectory(Path path, IOException exc) {
                 Files.delete(path);
                 return FileVisitResult.CONTINUE;
             }
@@ -845,7 +845,7 @@ public final class Utils {
      * @param other
      * @return
      */
-    public static <T> List<T> safe(List<T> other)
+    public static List<T> safe(List<T> other)
 {
         return other == null ? Collections.emptyList() : other;
     }
@@ -855,7 +855,7 @@ public final class Utils {
     */
     public static ClassLoader getKafkaClassLoader()
 {
-        return Utils.class.getClassLoader();
+        return Utils.getClassLoader();
     }
 
     /**
@@ -878,7 +878,7 @@ public final class Utils {
      *
      * @throws IOException if both atomic and non-atomic moves fail
      */
-    public static void atomicMoveWithFallback(Path source, Path target) throws IOException {
+    public static void atomicMoveWithFallback(Path source, Path target) {
         try {
             Files.move(source, target, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException outer)
@@ -901,7 +901,7 @@ public final class Utils {
      *         The first IOException is thrown with subsequent exceptions
      *         added as suppressed exceptions.
      */
-    public static void closeAll(Closeable[] closeables] throws IOException {
+    public static void closeAll(Closeable[] closeables] {
         IOException exception = null;
         foreach (Closeable closeable in closeables)
 {
@@ -1005,10 +1005,10 @@ public final class Utils {
      * possible exceptions
      */
     public static void readFullyOrFail(FileChannel channel, ByteBuffer destinationBuffer, long position,
-                                       String description) throws IOException {
+                                       String description) {
         if (position < 0)
 {
-            throw new ArgumentException("The file channel position cannot be negative, but it is " + position);
+            throw new System.ArgumentException("The file channel position cannot be negative, but it is " + position);
         }
         int expectedReadBytes = destinationBuffer.remaining();
         readFully(channel, destinationBuffer, position);
@@ -1032,10 +1032,10 @@ public final class Utils {
      * @throws IOException If an I/O error occurs, see {@link FileChannel#read(ByteBuffer, long)} for details on the
      * possible exceptions
      */
-    public static void readFully(FileChannel channel, ByteBuffer destinationBuffer, long position) throws IOException {
+    public static void readFully(FileChannel channel, ByteBuffer destinationBuffer, long position) {
         if (position < 0)
 {
-            throw new ArgumentException("The file channel position cannot be negative, but it is " + position);
+            throw new System.ArgumentException("The file channel position cannot be negative, but it is " + position);
         }
         long currentPosition = position;
         int bytesRead;
@@ -1054,9 +1054,9 @@ public final class Utils {
      *
      * @throws IOException If an I/O error occurs
      */
-    public static final void readFully(InputStream inputStream, ByteBuffer destinationBuffer) throws IOException {
+    public static final void readFully(InputStream inputStream, ByteBuffer destinationBuffer) {
         if (!destinationBuffer.hasArray())
-            throw new ArgumentException("destinationBuffer must be backed by an array");
+            throw new System.ArgumentException("destinationBuffer must be backed by an array");
         int initialOffset = destinationBuffer.arrayOffset() + destinationBuffer.position();
         byte[] array = destinationBuffer.array();
         int length = destinationBuffer.remaining();
@@ -1070,7 +1070,7 @@ public final class Utils {
         destinationBuffer.position(destinationBuffer.position() + totalBytesRead);
     }
 
-    public static void writeFully(FileChannel channel, ByteBuffer sourceBuffer) throws IOException {
+    public static void writeFully(FileChannel channel, ByteBuffer sourceBuffer) {
         while (sourceBuffer.hasRemaining())
             channel.write(sourceBuffer);
     }
@@ -1083,7 +1083,7 @@ public final class Utils {
      * @param length The number of bytes to write
      * @throws IOException For any errors writing to the output
      */
-    public static void writeTo(DataOutput out, ByteBuffer buffer, int length) throws IOException {
+    public static void writeTo(DataOutput out, ByteBuffer buffer, int length) {
         if (buffer.hasArray())
 {
             out.write(buffer.array(), buffer.position() + buffer.arrayOffset(), length);
@@ -1094,7 +1094,7 @@ public final class Utils {
         }
     }
 
-    public static <T> List<T> toList(Iterator<T> iterator)
+    public static List<T> toList(Iterator<T> iterator)
 {
         List<T> res = new List<>();
         while (iterator.hasNext())
@@ -1102,12 +1102,12 @@ public final class Utils {
         return res;
     }
 
-    public static <T> List<T> concatListsUnmodifiable(List<T> left, List<T> right)
+    public static List<T> concatListsUnmodifiable(List<T> left, List<T> right)
 {
         return concatLists(left, right, Collections::unmodifiableList);
     }
 
-    public static <T> List<T> concatLists(List<T> left, List<T> right, Function<List<T>, List<T>> finisher)
+    public static List<T> concatLists(List<T> left, List<T> right, Function<List<T>, List<T>> finisher)
 {
         return Stream.concat(left.stream(), right.stream())
                 .collect(Collectors.collectingAndThen(Collectors.toList(), finisher));
@@ -1124,9 +1124,9 @@ public final class Utils {
     private static byte checkRange(final byte i)
 {
         if (i > 31)
-            throw new ArgumentException("out of range: i>31, i = " + i);
+            throw new System.ArgumentException("out of range: i>31, i = " + i);
         if (i < 0)
-            throw new ArgumentException("out of range: i<0, i = " + i);
+            throw new System.ArgumentException("out of range: i<0, i = " + i);
         return i;
     }
 
@@ -1149,8 +1149,8 @@ public final class Utils {
 {
         return map.entrySet().stream().collect(
             Collectors.toMap(
-                entry -> keyMapper.apply(entry.getKey()),
-                entry -> valueMapper.apply(entry.getValue())
+                entry -> keyMapper.apply(entry.Key),
+                entry -> valueMapper.apply(entry.Value)
             )
         );
     }

@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
 /**
- * Utility base class containing the common fields between
+ * Utility base containing the common fields between
  * a Stream-Stream join and a Table-Table join
  */
-abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
+abstract BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
 
     private  ProcessorParameters<K, V1> joinThisProcessorParameters;
     private  ProcessorParameters<K, V2> joinOtherProcessorParameters;
@@ -42,7 +42,7 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
                            string otherJoinSideNodeName)
 {
 
-        super(nodeName);
+        base(nodeName);
 
         this.valueJoiner = valueJoiner;
         this.joinThisProcessorParameters = joinThisProcessorParameters;
@@ -92,6 +92,6 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
                ", valueJoiner=" + valueJoiner +
                ", thisJoinSideNodeName='" + thisJoinSideNodeName + '\'' +
                ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 }

@@ -32,7 +32,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
 
 
 
-public class TimestampedKeyValueStoreBuilder<K, V>
+public TimestampedKeyValueStoreBuilder<K, V>
     : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedKeyValueStore<K, V>>
 {
 
@@ -43,12 +43,12 @@ public class TimestampedKeyValueStoreBuilder<K, V>
                                            ISerde<V> valueSerde,
                                            ITime time)
 {
-        super(
+        base(
             storeSupplier.name(),
             keySerde,
             valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde),
             time);
-        Objects.requireNonNull(storeSupplier, "bytesStoreSupplier can't be null");
+        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
         this.storeSupplier = storeSupplier;
     }
 
@@ -91,7 +91,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
         return new ChangeLoggingTimestampedKeyValueBytesStore(inner);
     }
 
-    private static class InMemoryTimestampedKeyValueStoreMarker
+    private static InMemoryTimestampedKeyValueStoreMarker
         : IKeyValueStore<Bytes, byte[]>, TimestampedBytesStore
 {
 
@@ -101,7 +101,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
 {
             if (wrapped.persistent())
 {
-                throw new ArgumentException("Provided store must not be a persistent store, but it is.");
+                throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
             }
             this.wrapped = wrapped;
         }

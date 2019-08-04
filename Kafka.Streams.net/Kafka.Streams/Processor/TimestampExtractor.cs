@@ -49,5 +49,5 @@ public interface TimestampExtractor {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the timestamp of the record
      */
-    long extract(ConsumerRecord<Object, object> record, long partitionTime);
+    long extract(ConsumerRecord<object, object> record, long partitionTime);
 }

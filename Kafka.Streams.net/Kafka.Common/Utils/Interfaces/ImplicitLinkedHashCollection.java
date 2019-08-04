@@ -40,12 +40,12 @@ import java.util.Set;
  * It also makes the garbage collector's job easier, because it reduces the number of
  * pointers that it must chase.
  *
- * This class uses linear probing.  Unlike HashMap (but like HashTable), we don't force
+ * This uses linear probing.  Unlike HashMap (but like HashTable), we don't force
  * the size to be a power of 2.  This saves memory.
  *
  * This set does not allow null elements.  It does not have internal synchronization.
  */
-public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection.Element> extends AbstractCollection<E> {
+public ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection.Element> extends AbstractCollection<E> {
     public interface Element {
         int prev();
         void setPrev(int prev);
@@ -75,7 +75,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
      */
     private static final Element[] EMPTY_ELEMENTS = new Element[0];
 
-    private static class HeadElement : Element {
+    private static HeadElement : Element {
         static final HeadElement EMPTY = new HeadElement();
 
         private int prev = HEAD_INDEX;
@@ -140,7 +140,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         element.setPrev(INVALID_INDEX);
     }
 
-    private class ImplicitLinkedHashCollectionIterator : ListIterator<E> {
+    private ImplicitLinkedHashCollectionIterator : ListIterator<E> {
         private int cursor = 0;
         private Element cur = head;
         private int lastReturnedSlot = INVALID_INDEX;
@@ -239,7 +239,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         }
     }
 
-    private class ImplicitLinkedHashCollectionListView extends AbstractSequentialList<E> {
+    private ImplicitLinkedHashCollectionListView extends AbstractSequentialList<E> {
 
         
         public ListIterator<E> listIterator(int index)
@@ -259,7 +259,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         }
     }
 
-    private class ImplicitLinkedHashCollectionSetView extends AbstractSet<E> {
+    private ImplicitLinkedHashCollectionSetView extends AbstractSet<E> {
 
         
         public Iterator<E> iterator()
@@ -280,13 +280,13 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         }
 
         
-        public boolean Remove(Object key)
+        public boolean Remove(object key)
 {
             return ImplicitLinkedHashCollection.this.Remove(key);
         }
 
         
-        public boolean contains(Object key)
+        public boolean contains(object key)
 {
             return ImplicitLinkedHashCollection.this.contains(key);
         }
@@ -322,7 +322,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         return new ImplicitLinkedHashCollectionIterator(index);
     }
 
-    final int slot(Element[] curElements, Object e)
+    final int slot(Element[] curElements, object e)
 {
         return (e.hashCode() & 0x7fffffff) % curElements.Length;
     }
@@ -338,7 +338,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
      * @param key               The element to match.
      * @return                  The match index, or INVALID_INDEX if no match was found.
      */
-    final private int findIndexOfEqualElement(Object key)
+    final private int findIndexOfEqualElement(object key)
 {
         if (key == null)
 {
@@ -396,7 +396,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
      * @param key       The object to try to match.
      */
     
-    final public boolean contains(Object key)
+    final public boolean contains(object key)
 {
         return findIndexOfEqualElement(key) != INVALID_INDEX;
     }
@@ -503,7 +503,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
      * @return          True if an element was removed; false otherwise.
      */
     
-    final public boolean Remove(Object key)
+    final public boolean Remove(object key)
 {
         int slot = findElementToRemove(key);
         if (slot == INVALID_INDEX)
@@ -514,7 +514,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
         return true;
     }
 
-    int findElementToRemove(Object key)
+    int findElementToRemove(object key)
 {
         return findIndexOfEqualElement(key);
     }
@@ -664,7 +664,7 @@ public class ImplicitLinkedHashCollection<E extends ImplicitLinkedHashCollection
      * @return true is the specified object is equal to this collection
      */
     
-    public boolean Equals(Object o)
+    public boolean Equals(object o)
 {
         if (o == this)
             return true;

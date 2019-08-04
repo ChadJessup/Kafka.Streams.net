@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class ProcessorNode<K, V>
+    public ProcessorNode<K, V>
     {
         // TODO: 'children' can be removed when #forward() via index is removed
         private List<ProcessorNode<K, V>> children;

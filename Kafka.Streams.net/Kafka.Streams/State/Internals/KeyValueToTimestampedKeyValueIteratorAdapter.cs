@@ -22,7 +22,7 @@ using Kafka.Streams.State.KeyValueIterator;
 
 
 /**
- * This class is used to ensure backward compatibility at DSL level between
+ * This is used to ensure backward compatibility at DSL level between
  * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and
  * {@link org.apache.kafka.streams.state.KeyValueStore}.
  *

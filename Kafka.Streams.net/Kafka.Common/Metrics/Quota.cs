@@ -3,7 +3,7 @@ namespace Kafka.Common.Metrics
     /**
      * An upper or lower bound for metrics
      */
-    public class Quota
+    public Quota
     {
         public bool isUpperBound { get; set; }
         public double bound { get; set; }

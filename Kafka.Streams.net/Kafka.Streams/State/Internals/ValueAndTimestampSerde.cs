@@ -24,7 +24,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
 
 
 
-public class ValueAndTimestampSerde<V> : ISerde<ValueAndTimestamp<V>>
+public ValueAndTimestampSerde<V> : ISerde<ValueAndTimestamp<V>>
 {
     private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
     private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;

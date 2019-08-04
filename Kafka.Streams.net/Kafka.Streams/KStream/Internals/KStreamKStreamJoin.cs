@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -32,7 +32,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
-    private static  Logger LOG = LoggerFactory.getLogger(KStreamKStreamJoin.class);
+    private static  ILogger LOG= new LoggerFactory().CreateLogger<KStreamKStreamJoin);
 
     private  string otherWindowName;
     private  long joinBeforeMs;
@@ -56,7 +56,7 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
         return new KStreamKStreamJoinProcessor();
     }
 
-    private class KStreamKStreamJoinProcessor : AbstractProcessor<K, V1> {
+    private KStreamKStreamJoinProcessor : AbstractProcessor<K, V1> {
 
         private WindowStore<K, V2> otherWindow;
         private StreamsMetricsImpl metrics;
@@ -66,7 +66,7 @@ class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 

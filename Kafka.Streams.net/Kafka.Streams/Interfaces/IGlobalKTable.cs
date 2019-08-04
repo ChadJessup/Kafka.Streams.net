@@ -36,8 +36,8 @@
  * <p>
  * Records from the source topic that have null keys are dropped.
  *
- * @param <K> Type of primary keys
- * @param <V> Type of value changes
+ * @param Type of primary keys
+ * @param Type of value changes
  * @see KTable
  * @see StreamsBuilder#globalTable(string)
  * @see KStream#join(GlobalKTable, KeyValueMapper, ValueJoiner)

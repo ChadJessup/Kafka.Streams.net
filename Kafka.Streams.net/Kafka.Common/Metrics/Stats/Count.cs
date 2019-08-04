@@ -11,7 +11,7 @@ namespace Kafka.Common.Metrics.Stats
      * @deprecated since 2.4 . Use {@link WindowedCount} instead
      */
     [Obsolete)
-    public class Count : WindowedCount
+    public Count : WindowedCount
     {
     }
 }

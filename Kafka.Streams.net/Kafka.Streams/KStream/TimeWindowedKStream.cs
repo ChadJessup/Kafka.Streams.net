@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -48,8 +48,8 @@ namespace Kafka.streams.kstream;
 
  * A {@code WindowedKStream} must be obtained from a {@link KGroupedStream} via {@link KGroupedStream#windowedBy(Windows)} .
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  * @see KStream
  * @see KGroupedStream
  */
@@ -163,13 +163,13 @@ public interface TimeWindowedKStream<K, V> {
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.
      *
      *
-     * @param <VR>          the value type of the resulting {@link KTable}
+     * @param          the value type of the resulting {@link KTable}
      * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
      * @param aggregator    an {@link Aggregator} that computes a new aggregate result
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
+    KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
                                             Aggregator<K, V, VR> aggregator);
 
     /**
@@ -223,13 +223,13 @@ public interface TimeWindowedKStream<K, V> {
      * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
      * @param aggregator    an {@link Aggregator} that computes a new aggregate result
      * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
-     * @param <VR>          the value type of the resulting {@link KTable}
+     * @param          the value type of the resulting {@link KTable}
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
+    KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
                                             Aggregator<K, V, VR> aggregator,
-                                            Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized];
+                                            Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized);
 
     /**
      * Combine the values of records in this stream by the grouped key.
@@ -317,5 +317,5 @@ public interface TimeWindowedKStream<K, V> {
      * latest (rolling) aggregate for each key
      */
     KTable<Windowed<K>, V> reduce( Reducer<V> reducer,
-                                   Materialized<K, V, WindowStore<Bytes, byte[]>> materialized];
+                                   Materialized<K, V, WindowStore<Bytes, byte[]>> materialized);
 }

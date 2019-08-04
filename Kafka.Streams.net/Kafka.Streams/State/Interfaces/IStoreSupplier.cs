@@ -6,7 +6,7 @@ namespace Kafka.Streams.State.Interfaces
     /**
      * A state store supplier which can create one or more {@link IStateStore} instances.
      *
-     * @param <T> State store type
+     * @param State store type
      */
     public interface IStoreSupplier<T>
         where T : IStateStore

@@ -23,22 +23,22 @@ namespace Kafka.Streams.Errors {
  *
  * @see org.apache.kafka.streams.processor.internals.StreamTask
  */
-public class TaskIdFormatException : StreamsException {
+public TaskIdFormatException : StreamsException {
 
     private static  long serialVersionUID = 1L;
 
     public TaskIdFormatException( string message)
 {
-        super("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message));
+        base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message));
     }
 
     public TaskIdFormatException( string message,  Throwable throwable)
 {
-        super("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message), throwable);
+        base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message), throwable);
     }
 
     public TaskIdFormatException( Throwable throwable)
 {
-        super(throwable);
+        base(throwable);
     }
 }

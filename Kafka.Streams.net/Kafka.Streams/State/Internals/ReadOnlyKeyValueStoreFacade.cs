@@ -22,7 +22,7 @@ using Kafka.Streams.State.TimestampedKeyValueStore;
 
 
 
-public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
+public ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
 {
     protected TimestampedKeyValueStore<K, V> inner;
 

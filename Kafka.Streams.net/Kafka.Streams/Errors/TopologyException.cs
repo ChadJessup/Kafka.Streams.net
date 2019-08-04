@@ -21,23 +21,23 @@ namespace Kafka.Streams.Errors {
  * Indicates a pre run time error occurred while parsing the {@link org.apache.kafka.streams.Topology logical topology}
  * to construct the {@link org.apache.kafka.streams.processor.internals.ProcessorTopology physical processor topology}.
  */
-public class TopologyException : StreamsException {
+public TopologyException : StreamsException {
 
     private static  long serialVersionUID = 1L;
 
     public TopologyException( string message)
 {
-        super("Invalid topology" + (message == null ? "" : ": " + message));
+        base("Invalid topology" + (message == null ? "" : ": " + message));
     }
 
     public TopologyException( string message,
                               Throwable throwable)
 {
-        super("Invalid topology" + (message == null ? "" : ": " + message), throwable);
+        base("Invalid topology" + (message == null ? "" : ": " + message), throwable);
     }
 
     public TopologyException( Throwable throwable)
 {
-        super(throwable);
+        base(throwable);
     }
 }

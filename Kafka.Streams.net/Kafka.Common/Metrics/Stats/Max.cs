@@ -6,7 +6,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A {@link SampledStat} that gives the max over its samples.
      */
-    public class Max : SampledStat
+    public Max : SampledStat
     {
         public Max()
             : base(double.NegativeInfinity)

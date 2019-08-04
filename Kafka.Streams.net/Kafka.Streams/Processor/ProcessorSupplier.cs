@@ -25,8 +25,8 @@ namespace Kafka.Streams.Processor;
  * topology can then be replicated (and thus creating one or more {@link Processor} instances)
  * and distributed to multiple stream threads.
  *
- * @param <K> the type of keys
- * @param <V> the type of values
+ * @param the type of keys
+ * @param the type of values
  */
 public interface ProcessorSupplier<K, V> {
 

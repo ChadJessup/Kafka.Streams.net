@@ -1,6 +1,6 @@
 ﻿namespace Kafka.Common.Metrics.Stats
 {
-    public class Sample
+    public Sample
     {
         public double initialValue;
         public long eventCount;

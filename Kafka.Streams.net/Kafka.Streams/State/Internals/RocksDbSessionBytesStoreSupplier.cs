@@ -18,9 +18,9 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.SessionBytesStoreSupplier;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 
-public class RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
+public RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
 {
     private string name;
     private long retentionPeriod;
@@ -37,7 +37,7 @@ public class RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
         return name;
     }
 
-    public override SessionStore<Bytes, byte[]> get()
+    public override ISessionStore<Bytes, byte[]> get()
 {
         RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(
             name,

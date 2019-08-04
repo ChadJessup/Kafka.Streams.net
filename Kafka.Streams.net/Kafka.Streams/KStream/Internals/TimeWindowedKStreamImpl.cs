@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -43,7 +43,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWindowedKStream<K, V> {
+public TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWindowedKStream<K, V> {
 
     private  Windows<W> windows;
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
@@ -57,8 +57,8 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
                              GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
                              StreamsGraphNode streamsGraphNode)
 {
-        super(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
-        this.windows = Objects.requireNonNull(windows, "windows can't be null");
+        base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
+        this.windows = windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
         this.aggregateBuilder = aggregateBuilder;
     }
 
@@ -71,7 +71,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
     
     public KTable<Windowed<K>, long> count( Materialized<K, long, WindowStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
         // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
@@ -118,9 +118,9 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
                                                    Aggregator<K, V, VR> aggregator,
                                                    Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(initializer, "initializer can't be null");
-        Objects.requireNonNull(aggregator, "aggregator can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
+        aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
          MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
         if (materializedInternal.keySerde() == null)
@@ -145,8 +145,8 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
     
     public KTable<Windowed<K>, V> reduce( Reducer<V> reducer,  Materialized<K, V, WindowStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(reducer, "reducer can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
          MaterializedInternal<K, V, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
@@ -182,7 +182,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
 
                 if ((windows.size() + windows.gracePeriodMs()) > retentionPeriod)
 {
-                    throw new ArgumentException("The retention period of the window store "
+                    throw new System.ArgumentException("The retention period of the window store "
                                                            + name + " must be no smaller than its window size plus the grace period."
                                                            + " Got size=[" + windows.size() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"
@@ -204,7 +204,7 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : 
 
                 if ((windows.size() + windows.gracePeriodMs()) > windows.maintainMs())
 {
-                    throw new ArgumentException("The retention period of the window store "
+                    throw new System.ArgumentException("The retention period of the window store "
                                                            + name + " must be no smaller than its window size plus the grace period."
                                                            + " Got size=[" + windows.size() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"

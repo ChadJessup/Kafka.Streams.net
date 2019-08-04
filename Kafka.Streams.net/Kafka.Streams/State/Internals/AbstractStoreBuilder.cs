@@ -25,7 +25,7 @@ using Kafka.Streams.State.StoreBuilder;
 
 
 
-abstract public class AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder<T>
+abstract public AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder<T>
 {
     private Dictionary<string, string> logConfig = new HashMap<>();
     protected string name;
@@ -40,8 +40,8 @@ abstract public class AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder
                                 ISerde<V> valueSerde,
                                 ITime time)
 {
-        Objects.requireNonNull(name, "name cannot be null");
-        Objects.requireNonNull(time, "time cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+        time = time ?? throw new System.ArgumentNullException("time cannot be null", nameof(time));
         this.name = name;
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
@@ -62,7 +62,7 @@ abstract public class AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder
 
     public override StoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
 {
-        Objects.requireNonNull(config, "config can't be null");
+        config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
         enableLogging = true;
         logConfig = config;
         return this;

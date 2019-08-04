@@ -39,7 +39,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public class StoreChangelogReader : ChangelogReader {
+public StoreChangelogReader : ChangelogReader {
 
     private Logger log;
     private Consumer<byte[], byte[]> restoreConsumer;
@@ -50,10 +50,10 @@ public class StoreChangelogReader : ChangelogReader {
     private HashSet<TopicPartition> needsRestoring = new HashSet<>();
     private HashSet<TopicPartition> needsInitializing = new HashSet<>();
     private HashSet<TopicPartition> completedRestorers = new HashSet<>();
-    private Duration pollTime;
+    private TimeSpan pollTime;
 
     public StoreChangelogReader(Consumer<byte[], byte[]> restoreConsumer,
-                                Duration pollTime,
+                                TimeSpan pollTime,
                                 StateRestoreListener userStateRestoreListener,
                                 LogContext logContext)
 {
@@ -298,10 +298,10 @@ public class StoreChangelogReader : ChangelogReader {
         Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
         foreach (Map.Entry<TopicPartition, StateRestorer> entry in stateRestorers.entrySet())
 {
-            StateRestorer restorer = entry.getValue();
+            StateRestorer restorer = entry.Value;
             if (restorer.isPersistent())
 {
-                restoredOffsets.Add(entry.getKey(), restorer.restoredOffset());
+                restoredOffsets.Add(entry.Key, restorer.restoredOffset());
             }
         }
         return restoredOffsets;
@@ -347,7 +347,7 @@ public class StoreChangelogReader : ChangelogReader {
         // if we have changelog topic then we should have restored all records in the list
         // otherwise if we did not fully restore to that point we need to set nextPosition
         // to the position of the restoreConsumer and we'll cause a TaskMigratedException exception
-        if (nextPosition == -1 || (restorer.offsetLimit() == long.MAX_VALUE && numberRecords != numberRestored))
+        if (nextPosition == -1 || (restorer.offsetLimit() == long.MaxValue && numberRecords != numberRestored))
 {
             nextPosition = restoreConsumer.position(restorer.partition());
         }

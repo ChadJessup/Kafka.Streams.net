@@ -38,7 +38,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 
     AssignedStreamsTasks(LogContext logContext)
 {
-        super(logContext, "stream task");
+        base(logContext, "stream task");
     }
 
     
@@ -50,7 +50,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     
     List<StreamTask> allTasks()
 {
-        List<StreamTask> tasks = super.allTasks();
+        List<StreamTask> tasks = base.allTasks();
         tasks.AddAll(restoring.values());
         return tasks;
     }
@@ -58,7 +58,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     
     HashSet<TaskId> allAssignedTaskIds()
 {
-        HashSet<TaskId> taskIds = super.allAssignedTaskIds();
+        HashSet<TaskId> taskIds = base.allAssignedTaskIds();
         taskIds.AddAll(restoring.keySet());
         return taskIds;
     }
@@ -66,7 +66,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     
     bool allTasksRunning()
 {
-        return super.allTasksRunning() && restoring.isEmpty();
+        return base.allTasksRunning() && restoring.isEmpty();
     }
 
     RuntimeException closeAllRestoringTasks()
@@ -111,7 +111,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
 {
             Map.Entry<TaskId, StreamTask> entry = it.next();
-            StreamTask task = entry.getValue();
+            StreamTask task = entry.Value;
             if (restoredPartitions.containsAll(task.changelogPartitions()))
 {
                 transitionToRunning(task);
@@ -224,7 +224,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
         while (it.hasNext())
 {
-            StreamTask task = it.next().getValue();
+            StreamTask task = it.next().Value;
             try {
                 if (task.isProcessable(now) && task.process())
 {
@@ -260,7 +260,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
         while (it.hasNext())
 {
-            StreamTask task = it.next().getValue();
+            StreamTask task = it.next().Value;
             try {
                 if (task.maybePunctuateStreamTime())
 {
@@ -292,7 +292,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 
     void clear()
 {
-        super.clear();
+        base.clear();
         restoring.clear();
         restoringByPartition.clear();
         restoredPartitions.clear();
@@ -301,7 +301,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     public string ToString(string indent)
 {
         StringBuilder builder = new StringBuilder();
-        builder.Append(super.ToString(indent));
+        builder.Append(base.ToString(indent));
         describe(builder, restoring.values(), indent, "Restoring:");
         return builder.ToString();
     }

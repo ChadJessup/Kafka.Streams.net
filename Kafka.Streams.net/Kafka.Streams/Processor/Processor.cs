@@ -5,8 +5,8 @@ namespace Kafka.Streams.Processor
     /**
      * A processor of key-value pair records.
      *
-     * @param <K> the type of keys
-     * @param <V> the type of values
+     * @param the type of keys
+     * @param the type of values
      */
     public interface Processor<K, V>
     {

@@ -47,7 +47,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public class RecordCollectorImpl : RecordCollector {
+public RecordCollectorImpl : RecordCollector {
     private Logger log;
     private string logPrefix;
     private Sensor skippedRecordsSensor;
@@ -92,7 +92,7 @@ public class RecordCollectorImpl : RecordCollector {
                             Serializer<V> valueSerializer,
                             StreamPartitioner<K, V> partitioner)
 {
-        Integer partition = null;
+        int partition = null;
 
         if (partitioner != null)
 {
@@ -163,7 +163,7 @@ public class RecordCollectorImpl : RecordCollector {
                             K key,
                             V value,
                             Headers headers,
-                            Integer partition,
+                            int partition,
                             long timestamp,
                             Serializer<K> keySerializer,
                             Serializer<V> valueSerializer)

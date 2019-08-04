@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -23,11 +23,11 @@ namespace Kafka.streams.kstream;
  * In contrast to {@link Aggregator} the result type must be the same as the input type.
  * <p>
  * The provided values can be either original values from input {@link KeyValue} pair records or be a previously
- * computed result from {@link Reducer#apply(Object, Object)}.
+ * computed result from {@link Reducer#apply(object, object)}.
  * <p>
  * {@code Reducer} can be used to implement aggregation functions like sum, min, or max.
  *
- * @param <V> value type
+ * @param value type
  * @see KGroupedStream#reduce(Reducer)
  * @see KGroupedStream#reduce(Reducer, Materialized)
  * @see TimeWindowedKStream#reduce(Reducer)

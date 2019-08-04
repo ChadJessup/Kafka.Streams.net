@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -26,12 +26,12 @@ namespace Kafka.streams.kstream;
 
 
 /**
- *  The inner serde class can be specified by setting the property
+ *  The inner serde can be specified by setting the property
  *  {@link StreamsConfig#DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS} or
  *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
  *  if the no-arg constructor is called and hence it is not passed during initialization.
  */
-public class TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
+public TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
 
     private  long windowSize;
     private bool isChangelogTopic;
@@ -41,13 +41,13 @@ public class TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
     // Default constructor needed by Kafka
     public TimeWindowedDeserializer()
 {
-        this(null, long.MAX_VALUE);
+        this(null, long.MaxValue);
     }
 
     // TODO: fix this part as last bits of KAFKA-4468
     public TimeWindowedDeserializer( Deserializer<T> inner)
 {
-        this(inner, long.MAX_VALUE);
+        this(inner, long.MaxValue);
     }
 
     public TimeWindowedDeserializer( Deserializer<T> inner,  long windowSize)
@@ -71,11 +71,11 @@ public class TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
              string value = (string) configs[propertyName);
             try {
-                inner = Serde.class.cast(Utils.newInstance(value, Serde.class)).deserializer();
+                inner = Serde.cast(Utils.newInstance(value, Serde)).deserializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)
 {
-                throw new ConfigException(propertyName, value, "Serde class " + value + " could not be found.");
+                throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
             }
         }
     }

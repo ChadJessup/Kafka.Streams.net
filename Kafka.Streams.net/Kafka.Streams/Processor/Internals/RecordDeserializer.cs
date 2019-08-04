@@ -40,7 +40,7 @@ class RecordDeserializer {
 {
         this.sourceNode = sourceNode;
         this.deserializationExceptionHandler = deserializationExceptionHandler;
-        this.log = logContext.logger(RecordDeserializer.class);
+        this.log = logContext.logger<RecordDeserializer>();
         this.skippedRecordSensor = skippedRecordsSensor;
     }
 
@@ -50,7 +50,7 @@ class RecordDeserializer {
      *                          oritself
      */
     @SuppressWarnings("deprecation")
-    ConsumerRecord<Object, object> deserialize(IProcessorContext processorContext,
+    ConsumerRecord<object, object> deserialize(IProcessorContext processorContext,
                                                ConsumerRecord<byte[], byte[]> rawRecord)
 {
 

@@ -22,7 +22,7 @@ using Kafka.Streams.Processor.IStateStore;
 
 /**
  * Build a {@link IStateStore} wrapped with optional caching and logging.
- * @param <T>  the type of store to build
+ * @param  the type of store to build
  */
 public interface StoreBuilder<T : IStateStore>
 {

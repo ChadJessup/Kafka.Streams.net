@@ -7,10 +7,10 @@ namespace Kafka.Streams.Processor
      * An abstract implementation of {@link Processor} that manages the {@link IProcessorContext} instance and provides default no-op
      * implementation of {@link #close()}.
      *
-     * @param <K> the type of keys
-     * @param <V> the type of values
+     * @param the type of keys
+     * @param the type of values
      */
-    public abstract class AbstractProcessor<K, V> : Processor<K, V>
+    public abstract AbstractProcessor<K, V> : Processor<K, V>
     {
         private IProcessorContext context;
 
@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processor
         /**
          * Close this processor and clean up any resources.
          * <p>
-         * This method does nothing by default; if desired, subclasses should override it with custom functionality.
+         * This method does nothing by default; if desired, sues should override it with custom functionality.
          * </p>
          */
 

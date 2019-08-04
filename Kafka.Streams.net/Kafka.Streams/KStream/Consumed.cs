@@ -7,7 +7,7 @@ using System.Text;
 namespace Kafka.Streams.KStream
 {
     /**
-     * The {@code Consumed} class is used to define the optional parameters when using {@link StreamsBuilder} to
+     * The {@code Consumed} is used to define the optional parameters when using {@link StreamsBuilder} to
      * build instances of {@link KStream}, {@link KTable}, and {@link GlobalKTable}.
      * <p>
      * For example, you can read a topic as {@link KStream} with a custom timestamp extractor and specify the corresponding
@@ -24,16 +24,16 @@ namespace Kafka.Streams.KStream
      * interactive queries:
      * <pre>{@code
      * StreamsBuilder builder = new StreamsBuilder();
-     * KTable<Integer, Integer> table = builder.table(
+     * KTable<int, int> table = builder.table(
      *   "topicName",
      *   Consumed.with(AutoOffsetReset.LATEST),
      *   Materialized.as("queryable-store-name"));
      * }</pre>
      *
-     * @param <K> type of record key
-     * @param <V> type of record value
+     * @param type of record key
+     * @param type of record value
      */
-    public class Consumed<K, V> : Interfaces.INamedOperation<Consumed<K, V>>
+    public Consumed<K, V> : Interfaces.INamedOperation<Consumed<K, V>>
    
 {
 
@@ -79,8 +79,8 @@ namespace Kafka.Streams.KStream
      * @param valueSerde         the value serde. If {@code null} the default value serde from config will be used
      * @param timestampExtractor the timestamp extractor to used. If {@code null} the default timestamp extractor from config will be used
      * @param resetPolicy        the offset reset policy to be used. If {@code null} the default reset policy from config will be used
-     * @param <K>                key type
-     * @param <V>                value type
+     * @param                key type
+     * @param                value type
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(ISerde<K> keySerde,
@@ -98,8 +98,8 @@ namespace Kafka.Streams.KStream
      *
      * @param keySerde   the key serde. If {@code null} the default key serde from config will be used
      * @param valueSerde the value serde. If {@code null} the default value serde from config will be used
-     * @param <K>        key type
-     * @param <V>        value type
+     * @param        key type
+     * @param        value type
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(ISerde<K> keySerde,
@@ -113,8 +113,8 @@ namespace Kafka.Streams.KStream
      * Create an instance of {@link Consumed} with a {@link TimestampExtractor}.
      *
      * @param timestampExtractor the timestamp extractor to used. If {@code null} the default timestamp extractor from config will be used
-     * @param <K>                key type
-     * @param <V>                value type
+     * @param                key type
+     * @param                value type
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(ITimestampExtractor timestampExtractor)
@@ -127,8 +127,8 @@ namespace Kafka.Streams.KStream
      * Create an instance of {@link Consumed} with a {@link org.apache.kafka.streams.Topology.AutoOffsetReset Topology.AutoOffsetReset}.
      *
      * @param resetPolicy the offset reset policy to be used. If {@code null} the default reset policy from config will be used
-     * @param <K>         key type
-     * @param <V>         value type
+     * @param         key type
+     * @param         value type
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> With(Topology.AutoOffsetReset resetPolicy)
@@ -141,8 +141,8 @@ namespace Kafka.Streams.KStream
      * Create an instance of {@link Consumed} with provided processor name.
      *
      * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
-     * @param <K>         key type
-     * @param <V>         value type
+     * @param         key type
+     * @param         value type
      * @return a new instance of {@link Consumed}
      */
     public static Consumed<K, V> As(string processorName)

@@ -31,7 +31,7 @@ using Kafka.Common.Utils.LogContext;
 /**
  * Updates the state for all Global State Stores.
  */
-public class GlobalStateUpdateTask : GlobalStateMaintainer {
+public GlobalStateUpdateTask : GlobalStateMaintainer {
 
     private ProcessorTopology topology;
     private InternalProcessorContext processorContext;
@@ -87,7 +87,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer {
     public void update(ConsumerRecord<byte[], byte[]> record)
 {
         RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic());
-        ConsumerRecord<Object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
+        ConsumerRecord<object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
 
         if (deserialized != null)
 {

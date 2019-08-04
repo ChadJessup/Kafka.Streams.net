@@ -37,7 +37,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public class KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, V, V> {
+public KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, V, V> {
     private  SuppressedInternal<K> suppress;
     private  string storeName;
     private  KTableImpl<K, ?, V> parentKTable;
@@ -123,7 +123,7 @@ public class KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, 
         parentKTable.enableSendingOldValues();
     }
 
-    private static  class KTableSuppressProcessor<K, V> : Processor<K, Change<V>> {
+    private static  KTableSuppressProcessor<K, V> : Processor<K, Change<V>> {
         private  long maxRecords;
         private  long maxBytes;
         private  long suppressDurationMillis;

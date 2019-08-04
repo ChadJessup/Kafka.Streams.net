@@ -27,20 +27,20 @@ namespace Kafka.common.utils;
 
 
 /**
- * A base class for running a Unix command.
+ * A base for running a Unix command.
  *
  * <code>Shell</code> can be used to run unix commands like <code>du</code> or
  * <code>df</code>.
  */
-abstract public class Shell {
+abstract public Shell {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Shell.class);
+    private static final ILogger LOG= new LoggerFactory().CreateLogger<Shell);
 
     /** Return an array containing the command name and its parameters */
     protected abstract String[] execString();
 
     /** Parse the execution result */
-    protected abstract void parseExecResult(BufferedReader lines) throws IOException;
+    protected abstract void parseExecResult(BufferedReader lines);
 
     private final long timeout;
 
@@ -93,9 +93,9 @@ abstract public class Shell {
             timeoutTimer.schedule(new ShellTimeoutTimerTask(this), timeout);
         }
         final BufferedReader errReader = new BufferedReader(
-            new InputStreamReader(process.getErrorStream(), StandardCharsets.UTF_8));
+            new InputStreamReader(process.getErrorStream(), System.Text.Encoding.UTF8));
         BufferedReader inReader = new BufferedReader(
-            new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8));
+            new InputStreamReader(process.getInputStream(), System.Text.Encoding.UTF8));
         final StringBuffer errMsg = new StringBuffer();
 
         // read error and input streams as this would free up the buffers
@@ -172,12 +172,12 @@ abstract public class Shell {
      * This is an IOException with exit code.Added.
      */
     @SuppressWarnings("serial")
-    public static class ExitCodeException extends IOException {
+    public static ExitCodeException extends IOException {
         int exitCode;
 
         public ExitCodeException(int exitCode, String message)
 {
-            super(message);
+            base(message);
             this.exitCode = exitCode;
         }
 
@@ -195,7 +195,7 @@ abstract public class Shell {
      * directory and the environment remains unchanged. The output of the command
      * is stored as-is and is expected to be small.
      */
-    public static class ShellCommandExecutor extends Shell {
+    public static ShellCommandExecutor extends Shell {
 
         private final String[] command;
         private StringBuffer output;
@@ -210,7 +210,7 @@ abstract public class Shell {
 
         public ShellCommandExecutor(String[] execString, long timeout)
 {
-            super(timeout);
+            base(timeout);
             command = execString.clone();
         }
 
@@ -294,7 +294,7 @@ abstract public class Shell {
     /**
      * Timer which is used to timeout scripts spawned off by shell.
      */
-    private static class ShellTimeoutTimerTask extends TimerTask {
+    private static ShellTimeoutTimerTask extends TimerTask {
 
         private final Shell shell;
 

@@ -20,7 +20,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.WindowBytesStoreSupplier;
 using Kafka.Streams.State.WindowStore;
 
-public class RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
+public RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
 {
     private string name;
     private long retentionPeriod;
@@ -81,7 +81,7 @@ public class RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
         return "rocksdb-window-state";
     }
 
-    @Deprecated
+    [System.Obsolete]
     public override int segments()
 {
         return (int) (retentionPeriod / segmentInterval) + 1;

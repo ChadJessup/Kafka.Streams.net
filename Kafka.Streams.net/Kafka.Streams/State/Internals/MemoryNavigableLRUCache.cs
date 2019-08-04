@@ -26,14 +26,14 @@ using Kafka.Streams.State.KeyValueIterator;
 
 
 
-public class MemoryNavigableLRUCache : MemoryLRUCache
+public MemoryNavigableLRUCache : MemoryLRUCache
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(MemoryNavigableLRUCache.class);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<MemoryNavigableLRUCache);
 
     public MemoryNavigableLRUCache(string name, int maxCacheSize)
 {
-        super(name, maxCacheSize);
+        base(name, maxCacheSize);
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
@@ -65,7 +65,7 @@ public class MemoryNavigableLRUCache : MemoryLRUCache
     }
 
 
-    private static class CacheIterator : KeyValueIterator<Bytes, byte[]>
+    private static CacheIterator : KeyValueIterator<Bytes, byte[]>
 {
         private Iterator<Bytes> keys;
         private Dictionary<Bytes, byte[]> entries;

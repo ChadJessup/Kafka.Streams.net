@@ -21,10 +21,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.State.KeyValueIterator;
-
-
-
-
+using System.Runtime.CompilerServices;
 
 class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIterator<Bytes, byte[]>
 {
@@ -46,13 +43,14 @@ class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIter
         this.openIterators = openIterators;
     }
 
-    public override synchronized bool hasNext()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public override bool hasNext()
 {
         if (!open)
 {
             throw new InvalidStateStoreException(string.Format("RocksDB iterator for store %s has closed", storeName));
         }
-        return super.hasNext();
+        return base.hasNext();
     }
 
     public override KeyValue<Bytes, byte[]> makeNext()
@@ -78,7 +76,8 @@ class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIter
         throw new InvalidOperationException("RocksDB iterator does not support Remove()");
     }
 
-    public override synchronized void close()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public override void close()
 {
         openIterators.Remove(this);
         iter.close();

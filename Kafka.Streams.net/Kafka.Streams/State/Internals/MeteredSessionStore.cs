@@ -27,7 +27,7 @@ using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.internals.ProcessorStateManager;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 using Kafka.Streams.State.StateSerdes;
 
 
@@ -36,9 +36,9 @@ using Kafka.Streams.State.StateSerdes;
 
 
 
-public class MeteredSessionStore<K, V>
-    : WrappedStateStore<SessionStore<Bytes, byte[]>, Windowed<K>, V>
-    : SessionStore<K, V>
+public MeteredSessionStore<K, V>
+    : WrappedStateStore<ISessionStore<Bytes, byte[]>, Windowed<K>, V>
+    : ISessionStore<K, V>
 {
 
     private string metricScope;
@@ -53,13 +53,13 @@ public class MeteredSessionStore<K, V>
     private Sensor removeTime;
     private string taskName;
 
-    MeteredSessionStore(SessionStore<Bytes, byte[]> inner,
+    MeteredSessionStore(ISessionStore<Bytes, byte[]> inner,
                         string metricScope,
                         ISerde<K> keySerde,
                         ISerde<V> valueSerde,
                         ITime time)
 {
-        super(inner);
+        base(inner);
         this.metricScope = metricScope;
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
@@ -92,7 +92,7 @@ public class MeteredSessionStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            super.init(context, root);
+            base.init(context, root);
         } finally
 {
             metrics.recordLatency(
@@ -107,7 +107,7 @@ public class MeteredSessionStore<K, V>
     public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                     bool sendOldValues)
 {
-        SessionStore<Bytes, byte[]> wrapped = wrapped();
+        ISessionStore<Bytes, byte[]> wrapped = wrapped();
         if (wrapped is CachedStateStore)
 {
             return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
@@ -125,7 +125,7 @@ public class MeteredSessionStore<K, V>
     public override void put(Windowed<K> sessionKey,
                     V aggregate)
 {
-        Objects.requireNonNull(sessionKey, "sessionKey can't be null");
+        sessionKey = sessionKey ?? throw new System.ArgumentNullException("sessionKey can't be null", nameof(sessionKey));
         long startNs = time.nanoseconds();
         try
 {
@@ -143,7 +143,7 @@ public class MeteredSessionStore<K, V>
 
     public override void Remove(Windowed<K> sessionKey)
 {
-        Objects.requireNonNull(sessionKey, "sessionKey can't be null");
+        sessionKey = sessionKey ?? throw new System.ArgumentNullException("sessionKey can't be null", nameof(sessionKey));
         long startNs = time.nanoseconds();
         try
 {
@@ -161,7 +161,7 @@ public class MeteredSessionStore<K, V>
 
     public override V fetchSession(K key, long startTime, long endTime)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         Bytes bytesKey = keyBytes(key);
         long startNs = time.nanoseconds();
         try
@@ -180,7 +180,7 @@ public class MeteredSessionStore<K, V>
 
     public override KeyValueIterator<Windowed<K>, V> fetch(K key)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         return new MeteredWindowedKeyValueIterator<>(
             wrapped().fetch(keyBytes(key)),
             fetchTime,
@@ -192,8 +192,8 @@ public class MeteredSessionStore<K, V>
     public override KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to)
 {
-        Objects.requireNonNull(from, "from cannot be null");
-        Objects.requireNonNull(to, "to cannot be null");
+        from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
+        to = to ?? throw new System.ArgumentNullException("to cannot be null", nameof(to));
         return new MeteredWindowedKeyValueIterator<>(
             wrapped().fetch(keyBytes(from), keyBytes(to)),
             fetchTime,
@@ -206,7 +206,7 @@ public class MeteredSessionStore<K, V>
                                                          long earliestSessionEndTime,
                                                          long latestSessionStartTime)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         Bytes bytesKey = keyBytes(key);
         return new MeteredWindowedKeyValueIterator<>(
             wrapped().findSessions(
@@ -224,8 +224,8 @@ public class MeteredSessionStore<K, V>
                                                          long earliestSessionEndTime,
                                                          long latestSessionStartTime)
 {
-        Objects.requireNonNull(keyFrom, "keyFrom cannot be null");
-        Objects.requireNonNull(keyTo, "keyTo cannot be null");
+        keyFrom = keyFrom ?? throw new System.ArgumentNullException("keyFrom cannot be null", nameof(keyFrom));
+        keyTo = keyTo ?? throw new System.ArgumentNullException("keyTo cannot be null", nameof(keyTo));
         Bytes bytesKeyFrom = keyBytes(keyFrom);
         Bytes bytesKeyTo = keyBytes(keyTo);
         return new MeteredWindowedKeyValueIterator<>(
@@ -245,7 +245,7 @@ public class MeteredSessionStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            super.flush();
+            base.flush();
         } finally
 {
             metrics.recordLatency(flushTime, startNs, time.nanoseconds());
@@ -254,7 +254,7 @@ public class MeteredSessionStore<K, V>
 
     public override void close()
 {
-        super.close();
+        base.close();
         metrics.removeAllStoreLevelSensors(taskName, name());
     }
 

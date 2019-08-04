@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -24,10 +25,8 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-
-public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
-
-
+public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K, V>
+{
     private GroupedTableOperationRepartitionNode( string nodeName,
                                                   ISerde<K> keySerde,
                                                   ISerde<V> valueSerde,
@@ -37,7 +36,7 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
                                                   ProcessorParameters processorParameters)
 {
 
-        super(
+        base(
             nodeName,
             sourceName,
             processorParameters,
@@ -48,39 +47,39 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
         );
     }
 
-    
+
     Serializer<V> getValueSerializer()
 {
          Serializer<V> valueSerializer = valueSerde == null ? null : valueSerde.serializer();
         return unsafeCastChangedToValueSerializer(valueSerializer);
     }
 
-    
+
     private Serializer<V> unsafeCastChangedToValueSerializer( Serializer<V> valueSerializer)
 {
         return (Serializer<V>) new ChangedSerializer<>(valueSerializer);
     }
 
-    
+
     Deserializer<V> getValueDeserializer()
 {
-         Deserializer<? : V> valueDeserializer = valueSerde == null ? null : valueSerde.deserializer();
+         Deserializer<V> valueDeserializer = valueSerde == null ? null : valueSerde.deserializer();
         return unsafeCastChangedToValueDeserializer(valueDeserializer);
     }
 
-    
-    private Deserializer<V> unsafeCastChangedToValueDeserializer( Deserializer<? : V> valueDeserializer)
+
+    private Deserializer<V> unsafeCastChangedToValueDeserializer( Deserializer<V> valueDeserializer)
 {
         return (Deserializer<V>) new ChangedDeserializer<>(valueDeserializer);
     }
 
-    
+
     public string ToString()
 {
-        return "GroupedTableOperationRepartitionNode{} " + super.ToString();
+        return "GroupedTableOperationRepartitionNode{} " + base.ToString();
     }
 
-    
+
     public void writeToTopology( InternalTopologyBuilder topologyBuilder)
 {
          Serializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
@@ -109,12 +108,12 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
 
     }
 
-    public static <K1, V1> GroupedTableOperationRepartitionNodeBuilder<K1, V1> groupedTableOperationNodeBuilder()
+    public static GroupedTableOperationRepartitionNodeBuilder<K1, V1> groupedTableOperationNodeBuilder()
 {
         return new GroupedTableOperationRepartitionNodeBuilder<>();
     }
 
-    public static  class GroupedTableOperationRepartitionNodeBuilder<K, V> {
+    public static  GroupedTableOperationRepartitionNodeBuilder<K, V> {
 
         private ISerde<K> keySerde;
         private ISerde<V> valueSerde;
@@ -183,4 +182,5 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
             );
         }
     }
+}
 }

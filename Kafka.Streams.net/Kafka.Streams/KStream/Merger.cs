@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 /**
  * The interface for merging aggregate values for {@link SessionWindows} with the given key.
  *
- * @param <K>   key type
- * @param <V>   aggregate value type
+ * @param   key type
+ * @param   aggregate value type
  */
 public interface Merger<K, V> {
 

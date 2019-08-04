@@ -36,7 +36,7 @@ public interface WindowBytesStoreSupplier : StoreSupplier<WindowStore<Bytes, byt
      * @return number of segments
      * @deprecated since 2.1. Use {@link WindowBytesStoreSupplier#segmentIntervalMs()} instead.
      */
-    @Deprecated
+    [System.Obsolete]
     int segments();
 
     /**

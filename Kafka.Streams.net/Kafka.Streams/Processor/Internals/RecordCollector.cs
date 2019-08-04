@@ -30,7 +30,7 @@ public interface RecordCollector : AutoCloseable {
                      K key,
                      V value,
                      Headers headers,
-                     Integer partition,
+                     int partition,
                      long timestamp,
                      Serializer<K> keySerializer,
                      Serializer<V> valueSerializer);

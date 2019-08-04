@@ -18,20 +18,20 @@ namespace Kafka.common.utils;
 
 import org.apache.kafka.common.security.auth.KafkaPrincipal;
 
-public class SecurityUtils {
+public SecurityUtils {
 
     public static KafkaPrincipal parseKafkaPrincipal(String str)
 {
         if (str == null || str.isEmpty())
 {
-            throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
+            throw new System.ArgumentException("expected a string in format principalType:principalName but got " + str);
         }
 
         String[] split = str.split(":", 2);
 
         if (split.Length != 2)
 {
-            throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
+            throw new System.ArgumentException("expected a string in format principalType:principalName but got " + str);
         }
 
         return new KafkaPrincipal(split[0], split[1]);

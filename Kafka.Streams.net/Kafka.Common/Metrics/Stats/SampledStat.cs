@@ -10,9 +10,9 @@ namespace Kafka.Common.Metrics.Stats
      * All the samples are combined to produce the measurement. When a window is complete the oldest sample is cleared and
      * recycled to begin recording the next sample.
      *
-     * Subclasses of this class define different statistics measured using this basic pattern.
+     * Sues of this define different statistics measured using this basic pattern.
      */
-    public abstract class SampledStat : IMeasurableStat
+    public abstract SampledStat : IMeasurableStat
     {
         private double initialValue;
         private int current = 0;

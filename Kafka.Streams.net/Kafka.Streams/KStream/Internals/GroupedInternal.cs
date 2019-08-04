@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
-public class GroupedInternal<K, V> : Grouped<K, V> {
+public GroupedInternal<K, V> : Grouped<K, V> {
 
     public GroupedInternal( Grouped<K, V> grouped)
 {
-        super(grouped);
+        base(grouped);
     }
 
     public ISerde<K> keySerde()

@@ -5,7 +5,7 @@ namespace Kafka.Common.Metrics.Stats
     /**
      * A {@link SampledStat} that maintains a simple average over its samples.
      */
-    public class Avg : SampledStat
+    public Avg : SampledStat
     {
         public Avg()
           : base(0.0)

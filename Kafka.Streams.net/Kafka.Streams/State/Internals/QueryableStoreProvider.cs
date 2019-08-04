@@ -28,7 +28,7 @@ using Kafka.Streams.State.QueryableStoreType;
 /**
  * A wrapper over all of the {@link StateStoreProvider}s in a Topology
  */
-public class QueryableStoreProvider
+public QueryableStoreProvider
 {
 
     private List<StateStoreProvider> storeProviders;
@@ -47,10 +47,10 @@ public class QueryableStoreProvider
      *
      * @param storeName          name of the store
      * @param queryableStoreType accept stores passing {@link QueryableStoreType#accepts(IStateStore)}
-     * @param <T>                The expected type of the returned store
+     * @param                The expected type of the returned store
      * @return A composite object that wraps the store instances.
      */
-    public <T> T getStore(string storeName,
+    public T getStore(string storeName,
                           QueryableStoreType<T> queryableStoreType)
 {
         List<T> globalStore = globalStoreProvider.stores(storeName, queryableStoreType);

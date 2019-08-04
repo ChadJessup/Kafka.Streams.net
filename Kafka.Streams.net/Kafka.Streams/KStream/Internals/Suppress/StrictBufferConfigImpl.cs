@@ -22,7 +22,7 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBufferConfig> : Suppressed.StrictBufferConfig {
+public StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBufferConfig> : Suppressed.StrictBufferConfig {
 
     private  long maxRecords;
     private  long maxBytes;
@@ -39,8 +39,8 @@ public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBuff
 
     public StrictBufferConfigImpl()
 {
-        this.maxRecords = long.MAX_VALUE;
-        this.maxBytes = long.MAX_VALUE;
+        this.maxRecords = long.MaxValue;
+        this.maxBytes = long.MaxValue;
         this.bufferFullStrategy = SHUT_DOWN;
     }
 
@@ -75,7 +75,7 @@ public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBuff
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

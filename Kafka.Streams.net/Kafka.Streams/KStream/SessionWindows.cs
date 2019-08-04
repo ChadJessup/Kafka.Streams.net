@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -70,7 +70,7 @@ namespace Kafka.streams.kstream;
  * @see KGroupedStream#windowedBy(SessionWindows)
  * @see TimestampExtractor
  */
-public  class SessionWindows {
+public  SessionWindows {
 
     private  long gapMs;
     private  long maintainDurationMs;
@@ -93,12 +93,12 @@ public  class SessionWindows {
      * @throws ArgumentException if {@code inactivityGapMs} is zero or negative
      * @deprecated Use {@link #with(Duration)} instead.
      */
-    @Deprecated
+    [System.Obsolete]
     public static SessionWindows with( long inactivityGapMs)
 {
         if (inactivityGapMs <= 0)
 {
-            throw new ArgumentException("Gap time (inactivityGapMs) cannot be zero or negative.");
+            throw new System.ArgumentException("Gap time (inactivityGapMs) cannot be zero or negative.");
         }
         return new SessionWindows(inactivityGapMs, DEFAULT_RETENTION_MS, -1);
     }
@@ -111,7 +111,7 @@ public  class SessionWindows {
      *
      * @throws ArgumentException if {@code inactivityGap} is zero or negative or can't be represented as {@code long milliseconds}
      */
-    public static SessionWindows with( Duration inactivityGap)
+    public static SessionWindows with( TimeSpan inactivityGap)
 {
          string msgPrefix = prepareMillisCheckFailMsgPrefix(inactivityGap, "inactivityGap");
         return with(ApiUtils.validateMillisecondDuration(inactivityGap, msgPrefix));
@@ -128,11 +128,11 @@ public  class SessionWindows {
      *             or directly configure the retention in a store supplier and use
      *             {@link Materialized#as(SessionBytesStoreSupplier)}.
      */
-    @Deprecated
+    [System.Obsolete]
     public SessionWindows until( long durationMs){
         if (durationMs < gapMs)
 {
-            throw new ArgumentException("Window retention time (durationMs) cannot be smaller than window gap.");
+            throw new System.ArgumentException("Window retention time (durationMs) cannot be smaller than window gap.");
         }
 
         return new SessionWindows(gapMs, durationMs, graceMs);
@@ -150,13 +150,13 @@ public  class SessionWindows {
      * @return this updated builder
      * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
      */
-    public SessionWindows grace( Duration afterWindowEnd){
+    public SessionWindows grace( TimeSpan afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
 
         if (afterWindowEndMs < 0)
 {
-            throw new ArgumentException("Grace period must not be negative.");
+            throw new System.ArgumentException("Grace period must not be negative.");
         }
 
         return new SessionWindows(
@@ -171,7 +171,7 @@ public  class SessionWindows {
 {
         // NOTE: in the future, when we Remove maintainMs,
         // we should default the grace period to 24h to maintain the default behavior,
-        // or we can default to (24h - gapMs) if you want to be super accurate.
+        // or we can default to (24h - gapMs) if you want to be base.accurate.
         return graceMs != -1 ? graceMs : maintainMs() - inactivityGap();
     }
 
@@ -193,7 +193,7 @@ public  class SessionWindows {
      * @return the window maintain duration
      * @deprecated since 2.1. Use {@link Materialized#retention} instead.
      */
-    @Deprecated
+    [System.Obsolete]
     public long maintainMs()
 {
         return Math.Max(maintainDurationMs, gapMs);
@@ -201,7 +201,7 @@ public  class SessionWindows {
 
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

@@ -30,7 +30,7 @@ using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 
 
 
-public class Sensors {
+public Sensors {
     private Sensors() {}
 
     public static Sensor createTaskAndStoreLatencyAndThroughputSensors(RecordingLevel level,

@@ -35,7 +35,7 @@ namespace Kafka.Common.Metrics
      * sensor.record(messageSize);
      * </pre>
      */
-    public class MetricsRegistry : IDisposable
+    public MetricsRegistry : IDisposable
     {
         //private MetricConfig config;
         //private ConcurrentDictionary<MetricName, KafkaMetric> metrics;
@@ -253,7 +253,7 @@ namespace Kafka.Common.Metrics
         {
             if ((keyValue.Length % 2) != 0)
             {
-                throw new ArgumentException("keyValue needs to be specified in pairs");
+                throw new System.ArgumentException("keyValue needs to be specified in pairs");
             }
 
             Dictionary<string, string> tags = new Dictionary<string, string>();
@@ -303,19 +303,19 @@ namespace Kafka.Common.Metrics
                     //}
                     //else
                     //{
-                    //    throw new ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name() + "' is defined twice.");
+                    //    throw new System.ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name() + "' is defined twice.");
                     //}
                 }
             }
 
             StringBuilder b = new StringBuilder();
-            //b.Append("<table class=\"data-table\"><tbody>\n");
+            //b.Append("<table=\"data-table\"><tbody>\n");
 
             //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes.entrySet())
 {
             //    b.Append("<tr>\n");
-            //    b.Append("<td colspan=3 class=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
-            //    b.Append(e.getKey());
+            //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
+            //    b.Append(e.Key);
             //    b.Append("</td>");
             //    b.Append("</tr>\n");
 
@@ -325,15 +325,15 @@ namespace Kafka.Common.Metrics
             //    b.Append("<th>Description</th>\n");
             //    b.Append("</tr>\n");
 
-            //    foreach (Entry<string, string> e2 in e.getValue().entrySet())
+            //    foreach (Entry<string, string> e2 in e.Value.entrySet())
 {
             //        b.Append("<tr>\n");
             //        b.Append("<td></td>");
             //        b.Append("<td>");
-            //        b.Append(e2.getKey());
+            //        b.Append(e2.Key);
             //        b.Append("</td>");
             //        b.Append("<td>");
-            //        b.Append(e2.getValue());
+            //        b.Append(e2.Value);
             //        b.Append("</td>");
             //        b.Append("</tr>\n");
             //    }
@@ -662,7 +662,7 @@ namespace Kafka.Common.Metrics
             MetricName metricName = metric.metricName;
             if (this.metrics.ContainsKey(metricName))
             {
-                throw new ArgumentException("A metric named '" + metricName + "' already exists, can't register another one.");
+                throw new System.ArgumentException("A metric named '" + metricName + "' already exists, can't register another one.");
             }
 
             this.metrics.TryAdd(metricName, metric);
@@ -710,7 +710,7 @@ namespace Kafka.Common.Metrics
 
             if (!runtimeTagKeys.Equals(templateTagKeys))
 {
-                throw new ArgumentException("For '" + template.name + "', runtime-defined metric tags do not match the tags in the template. "
+                throw new System.ArgumentException("For '" + template.name + "', runtime-defined metric tags do not match the tags in the template. "
                         + "Runtime = " + runtimeTagKeys.ToString() + " Template = " + templateTagKeys.ToString());
             }
 

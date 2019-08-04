@@ -4,10 +4,10 @@ namespace Kafka.Streams
      * A key-value pair defined for a single Kafka Streams record.
      * If the record comes directly from a Kafka topic then its key/value are defined as the message key/value.
      *
-     * @param <K> Key type
-     * @param <V> Value type
+     * @param Key type
+     * @param Value type
      */
-    public class KeyValue<K, V>
+    public KeyValue<K, V>
     {
         /** The key of the key-value pair. */
         public K key;
@@ -31,8 +31,8 @@ namespace Kafka.Streams
          *
          * @param key   the key
          * @param value the value
-         * @param <K>   the type of the key
-         * @param <V>   the type of the value
+         * @param   the type of the key
+         * @param   the type of the value
          * @return a new key-value pair
          */
         public static KeyValue<K, V> pair(K key, V value)

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -31,13 +31,13 @@ namespace Kafka.streams.kstream.internals;
 
 
 class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2> {
-    private static  Logger LOG = LoggerFactory.getLogger(KTableKTableRightJoin.class);
+    private static  ILogger LOG= new LoggerFactory().CreateLogger<KTableKTableRightJoin);
 
     KTableKTableRightJoin( KTableImpl<K, ?, V1> table1,
                            KTableImpl<K, ?, V2> table2,
                            ValueJoiner<V1, V2, R> joiner)
 {
-        super(table1, table2, joiner);
+        base(table1, table2, joiner);
     }
 
     
@@ -52,12 +52,12 @@ class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
         return new KTableKTableRightJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
     }
 
-    private class KTableKTableRightJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> {
+    private KTableKTableRightJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> {
 
         KTableKTableRightJoinValueGetterSupplier( KTableValueGetterSupplier<K, V1> valueGetterSupplier1,
                                                   KTableValueGetterSupplier<K, V2> valueGetterSupplier2)
 {
-            super(valueGetterSupplier1, valueGetterSupplier2);
+            base(valueGetterSupplier1, valueGetterSupplier2);
         }
 
         public KTableValueGetter<K, R> get()
@@ -66,7 +66,7 @@ class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
         }
     }
 
-    private class KTableKTableRightJoinProcessor : AbstractProcessor<K, Change<V1>> {
+    private KTableKTableRightJoinProcessor : AbstractProcessor<K, Change<V1>> {
 
         private  KTableValueGetter<K, V2> valueGetter;
         private StreamsMetricsImpl metrics;
@@ -80,7 +80,7 @@ class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             valueGetter.init(context);
@@ -132,7 +132,7 @@ class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
         }
     }
 
-    private class KTableKTableRightJoinValueGetter : KTableValueGetter<K, R> {
+    private KTableKTableRightJoinValueGetter : KTableValueGetter<K, R> {
 
         private  KTableValueGetter<K, V1> valueGetter1;
         private  KTableValueGetter<K, V2> valueGetter2;

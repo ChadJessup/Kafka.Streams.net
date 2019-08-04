@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -22,11 +22,11 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class ConsumedInternal<K, V> : Consumed<K, V> {
+public ConsumedInternal<K, V> : Consumed<K, V> {
 
     public ConsumedInternal( Consumed<K, V> consumed)
 {
-        super(consumed);
+        base(consumed);
     }
 
 

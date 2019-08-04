@@ -25,17 +25,17 @@ namespace Kafka.Streams.State.Internals;
  *
  * @param <T>
  */
-public class Maybe<T>
+public Maybe<T>
 {
     private T nullableValue;
     private bool defined;
 
-    public static <T> Maybe<T> defined(T nullableValue)
+    public static Maybe<T> defined(T nullableValue)
 {
         return new Maybe<>(nullableValue);
     }
 
-    public static <T> Maybe<T> undefined()
+    public static Maybe<T> undefined()
 {
         return new Maybe<>();
     }

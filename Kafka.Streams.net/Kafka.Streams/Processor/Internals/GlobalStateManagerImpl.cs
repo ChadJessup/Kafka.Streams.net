@@ -15,10 +15,10 @@ using System.Text;
 namespace Kafka.Streams.Processor.Internals
 {
 /**
- * This class is responsible for the initialization, restoration, closing, flushing etc
- * of Global State Stores. There is only ever 1 instance of this class per Application Instance.
+ * This is responsible for the initialization, restoration, closing, flushing etc
+ * of Global State Stores. There is only ever 1 instance of this per Application Instance.
  */
-public class GlobalStateManagerImpl : GlobalStateManager
+public GlobalStateManagerImpl : GlobalStateManager
     {
     private ILogger log;
     private bool eosEnabled;
@@ -59,7 +59,7 @@ public class GlobalStateManagerImpl : GlobalStateManager
             }
         }
 
-        log = logContext.logger(GlobalStateManagerImpl.class);
+        log = logContext.logger(GlobalStateManagerImpl);
         this.topology = topology;
         this.globalConsumer = globalConsumer;
         this.stateDirectory = stateDirectory;
@@ -151,17 +151,17 @@ public class GlobalStateManagerImpl : GlobalStateManager
 
         if (globalStores.ContainsKey(store.name()))
 {
-            throw new ArgumentException(string.Format("Global Store %s has already been registered", store.name()));
+            throw new System.ArgumentException(string.Format("Global Store %s has already been registered", store.name()));
         }
 
         if (!globalStoreNames.contains(store.name()))
 {
-            throw new ArgumentException(string.Format("Trying to register store %s that is not a known global store", store.name()));
+            throw new System.ArgumentException(string.Format("Trying to register store %s that is not a known global store", store.name()));
         }
 
         if (stateRestoreCallback == null)
 {
-            throw new ArgumentException(string.Format("The stateRestoreCallback provided for store %s was null", store.name()));
+            throw new System.ArgumentException(string.Format("The stateRestoreCallback provided for store %s was null", store.name()));
         }
 
         log.info("Restoring state for global store {}", store.name());
@@ -323,9 +323,9 @@ public class GlobalStateManagerImpl : GlobalStateManager
         log.LogDebug("Flushing all global globalStores registered in the state manager");
         foreach (Map.Entry<string, Optional<IStateStore>> entry in globalStores.entrySet())
 {
-            if (entry.getValue().isPresent())
+            if (entry.Value.isPresent())
 {
-                IStateStore store = entry.getValue()[);
+                IStateStore store = entry.Value[);
                 try {
                     log.trace("Flushing global store={}", store.name());
                     store.flush();
@@ -337,7 +337,7 @@ public class GlobalStateManagerImpl : GlobalStateManager
                     );
                 }
             } else {
-                throw new InvalidOperationException("Expected " + entry.getKey() + " to have been initialized");
+                throw new InvalidOperationException("Expected " + entry.Key + " to have been initialized");
             }
         }
     }
@@ -353,23 +353,23 @@ public class GlobalStateManagerImpl : GlobalStateManager
             StringBuilder closeFailed = new StringBuilder();
             foreach (Map.Entry<string, Optional<IStateStore>> entry in globalStores.entrySet())
 {
-                if (entry.getValue().isPresent())
+                if (entry.Value.isPresent())
 {
-                    log.LogDebug("Closing global storage engine {}", entry.getKey());
+                    log.LogDebug("Closing global storage engine {}", entry.Key);
                     try {
-                        entry.getValue()().close();
+                        entry.Value().close();
                     } catch (RuntimeException e)
 {
-                        log.LogError("Failed to close global state store {}", entry.getKey(), e);
+                        log.LogError("Failed to close global state store {}", entry.Key, e);
                         closeFailed.Append("Failed to close global state store:")
-                                   .Append(entry.getKey())
+                                   .Append(entry.Key)
                                    .Append(". Reason: ")
                                    .Append(e)
                                    .Append("\n");
                     }
-                    globalStores.Add(entry.getKey(), Optional.empty());
+                    globalStores.Add(entry.Key, Optional.empty());
                 } else {
-                    log.info("Skipping to close non-initialized store {}", entry.getKey());
+                    log.info("Skipping to close non-initialized store {}", entry.Key);
                 }
             }
             if (closeFailed.Length > 0)
@@ -391,10 +391,10 @@ public class GlobalStateManagerImpl : GlobalStateManager
         // Skip non persistent store
         foreach (Map.Entry<TopicPartition, long> topicPartitionOffset in checkpointFileCache.entrySet())
 {
-            string topic = topicPartitionOffset.getKey().topic();
+            string topic = topicPartitionOffset.Key.topic();
             if (!globalNonPersistentStoresTopics.contains(topic))
 {
-                filteredOffsets.Add(topicPartitionOffset.getKey(), topicPartitionOffset.getValue());
+                filteredOffsets.Add(topicPartitionOffset.Key, topicPartitionOffset.Value);
             }
         }
 

@@ -18,15 +18,15 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public class ToInternal : To {
+public ToInternal : To {
     public ToInternal()
 {
-        super(To.all());
+        base(To.all());
     }
 
     public void update(To to)
 {
-        super.update(to);
+        base.update(to);
     }
 
     public bool hasTimestamp()

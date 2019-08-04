@@ -21,7 +21,7 @@ using Kafka.Common.Cluster;
 using Kafka.Common.serialization.Serializer;
 
 
-public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
+public DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
 
     private Cluster cluster;
     private Serializer<K> keySerializer;
@@ -35,7 +35,7 @@ public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
     }
 
     
-    public Integer partition(string topic, K key, V value, int numPartitions)
+    public int partition(string topic, K key, V value, int numPartitions)
 {
         byte[] keyBytes = keySerializer.serialize(topic, key);
         return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);

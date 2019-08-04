@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -33,7 +33,7 @@ namespace Kafka.streams.kstream.internals;
  * @see org.apache.kafka.streams.processor.TimestampExtractor
  */
 @InterfaceStability.Unstable
-public class TimeWindow : Window {
+public TimeWindow : Window {
 
     /**
      * Create a new window for the given start time (inclusive) and end time (exclusive).
@@ -44,10 +44,10 @@ public class TimeWindow : Window {
      * {@code startMs}
      */
     public TimeWindow( long startMs,  long endMs){
-        super(startMs, endMs);
+        base(startMs, endMs);
         if (startMs == endMs)
 {
-            throw new ArgumentException("Window endMs must be greater than window startMs.");
+            throw new System.ArgumentException("Window endMs must be greater than window startMs.");
         }
     }
 
@@ -62,7 +62,7 @@ public class TimeWindow : Window {
     public bool overlap( Window other){
         if (getClass() != other.getClass())
 {
-            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
+            throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
          TimeWindow otherWindow = (TimeWindow) other;

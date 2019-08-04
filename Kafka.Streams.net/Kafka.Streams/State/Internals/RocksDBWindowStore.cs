@@ -24,8 +24,8 @@ using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.WindowStore;
 using Kafka.Streams.State.WindowStoreIterator;
 
-public class RocksDBWindowStore
-    : WrappedStateStore<SegmentedBytesStore, Object, object>
+public RocksDBWindowStore
+    : WrappedStateStore<SegmentedBytesStore, object, object>
     : WindowStore<Bytes, byte[]>
 {
 
@@ -39,7 +39,7 @@ public class RocksDBWindowStore
                        bool retainDuplicates,
                        long windowSize)
 {
-        super(bytesStore);
+        base(bytesStore);
         this.retainDuplicates = retainDuplicates;
         this.windowSize = windowSize;
     }
@@ -47,7 +47,7 @@ public class RocksDBWindowStore
     public override void init(IProcessorContext context, IStateStore root)
 {
         this.context = context;
-        super.init(context, root);
+        base.init(context, root);
     }
 
     public override void put(Bytes key, byte[] value)
@@ -72,14 +72,14 @@ public class RocksDBWindowStore
         return bytesValue;
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override WindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
 {
         KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo);
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                            Bytes to,
                                                            long timeFrom,
@@ -95,7 +95,7 @@ public class RocksDBWindowStore
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
 {
         KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo);

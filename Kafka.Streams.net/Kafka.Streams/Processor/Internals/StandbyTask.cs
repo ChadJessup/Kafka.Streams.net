@@ -35,7 +35,7 @@ using Kafka.Common.metrics.Sensor;
 /**
  * A StandbyTask
  */
-public class StandbyTask : AbstractTask {
+public StandbyTask : AbstractTask {
 
     private Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
     private Sensor closeTaskSensor;
@@ -60,7 +60,7 @@ public class StandbyTask : AbstractTask {
                 StreamsMetricsImpl metrics,
                 StateDirectory stateDirectory)
 {
-        super(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config);
+        base(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config);
 
         closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
         processorContext = new StandbyContextImpl(id, config, stateMgr, metrics);

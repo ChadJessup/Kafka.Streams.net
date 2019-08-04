@@ -29,7 +29,7 @@ using Kafka.Streams.State.ReadOnlySessionStore;
  * Wrapper over the underlying {@link ReadOnlySessionStore}s found in a {@link
  * org.apache.kafka.streams.processor.internals.ProcessorTopology}
  */
-public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
+public CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
     private StateStoreProvider storeProvider;
     private QueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;
@@ -46,7 +46,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 
     public override KeyValueIterator<Windowed<K>, V> fetch(K key)
 {
-        Objects.requireNonNull(key, "key can't be null");
+        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
         List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
         foreach (ReadOnlySessionStore<K, V> store in stores)
 {
@@ -73,8 +73,8 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 
     public override KeyValueIterator<Windowed<K>, V> fetch(K from, K to)
 {
-        Objects.requireNonNull(from, "from can't be null");
-        Objects.requireNonNull(to, "to can't be null");
+        from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
+        to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
         NextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store -> store.fetch(from, to);
         return new DelegatingPeekingKeyValueIterator<>(storeName,
                                                        new CompositeKeyValueIterator<>(

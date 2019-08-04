@@ -28,7 +28,7 @@ class TimestampedSegments : AbstractSegments<TimestampedSegment>
                         long retentionPeriod,
                         long segmentInterval)
 {
-        super(name, retentionPeriod, segmentInterval);
+        base(name, retentionPeriod, segmentInterval);
     }
 
     public override TimestampedSegment getOrCreateSegment(long segmentId,

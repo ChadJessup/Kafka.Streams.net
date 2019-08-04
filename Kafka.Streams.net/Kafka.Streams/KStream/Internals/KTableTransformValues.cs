@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -40,8 +40,8 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
                            ValueTransformerWithKeySupplier<K, V, V1> transformerSupplier,
                            string queryableName)
 {
-        this.parent = Objects.requireNonNull(parent, "parent");
-        this.transformerSupplier = Objects.requireNonNull(transformerSupplier, "transformerSupplier");
+        this.parent = parent = parent ?? throw new System.ArgumentNullException("parent", nameof(parent));
+        this.transformerSupplier = transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier", nameof(transformerSupplier));
         this.queryableName = queryableName;
     }
 
@@ -86,21 +86,21 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     }
 
 
-    private class KTableTransformValuesProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableTransformValuesProcessor : AbstractProcessor<K, Change<V>> {
         private  ValueTransformerWithKey<K, V, V1> valueTransformer;
         private TimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
 
         private KTableTransformValuesProcessor( ValueTransformerWithKey<K, V, V1> valueTransformer)
 {
-            this.valueTransformer = Objects.requireNonNull(valueTransformer, "valueTransformer");
+            this.valueTransformer = valueTransformer = valueTransformer ?? throw new System.ArgumentNullException("valueTransformer", nameof(valueTransformer));
         }
 
         
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             valueTransformer.init(new ForwardingDisabledProcessorContext(context));
             if (queryableName != null)
 {
@@ -137,15 +137,15 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     }
 
 
-    private class KTableTransformValuesGetter : KTableValueGetter<K, V1> {
+    private KTableTransformValuesGetter : KTableValueGetter<K, V1> {
         private  KTableValueGetter<K, V> parentGetter;
         private  ValueTransformerWithKey<K, V, V1> valueTransformer;
 
         KTableTransformValuesGetter( KTableValueGetter<K, V> parentGetter,
                                      ValueTransformerWithKey<K, V, V1> valueTransformer)
 {
-            this.parentGetter = Objects.requireNonNull(parentGetter, "parentGetter");
-            this.valueTransformer = Objects.requireNonNull(valueTransformer, "valueTransformer");
+            this.parentGetter = parentGetter = parentGetter ?? throw new System.ArgumentNullException("parentGetter", nameof(parentGetter));
+            this.valueTransformer = valueTransformer = valueTransformer ?? throw new System.ArgumentNullException("valueTransformer", nameof(valueTransformer));
         }
 
         

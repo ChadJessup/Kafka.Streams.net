@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -22,7 +22,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V> {
+public WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V> {
 
     private  WindowedSerializer<K> serializer;
 
@@ -43,7 +43,7 @@ public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V>
      * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
      */
     
-    public Integer partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions)
+    public int partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions)
 {
          byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
 

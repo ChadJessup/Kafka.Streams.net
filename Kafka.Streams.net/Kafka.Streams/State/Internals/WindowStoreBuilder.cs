@@ -22,7 +22,7 @@ using Kafka.Common.Utils.Time;
 using Kafka.Streams.State.WindowBytesStoreSupplier;
 using Kafka.Streams.State.WindowStore;
 
-public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K, V>>
+public WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K, V>>
 {
 
     private WindowBytesStoreSupplier storeSupplier;
@@ -32,7 +32,7 @@ public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K
                               ISerde<V> valueSerde,
                               ITime time)
 {
-        super(storeSupplier.name(), keySerde, valueSerde, time);
+        base(storeSupplier.name(), keySerde, valueSerde, time);
         this.storeSupplier = storeSupplier;
     }
 

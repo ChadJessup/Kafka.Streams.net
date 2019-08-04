@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
-@Deprecated
-public class SerializedInternal<K, V> : org.apache.kafka.streams.kstream.Serialized<K, V> {
+[System.Obsolete]
+public SerializedInternal<K, V> : org.apache.kafka.streams.kstream.Serialized<K, V> {
     public SerializedInternal( org.apache.kafka.streams.kstream.Serialized<K, V> serialized)
 {
-        super(serialized);
+        base(serialized);
     }
 
     public ISerde<K> keySerde()

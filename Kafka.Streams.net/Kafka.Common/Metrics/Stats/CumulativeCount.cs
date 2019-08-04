@@ -8,7 +8,7 @@ namespace Kafka.Common.Metrics.Stats
      * {@link CumulativeCount#record(MetricConfig, double, long)} invocations,
      * instead of summing the recorded values.
      */
-    public class CumulativeCount : CumulativeSum
+    public CumulativeCount : CumulativeSum
     {
         public override void record(MetricConfig config, double value, long timeMs)
         {

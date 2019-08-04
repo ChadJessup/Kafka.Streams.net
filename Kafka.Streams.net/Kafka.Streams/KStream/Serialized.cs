@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
 /**
- * The class that is used to capture the key and value {@link Serde}s used when performing
+ * The that is used to capture the key and value {@link Serde}s used when performing
  * {@link KStream#groupBy(KeyValueMapper, Serialized)} and {@link KStream#groupByKey(Serialized)} operations.
  *
- * @param <K> the key type
- * @param <V> the value type
+ * @param the key type
+ * @param the value type
  *
  *  @deprecated since 2.1. Use {@link  org.apache.kafka.streams.kstream.Grouped} instead
  */
-@Deprecated
-public class Serialized<K, V> {
+[System.Obsolete]
+public Serialized<K, V> {
 
     protected  ISerde<K> keySerde;
     protected  ISerde<V> valueSerde;
@@ -53,8 +53,8 @@ public class Serialized<K, V> {
      *                   if not specified the default serdes defined in the configs will be used
      * @param valueSerde valueSerde that will be used to materialize a stream
      *                   if not specified the default serdes defined in the configs will be used
-     * @param <K>        the key type
-     * @param <V>        the value type
+     * @param        the key type
+     * @param        the value type
      * @return a new instance of {@link Serialized} configured with the provided serdes
      */
     public staticSerialized<K, V> with( ISerde<K> keySerde,

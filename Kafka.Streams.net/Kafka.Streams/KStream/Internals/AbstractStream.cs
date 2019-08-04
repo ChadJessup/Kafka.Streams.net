@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -33,14 +33,14 @@ namespace Kafka.streams.kstream.internals;
 
 
 /*
- * Any classes (KTable, KStream, etc) extending this class should follow the serde specification precedence ordering as:
+ * Anyes (KTable, KStream, etc) extending this should follow the serde specification precedence ordering as:
  *
  * 1) Overridden values via control objects (e.g. Materialized, Serialized, Consumed, etc)
  * 2) Serdes that can be inferred from the operator itself (e.g. groupBy().count(), where value serde can default to `LongSerde`).
  * 3) Serde inherited from parent operator if possible (note if the key / value types have been changed, then the corresponding serde cannot be inherited).
  * 4) Default serde specified in the config.
  */
-public abstract class AbstractStream<K, V> {
+public abstract AbstractStream<K, V> {
 
     protected  string name;
     protected  ISerde<K> keySerde;
@@ -70,7 +70,7 @@ public abstract class AbstractStream<K, V> {
 {
         if (sourceNodes == null || sourceNodes.isEmpty())
 {
-            throw new ArgumentException("parameter <sourceNodes> must not be null or empty");
+            throw new System.ArgumentException("parameter <sourceNodes> must not be null or empty");
         }
 
         this.name = name;
@@ -82,7 +82,7 @@ public abstract class AbstractStream<K, V> {
     }
 
     // This method allows to expose the InternalTopologyBuilder instance
-    // to subclasses that extend AbstractStream class.
+    // to sues that extend AbstractStream.
     protected InternalTopologyBuilder internalTopologyBuilder()
 {
         return builder.internalTopologyBuilder;
@@ -99,21 +99,21 @@ public abstract class AbstractStream<K, V> {
         return allSourceNodes;
     }
 
-    static <T2, T1, R> ValueJoiner<T2, T1, R> reverseJoiner( ValueJoiner<T1, T2, R> joiner)
+    static ValueJoiner<T2, T1, R> reverseJoiner( ValueJoiner<T1, T2, R> joiner)
 {
         return (value2, value1) -> joiner.apply(value1, value2);
     }
 
-    static <K, V, VR> ValueMapperWithKey<K, V, VR> withKey( ValueMapper<V, VR> valueMapper)
+    static ValueMapperWithKey<K, V, VR> withKey( ValueMapper<V, VR> valueMapper)
 {
-        Objects.requireNonNull(valueMapper, "valueMapper can't be null");
+        valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
         return (readOnlyKey, value) -> valueMapper.apply(value);
     }
 
-    static <K, V, VR> ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier(
+    static ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier(
          ValueTransformerSupplier<V, VR> valueTransformerSupplier)
 {
-        Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
+        valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
         return () -> {
              ValueTransformer<V, VR> valueTransformer = valueTransformerSupplier[];
             return new ValueTransformerWithKey<K, V, VR>()

@@ -25,8 +25,8 @@ using Kafka.Streams.kstream.Windowed;
  * A window store that only supports read operations.
  * Implementations should be thread-safe as concurrent reads and writes are expected.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  */
 public interface ReadOnlyWindowStore<K, V>
 {
@@ -74,9 +74,9 @@ public interface ReadOnlyWindowStore<K, V>
      * @return an iterator over key-value pairs {@code <timestamp, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException If {@code null} is used for key.
-     * @deprecated Use {@link #fetch(Object, Instant, Instant)} instead
+     * @deprecated Use {@link #fetch(object, Instant, Instant)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     WindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo);
 
     /**
@@ -127,9 +127,9 @@ public interface ReadOnlyWindowStore<K, V>
      * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException If {@code null} is used for any key.
-     * @deprecated Use {@link #fetch(Object, Object, Instant, Instant)} instead
+     * @deprecated Use {@link #fetch(object, object, Instant, Instant)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     KeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
 
     /**
@@ -167,7 +167,7 @@ public interface ReadOnlyWindowStore<K, V>
      * @throws NullPointerException if {@code null} is used for any key
      * @deprecated Use {@link #fetchAll(Instant, Instant)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo);
 
     /**

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public class Windows<TWindow>
+    public Windows<TWindow>
         where TWindow : Window
    
 {

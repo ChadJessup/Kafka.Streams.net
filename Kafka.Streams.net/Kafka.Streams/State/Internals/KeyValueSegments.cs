@@ -28,7 +28,7 @@ class KeyValueSegments : AbstractSegments<KeyValueSegment>
                      long retentionPeriod,
                      long segmentInterval)
 {
-        super(name, retentionPeriod, segmentInterval);
+        base(name, retentionPeriod, segmentInterval);
     }
 
     public override KeyValueSegment getOrCreateSegment(long segmentId,

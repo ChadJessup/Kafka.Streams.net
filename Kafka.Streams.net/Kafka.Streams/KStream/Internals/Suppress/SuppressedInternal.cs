@@ -22,13 +22,13 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
-    private static  Duration DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MAX_VALUE);
+public SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
+    private static  TimeSpan DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MaxValue);
     private static  StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl) BufferConfig.unbounded();
 
     private  string name;
     private  BufferConfigInternal bufferConfig;
-    private  Duration timeToWaitForMoreEvents;
+    private  TimeSpan timeToWaitForMoreEvents;
     private  TimeDefinition<K> timeDefinition;
     private  bool safeToDropTombstones;
 
@@ -46,7 +46,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
      *                             compact).
      */
     public SuppressedInternal( string name,
-                               Duration suppressionTime,
+                               TimeSpan suppressionTime,
                                BufferConfig bufferConfig,
                                TimeDefinition<K> timeDefinition,
                                bool safeToDropTombstones)
@@ -80,7 +80,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
         return timeDefinition;
     }
 
-    Duration timeToWaitForMoreEvents()
+    TimeSpan timeToWaitForMoreEvents()
 {
         return timeToWaitForMoreEvents == null ? Duration.ZERO : timeToWaitForMoreEvents;
     }
@@ -91,7 +91,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
     }
 
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

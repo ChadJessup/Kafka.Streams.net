@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
+public OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
 
     OptimizableRepartitionNode( string nodeName,
                                 string sourceName,
@@ -35,7 +35,7 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
                                 string repartitionTopic)
 {
 
-        super(
+        base(
             nodeName,
             sourceName,
             processorParameters,
@@ -77,7 +77,7 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
     
     public string ToString()
 {
-        return "OptimizableRepartitionNode{ " + super.ToString() + " }";
+        return "OptimizableRepartitionNode{ " + base.ToString() + " }";
     }
 
     
@@ -120,7 +120,7 @@ public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
     }
 
 
-    public static  class OptimizableRepartitionNodeBuilder<K, V> {
+    public static  OptimizableRepartitionNodeBuilder<K, V> {
 
         private string nodeName;
         private ProcessorParameters processorParameters;

@@ -24,7 +24,7 @@ namespace Kafka.Streams.Errors {
  * Indicates that a task got migrated to another thread.
  * Thus, the task raising this exception can be cleaned up and closed as "zombie".
  */
-public class TaskMigratedException : StreamsException {
+public TaskMigratedException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
@@ -33,7 +33,7 @@ public class TaskMigratedException : StreamsException {
     // this is for unit test only
     public TaskMigratedException()
 {
-        super("A task has been migrated unexpectedly", null);
+        base("A task has been migrated unexpectedly", null);
 
         this.task = null;
     }
@@ -43,7 +43,7 @@ public class TaskMigratedException : StreamsException {
                                   long endOffset,
                                   long pos)
 {
-        super(string.Format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
+        base(string.Format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
                             topicPartition,
                             endOffset,
                             pos),
@@ -54,7 +54,7 @@ public class TaskMigratedException : StreamsException {
 
     public TaskMigratedException( Task task)
 {
-        super(string.Format("Task %s is unexpectedly closed during processing", task.id()), null);
+        base(string.Format("Task %s is unexpectedly closed during processing", task.id()), null);
 
         this.task = task;
     }
@@ -62,7 +62,7 @@ public class TaskMigratedException : StreamsException {
     public TaskMigratedException( Task task,
                                   Throwable throwable)
 {
-        super(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable);
+        base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable);
 
         this.task = task;
     }

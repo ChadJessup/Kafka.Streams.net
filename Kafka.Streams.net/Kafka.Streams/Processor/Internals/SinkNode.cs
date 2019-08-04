@@ -22,7 +22,7 @@ using Kafka.Common.serialization.Serializer;
 
 
 
-public class SinkNode<K, V> : ProcessorNode<K, V> {
+public SinkNode<K, V> : ProcessorNode<K, V> {
 
     private Serializer<K> keySerializer;
     private Serializer<V> valSerializer;
@@ -37,7 +37,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
              Serializer<V> valSerializer,
              StreamPartitioner<K, V> partitioner)
 {
-        super(name);
+        base(name);
 
         this.topicExtractor = topicExtractor;
         this.keySerializer = keySerializer;
@@ -58,7 +58,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
     
     public void init(InternalProcessorContext context)
 {
-        super.init(context);
+        base.init(context);
         this.context = context;
 
         // if serializers are null, get the default ones from the context
@@ -126,7 +126,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
     
     public string ToString(string indent)
 {
-        StringBuilder sb = new StringBuilder(super.ToString(indent));
+        StringBuilder sb = new StringBuilder(base.ToString(indent));
         sb.Append(indent).Append("\ttopic:\t\t");
         sb.Append(topicExtractor);
         sb.Append("\n");

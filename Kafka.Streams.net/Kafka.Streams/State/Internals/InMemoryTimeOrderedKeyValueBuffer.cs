@@ -54,7 +54,7 @@ using Kafka.Streams.State.internals.metrics.Sensors;
 
 
 
-public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer<K, V>
+public InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer<K, V>
 {
     private static BytesSerializer KEY_SERIALIZER = new BytesSerializer();
     private static ByteArraySerializer VALUE_SERIALIZER = new ByteArraySerializer();
@@ -74,7 +74,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
     private FullChangeSerde<V> valueSerde;
 
     private long memBufferSize = 0L;
-    private long minTimestamp = long.MAX_VALUE;
+    private long minTimestamp = long.MaxValue;
     private RecordCollector collector;
     private string changelogTopic;
     private Sensor bufferSizeSensor;
@@ -84,7 +84,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
 
     private int partition;
 
-    public static class Builder<K, V> : StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>>
+    public static Builder<K, V> : StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>>
 {
 
         private string storeName;
@@ -221,7 +221,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         sortedMap.clear();
         dirtyKeys.clear();
         memBufferSize = 0;
-        minTimestamp = long.MAX_VALUE;
+        minTimestamp = long.MaxValue;
         updateBufferMetrics();
     }
 
@@ -300,7 +300,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     }
                     if (bufferKey.time() == minTimestamp)
 {
-                        minTimestamp = sortedMap.isEmpty() ? long.MAX_VALUE : sortedMap.firstKey().time();
+                        minTimestamp = sortedMap.isEmpty() ? long.MaxValue : sortedMap.firstKey().time();
                     }
                 }
 
@@ -379,7 +379,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     cleanPut(time, key, bufferValue);
                 } else
 {
-                    throw new ArgumentException("Restoring apparently invalid changelog record: " + record);
+                    throw new System.ArgumentException("Restoring apparently invalid changelog record: " + record);
                 }
             }
             if (record.partition() != partition)
@@ -413,15 +413,15 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
             // predicate being true means we read one record, call the callback, and then Remove it
             while (next != null && predicate())
 {
-                if (next.getKey().time() != minTimestamp)
+                if (next.Key.time() != minTimestamp)
 {
                     throw new InvalidOperationException(
                         "minTimestamp [" + minTimestamp + "] did not match the actual min timestamp [" +
-                            next.getKey().time() + "]"
+                            next.Key.time() + "]"
                     );
                 }
-                K key = keySerde.deserializer().deserialize(changelogTopic, next.getKey().key()());
-                BufferValue bufferValue = next.getValue();
+                K key = keySerde.deserializer().deserialize(changelogTopic, next.Key.key()());
+                BufferValue bufferValue = next.Value;
                 Change<V> value = valueSerde.deserializeParts(
                     changelogTopic,
                     new Change<>(bufferValue.newValue(), bufferValue.oldValue())
@@ -429,21 +429,21 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                 callback.accept(new Eviction<>(key, value, bufferValue.context()));
 
                 delegate.Remove();
-                index.Remove(next.getKey().key());
+                index.Remove(next.Key.key());
 
-                dirtyKeys.Add(next.getKey().key());
+                dirtyKeys.Add(next.Key.key());
 
-                memBufferSize -= computeRecordSize(next.getKey().key(), bufferValue);
+                memBufferSize -= computeRecordSize(next.Key.key(), bufferValue);
 
                 // peek at the next record so we can update the minTimestamp
                 if (delegate.hasNext())
 {
                     next = delegate.next();
-                    minTimestamp = next == null ? long.MAX_VALUE : next.getKey().time();
+                    minTimestamp = next == null ? long.MaxValue : next.Key.time();
                 } else
 {
                     next = null;
-                    minTimestamp = long.MAX_VALUE;
+                    minTimestamp = long.MaxValue;
                 }
 
                 evictions++;

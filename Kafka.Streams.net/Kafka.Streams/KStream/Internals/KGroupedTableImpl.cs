@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -36,12 +36,12 @@ namespace Kafka.streams.kstream.internals;
 
 
 /**
- * The implementation class of {@link KGroupedTable}.
+ * The implementation of {@link KGroupedTable}.
  *
- * @param <K> the key type
- * @param <V> the value type
+ * @param the key type
+ * @param the value type
  */
-public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V> {
+public KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V> {
 
     private static  string AGGREGATE_NAME = "KTABLE-AGGREGATE-";
 
@@ -63,12 +63,12 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
                        GroupedInternal<K, V> groupedInternal,
                        StreamsGraphNode streamsGraphNode)
 {
-        super(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
+        base(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
 
         this.userProvidedRepartitionTopicName = groupedInternal.name();
     }
 
-    private <T> KTable<K, T> doAggregate( ProcessorSupplier<K, Change<V>> aggregateSupplier,
+    private KTable<K, T> doAggregate( ProcessorSupplier<K, Change<V>> aggregateSupplier,
                                           string functionName,
                                           MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materialized)
 {
@@ -128,8 +128,8 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
                                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 {
         Objects.requireNonNull.Adder, .Adder can't be null");
-        Objects.requireNonNull(subtractor, "subtractor can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
          MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
@@ -189,10 +189,10 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
                                          Aggregator<K, V, VR> subtractor,
                                          Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 {
-        Objects.requireNonNull(initializer, "initializer can't be null");
+        initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
         Objects.requireNonNull.Adder, .Adder can't be null");
-        Objects.requireNonNull(subtractor, "subtractor can't be null");
-        Objects.requireNonNull(materialized, "materialized can't be null");
+        subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
+        materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
          MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
@@ -209,7 +209,7 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V
     }
 
     
-    public <T> KTable<K, T> aggregate( Initializer<T> initializer,
+    public KTable<K, T> aggregate( Initializer<T> initializer,
                                        Aggregator<K, V, T>.Adder,
                                        Aggregator<K, V, T> subtractor)
 {

@@ -6,15 +6,15 @@ using System.Text;
 namespace Kafka.Streams.KStream
 {
     /**
-     * The class that is used to capture the key and value {@link Serde}s and set the part of name used for
+     * The that is used to capture the key and value {@link Serde}s and set the part of name used for
      * repartition topics when performing {@link KStream#groupBy(KeyValueMapper, Grouped)}, {@link
      * KStream#groupByKey(Grouped)}, or {@link KTable#groupBy(KeyValueMapper, Grouped)} operations.  Note
      * that Kafka Streams does not always create repartition topics for grouping operations.
      *
-     * @param <K> the key type
-     * @param <V> the value type
+     * @param the key type
+     * @param the value type
      */
-    public class Grouped<K, V> : Interfaces.INamedOperation<Grouped<K, V>>
+    public Grouped<K, V> : Interfaces.INamedOperation<Grouped<K, V>>
    
 {
         protected ISerde<K> keySerde;

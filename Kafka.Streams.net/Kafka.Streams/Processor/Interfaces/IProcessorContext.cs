@@ -77,7 +77,7 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * Schedules a periodic operation for processors. A processor may call this method during
          * {@link Processor#init(IProcessorContext) initialization} or
-         * {@link Processor#process(Object, Object) processing} to
+         * {@link Processor#process(object, object) processing} to
          * schedule a periodic callback &mdash; called a punctuation &mdash; to {@link Punctuator#punctuate(long)}.
          * The type parameter controls what notion of time is used for punctuation:
          * <ul>
@@ -134,7 +134,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param key key
          * @param value value
          * @param childName name of downstream processor
-         * @deprecated please use {@link #forward(Object, Object, To)} instead
+         * @deprecated please use {@link #forward(object, object, To)} instead
          */
         void forward(K key, V value, string childName);
 

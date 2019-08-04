@@ -47,8 +47,8 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see WallclockTimestampExtractor
  */
 @InterfaceStability.Evolving
-public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
-    private static Logger log = LoggerFactory.getLogger(LogAndSkipOnInvalidTimestamp.class);
+public LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
+    private static Logger log = new LoggerFactory().CreateLogger<LogAndSkipOnInvalidTimestamp);
 
     /**
      * Writes a log WARN message when the extracted timestamp is invalid (negative) but returns the invalid timestamp as-is,
@@ -60,7 +60,7 @@ public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @return the originally extracted timestamp of the record
      */
     
-    public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
+    public long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
 {

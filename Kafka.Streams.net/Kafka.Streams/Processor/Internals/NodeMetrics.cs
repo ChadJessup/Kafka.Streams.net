@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class NodeMetrics
+    public NodeMetrics
     {
         private StreamsMetricsImpl metrics;
 

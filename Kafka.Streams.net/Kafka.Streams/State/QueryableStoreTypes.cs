@@ -34,14 +34,14 @@ using Kafka.Streams.State.internals.StateStoreProvider;
  * These can be used with {@link KafkaStreams#store(string, QueryableStoreType)}.
  * To access and query the {@link IStateStore}s that are part of a {@link Topology}.
  */
-public class QueryableStoreTypes
+public QueryableStoreTypes
 {
 
     /**
      * A {@link QueryableStoreType} that accepts {@link ReadOnlyKeyValueStore}.
      *
-     * @param <K> key type of the store
-     * @param <V> value type of the store
+     * @param key type of the store
+     * @param value type of the store
      * @return {@link QueryableStoreTypes.KeyValueStoreType}
      */
     public staticQueryableStoreType<IReadOnlyKeyValueStore<K, V>> keyValueStore()
@@ -52,8 +52,8 @@ public class QueryableStoreTypes
     /**
      * A {@link QueryableStoreType} that accepts {@link ReadOnlyKeyValueStore ReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>}.
      *
-     * @param <K> key type of the store
-     * @param <V> value type of the store
+     * @param key type of the store
+     * @param value type of the store
      * @return {@link QueryableStoreTypes.TimestampedKeyValueStoreType}
      */
     public staticQueryableStoreType<IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>> timestampedKeyValueStore()
@@ -64,8 +64,8 @@ public class QueryableStoreTypes
     /**
      * A {@link QueryableStoreType} that accepts {@link ReadOnlyWindowStore}.
      *
-     * @param <K> key type of the store
-     * @param <V> value type of the store
+     * @param key type of the store
+     * @param value type of the store
      * @return {@link QueryableStoreTypes.WindowStoreType}
      */
     public staticQueryableStoreType<ReadOnlyWindowStore<K, V>> windowStore()
@@ -76,8 +76,8 @@ public class QueryableStoreTypes
     /**
      * A {@link QueryableStoreType} that accepts {@link ReadOnlyWindowStore ReadOnlyWindowStore<K, ValueAndTimestamp<V>>}.
      *
-     * @param <K> key type of the store
-     * @param <V> value type of the store
+     * @param key type of the store
+     * @param value type of the store
      * @return {@link QueryableStoreTypes.TimestampedWindowStoreType}
      */
     public staticQueryableStoreType<ReadOnlyWindowStore<K, ValueAndTimestamp<V>>> timestampedWindowStore()
@@ -88,8 +88,8 @@ public class QueryableStoreTypes
     /**
      * A {@link QueryableStoreType} that accepts {@link ReadOnlySessionStore}.
      *
-     * @param <K> key type of the store
-     * @param <V> value type of the store
+     * @param key type of the store
+     * @param value type of the store
      * @return {@link QueryableStoreTypes.SessionStoreType}
      */
     public staticQueryableStoreType<ReadOnlySessionStore<K, V>> sessionStore()
@@ -97,7 +97,7 @@ public class QueryableStoreTypes
         return new SessionStoreType<>();
     }
 
-    private static abstract class QueryableStoreTypeMatcher<T> : QueryableStoreType<T>
+    private static abstract QueryableStoreTypeMatcher<T> : QueryableStoreType<T>
 {
 
         private HashSet<Class> matchTo;
@@ -122,12 +122,12 @@ public class QueryableStoreTypes
         }
     }
 
-    public static class KeyValueStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlyKeyValueStore<K, V>>
+    public static KeyValueStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlyKeyValueStore<K, V>>
 {
 
         KeyValueStoreType()
 {
-            super(Collections.singleton(ReadOnlyKeyValueStore.class));
+            base(Collections.singleton(ReadOnlyKeyValueStore));
         }
 
         
@@ -139,15 +139,15 @@ public class QueryableStoreTypes
 
     }
 
-    private static class TimestampedKeyValueStoreType<K, V>
+    private static TimestampedKeyValueStoreType<K, V>
         : QueryableStoreTypeMatcher<ReadOnlyKeyValueStore<K, ValueAndTimestamp<V>>>
 {
 
         TimestampedKeyValueStoreType()
 {
-            super(new HashSet<>(Arrays.asList(
-                TimestampedKeyValueStore.class,
-                IReadOnlyKeyValueStore.class)));
+            base(new HashSet<>(Arrays.asList(
+                TimestampedKeyValueStore,
+                IReadOnlyKeyValueStore)));
         }
 
         
@@ -158,12 +158,12 @@ public class QueryableStoreTypes
         }
     }
 
-    public static class WindowStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlyWindowStore<K, V>>
+    public static WindowStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlyWindowStore<K, V>>
 {
 
         WindowStoreType()
 {
-            super(Collections.singleton(ReadOnlyWindowStore.class));
+            base(Collections.singleton(ReadOnlyWindowStore));
         }
 
         
@@ -174,15 +174,15 @@ public class QueryableStoreTypes
         }
     }
 
-    private static class TimestampedWindowStoreType<K, V>
+    private static TimestampedWindowStoreType<K, V>
         : QueryableStoreTypeMatcher<ReadOnlyWindowStore<K, ValueAndTimestamp<V>>>
 {
 
         TimestampedWindowStoreType()
 {
-            super(new HashSet<>(Arrays.asList(
-                TimestampedWindowStore.class,
-                ReadOnlyWindowStore.class)));
+            base(new HashSet<>(Arrays.asList(
+                TimestampedWindowStore,
+                ReadOnlyWindowStore)));
         }
 
         
@@ -193,12 +193,12 @@ public class QueryableStoreTypes
         }
     }
 
-    public static class SessionStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlySessionStore<K, V>>
+    public static SessionStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlySessionStore<K, V>>
 {
 
         SessionStoreType()
 {
-            super(Collections.singleton(ReadOnlySessionStore.class));
+            base(Collections.singleton(ReadOnlySessionStore));
         }
 
         

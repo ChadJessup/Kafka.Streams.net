@@ -31,7 +31,7 @@ using Kafka.Common.serialization.Serde;
 
 
 
-public abstract class AbstractProcessorContext : InternalProcessorContext {
+public abstract AbstractProcessorContext : InternalProcessorContext {
 
     public static string NONEXIST_TOPIC = "__null_topic__";
     private TaskId taskId;
@@ -106,7 +106,7 @@ public abstract class AbstractProcessorContext : InternalProcessorContext {
 {
             throw new InvalidOperationException("Can only create state stores during initialization.");
         }
-        Objects.requireNonNull(store, "store must not be null");
+        store = store ?? throw new System.ArgumentNullException("store must not be null", nameof(store));
         stateManager.register(store, stateRestoreCallback);
     }
 

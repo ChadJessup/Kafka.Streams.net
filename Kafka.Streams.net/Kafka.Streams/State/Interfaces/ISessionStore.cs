@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.Interfaces
      * If two sessions are merged, a new session with new start- and end-timestamp must be inserted into the store
      * while the two old sessions must be deleted.
      *
-     * @param <K>   type of the record keys
+     * @param   type of the record keys
      * @param <AGG> type of the aggregated values
      */
     public interface ISessionStore<K, AGG> : IStateStore, ReadOnlySessionStore<K, AGG>

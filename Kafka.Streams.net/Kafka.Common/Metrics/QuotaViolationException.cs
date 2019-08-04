@@ -5,7 +5,7 @@ namespace Kafka.Common.Metrics
     /**
      * Thrown when a sensor records a value that causes a metric to go outside the bounds configured as its quota
      */
-    public class QuotaViolationException : Exception
+    public QuotaViolationException : Exception
     {
         public QuotaViolationException(MetricName metricName, double value, double bound)
             : base($"'{metricName}' violated quota. Actual: {value}, Threshold: {bound}")

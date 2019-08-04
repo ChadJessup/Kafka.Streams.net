@@ -27,7 +27,7 @@ using Kafka.Common.header.internals.RecordHeaders;
 
 
 
-public class ProcessorRecordContext : RecordContext {
+public ProcessorRecordContext : RecordContext {
 
     private long timestamp;
     private long offset;
@@ -88,7 +88,7 @@ public class ProcessorRecordContext : RecordContext {
 {
             size += topic.toCharArray().Length;
         }
-        size += Integer.BYTES; // partition
+        size += int.BYTES; // partition
         if (headers != null)
 {
             foreach (Header header in headers)
@@ -114,10 +114,10 @@ public class ProcessorRecordContext : RecordContext {
         int size = 0;
         size += long.BYTES; // value.context.timestamp
         size += long.BYTES; // value.context.offset
-        size += Integer.BYTES; // size of topic
+        size += int.BYTES; // size of topic
         size += topicBytes.Length;
-        size += Integer.BYTES; // partition
-        size += Integer.BYTES; // number of headers
+        size += int.BYTES; // partition
+        size += int.BYTES; // number of headers
 
         if (headers == null)
 {
@@ -129,7 +129,7 @@ public class ProcessorRecordContext : RecordContext {
 
             for (int i = 0; i < headers.Length; i++)
 {
-                size += 2 * Integer.BYTES; // sizes of key and value
+                size += 2 * int.BYTES; // sizes of key and value
 
                 byte[] keyBytes = headers[i].key().getBytes(UTF_8);
                 size += keyBytes.Length;
@@ -240,9 +240,9 @@ public class ProcessorRecordContext : RecordContext {
     }
 
     /**
-     * Equality is implemented in support of tests, *not* for use in Hash collections, since this class is mutable.
+     * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
      */
-    @Deprecated
+    [System.Obsolete]
     
     public int GetHashCode()
 {

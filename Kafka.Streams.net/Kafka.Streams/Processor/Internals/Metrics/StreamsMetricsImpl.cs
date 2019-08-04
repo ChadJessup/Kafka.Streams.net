@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals.Metrics
 {
-    public class StreamsMetricsImpl : IStreamsMetrics
+    public StreamsMetricsImpl : IStreamsMetrics
     {
         private Dictionary<Sensor, Sensor> parentSensors;
         public Dictionary<MetricName, IMetric> streamMetrics { get; }
@@ -89,7 +89,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             {
                 if ((tags.Length % 2) != 0)
                 {
-                    throw new ArgumentException("Tags needs to be specified in key-value pairs");
+                    throw new System.ArgumentException("Tags needs to be specified in key-value pairs");
                 }
 
                 for (int i = 0; i < tags.Length; i += 2)
@@ -328,7 +328,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             {
                 if ((tags.Length % 2) != 0)
                 {
-                    throw new ArgumentException("Tags needs to be specified in key-value pairs");
+                    throw new System.ArgumentException("Tags needs to be specified in key-value pairs");
                 }
 
                 for (int i = 0; i < tags.Length; i += 2)
@@ -519,7 +519,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
          */
         //public void removeSensor(Sensor sensor)
         //{
-        //    //   Objects.requireNonNull(sensor, "Sensor is null");
+        //    //   sensor = sensor ?? throw new System.ArgumentNullException("Sensor is null", nameof(sensor));
         //    metrics.removeSensor(sensor.name);
 
         //    if (parentSensors.TryGetValue(sensor, out var parent))

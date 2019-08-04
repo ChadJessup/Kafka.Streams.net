@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -40,7 +40,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
-    private  Logger log = LoggerFactory.getLogger(getClass());
+    private  Logger log = new LoggerFactory().CreateLogger<getClass());
 
     private  string storeName;
     private  Windows<W> windows;
@@ -60,7 +60,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         this.aggregator = aggregator;
     }
 
-    
+
     public Processor<K, V> get()
 {
         return new KStreamWindowAggregateProcessor();
@@ -71,14 +71,14 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         return windows;
     }
 
-    
+
     public void enableSendingOldValues()
 {
         sendOldValues = true;
     }
 
 
-    private class KStreamWindowAggregateProcessor : AbstractProcessor<K, V> {
+    private KStreamWindowAggregateProcessor : AbstractProcessor<K, V> {
         private TimestampedWindowStore<K, Agg> windowStore;
         private TimestampedTupleForwarder<Windowed<K>, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
@@ -87,11 +87,11 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             internalProcessorContext = (InternalProcessorContext) context;
 
             metrics = internalProcessorContext.metrics();
@@ -106,7 +106,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
                 sendOldValues);
         }
 
-        
+
         public void process( K key,  V value)
 {
             if (key == null)
@@ -129,8 +129,8 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
             foreach ( Map.Entry<long, W> entry in matchedWindows.entrySet())
 {
-                 long windowStart = entry.getKey();
-                 long windowEnd = entry.getValue().end();
+                 long windowStart = entry.Key;
+                 long windowEnd = entry.Value.end();
                 if (windowEnd > closeTime)
 {
                      ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
@@ -152,7 +152,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
                     // update the store with the new value
                     windowStore.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp), windowStart);
                     tupleForwarder.maybeForward(
-                        new Windowed<>(key, entry.getValue()),
+                        new Windowed<>(key, entry.Value),
                         newAgg,
                         sendOldValues ? oldAgg : null,
                         newTimestamp);
@@ -182,7 +182,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         }
     }
 
-    
+
     public KTableValueGetterSupplier<Windowed<K>, Agg> view()
 {
         return new KTableValueGetterSupplier<Windowed<K>, Agg>()
@@ -193,7 +193,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
                 return new KStreamWindowAggregateValueGetter();
             }
 
-            
+
             public string[] storeNames()
 {
                 return new string[] {storeName};
@@ -205,15 +205,15 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
     private class KStreamWindowAggregateValueGetter : KTableValueGetter<Windowed<K>, Agg> {
         private TimestampedWindowStore<K, Agg> windowStore;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
             windowStore = (TimestampedWindowStore<K, Agg>) context.getStateStore(storeName);
         }
 
-        
-        
+
+
         public ValueAndTimestamp<Agg> get( Windowed<K> windowedKey)
 {
              K key = windowedKey.key();
@@ -221,7 +221,7 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
             return windowStore.fetch(key, window.start());
         }
 
-        
+
         public void close() {}
     }
 }

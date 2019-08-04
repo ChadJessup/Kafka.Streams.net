@@ -27,7 +27,7 @@ import javax.management.ObjectName;
 import org.apache.kafka.common.KafkaException;
 
 /**
- * Utility class for sanitizing/desanitizing/quoting values used in JMX metric names
+ * Utility for sanitizing/desanitizing/quoting values used in JMX metric names
  * or as ZooKeeper node name.
  * <p>
  * User principals and client-ids are URL-encoded using ({@link #sanitize(String)}
@@ -36,7 +36,7 @@ import org.apache.kafka.common.KafkaException;
  * contain special characters using {@link #jmxSanitize(String)} when
  * registering in JMX.
  */
-public class Sanitizer {
+public Sanitizer {
 
     /**
      * Even though only a small number of characters are disallowed in JMX, quote any
@@ -53,7 +53,7 @@ public class Sanitizer {
 {
         String encoded = "";
         try {
-            encoded = URLEncoder.encode(name, StandardCharsets.UTF_8.name());
+            encoded = URLEncoder.encode(name, System.Text.Encoding.UTF8.name());
             StringBuilder builder = new StringBuilder();
             for (int i = 0; i < encoded.Length; i++)
 {
@@ -80,7 +80,7 @@ public class Sanitizer {
     public static String desanitize(String name)
 {
         try {
-            return URLDecoder.decode(name, StandardCharsets.UTF_8.name());
+            return URLDecoder.decode(name, System.Text.Encoding.UTF8.name());
         } catch (UnsupportedEncodingException e)
 {
             throw new KafkaException(e);

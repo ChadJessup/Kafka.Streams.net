@@ -33,12 +33,12 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public class CachingKeyValueStore
+public CachingKeyValueStore
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
     : IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
 {
 
-    private static Logger LOG = LoggerFactory.getLogger(CachingKeyValueStore.class);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<CachingKeyValueStore);
 
     private CacheFlushListener<byte[], byte[]> flushListener;
     private bool sendOldValues;
@@ -50,14 +50,14 @@ public class CachingKeyValueStore
 
     CachingKeyValueStore(IKeyValueStore<Bytes, byte[]> underlying)
 {
-        super(underlying);
+        base(underlying);
     }
 
     public override void init(IProcessorContext context,
                      IStateStore root)
 {
         initInternal(context);
-        super.init(context, root);
+        base.init(context, root);
         // save the stream thread as we only ever want to trigger a flush
         // when the stream thread is the current thread.
         streamThread = Thread.currentThread();
@@ -126,7 +126,7 @@ public class CachingKeyValueStore
     public override void put(Bytes key,
                     byte[] value)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         validateStoreOpen();
         lock.writeLock().lock();
         try
@@ -158,7 +158,7 @@ public class CachingKeyValueStore
     public override byte[] putIfAbsent(Bytes key,
                               byte[] value)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         validateStoreOpen();
         lock.writeLock().lock();
         try
@@ -183,7 +183,7 @@ public class CachingKeyValueStore
 {
             foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
-                Objects.requireNonNull(entry.key, "key cannot be null");
+                entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
                 put(entry.key, entry.value);
             }
         } finally
@@ -194,7 +194,7 @@ public class CachingKeyValueStore
 
     public override byte[] delete(Bytes key)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         validateStoreOpen();
         lock.writeLock().lock();
         try
@@ -215,7 +215,7 @@ public class CachingKeyValueStore
 
     public override byte[] get(Bytes key)
 {
-        Objects.requireNonNull(key, "key cannot be null");
+        key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         validateStoreOpen();
         Lock theLock;
         if (Thread.currentThread().Equals(streamThread))
@@ -307,7 +307,7 @@ public class CachingKeyValueStore
         try
 {
             cache.flush(cacheName);
-            super.flush();
+            base.flush();
         } finally
 {
             lock.writeLock().unlock();
@@ -323,7 +323,7 @@ public class CachingKeyValueStore
 {
             try
 {
-                super.close();
+                base.close();
             } finally
 {
                 cache.close(cacheName);

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -26,12 +26,12 @@ namespace Kafka.streams.kstream;
 
 
 /**
- *  The inner serde class can be specified by setting the property
+ *  The inner serde can be specified by setting the property
  *  {@link StreamsConfig#DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS} or
  *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
  *  if the no-arg constructor is called and hence it is not passed during initialization.
  */
-public class SessionWindowedDeserializer<T> : Deserializer<Windowed<T>> {
+public SessionWindowedDeserializer<T> : Deserializer<Windowed<T>> {
 
     private Deserializer<T> inner;
 
@@ -52,11 +52,11 @@ public class SessionWindowedDeserializer<T> : Deserializer<Windowed<T>> {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
              string value = (string) configs[propertyName);
             try {
-                inner = Serde.class.cast(Utils.newInstance(value, Serde.class)).deserializer();
+                inner = Serde.cast(Utils.newInstance(value, Serde)).deserializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)
 {
-                throw new ConfigException(propertyName, value, "Serde class " + value + " could not be found.");
+                throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
             }
         }
     }

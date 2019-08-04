@@ -21,9 +21,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Utility class that handles immutable byte arrays.
+ * Utility that handles immutable byte arrays.
  */
-public class Bytes : Comparable<Bytes> {
+public Bytes : Comparable<Bytes> {
 
     public static final byte[] EMPTY = new byte[0];
 
@@ -81,7 +81,7 @@ public class Bytes : Comparable<Bytes> {
     }
 
     
-    public boolean Equals(Object other)
+    public boolean Equals(object other)
 {
         if (this == other)
             return true;
@@ -162,7 +162,7 @@ public class Bytes : Comparable<Bytes> {
                     final byte[] buffer2, int offset2, int length2];
     }
 
-    private static class LexicographicByteArrayComparator : ByteArrayComparator {
+    private static LexicographicByteArrayComparator : ByteArrayComparator {
 
         
         public int compare(byte[] buffer1, byte[] buffer2)

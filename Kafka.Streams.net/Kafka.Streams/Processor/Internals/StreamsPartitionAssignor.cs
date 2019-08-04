@@ -58,7 +58,7 @@ using Kafka.Common.Utils.Utils;
 
 
 
-public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
+public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
 
     static int UNKNOWN = -1;
     private static int VERSION_ONE = 1;
@@ -66,7 +66,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
     private static int VERSION_THREE = 3;
     private static int VERSION_FOUR = 4;
     private static int EARLIEST_PROBEABLE_VERSION = VERSION_THREE;
-    protected HashSet<Integer> supportedVersions = new HashSet<>();
+    protected HashSet<int> supportedVersions = new HashSet<>();
 
     private Logger log;
     private string logPrefix;
@@ -98,12 +98,12 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                 case 2:
                     return VERSION_PROBING;
                 default:
-                    throw new ArgumentException("Unknown error code: " + code);
+                    throw new System.ArgumentException("Unknown error code: " + code);
             }
         }
     }
 
-    private static class AssignedPartition : Comparable<AssignedPartition> {
+    private static AssignedPartition : Comparable<AssignedPartition> {
         public TaskId taskId;
         public TopicPartition partition;
 
@@ -139,7 +139,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         }
     }
 
-    private static class ClientMetadata {
+    private static ClientMetadata {
         HostInfo hostInfo;
         HashSet<string> consumers;
         ClientState state;
@@ -151,7 +151,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             if (endPoint != null)
 {
                 string host = getHost(endPoint);
-                Integer port = getPort(endPoint);
+                int port = getPort(endPoint);
 
                 if (host == null || port == null)
 {
@@ -190,10 +190,10 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         }
     }
 
-    private static class InternalStreamsConfig : StreamsConfig {
+    private static InternalStreamsConfig : StreamsConfig {
         private InternalStreamsConfig(Dictionary<?, ?> props)
 {
-            super(props, false);
+            base(props, false);
         }
     }
 
@@ -204,7 +204,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
             return result;
         } else {
-            return Integer.compare(p1.partition(), p2.partition());
+            return int.compare(p1.partition(), p2.partition());
         }
     };
 
@@ -264,7 +264,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                     usedSubscriptionMetadataVersion = VERSION_TWO;
                     break;
                 default:
-                    throw new ArgumentException("Unknown configuration value for parameter 'upgrade.from': " + upgradeFrom);
+                    throw new System.ArgumentException("Unknown configuration value for parameter 'upgrade.from': " + upgradeFrom);
             }
         }
 
@@ -278,7 +278,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
         if (!(o is TaskManager))
 {
-            KafkaException fatalException = new KafkaException(string.Format("%s is not an instance of %s", o.GetType().getName(), TaskManager.class.getName()));
+            KafkaException fatalException = new KafkaException(string.Format("%s is not an instance of %s", o.GetType().getName(), TaskManager.getName()));
             log.LogError(fatalException.getMessage(), fatalException);
             throw fatalException;
         }
@@ -296,7 +296,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         if (!(ai is AtomicInteger))
 {
             KafkaException fatalException = new KafkaException(string.Format("%s is not an instance of %s",
-                ai.GetType().getName(), AtomicInteger.class.getName()));
+                ai.GetType().getName(), AtomicInteger.getName()));
             log.LogError(fatalException.getMessage(), fatalException);
             throw fatalException;
         }
@@ -304,14 +304,14 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
         numStandbyReplicas = streamsConfig.getInt(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG);
 
-        partitionGrouper = streamsConfig.getConfiguredInstance(StreamsConfig.PARTITION_GROUPER_CLASS_CONFIG, PartitionGrouper.class);
+        partitionGrouper = streamsConfig.getConfiguredInstance(StreamsConfig.PARTITION_GROUPER_CLASS_CONFIG, PartitionGrouper);
 
         string userEndPoint = streamsConfig.getString(StreamsConfig.APPLICATION_SERVER_CONFIG);
         if (userEndPoint != null && !userEndPoint.isEmpty())
 {
             try {
                 string host = getHost(userEndPoint);
-                Integer port = getPort(userEndPoint);
+                int port = getPort(userEndPoint);
 
                 if (host == null || port == null)
 {
@@ -419,8 +419,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         int futureMetadataVersion = UNKNOWN;
         foreach (Map.Entry<string, Subscription> entry in subscriptions.entrySet())
 {
-            string consumerId = entry.getKey();
-            Subscription subscription = entry.getValue();
+            string consumerId = entry.Key;
+            Subscription subscription = entry.Value;
 
             SubscriptionInfo info = SubscriptionInfo.decode(subscription.userData());
             int usedVersion = info.version();
@@ -480,7 +480,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // parse the topology to determine the repartition source topics,
         // making sure they are created with the number of partitions as
         // the maximum of the depending sub-topologies source topics' number of partitions
-        Dictionary<Integer, InternalTopologyBuilder.TopicsInfo> topicGroups = taskManager.builder().topicGroups();
+        Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups = taskManager.builder().topicGroups();
 
         Dictionary<string, InternalTopicConfig> repartitionTopicMetadata = new HashMap<>();
         foreach (InternalTopologyBuilder.TopicsInfo topicsInfo in topicGroups.values())
@@ -524,7 +524,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
                                 // use the maximum of all its source topic partitions as the number of partitions
                                 foreach (string sourceTopicName in otherTopicsInfo.sourceTopics)
 {
-                                    Integer numPartitionsCandidate;
+                                    int numPartitionsCandidate;
                                     // It is possible the sourceTopic is another internal topic, i.e,
                                     // map().join().join(map())
                                     if (repartitionTopicMetadata.ContainsKey(sourceTopicName))
@@ -569,8 +569,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         Dictionary<TopicPartition, PartitionInfo> allRepartitionTopicPartitions = new HashMap<>();
         foreach (Map.Entry<string, InternalTopicConfig> entry in repartitionTopicMetadata.entrySet())
 {
-            string topic = entry.getKey();
-            int numPartitions = entry.getValue().numberOfPartitions();
+            string topic = entry.Key;
+            int numPartitions = entry.Value.numberOfPartitions();
 
             for (int partition = 0; partition < numPartitions; partition++)
 {
@@ -588,21 +588,21 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
         // get the tasks as partition groups from the partition grouper
         HashSet<string> allSourceTopics = new HashSet<>();
-        Dictionary<Integer, HashSet<string>> sourceTopicsByGroup = new HashMap<>();
-        foreach (Map.Entry<Integer, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
+        Dictionary<int, HashSet<string>> sourceTopicsByGroup = new HashMap<>();
+        foreach (Map.Entry<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
 {
-            allSourceTopics.AddAll(entry.getValue().sourceTopics);
-            sourceTopicsByGroup.Add(entry.getKey(), entry.getValue().sourceTopics);
+            allSourceTopics.AddAll(entry.Value.sourceTopics);
+            sourceTopicsByGroup.Add(entry.Key, entry.Value.sourceTopics);
         }
 
         Dictionary<TaskId, HashSet<TopicPartition>> partitionsForTask = partitionGrouper.partitionGroups(sourceTopicsByGroup, fullMetadata);
 
         // check if all partitions are assigned, and there are no duplicates of partitions in multiple tasks
         HashSet<TopicPartition> allAssignedPartitions = new HashSet<>();
-        Dictionary<Integer, HashSet<TaskId>> tasksByTopicGroup = new HashMap<>();
+        Dictionary<int, HashSet<TaskId>> tasksByTopicGroup = new HashMap<>();
         foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in partitionsForTask.entrySet())
 {
-            HashSet<TopicPartition> partitions = entry.getValue();
+            HashSet<TopicPartition> partitions = entry.Value;
             foreach (TopicPartition partition in partitions)
 {
                 if (allAssignedPartitions.contains(partition))
@@ -612,7 +612,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             }
             allAssignedPartitions.AddAll(partitions);
 
-            TaskId id = entry.getKey();
+            TaskId id = entry.Key;
             tasksByTopicGroup.computeIfAbsent(id.topicGroupId, k -> new HashSet<>()).Add(id);
         }
         foreach (string topic in allSourceTopics)
@@ -639,10 +639,10 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 
         //.Add tasks to state change log topic subscribers
         Dictionary<string, InternalTopicConfig> changelogTopicMetadata = new HashMap<>();
-        foreach (Map.Entry<Integer, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
+        foreach (Map.Entry<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
 {
-            int topicGroupId = entry.getKey();
-            Dictionary<string, InternalTopicConfig> stateChangelogTopics = entry.getValue().stateChangelogTopics;
+            int topicGroupId = entry.Key;
+            Dictionary<string, InternalTopicConfig> stateChangelogTopics = entry.Value.stateChangelogTopics;
 
             foreach (InternalTopicConfig topicConfig in stateChangelogTopics.values())
 {
@@ -676,7 +676,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         Dictionary<UUID, ClientState> states = new HashMap<>();
         foreach (Map.Entry<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
 {
-            states.Add(entry.getKey(), entry.getValue().state);
+            states.Add(entry.Key, entry.Value.state);
         }
 
         log.LogDebug("Assigning tasks {} to clients {} with number of replicas {}",
@@ -695,12 +695,12 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
             foreach (Map.Entry<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
 {
-                HostInfo hostInfo = entry.getValue().hostInfo;
+                HostInfo hostInfo = entry.Value.hostInfo;
 
                 if (hostInfo != null)
 {
                     HashSet<TopicPartition> topicPartitions = new HashSet<>();
-                    ClientState state = entry.getValue().state;
+                    ClientState state = entry.Value.state;
 
                     foreach (TaskId id in state.activeTasks())
 {
@@ -734,8 +734,8 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         // within the client, distribute tasks to its owned consumers
         foreach (Map.Entry<UUID, ClientMetadata> entry in clientsMetadata.entrySet())
 {
-            HashSet<string> consumers = entry.getValue().consumers;
-            ClientState state = entry.getValue().state;
+            HashSet<string> consumers = entry.Value.consumers;
+            ClientState state = entry.Value.state;
 
             List<List<TaskId>> interleavedActive = interleaveTasksByGroupId(state.activeTasks(), consumers.size());
             List<List<TaskId>> interleavedStandby = interleaveTasksByGroupId(state.standbyTasks(), consumers.size());
@@ -1080,7 +1080,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
         }
     }
 
-    static class CopartitionedTopicsValidator {
+    static CopartitionedTopicsValidator {
         private string logPrefix;
         private Logger log;
 
@@ -1101,7 +1101,7 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
                 if (!allRepartitionTopicsNumPartitions.ContainsKey(topic))
 {
-                    Integer partitions = metadata.partitionCountForTopic(topic);
+                    int partitions = metadata.partitionCountForTopic(topic);
                     if (partitions == null)
 {
                         string str = string.Format("%sTopic not found: %s", logPrefix, topic);
@@ -1127,9 +1127,9 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
 {
                 for (Map.Entry<string, InternalTopicConfig> entry: allRepartitionTopicsNumPartitions.entrySet())
 {
-                    if (copartitionGroup.contains(entry.getKey()))
+                    if (copartitionGroup.contains(entry.Key))
 {
-                        int partitions = entry.getValue().numberOfPartitions();
+                        int partitions = entry.Value.numberOfPartitions();
                         if (partitions > numPartitions)
 {
                             numPartitions = partitions;
@@ -1140,9 +1140,9 @@ public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable 
             // enforce co-partitioning restrictions to repartition topics by updating their number of partitions
             foreach (Map.Entry<string, InternalTopicConfig> entry in allRepartitionTopicsNumPartitions.entrySet())
 {
-                if (copartitionGroup.contains(entry.getKey()))
+                if (copartitionGroup.contains(entry.Key))
 {
-                    entry.getValue().setNumberOfPartitions(numPartitions);
+                    entry.Value.setNumberOfPartitions(numPartitions);
                 }
             }
 

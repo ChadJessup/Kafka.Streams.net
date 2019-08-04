@@ -26,19 +26,11 @@ using Kafka.Common.metrics.stats.Min;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
-
-
-
-
-
-
-
-
-
+using System.Runtime.CompilerServices;
 
 class NamedCache
 {
-    private static Logger log = LoggerFactory.getLogger(NamedCache.class);
+    private static Logger log = new LoggerFactory().CreateLogger<NamedCache);
     private string name;
     private NavigableMap<Bytes, LRUNode> cache = new ConcurrentSkipListMap<>();
     private HashSet<Bytes> dirtyKeys = new HashSet<>();
@@ -60,27 +52,33 @@ class NamedCache
         this.namedCacheMetrics = new NamedCacheMetrics(metrics, name);
     }
 
-    synchronized string name()
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    string name()
 {
         return name;
     }
 
-    synchronized long hits()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    long hits()
 {
         return numReadHits;
     }
 
-    synchronized long misses()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    long misses()
 {
         return numReadMisses;
     }
 
-    synchronized long overwrites()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    long overwrites()
 {
         return numOverwrites;
     }
 
-    synchronized long flushes()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    long flushes()
 {
         return numFlushes;
     }
@@ -101,12 +99,14 @@ class NamedCache
         return node.entry;
     }
 
-    synchronized void setListener(ThreadCache.DirtyEntryFlushListener listener)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void setListener(ThreadCache.DirtyEntryFlushListener listener)
 {
         this.listener = listener;
     }
 
-    synchronized void flush()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void flush()
 {
         flush(null);
     }
@@ -123,7 +123,7 @@ class NamedCache
 
         if (listener == null)
 {
-            throw new ArgumentException("No listener for namespace " + name + " registered with cache");
+            throw new System.ArgumentException("No listener for namespace " + name + " registered with cache");
         }
 
         if (dirtyKeys.isEmpty())
@@ -165,7 +165,8 @@ class NamedCache
         }
     }
 
-    synchronized void put(Bytes key, LRUCacheEntry value)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void put(Bytes key, LRUCacheEntry value)
 {
         if (!value.isDirty() && dirtyKeys.contains(key))
 {
@@ -200,7 +201,8 @@ class NamedCache
         currentSizeBytes += node.size();
     }
 
-    synchronized long sizeInBytes()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    long sizeInBytes()
 {
         return currentSizeBytes;
     }
@@ -261,7 +263,8 @@ class NamedCache
         }
     }
 
-    synchronized void evict()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void evict()
 {
         if (tail == null)
 {
@@ -287,7 +290,8 @@ class NamedCache
         return originalValue;
     }
 
-    synchronized void putAll(List<KeyValue<byte[], LRUCacheEntry>> entries)
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void putAll(List<KeyValue<byte[], LRUCacheEntry>> entries)
 {
         foreach (KeyValue<byte[], LRUCacheEntry> entry in entries)
 {
@@ -353,7 +357,8 @@ class NamedCache
         return tail;
     }
 
-    synchronized void close()
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    void close()
 {
         head = tail = null;
         listener = null;
@@ -364,9 +369,9 @@ class NamedCache
     }
 
     /**
-     * A simple wrapper class to implement a doubly-linked list around MemoryLRUCacheBytesEntry
+     * A simple wrapper to implement a doubly-linked list around MemoryLRUCacheBytesEntry
      */
-    static class LRUNode
+    static LRUNode
 {
         private Bytes key;
         private LRUCacheEntry entry;
@@ -414,7 +419,7 @@ class NamedCache
         }
     }
 
-    private static class NamedCacheMetrics
+    private static NamedCacheMetrics
 {
         private StreamsMetricsImpl metrics;
 

@@ -3,9 +3,9 @@ using Kafka.Common.Utils;
 namespace Kafka.Streams.State.Interfaces
 {
     /**
-     * A store supplier that can be used to create one or more {@link SessionStore SessionStore&lt;Byte, byte[]&gt;} instances.
+     * A store supplier that can be used to create one or more {@link ISessionStore ISessionStore&lt;Byte, byte[]&gt;} instances.
      *
-     * For any stores implementing the {@link SessionStore SessionStore&lt;Byte, byte[]&gt;} interface, {@code null} value
+     * For any stores implementing the {@link ISessionStore ISessionStore&lt;Byte, byte[]&gt;} interface, {@code null} value
      * bytes are considered as "not exist". This means:
      * <ol>
      *   <li>{@code null} value bytes in put operations should be treated as delete.</li>
@@ -24,7 +24,7 @@ namespace Kafka.Streams.State.Interfaces
         long segmentIntervalMs();
 
         /**
-         * The time period for which the {@link SessionStore} will retain historic data.
+         * The time period for which the {@link ISessionStore} will retain historic data.
          *
          * @return retentionPeriod
          */

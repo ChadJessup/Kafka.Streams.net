@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
+public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
     {
     private static  ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
 
@@ -37,7 +37,7 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
     }
 
 
-    private class KStreamReduceProcessor : AbstractProcessor<K, V> {
+    private KStreamReduceProcessor : AbstractProcessor<K, V> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private StreamsMetricsImpl metrics;
@@ -110,7 +110,7 @@ public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
     }
 
 
-    private class KStreamReduceValueGetter : KTableValueGetter<K, V>
+    private KStreamReduceValueGetter : KTableValueGetter<K, V>
     {
         private TimestampedKeyValueStore<K, V> store;
 

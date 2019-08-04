@@ -20,7 +20,7 @@ import java.nio.ByteBuffer;
 import java.util.zip.Checksum;
 
 /**
- * This class was taken from Hadoop org.apache.hadoop.util.PureJavaCrc32
+ * This was taken from Hadoop org.apache.hadoop.util.PureJavaCrc32
  * 
  * A pure-java implementation of the CRC32 checksum that uses the same polynomial as the built-in native CRC32.
  * 
@@ -31,7 +31,7 @@ import java.util.zip.Checksum;
  * 
  * @see java.util.zip.CRC32
  */
-public class Crc32 : Checksum {
+public Crc32 : Checksum {
 
     /**
      * Compute the CRC32 of the byte array
@@ -56,7 +56,7 @@ public class Crc32 : Checksum {
 {
         Crc32 crc = new Crc32();
         crc.update(bytes, offset, size);
-        return crc.getValue();
+        return crc.Value;
     }
 
     /**
@@ -71,7 +71,7 @@ public class Crc32 : Checksum {
 {
         Crc32 crc = new Crc32();
         Checksums.update(crc, buffer, offset, size);
-        return crc.getValue();
+        return crc.Value;
     }
 
     /** the current CRC value, bit-flipped */
@@ -84,7 +84,7 @@ public class Crc32 : Checksum {
     }
 
     
-    public long getValue()
+    public long Value
 {
         return (~crc) & 0xffffffffL;
     }

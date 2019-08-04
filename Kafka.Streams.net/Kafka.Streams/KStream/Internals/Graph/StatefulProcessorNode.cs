@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -25,10 +25,10 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
+public StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
 
     private  string[] storeNames;
-    private  StoreBuilder<? : IStateStore> storeBuilder;
+    private  StoreBuilder<IStateStore> storeBuilder;
 
 
     /**
@@ -38,7 +38,7 @@ public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
                                   ProcessorParameters<K, V> processorParameters,
                                   string[] storeNames)
 {
-        super(nodeName, processorParameters);
+        base(nodeName, processorParameters);
 
         this.storeNames = storeNames;
         this.storeBuilder = null;
@@ -51,9 +51,9 @@ public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
      */
     public StatefulProcessorNode( string nodeName,
                                   ProcessorParameters<K, V> processorParameters,
-                                  StoreBuilder<? : IStateStore> materializedKTableStoreBuilder)
+                                  StoreBuilder<IStateStore> materializedKTableStoreBuilder)
 {
-        super(nodeName, processorParameters);
+        base(nodeName, processorParameters);
 
         this.storeNames = null;
         this.storeBuilder = materializedKTableStoreBuilder;
@@ -65,7 +65,7 @@ public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
         return "StatefulProcessorNode{" +
             "storeNames=" + Arrays.ToString(storeNames) +
             ", storeBuilder=" + storeBuilder +
-            "} " + super.ToString();
+            "} " + base.ToString();
     }
 
     

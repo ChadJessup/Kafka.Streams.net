@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -23,7 +23,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> {
+public TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> {
 
     private TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
 

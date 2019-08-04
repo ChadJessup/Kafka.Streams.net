@@ -24,9 +24,9 @@ namespace Kafka.common.utils;
 /**
  * A scheduler implementation that uses the system clock.
  *
- * Use Scheduler.SYSTEM instead of constructing an instance of this class.
+ * Use Scheduler.SYSTEM instead of constructing an instance of this.
  */
-public class SystemScheduler : Scheduler {
+public SystemScheduler : Scheduler {
     SystemScheduler()
 {
     }
@@ -38,7 +38,7 @@ public class SystemScheduler : Scheduler {
     }
 
     
-    public <T> Future<T> schedule(final ScheduledExecutorService executor,
+    public Future<T> schedule(final ScheduledExecutorService executor,
                                   final Callable<T> callable, long delayMs)
 {
         return executor.schedule(callable, delayMs, TimeUnit.MILLISECONDS);

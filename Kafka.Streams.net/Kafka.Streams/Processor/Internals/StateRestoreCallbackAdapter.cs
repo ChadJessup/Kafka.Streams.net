@@ -26,12 +26,12 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public class StateRestoreCallbackAdapter {
+public StateRestoreCallbackAdapter {
     private StateRestoreCallbackAdapter() {}
 
     public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
 {
-        Objects.requireNonNull(restoreCallback, "stateRestoreCallback must not be null");
+        restoreCallback = restoreCallback ?? throw new System.ArgumentNullException("stateRestoreCallback must not be null", nameof(restoreCallback));
         if (restoreCallback is RecordBatchingStateRestoreCallback)
 {
             return (RecordBatchingStateRestoreCallback) restoreCallback;

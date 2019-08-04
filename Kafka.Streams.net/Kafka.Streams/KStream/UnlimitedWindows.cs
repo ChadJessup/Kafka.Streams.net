@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -42,7 +42,7 @@ namespace Kafka.streams.kstream;
  * @see KGroupedStream#windowedBy(Windows)
  * @see TimestampExtractor
  */
-public  class UnlimitedWindows : Windows<UnlimitedWindow> {
+public  UnlimitedWindows : Windows<UnlimitedWindow> {
 
     private static  long DEFAULT_START_TIMESTAMP_MS = 0L;
 
@@ -71,11 +71,11 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      * @throws ArgumentException if the start time is negative
      * @deprecated Use {@link #startOn(Instant)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     public UnlimitedWindows startOn( long startMs){
         if (startMs < 0)
 {
-            throw new ArgumentException("Window start time (startMs) cannot be negative.");
+            throw new System.ArgumentException("Window start time (startMs) cannot be negative.");
         }
         return new UnlimitedWindows(startMs);
     }
@@ -108,14 +108,14 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
 
     /**
      * {@inheritDoc}
-     * As unlimited windows have conceptually infinite size, this methods just returns {@link long#MAX_VALUE}.
+     * As unlimited windows have conceptually infinite size, this methods just returns {@link long#MaxValue}.
      *
-     * @return the size of the specified windows which is {@link long#MAX_VALUE}
+     * @return the size of the specified windows which is {@link long#MaxValue}
      */
     
     public long size()
 {
-        return long.MAX_VALUE;
+        return long.MaxValue;
     }
 
     /**
@@ -126,24 +126,24 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      * @deprecated since 2.1.
      */
     
-    @Deprecated
+    [System.Obsolete]
     public UnlimitedWindows until( long durationMs)
 {
-        throw new ArgumentException("Window retention time (durationMs) cannot be set for UnlimitedWindows.");
+        throw new System.ArgumentException("Window retention time (durationMs) cannot be set for UnlimitedWindows.");
     }
 
     /**
      * {@inheritDoc}
-     * The retention time for unlimited windows in infinite and thus represented as {@link long#MAX_VALUE}.
+     * The retention time for unlimited windows in infinite and thus represented as {@link long#MaxValue}.
      *
-     * @return the window retention time that is {@link long#MAX_VALUE}
+     * @return the window retention time that is {@link long#MaxValue}
      * @deprecated since 2.1. Use {@link Materialized#retention} instead.
      */
     
-    @Deprecated
+    [System.Obsolete]
     public long maintainMs()
 {
-        return long.MAX_VALUE;
+        return long.MaxValue;
     }
 
     
@@ -154,7 +154,7 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
 
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
     
-    public bool Equals( Object o)
+    public bool Equals( object o)
 {
         if (this == o)
 {

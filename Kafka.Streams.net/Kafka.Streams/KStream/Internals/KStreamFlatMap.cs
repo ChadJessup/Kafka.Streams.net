@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamFlatMap<K, V, K1, V1> : ProcessorSupplier<K, V>
+    public KStreamFlatMap<K, V, K1, V1> : ProcessorSupplier<K, V>
     {
         private IKeyValueMapper<K,V, KeyValuePair<K1, V1>> mapper;
 
-        KStreamFlatMap(IKeyValueMapper<K, V, Iterable<? : KeyValue<? : K1, V1>>> mapper)
+        KStreamFlatMap(IKeyValueMapper<K, V, Iterable<KeyValue<K1, V1>>> mapper)
 {
             this.mapper = mapper;
         }
@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream.Internals
             return new KStreamFlatMapProcessor();
         }
 
-        private class KStreamFlatMapProcessor : AbstractProcessor<K, V> {
+        private KStreamFlatMapProcessor : AbstractProcessor<K, V> {
 
             public void process(K key, V value)
 {

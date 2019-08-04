@@ -27,7 +27,7 @@ using Kafka.Common.config.TopicConfig;
  * RepartitionTopicConfig captures the properties required for configuring
  * the repartition topics.
  */
-public class RepartitionTopicConfig : InternalTopicConfig {
+public RepartitionTopicConfig : InternalTopicConfig {
 
     private static Dictionary<string, string> REPARTITION_TOPIC_DEFAULT_OVERRIDES;
     static {
@@ -40,7 +40,7 @@ public class RepartitionTopicConfig : InternalTopicConfig {
 
     RepartitionTopicConfig(string name, Dictionary<string, string> topicConfigs)
 {
-        super(name, topicConfigs);
+        base(name, topicConfigs);
     }
 
     /**

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -27,9 +27,9 @@ namespace Kafka.streams.kstream;
 
 /**
  * The {@code ValueTransformerWithKey} interface for stateful mapping of a value to a new value (with possible new type).
- * This is a stateful record-by-record operation, i.e, {@link #transform(Object, Object)} is invoked individually for each
+ * This is a stateful record-by-record operation, i.e, {@link #transform(object, object)} is invoked individually for each
  * record of a stream and can access and modify a state that is available beyond a single call of
- * {@link #transform(Object, Object)} (cf. {@link ValueMapper} for stateless value transformation).
+ * {@link #transform(object, object)} (cf. {@link ValueMapper} for stateless value transformation).
  * Additionally, this {@code ValueTransformerWithKey} can
  * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
  * {@link Punctuator#punctuate(long) called periodically} with the provided context.
@@ -41,9 +41,9 @@ namespace Kafka.streams.kstream;
  * <p>
  * If a record's key and value should be modified {@link Transformer} can be used.
  *
- * @param <K>  key type
- * @param <V>  value type
- * @param <VR> transformed value type
+ * @param  key type
+ * @param  value type
+ * @param transformed value type
  * @see ValueTransformer
  * @see ValueTransformerWithKeySupplier
  * @see KStream#transformValues(ValueTransformerSupplier, string...)
@@ -62,10 +62,10 @@ public interface ValueTransformerWithKey<K, V, VR> {
      * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
      * <p>
      * Note that {@link IProcessorContext} is updated in the background with the current record's meta data.
-     * Thus, it only contains valid record meta data when accessed within {@link #transform(Object, Object)}.
+     * Thus, it only contains valid record meta data when accessed within {@link #transform(object, object)}.
      * <p>
-     * Note that using {@link IProcessorContext#forward(Object, Object)} or
-     * {@link IProcessorContext#forward(Object, Object, To)} is not allowed within any method of
+     * Note that using {@link IProcessorContext#forward(object, object)} or
+     * {@link IProcessorContext#forward(object, object, To)} is not allowed within any method of
      * {@code ValueTransformerWithKey} and will result in an {@link StreamsException exception}.
      *
      * @param context the context
@@ -80,8 +80,8 @@ public interface ValueTransformerWithKey<K, V, VR> {
      * attached} to this operator can be accessed and modified arbitrarily (cf.
      * {@link IProcessorContext#getStateStore(string)}).
      * <p>
-     * Note, that using {@link IProcessorContext#forward(Object, Object)} or
-     * {@link IProcessorContext#forward(Object, Object, To)} is not allowed within {@code transform} and
+     * Note, that using {@link IProcessorContext#forward(object, object)} or
+     * {@link IProcessorContext#forward(object, object, To)} is not allowed within {@code transform} and
      * will result in an {@link StreamsException exception}.
      *
      * @param readOnlyKey the read-only key
@@ -94,7 +94,7 @@ public interface ValueTransformerWithKey<K, V, VR> {
      * Close this processor and clean up any resources.
      * <p>
      * It is not possible to return any new output records within {@code close()}.
-     * Using {@link IProcessorContext#forward(Object, Object)} or {@link IProcessorContext#forward(Object, Object, To)},
+     * Using {@link IProcessorContext#forward(object, object)} or {@link IProcessorContext#forward(object, object, To)},
      * will result in an {@link StreamsException exception}.
      */
     void close();

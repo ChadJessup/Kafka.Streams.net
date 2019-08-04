@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
-public class JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
+public JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
 
     JoinedInternal( Joined<K, V, VO> joined)
 {
-        super(joined);
+        base(joined);
     }
 
     public ISerde<K> keySerde()
@@ -41,8 +41,8 @@ public class JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
         return otherValueSerde;
     }
 
-     // TODO Remove annotation when super.name() is removed
-    @SuppressWarnings("deprecation") // this method should not be removed if super.name() is removed
+     // TODO Remove annotation when base.name() is removed
+    @SuppressWarnings("deprecation") // this method should not be removed if base.name() is removed
     public string name()
 {
         return name;

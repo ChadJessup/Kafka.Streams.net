@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals;
 
 
 
-public class RecordConverters
+public RecordConverters
 {
     private static RecordConverter IDENTITY_INSTANCE = record -> record;
 
@@ -50,7 +50,7 @@ public class RecordConverters
         );
     };
 
-    // privatize the constructor so the class cannot be instantiated (only used for its static members)
+    // privatize the constructor so the cannot be instantiated (only used for its static members)
     private RecordConverters() {}
 
     public static RecordConverter rawValueToTimestampedValue()

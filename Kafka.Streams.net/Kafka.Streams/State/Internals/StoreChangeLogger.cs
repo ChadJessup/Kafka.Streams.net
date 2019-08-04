@@ -24,7 +24,7 @@ using Kafka.Streams.State.StateSerdes;
 
 /**
  * Note that the use of array-typed keys is discouraged because they result in incorrect caching behavior.
- * If you intend to work on byte arrays as key, for example, you may want to wrap them with the {@code Bytes} class,
+ * If you intend to work on byte arrays as key, for example, you may want to wrap them with the {@code Bytes},
  * i.e. use {@code RocksDBStore<Bytes, ...>} rather than {@code RocksDBStore<byte[], ...>}.
  *
  * @param <K>

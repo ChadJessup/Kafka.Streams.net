@@ -26,7 +26,7 @@ using Kafka.Streams.State.WindowStoreIterator;
 class KeyValueIterators
 {
 
-    private static class EmptyKeyValueIterator<K, V> : KeyValueIterator<K, V>
+    private static EmptyKeyValueIterator<K, V> : KeyValueIterator<K, V>
 {
 
         
@@ -58,7 +58,7 @@ class KeyValueIterators
         }
     }
 
-    private static class EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<long, V>
+    private static EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<long, V>
         : WindowStoreIterator<V>
 {
     }
@@ -74,7 +74,7 @@ class KeyValueIterators
     }
 
     
-    static <V> WindowStoreIterator<V> emptyWindowStoreIterator()
+    static WindowStoreIterator<V> emptyWindowStoreIterator()
 {
         return (WindowStoreIterator<V>) EMPTY_WINDOW_STORE_ITERATOR;
     }

@@ -37,12 +37,12 @@ using Kafka.Common.serialization.Serde;
 /**
  * {@code IProcessorContext} implementation that will throw on any forward call.
  */
-public class ForwardingDisabledProcessorContext : IProcessorContext {
+public ForwardingDisabledProcessorContext : IProcessorContext {
     private IProcessorContext delegate;
 
     public ForwardingDisabledProcessorContext(IProcessorContext delegate)
 {
-        this.delegate = Objects.requireNonNull(delegate, "delegate");
+        this.delegate = delegate = delegate ?? throw new System.ArgumentNullException("delegate", nameof(delegate));
     }
 
     
@@ -95,7 +95,7 @@ public class ForwardingDisabledProcessorContext : IProcessorContext {
     }
 
     
-    @Deprecated
+    [System.Obsolete]
     public ICancellable schedule(long intervalMs,
                                 PunctuationType type,
                                 Punctuator callback)
@@ -104,34 +104,34 @@ public class ForwardingDisabledProcessorContext : IProcessorContext {
     }
 
     
-    public ICancellable schedule(Duration interval,
+    public ICancellable schedule(TimeSpan interval,
                                 PunctuationType type,
                                 Punctuator callback){
         return delegate.schedule(interval, type, callback);
     }
 
     
-    publicvoid forward(K key, V value)
+    public void forward(K key, V value)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
     
-    publicvoid forward(K key, V value, To to)
+    public void forward(K key, V value, To to)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
     
-    @Deprecated
-    publicvoid forward(K key, V value, int childIndex)
+    [System.Obsolete]
+    public void forward(K key, V value, int childIndex)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
     
-    @Deprecated
-    publicvoid forward(K key, V value, string childName)
+    [System.Obsolete]
+    public void forward(K key, V value, string childName)
 {
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }

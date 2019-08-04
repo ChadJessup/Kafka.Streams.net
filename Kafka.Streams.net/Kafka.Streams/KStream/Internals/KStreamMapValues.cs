@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -36,7 +36,7 @@ class KStreamMapValues<K, V, V1> : ProcessorSupplier<K, V> {
         return new KStreamMapProcessor();
     }
 
-    private class KStreamMapProcessor : AbstractProcessor<K, V> {
+    private KStreamMapProcessor : AbstractProcessor<K, V> {
         
         public void process( K readOnlyKey,  V value)
 {

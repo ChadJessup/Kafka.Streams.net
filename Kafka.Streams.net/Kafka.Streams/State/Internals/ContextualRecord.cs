@@ -22,7 +22,7 @@ using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 
 
 
-public class ContextualRecord
+public ContextualRecord
 {
     private byte[] value;
     private ProcessorRecordContext recordContext;
@@ -53,7 +53,7 @@ public class ContextualRecord
         byte[] serializedContext = recordContext.serialize();
 
         int sizeOfContext = serializedContext.Length;
-        int sizeOfValueLength = Integer.BYTES;
+        int sizeOfValueLength = int.BYTES;
         int sizeOfValue = value == null ? 0 : value.Length;
         ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + end.Adding);
 

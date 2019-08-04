@@ -1,48 +1,34 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-namespace Kafka.streams.kstream;
+using Kafka.Streams.Interfaces;
 
-
-
+namespace Kafka.Streams.KStream
+{
 /**
- * The {@code Joined} class represents optional params that can be passed to
+ * The {@code Joined} represents optional params that can be passed to
  * {@link KStream#join}, {@link KStream#leftJoin}, and  {@link KStream#outerJoin} operations.
  */
-public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
+public Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>>
+    {
 
-    protected  ISerde<K> keySerde;
-    protected  ISerde<V> valueSerde;
-    protected  ISerde<VO> otherValueSerde;
-    protected  string name;
+    protected ISerde<K> keySerde;
+    protected ISerde<V> valueSerde;
+    protected ISerde<VO> otherValueSerde;
+    protected string name;
 
-    private Joined( ISerde<K> keySerde,
-                    ISerde<V> valueSerde,
-                    ISerde<VO> otherValueSerde,
-                    string name)
-{
+    private Joined(
+        ISerde<K> keySerde,
+        ISerde<V> valueSerde,
+        ISerde<VO> otherValueSerde,
+        string name)
+    {
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
         this.otherValueSerde = otherValueSerde;
         this.name = name;
     }
 
-    protected Joined( Joined<K, V, VO> joined)
-{
-        this(joined.keySerde, joined.valueSerde, joined.otherValueSerde, joined.name);
+    protected Joined(Joined<K, V, VO> joined)
+        : this(joined.keySerde, joined.valueSerde, joined.otherValueSerde, joined.name)
+    {
     }
 
     /**
@@ -52,16 +38,17 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * @param keySerde        the key serde to use. If {@code null} the default key serde from config will be used
      * @param valueSerde      the value serde to use. If {@code null} the default value serde from config will be used
      * @param otherValueSerde the otherValue serde to use. If {@code null} the default value serde from config will be used
-     * @param <K>             key type
-     * @param <V>             value type
-     * @param <VO>            other value type
+     * @param             key type
+     * @param             value type
+     * @param            other value type
      * @return new {@code Joined} instance with the provided serdes
      */
-    public static <K, V, VO> Joined<K, V, VO> with( ISerde<K> keySerde,
-                                                    ISerde<V> valueSerde,
-                                                    ISerde<VO> otherValueSerde)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, null);
+    public static Joined<K, V, VO> with(
+        ISerde<K> keySerde,
+        ISerde<V> valueSerde,
+        ISerde<VO> otherValueSerde)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, null);
     }
 
     /**
@@ -77,17 +64,18 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * from config will be used
      * @param name the name used as the base for naming components of the join including any
      * repartition topics
-     * @param <K> key type
-     * @param <V> value type
-     * @param <VO> other value type
+     * @param key type
+     * @param value type
+     * @param other value type
      * @return new {@code Joined} instance with the provided serdes
      */
-    public static <K, V, VO> Joined<K, V, VO> with( ISerde<K> keySerde,
-                                                    ISerde<V> valueSerde,
-                                                    ISerde<VO> otherValueSerde,
-                                                    string name)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, name);
+    public static Joined<K, V, VO> with(
+        ISerde<K> keySerde,
+        ISerde<V> valueSerde,
+        ISerde<VO> otherValueSerde,
+        string name)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
     }
 
     /**
@@ -95,14 +83,14 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * {@code null} values are accepted and will be replaced by the default key serde as defined in config.
      *
      * @param keySerde the key serde to use. If {@code null} the default key serde from config will be used
-     * @param <K>      key type
-     * @param <V>      value type
-     * @param <VO>     other value type
+     * @param      key type
+     * @param      value type
+     * @param     other value type
      * @return new {@code Joined} instance configured with the keySerde
      */
-    public static <K, V, VO> Joined<K, V, VO> keySerde( ISerde<K> keySerde)
-{
-        return new Joined<>(keySerde, null, null, null);
+    public static Joined<K, V, VO> keySerde(ISerde<K> keySerde)
+    {
+        return new Joined<K, V, VO>(keySerde, null, null, null);
     }
 
     /**
@@ -110,14 +98,14 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * {@code null} values are accepted and will be replaced by the default value serde as defined in config.
      *
      * @param valueSerde the value serde to use. If {@code null} the default value serde from config will be used
-     * @param <K>        key type
-     * @param <V>        value type
-     * @param <VO>       other value type
+     * @param        key type
+     * @param        value type
+     * @param       other value type
      * @return new {@code Joined} instance configured with the valueSerde
      */
-    public static <K, V, VO> Joined<K, V, VO> valueSerde( ISerde<V> valueSerde)
-{
-        return new Joined<>(null, valueSerde, null, null);
+    public static Joined<K, V, VO> valueSerde(ISerde<V> valueSerde)
+    {
+        return new Joined<K, V, VO>(null, valueSerde, null, null);
     }
 
     /**
@@ -125,14 +113,14 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * {@code null} values are accepted and will be replaced by the default value serde as defined in config.
      *
      * @param otherValueSerde the otherValue serde to use. If {@code null} the default value serde from config will be used
-     * @param <K>             key type
-     * @param <V>             value type
-     * @param <VO>            other value type
+     * @param             key type
+     * @param             value type
+     * @param            other value type
      * @return new {@code Joined} instance configured with the otherValueSerde
      */
-    public static <K, V, VO> Joined<K, V, VO> otherValueSerde( ISerde<VO> otherValueSerde)
-{
-        return new Joined<>(null, null, otherValueSerde, null);
+    public static Joined<K, V, VO> otherValueSerde(ISerde<VO> otherValueSerde)
+    {
+        return new Joined<K, V, VO>(null, null, otherValueSerde, null);
     }
 
     /**
@@ -141,17 +129,17 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      *
      * @param name the name used as the base for naming components of the join including any
      * repartition topics
-     * @param <K> key type
-     * @param <V> value type
-     * @param <VO> other value type
+     * @param key type
+     * @param value type
+     * @param other value type
      * @return new {@code Joined} instance configured with the name
      *
      * @deprecated use {@link #as(string)} instead
      */
-    @Deprecated
-    public static <K, V, VO> Joined<K, V, VO> named( string name)
-{
-        return new Joined<>(null, null, null, name);
+    [System.Obsolete]
+    public static Joined<K, V, VO> named(string name)
+    {
+        return new Joined<K, V, VO>(null, null, null, name);
     }
 
     /**
@@ -160,15 +148,15 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      *
      * @param name the name used as the base for naming components of the join including any
      * repartition topics
-     * @param <K> key type
-     * @param <V> value type
-     * @param <VO> other value type
+     * @param key type
+     * @param value type
+     * @param other value type
      * @return new {@code Joined} instance configured with the name
      *
      */
-    public static <K, V, VO> Joined<K, V, VO> as( string name)
-{
-        return new Joined<>(null, null, null, name);
+    public static Joined<K, V, VO> As(string name)
+    {
+        return new Joined<K, V, VO>(null, null, null, name);
     }
 
 
@@ -179,9 +167,9 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * @param keySerde the key serde to use. If null the default key serde from config will be used
      * @return new {@code Joined} instance configured with the {@code name}
      */
-    public Joined<K, V, VO> withKeySerde( ISerde<K> keySerde)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, name);
+    public Joined<K, V, VO> withKeySerde(ISerde<K> keySerde)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
     }
 
     /**
@@ -191,9 +179,9 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * @param valueSerde the value serde to use. If null the default value serde from config will be used
      * @return new {@code Joined} instance configured with the {@code valueSerde}
      */
-    public Joined<K, V, VO> withValueSerde( ISerde<V> valueSerde)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, name);
+    public Joined<K, V, VO> withValueSerde(ISerde<V> valueSerde)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
     }
 
     /**
@@ -203,9 +191,9 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * @param otherValueSerde the otherValue serde to use. If null the default value serde from config will be used
      * @return new {@code Joined} instance configured with the {@code valueSerde}
      */
-    public Joined<K, V, VO> withOtherValueSerde( ISerde<VO> otherValueSerde)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, name);
+    public Joined<K, V, VO> withOtherValueSerde(ISerde<VO> otherValueSerde)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
     }
 
     /**
@@ -216,34 +204,33 @@ public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>> {
      * repartition topics
      * @return new {@code Joined} instance configured with the {@code name}
      */
-    
-    public Joined<K, V, VO> withName( string name)
-{
-        return new Joined<>(keySerde, valueSerde, otherValueSerde, name);
+
+    public Joined<K, V, VO> withName(string name)
+    {
+        return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
     }
 
     public ISerde<K> keySerde()
-{
+    {
         return keySerde;
     }
 
     public ISerde<V> valueSerde()
-{
+    {
         return valueSerde;
     }
 
     public ISerde<VO> otherValueSerde()
-{
+    {
         return otherValueSerde;
     }
 
     /**
      * @deprecated this method will be removed in a in a future release
      */
-    @Deprecated
+    [System.Obsolete]
     public string name()
-{
+    {
         return name;
     }
-
 }

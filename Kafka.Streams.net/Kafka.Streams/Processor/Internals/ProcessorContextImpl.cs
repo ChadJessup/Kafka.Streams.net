@@ -45,7 +45,7 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
+public ProcessorContextImpl : AbstractProcessorContext : RecordCollector.Supplier {
 
     private StreamTask task;
     private RecordCollector collector;
@@ -60,7 +60,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
                          StreamsMetricsImpl metrics,
                          ThreadCache cache)
 {
-        super(id, config, metrics, stateMgr, cache);
+        base(id, config, metrics, stateMgr, cache);
         this.task = task;
         this.collector = collector;
     }
@@ -103,9 +103,9 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
             } else if (global is WindowStore)
 {
                 return new WindowStoreReadOnlyDecorator((WindowStore) global);
-            } else if (global is SessionStore)
+            } else if (global is ISessionStore)
 {
-                return new SessionStoreReadOnlyDecorator((SessionStore) global);
+                return new SessionStoreReadOnlyDecorator((ISessionStore) global);
             }
 
             return global;
@@ -135,9 +135,9 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         } else if (store is WindowStore)
 {
             return new WindowStoreReadWriteDecorator((WindowStore) store);
-        } else if (store is SessionStore)
+        } else if (store is ISessionStore)
 {
-            return new SessionStoreReadWriteDecorator((SessionStore) store);
+            return new SessionStoreReadWriteDecorator((ISessionStore) store);
         }
 
         return store;
@@ -153,7 +153,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
 
     
     
-    @Deprecated
+    [System.Obsolete]
     public void forward(K key,
                                V value,
                                int childIndex)
@@ -166,7 +166,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
 
     
     
-    @Deprecated
+    [System.Obsolete]
     public void forward(K key,
                                V value,
                                string childName)
@@ -234,35 +234,35 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
     }
 
     
-    @Deprecated
+    [System.Obsolete]
     public ICancellable schedule(long intervalMs,
                                 PunctuationType type,
                                 Punctuator callback)
 {
         if (intervalMs < 1)
 {
-            throw new ArgumentException("The minimum supported scheduling interval is 1 millisecond.");
+            throw new System.ArgumentException("The minimum supported scheduling interval is 1 millisecond.");
         }
         return task.schedule(intervalMs, type, callback);
     }
 
     @SuppressWarnings("deprecation") // removing #schedule(long intervalMs,...) will fix this
     
-    public ICancellable schedule(Duration interval,
+    public ICancellable schedule(TimeSpan interval,
                                 PunctuationType type,
                                 Punctuator callback){
         string msgPrefix = prepareMillisCheckFailMsgPrefix(interval, "interval");
         return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
     }
 
-    private abstract static class StateStoreReadOnlyDecorator<T : IStateStore, K, V>
+    private abstract static StateStoreReadOnlyDecorator<T : IStateStore, K, V>
         : WrappedStateStore<T, K, V> {
 
         static string ERROR_MESSAGE = "Global store is read only";
 
         private StateStoreReadOnlyDecorator(T inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -285,13 +285,13 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    private static class KeyValueStoreReadOnlyDecorator<K, V>
+    private static KeyValueStoreReadOnlyDecorator<K, V>
         : StateStoreReadOnlyDecorator<IKeyValueStore<K, V>, K, V>
         : IKeyValueStore<K, V> {
 
         private KeyValueStoreReadOnlyDecorator(IKeyValueStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -346,23 +346,23 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    private static class TimestampedKeyValueStoreReadOnlyDecorator<K, V>
+    private static TimestampedKeyValueStoreReadOnlyDecorator<K, V>
         : KeyValueStoreReadOnlyDecorator<K, ValueAndTimestamp<V>>
         : TimestampedKeyValueStore<K, V> {
 
         private TimestampedKeyValueStoreReadOnlyDecorator(TimestampedKeyValueStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
     }
 
-    private static class WindowStoreReadOnlyDecorator<K, V>
+    private static WindowStoreReadOnlyDecorator<K, V>
         : StateStoreReadOnlyDecorator<WindowStore<K, V>, K, V>
         : WindowStore<K, V> {
 
         private WindowStoreReadOnlyDecorator(WindowStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -388,7 +388,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
 
         
-        @Deprecated
+        [System.Obsolete]
         public WindowStoreIterator<V> fetch(K key,
                                             long timeFrom,
                                             long timeTo)
@@ -397,7 +397,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
 
         
-        @Deprecated
+        [System.Obsolete]
         public KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
                                                       long timeFrom,
@@ -413,7 +413,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
 
         
-        @Deprecated
+        [System.Obsolete]
         public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
 {
@@ -421,23 +421,23 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    private static class TimestampedWindowStoreReadOnlyDecorator<K, V>
+    private static TimestampedWindowStoreReadOnlyDecorator<K, V>
         : WindowStoreReadOnlyDecorator<K, ValueAndTimestamp<V>>
         : TimestampedWindowStore<K, V> {
 
         private TimestampedWindowStoreReadOnlyDecorator(TimestampedWindowStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
     }
 
-    private static class SessionStoreReadOnlyDecorator<K, AGG>
-        : StateStoreReadOnlyDecorator<SessionStore<K, AGG>, K, AGG>
-        : SessionStore<K, AGG> {
+    private static SessionStoreReadOnlyDecorator<K, AGG>
+        : StateStoreReadOnlyDecorator<ISessionStore<K, AGG>, K, AGG>
+        : ISessionStore<K, AGG> {
 
-        private SessionStoreReadOnlyDecorator(SessionStore<K, AGG> inner)
+        private SessionStoreReadOnlyDecorator(ISessionStore<K, AGG> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -490,14 +490,14 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    private abstract static class StateStoreReadWriteDecorator<T : IStateStore, K, V>
+    private abstract static StateStoreReadWriteDecorator<T : IStateStore, K, V>
         : WrappedStateStore<T, K, V> {
 
         static string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
 
         private StateStoreReadWriteDecorator(T inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -514,13 +514,13 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    static class KeyValueStoreReadWriteDecorator<K, V>
+    static KeyValueStoreReadWriteDecorator<K, V>
         : StateStoreReadWriteDecorator<IKeyValueStore<K, V>, K, V>
         : IKeyValueStore<K, V> {
 
         KeyValueStoreReadWriteDecorator(IKeyValueStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -575,23 +575,23 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    static class TimestampedKeyValueStoreReadWriteDecorator<K, V>
+    static TimestampedKeyValueStoreReadWriteDecorator<K, V>
         : KeyValueStoreReadWriteDecorator<K, ValueAndTimestamp<V>>
         : TimestampedKeyValueStore<K, V> {
 
         TimestampedKeyValueStoreReadWriteDecorator(TimestampedKeyValueStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
     }
 
-    static class WindowStoreReadWriteDecorator<K, V>
+    static WindowStoreReadWriteDecorator<K, V>
         : StateStoreReadWriteDecorator<WindowStore<K, V>, K, V>
         : WindowStore<K, V> {
 
         WindowStoreReadWriteDecorator(WindowStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         
@@ -616,7 +616,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
             return wrapped().fetch(key, time);
         }
 
-        @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+        @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
         
         public WindowStoreIterator<V> fetch(K key,
                                             long timeFrom,
@@ -625,7 +625,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
             return wrapped().fetch(key, timeFrom, timeTo);
         }
 
-        @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+        @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
         
         public KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
@@ -635,7 +635,7 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
             return wrapped().fetch(from, to, timeFrom, timeTo);
         }
 
-        @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+        @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
         
         public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
@@ -650,23 +650,23 @@ public class ProcessorContextImpl : AbstractProcessorContext : RecordCollector.S
         }
     }
 
-    static class TimestampedWindowStoreReadWriteDecorator<K, V>
+    static TimestampedWindowStoreReadWriteDecorator<K, V>
         : WindowStoreReadWriteDecorator<K, ValueAndTimestamp<V>>
         : TimestampedWindowStore<K, V> {
 
         TimestampedWindowStoreReadWriteDecorator(TimestampedWindowStore<K, V> inner)
 {
-            super(inner);
+            base(inner);
         }
     }
 
-    static class SessionStoreReadWriteDecorator<K, AGG>
-        : StateStoreReadWriteDecorator<SessionStore<K, AGG>, K, AGG>
-        : SessionStore<K, AGG> {
+    static SessionStoreReadWriteDecorator<K, AGG>
+        : StateStoreReadWriteDecorator<ISessionStore<K, AGG>, K, AGG>
+        : ISessionStore<K, AGG> {
 
-        SessionStoreReadWriteDecorator(SessionStore<K, AGG> inner)
+        SessionStoreReadWriteDecorator(ISessionStore<K, AGG> inner)
 {
-            super(inner);
+            base(inner);
         }
 
         

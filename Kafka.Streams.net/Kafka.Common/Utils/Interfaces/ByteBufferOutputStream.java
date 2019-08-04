@@ -23,16 +23,16 @@ namespace Kafka.common.utils;
  * A ByteBuffer-backed Stream that expands the internal ByteBuffer as required. Given this, the caller should
  * always access the underlying ByteBuffer via the {@link #buffer()} method until all writes are completed.
  *
- * This class is typically used for 2 purposes:
+ * This is typically used for 2 purposes:
  *
  * 1. Write to a ByteBuffer when there is a chance that we may need to expand it in order to fit all the desired data
  * 2. Write to a ByteBuffer via methods that expect an Stream interface
  *
- * Hard to track bugs can happen when this class is used for the second reason and unexpected buffer expansion happens.
- * So, it's best to assume that buffer expansion can always happen. An improvement would be to create a separate class
+ * Hard to track bugs can happen when this is used for the second reason and unexpected buffer expansion happens.
+ * So, it's best to assume that buffer expansion can always happen. An improvement would be to create a separate
  * thataltogether.
  */
-public class ByteBufferOutputStream extends Stream {
+public ByteBufferOutputStream extends Stream {
 
     private static final float REALLOCATION_FACTOR = 1.1f;
 
@@ -41,7 +41,7 @@ public class ByteBufferOutputStream extends Stream {
     private ByteBuffer buffer;
 
     /**
-     * Creates an instance of this class that will write to the received `buffer` up to its `limit`. If necessary to
+     * Creates an instance of this that will write to the received `buffer` up to its `limit`. If necessary to
      * satisfy `write` or `position` calls, larger buffers will be allocated so the {@link #buffer()} method may return
      * a different buffer than the received `buffer` parameter.
      *
@@ -109,7 +109,7 @@ public class ByteBufferOutputStream extends Stream {
     }
 
     /**
-     * The capacity of the first internal ByteBuffer used by this class. This is useful in cases where a pooled
+     * The capacity of the first internal ByteBuffer used by this. This is useful in cases where a pooled
      * ByteBuffer was passed via the constructor and it needs to be returned to the pool.
      */
     public int initialCapacity()

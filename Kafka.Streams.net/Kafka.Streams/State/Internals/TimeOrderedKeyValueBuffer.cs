@@ -29,7 +29,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
 public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
 {
 
-    class Eviction<K, V>
+    Eviction<K, V>
 {
         private K key;
         private Change<V> value;

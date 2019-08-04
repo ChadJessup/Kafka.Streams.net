@@ -1,7 +1,7 @@
 ﻿
 namespace Kafka.Common.Metrics.Stats
 {
-    public class NamedMeasurable
+    public NamedMeasurable
     {
         public NamedMeasurable(MetricName name, IMeasurable stat)
             : base()

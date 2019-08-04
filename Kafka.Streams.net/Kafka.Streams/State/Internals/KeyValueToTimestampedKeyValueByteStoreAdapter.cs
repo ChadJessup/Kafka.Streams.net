@@ -30,7 +30,7 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 /**
- * This class is used to ensure backward compatibility at DSL level between
+ * This is used to ensure backward compatibility at DSL level between
  * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and {@link KeyValueStore}.
  * <p>
  * If a user provides a supplier for plain {@code KeyValueStores} via
@@ -39,7 +39,7 @@ using Kafka.Streams.State.KeyValueStore;
  *
  * @see KeyValueToTimestampedKeyValueIteratorAdapter
  */
-public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
+public KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
 {
     IKeyValueStore<Bytes, byte[]> store;
 
@@ -47,7 +47,7 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Byte
 {
         if (!store.persistent())
 {
-            throw new ArgumentException("Provided store must be a persistent store, but it is not.");
+            throw new System.ArgumentException("Provided store must be a persistent store, but it is not.");
         }
         this.store = store;
     }

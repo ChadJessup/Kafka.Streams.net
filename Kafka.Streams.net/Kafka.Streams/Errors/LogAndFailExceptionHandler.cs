@@ -28,8 +28,8 @@ namespace Kafka.Streams.Errors {
  * Deserialization handler that logs a deserialization exception and then
  * signals the processing pipeline to stop processing more records and fail.
  */
-public class LogAndFailExceptionHandler : IDeserializationExceptionHandler {
-    private static  Logger log = LoggerFactory.getLogger(LogAndFailExceptionHandler.class);
+public LogAndFailExceptionHandler : IDeserializationExceptionHandler {
+    private static  Logger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler);
 
     
     public DeserializationHandlerResponse handle( IProcessorContext context,

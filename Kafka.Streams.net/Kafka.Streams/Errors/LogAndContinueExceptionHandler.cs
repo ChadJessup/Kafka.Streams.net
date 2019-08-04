@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+
 namespace Kafka.Streams.Errors {
 
 
@@ -28,10 +32,11 @@ namespace Kafka.Streams.Errors {
  * Deserialization handler that logs a deserialization exception and then
  * signals the processing pipeline to continue processing more records.
  */
-public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler {
-    private static  Logger log = LoggerFactory.getLogger(LogAndContinueExceptionHandler.class);
+public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler
+    {
+    private static ILogger log = new LoggerFactory().CreateLogger<LogAndContinueExceptionHandler>();
 
-    
+
     public DeserializationHandlerResponse handle( IProcessorContext context,
                                                   ConsumerRecord<byte[], byte[]> record,
                                                   Exception exception)
@@ -45,7 +50,7 @@ public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler {
         return DeserializationHandlerResponse.CONTINUE;
     }
 
-    
+
     public void configure( Map<string, ?> configs)
 {
         // ignore

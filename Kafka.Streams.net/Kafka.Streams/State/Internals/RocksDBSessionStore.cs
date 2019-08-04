@@ -19,17 +19,17 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
 using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.SessionStore;
+using Kafka.Streams.State.ISessionStore;
 
 
-public class RocksDBSessionStore
-    : WrappedStateStore<SegmentedBytesStore, Object, object>
-    : SessionStore<Bytes, byte[]>
+public RocksDBSessionStore
+    : WrappedStateStore<SegmentedBytesStore, object, object>
+    : ISessionStore<Bytes, byte[]>
 {
 
     RocksDBSessionStore(SegmentedBytesStore bytesStore)
 {
-        super(bytesStore);
+        base(bytesStore);
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
@@ -65,12 +65,12 @@ public class RocksDBSessionStore
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 {
-        return findSessions(key, 0, long.MAX_VALUE);
+        return findSessions(key, 0, long.MaxValue);
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 {
-        return findSessions(from, to, 0, long.MAX_VALUE);
+        return findSessions(from, to, 0, long.MaxValue);
     }
 
     public override void Remove(Windowed<Bytes> key)

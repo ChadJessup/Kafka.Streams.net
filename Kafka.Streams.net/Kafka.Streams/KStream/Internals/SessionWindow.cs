@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -28,7 +28,7 @@ namespace Kafka.streams.kstream.internals;
  * @see org.apache.kafka.streams.kstream.SessionWindows
  * @see org.apache.kafka.streams.processor.TimestampExtractor
  */
-public  class SessionWindow : Window {
+public  SessionWindow : Window {
 
     /**
      * Create a new window for the given start time and end time (both inclusive).
@@ -38,7 +38,7 @@ public  class SessionWindow : Window {
      * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
      */
     public SessionWindow( long startMs,  long endMs){
-        super(startMs, endMs);
+        base(startMs, endMs);
     }
 
     /**
@@ -51,7 +51,7 @@ public  class SessionWindow : Window {
     public bool overlap( Window other){
         if (getClass() != other.getClass())
 {
-            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
+            throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
          SessionWindow otherWindow = (SessionWindow) other;

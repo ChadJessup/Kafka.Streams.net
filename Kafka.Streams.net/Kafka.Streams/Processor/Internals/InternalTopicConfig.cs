@@ -25,7 +25,7 @@ using Kafka.Common.internals.Topic;
  * InternalTopicConfig captures the properties required for configuring
  * the internal topics we create for change-logs and repartitioning etc.
  */
-public abstract class InternalTopicConfig {
+public abstract InternalTopicConfig {
 
     string name;
     Dictionary<string, string> topicConfigs;
@@ -34,7 +34,7 @@ public abstract class InternalTopicConfig {
 
     InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
 {
-        Objects.requireNonNull(name, "name can't be null");
+        name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
         Topic.validate(name);
 
         this.name = name;
@@ -64,7 +64,7 @@ public abstract class InternalTopicConfig {
 {
         if (numberOfPartitions < 1)
 {
-            throw new ArgumentException("Number of partitions must be at least 1.");
+            throw new System.ArgumentException("Number of partitions must be at least 1.");
         }
         this.numberOfPartitions = numberOfPartitions;
     }

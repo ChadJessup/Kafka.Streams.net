@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -25,7 +25,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class StreamSourceNode<K, V> : StreamsGraphNode {
+public StreamSourceNode<K, V> : StreamsGraphNode {
 
     private Collection<string> topicNames;
     private Pattern topicPattern;
@@ -36,7 +36,7 @@ public class StreamSourceNode<K, V> : StreamsGraphNode {
                              Collection<string> topicNames,
                              ConsumedInternal<K, V> consumedInternal)
 {
-        super(nodeName);
+        base(nodeName);
 
         this.topicNames = topicNames;
         this.consumedInternal = consumedInternal;
@@ -47,7 +47,7 @@ public class StreamSourceNode<K, V> : StreamsGraphNode {
                              ConsumedInternal<K, V> consumedInternal)
 {
 
-        super(nodeName);
+        base(nodeName);
 
         this.topicPattern = topicPattern;
         this.consumedInternal = consumedInternal;
@@ -85,7 +85,7 @@ public class StreamSourceNode<K, V> : StreamsGraphNode {
                "topicNames=" + topicNames +
                ", topicPattern=" + topicPattern +
                ", consumedInternal=" + consumedInternal +
-               "} " + super.ToString();
+               "} " + base.ToString();
     }
 
     

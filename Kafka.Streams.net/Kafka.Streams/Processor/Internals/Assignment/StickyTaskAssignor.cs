@@ -31,9 +31,9 @@ namespace Kafka.Streams.Processor.Internals.assignment;
 
 
 
-public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
+public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 
-    private static Logger log = LoggerFactory.getLogger(StickyTaskAssignor.class);
+    private static Logger log = new LoggerFactory().CreateLogger<StickyTaskAssignor);
     private Dictionary<ID, ClientState> clients;
     private HashSet<TaskId> taskIds;
     private Dictionary<TaskId, ID> previousActiveTaskAssignment = new HashMap<>();
@@ -87,10 +87,10 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         // the same active task
         foreach (Map.Entry<TaskId, ID> entry in previousActiveTaskAssignment.entrySet())
 {
-            TaskId taskId = entry.getKey();
+            TaskId taskId = entry.Key;
             if (taskIds.contains(taskId))
 {
-                ClientState client = clients[entry.getValue());
+                ClientState client = clients[entry.Value);
                 if (client.hasUnfulfilledQuota(tasksPerThread))
 {
                     assignTaskToClient(assigned, taskId, client);
@@ -150,9 +150,9 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         HashSet<ID> clientIds = new HashSet<>();
         foreach (Map.Entry<ID, ClientState> client in clients.entrySet())
 {
-            if (!client.getValue().hasAssignedTask(taskId))
+            if (!client.Value.hasAssignedTask(taskId))
 {
-                clientIds.Add(client.getKey());
+                clientIds.Add(client.Key);
             }
         }
         return clientIds;
@@ -271,18 +271,18 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 {
         foreach (Map.Entry<ID, ClientState> clientState in clients.entrySet())
 {
-            foreach (TaskId activeTask in clientState.getValue().previousActiveTasks())
+            foreach (TaskId activeTask in clientState.Value.previousActiveTasks())
 {
-                previousActiveTaskAssignment.Add(activeTask, clientState.getKey());
+                previousActiveTaskAssignment.Add(activeTask, clientState.Key);
             }
 
-            foreach (TaskId prevAssignedTask in clientState.getValue().previousStandbyTasks())
+            foreach (TaskId prevAssignedTask in clientState.Value.previousStandbyTasks())
 {
                 if (!previousStandbyTaskAssignment.ContainsKey(prevAssignedTask))
 {
                     previousStandbyTaskAssignment.Add(prevAssignedTask, new HashSet<>());
                 }
-                previousStandbyTaskAssignment[prevAssignedTask).Add(clientState.getKey());
+                previousStandbyTaskAssignment[prevAssignedTask).Add(clientState.Key);
             }
         }
 
@@ -298,7 +298,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         return capacity;
     }
 
-    private static class TaskPairs {
+    private static TaskPairs {
         private HashSet<Pair> pairs;
         private int maxPairs;
 
@@ -342,7 +342,7 @@ public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             return new Pair(task2, task1);
         }
 
-        private static class Pair {
+        private static Pair {
             private TaskId task1;
             private TaskId task2;
 

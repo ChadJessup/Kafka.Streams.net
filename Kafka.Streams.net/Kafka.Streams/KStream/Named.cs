@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public class Named : Interfaces.INamedOperation<Named>
+    public Named : Interfaces.INamedOperation<Named>
    
 {
         public Named WithName(string name)

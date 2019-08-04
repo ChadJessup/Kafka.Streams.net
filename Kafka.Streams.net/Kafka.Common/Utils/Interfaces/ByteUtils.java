@@ -24,9 +24,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 /**
- * This classes exposes low-level methods for reading/writing from byte streams or buffers.
+ * Thises exposes low-level methods for reading/writing from byte streams or buffers.
  */
-public final class ByteUtils {
+public final ByteUtils {
 
     private ByteUtils() {}
 
@@ -59,7 +59,7 @@ public final class ByteUtils {
      * @param in The stream to read from
      * @return The integer read (MUST BE TREATED WITH SPECIAL CARE TO AVOID SIGNEDNESS)
      */
-    public static int readUnsignedIntLE(InputStream in) throws IOException {
+    public static int readUnsignedIntLE(InputStream in) {
         return in.read()
                 | (in.read() << 8)
                 | (in.read() << 16)
@@ -111,7 +111,7 @@ public final class ByteUtils {
      * @param out The stream to write to
      * @param value The value to write
      */
-    public static void writeUnsignedIntLE(OutputStream out, int value) throws IOException {
+    public static void writeUnsignedIntLE(OutputStream out, int value) {
         out.write(value);
         out.write(value >>> 8);
         out.write(value >>> 16);
@@ -169,7 +169,7 @@ public final class ByteUtils {
      * @throws ArgumentException if variable-length value does not terminate after 5 bytes have been read
      * @throws IOException              if {@link DataInput} throws {@link IOException}
      */
-    public static int readVarint(DataInput in) throws IOException {
+    public static int readVarint(DataInput in) {
         int value = 0;
         int i = 0;
         int b;
@@ -194,7 +194,7 @@ public final class ByteUtils {
      * @throws ArgumentException if variable-length value does not terminate after 10 bytes have been read
      * @throws IOException              if {@link DataInput} throws {@link IOException}
      */
-    public static long readVarlong(DataInput in) throws IOException {
+    public static long readVarlong(DataInput in) {
         long value = 0L;
         int i = 0;
         long b;
@@ -241,7 +241,7 @@ public final class ByteUtils {
      * @param value The value to write
      * @param out The output to write to
      */
-    public static void writeVarint(int value, DataOutput out) throws IOException {
+    public static void writeVarint(int value, DataOutput out) {
         int v = (value << 1) ^ (value >> 31);
         while ((v & 0xffffff80) != 0L)
 {
@@ -279,7 +279,7 @@ public final class ByteUtils {
      * @param value The value to write
      * @param out The output to write to
      */
-    public static void writeVarlong(long value, DataOutput out) throws IOException {
+    public static void writeVarlong(long value, DataOutput out) {
         long v = (value << 1) ^ (value >> 63);
         while ((v & 0xffffffffffffff80L) != 0L)
 {
@@ -345,13 +345,13 @@ public final class ByteUtils {
 
     private static ArgumentException illegalVarintException(int value)
 {
-        throw new ArgumentException("Varint is too long, the most significant bit in the 5th byte is set, " +
-                "converted value: " + Integer.toHexString(value));
+        throw new System.ArgumentException("Varint is too long, the most significant bit in the 5th byte is set, " +
+                "converted value: " + int.toHexString(value));
     }
 
     private static ArgumentException illegalVarlongException(long value)
 {
-        throw new ArgumentException("Varlong is too long, most significant bit in the 10th byte is set, " +
+        throw new System.ArgumentException("Varlong is too long, most significant bit in the 10th byte is set, " +
                 "converted value: " + Long.toHexString(value));
     }
 }

@@ -39,7 +39,7 @@ namespace Kafka.Streams.Errors.Interfaces
         int id { get; }
 
         //DeserializationHandlerResponse( int id,  string name)
-{
+//{
         //    this.id = id;
         //    this.name = name;
         //}

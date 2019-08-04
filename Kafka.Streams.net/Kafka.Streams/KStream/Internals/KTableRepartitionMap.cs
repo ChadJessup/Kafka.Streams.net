@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -31,7 +31,7 @@ namespace Kafka.streams.kstream.internals;
  * <p>
  * Given the input, it can output at most two records (one mapped from old value and one mapped from new value).
  */
-public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, KeyValue<K1, V1>> {
+public KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, KeyValue<K1, V1>> {
 
     private  KTableImpl<K, ?, V> parent;
     private  IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
@@ -79,7 +79,7 @@ public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, 
         throw new InvalidOperationException("KTableRepartitionMap should always require sending old values.");
     }
 
-    private class KTableMapProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableMapProcessor : AbstractProcessor<K, Change<V>> {
 
         /**
          * @throws StreamsException if key is null
@@ -94,8 +94,8 @@ public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, 
             }
 
             // if the value is null, we do not need to forward its selected key-value further
-             KeyValue<? : K1, V1> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
-             KeyValue<? : K1, V1> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
+             KeyValue<K1, V1> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
+             KeyValue<K1, V1> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
 
             // if the selected repartition key or value is null, skip
             // forward oldPair first, to be consistent with reduce and aggregate
@@ -112,7 +112,7 @@ public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, 
         }
     }
 
-    private class KTableMapValueGetter : KTableValueGetter<K, KeyValue<K1, V1>> {
+    private KTableMapValueGetter : KTableValueGetter<K, KeyValue<K1, V1>> {
 
         private  KTableValueGetter<K, V> parentGetter;
         private IProcessorContext context;

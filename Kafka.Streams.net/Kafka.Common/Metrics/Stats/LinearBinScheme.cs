@@ -9,7 +9,7 @@ namespace Kafka.Common.Metrics.Stats
      * the bin widths are increasing at a linear rate. However, the bin widths are scaled such that the specified range
      * of values will all fit within the bins (e.g., the upper range of the last bin is equal to the maximum value).
      */
-    public class LinearBinScheme : IBinScheme
+    public LinearBinScheme : IBinScheme
     {
         public int bins { get; private set; }
         private double max;
@@ -25,7 +25,7 @@ namespace Kafka.Common.Metrics.Stats
         {
             if (numBins < 2)
             {
-                throw new ArgumentException("Must have at least 2 bins.");
+                throw new System.ArgumentException("Must have at least 2 bins.");
             }
 
             this.bins = numBins;
@@ -54,7 +54,7 @@ namespace Kafka.Common.Metrics.Stats
         {
             if (x < 0.0d)
             {
-                throw new ArgumentException("Values less than 0.0 not accepted.");
+                throw new System.ArgumentException("Values less than 0.0 not accepted.");
             }
             else if (x > this.max)
             {

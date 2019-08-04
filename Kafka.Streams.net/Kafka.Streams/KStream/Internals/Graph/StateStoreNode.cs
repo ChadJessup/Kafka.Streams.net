@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
 
-public class StateStoreNode : StreamsGraphNode {
+public StateStoreNode : StreamsGraphNode {
 
     protected  StoreBuilder storeBuilder;
 
     public StateStoreNode( StoreBuilder storeBuilder)
 {
-        super(storeBuilder.name());
+        base(storeBuilder.name());
 
         this.storeBuilder = storeBuilder;
     }

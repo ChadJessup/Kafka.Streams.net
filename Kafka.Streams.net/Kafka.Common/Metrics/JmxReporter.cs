@@ -44,10 +44,10 @@
 ///**
 // * Register metrics in JMX as dynamic mbeans based on the metric names
 // */
-//public class JmxReporter : MetricsReporter {
+//public JmxReporter : MetricsReporter {
 
-//    private static Logger log = LoggerFactory.getLogger(JmxReporter.class);
-//    private static object LOCK = new Object();
+//    private static Logger log = new LoggerFactory().CreateLogger<JmxReporter);
+//    private static object LOCK = new object();
 //    private string prefix;
 //    private Dictionary<string, KafkaMbean> mbeans = new HashMap<string, KafkaMbean>();
 
@@ -150,12 +150,12 @@
 //        mBeanName.Append(metricName.group());
 //        foreach (Map.Entry<string, string> entry in metricName.tags().entrySet())
 {
-//            if (entry.getKey().Length <= 0 || entry.getValue().Length <= 0)
+//            if (entry.Key.Length <= 0 || entry.Value.Length <= 0)
 //                continue;
 //            mBeanName.Append(",");
-//            mBeanName.Append(entry.getKey());
+//            mBeanName.Append(entry.Key);
 //            mBeanName.Append("=");
-//            mBeanName.Append(Sanitizer.jmxSanitize(entry.getValue()));
+//            mBeanName.Append(Sanitizer.jmxSanitize(entry.Value));
 //        }
 //        return mBeanName.ToString();
 //    }
@@ -192,7 +192,7 @@
 //        }
 //    }
 
-//    private static class KafkaMbean : DynamicMBean {
+//    private static KafkaMbean : DynamicMBean {
 //        private ObjectName objectName;
 //        private Dictionary<string, KafkaMetric> metrics;
 
@@ -247,10 +247,10 @@
 //            int i = 0;
 //            foreach (Map.Entry<string, KafkaMetric> entry in this.metrics.entrySet())
 {
-//                string attribute = entry.getKey();
-//                KafkaMetric metric = entry.getValue();
+//                string attribute = entry.Key;
+//                KafkaMetric metric = entry.Value;
 //                attrs[i] = new MBeanAttributeInfo(attribute,
-//                                                  double.class.getName(),
+//                                                  double.getName(),
 //                                                  metric.metricName.description(),
 //                                                  true,
 //                                                  false,
@@ -261,7 +261,7 @@
 //        }
 
 //        
-//        public object invoke(string name, Object[] params, string[] sig]{
+//        public object invoke(string name, object[] params, string[] sig]{
 //            throw new InvalidOperationException("Set not allowed.");
 //        }
 

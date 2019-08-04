@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 /**
  * A {@code TransformerSupplier} interface which can create one or more {@link Transformer} instances.
  *
- * @param <K> key type
- * @param <V> value type
- * @param <R> {@link org.apache.kafka.streams.KeyValue KeyValue} return type (both key and value type can be set
+ * @param key type
+ * @param value type
+ * @param {@link org.apache.kafka.streams.KeyValue KeyValue} return type (both key and value type can be set
  *            arbitrarily)
  * @see Transformer
  * @see KStream#transform(TransformerSupplier, string...)

@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
 
-public abstract class KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> : KTableValueGetterSupplier<K, R> {
+public abstract KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> : KTableValueGetterSupplier<K, R> {
      KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
      KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
 

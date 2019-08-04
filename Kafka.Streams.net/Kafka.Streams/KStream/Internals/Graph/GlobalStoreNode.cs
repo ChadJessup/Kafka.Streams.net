@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.streams.kstream.internals.graph;
+namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
@@ -23,7 +23,7 @@ namespace Kafka.streams.kstream.internals.graph;
 
 
 
-public class GlobalStoreNode : StateStoreNode {
+public GlobalStoreNode : StateStoreNode {
 
 
     private  string sourceName;
@@ -41,7 +41,7 @@ public class GlobalStoreNode : StateStoreNode {
                             ProcessorSupplier stateUpdateSupplier)
 {
 
-        super(storeBuilder);
+        base(storeBuilder);
         this.sourceName = sourceName;
         this.topic = topic;
         this.consumed = consumed;

@@ -22,9 +22,9 @@ namespace Kafka.common.utils;
 /**
  * A wrapper for Thread that sets things up nicely
  */
-public class KafkaThread extends Thread {
+public KafkaThread extends Thread {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = new LoggerFactory().CreateLogger<getClass());
     
     public static KafkaThread daemon(final String name, Runnable runnable)
 {
@@ -38,13 +38,13 @@ public class KafkaThread extends Thread {
 
     public KafkaThread(final String name, boolean daemon)
 {
-        super(name);
+        base(name);
         configureThread(name, daemon);
     }
 
     public KafkaThread(final String name, Runnable runnable, boolean daemon)
 {
-        super(runnable, name);
+        base(runnable, name);
         configureThread(name, daemon);
     }
 

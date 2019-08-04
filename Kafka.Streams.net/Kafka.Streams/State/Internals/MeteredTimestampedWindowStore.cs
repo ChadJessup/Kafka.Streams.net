@@ -29,7 +29,7 @@ using Kafka.Streams.State.WindowStore;
 /**
  * A Metered {@link MeteredTimestampedWindowStore} wrapper that is used for recording operation metrics, and hence its
  * inner WindowStore implementation do not need to provide its own metrics collecting functionality.
- * The inner {@link WindowStore} of this class is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
+ * The inner {@link WindowStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
  * to convert from &lt;K,ValueAndTimestamp&lt;V&gt&gt; to &lt;Bytes,byte[]&gt;
  * @param <K>
  * @param <V>
@@ -46,7 +46,7 @@ class MeteredTimestampedWindowStore<K, V>
                                   ISerde<K> keySerde,
                                   ISerde<ValueAndTimestamp<V>> valueSerde)
 {
-        super(inner, windowSizeMs, metricScope, time, keySerde, valueSerde);
+        base(inner, windowSizeMs, metricScope, time, keySerde, valueSerde);
     }
 
     

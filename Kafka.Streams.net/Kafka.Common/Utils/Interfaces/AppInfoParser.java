@@ -31,8 +31,8 @@ namespace Kafka.common.utils;
 
 
 
-public class AppInfoParser {
-    private static final Logger log = LoggerFactory.getLogger(AppInfoParser.class);
+public AppInfoParser {
+    private static final Logger log = new LoggerFactory().CreateLogger<AppInfoParser);
     private static final String VERSION;
     private static final String COMMIT_ID;
 
@@ -40,7 +40,7 @@ public class AppInfoParser {
 
     static {
         Properties props = new Properties();
-        try (InputStream resourceStream = AppInfoParser.class.getResourceAsStream("/kafka/kafka-version.properties"))
+        try (InputStream resourceStream = AppInfoParser.getResourceAsStream("/kafka/kafka-version.properties"))
 {
             props.load(resourceStream);
         } catch (Exception e)
@@ -121,7 +121,7 @@ public class AppInfoParser {
         long getStartTimeMs();
     }
 
-    public static class AppInfo : AppInfoMBean {
+    public static AppInfo : AppInfoMBean {
 
         private final long startTimeMs;
 
@@ -153,7 +153,7 @@ public class AppInfoParser {
 
     }
 
-    static class ImmutableValue<T> : Gauge<T> {
+    static ImmutableValue<T> : Gauge<T> {
         private final T value;
 
         public ImmutableValue(T value)

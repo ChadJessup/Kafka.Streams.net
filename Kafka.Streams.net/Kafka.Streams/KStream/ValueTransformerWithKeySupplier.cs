@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 /**
- * @param <K>  key type
- * @param <V>  value type
- * @param <VR> transformed value type
+ * @param  key type
+ * @param  value type
+ * @param transformed value type
  * @see ValueTransformer
  * @see ValueTransformerWithKey
  * @see KStream#transformValues(ValueTransformerSupplier, string...)

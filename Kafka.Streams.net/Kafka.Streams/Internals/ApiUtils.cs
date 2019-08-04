@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kafka.Streams.Internals
 {
-    internal class ApiUtils
+    internal ApiUtils
    
 {
     }

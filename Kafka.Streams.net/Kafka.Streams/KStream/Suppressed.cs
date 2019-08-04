@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -48,7 +48,7 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
          */
         static EagerBufferConfig maxRecords( long recordLimit)
 {
-            return new EagerBufferConfigImpl(recordLimit, long.MAX_VALUE);
+            return new EagerBufferConfigImpl(recordLimit, long.MaxValue);
         }
 
         /**
@@ -61,7 +61,7 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
          */
         static EagerBufferConfig maxBytes( long byteLimit)
 {
-            return new EagerBufferConfigImpl(long.MAX_VALUE, byteLimit);
+            return new EagerBufferConfigImpl(long.MaxValue, byteLimit);
         }
 
         /**
@@ -155,10 +155,10 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      *
      * @param timeToWaitForMoreEvents The amount of time to wait, per record, for new events.
      * @param bufferConfig A configuration specifying how much space to use for buffering intermediate results.
-     * @param <K> The key type for the KTable to apply this suppression to.
+     * @param The key type for the KTable to apply this suppression to.
      * @return a suppression configuration
      */
-    static <K> Suppressed<K> untilTimeLimit( Duration timeToWaitForMoreEvents,  BufferConfig bufferConfig)
+    static Suppressed<K> untilTimeLimit( TimeSpan timeToWaitForMoreEvents,  BufferConfig bufferConfig)
 {
         return new SuppressedInternal<>(null, timeToWaitForMoreEvents, bufferConfig, null, false);
     }

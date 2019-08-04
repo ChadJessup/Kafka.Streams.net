@@ -39,7 +39,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public abstract class AbstractTask : Task {
+public abstract AbstractTask : Task {
 
     TaskId id;
     string applicationId;

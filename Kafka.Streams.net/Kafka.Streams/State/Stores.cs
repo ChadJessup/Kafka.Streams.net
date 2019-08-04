@@ -66,10 +66,10 @@ using Kafka.Streams.State.internals.WindowStoreBuilder;
  * topology.AddProcessor("processorName", ...);
  *
  * Dictionary<string,string> topicConfig = new HashMap<>();
- * StoreBuilder<WindowStore<Integer, long>> storeBuilder = Stores
+ * StoreBuilder<WindowStore<int, long>> storeBuilder = Stores
  *   .windowStoreBuilder(
  *     Stores.persistentWindowStore("queryable-store-name", ...),
- *     Serdes.Integer(),
+ *     Serdes.int(),
  *     Serdes.long())
  *   .withLoggingEnabled(topicConfig);
  *
@@ -77,7 +77,7 @@ using Kafka.Streams.State.internals.WindowStoreBuilder;
  * }</pre>
  */
 @InterfaceStability.Evolving
-public class Stores
+public Stores
 {
 
     /**
@@ -93,7 +93,7 @@ public class Stores
      */
     public static KeyValueBytesStoreSupplier persistentKeyValueStore(string name)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         return new RocksDbKeyValueBytesStoreSupplier(name, false);
     }
 
@@ -111,7 +111,7 @@ public class Stores
      */
     public static KeyValueBytesStoreSupplier persistentTimestampedKeyValueStore(string name)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         return new RocksDbKeyValueBytesStoreSupplier(name, true);
     }
 
@@ -127,7 +127,7 @@ public class Stores
      */
     public static KeyValueBytesStoreSupplier inMemoryKeyValueStore(string name)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         return new KeyValueBytesStoreSupplier()
 {
             
@@ -163,10 +163,10 @@ public class Stores
      */
     public static KeyValueBytesStoreSupplier lruMap(string name, int maxCacheSize)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         if (maxCacheSize < 0)
 {
-            throw new ArgumentException("maxCacheSize cannot be negative");
+            throw new System.ArgumentException("maxCacheSize cannot be negative");
         }
         return new KeyValueBytesStoreSupplier()
 {
@@ -207,7 +207,7 @@ public class Stores
      * @return an instance of {@link WindowBytesStoreSupplier}
      * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, boolean)} instead
      */
-    @Deprecated // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+    [System.Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
     public static WindowBytesStoreSupplier persistentWindowStore(string name,
                                                                  long retentionPeriod,
                                                                  int numSegments,
@@ -216,7 +216,7 @@ public class Stores
 {
         if (numSegments < 2)
 {
-            throw new ArgumentException("numSegments cannot be smaller than 2");
+            throw new System.ArgumentException("numSegments cannot be smaller than 2");
         }
 
         long legacySegmentInterval = Math.Max(retentionPeriod / (numSegments - 1), 60_000L);
@@ -249,8 +249,8 @@ public class Stores
      * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier persistentWindowStore(string name,
-                                                                 Duration retentionPeriod,
-                                                                 Duration windowSize,
+                                                                 TimeSpan retentionPeriod,
+                                                                 TimeSpan windowSize,
                                                                  bool retainDuplicates) throws ArgumentException
 {
         return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, false);
@@ -275,20 +275,20 @@ public class Stores
      * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier persistentTimestampedWindowStore(string name,
-                                                                            Duration retentionPeriod,
-                                                                            Duration windowSize,
+                                                                            TimeSpan retentionPeriod,
+                                                                            TimeSpan windowSize,
                                                                             bool retainDuplicates) throws ArgumentException
 {
         return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, true);
     }
 
     private static WindowBytesStoreSupplier persistentWindowStore(string name,
-                                                                  Duration retentionPeriod,
-                                                                  Duration windowSize,
+                                                                  TimeSpan retentionPeriod,
+                                                                  TimeSpan windowSize,
                                                                   bool retainDuplicates,
                                                                   bool timestampedStore)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         string rpMsgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
         long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
         string wsMsgPrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
@@ -306,22 +306,22 @@ public class Stores
                                                                   long segmentInterval,
                                                                   bool timestampedStore)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         if (retentionPeriod < 0L)
 {
-            throw new ArgumentException("retentionPeriod cannot be negative");
+            throw new System.ArgumentException("retentionPeriod cannot be negative");
         }
         if (windowSize < 0L)
 {
-            throw new ArgumentException("windowSize cannot be negative");
+            throw new System.ArgumentException("windowSize cannot be negative");
         }
         if (segmentInterval < 1L)
 {
-            throw new ArgumentException("segmentInterval cannot be zero or negative");
+            throw new System.ArgumentException("segmentInterval cannot be zero or negative");
         }
         if (windowSize > retentionPeriod)
 {
-            throw new ArgumentException("The retention period of the window store "
+            throw new System.ArgumentException("The retention period of the window store "
                 + name + " must be no smaller than its window size. Got size=["
                 + windowSize + "], retention=[" + retentionPeriod + "]"];
         }
@@ -351,29 +351,29 @@ public class Stores
      * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier inMemoryWindowStore(string name,
-                                                               Duration retentionPeriod,
-                                                               Duration windowSize,
+                                                               TimeSpan retentionPeriod,
+                                                               TimeSpan windowSize,
                                                                bool retainDuplicates) throws ArgumentException
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
 
         string repartitionPeriodErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
         long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
         if (retentionMs < 0L)
 {
-            throw new ArgumentException("retentionPeriod cannot be negative");
+            throw new System.ArgumentException("retentionPeriod cannot be negative");
         }
 
         string windowSizeErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
         long windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
         if (windowSizeMs < 0L)
 {
-            throw new ArgumentException("windowSize cannot be negative");
+            throw new System.ArgumentException("windowSize cannot be negative");
         }
 
         if (windowSizeMs > retentionMs)
 {
-            throw new ArgumentException("The retention period of the window store "
+            throw new System.ArgumentException("The retention period of the window store "
                 + name + " must be no smaller than its window size. Got size=["
                 + windowSize + "], retention=[" + retentionPeriod + "]"];
         }
@@ -392,14 +392,14 @@ public class Stores
      * @return an instance of a {@link  SessionBytesStoreSupplier}
      * @deprecated since 2.1 Use {@link Stores#persistentSessionStore(string, Duration)} instead
      */
-    @Deprecated // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+    [System.Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
     public static SessionBytesStoreSupplier persistentSessionStore(string name,
                                                                    long retentionPeriodMs)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
         if (retentionPeriodMs < 0)
 {
-            throw new ArgumentException("retentionPeriod cannot be negative");
+            throw new System.ArgumentException("retentionPeriod cannot be negative");
         }
         return new RocksDbSessionBytesStoreSupplier(name, retentionPeriodMs);
     }
@@ -416,7 +416,7 @@ public class Stores
      */
     @SuppressWarnings("deprecation") // removing #persistentSessionStore(string name, long retentionPeriodMs) will fix this
     public static SessionBytesStoreSupplier persistentSessionStore(string name,
-                                                                   Duration retentionPeriod)
+                                                                   TimeSpan retentionPeriod)
 {
         string msgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
         return persistentSessionStore(name, ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix));
@@ -432,15 +432,15 @@ public class Stores
      *                          and for the entire grace period.
      * @return an instance of a {@link  SessionBytesStoreSupplier}
      */
-    public static SessionBytesStoreSupplier inMemorySessionStore(string name, Duration retentionPeriod)
+    public static SessionBytesStoreSupplier inMemorySessionStore(string name, TimeSpan retentionPeriod)
 {
-        Objects.requireNonNull(name, "name cannot be null");
+        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
 
         string msgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
         long retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
         if (retentionPeriodMs < 0)
 {
-            throw new ArgumentException("retentionPeriod cannot be negative");
+            throw new System.ArgumentException("retentionPeriod cannot be negative");
         }
         return new InMemorySessionBytesStoreSupplier(name, retentionPeriodMs);
     }
@@ -455,15 +455,15 @@ public class Stores
      * @param keySerde      the key serde to use
      * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
      *                      it is treated as delete
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
      */
     public staticStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
                                                                                 ISerde<K> keySerde,
                                                                                 ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(supplier, "supplier cannot be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
         return new KeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
@@ -478,15 +478,15 @@ public class Stores
      * @param keySerde      the key serde to use
      * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
      *                      it is treated as delete
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
      */
     public staticStoreBuilder<TimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
                                                                                                       ISerde<K> keySerde,
                                                                                                       ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(supplier, "supplier cannot be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
         return new TimestampedKeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
@@ -500,15 +500,15 @@ public class Stores
      * @param keySerde      the key serde to use
      * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
      *                      it is treated as delete
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
      */
     public staticStoreBuilder<WindowStore<K, V>> windowStoreBuilder(WindowBytesStoreSupplier supplier,
                                                                             ISerde<K> keySerde,
                                                                             ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(supplier, "supplier cannot be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
         return new WindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
@@ -523,34 +523,34 @@ public class Stores
      * @param keySerde      the key serde to use
      * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
      *                      it is treated as delete
-     * @param <K>           key type
-     * @param <V>           value type
+     * @param           key type
+     * @param           value type
      * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
      */
     public staticStoreBuilder<TimestampedWindowStore<K, V>> timestampedWindowStoreBuilder(WindowBytesStoreSupplier supplier,
                                                                                                   ISerde<K> keySerde,
                                                                                                   ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(supplier, "supplier cannot be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
         return new TimestampedWindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
     /**
-     * Creates a {@link StoreBuilder} that can be used to build a {@link SessionStore}.
+     * Creates a {@link StoreBuilder} that can be used to build a {@link ISessionStore}.
      *
      * @param supplier      a {@link SessionBytesStoreSupplier} (cannot be {@code null})
      * @param keySerde      the key serde to use
      * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
      *                      it is treated as delete
-     * @param <K>           key type
-     * @param <V>           value type
-     * @return an instance of {@link StoreBuilder} than can build a {@link SessionStore}
+     * @param           key type
+     * @param           value type
+     * @return an instance of {@link StoreBuilder} than can build a {@link ISessionStore}
      */
-    public staticStoreBuilder<SessionStore<K, V>> sessionStoreBuilder(SessionBytesStoreSupplier supplier,
+    public staticStoreBuilder<ISessionStore<K, V>> sessionStoreBuilder(SessionBytesStoreSupplier supplier,
                                                                               ISerde<K> keySerde,
                                                                               ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(supplier, "supplier cannot be null");
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
         return new SessionStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 }

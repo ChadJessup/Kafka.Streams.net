@@ -47,6 +47,6 @@ public interface PartitionGrouper {
      * @param metadata Metadata of the consuming cluster
      * @return a map of task ids to groups of partitions
      */
-    Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<Integer, HashSet<string>> topicGroups, Cluster metadata);
+    Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata);
 
 }

@@ -36,7 +36,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-abstract class AssignedTasks<T : Task> {
+abstract AssignedTasks<T : Task> {
     Logger log;
     private string taskTypeName;
     private Dictionary<TaskId, T> created = new HashMap<>();
@@ -74,18 +74,18 @@ abstract class AssignedTasks<T : Task> {
 {
             Map.Entry<TaskId, T> entry = it.next();
             try {
-                if (!entry.getValue().initializeStateStores())
+                if (!entry.Value.initializeStateStores())
 {
-                    log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.getKey());
-                    ((AssignedStreamsTasks) this).AddToRestoring((StreamTask) entry.getValue());
+                    log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
+                    ((AssignedStreamsTasks) this).AddToRestoring((StreamTask) entry.Value);
                 } else {
-                    transitionToRunning(entry.getValue());
+                    transitionToRunning(entry.Value);
                 }
                 it.Remove();
             } catch (LockException e)
 {
                 // made this trace as it will spam the logs in the poll loop.
-                log.trace("Could not create {} {} due to {}; will retry", taskTypeName, entry.getKey(), e.ToString());
+                log.trace("Could not create {} {} due to {}; will retry", taskTypeName, entry.Key, e.ToString());
             }
         }
     }

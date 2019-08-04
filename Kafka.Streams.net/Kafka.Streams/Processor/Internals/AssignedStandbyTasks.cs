@@ -22,7 +22,7 @@ class AssignedStandbyTasks : AssignedTasks<StandbyTask> {
 
     AssignedStandbyTasks(LogContext logContext)
 {
-        super(logContext, "standby task");
+        base(logContext, "standby task");
     }
 
 }

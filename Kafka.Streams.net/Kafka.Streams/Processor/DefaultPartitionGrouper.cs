@@ -37,9 +37,9 @@ using Kafka.Common.TopicPartition;
  * number of partitions. Copartitioning is ensured by having the same number of partitions on
  * joined topics, and by using the serialization and Producer's default partitioner.
  */
-public class DefaultPartitionGrouper : PartitionGrouper {
+public DefaultPartitionGrouper : PartitionGrouper {
 
-    private static Logger log = LoggerFactory.getLogger(DefaultPartitionGrouper.class);
+    private static Logger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper);
     /**
      * Generate tasks with the assigned topic partitions.
      *
@@ -47,14 +47,14 @@ public class DefaultPartitionGrouper : PartitionGrouper {
      * @param metadata      metadata of the consuming cluster
      * @return The map from generated task ids to the assigned partitions
      */
-    public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<Integer, HashSet<string>> topicGroups, Cluster metadata)
+    public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
 {
         Dictionary<TaskId, HashSet<TopicPartition>> groups = new HashMap<>();
 
-        foreach (Map.Entry<Integer, HashSet<string>> entry in topicGroups.entrySet())
+        foreach (Map.Entry<int, HashSet<string>> entry in topicGroups.entrySet())
 {
-            Integer topicGroupId = entry.getKey();
-            HashSet<string> topicGroup = entry.getValue();
+            int topicGroupId = entry.Key;
+            HashSet<string> topicGroup = entry.Value;
 
             int maxNumPartitions = maxNumPartitions(metadata, topicGroup);
 

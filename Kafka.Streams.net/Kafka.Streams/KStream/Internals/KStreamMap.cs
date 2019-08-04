@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -24,9 +24,9 @@ namespace Kafka.streams.kstream.internals;
 
 class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
 
-    private  IKeyValueMapper<K, V, KeyValue<? : K1, V1>> mapper;
+    private  IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
-    public KStreamMap( IKeyValueMapper<K, V, KeyValue<? : K1, V1>> mapper)
+    public KStreamMap( IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper)
 {
         this.mapper = mapper;
     }
@@ -37,11 +37,11 @@ class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
         return new KStreamMapProcessor();
     }
 
-    private class KStreamMapProcessor : AbstractProcessor<K, V> {
+    private KStreamMapProcessor : AbstractProcessor<K, V> {
         
         public void process( K key,  V value)
 {
-             KeyValue<? : K1, V1> newPair = mapper.apply(key, value);
+             KeyValue<K1, V1> newPair = mapper.apply(key, value);
             context().forward(newPair.key, newPair.value);
         }
     }

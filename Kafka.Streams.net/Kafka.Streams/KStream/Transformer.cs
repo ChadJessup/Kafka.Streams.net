@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -27,9 +27,9 @@ namespace Kafka.streams.kstream;
 /**
  * The {@code Transformer} interface is for stateful mapping of an input record to zero, one, or multiple new output
  * records (both key and value type can be altered arbitrarily).
- * This is a stateful record-by-record operation, i.e, {@link #transform(Object, Object)} is invoked individually for
+ * This is a stateful record-by-record operation, i.e, {@link #transform(object, object)} is invoked individually for
  * each record of a stream and can access and modify a state that is available beyond a single call of
- * {@link #transform(Object, Object)} (cf. {@link KeyValueMapper} for stateless record transformation).
+ * {@link #transform(object, object)} (cf. {@link KeyValueMapper} for stateless record transformation).
  * Additionally, this {@code Transformer} can {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule}
  * a method to be {@link Punctuator#punctuate(long) called periodically} with the provided context.
  * <p>
@@ -37,9 +37,9 @@ namespace Kafka.streams.kstream;
  * <p>
  * If only a record's value should be modified {@link ValueTransformer} can be used.
  *
- * @param <K> key type
- * @param <V> value type
- * @param <R> {@link KeyValue} return type (both key and value type can be set
+ * @param key type
+ * @param value type
+ * @param {@link KeyValue} return type (both key and value type can be set
  *            arbitrarily)
  * @see TransformerSupplier
  * @see KStream#transform(TransformerSupplier, string...)
@@ -60,7 +60,7 @@ public interface Transformer<K, V, R> {
      * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
      * <p>
      * Note, that {@link IProcessorContext} is updated in the background with the current record's meta data.
-     * Thus, it only contains valid record meta data when accessed within {@link #transform(Object, Object)}.
+     * Thus, it only contains valid record meta data when accessed within {@link #transform(object, object)}.
      *
      * @param context the context
      */
@@ -73,12 +73,12 @@ public interface Transformer<K, V, R> {
      * arbitrarily (cf. {@link IProcessorContext#getStateStore(string)}).
      * <p>
      * If only one record should be forward downstream, {@code transform} can return a new {@link KeyValue}. If
-     * more than one output record should be forwarded downstream, {@link IProcessorContext#forward(Object, Object)}
-     * and {@link IProcessorContext#forward(Object, Object, To)} can be used.
+     * more than one output record should be forwarded downstream, {@link IProcessorContext#forward(object, object)}
+     * and {@link IProcessorContext#forward(object, object, To)} can be used.
      * If no record should be forwarded downstream, {@code transform} can return {@code null}.
      *
      * Note that returning a new {@link KeyValue} is merely for convenience. The same can be achieved by using
-     * {@link IProcessorContext#forward(Object, Object)} and returning {@code null}.
+     * {@link IProcessorContext#forward(object, object)} and returning {@code null}.
      *
      * @param key the key for the record
      * @param value the value for the record
@@ -91,8 +91,8 @@ public interface Transformer<K, V, R> {
      * Close this transformer and clean up any resources. The framework may
      * later re-use this transformer by calling {@link #init(IProcessorContext)} on it again.
      * <p>
-     * To generate new {@link KeyValue} pairs {@link IProcessorContext#forward(Object, Object)} and
-     * {@link IProcessorContext#forward(Object, Object, To)} can be used.
+     * To generate new {@link KeyValue} pairs {@link IProcessorContext#forward(object, object)} and
+     * {@link IProcessorContext#forward(object, object, To)} can be used.
      */
     void close();
 

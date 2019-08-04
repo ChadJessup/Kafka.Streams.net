@@ -19,7 +19,7 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public class QuickUnion<T> {
+public QuickUnion<T> {
 
     private HashMap<T, T> ids = new HashMap<>();
 

@@ -34,7 +34,7 @@ using Kafka.Common.Utils.LogContext;
  * partition timestamp defined as the largest timestamp seen on the partition so far; this is passed to the
  * timestamp extractor.
  */
-public class RecordQueue {
+public RecordQueue {
 
     public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
 
@@ -70,7 +70,7 @@ public class RecordQueue {
             logContext,
             skipRecordsSensor
         );
-        this.log = logContext.logger(RecordQueue.class);
+        this.log = logContext.logger<RecordQueue>();
     }
 
     /**
@@ -182,7 +182,7 @@ public class RecordQueue {
         while (headRecord == null && !fifoQueue.isEmpty())
 {
             ConsumerRecord<byte[], byte[]> raw = fifoQueue.pollFirst();
-            ConsumerRecord<Object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
+            ConsumerRecord<object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
 
             if (deserialized == null)
 {

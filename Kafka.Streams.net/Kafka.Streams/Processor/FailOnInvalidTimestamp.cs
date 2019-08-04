@@ -46,8 +46,8 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see WallclockTimestampExtractor
  */
 @InterfaceStability.Evolving
-public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
-    private static Logger log = LoggerFactory.getLogger(FailOnInvalidTimestamp.class);
+public FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
+    private static Logger log = new LoggerFactory().CreateLogger<FailOnInvalidTimestamp);
 
     /**
      * Raises an exception on every call.
@@ -59,7 +59,7 @@ public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @throws StreamsException on every invocation
      */
     
-    public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
+    public long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
            {

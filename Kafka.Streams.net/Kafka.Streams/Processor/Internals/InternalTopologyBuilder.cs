@@ -51,9 +51,9 @@ using Kafka.Common.Utils.Utils;
 
 
 
-public class InternalTopologyBuilder {
+public InternalTopologyBuilder {
 
-    private static Logger log = LoggerFactory.getLogger(InternalTopologyBuilder.class);
+    private static Logger log = new LoggerFactory().CreateLogger<InternalTopologyBuilder);
     private static Pattern EMPTY_ZERO_LENGTH_PATTERN = Pattern.compile("");
     private static string[] NO_PREDECESSORS = {};
 
@@ -121,9 +121,9 @@ public class InternalTopologyBuilder {
 
     private Pattern topicPattern = null;
 
-    private Dictionary<Integer, HashSet<string>> nodeGroups = null;
+    private Dictionary<int, HashSet<string>> nodeGroups = null;
 
-    public static class StateStoreFactory {
+    public static StateStoreFactory {
         private StoreBuilder builder;
         private HashSet<string> users = new HashSet<>();
 
@@ -185,7 +185,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    private static abstract class NodeFactory {
+    private static abstract NodeFactory {
         string name;
         string[] predecessors;
 
@@ -201,7 +201,7 @@ public class InternalTopologyBuilder {
         abstract AbstractNode describe();
     }
 
-    private static class ProcessorNodeFactory : NodeFactory {
+    private static ProcessorNodeFactory : NodeFactory {
         private ProcessorSupplier<?, ?> supplier;
         private HashSet<string> stateStoreNames = new HashSet<>();
 
@@ -209,7 +209,7 @@ public class InternalTopologyBuilder {
                              string[] predecessors,
                              ProcessorSupplier<?, ?> supplier)
 {
-            super(name, predecessors.clone());
+            base(name, predecessors.clone());
             this.supplier = supplier;
         }
 
@@ -231,7 +231,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    private class SourceNodeFactory : NodeFactory {
+    private SourceNodeFactory : NodeFactory {
         private List<string> topics;
         private Pattern pattern;
         private Deserializer<?> keyDeserializer;
@@ -245,7 +245,7 @@ public class InternalTopologyBuilder {
                                   Deserializer<?> keyDeserializer,
                                   Deserializer<?> valDeserializer)
 {
-            super(name, NO_PREDECESSORS);
+            base(name, NO_PREDECESSORS);
             this.topics = topics != null ? Arrays.asList(topics) : new List<>();
             this.pattern = pattern;
             this.keyDeserializer = keyDeserializer;
@@ -313,7 +313,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    private class SinkNodeFactory<K, V> : NodeFactory {
+    private SinkNodeFactory<K, V> : NodeFactory {
         private Serializer<K> keySerializer;
         private Serializer<V> valSerializer;
         private StreamPartitioner<K, V> partitioner;
@@ -326,7 +326,7 @@ public class InternalTopologyBuilder {
                                 Serializer<V> valSerializer,
                                 StreamPartitioner<K, V> partitioner)
 {
-            super(name, predecessors.clone());
+            base(name, predecessors.clone());
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
             this.valSerializer = valSerializer;
@@ -361,7 +361,7 @@ public class InternalTopologyBuilder {
     // public for testing only
     public synchronized InternalTopologyBuilder setApplicationId(string applicationId)
 {
-        Objects.requireNonNull(applicationId, "applicationId can't be null");
+        applicationId = applicationId ?? throw new System.ArgumentNullException("applicationId can't be null", nameof(applicationId));
         this.applicationId = applicationId;
 
         return this;
@@ -369,7 +369,7 @@ public class InternalTopologyBuilder {
 
     public synchronized InternalTopologyBuilder rewriteTopology(StreamsConfig config)
 {
-        Objects.requireNonNull(config, "config can't be null");
+        config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
 
         // set application id
         setApplicationId(config.getString(StreamsConfig.APPLICATION_ID_CONFIG));
@@ -408,7 +408,7 @@ public class InternalTopologyBuilder {
 {
             throw new TopologyException("You must provide at least one topic");
         }
-        Objects.requireNonNull(name, "name must not be null");
+        name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
         if (nodeFactories.ContainsKey(name))
 {
             throw new TopologyException("Processor " + name + " is already.Added.");
@@ -416,7 +416,7 @@ public class InternalTopologyBuilder {
 
         foreach (string topic in topics)
 {
-            Objects.requireNonNull(topic, "topic names cannot be null");
+            topic = topic ?? throw new System.ArgumentNullException("topic names cannot be null", nameof(topic));
             validateTopicNotAlreadyRegistered(topic);
             maybeAddToResetList(earliestResetTopics, latestResetTopics, offsetReset, topic);
             sourceTopicNames.Add(topic);
@@ -435,8 +435,8 @@ public class InternalTopologyBuilder {
                                 Deserializer valDeserializer,
                                 Pattern topicPattern)
 {
-        Objects.requireNonNull(topicPattern, "topicPattern can't be null");
-        Objects.requireNonNull(name, "name can't be null");
+        topicPattern = topicPattern ?? throw new System.ArgumentNullException("topicPattern can't be null", nameof(topicPattern));
+        name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
 
         if (nodeFactories.ContainsKey(name))
 {
@@ -482,9 +482,9 @@ public class InternalTopologyBuilder {
                                      StreamPartitioner<K, V> partitioner,
                                      string[] predecessorNames)
 {
-        Objects.requireNonNull(name, "name must not be null");
-        Objects.requireNonNull(topic, "topic must not be null");
-        Objects.requireNonNull(predecessorNames, "predecessor names must not be null");
+        name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
+        topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
+        predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
         if (predecessorNames.Length == 0)
 {
             throw new TopologyException("Sink " + name + " must have at least one parent");
@@ -502,9 +502,9 @@ public class InternalTopologyBuilder {
                                      StreamPartitioner<K, V> partitioner,
                                      string[] predecessorNames)
 {
-        Objects.requireNonNull(name, "name must not be null");
-        Objects.requireNonNull(topicExtractor, "topic extractor must not be null");
-        Objects.requireNonNull(predecessorNames, "predecessor names must not be null");
+        name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
+        topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor must not be null", nameof(topicExtractor));
+        predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
         if (nodeFactories.ContainsKey(name))
 {
             throw new TopologyException("Processor " + name + " is already.Added.");
@@ -516,7 +516,7 @@ public class InternalTopologyBuilder {
 
         foreach (string predecessor in predecessorNames)
 {
-            Objects.requireNonNull(predecessor, "predecessor name can't be null");
+            predecessor = predecessor ?? throw new System.ArgumentNullException("predecessor name can't be null", nameof(predecessor));
             if (predecessor.Equals(name))
 {
                 throw new TopologyException("Processor " + name + " cannot be a predecessor of itself.");
@@ -541,9 +541,9 @@ public class InternalTopologyBuilder {
                                    ProcessorSupplier supplier,
                                    string[] predecessorNames)
 {
-        Objects.requireNonNull(name, "name must not be null");
-        Objects.requireNonNull(supplier, "supplier must not be null");
-        Objects.requireNonNull(predecessorNames, "predecessor names must not be null");
+        name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
+        supplier = supplier ?? throw new System.ArgumentNullException("supplier must not be null", nameof(supplier));
+        predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
         if (nodeFactories.ContainsKey(name))
 {
             throw new TopologyException("Processor " + name + " is already.Added.");
@@ -555,7 +555,7 @@ public class InternalTopologyBuilder {
 
         foreach (string predecessor in predecessorNames)
 {
-            Objects.requireNonNull(predecessor, "predecessor name must not be null");
+            predecessor = predecessor ?? throw new System.ArgumentNullException("predecessor name must not be null", nameof(predecessor));
             if (predecessor.Equals(name))
 {
                 throw new TopologyException("Processor " + name + " cannot be a predecessor of itself.");
@@ -582,7 +582,7 @@ public class InternalTopologyBuilder {
                                     bool allowOverride,
                                     string[] processorNames)
 {
-        Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
+        storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("storeBuilder can't be null", nameof(storeBuilder));
         if (!allowOverride && stateFactories.ContainsKey(storeBuilder.name()))
 {
             throw new TopologyException("IStateStore " + storeBuilder.name() + " is already.Added.");
@@ -594,7 +594,7 @@ public class InternalTopologyBuilder {
 {
             foreach (string processorName in processorNames)
 {
-                Objects.requireNonNull(processorName, "processor name must not be null");
+                processorName = processorName ?? throw new System.ArgumentNullException("processor name must not be null", nameof(processorName));
                 connectProcessorAndStateStore(processorName, storeBuilder.name());
             }
         }
@@ -610,7 +610,7 @@ public class InternalTopologyBuilder {
                                      string processorName,
                                      ProcessorSupplier stateUpdateSupplier)
 {
-        Objects.requireNonNull(storeBuilder, "store builder must not be null");
+        storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("store builder must not be null", nameof(storeBuilder));
         validateGlobalStoreArguments(sourceName,
                                      topic,
                                      processorName,
@@ -663,15 +663,15 @@ public class InternalTopologyBuilder {
     public void connectProcessorAndStateStores(string processorName,
                                                      string[] stateStoreNames)
 {
-        Objects.requireNonNull(processorName, "processorName can't be null");
-        Objects.requireNonNull(stateStoreNames, "state store list must not be null");
+        processorName = processorName ?? throw new System.ArgumentNullException("processorName can't be null", nameof(processorName));
+        stateStoreNames = stateStoreNames ?? throw new System.ArgumentNullException("state store list must not be null", nameof(stateStoreNames));
         if (stateStoreNames.Length == 0)
 {
             throw new TopologyException("Must provide at least one state store name.");
         }
         foreach (string stateStoreName in stateStoreNames)
 {
-            Objects.requireNonNull(stateStoreName, "state store name must not be null");
+            stateStoreName = stateStoreName ?? throw new System.ArgumentNullException("state store name must not be null", nameof(stateStoreName));
             connectProcessorAndStateStore(processorName, stateStoreName);
         }
         nodeGroups = null;
@@ -689,7 +689,7 @@ public class InternalTopologyBuilder {
 
     public void.AddInternalTopic(string topicName)
 {
-        Objects.requireNonNull(topicName, "topicName can't be null");
+        topicName = topicName ?? throw new System.ArgumentNullException("topicName can't be null", nameof(topicName));
         internalTopicNames.Add(topicName);
     }
 
@@ -705,10 +705,10 @@ public class InternalTopologyBuilder {
                                               string storeName,
                                               bool loggingEnabled)
 {
-        Objects.requireNonNull(sourceName, "sourceName must not be null");
-        Objects.requireNonNull(topic, "topic must not be null");
-        Objects.requireNonNull(stateUpdateSupplier, "supplier must not be null");
-        Objects.requireNonNull(processorName, "processorName must not be null");
+        sourceName = sourceName ?? throw new System.ArgumentNullException("sourceName must not be null", nameof(sourceName));
+        topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
+        stateUpdateSupplier = stateUpdateSupplier ?? throw new System.ArgumentNullException("supplier must not be null", nameof(stateUpdateSupplier));
+        processorName = processorName ?? throw new System.ArgumentNullException("processorName must not be null", nameof(processorName));
         if (nodeFactories.ContainsKey(sourceName))
 {
             throw new TopologyException("Processor " + sourceName + " is already.Added.");
@@ -827,7 +827,7 @@ public class InternalTopologyBuilder {
 
     }
 
-    private <T> void maybeAddToResetList(Collection<T> earliestResets,
+    private void maybeAddToResetList(Collection<T> earliestResets,
                                          Collection<T> latestResets,
                                          Topology.AutoOffsetReset offsetReset,
                                          T item)
@@ -848,7 +848,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public synchronized Dictionary<Integer, HashSet<string>> nodeGroups()
+    public synchronized Dictionary<int, HashSet<string>> nodeGroups()
 {
         if (nodeGroups == null)
 {
@@ -857,9 +857,9 @@ public class InternalTopologyBuilder {
         return nodeGroups;
     }
 
-    private Dictionary<Integer, HashSet<string>> makeNodeGroups()
+    private Dictionary<int, HashSet<string>> makeNodeGroups()
 {
-        Dictionary<Integer, HashSet<string>> nodeGroups = new LinkedHashMap<>();
+        Dictionary<int, HashSet<string>> nodeGroups = new LinkedHashMap<>();
         Dictionary<string, HashSet<string>> rootToNodeGroup = new HashMap<>();
 
         int nodeGroupId = 0;
@@ -887,7 +887,7 @@ public class InternalTopologyBuilder {
 
     private int putNodeGroupName(string nodeName,
                                  int nodeGroupId,
-                                 Dictionary<Integer, HashSet<string>> nodeGroups,
+                                 Dictionary<int, HashSet<string>> nodeGroups,
                                  Dictionary<string, HashSet<string>> rootToNodeGroup)
 {
         int newNodeGroupId = nodeGroupId;
@@ -905,10 +905,10 @@ public class InternalTopologyBuilder {
 
     public synchronized ProcessorTopology build()
 {
-        return build((Integer) null);
+        return build((int) null);
     }
 
-    public synchronized ProcessorTopology build(Integer topicGroupId)
+    public synchronized ProcessorTopology build(int topicGroupId)
 {
         HashSet<string> nodeGroup;
         if (topicGroupId != null)
@@ -934,7 +934,7 @@ public class InternalTopologyBuilder {
      */
     public synchronized ProcessorTopology buildGlobalStateTopology()
 {
-        Objects.requireNonNull(applicationId, "topology has not completed optimization");
+        applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
         HashSet<string> globalGroups = globalNodeGroups();
         if (globalGroups.isEmpty())
@@ -947,9 +947,9 @@ public class InternalTopologyBuilder {
     private HashSet<string> globalNodeGroups()
 {
         HashSet<string> globalGroups = new HashSet<>();
-        foreach (Map.Entry<Integer, HashSet<string>> nodeGroup in nodeGroups().entrySet())
+        foreach (Map.Entry<int, HashSet<string>> nodeGroup in nodeGroups().entrySet())
 {
-            HashSet<string> nodes = nodeGroup.getValue();
+            HashSet<string> nodes = nodeGroup.Value;
             foreach (string node in nodes)
 {
                 if (isGlobalSource(node))
@@ -963,7 +963,7 @@ public class InternalTopologyBuilder {
 
     private ProcessorTopology build(Set<string> nodeGroup)
 {
-        Objects.requireNonNull(applicationId, "topology has not completed optimization");
+        applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
         Dictionary<string, ProcessorNode> processorMap = new LinkedHashMap<>();
         Dictionary<string, SourceNode> topicSourceMap = new HashMap<>();
@@ -1002,7 +1002,7 @@ public class InternalTopologyBuilder {
                                   (SinkNodeFactory) factory,
                                   (SinkNode) node);
                 } else {
-                    throw new TopologyException("Unknown definition class: " + factory.GetType().getName());
+                    throw new TopologyException("Unknown definition: " + factory.GetType().getName());
                 }
             }
         }
@@ -1109,14 +1109,14 @@ public class InternalTopologyBuilder {
      */
     public Dictionary<string, IStateStore> globalStateStores()
 {
-        Objects.requireNonNull(applicationId, "topology has not completed optimization");
+        applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
         return Collections.unmodifiableMap(globalStateStores);
     }
 
     public HashSet<string> allStateStoreName()
 {
-        Objects.requireNonNull(applicationId, "topology has not completed optimization");
+        applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
         HashSet<string> allNames = new HashSet<>(stateFactories.keySet());
         allNames.AddAll(globalStateStores.keySet());
@@ -1129,22 +1129,22 @@ public class InternalTopologyBuilder {
      *
      * @return groups of topic names
      */
-    public synchronized Dictionary<Integer, TopicsInfo> topicGroups()
+    public synchronized Dictionary<int, TopicsInfo> topicGroups()
 {
-        Dictionary<Integer, TopicsInfo> topicGroups = new LinkedHashMap<>();
+        Dictionary<int, TopicsInfo> topicGroups = new LinkedHashMap<>();
 
         if (nodeGroups == null)
 {
             nodeGroups = makeNodeGroups();
         }
 
-        foreach (Map.Entry<Integer, HashSet<string>> entry in nodeGroups.entrySet())
+        foreach (Map.Entry<int, HashSet<string>> entry in nodeGroups.entrySet())
 {
             HashSet<string> sinkTopics = new HashSet<>();
             HashSet<string> sourceTopics = new HashSet<>();
             Dictionary<string, InternalTopicConfig> repartitionTopics = new HashMap<>();
             Dictionary<string, InternalTopicConfig> stateChangelogTopics = new HashMap<>();
-            foreach (string node in entry.getValue())
+            foreach (string node in entry.Value)
 {
                 // if the node is a source node,.Add to the source topics
                 List<string> topics = nodeToSourceTopics[node];
@@ -1205,7 +1205,7 @@ public class InternalTopologyBuilder {
             }
             if (!sourceTopics.isEmpty())
 {
-                topicGroups.Add(entry.getKey(), new TopicsInfo(
+                topicGroups.Add(entry.Key, new TopicsInfo(
                         Collections.unmodifiableSet(sinkTopics),
                         Collections.unmodifiableSet(sourceTopics),
                         Collections.unmodifiableMap(repartitionTopics),
@@ -1223,10 +1223,10 @@ public class InternalTopologyBuilder {
             foreach (Map.Entry<string, Pattern> stringPatternEntry in nodeToSourcePatterns.entrySet())
 {
                 SourceNodeFactory sourceNode =
-                    (SourceNodeFactory) nodeFactories[stringPatternEntry.getKey());
+                    (SourceNodeFactory) nodeFactories[stringPatternEntry.Key);
                 //need to update nodeToSourceTopics with topics matched from given regex
                 nodeToSourceTopics.Add(
-                    stringPatternEntry.getKey(),
+                    stringPatternEntry.Key,
                     sourceNode.getTopics(subscriptionUpdates.getUpdates()));
                 log.LogDebug("nodeToSourceTopics {}", nodeToSourceTopics);
             }
@@ -1242,7 +1242,7 @@ public class InternalTopologyBuilder {
                 HashSet<string> updatedTopicsForStateStore = new HashSet<>();
                 foreach (string subscriptionUpdateTopic in subscriptionUpdates.getUpdates())
 {
-                    foreach (Pattern pattern in storePattern.getValue())
+                    foreach (Pattern pattern in storePattern.Value)
 {
                         if (pattern.matcher(subscriptionUpdateTopic).matches())
 {
@@ -1252,13 +1252,13 @@ public class InternalTopologyBuilder {
                 }
                 if (!updatedTopicsForStateStore.isEmpty())
 {
-                    Collection<string> storeTopics = stateStoreNameToSourceTopics[storePattern.getKey());
+                    Collection<string> storeTopics = stateStoreNameToSourceTopics[storePattern.Key);
                     if (storeTopics != null)
 {
                         updatedTopicsForStateStore.AddAll(storeTopics);
                     }
                     stateStoreNameToSourceTopics.Add(
-                        storePattern.getKey(),
+                        storePattern.Key,
                         Collections.unmodifiableSet(updatedTopicsForStateStore));
                 }
             }
@@ -1325,7 +1325,7 @@ public class InternalTopologyBuilder {
         Dictionary<string, List<string>> results = new HashMap<>();
         foreach (Map.Entry<string, HashSet<string>> entry in stateStoreNameToSourceTopics.entrySet())
 {
-            results.Add(entry.getKey(), maybeDecorateInternalSourceTopics(entry.getValue()));
+            results.Add(entry.Key, maybeDecorateInternalSourceTopics(entry.Value));
         }
         return results;
     }
@@ -1428,17 +1428,17 @@ public class InternalTopologyBuilder {
 {
         TopologyDescription description = new TopologyDescription();
 
-        foreach (Map.Entry<Integer, HashSet<string>> nodeGroup in makeNodeGroups().entrySet())
+        foreach (Map.Entry<int, HashSet<string>> nodeGroup in makeNodeGroups().entrySet())
 {
 
-            HashSet<string> allNodesOfGroups = nodeGroup.getValue();
+            HashSet<string> allNodesOfGroups = nodeGroup.Value;
             bool isNodeGroupOfGlobalStores = nodeGroupContainsGlobalSourceNode(allNodesOfGroups);
 
             if (!isNodeGroupOfGlobalStores)
 {
-                describeSubtopology(description, nodeGroup.getKey(), allNodesOfGroups);
+                describeSubtopology(description, nodeGroup.Key, allNodesOfGroups);
             } else {
-                describeGlobalStore(description, allNodesOfGroups, nodeGroup.getKey());
+                describeGlobalStore(description, allNodesOfGroups, nodeGroup.Key);
             }
         }
 
@@ -1484,7 +1484,7 @@ public class InternalTopologyBuilder {
         return false;
     }
 
-    private static class NodeComparator : Comparator<TopologyDescription.Node>, Serializable {
+    private static NodeComparator : Comparator<TopologyDescription.Node>, Serializable {
 
         
         public int compare(TopologyDescription.Node node1,
@@ -1522,7 +1522,7 @@ public class InternalTopologyBuilder {
     }
 
     private void describeSubtopology(TopologyDescription description,
-                                     Integer subtopologyId,
+                                     int subtopologyId,
                                      HashSet<string> nodeNames)
 {
 
@@ -1551,7 +1551,7 @@ public class InternalTopologyBuilder {
                 new HashSet<>(nodesByName.values())));
     }
 
-    public static class GlobalStore : TopologyDescription.GlobalStore {
+    public static GlobalStore : TopologyDescription.GlobalStore {
         private Source source;
         private Processor processor;
         private int id;
@@ -1619,7 +1619,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public abstract static class AbstractNode : TopologyDescription.Node {
+    public abstract static AbstractNode : TopologyDescription.Node {
         string name;
         HashSet<TopologyDescription.Node> predecessors = new TreeSet<>(NODE_COMPARATOR);
         HashSet<TopologyDescription.Node> successors = new TreeSet<>(NODE_COMPARATOR);
@@ -1629,7 +1629,7 @@ public class InternalTopologyBuilder {
 
         AbstractNode(string name)
 {
-            Objects.requireNonNull(name, "name cannot be null");
+            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
             this.name = name;
             this.size = 1;
         }
@@ -1663,7 +1663,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public static class Source : AbstractNode : TopologyDescription.Source {
+    public static Source : AbstractNode : TopologyDescription.Source {
         private HashSet<string> topics;
         private Pattern topicPattern;
 
@@ -1671,21 +1671,21 @@ public class InternalTopologyBuilder {
                       HashSet<string> topics,
                       Pattern pattern)
 {
-            super(name);
+            base(name);
             if (topics == null && pattern == null)
 {
-                throw new ArgumentException("Either topics or pattern must be not-null, but both are null.");
+                throw new System.ArgumentException("Either topics or pattern must be not-null, but both are null.");
             }
             if (topics != null && pattern != null)
 {
-                throw new ArgumentException("Either topics or pattern must be null, but both are not null.");
+                throw new System.ArgumentException("Either topics or pattern must be null, but both are not null.");
             }
 
             this.topics = topics;
             this.topicPattern = pattern;
         }
 
-        @Deprecated
+        [System.Obsolete]
         
         public string topics()
 {
@@ -1746,13 +1746,13 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public static class Processor : AbstractNode : TopologyDescription.Processor {
+    public static Processor : AbstractNode : TopologyDescription.Processor {
         private HashSet<string> stores;
 
         public Processor(string name,
                          HashSet<string> stores)
 {
-            super(name);
+            base(name);
             this.stores = stores;
         }
 
@@ -1796,20 +1796,20 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public static class Sink : AbstractNode : TopologyDescription.Sink {
+    public static Sink : AbstractNode : TopologyDescription.Sink {
         private TopicNameExtractor topicNameExtractor;
 
         public Sink(string name,
                     TopicNameExtractor topicNameExtractor)
 {
-            super(name);
+            base(name);
             this.topicNameExtractor = topicNameExtractor;
         }
 
         public Sink(string name,
                     string topic)
 {
-            super(name);
+            base(name);
             this.topicNameExtractor = new StaticTopicNameExtractor(topic);
         }
 
@@ -1848,7 +1848,7 @@ public class InternalTopologyBuilder {
 {
                 return "Sink: " + name + " (topic: " + topic() + ")\n      <-- " + nodeNames(predecessors);
             }
-            return "Sink: " + name + " (extractor class: " + topicNameExtractor + ")\n      <-- "
+            return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
                 + nodeNames(predecessors);
         }
 
@@ -1878,7 +1878,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public static class Subtopology : org.apache.kafka.streams.TopologyDescription.Subtopology {
+    public static Subtopology : org.apache.kafka.streams.TopologyDescription.Subtopology {
         private int id;
         private HashSet<TopologyDescription.Node> nodes;
 
@@ -1949,7 +1949,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    public static class TopicsInfo {
+    public static TopicsInfo {
         HashSet<string> sinkTopics;
         HashSet<string> sourceTopics;
         public Dictionary<string, InternalTopicConfig> stateChangelogTopics;
@@ -1997,7 +1997,7 @@ public class InternalTopologyBuilder {
         }
     }
 
-    private static class GlobalStoreComparator : Comparator<TopologyDescription.GlobalStore>, Serializable {
+    private static GlobalStoreComparator : Comparator<TopologyDescription.GlobalStore>, Serializable {
         
         public int compare(TopologyDescription.GlobalStore globalStore1,
                            TopologyDescription.GlobalStore globalStore2)
@@ -2012,7 +2012,7 @@ public class InternalTopologyBuilder {
 
     private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
 
-    private static class SubtopologyComparator : Comparator<TopologyDescription.Subtopology>, Serializable {
+    private static SubtopologyComparator : Comparator<TopologyDescription.Subtopology>, Serializable {
         
         public int compare(TopologyDescription.Subtopology subtopology1,
                            TopologyDescription.Subtopology subtopology2)
@@ -2027,7 +2027,7 @@ public class InternalTopologyBuilder {
 
     private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
 
-    public static class TopologyDescription : org.apache.kafka.streams.TopologyDescription {
+    public static TopologyDescription : org.apache.kafka.streams.TopologyDescription {
         private TreeSet<TopologyDescription.Subtopology> subtopologies = new TreeSet<>(SUBTOPOLOGY_COMPARATOR);
         private TreeSet<TopologyDescription.GlobalStore> globalStores = new TreeSet<>(GLOBALSTORE_COMPARATOR);
 
@@ -2144,7 +2144,7 @@ public class InternalTopologyBuilder {
      * Used to capture subscribed topic via Patterns discovered during the
      * partition assignment process.
      */
-    public static class SubscriptionUpdates {
+    public static SubscriptionUpdates {
 
         private HashSet<string> updatedTopicSubscriptions = new HashSet<>();
 

@@ -40,7 +40,7 @@ interface StateManager : Checkpointable {
     void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
                                               InternalProcessorContext processorContext);
 
-    void close(bool clean) throws IOException;
+    void close(bool clean);
 
     IStateStore getGlobalStore(string name);
 

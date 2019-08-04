@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -47,27 +47,27 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
         this.Remove = Remove;
     }
 
-    
+
     public void enableSendingOldValues()
 {
         sendOldValues = true;
     }
 
-    
+
     public Processor<K, Change<V>> get()
 {
         return new KTableAggregateProcessor();
     }
 
-    private class KTableAggregateProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableAggregateProcessor : AbstractProcessor<K, Change<V>> {
         private TimestampedKeyValueStore<K, T> store;
         private TimestampedTupleForwarder<K, T> tupleForwarder;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             store = (TimestampedKeyValueStore<K, T>) context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<>(
                 store,
@@ -79,7 +79,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
         /**
          * @throws StreamsException if key is null
          */
-        
+
         public void process( K key,  Change<V> value)
 {
             // the keys should never be null
@@ -130,7 +130,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
 
     }
 
-    
+
     public KTableValueGetterSupplier<K, T> view()
 {
         return new KTableMaterializedValueGetterSupplier<>(storeName);

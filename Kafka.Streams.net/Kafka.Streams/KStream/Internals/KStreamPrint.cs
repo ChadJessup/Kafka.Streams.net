@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
 
 
-public class KStreamPrint<K, V> : ProcessorSupplier<K, V> {
+public KStreamPrint<K, V> : ProcessorSupplier<K, V> {
 
     private  ForeachAction<K, V> action;
     
@@ -36,7 +36,7 @@ public class KStreamPrint<K, V> : ProcessorSupplier<K, V> {
         return new KStreamPrintProcessor();
     }
 
-    private class KStreamPrintProcessor : AbstractProcessor<K, V> {
+    private KStreamPrintProcessor : AbstractProcessor<K, V> {
 
         
         public void process( K key,  V value)

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -41,28 +41,28 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
         this.removeReducer = removeReducer;
     }
 
-    
+
     public void enableSendingOldValues()
 {
         sendOldValues = true;
     }
 
-    
+
     public Processor<K, Change<V>> get()
 {
         return new KTableReduceProcessor();
     }
 
-    private class KTableReduceProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableReduceProcessor : AbstractProcessor<K, Change<V>> {
 
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<>(
                 store,
@@ -74,7 +74,7 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
         /**
          * @throws StreamsException if key is null
          */
-        
+
         public void process( K key,  Change<V> value)
 {
             // the keys should never be null
@@ -119,7 +119,7 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
         }
     }
 
-    
+
     public KTableValueGetterSupplier<K, V> view()
 {
         return new KTableMaterializedValueGetterSupplier<>(storeName);

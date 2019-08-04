@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
 
 
-public class ChangedDeserializer<T> : Deserializer<Change<T>> {
+public ChangedDeserializer<T> : Deserializer<Change<T>> {
 
     private static  int NEWFLAG_SIZE = 1;
 

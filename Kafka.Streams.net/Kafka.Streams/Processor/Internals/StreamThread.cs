@@ -63,7 +63,7 @@ using Kafka.Common.Utils.Time;
 
 
 
-public class StreamThread : Thread {
+public StreamThread : Thread {
 
     /**
      * Stream thread states are the possible states that a stream thread can be in.
@@ -129,9 +129,9 @@ public class StreamThread : Thread {
     public enum State : ThreadStateTransitionValidator {
         CREATED(1, 5), STARTING(2, 5), PARTITIONS_REVOKED(3, 5), PARTITIONS_ASSIGNED(2, 4, 5), RUNNING(2, 5), PENDING_SHUTDOWN(6), DEAD;
 
-        private HashSet<Integer> validTransitions = new HashSet<>();
+        private HashSet<int> validTransitions = new HashSet<>();
 
-        State(Integer[] validTransitions)
+        State(int[] validTransitions)
 {
             this.validTransitions.AddAll(Arrays.asList(validTransitions));
         }
@@ -256,7 +256,7 @@ public class StreamThread : Thread {
         }
     }
 
-    static class RebalanceListener : ConsumerRebalanceListener {
+    static RebalanceListener : ConsumerRebalanceListener {
         private ITime time;
         private TaskManager taskManager;
         private StreamThread streamThread;
@@ -370,7 +370,7 @@ public class StreamThread : Thread {
         }
     }
 
-    static abstract class AbstractTaskCreator<T : Task> {
+    static abstract AbstractTaskCreator<T : Task> {
         string applicationId;
         InternalTopologyBuilder builder;
         StreamsConfig config;
@@ -415,8 +415,8 @@ public class StreamThread : Thread {
             List<T> createdTasks = new List<>();
             foreach (Map.Entry<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated.entrySet())
 {
-                TaskId taskId = newTaskAndPartitions.getKey();
-                HashSet<TopicPartition> partitions = newTaskAndPartitions.getValue();
+                TaskId taskId = newTaskAndPartitions.Key;
+                HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
                 T task = createTask(consumer, taskId, partitions);
                 if (task != null)
 {
@@ -433,7 +433,7 @@ public class StreamThread : Thread {
         public void close() {}
     }
 
-    static class TaskCreator : AbstractTaskCreator<StreamTask> {
+    static TaskCreator : AbstractTaskCreator<StreamTask> {
         private ThreadCache cache;
         private KafkaClientSupplier clientSupplier;
         private string threadClientId;
@@ -452,7 +452,7 @@ public class StreamThread : Thread {
                     string threadClientId,
                     Logger log)
 {
-            super(
+            base(
                 builder,
                 config,
                 streamsMetrics,
@@ -517,7 +517,7 @@ public class StreamThread : Thread {
         }
     }
 
-    static class StandbyTaskCreator : AbstractTaskCreator<StandbyTask> {
+    static StandbyTaskCreator : AbstractTaskCreator<StandbyTask> {
         private Sensor createTaskSensor;
 
         StandbyTaskCreator(InternalTopologyBuilder builder,
@@ -528,7 +528,7 @@ public class StreamThread : Thread {
                            ITime time,
                            Logger log)
 {
-            super(
+            base(
                 builder,
                 config,
                 streamsMetrics,
@@ -574,7 +574,7 @@ public class StreamThread : Thread {
     private Logger log;
     private string logPrefix;
     private object stateLock;
-    private Duration pollTime;
+    private TimeSpan pollTime;
     private long commitTimeMs;
     private int maxPollTimeMs;
     private string originalReset;
@@ -623,12 +623,12 @@ public class StreamThread : Thread {
 
         string logPrefix = string.Format("stream-thread [%s] ", threadClientId);
         LogContext logContext = new LogContext(logPrefix);
-        Logger log = logContext.logger(StreamThread.class);
+        Logger log = logContext.logger(StreamThread);
 
         log.info("Creating restore consumer client");
         Dictionary<string, object> restoreConsumerConfigs = config.getRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
         Consumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs);
-        Duration pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
+        TimeSpan pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
         StoreChangelogReader changelogReader = new StoreChangelogReader(restoreConsumer, pollTime, userStateRestoreListener, logContext);
 
         Producer<byte[], byte[]> threadProducer = null;
@@ -721,9 +721,9 @@ public class StreamThread : Thread {
                         LogContext logContext,
                         AtomicInteger assignmentErrorCode)
 {
-        super(threadClientId);
+        base(threadClientId);
 
-        this.stateLock = new Object();
+        this.stateLock = new object();
         this.standbyRecords = new HashMap<>();
 
         this.streamsMetrics = streamsMetrics;
@@ -745,7 +745,7 @@ public class StreamThread : Thread {
         this.time = time;
         this.builder = builder;
         this.logPrefix = logContext.logPrefix();
-        this.log = logContext.logger(StreamThread.class);
+        this.log = logContext.logger(StreamThread);
         this.rebalanceListener = new RebalanceListener(time, taskManager, this, this.log);
         this.taskManager = taskManager;
         this.producer = producer;
@@ -763,10 +763,10 @@ public class StreamThread : Thread {
         this.numIterations = 1;
     }
 
-    private static class InternalConsumerConfig : ConsumerConfig {
+    private static InternalConsumerConfig : ConsumerConfig {
         private InternalConsumerConfig(Dictionary<string, object> props)
 {
-            super(ConsumerConfig.AddDeserializerToConfig(props, new ByteArrayDeserializer(), new ByteArrayDeserializer()), false);
+            base(ConsumerConfig.AddDeserializerToConfig(props, new ByteArrayDeserializer(), new ByteArrayDeserializer()), false);
         }
     }
 
@@ -1005,7 +1005,7 @@ public class StreamThread : Thread {
      * @return Next batch of records or null if no records available.
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    private ConsumerRecords<byte[], byte[]> pollRequests(Duration pollTime)
+    private ConsumerRecords<byte[], byte[]> pollRequests(TimeSpan pollTime)
 {
         ConsumerRecords<byte[], byte[]> records = null;
 
@@ -1194,8 +1194,8 @@ public class StreamThread : Thread {
 
                     foreach (Map.Entry<TopicPartition, List<ConsumerRecord<byte[], byte[]>>> entry in standbyRecords.entrySet())
 {
-                        TopicPartition partition = entry.getKey();
-                        List<ConsumerRecord<byte[], byte[]>> remaining = entry.getValue();
+                        TopicPartition partition = entry.Key;
+                        List<ConsumerRecord<byte[], byte[]>> remaining = entry.Value;
                         if (remaining != null)
 {
                             StandbyTask task = taskManager.standbyTask(partition);
@@ -1389,13 +1389,13 @@ public class StreamThread : Thread {
         HashSet<TaskMetadata> activeTasksMetadata = new HashSet<>();
         foreach (Map.Entry<TaskId, StreamTask> task in activeTasks.entrySet())
 {
-            activeTasksMetadata.Add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
-            producerClientIds.Add(getTaskProducerClientId(getName(), task.getKey()));
+            activeTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
+            producerClientIds.Add(getTaskProducerClientId(getName(), task.Key));
         }
         HashSet<TaskMetadata> standbyTasksMetadata = new HashSet<>();
         foreach (Map.Entry<TaskId, StandbyTask> task in standbyTasks.entrySet())
 {
-            standbyTasksMetadata.Add(new TaskMetadata(task.getKey().ToString(), task.getValue().partitions()));
+            standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
         }
 
         string adminClientId = threadMetadata.adminClientId();

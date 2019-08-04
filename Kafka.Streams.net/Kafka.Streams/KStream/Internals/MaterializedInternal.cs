@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -24,7 +24,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S> {
+public MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S> {
 
     private  bool queriable;
 
@@ -37,7 +37,7 @@ public class MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S>
                                  InternalNameProvider nameProvider,
                                  string generatedStorePrefix)
 {
-        super(materialized);
+        base(materialized);
 
         // if storeName is not provided, the corresponding KTable would never be queryable;
         // but we still need to provide an internal name for it in case we materialize.
@@ -92,7 +92,7 @@ public class MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S>
         return cachingEnabled;
     }
 
-    Duration retention()
+    TimeSpan retention()
 {
         return retention;
     }

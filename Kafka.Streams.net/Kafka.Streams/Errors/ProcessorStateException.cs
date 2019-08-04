@@ -22,22 +22,22 @@ namespace Kafka.Streams.Errors {
  *
  * @see org.apache.kafka.streams.processor.IStateStore
  */
-public class ProcessorStateException : StreamsException {
+public ProcessorStateException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
     public ProcessorStateException( string message)
 {
-        super(message);
+        base(message);
     }
 
     public ProcessorStateException( string message,  Throwable throwable)
 {
-        super(message, throwable);
+        base(message, throwable);
     }
 
     public ProcessorStateException( Throwable throwable)
 {
-        super(throwable);
+        base(throwable);
     }
 }

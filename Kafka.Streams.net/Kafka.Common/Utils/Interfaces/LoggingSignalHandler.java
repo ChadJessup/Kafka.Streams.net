@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class LoggingSignalHandler {
+public LoggingSignalHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(LoggingSignalHandler.class);
+    private static final Logger log = new LoggerFactory().CreateLogger<LoggingSignalHandler);
 
     private static final List<String> SIGNALS = Arrays.asList("TERM", "INT", "HUP");
 
@@ -42,13 +42,13 @@ public class LoggingSignalHandler {
     private final Method signalHandlerHandleMethod;
 
     /**
-     * Create an instance of this class.
+     * Create an instance of this.
      *
      * @throws ReflectiveOperationException if the underlying API has changed in an incompatible manner.
      */
     public LoggingSignalHandler() throws ReflectiveOperationException {
         signalClass = Class.forName("sun.misc.Signal");
-        signalConstructor = signalClass.getConstructor(String.class);
+        signalConstructor = signalClass.getConstructor(String);
         signalHandlerClass = Class.forName("sun.misc.SignalHandler");
         signalHandlerHandleMethod = signalHandlerClass.getMethod("handle", signalClass);
         signalHandleMethod = signalClass.getMethod("handle", signalClass, signalHandlerClass);
@@ -60,11 +60,11 @@ public class LoggingSignalHandler {
      * does not currently work on Windows.
      *
      * @implNote sun.misc.Signal and sun.misc.SignalHandler are described as "not encapsulated" in
-     * http://openjdk.java.net/jeps/260. However, they are not available in the compile classpath if the `--release`
+     * http://openjdk.java.net/jeps/260. However, they are not available in the compilepath if the `--release`
      * flag is used. As a workaround, we rely on reflection.
      */
     public void register() throws ReflectiveOperationException {
-        Map<String, Object> jvmSignalHandlers = new ConcurrentHashMap<>();
+        Map<String, object> jvmSignalHandlers = new ConcurrentHashMap<>();
 
         foreach (String signal in SIGNALS)
 {
@@ -73,24 +73,24 @@ public class LoggingSignalHandler {
         log.info("Registered signal handlers for " + String.join(", ", SIGNALS));
     }
 
-    private Object createSignalHandler(final Map<String, Object> jvmSignalHandlers)
+    private object createSignalHandler(final Map<String, object> jvmSignalHandlers)
 {
         InvocationHandler invocationHandler = new InvocationHandler()
 {
 
-            private String getName(Object signal) throws ReflectiveOperationException {
+            private String getName(object signal) throws ReflectiveOperationException {
                 return (String) signalGetNameMethod.invoke(signal);
             }
 
-            private void handle(Object signalHandler, Object signal) throws ReflectiveOperationException {
+            private void handle(object signalHandler, object signal) throws ReflectiveOperationException {
                 signalHandlerHandleMethod.invoke(signalHandler, signal);
             }
 
             
-            public Object invoke(Object proxy, Method method, Object[] args] throws Throwable {
-                Object signal = args[0];
+            public object invoke(object proxy, Method method, object[] args] throws Throwable {
+                object signal = args[0];
                 log.info("Terminating process due to signal {}", signal);
-                Object handler = jvmSignalHandlers[getName(signal));
+                object handler = jvmSignalHandlers[getName(signal));
                 if (handler != null)
                     handle(handler, signal);
                 return null;
@@ -100,10 +100,10 @@ public class LoggingSignalHandler {
                 invocationHandler);
     }
 
-    private void register(String signalName, final Map<String, Object> jvmSignalHandlers) throws ReflectiveOperationException {
-        Object signal = signalConstructor.newInstance(signalName);
-        Object signalHandler = createSignalHandler(jvmSignalHandlers);
-        Object oldHandler = signalHandleMethod.invoke(null, signal, signalHandler);
+    private void register(String signalName, final Map<String, object> jvmSignalHandlers) throws ReflectiveOperationException {
+        object signal = signalConstructor.newInstance(signalName);
+        object signalHandler = createSignalHandler(jvmSignalHandlers);
+        object oldHandler = signalHandleMethod.invoke(null, signal, signalHandler);
         if (oldHandler != null)
             jvmSignalHandlers.Add(signalName, oldHandler);
     }

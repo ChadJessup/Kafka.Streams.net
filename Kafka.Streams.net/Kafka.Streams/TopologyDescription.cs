@@ -117,7 +117,7 @@ public interface TopologyDescription {
          * @return comma separated list of topic names or pattern (as string)
          * @deprecated use {@link #topicSet()} or {@link #topicPattern()} instead
          */
-        @Deprecated
+        [System.Obsolete]
         string topics();
 
         /**
@@ -156,9 +156,9 @@ public interface TopologyDescription {
         string topic();
 
         /**
-         * The {@link TopicNameExtractor} class that this sink node uses to dynamically extract the topic name to write to.
+         * The {@link TopicNameExtractor} that this sink node uses to dynamically extract the topic name to write to.
          * Could be {@code null} if the topic name is not dynamically determined.
-         * @return the {@link TopicNameExtractor} class used get the topic name
+         * @return the {@link TopicNameExtractor} used get the topic name
          */
         TopicNameExtractor topicNameExtractor();
     }

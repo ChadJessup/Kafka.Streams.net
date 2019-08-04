@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-public class RocksDBTimestampedSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<TimestampedSegment>
+public RocksDBTimestampedSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<TimestampedSegment>
 {
 
     RocksDBTimestampedSegmentedBytesStore(string name,
@@ -25,6 +25,6 @@ public class RocksDBTimestampedSegmentedBytesStore : AbstractRocksDBSegmentedByt
                                           long segmentInterval,
                                           KeySchema keySchema)
 {
-        super(name, metricScope, keySchema, new TimestampedSegments(name, retention, segmentInterval));
+        base(name, metricScope, keySchema, new TimestampedSegments(name, retention, segmentInterval));
     }
 }

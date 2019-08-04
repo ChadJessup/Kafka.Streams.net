@@ -44,7 +44,7 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see WallclockTimestampExtractor
  */
 @InterfaceStability.Evolving
-abstract class ExtractRecordMetadataTimestamp : TimestampExtractor {
+abstract ExtractRecordMetadataTimestamp : TimestampExtractor {
 
     /**
      * Extracts the embedded metadata timestamp from the given {@link ConsumerRecord}.
@@ -54,7 +54,7 @@ abstract class ExtractRecordMetadataTimestamp : TimestampExtractor {
      * @return the embedded metadata timestamp of the given {@link ConsumerRecord}
      */
     
-    public long extract(ConsumerRecord<Object, object> record, long partitionTime)
+    public long extract(ConsumerRecord<object, object> record, long partitionTime)
 {
         long timestamp = record.timestamp();
 
@@ -74,7 +74,7 @@ abstract class ExtractRecordMetadataTimestamp : TimestampExtractor {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return a new timestamp for the record (if negative, record will not be processed but dropped silently)
      */
-    public abstract long onInvalidTimestamp(ConsumerRecord<Object, object> record,
+    public abstract long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                             long recordTimestamp,
                                             long partitionTime);
 }

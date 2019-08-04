@@ -28,7 +28,7 @@ using Kafka.Streams.kstream.Windowed;
  * While the window start- and end-timestamp are fixed per window, the value-side timestamp is used
  * to store the last update timestamp of the corresponding window.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  */
 public interface TimestampedWindowStore<K, V> : WindowStore<K, ValueAndTimestamp<V>> { }

@@ -31,13 +31,13 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
+public InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 {
     private string name;
     private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
     private volatile bool open = false;
 
-    private static Logger LOG = LoggerFactory.getLogger(InMemoryKeyValueStore.class);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<InMemoryKeyValueStore);
 
     public InMemoryKeyValueStore(string name)
 {
@@ -160,7 +160,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         open = false;
     }
 
-    private static class InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
+    private static InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
 {
         private Iterator<Map.Entry<Bytes, byte[]>> iter;
 
@@ -179,7 +179,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         public KeyValue<Bytes, byte[]> next()
 {
             Map.Entry<Bytes, byte[]> entry = iter.next();
-            return new KeyValue<>(entry.getKey(), entry.getValue());
+            return new KeyValue<>(entry.Key, entry.Value);
         }
 
         

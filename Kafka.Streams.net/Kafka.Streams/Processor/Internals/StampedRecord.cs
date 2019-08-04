@@ -19,11 +19,11 @@ namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.header.Headers;
 
-public class StampedRecord : Stamped<ConsumerRecord<Object, object>> {
+public StampedRecord : Stamped<ConsumerRecord<object, object>> {
 
-    public StampedRecord(ConsumerRecord<Object, object> record, long timestamp)
+    public StampedRecord(ConsumerRecord<object, object> record, long timestamp)
 {
-        super(record, timestamp);
+        base(record, timestamp);
     }
 
     public string topic()

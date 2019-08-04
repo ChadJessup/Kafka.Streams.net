@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 
@@ -46,8 +46,8 @@ namespace Kafka.streams.kstream;
  * {@link #transform(TransformerSupplier, string...) transform(...)}, and
  * {@link #transformValues(ValueTransformerSupplier, string...) transformValues(...)}.
  *
- * @param <K> Type of keys
- * @param <V> Type of values
+ * @param Type of keys
+ * @param Type of values
  * @see KTable
  * @see KGroupedStream
  * @see StreamsBuilder#stream(string)
@@ -115,8 +115,8 @@ public interface KStream<K, V> {
      * length of the value string.
      * <pre>{@code
      * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
-     * KStream<Integer, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, Integer> {
-     *     Integer apply(Byte[] key, string value)
+     * KStream<int, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, int> {
+     *     int apply(Byte[] key, string value)
 {
      *         return value.Length;
      *     }
@@ -126,7 +126,7 @@ public interface KStream<K, V> {
      * join) is applied to the result {@code KStream}.
      *
      * @param mapper a {@link KeyValueMapper} that computes a new key for each record
-     * @param <KR>   the new key type of the result stream
+     * @param   the new key type of the result stream
      * @return a {@code KStream} that contains records with new key (possibly of different type) and unmodified value
      * @see #map(KeyValueMapper)
      * @see #flatMap(KeyValueMapper)
@@ -135,7 +135,7 @@ public interface KStream<K, V> {
      * @see #flatMapValues(ValueMapper)
      * @see #flatMapValues(ValueMapperWithKey)
      */
-    <KR> KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper);
+    KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper);
 
     /**
      * Set a new key (with possibly new type) for each input record.
@@ -148,8 +148,8 @@ public interface KStream<K, V> {
      * length of the value string.
      * <pre>{@code
      * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
-     * KStream<Integer, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, Integer> {
-     *     Integer apply(Byte[] key, string value)
+     * KStream<int, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, int> {
+     *     int apply(Byte[] key, string value)
 {
      *         return value.Length;
      *     }
@@ -160,7 +160,7 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link KeyValueMapper} that computes a new key for each record
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <KR>   the new key type of the result stream
+     * @param   the new key type of the result stream
      * @return a {@code KStream} that contains records with new key (possibly of different type) and unmodified value
      * @see #map(KeyValueMapper)
      * @see #flatMap(KeyValueMapper)
@@ -169,7 +169,7 @@ public interface KStream<K, V> {
      * @see #flatMapValues(ValueMapper)
      * @see #flatMapValues(ValueMapperWithKey)
      */
-    <KR> KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper,
+    KStream<KR, V> selectKey( IKeyValueMapper<K, V, KR> mapper,
                                    Named named);
 
     /**
@@ -183,8 +183,8 @@ public interface KStream<K, V> {
      * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, Integer>> {
-     *     KeyValue<string, Integer> apply(string key, string value)
+     * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, int>> {
+     *     KeyValue<string, int> apply(string key, string value)
 {
      *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
      *     }
@@ -196,8 +196,8 @@ public interface KStream<K, V> {
      * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
      *
      * @param mapper a {@link KeyValueMapper} that computes a new output record
-     * @param <KR>   the key type of the result stream
-     * @param <VR>   the value type of the result stream
+     * @param   the key type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with new key and value (possibly both of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #flatMap(KeyValueMapper)
@@ -209,7 +209,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<? : KR, VR>> mapper);
+    KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper);
 
     /**
      * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -222,8 +222,8 @@ public interface KStream<K, V> {
      * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, Integer>> {
-     *     KeyValue<string, Integer> apply(string key, string value)
+     * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, int>> {
+     *     KeyValue<string, int> apply(string key, string value)
 {
      *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
      *     }
@@ -236,8 +236,8 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link KeyValueMapper} that computes a new output record
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <KR>   the key type of the result stream
-     * @param <VR>   the value type of the result stream
+     * @param   the key type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with new key and value (possibly both of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #flatMap(KeyValueMapper)
@@ -249,7 +249,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<? : KR, VR>> mapper,
+    KStream<KR, VR> map( IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper,
                                   Named named);
 
     /**
@@ -262,8 +262,8 @@ public interface KStream<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapper<string, Integer> {
-     *     Integer apply(string value)
+     * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
+     *     int apply(string value)
 {
      *         return value.split(" ").Length;
      *     }
@@ -274,7 +274,7 @@ public interface KStream<K, V> {
      * is applied to the result {@code KStream}. (cf. {@link #map(KeyValueMapper)})
      *
      * @param mapper a {@link ValueMapper} that computes a new output value
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -285,7 +285,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> mapValues( ValueMapper<V, VR> mapper);
+    KStream<K, VR> mapValues( ValueMapper<V, VR> mapper);
 
 
     /**
@@ -298,8 +298,8 @@ public interface KStream<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapper<string, Integer> {
-     *     Integer apply(string value)
+     * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapper<string, int> {
+     *     int apply(string value)
 {
      *         return value.split(" ").Length;
      *     }
@@ -311,7 +311,7 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link ValueMapper} that computes a new output value
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -322,7 +322,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> mapValues( ValueMapper<V, VR> mapper,
+    KStream<K, VR> mapValues( ValueMapper<V, VR> mapper,
                                    Named named);
 
     /**
@@ -335,8 +335,8 @@ public interface KStream<K, V> {
      * The example below counts the number of tokens of key and value strings.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value)
+     * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
+     *     int apply(string readOnlyKey, string value)
 {
      *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
@@ -348,7 +348,7 @@ public interface KStream<K, V> {
      * is applied to the result {@code KStream}. (cf. {@link #map(KeyValueMapper)})
      *
      * @param mapper a {@link ValueMapperWithKey} that computes a new output value
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -359,7 +359,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper);
+    KStream<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper);
 
     /**
      * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -371,8 +371,8 @@ public interface KStream<K, V> {
      * The example below counts the number of tokens of key and value strings.
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value)
+     * KStream<string, int> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, int> {
+     *     int apply(string readOnlyKey, string value)
 {
      *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
@@ -385,7 +385,7 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link ValueMapperWithKey} that computes a new output value
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -396,7 +396,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
+    KStream<K, VR> mapValues( ValueMapperWithKey<K, V, VR> mapper,
                                    Named named);
 
     /**
@@ -411,12 +411,12 @@ public interface KStream<K, V> {
      * and emit a record {@code <word:1>} for each word.
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.flatMap(
-     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, Integer>>> {
-     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value)
+     * KStream<string, int> outputStream = inputStream.flatMap(
+     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, int>>> {
+     *         Iterable<KeyValue<string, int>> apply(byte[] key, string value)
 {
      *             string[] tokens = value.split(" ");
-     *             List<KeyValue<string, Integer>> result = new List<>(tokens.Length);
+     *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
      *
      *             for(string token : tokens)
 {
@@ -434,8 +434,8 @@ public interface KStream<K, V> {
      * or join) is applied to the result {@code KStream}. (cf. {@link #flatMapValues(ValueMapper)})
      *
      * @param mapper a {@link KeyValueMapper} that computes the new output records
-     * @param <KR>   the key type of the result stream
-     * @param <VR>   the value type of the result stream
+     * @param   the key type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -450,7 +450,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<? : KeyValue<? : KR, VR>>> mapper);
+    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper);
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -464,12 +464,12 @@ public interface KStream<K, V> {
      * and emit a record {@code <word:1>} for each word.
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
-     * KStream<string, Integer> outputStream = inputStream.flatMap(
-     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, Integer>>> {
-     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value)
+     * KStream<string, int> outputStream = inputStream.flatMap(
+     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, int>>> {
+     *         Iterable<KeyValue<string, int>> apply(byte[] key, string value)
 {
      *             string[] tokens = value.split(" ");
-     *             List<KeyValue<string, Integer>> result = new List<>(tokens.Length);
+     *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
      *
      *             for(string token : tokens)
 {
@@ -488,8 +488,8 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link KeyValueMapper} that computes the new output records
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <KR>   the key type of the result stream
-     * @param <VR>   the value type of the result stream
+     * @param   the key type of the result stream
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -504,7 +504,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<? : KeyValue<? : KR, VR>>> mapper,
+    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper,
                                       Named named);
 
     /**
@@ -535,7 +535,7 @@ public interface KStream<K, V> {
      * is applied to the result {@code KStream}. (cf. {@link #flatMap(KeyValueMapper)})
      *
      * @param mapper a {@link ValueMapper} the computes the new output values
-     * @param <VR>      the value type of the result stream
+     * @param      the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -549,7 +549,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<? : VR>> mapper);
+    KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper);
 
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -580,7 +580,7 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link ValueMapper} the computes the new output values
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>      the value type of the result stream
+     * @param      the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -594,7 +594,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<? : VR>> mapper,
+    KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper,
                                        Named named);
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -606,12 +606,12 @@ public interface KStream<K, V> {
      * This is a stateless record-by-record operation (cf. {@link #transformValues(ValueTransformerWithKeySupplier, string...)}
      * for stateful value transformation).
      * <p>
-     * The example below splits input records {@code <Integer:string>}, with key=1, containing sentences as values
+     * The example below splits input records {@code <int:string>}, with key=1, containing sentences as values
      * into their words.
      * <pre>{@code
-     * KStream<Integer, string> inputStream = builder.stream("topic");
-     * KStream<Integer, string> outputStream = inputStream.flatMapValues(new ValueMapper<Integer, string, Iterable<string>> {
-     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value)
+     * KStream<int, string> inputStream = builder.stream("topic");
+     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, Iterable<string>> {
+     *     Iterable<int, string> apply(int readOnlyKey, string value)
 {
      *         if(readOnlyKey == 1)
 {
@@ -631,7 +631,7 @@ public interface KStream<K, V> {
      * is applied to the result {@code KStream}. (cf. {@link #flatMap(KeyValueMapper)})
      *
      * @param mapper a {@link ValueMapperWithKey} the computes the new output values
-     * @param <VR>      the value type of the result stream
+     * @param      the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -645,7 +645,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<? : VR>> mapper);
+    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper);
 
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -657,12 +657,12 @@ public interface KStream<K, V> {
      * This is a stateless record-by-record operation (cf. {@link #transformValues(ValueTransformerWithKeySupplier, string...)}
      * for stateful value transformation).
      * <p>
-     * The example below splits input records {@code <Integer:string>}, with key=1, containing sentences as values
+     * The example below splits input records {@code <int:string>}, with key=1, containing sentences as values
      * into their words.
      * <pre>{@code
-     * KStream<Integer, string> inputStream = builder.stream("topic");
-     * KStream<Integer, string> outputStream = inputStream.flatMapValues(new ValueMapper<Integer, string, Iterable<string>> {
-     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value)
+     * KStream<int, string> inputStream = builder.stream("topic");
+     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, Iterable<string>> {
+     *     Iterable<int, string> apply(int readOnlyKey, string value)
 {
      *         if(readOnlyKey == 1)
 {
@@ -683,7 +683,7 @@ public interface KStream<K, V> {
      *
      * @param mapper a {@link ValueMapperWithKey} the computes the new output values
      * @param named  a {@link Named} config used to name the processor in the topology
-     * @param <VR>      the value type of the result stream
+     * @param      the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified keys and new values of different type
      * @see #selectKey(KeyValueMapper)
      * @see #map(KeyValueMapper)
@@ -697,7 +697,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <VR> KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<? : VR>> mapper,
+    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper,
                                        Named named);
     /**
      * Print the records of this KStream using the options provided by {@link Printed}
@@ -716,7 +716,7 @@ public interface KStream<K, V> {
      * @param action an action to perform on each record
      * @see #process(ProcessorSupplier, string...)
      */
-    void foreach( ForeachAction<K, V> action);
+    void ForEach( ForeachAction<K, V> action);
 
     /**
      * Perform an action on each record of {@code KStream}.
@@ -727,7 +727,7 @@ public interface KStream<K, V> {
      * @param named  a {@link Named} config used to name the processor in the topology
      * @see #process(ProcessorSupplier, string...)
      */
-    void foreach( ForeachAction<K, V> action,  Named named);
+    void ForEach( ForeachAction<K, V> action,  Named named);
 
     /**
      * Perform an action on each record of {@code KStream}.
@@ -773,7 +773,7 @@ public interface KStream<K, V> {
      * @param predicates the ordered list of {@link Predicate} instances
      * @return multiple distinct substreams of this {@code KStream}
      */
-    
+
     KStream<K, V>[] branch( Predicate<K, V>[] predicates);
 
     /**
@@ -790,7 +790,7 @@ public interface KStream<K, V> {
      * @param predicates the ordered list of {@link Predicate} instances
      * @return multiple distinct substreams of this {@code KStream}
      */
-    
+
     KStream<K, V>[] branch( Named named,  Predicate<K, V>[] predicates);
 
     /**
@@ -921,9 +921,9 @@ public interface KStream<K, V> {
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(Object, Object)
+     * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(object, object)
      * transform()}.
-     * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
+     * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
      * in which case no record is emitted.
      * <pre>{@code
      * new TransformerSupplier()
@@ -966,22 +966,22 @@ public interface KStream<K, V> {
      * (cf. {@link #transformValues(ValueTransformerSupplier, string...) transformValues()} )
      * <p>
      * Note that it is possible to emit multiple records for each input record by using
-     * {@link IProcessorContext#forward(Object, Object) context#forward()} in
-     * {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * {@link IProcessorContext#forward(object, object) context#forward()} in
+     * {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      * Be aware that a mismatch between the types of the emitted records and the type of the stream would only be
      * detected at runtime.
-     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(Object, Object) context#forward()} should
-     * not be used in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(object, object) context#forward()} should
+     * not be used in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
-     * If in {@link Transformer#transform(Object, Object) Transformer#transform()} multiple records need to be emitted
+     * If in {@link Transformer#transform(object, object) Transformer#transform()} multiple records need to be emitted
      * for each input record, it is recommended to use {@link #flatTransform(TransformerSupplier, string...)
      * flatTransform()}.
      *
      * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <K1>                the key type of the new stream
-     * @param <V1>                the value type of the new stream
+     * @param                the key type of the new stream
+     * @param                the value type of the new stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #map(KeyValueMapper)
      * @see #flatTransform(TransformerSupplier, string...)
@@ -989,8 +989,8 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    <K1, V1> KStream<K1, V1> transform( TransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
-                                        string[] stateStoreNames];
+    KStream<K1, V1> transform( TransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
+                                        string[] stateStoreNames);
 
     /**
      * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -1018,9 +1018,9 @@ public interface KStream<K, V> {
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(Object, Object)
+     * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(object, object)
      * transform()}.
-     * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
+     * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
      * in which case no record is emitted.
      * <pre>{@code
      * new TransformerSupplier()
@@ -1063,23 +1063,23 @@ public interface KStream<K, V> {
      * (cf. {@link #transformValues(ValueTransformerSupplier, string...) transformValues()} )
      * <p>
      * Note that it is possible to emit multiple records for each input record by using
-     * {@link IProcessorContext#forward(Object, Object) context#forward()} in
-     * {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * {@link IProcessorContext#forward(object, object) context#forward()} in
+     * {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      * Be aware that a mismatch between the types of the emitted records and the type of the stream would only be
      * detected at runtime.
-     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(Object, Object) context#forward()} should
-     * not be used in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(object, object) context#forward()} should
+     * not be used in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
-     * If in {@link Transformer#transform(Object, Object) Transformer#transform()} multiple records need to be emitted
+     * If in {@link Transformer#transform(object, object) Transformer#transform()} multiple records need to be emitted
      * for each input record, it is recommended to use {@link #flatTransform(TransformerSupplier, string...)
      * flatTransform()}.
      *
      * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
      * @param named               a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <K1>                the key type of the new stream
-     * @param <V1>                the value type of the new stream
+     * @param                the key type of the new stream
+     * @param                the value type of the new stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #map(KeyValueMapper)
      * @see #flatTransform(TransformerSupplier, string...)
@@ -1087,9 +1087,9 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    <K1, V1> KStream<K1, V1> transform( TransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
+    KStream<K1, V1> transform( TransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
                                         Named named,
-                                        string[] stateStoreNames];
+                                        string[] stateStoreNames);
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -1119,8 +1119,8 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
      * punctuate()}, a schedule must be registered.
      * The {@link Transformer} must return an {@link java.lang.Iterable} type (e.g., any {@link java.util.Collection}
-     * type) in {@link Transformer#transform(Object, Object) transform()}.
-     * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
+     * type) in {@link Transformer#transform(object, object) transform()}.
+     * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
      * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
      * <pre>{@code
      * new TransformerSupplier()
@@ -1167,19 +1167,19 @@ public interface KStream<K, V> {
      * or join) is applied to the result {@code KStream}.
      * (cf. {@link #transformValues(ValueTransformerSupplier, string...) transformValues()})
      * <p>
-     * Note that it is possible to emit records by using {@link IProcessorContext#forward(Object, Object)
-     * context#forward()} in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * Note that it is possible to emit records by using {@link IProcessorContext#forward(object, object)
+     * context#forward()} in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      * Be aware that a mismatch between the types of the emitted records and the type of the stream would only be
      * detected at runtime.
-     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(Object, Object) context#forward()} should
-     * not be used in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(object, object) context#forward()} should
+     * not be used in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      *
      * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <K1>                the key type of the new stream
-     * @param <V1>                the value type of the new stream
+     * @param                the key type of the new stream
+     * @param                the value type of the new stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #flatMap(KeyValueMapper)
      * @see #transform(TransformerSupplier, string...)
@@ -1187,8 +1187,8 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    <K1, V1> KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
-                                            string[] stateStoreNames];
+    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
+                                            string[] stateStoreNames);
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -1218,8 +1218,8 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
      * punctuate()}, a schedule must be registered.
      * The {@link Transformer} must return an {@link java.lang.Iterable} type (e.g., any {@link java.util.Collection}
-     * type) in {@link Transformer#transform(Object, Object) transform()}.
-     * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
+     * type) in {@link Transformer#transform(object, object) transform()}.
+     * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
      * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
      * <pre>{@code
      * new TransformerSupplier()
@@ -1266,20 +1266,20 @@ public interface KStream<K, V> {
      * or join) is applied to the result {@code KStream}.
      * (cf. {@link #transformValues(ValueTransformerSupplier, string...) transformValues()})
      * <p>
-     * Note that it is possible to emit records by using {@link IProcessorContext#forward(Object, Object)
-     * context#forward()} in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * Note that it is possible to emit records by using {@link IProcessorContext#forward(object, object)
+     * context#forward()} in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      * Be aware that a mismatch between the types of the emitted records and the type of the stream would only be
      * detected at runtime.
-     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(Object, Object) context#forward()} should
-     * not be used in {@link Transformer#transform(Object, Object) Transformer#transform()} and
+     * To ensure type-safety at compile-time, {@link IProcessorContext#forward(object, object) context#forward()} should
+     * not be used in {@link Transformer#transform(object, object) Transformer#transform()} and
      * {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) Punctuator#punctuate()}.
      *
      * @param transformerSupplier an instance of {@link TransformerSupplier} that generates a {@link Transformer}
      * @param named               a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames     the names of the state stores used by the processor
-     * @param <K1>                the key type of the new stream
-     * @param <V1>                the value type of the new stream
+     * @param                the key type of the new stream
+     * @param                the value type of the new stream
      * @return a {@code KStream} that contains more or less records with new key and value (possibly of different type)
      * @see #flatMap(KeyValueMapper)
      * @see #transform(TransformerSupplier, string...)
@@ -1287,9 +1287,9 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    <K1, V1> KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
+    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
                                             Named named,
-                                            string[] stateStoreNames];
+                                            string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1316,11 +1316,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(Object) transform()}.
-     * If the return value of {@link ValueTransformer#transform(Object) ValueTransformer#transform()} is {@code null},
+     * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(object) transform()}.
+     * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null},
      * no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValue}
-     * pairs can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1364,14 +1364,14 @@ public interface KStream<K, V> {
      * @param valueTransformerSupplier a instance of {@link ValueTransformerSupplier} that generates a
      *                                 {@link ValueTransformer}
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      * @see #transform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> transformValues( ValueTransformerSupplier<V, VR> valueTransformerSupplier,
-                                         string[] stateStoreNames];
+    KStream<K, VR> transformValues( ValueTransformerSupplier<V, VR> valueTransformerSupplier,
+                                         string[] stateStoreNames);
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
      * A {@link ValueTransformer} (provided by the given {@link ValueTransformerSupplier}) is applied to each input
@@ -1397,11 +1397,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(Object) transform()}.
-     * If the return value of {@link ValueTransformer#transform(Object) ValueTransformer#transform()} is {@code null}, no
+     * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(object) transform()}.
+     * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null}, no
      * records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValue}
-     * pairs can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1446,15 +1446,15 @@ public interface KStream<K, V> {
      *                                 {@link ValueTransformer}
      * @param named                    a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      * @see #transform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> transformValues( ValueTransformerSupplier<V, VR> valueTransformerSupplier,
+    KStream<K, VR> transformValues( ValueTransformerSupplier<V, VR> valueTransformerSupplier,
                                          Named named,
-                                         string[] stateStoreNames];
+                                         string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1482,12 +1482,12 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformerWithKey} must return the new value in
-     * {@link ValueTransformerWithKey#transform(Object, Object) transform()}.
-     * If the return value of {@link ValueTransformerWithKey#transform(Object, Object) ValueTransformerWithKey#transform()}
+     * {@link ValueTransformerWithKey#transform(object, object) transform()}.
+     * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
      * is {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1532,14 +1532,14 @@ public interface KStream<K, V> {
      * @param valueTransformerSupplier a instance of {@link ValueTransformerWithKeySupplier} that generates a
      *                                 {@link ValueTransformerWithKey}
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      * @see #transform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
-                                         string[] stateStoreNames];
+    KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+                                         string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1567,12 +1567,12 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformerWithKey} must return the new value in
-     * {@link ValueTransformerWithKey#transform(Object, Object) transform()}.
-     * If the return value of {@link ValueTransformerWithKey#transform(Object, Object) ValueTransformerWithKey#transform()}
+     * {@link ValueTransformerWithKey#transform(object, object) transform()}.
+     * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
      * is {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1618,15 +1618,15 @@ public interface KStream<K, V> {
      *                                 {@link ValueTransformerWithKey}
      * @param named                    a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains records with unmodified key and new values (possibly of different type)
      * @see #mapValues(ValueMapper)
      * @see #mapValues(ValueMapperWithKey)
      * @see #transform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+    KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                          Named named,
-                                         string[] stateStoreNames];
+                                         string[] stateStoreNames);
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
      * type) and emit for each new value a record with the same key of the input record and the value.
@@ -1653,13 +1653,13 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformer} must return an {@link java.lang.Iterable} type (e.g., any
-     * {@link java.util.Collection} type) in {@link ValueTransformer#transform(Object)
+     * {@link java.util.Collection} type) in {@link ValueTransformer#transform(object)
      * transform()}.
-     * If the return value of {@link ValueTransformer#transform(Object) ValueTransformer#transform()} is an empty
+     * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
      * {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1709,7 +1709,7 @@ public interface KStream<K, V> {
      * @param valueTransformerSupplier an instance of {@link ValueTransformerSupplier} that generates a
      *                                 {@link ValueTransformer}
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
      * different type)
      * @see #mapValues(ValueMapper)
@@ -1717,8 +1717,8 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
-                                             string[] stateStoreNames];
+    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
+                                             string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1746,13 +1746,13 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformer} must return an {@link java.lang.Iterable} type (e.g., any
-     * {@link java.util.Collection} type) in {@link ValueTransformer#transform(Object)
+     * {@link java.util.Collection} type) in {@link ValueTransformer#transform(object)
      * transform()}.
-     * If the return value of {@link ValueTransformer#transform(Object) ValueTransformer#transform()} is an empty
+     * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
      * {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1803,7 +1803,7 @@ public interface KStream<K, V> {
      *                                 {@link ValueTransformer}
      * @param named                    a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
      * different type)
      * @see #mapValues(ValueMapper)
@@ -1811,9 +1811,9 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
                                              Named named,
-                                             string[] stateStoreNames];
+                                             string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1841,13 +1841,13 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformerWithKey} must return an {@link java.lang.Iterable} type (e.g., any
-     * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(Object, Object)
+     * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(object, object)
      * transform()}.
-     * If the return value of {@link ValueTransformerWithKey#transform(Object, Object) ValueTransformerWithKey#transform()}
+     * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
      * is an empty {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1898,7 +1898,7 @@ public interface KStream<K, V> {
      * @param valueTransformerSupplier a instance of {@link ValueTransformerWithKeySupplier} that generates a
      *                                 {@link ValueTransformerWithKey}
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
      * different type)
      * @see #mapValues(ValueMapper)
@@ -1906,8 +1906,8 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
-                                             string[] stateStoreNames];
+    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
+                                             string[] stateStoreNames);
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1935,13 +1935,13 @@ public interface KStream<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * The {@link ValueTransformerWithKey} must return an {@link java.lang.Iterable} type (e.g., any
-     * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(Object, Object)
+     * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(object, object)
      * transform()}.
-     * If the return value of {@link ValueTransformerWithKey#transform(Object, Object) ValueTransformerWithKey#transform()}
+     * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
      * is an empty {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
-     * can be emitted via {@link IProcessorContext#forward(Object, Object) IProcessorContext.forward()}.
+     * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
@@ -1993,7 +1993,7 @@ public interface KStream<K, V> {
      *                                 {@link ValueTransformerWithKey}
      * @param named                    a {@link Named} config used to name the processor in the topology
      * @param stateStoreNames          the names of the state stores used by the processor
-     * @param <VR>                     the value type of the result stream
+     * @param                     the value type of the result stream
      * @return a {@code KStream} that contains more or less records with unmodified key and new values (possibly of
      * different type)
      * @see #mapValues(ValueMapper)
@@ -2001,9 +2001,9 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    <VR> KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
                                              Named named,
-                                             string[] stateStoreNames];
+                                             string[] stateStoreNames);
 
     /**
      * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
@@ -2068,7 +2068,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      */
     void process( ProcessorSupplier<K, V> processorSupplier,
-                  string[] stateStoreNames];
+                  string[] stateStoreNames);
 
     /**
      * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
@@ -2135,7 +2135,7 @@ public interface KStream<K, V> {
      */
     void process( ProcessorSupplier<K, V> processorSupplier,
                   Named named,
-                  string[] stateStoreNames];
+                  string[] stateStoreNames);
 
     /**
      * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2193,7 +2193,7 @@ public interface KStream<K, V> {
      *
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupByKey(Grouped)} instead
      */
-    @Deprecated
+    [System.Obsolete]
     KGroupedStream<K, V> groupByKey( Serialized<K, V> serialized);
 
     /**
@@ -2250,10 +2250,10 @@ public interface KStream<K, V> {
      * If the key type is changed, it is recommended to use {@link #groupBy(KeyValueMapper, Grouped)} instead.
      *
      * @param selector a {@link KeyValueMapper} that computes a new key for grouping
-     * @param <KR>     the key type of the result {@link KGroupedStream}
+     * @param     the key type of the result {@link KGroupedStream}
      * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
      */
-    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector);
+    KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector);
 
     /**
      * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2278,13 +2278,13 @@ public interface KStream<K, V> {
      * This operation is equivalent to calling {@link #selectKey(KeyValueMapper)} followed by {@link #groupByKey()}.
      *
      * @param selector a {@link KeyValueMapper} that computes a new key for grouping
-     * @param <KR>     the key type of the result {@link KGroupedStream}
+     * @param     the key type of the result {@link KGroupedStream}
      * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
      *
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupBy(KeyValueMapper, Grouped)} instead
      */
-    @Deprecated
-    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector,
+    [System.Obsolete]
+    KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector,
                                         Serialized<KR, V> serialized);
 
     /**
@@ -2313,10 +2313,10 @@ public interface KStream<K, V> {
      * @param selector a {@link KeyValueMapper} that computes a new key for grouping
      * @param grouped  the {@link Grouped} instance used to specify {@link org.apache.kafka.common.serialization.Serdes}
      *                 and part of the name for a repartition topic if repartitioning is required.
-     * @param <KR>     the key type of the result {@link KGroupedStream}
+     * @param     the key type of the result {@link KGroupedStream}
      * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
      */
-    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector,
+    KGroupedStream<KR, V> groupBy( IKeyValueMapper<K, V, KR> selector,
                                         Grouped<KR, V> grouped);
 
     /**
@@ -2384,14 +2384,14 @@ public interface KStream<K, V> {
      * @param otherStream the {@code KStream} to be joined with this stream
      * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param windows     the specification of the {@link JoinWindows}
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key and within the joining window intervals
      * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
      * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
      */
-    <VO, VR> KStream<K, VR> join( KStream<K, VO> otherStream,
+    KStream<K, VR> join( KStream<K, VO> otherStream,
                                   ValueJoiner<V, VO, VR> joiner,
                                   JoinWindows windows);
 
@@ -2463,14 +2463,14 @@ public interface KStream<K, V> {
      * @param windows     the specification of the {@link JoinWindows}
      * @param joined      a {@link Joined} instance that defines the serdes to
      *                    be used to serialize/deserialize inputs and outputs of the joined streams
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key and within the joining window intervals
      * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
      * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
      */
-    <VO, VR> KStream<K, VR> join( KStream<K, VO> otherStream,
+    KStream<K, VR> join( KStream<K, VO> otherStream,
                                   ValueJoiner<V, VO, VR> joiner,
                                   JoinWindows windows,
                                   Joined<K, V, VO> joined);
@@ -2543,15 +2543,15 @@ public interface KStream<K, V> {
      * @param otherStream the {@code KStream} to be joined with this stream
      * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param windows     the specification of the {@link JoinWindows}
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * this {@code KStream} and within the joining window intervals
      * @see #join(KStream, ValueJoiner, JoinWindows)
      * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
      */
-    <VO, VR> KStream<K, VR> leftJoin( KStream<K, VO> otherStream,
+    KStream<K, VR> leftJoin( KStream<K, VO> otherStream,
                                       ValueJoiner<V, VO, VR> joiner,
                                       JoinWindows windows);
 
@@ -2626,15 +2626,15 @@ public interface KStream<K, V> {
      * @param windows     the specification of the {@link JoinWindows}
      * @param joined      a {@link Joined} instance that defines the serdes to
      *                    be used to serialize/deserialize inputs and outputs of the joined streams
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * this {@code KStream} and within the joining window intervals
      * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
      * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
      */
-    <VO, VR> KStream<K, VR> leftJoin( KStream<K, VO> otherStream,
+    KStream<K, VR> leftJoin( KStream<K, VO> otherStream,
                                       ValueJoiner<V, VO, VR> joiner,
                                       JoinWindows windows,
                                       Joined<K, V, VO> joined);
@@ -2708,15 +2708,15 @@ public interface KStream<K, V> {
      * @param otherStream the {@code KStream} to be joined with this stream
      * @param joiner      a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param windows     the specification of the {@link JoinWindows}
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KStream} and within the joining window intervals
      * @see #join(KStream, ValueJoiner, JoinWindows)
      * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
      */
-    <VO, VR> KStream<K, VR> outerJoin( KStream<K, VO> otherStream,
+    KStream<K, VR> outerJoin( KStream<K, VO> otherStream,
                                        ValueJoiner<V, VO, VR> joiner,
                                        JoinWindows windows);
 
@@ -2792,15 +2792,15 @@ public interface KStream<K, V> {
      * @param windows     the specification of the {@link JoinWindows}
      * @param joined      a {@link Joined} instance that defines the serdes to
      *                    be used to serialize/deserialize inputs and outputs of the joined streams
-     * @param <VO>        the value type of the other stream
-     * @param <VR>        the value type of the result stream
+     * @param        the value type of the other stream
+     * @param        the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key plus one for each non-matching record of
      * both {@code KStream} and within the joining window intervals
      * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
      * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
      */
-    <VO, VR> KStream<K, VR> outerJoin( KStream<K, VO> otherStream,
+    KStream<K, VR> outerJoin( KStream<K, VO> otherStream,
                                        ValueJoiner<V, VO, VR> joiner,
                                        JoinWindows windows,
                                        Joined<K, V, VO> joined);
@@ -2870,14 +2870,14 @@ public interface KStream<K, V> {
      *
      * @param table  the {@link KTable} to be joined with this stream
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <VT>   the value type of the table
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the table
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner)
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <VT, VR> KStream<K, VR> join( KTable<K, VT> table,
+    KStream<K, VR> join( KTable<K, VT> table,
                                   ValueJoiner<V, VT, VR> joiner);
 
     /**
@@ -2947,14 +2947,14 @@ public interface KStream<K, V> {
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param joined      a {@link Joined} instance that defines the serdes to
      *                    be used to serialize/deserialize inputs of the joined streams
-     * @param <VT>   the value type of the table
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the table
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one for each matched record-pair with the same key
      * @see #leftJoin(KTable, ValueJoiner, Joined)
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <VT, VR> KStream<K, VR> join( KTable<K, VT> table,
+    KStream<K, VR> join( KTable<K, VT> table,
                                   ValueJoiner<V, VT, VR> joiner,
                                   Joined<K, V, VT> joined);
 
@@ -3026,14 +3026,14 @@ public interface KStream<K, V> {
      *
      * @param table  the {@link KTable} to be joined with this stream
      * @param joiner a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <VT>   the value type of the table
-     * @param <VR>   the value type of the result stream
+     * @param   the value type of the table
+     * @param   the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <VT, VR> KStream<K, VR> leftJoin( KTable<K, VT> table,
+    KStream<K, VR> leftJoin( KTable<K, VT> table,
                                       ValueJoiner<V, VT, VR> joiner);
 
     /**
@@ -3106,14 +3106,14 @@ public interface KStream<K, V> {
      * @param joiner  a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param joined  a {@link Joined} instance that defines the serdes to
      *                be used to serialize/deserialize inputs and outputs of the joined streams
-     * @param <VT>    the value type of the table
-     * @param <VR>    the value type of the result stream
+     * @param    the value type of the table
+     * @param    the value type of the result stream
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(KTable, ValueJoiner, Joined)
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <VT, VR> KStream<K, VR> leftJoin( KTable<K, VT> table,
+    KStream<K, VR> leftJoin( KTable<K, VT> table,
                                       ValueJoiner<V, VT, VR> joiner,
                                       Joined<K, V, VT> joined);
 
@@ -3139,14 +3139,14 @@ public interface KStream<K, V> {
      * @param keyValueMapper instance of {@link KeyValueMapper} used to map from the (key, value) of this stream
      *                       to the key of the {@link GlobalKTable}
      * @param joiner         a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <GK>           the key type of {@link GlobalKTable}
-     * @param <GV>           the value type of the {@link GlobalKTable}
-     * @param <RV>           the value type of the resulting {@code KStream}
+     * @param           the key type of {@link GlobalKTable}
+     * @param           the value type of the {@link GlobalKTable}
+     * @param           the value type of the resulting {@code KStream}
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <GK, GV, RV> KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
                                       IKeyValueMapper<K, V, GK> keyValueMapper,
                                       ValueJoiner<V, GV, RV> joiner);
 
@@ -3173,14 +3173,14 @@ public interface KStream<K, V> {
      *                       to the key of the {@link GlobalKTable}
      * @param joiner         a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param named          a {@link Named} config used to name the processor in the topology
-     * @param <GK>           the key type of {@link GlobalKTable}
-     * @param <GV>           the value type of the {@link GlobalKTable}
-     * @param <RV>           the value type of the resulting {@code KStream}
+     * @param           the key type of {@link GlobalKTable}
+     * @param           the value type of the {@link GlobalKTable}
+     * @param           the value type of the resulting {@code KStream}
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <GK, GV, RV> KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
                                       IKeyValueMapper<K, V, GK> keyValueMapper,
                                       ValueJoiner<V, GV, RV> joiner,
                                       Named named);
@@ -3210,14 +3210,14 @@ public interface KStream<K, V> {
      * @param keyValueMapper instance of {@link KeyValueMapper} used to map from the (key, value) of this stream
      *                       to the key of the {@link GlobalKTable}
      * @param valueJoiner    a {@link ValueJoiner} that computes the join result for a pair of matching records
-     * @param <GK>           the key type of {@link GlobalKTable}
-     * @param <GV>           the value type of the {@link GlobalKTable}
-     * @param <RV>           the value type of the resulting {@code KStream}
+     * @param           the key type of {@link GlobalKTable}
+     * @param           the value type of the {@link GlobalKTable}
+     * @param           the value type of the resulting {@code KStream}
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <GK, GV, RV> KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
                                           IKeyValueMapper<K, V, GK> keyValueMapper,
                                           ValueJoiner<V, GV, RV> valueJoiner);
 
@@ -3248,14 +3248,14 @@ public interface KStream<K, V> {
      *                       to the key of the {@link GlobalKTable}
      * @param valueJoiner    a {@link ValueJoiner} that computes the join result for a pair of matching records
      * @param named          a {@link Named} config used to name the processor in the topology
-     * @param <GK>           the key type of {@link GlobalKTable}
-     * @param <GV>           the value type of the {@link GlobalKTable}
-     * @param <RV>           the value type of the resulting {@code KStream}
+     * @param           the key type of {@link GlobalKTable}
+     * @param           the value type of the {@link GlobalKTable}
+     * @param           the value type of the resulting {@code KStream}
      * @return a {@code KStream} that contains join-records for each key and values computed by the given
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    <GK, GV, RV> KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
                                           IKeyValueMapper<K, V, GK> keyValueMapper,
                                           ValueJoiner<V, GV, RV> valueJoiner,
                                           Named named);

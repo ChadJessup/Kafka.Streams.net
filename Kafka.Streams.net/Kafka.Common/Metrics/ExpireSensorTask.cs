@@ -7,7 +7,7 @@ namespace Kafka.Common.Metrics
      * This iterates over every Sensor and triggers a removeSensor if it has expired
      * Package private for testing
      */
-    public class ExpireSensorTask
+    public ExpireSensorTask
     {
         public void run()
         {
@@ -24,7 +24,7 @@ namespace Kafka.Common.Metrics
         //        {
         //            if (sensorEntry.Value.hasExpired())
         //            {
-        ////                log.LogDebug("Removing expired sensor {}", sensorEntry.getKey());
+        ////                log.LogDebug("Removing expired sensor {}", sensorEntry.Key);
         //                //removeSensor(sensorEntry.Key);
         //            }
         //        }

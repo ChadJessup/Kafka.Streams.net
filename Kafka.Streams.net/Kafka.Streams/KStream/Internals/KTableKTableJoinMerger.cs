@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -26,7 +26,7 @@ namespace Kafka.streams.kstream.internals;
 
 
 
-public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
+public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 
     private  KTableProcessorSupplier<K, ?, V> parent1;
     private  KTableProcessorSupplier<K, ?, V> parent2;
@@ -105,7 +105,7 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         return new KTableKTableJoinMerger<>(parent1, parent2, queryableName);
     }
 
-    private class KTableKTableJoinMergeProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableKTableJoinMergeProcessor : AbstractProcessor<K, Change<V>> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
@@ -113,7 +113,7 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             if (queryableName != null)
 {
                 store = (TimestampedKeyValueStore<K, V>) context.getStateStore(queryableName);

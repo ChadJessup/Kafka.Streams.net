@@ -18,7 +18,7 @@ namespace Kafka.common.utils;
 
 
 
-public final class Java {
+public final Java {
 
     private Java() { }
 
@@ -28,10 +28,10 @@ public final class Java {
     static Version parseVersion(String versionString)
 {
         final StringTokenizer st = new StringTokenizer(versionString, ".");
-        int majorVersion = Integer.parseInt(st.nextToken());
+        int majorVersion = int.Parse(st.nextToken());
         int minorVersion;
         if (st.hasMoreTokens())
-            minorVersion = Integer.parseInt(st.nextToken());
+            minorVersion = int.Parse(st.nextToken());
         else
             minorVersion = 0;
         return new Version(majorVersion, minorVersion);
@@ -46,7 +46,7 @@ public final class Java {
     }
 
     // Package private for testing
-    static class Version {
+    static Version {
         public final int majorVersion;
         public final int minorVersion;
 

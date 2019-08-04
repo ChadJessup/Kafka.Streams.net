@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -106,7 +106,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     }
 
 
-    private class KTableMapValuesProcessor : AbstractProcessor<K, Change<V>> {
+    private KTableMapValuesProcessor : AbstractProcessor<K, Change<V>> {
         private TimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
 
@@ -114,7 +114,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
             if (queryableName != null)
 {
                 store = (TimestampedKeyValueStore<K, V1>) context.getStateStore(queryableName);
@@ -143,7 +143,7 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
     }
 
 
-    private class KTableMapValuesValueGetter : KTableValueGetter<K, V1> {
+    private KTableMapValuesValueGetter : KTableValueGetter<K, V1> {
         private  KTableValueGetter<K, V> parentGetter;
 
         KTableMapValuesValueGetter( KTableValueGetter<K, V> parentGetter)

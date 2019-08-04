@@ -22,7 +22,7 @@ using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 
 
 
-public class BufferValue
+public BufferValue
 {
     private static int NULL_VALUE_SENTINEL = -1;
     private static int OLD_PREV_DUPLICATE_VALUE_SENTINEL = -2;
@@ -114,7 +114,7 @@ public class BufferValue
     ByteBuffer serialize(int end.Adding)
 {
 
-        int sizeOfValueLength = Integer.BYTES;
+        int sizeOfValueLength = int.BYTES;
 
         int sizeOfPriorValue = priorValue == null ? 0 : priorValue.Length;
         int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.Length;

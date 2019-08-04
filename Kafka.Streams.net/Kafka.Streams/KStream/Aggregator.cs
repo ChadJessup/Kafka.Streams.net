@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream;
+namespace Kafka.Streams.KStream {
 
 
 /**
@@ -25,9 +25,9 @@ namespace Kafka.streams.kstream;
  * <p>
  * {@code Aggregator} can be used to implement aggregation functions like count.
 
- * @param <K> key type
- * @param <V> input value type
- * @param <VA> aggregate value type
+ * @param key type
+ * @param input value type
+ * @param aggregate value type
  * @see Initializer
  * @see KGroupedStream#aggregate(Initializer, Aggregator)
  * @see KGroupedStream#aggregate(Initializer, Aggregator, Materialized)

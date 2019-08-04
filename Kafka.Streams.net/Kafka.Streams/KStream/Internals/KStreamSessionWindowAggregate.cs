@@ -1,89 +1,51 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-namespace Kafka.streams.kstream.internals;
+using Microsoft.Extensions.Logging;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
-    private static  Logger LOG = LoggerFactory.getLogger(KStreamSessionWindowAggregate.class);
-
-    private  string storeName;
-    private  SessionWindows windows;
-    private  Initializer<Agg> initializer;
-    private  Aggregator<K, V, Agg> aggregator;
-    private  Merger<K, Agg> sessionMerger;
-
-    private bool sendOldValues = false;
-
-    public KStreamSessionWindowAggregate( SessionWindows windows,
-                                          string storeName,
-                                          Initializer<Agg> initializer,
-                                          Aggregator<K, V, Agg> aggregator,
-                                          Merger<K, Agg> sessionMerger)
+namespace Kafka.Streams.KStream.Internals
 {
-        this.windows = windows;
-        this.storeName = storeName;
-        this.initializer = initializer;
-        this.aggregator = aggregator;
-        this.sessionMerger = sessionMerger;
-    }
+    public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamSessionWindowAggregate>();
 
-    
-    public Processor<K, V> get()
-{
-        return new KStreamSessionWindowAggregateProcessor();
-    }
+        private string storeName;
+        private SessionWindows windows;
+        private Initializer<Agg> initializer;
+        private Aggregator<K, V, Agg> aggregator;
+        private Merger<K, Agg> sessionMerger;
 
-    public SessionWindows windows()
-{
-        return windows;
-    }
+        private bool sendOldValues = false;
 
-    
-    public void enableSendingOldValues()
-{
-        sendOldValues = true;
-    }
+        public KStreamSessionWindowAggregate(SessionWindows windows,
+                                              string storeName,
+                                              Initializer<Agg> initializer,
+                                              Aggregator<K, V, Agg> aggregator,
+                                              Merger<K, Agg> sessionMerger)
+        {
+            this.windows = windows;
+            this.storeName = storeName;
+            this.initializer = initializer;
+            this.aggregator = aggregator;
+            this.sessionMerger = sessionMerger;
+        }
 
-    private class KStreamSessionWindowAggregateProcessor : AbstractProcessor<K, V> {
 
-        private SessionStore<K, Agg> store;
+        public Processor<K, V> get()
+        {
+            return new KStreamSessionWindowAggregateProcessor();
+        }
+
+        public SessionWindows windows()
+        {
+            return windows;
+        }
+
+
+        public void enableSendingOldValues()
+        {
+            sendOldValues = true;
+        }
+
+        private KStreamSessionWindowAggregateProcessor : AbstractProcessor<K, V> {
+
+        private ISessionStore<K, Agg> store;
         private SessionTupleForwarder<K, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
         private InternalProcessorContext internalProcessorContext;
@@ -91,27 +53,27 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-        
-        
-        public void init( IProcessorContext context)
-{
-            super.init(context);
-            internalProcessorContext = (InternalProcessorContext) context;
-            metrics = (StreamsMetricsImpl) context.metrics();
+
+
+        public void init(IProcessorContext context)
+        {
+            base.init(context);
+            internalProcessorContext = (InternalProcessorContext)context;
+            metrics = (StreamsMetricsImpl)context.metrics();
             lateRecordDropSensor = Sensors.lateRecordDropSensor(internalProcessorContext);
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
-            store = (SessionStore<K, Agg>) context.getStateStore(storeName);
+            store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
             tupleForwarder = new SessionTupleForwarder<>(store, context, new SessionCacheFlushListener<>(context), sendOldValues);
         }
 
-        
-        public void process( K key,  V value)
-{
+
+        public void process(K key, V value)
+        {
             // if the key is null, we do not need proceed aggregating
             // the record with the table
             if (key == null)
-{
+            {
                 LOG.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     value, context().topic(), context().partition(), context().offset()
@@ -120,12 +82,12 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
                 return;
             }
 
-             long timestamp = context().timestamp();
+            long timestamp = context().timestamp();
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
-             long closeTime = observedStreamTime - windows.gracePeriodMs();
+            long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-             List<KeyValue<Windowed<K>, Agg>> merged = new List<>();
-             SessionWindow newSessionWindow = new SessionWindow(timestamp, timestamp);
+            List<KeyValue<Windowed<K>, Agg>> merged = new List<>();
+            SessionWindow newSessionWindow = new SessionWindow(timestamp, timestamp);
             SessionWindow mergedWindow = newSessionWindow;
             Agg agg = initializer.apply();
 
@@ -138,17 +100,17 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
             )
 {
                 while (iterator.hasNext())
-{
-                     KeyValue<Windowed<K>, Agg> next = iterator.next();
+                {
+                    KeyValue<Windowed<K>, Agg> next = iterator.next();
                     merged.Add(next);
                     agg = sessionMerger.apply(key, agg, next.value);
-                    mergedWindow = mergeSessionWindow(mergedWindow, (SessionWindow) next.key.window());
+                    mergedWindow = mergeSessionWindow(mergedWindow, (SessionWindow)next.key.window());
                 }
             }
 
             if (mergedWindow.end() < closeTime)
-{
-                LOG.debug(
+            {
+                LOG.LogDebug(
                     "Skipping record for expired window. " +
                         "key=[{}] " +
                         "topic=[{}] " +
@@ -171,70 +133,69 @@ public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSuppl
                 lateRecordDropSensor.record();
             } else {
                 if (!mergedWindow.Equals(newSessionWindow))
-{
-                    foreach ( KeyValue<Windowed<K>, Agg> session in merged)
-{
+                {
+                    foreach (KeyValue<Windowed<K>, Agg> session in merged)
+                    {
                         store.Remove(session.key);
                         tupleForwarder.maybeForward(session.key, null, sendOldValues ? session.value : null);
                     }
                 }
 
                 agg = aggregator.apply(key, value, agg);
-                 Windowed<K> sessionKey = new Windowed<>(key, mergedWindow);
+                Windowed<K> sessionKey = new Windowed<>(key, mergedWindow);
                 store.Add(sessionKey, agg);
                 tupleForwarder.maybeForward(sessionKey, agg, null);
             }
+            }
+    }
+
+        private SessionWindow mergeSessionWindow(SessionWindow one, SessionWindow two)
+        {
+            long start = one.start() < two.start() ? one.start() : two.start();
+            long end = one.end() > two.end() ? one.end() : two.end();
+            return new SessionWindow(start, end);
         }
-    }
 
-    private SessionWindow mergeSessionWindow( SessionWindow one,  SessionWindow two)
-{
-         long start = one.start() < two.start() ? one.start() : two.start();
-         long end = one.end() > two.end() ? one.end() : two.end();
-        return new SessionWindow(start, end);
-    }
 
-    
-    public KTableValueGetterSupplier<Windowed<K>, Agg> view()
-{
-        return new KTableValueGetterSupplier<Windowed<K>, Agg>()
-{
-            
+        public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+        {
+            return new KTableValueGetterSupplier<Windowed<K>, Agg>()
+            {
+
             public KTableValueGetter<Windowed<K>, Agg> get()
-{
+            {
                 return new KTableSessionWindowValueGetter();
             }
 
-            
+
             public string[] storeNames()
-{
-                return new string[] {storeName};
+            {
+                return new string[] { storeName };
             }
         };
     }
 
     private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg> {
-        private SessionStore<K, Agg> store;
+        private ISessionStore<K, Agg> store;
 
-        
-        
-        public void init( IProcessorContext context)
-{
-            store = (SessionStore<K, Agg>) context.getStateStore(storeName);
+
+
+        public void init(IProcessorContext context)
+        {
+            store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
         }
 
-        
-        public ValueAndTimestamp<Agg> get( Windowed<K> key)
-{
+
+        public ValueAndTimestamp<Agg> get(Windowed<K> key)
+        {
             return ValueAndTimestamp.make(
                 store.fetchSession(key.key(), key.window().start(), key.window().end()),
                 key.window().end());
         }
 
-        
+
         public void close()
-{
+        {
         }
     }
-
 }

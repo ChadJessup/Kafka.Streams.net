@@ -14,17 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
 
 
-public class ProducedInternal<K, V> : Produced<K, V> {
+public ProducedInternal<K, V> : Produced<K, V> {
 
     public ProducedInternal( Produced<K, V> produced)
 {
-        super(produced);
+        base(produced);
     }
 
     public ISerde<K> keySerde()

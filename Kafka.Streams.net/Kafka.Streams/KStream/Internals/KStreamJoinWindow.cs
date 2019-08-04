@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -37,7 +37,7 @@ class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
         return new KStreamJoinWindowProcessor();
     }
 
-    private class KStreamJoinWindowProcessor : AbstractProcessor<K, V> {
+    private KStreamJoinWindowProcessor : AbstractProcessor<K, V> {
 
         private WindowStore<K, V> window;
 
@@ -45,7 +45,7 @@ class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
         
         public void init( IProcessorContext context)
 {
-            super.init(context);
+            base.init(context);
 
             window = (WindowStore<K, V>) context.getStateStore(windowName);
         }

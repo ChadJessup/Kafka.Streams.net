@@ -26,7 +26,7 @@ namespace Kafka.common.utils;
 /**
  * A simple read-optimized map implementation that synchronizes only writes and does a full copy on each modification
  */
-public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
+public CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
 
     private volatile Map<K, V> map;
 
@@ -41,13 +41,13 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public boolean ContainsKey(Object k)
+    public boolean ContainsKey(object k)
 {
         return map.ContainsKey(k);
     }
 
     
-    public boolean containsValue(Object v)
+    public boolean containsValue(object v)
 {
         return map.containsValue(v);
     }
@@ -59,7 +59,7 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public V get(Object k)
+    public V get(object k)
 {
         return map[k];
     }
@@ -112,7 +112,7 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public synchronized V Remove(Object key)
+    public synchronized V Remove(object key)
 {
         Map<K, V> copy = new HashMap<K, V>(this.map);
         V prev = copy.Remove(key);
@@ -130,7 +130,7 @@ public class CopyOnWriteMap<K, V> : ConcurrentMap<K, V> {
     }
 
     
-    public synchronized boolean Remove(Object k, Object v)
+    public synchronized boolean Remove(object k, object v)
 {
         if (ContainsKey(k) && get(k).Equals(v))
 {

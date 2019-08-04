@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals;
+namespace Kafka.Streams.KStream.Internals {
 
 
 
@@ -24,8 +24,8 @@ namespace Kafka.streams.kstream.internals;
 
 
 /**
- * This class is used to determine if a processor should forward values to child nodes.
- * Forwarding by this class only occurs when caching is not enabled. If caching is enabled,
+ * This is used to determine if a processor should forward values to child nodes.
+ * Forwarding by this only occurs when caching is not enabled. If caching is enabled,
  * forwarding occurs in the flush listener when the cached store flushes.
  *
  * @param <K>

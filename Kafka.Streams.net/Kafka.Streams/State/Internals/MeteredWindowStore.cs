@@ -36,7 +36,7 @@ using Kafka.Streams.State.WindowStoreIterator;
 
 
 
-public class MeteredWindowStore<K, V>
+public MeteredWindowStore<K, V>
     : WrappedStateStore<WindowStore<Bytes, byte[]>, Windowed<K>, V>
     : WindowStore<K, V>
 {
@@ -61,7 +61,7 @@ public class MeteredWindowStore<K, V>
                        ISerde<K> keySerde,
                        ISerde<V> valueSerde)
 {
-        super(inner);
+        base(inner);
         this.windowSizeMs = windowSizeMs;
         this.metricScope = metricScope;
         this.time = time;
@@ -90,7 +90,7 @@ public class MeteredWindowStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            super.init(context, root);
+            base.init(context, root);
         } finally
 {
             metrics.recordLatency(
@@ -171,7 +171,7 @@ public class MeteredWindowStore<K, V>
         }
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override WindowStoreIterator<V> fetch(K key,
                                         long timeFrom,
                                         long timeTo)
@@ -183,7 +183,7 @@ public class MeteredWindowStore<K, V>
                                                 time);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
     public override KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to,
                                                   long timeFrom,
@@ -197,7 +197,7 @@ public class MeteredWindowStore<K, V>
             time);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
+    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
     public override KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                      long timeTo)
 {
@@ -219,7 +219,7 @@ public class MeteredWindowStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            super.flush();
+            base.flush();
         } finally
 {
             metrics.recordLatency(flushTime, startNs, time.nanoseconds());
@@ -228,7 +228,7 @@ public class MeteredWindowStore<K, V>
 
     public override void close()
 {
-        super.close();
+        base.close();
         metrics.removeAllStoreLevelSensors(taskName, name());
     }
 

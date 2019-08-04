@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public class Windowed<K>
+    public Windowed<K>
     {
     }
 }

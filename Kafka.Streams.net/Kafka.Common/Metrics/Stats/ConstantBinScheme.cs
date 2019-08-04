@@ -7,7 +7,7 @@ namespace Kafka.Common.Metrics.Stats
      * A scheme for calculating the bins where the width of each bin is a constant determined by the range of values
      * and the number of bins.
      */
-    public class ConstantBinScheme : IBinScheme
+    public ConstantBinScheme : IBinScheme
     {
         public int bins { get; private set; }
 
@@ -27,7 +27,7 @@ namespace Kafka.Common.Metrics.Stats
         public ConstantBinScheme(int bins, double min, double max)
         {
             if (bins < 2)
-                throw new ArgumentException("Must have at least 2 bins.");
+                throw new System.ArgumentException("Must have at least 2 bins.");
             this.min = min;
             this.max = max;
             this.bins = bins;

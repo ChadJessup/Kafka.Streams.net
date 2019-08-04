@@ -3,8 +3,8 @@
     /**
      * The interface for merging aggregate values for {@link SessionWindows} with the given key.
      *
-     * @param <K>   key type
-     * @param <V>   aggregate value type
+     * @param   key type
+     * @param   aggregate value type
      */
     public interface IMerger<K, V>
    

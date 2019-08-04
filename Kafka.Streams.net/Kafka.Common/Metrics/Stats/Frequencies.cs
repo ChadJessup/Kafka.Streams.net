@@ -22,7 +22,7 @@ namespace Kafka.Common.Metrics.Stats
      * object is a {@link CompoundStat}, and so it can be {@link org.apache.kafka.common.metrics.Sensor.Add(CompoundStat)
      *.Added directly to a Sensor} so the metrics are created automatically.
      */
-    public class Frequencies : SampledStat, ICompoundStat
+    public Frequencies : SampledStat, ICompoundStat
     {
 
         /**
@@ -50,7 +50,7 @@ namespace Kafka.Common.Metrics.Stats
 
             if (!frequencies.Any())
             {
-                throw new ArgumentException("Must specify at least one metric name");
+                throw new System.ArgumentException("Must specify at least one metric name");
             }
 
             return new Frequencies(2, 0.0, 1.0, frequencies);
@@ -77,25 +77,25 @@ namespace Kafka.Common.Metrics.Stats
         {
             if (max < min)
             {
-                throw new ArgumentException("The maximum value " + max
+                throw new System.ArgumentException("The maximum value " + max
                                                            + " must be greater than the minimum value " + min);
             }
 
             if (buckets < 1)
             {
-                throw new ArgumentException("Must be at least 1 bucket");
+                throw new System.ArgumentException("Must be at least 1 bucket");
             }
 
             if (buckets < frequencies.Count)
             {
-                throw new ArgumentException("More frequencies than buckets");
+                throw new System.ArgumentException("More frequencies than buckets");
             }
             this.frequencies = frequencies;
             foreach (Frequency freq in frequencies)
             {
                 if (min > freq.centerValue || max < freq.centerValue)
                 {
-                    throw new ArgumentException("The frequency centered at '" + freq.centerValue
+                    throw new System.ArgumentException("The frequency centered at '" + freq.centerValue
                                                                + "' is not within the range [" + min + "," + max + "]");
                 }
             }

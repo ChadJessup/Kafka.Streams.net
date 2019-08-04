@@ -28,20 +28,20 @@ using Kafka.Streams.State.internals.ValueAndTimestampSerializer;
 /**
  * Factory for creating serializers / deserializers for state stores in Kafka Streams.
  *
- * @param <K> key type of serde
- * @param <V> value type of serde
+ * @param key type of serde
+ * @param value type of serde
  */
-public class StateSerdes<K, V>
+public StateSerdes<K, V>
 {
 
     /**
-     * Create a new instance of {@link StateSerdes} for the given state name and key-/value-type classes.
+     * Create a new instance of {@link StateSerdes} for the given state name and key-/value-typees.
      *
      * @param topic      the topic name
-     * @param keyClass   the class of the key type
-     * @param valueClass the class of the value type
-     * @param <K>        the key type
-     * @param <V>        the value type
+     * @param keyClass   the of the key type
+     * @param valueClass the of the value type
+     * @param        the key type
+     * @param        the value type
      * @return a new instance of {@link StateSerdes}
      */
     public staticStateSerdes<K, V> withBuiltinTypes(
@@ -71,9 +71,9 @@ public class StateSerdes<K, V>
                        ISerde<K> keySerde,
                        ISerde<V> valueSerde)
 {
-        Objects.requireNonNull(topic, "topic cannot be null");
-        Objects.requireNonNull(keySerde, "key serde cannot be null");
-        Objects.requireNonNull(valueSerde, "value serde cannot be null");
+        topic = topic ?? throw new System.ArgumentNullException("topic cannot be null", nameof(topic));
+        keySerde = keySerde ?? throw new System.ArgumentNullException("key serde cannot be null", nameof(keySerde));
+        valueSerde = valueSerde ?? throw new System.ArgumentNullException("value serde cannot be null", nameof(valueSerde));
 
         this.topic = topic;
         this.keySerde = keySerde;
@@ -210,7 +210,7 @@ public class StateSerdes<K, V>
         } catch (ClassCastException e)
 {
             string valueClass;
-            Class<? : Serializer> serializerClass;
+            Class<Serializer> serializerClass;
             if (valueSerializer() is ValueAndTimestampSerializer)
 {
                 serializerClass = ((ValueAndTimestampSerializer) valueSerializer()).valueSerializer.GetType();

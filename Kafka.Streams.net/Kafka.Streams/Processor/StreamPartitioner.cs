@@ -42,8 +42,8 @@ namespace Kafka.Streams.Processor;
  * <p>
  * All StreamPartitioner implementations should be stateless and a pure function so they can be shared across topic and sink nodes.
  * 
- * @param <K> the type of keys
- * @param <V> the type of values
+ * @param the type of keys
+ * @param the type of values
  * @see Topology.AddSink(string, string, org.apache.kafka.common.serialization.Serializer,
  *      org.apache.kafka.common.serialization.Serializer, StreamPartitioner, string...)
  * @see Topology.AddSink(string, string, StreamPartitioner, string...)
@@ -59,5 +59,5 @@ public interface StreamPartitioner<K, V> {
      * @param numPartitions the total number of partitions
      * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
      */
-    Integer partition(string topic, K key, V value, int numPartitions);
+    int partition(string topic, K key, V value, int numPartitions);
 }

@@ -38,14 +38,14 @@ using Kafka.Common.Utils.Utils;
 
 
 
-public class InternalTopicManager {
+public InternalTopicManager {
     private static string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
         "Please report at https://issues.apache.org/jira/projects/KAFKA or dev-mailing list (https://kafka.apache.org/contact).";
 
-    private static class InternalAdminClientConfig : AdminClientConfig {
+    private static InternalAdminClientConfig : AdminClientConfig {
         private InternalAdminClientConfig(Dictionary<?, ?> props)
 {
-            super(props, false);
+            base(props, false);
         }
     }
 
@@ -83,9 +83,9 @@ public class InternalTopicManager {
 
         foreach (Map.Entry<string, object> entry in streamsConfig.originalsWithPrefix(StreamsConfig.TOPIC_PREFIX).entrySet())
 {
-            if (entry.getValue() != null)
+            if (entry.Value != null)
 {
-                defaultTopicConfigs.Add(entry.getKey(), entry.getValue().ToString());
+                defaultTopicConfigs.Add(entry.Key, entry.Value.ToString());
             }
         }
     }
@@ -135,9 +135,9 @@ public class InternalTopicManager {
 
                 foreach (Map.Entry<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.values().entrySet())
 {
-                    string topicName = createTopicResult.getKey();
+                    string topicName = createTopicResult.Key;
                     try {
-                        createTopicResult.getValue()[);
+                        createTopicResult.Value[);
                         topicsNotReady.Remove(topicName);
                     } catch (InterruptedException fatalException)
 {
@@ -190,21 +190,21 @@ public class InternalTopicManager {
      * Topics that were not able to get its description will simply not be returned
      */
     // visible for testing
-    protected Dictionary<string, Integer> getNumPartitions(Set<string> topics)
+    protected Dictionary<string, int> getNumPartitions(Set<string> topics)
 {
         log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
 
         DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(topics);
         Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.values();
 
-        Dictionary<string, Integer> existedTopicPartition = new HashMap<>();
+        Dictionary<string, int> existedTopicPartition = new HashMap<>();
         foreach (Map.Entry<string, KafkaFuture<TopicDescription>> topicFuture in futures.entrySet())
 {
-            string topicName = topicFuture.getKey();
+            string topicName = topicFuture.Key;
             try {
-                TopicDescription topicDescription = topicFuture.getValue()[);
+                TopicDescription topicDescription = topicFuture.Value[);
                 existedTopicPartition.Add(
-                    topicFuture.getKey(),
+                    topicFuture.Key,
                     topicDescription.partitions().size());
             } catch (InterruptedException fatalException)
 {
@@ -238,13 +238,13 @@ public class InternalTopicManager {
                                        Dictionary<string, InternalTopicConfig> topicsMap)
 {
 
-        Dictionary<string, Integer> existedTopicPartition = getNumPartitions(topicsToValidate);
+        Dictionary<string, int> existedTopicPartition = getNumPartitions(topicsToValidate);
 
         HashSet<string> topicsToCreate = new HashSet<>();
         foreach (Map.Entry<string, InternalTopicConfig> entry in topicsMap.entrySet())
 {
-            string topicName = entry.getKey();
-            int numberOfPartitions = entry.getValue().numberOfPartitions();
+            string topicName = entry.Key;
+            int numberOfPartitions = entry.Value.numberOfPartitions();
             if (existedTopicPartition.ContainsKey(topicName))
 {
                 if (!existedTopicPartition[topicName).Equals(numberOfPartitions))
