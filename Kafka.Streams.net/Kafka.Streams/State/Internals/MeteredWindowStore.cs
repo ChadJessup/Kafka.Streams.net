@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.Serde;
@@ -33,7 +33,7 @@ using Kafka.Streams.State.WindowStoreIterator;
 
 import java.util.Map;
 
-import static org.apache.kafka.common.metrics.Sensor.RecordingLevel.DEBUG;
+import static org.apache.kafka.common.metrics.RecordingLevel.DEBUG;
 import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTaskAndStoreLatencyAndThroughputSensors;
 
 public class MeteredWindowStore<K, V>
@@ -43,7 +43,7 @@ public class MeteredWindowStore<K, V>
 
     private long windowSizeMs;
     private string metricScope;
-    private Time time;
+    private ITime time;
     ISerde<K> keySerde;
     ISerde<V> valueSerde;
     StateSerdes<K, V> serdes;
@@ -57,7 +57,7 @@ public class MeteredWindowStore<K, V>
     MeteredWindowStore(WindowStore<Bytes, byte[]> inner,
                        long windowSizeMs,
                        string metricScope,
-                       Time time,
+                       ITime time,
                        ISerde<K> keySerde,
                        ISerde<V> valueSerde)
 {
@@ -76,7 +76,7 @@ public class MeteredWindowStore<K, V>
         initStoreSerde(context);
         metrics = (StreamsMetricsImpl) context.metrics();
 
-        taskName = context.taskId().toString();
+        taskName = context.taskId().ToString();
         string metricsGroup = "stream-" + metricScope + "-metrics";
         Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
         Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name());
@@ -117,7 +117,7 @@ public class MeteredWindowStore<K, V>
         WindowStore<Bytes, byte[]> wrapped = wrapped();
         if (wrapped is CachedStateStore)
 {
-            return ((CachedStateStore<byte[], byte[]>) wrapped).setFlushListener(
+            return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
                 (key, newValue, oldValue, timestamp) -> listener.apply(
                     WindowKeySchema.fromStoreKey(key, windowSizeMs, serdes.keyDeserializer(), serdes.topic()),
                     newValue != null ? serdes.valueFrom(newValue) : null,
@@ -142,10 +142,10 @@ public class MeteredWindowStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            wrapped().put(keyBytes(key), serdes.rawValue(value), windowStartTimestamp);
+            wrapped().Add(keyBytes(key), serdes.rawValue(value), windowStartTimestamp);
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), key, value);
+            string message = string.Format(e.getMessage(), key, value);
             throw new ProcessorStateException(message, e);
         } finally
 {
@@ -159,7 +159,7 @@ public class MeteredWindowStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            byte[] result = wrapped().fetch(keyBytes(key), timestamp);
+            byte[] result = wrapped().fetch(keyBytes(key), timestamp];
             if (result == null)
 {
                 return null;

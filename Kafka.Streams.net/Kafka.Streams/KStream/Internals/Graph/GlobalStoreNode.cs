@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
@@ -33,12 +33,13 @@ public class GlobalStoreNode : StateStoreNode {
     private  ProcessorSupplier stateUpdateSupplier;
 
 
-    public GlobalStoreNode( StoreBuilder<KeyValueStore> storeBuilder,
+    public GlobalStoreNode( StoreBuilder<IKeyValueStore> storeBuilder,
                             string sourceName,
                             string topic,
                             ConsumedInternal consumed,
                             string processorName,
-                            ProcessorSupplier stateUpdateSupplier) {
+                            ProcessorSupplier stateUpdateSupplier)
+{
 
         super(storeBuilder);
         this.sourceName = sourceName;
@@ -49,9 +50,10 @@ public class GlobalStoreNode : StateStoreNode {
     }
 
 
-    @Override
+    
     @SuppressWarnings("unchecked")
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
         storeBuilder.withLoggingDisabled();
         topologyBuilder.addGlobalStore(storeBuilder,
                                        sourceName,
@@ -65,8 +67,9 @@ public class GlobalStoreNode : StateStoreNode {
     }
 
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "GlobalStoreNode{" +
                "sourceName='" + sourceName + '\'' +
                ", topic='" + topic + '\'' +

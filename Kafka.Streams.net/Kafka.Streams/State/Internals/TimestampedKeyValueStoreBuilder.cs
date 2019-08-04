@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -41,7 +41,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
     public TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier storeSupplier,
                                            ISerde<K> keySerde,
                                            ISerde<V> valueSerde,
-                                           Time time)
+                                           ITime time)
 {
         super(
             storeSupplier.name(),
@@ -54,7 +54,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
 
     public override TimestampedKeyValueStore<K, V> build()
 {
-        KeyValueStore<Bytes, byte[]> store = storeSupplier.get();
+        IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
         if (!(store is TimestampedBytesStore))
 {
             if (store.persistent())
@@ -73,7 +73,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
             valueSerde);
     }
 
-    private KeyValueStore<Bytes, byte[]> maybeWrapCaching(KeyValueStore<Bytes, byte[]> inner)
+    private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
 {
         if (!enableCaching)
 {
@@ -82,7 +82,7 @@ public class TimestampedKeyValueStoreBuilder<K, V>
         return new CachingKeyValueStore(inner);
     }
 
-    private KeyValueStore<Bytes, byte[]> maybeWrapLogging(KeyValueStore<Bytes, byte[]> inner)
+    private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
 {
         if (!enableLogging)
 {
@@ -92,103 +92,103 @@ public class TimestampedKeyValueStoreBuilder<K, V>
     }
 
     private static class InMemoryTimestampedKeyValueStoreMarker
-        : KeyValueStore<Bytes, byte[]>, TimestampedBytesStore
+        : IKeyValueStore<Bytes, byte[]>, TimestampedBytesStore
 {
 
-        KeyValueStore<Bytes, byte[]> wrapped;
+        IKeyValueStore<Bytes, byte[]> wrapped;
 
-        private InMemoryTimestampedKeyValueStoreMarker(KeyValueStore<Bytes, byte[]> wrapped)
+        private InMemoryTimestampedKeyValueStoreMarker(IKeyValueStore<Bytes, byte[]> wrapped)
 {
             if (wrapped.persistent())
 {
-                throw new IllegalArgumentException("Provided store must not be a persistent store, but it is.");
+                throw new ArgumentException("Provided store must not be a persistent store, but it is.");
             }
             this.wrapped = wrapped;
         }
 
-        @Override
+        
         public void init(IProcessorContext context,
                          IStateStore root)
 {
             wrapped.init(context, root);
         }
 
-        @Override
+        
         public void put(Bytes key,
                         byte[] value)
 {
-            wrapped.put(key, value);
+            wrapped.Add(key, value);
         }
 
-        @Override
+        
         public byte[] putIfAbsent(Bytes key,
                                   byte[] value)
 {
             return wrapped.putIfAbsent(key, value);
         }
 
-        @Override
+        
         public void putAll(List<KeyValue<Bytes, byte[]>> entries)
 {
             wrapped.putAll(entries);
         }
 
-        @Override
+        
         public byte[] delete(Bytes key)
 {
             return wrapped.delete(key);
         }
 
-        @Override
+        
         public byte[] get(Bytes key)
 {
-            return wrapped.get(key);
+            return wrapped[key];
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
 {
             return wrapped.range(from, to);
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> all()
 {
             return wrapped.all();
         }
 
-        @Override
+        
         public long approximateNumEntries()
 {
             return wrapped.approximateNumEntries();
         }
 
-        @Override
+        
         public void flush()
 {
             wrapped.flush();
         }
 
-        @Override
+        
         public void close()
 {
             wrapped.close();
         }
 
-        @Override
+        
         public bool isOpen()
 {
             return wrapped.isOpen();
         }
 
-        @Override
+        
         public string name()
 {
             return wrapped.name();
         }
 
-        @Override
+        
         public bool persistent()
 {
             return false;

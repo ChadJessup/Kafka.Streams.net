@@ -114,7 +114,7 @@ namespace Kafka.Streams.State.Internals
                 null);
         }
 
-        public override void remove(Bytes key)
+        public override void Remove(Bytes key)
         {
             long timestamp = keySchema.segmentTimestamp(key);
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
@@ -139,7 +139,7 @@ namespace Kafka.Streams.State.Internals
                 LOG.LogDebug("Skipping record for expired segment.");
             } else
             {
-                segment.put(key, value);
+                segment.Add(key, value);
             }
         }
 
@@ -150,7 +150,7 @@ namespace Kafka.Streams.State.Internals
             {
                 return null;
             }
-            return segment.get(key);
+            return segment[key];
         }
 
         public override string Name()
@@ -164,13 +164,13 @@ namespace Kafka.Streams.State.Internals
             this.context = (InternalProcessorContext)context;
 
             StreamsMetricsImpl metrics = this.context.metrics();
-            string taskName = context.taskId().toString();
+            string taskName = context.taskId().ToString();
 
             expiredRecordSensor = metrics.storeLevelSensor(
                 taskName,
                 name(),
                 EXPIRED_WINDOW_RECORD_DROP,
-                Sensor.RecordingLevel.INFO
+                RecordingLevel.INFO
             );
             addInvocationRateAndCount(
                 expiredRecordSensor,

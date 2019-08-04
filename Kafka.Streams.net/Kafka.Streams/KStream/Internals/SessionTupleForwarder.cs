@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Windowed;
 import org.apache.kafka.streams.processor.IProcessorContext;
@@ -40,7 +40,8 @@ class SessionTupleForwarder<K, V> {
     SessionTupleForwarder( IStateStore store,
                            IProcessorContext context,
                            CacheFlushListener<Windowed<K>, V> flushListener,
-                           bool sendOldValues) {
+                           bool sendOldValues)
+{
         this.context = context;
         this.sendOldValues = sendOldValues;
         cachingEnabled = ((WrappedStateStore) store).setFlushListener(flushListener, sendOldValues);
@@ -48,8 +49,10 @@ class SessionTupleForwarder<K, V> {
 
     public void maybeForward( Windowed<K> key,
                               V newValue,
-                              V oldValue) {
-        if (!cachingEnabled) {
+                              V oldValue)
+{
+        if (!cachingEnabled)
+{
             context.forward(key, new Change<>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(key.window().end()));
         }
     }

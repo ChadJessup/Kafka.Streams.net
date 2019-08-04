@@ -14,33 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ForeachAction;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamPeek<K, V> implements ProcessorSupplier<K, V> {
+class KStreamPeek<K, V> : ProcessorSupplier<K, V> {
 
     private  bool forwardDownStream;
     private  ForeachAction<K, V> action;
 
-    public KStreamPeek( ForeachAction<K, V> action,  bool forwardDownStream) {
+    public KStreamPeek( ForeachAction<K, V> action,  bool forwardDownStream)
+{
         this.action = action;
         this.forwardDownStream = forwardDownStream;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamPeekProcessor();
     }
 
     private class KStreamPeekProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             action.apply(key, value);
-            if (forwardDownStream) {
+            if (forwardDownStream)
+{
                 context().forward(key, value);
             }
         }

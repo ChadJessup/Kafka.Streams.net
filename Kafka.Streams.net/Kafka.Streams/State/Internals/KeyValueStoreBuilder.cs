@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -24,7 +24,7 @@ using Kafka.Streams.State.KeyValueStore;
 
 import java.util.Objects;
 
-public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, KeyValueStore<K, V>>
+public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
 {
 
     private KeyValueBytesStoreSupplier storeSupplier;
@@ -32,24 +32,24 @@ public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, KeyValueSto
     public KeyValueStoreBuilder(KeyValueBytesStoreSupplier storeSupplier,
                                 ISerde<K> keySerde,
                                 ISerde<V> valueSerde,
-                                Time time)
+                                ITime time)
 {
         super(storeSupplier.name(), keySerde, valueSerde, time);
         Objects.requireNonNull(storeSupplier, "bytesStoreSupplier can't be null");
         this.storeSupplier = storeSupplier;
     }
 
-    public override KeyValueStore<K, V> build()
+    public override IKeyValueStore<K, V> build()
 {
         return new MeteredKeyValueStore<>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier.get())),
+            maybeWrapCaching(maybeWrapLogging(storeSupplier())],
             storeSupplier.metricsScope(),
             time,
             keySerde,
             valueSerde);
     }
 
-    private KeyValueStore<Bytes, byte[]> maybeWrapCaching(KeyValueStore<Bytes, byte[]> inner)
+    private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
 {
         if (!enableCaching)
 {
@@ -58,7 +58,7 @@ public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, KeyValueSto
         return new CachingKeyValueStore(inner);
     }
 
-    private KeyValueStore<Bytes, byte[]> maybeWrapLogging(KeyValueStore<Bytes, byte[]> inner)
+    private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
 {
         if (!enableLogging)
 {

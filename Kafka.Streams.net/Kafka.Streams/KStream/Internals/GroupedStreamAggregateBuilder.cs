@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.Aggregator;
@@ -56,7 +56,8 @@ class GroupedStreamAggregateBuilder<K, V> {
                                    bool repartitionRequired,
                                    Set<string> sourceNodes,
                                    string name,
-                                   StreamsGraphNode streamsGraphNode) {
+                                   StreamsGraphNode streamsGraphNode)
+{
 
         this.builder = builder;
         this.keySerde = groupedInternal.keySerde();
@@ -73,15 +74,17 @@ class GroupedStreamAggregateBuilder<K, V> {
                                    KStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
                                    string queryableStoreName,
                                    ISerde<KR> keySerde,
-                                   ISerde<VR> valSerde) {
-        assert queryableStoreName == null || queryableStoreName.equals(storeBuilder.name());
+                                   ISerde<VR> valSerde)
+{
+        assert queryableStoreName == null || queryableStoreName.Equals(storeBuilder.name());
 
          string aggFunctionName = builder.newProcessorName(functionName);
 
         string sourceName = this.name;
         StreamsGraphNode parentNode = streamsGraphNode;
 
-        if (repartitionRequired) {
+        if (repartitionRequired)
+{
              OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder = optimizableRepartitionNodeBuilder();
              string repartitionTopicPrefix = userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : storeBuilder.name();
             sourceName = createRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
@@ -90,7 +93,8 @@ class GroupedStreamAggregateBuilder<K, V> {
             // Any subsequent calls to GroupedStreamAggregateBuilder#build we check if
             // the user has provided a name for the repartition topic, is so we re-use
             // the existing repartition node, otherwise we create a new one.
-            if (repartitionNode == null || userProvidedRepartitionTopicName == null) {
+            if (repartitionNode == null || userProvidedRepartitionTopicName == null)
+{
                 repartitionNode = repartitionNodeBuilder.build();
             }
 
@@ -110,7 +114,7 @@ class GroupedStreamAggregateBuilder<K, V> {
         return new KTableImpl<>(aggFunctionName,
                                 keySerde,
                                 valSerde,
-                                sourceName.equals(this.name) ? sourceNodes : Collections.singleton(sourceName),
+                                sourceName.Equals(this.name) ? sourceNodes : Collections.singleton(sourceName),
                                 queryableStoreName,
                                 aggregateSupplier,
                                 statefulProcessorNode,
@@ -122,7 +126,8 @@ class GroupedStreamAggregateBuilder<K, V> {
      * @return the new sourceName of the repartitioned source
      */
     private string createRepartitionSource( string repartitionTopicNamePrefix,
-                                            OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder) {
+                                            OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
+{
 
         return KStreamImpl.createRepartitionedSource(builder,
                                                      keySerde,

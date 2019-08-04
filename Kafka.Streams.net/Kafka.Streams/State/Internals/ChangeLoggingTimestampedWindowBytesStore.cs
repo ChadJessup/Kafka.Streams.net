@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.WindowStore;
@@ -31,7 +31,7 @@ class ChangeLoggingTimestampedWindowBytesStore : ChangeLoggingWindowBytesStore
         super(bytesStore, retainDuplicates);
     }
 
-    @Override
+    
     void log(Bytes key,
              byte[] valueAndTimestamp)
 {

@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics.stats;
-
-/**
- * A {@link SampledStat} that maintains the sum of what it has seen.
- * This is a sampled version of {@link CumulativeSum}.
- *
- * See also {@link WindowedCount} if you want to increment the value by 1 on each recording.
- *
- * @deprecated since 2.4 . Use {@link WindowedSum} instead
- */
-@Deprecated
-public class Sum : WindowedSum {
+namespace Kafka.Common.Metrics.Stats
+{
+    /**
+     * A {@link SampledStat} that maintains the sum of what it has seen.
+     * This is a sampled version of {@link CumulativeSum}.
+     *
+     * See also {@link WindowedCount} if you want to increment the value by 1 on each recording.
+     *
+     * @deprecated since 2.4 . Use {@link WindowedSum} instead
+     */
+    public class Sum : WindowedSum
+    {
+    }
 }

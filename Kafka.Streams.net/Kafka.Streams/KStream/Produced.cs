@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
 import org.apache.kafka.common.serialization.Serde;
@@ -30,7 +30,7 @@ import java.util.Objects;
  * @param <K> key type
  * @param <V> value type
  */
-public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
+public class Produced<K, V> : NamedOperation<Produced<K, V>> {
 
     protected ISerde<K> keySerde;
     protected ISerde<V> valueSerde;
@@ -40,14 +40,16 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
     private Produced( ISerde<K> keySerde,
                       ISerde<V> valueSerde,
                       StreamPartitioner<? super K, ? super V> partitioner,
-                      string processorName) {
+                      string processorName)
+{
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
         this.partitioner = partitioner;
         this.processorName = processorName;
     }
 
-    protected Produced( Produced<K, V> produced) {
+    protected Produced( Produced<K, V> produced)
+{
         this.keySerde = produced.keySerde;
         this.valueSerde = produced.valueSerde;
         this.partitioner = produced.partitioner;
@@ -65,7 +67,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @see KStream#to(string, Produced)
      */
     public static <K, V> Produced<K, V> with( ISerde<K> keySerde,
-                                              ISerde<V> valueSerde) {
+                                              ISerde<V> valueSerde)
+{
         return new Produced<>(keySerde, valueSerde, null, null);
     }
 
@@ -85,7 +88,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      */
     public static <K, V> Produced<K, V> with( ISerde<K> keySerde,
                                               ISerde<V> valueSerde,
-                                              StreamPartitioner<? super K, ? super V> partitioner) {
+                                              StreamPartitioner<? super K, ? super V> partitioner)
+{
         return new Produced<>(keySerde, valueSerde, partitioner, null);
     }
 
@@ -97,7 +101,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @param <V>         value type
      * @return a new instance of {@link Produced}
      */
-    public static <K, V> Produced<K, V> as( string processorName) {
+    public static <K, V> Produced<K, V> as( string processorName)
+{
         return new Produced<>(null, null, null, processorName);
     }
 
@@ -110,7 +115,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> keySerde( ISerde<K> keySerde) {
+    public static <K, V> Produced<K, V> keySerde( ISerde<K> keySerde)
+{
         return new Produced<>(keySerde, null, null, null);
     }
 
@@ -123,7 +129,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> valueSerde( ISerde<V> valueSerde) {
+    public static <K, V> Produced<K, V> valueSerde( ISerde<V> valueSerde)
+{
         return new Produced<>(null, valueSerde, null, null);
     }
 
@@ -138,7 +145,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @see KStream#through(string, Produced)
      * @see KStream#to(string, Produced)
      */
-    public static <K, V> Produced<K, V> streamPartitioner( StreamPartitioner<? super K, ? super V> partitioner) {
+    public static <K, V> Produced<K, V> streamPartitioner( StreamPartitioner<? super K, ? super V> partitioner)
+{
         return new Produced<>(null, null, partitioner, null);
     }
 
@@ -149,7 +157,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} wil be used
      * @return this
      */
-    public Produced<K, V> withStreamPartitioner( StreamPartitioner<? super K, ? super V> partitioner) {
+    public Produced<K, V> withStreamPartitioner( StreamPartitioner<? super K, ? super V> partitioner)
+{
         this.partitioner = partitioner;
         return this;
     }
@@ -159,7 +168,8 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @param valueSerde    Serde to use for serializing the value
      * @return this
      */
-    public Produced<K, V> withValueSerde( ISerde<V> valueSerde) {
+    public Produced<K, V> withValueSerde( ISerde<V> valueSerde)
+{
         this.valueSerde = valueSerde;
         return this;
     }
@@ -169,32 +179,38 @@ public class Produced<K, V> implements NamedOperation<Produced<K, V>> {
      * @param keySerde    Serde to use for serializing the key
      * @return this
      */
-    public Produced<K, V> withKeySerde( ISerde<K> keySerde) {
+    public Produced<K, V> withKeySerde( ISerde<K> keySerde)
+{
         this.keySerde = keySerde;
         return this;
     }
 
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          Produced<?, ?> produced = (Produced<?, ?>) o;
-        return Objects.equals(keySerde, produced.keySerde) &&
-               Objects.equals(valueSerde, produced.valueSerde) &&
-               Objects.equals(partitioner, produced.partitioner);
+        return Objects.Equals(keySerde, produced.keySerde) &&
+               Objects.Equals(valueSerde, produced.valueSerde) &&
+               Objects.Equals(partitioner, produced.partitioner);
     }
 
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(keySerde, valueSerde, partitioner);
     }
 
-    @Override
-    public Produced<K, V> withName( string name) {
+    
+    public Produced<K, V> withName( string name)
+{
         this.processorName = name;
         return this;
     }

@@ -14,31 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ValueMapperWithKey;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamFlatMapValues<K, V, V1> implements ProcessorSupplier<K, V> {
+class KStreamFlatMapValues<K, V, V1> : ProcessorSupplier<K, V> {
 
     private  ValueMapperWithKey<? super K, ? super V, ? : Iterable<? : V1>> mapper;
 
-    KStreamFlatMapValues( ValueMapperWithKey<? super K, ? super V, ? : Iterable<? : V1>> mapper) {
+    KStreamFlatMapValues( ValueMapperWithKey<? super K, ? super V, ? : Iterable<? : V1>> mapper)
+{
         this.mapper = mapper;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamFlatMapValuesProcessor();
     }
 
     private class KStreamFlatMapValuesProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
              Iterable<? : V1> newValues = mapper.apply(key, value);
-            for ( V1 v : newValues) {
+            foreach ( V1 v in newValues)
+{
                 context().forward(key, v);
             }
         }

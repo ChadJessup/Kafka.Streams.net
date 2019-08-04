@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -41,7 +41,7 @@ import java.util.Set;
  * @param <K> the key type
  * @param <V> the value type
  */
-public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedTable<K, V> {
+public class KGroupedTableImpl<K, V> : AbstractStream<K, V> : KGroupedTable<K, V> {
 
     private static  string AGGREGATE_NAME = "KTABLE-AGGREGATE-";
 
@@ -61,7 +61,8 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
                        string name,
                        Set<string> sourceNodes,
                        GroupedInternal<K, V> groupedInternal,
-                       StreamsGraphNode streamsGraphNode) {
+                       StreamsGraphNode streamsGraphNode)
+{
         super(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
 
         this.userProvidedRepartitionTopicName = groupedInternal.name();
@@ -69,7 +70,8 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
 
     private <T> KTable<K, T> doAggregate( ProcessorSupplier<K, Change<V>> aggregateSupplier,
                                           string functionName,
-                                          MaterializedInternal<K, T, KeyValueStore<Bytes, byte[]>> materialized) {
+                                          MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materialized)
+{
 
          string sinkName = builder.newProcessorName(KStreamImpl.SINK_NAME);
          string sourceName = builder.newProcessorName(KStreamImpl.SOURCE_NAME);
@@ -77,7 +79,8 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
          string repartitionTopic = (userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : materialized.storeName())
             + KStreamImpl.REPARTITION_TOPIC_SUFFIX;
 
-        if (repartitionGraphNode == null || userProvidedRepartitionTopicName == null) {
+        if (repartitionGraphNode == null || userProvidedRepartitionTopicName == null)
+{
             repartitionGraphNode = createRepartitionNode(sinkName, sourceName, repartitionTopic);
         }
 
@@ -107,7 +110,8 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
 
     private GroupedTableOperationRepartitionNode<K, V> createRepartitionNode( string sinkName,
                                                                               string sourceName,
-                                                                              string topic) {
+                                                                              string topic)
+{
 
         return GroupedTableOperationRepartitionNode.<K, V>groupedTableOperationNodeBuilder()
             .withRepartitionTopic(topic)
@@ -118,20 +122,23 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
             .withNodeName(sourceName).build();
     }
 
-    @Override
+    
     public KTable<K, V> reduce( Reducer<V> adder,
                                 Reducer<V> subtractor,
-                                Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized) {
+                                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(adder, "adder can't be null");
         Objects.requireNonNull(subtractor, "subtractor can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
-         MaterializedInternal<K, V, KeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(valSerde);
         }
          ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableReduce<>(materializedInternal.storeName(),
@@ -140,21 +147,25 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
         return doAggregate(aggregateSupplier, REDUCE_NAME, materializedInternal);
     }
 
-    @Override
+    
     public KTable<K, V> reduce( Reducer<V> adder,
-                                Reducer<V> subtractor) {
+                                Reducer<V> subtractor)
+{
         return reduce(adder, subtractor, Materialized.with(keySerde, valSerde));
     }
 
-    @Override
-    public KTable<K, Long> count( Materialized<K, Long, KeyValueStore<Bytes, byte[]>> materialized) {
-         MaterializedInternal<K, Long, KeyValueStore<Bytes, byte[]>> materializedInternal =
+    
+    public KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+{
+         MaterializedInternal<K, Long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(Serdes.Long());
         }
 
@@ -166,25 +177,28 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
         return doAggregate(aggregateSupplier, AGGREGATE_NAME, materializedInternal);
     }
 
-    @Override
-    public KTable<K, Long> count() {
+    
+    public KTable<K, Long> count()
+{
         return count(Materialized.with(keySerde, Serdes.Long()));
     }
 
-    @Override
+    
     public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
                                          Aggregator<? super K, ? super V, VR> adder,
                                          Aggregator<? super K, ? super V, VR> subtractor,
-                                         Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized) {
+                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(initializer, "initializer can't be null");
         Objects.requireNonNull(adder, "adder can't be null");
         Objects.requireNonNull(subtractor, "subtractor can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-         MaterializedInternal<K, VR, KeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
          ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
@@ -194,10 +208,11 @@ public class KGroupedTableImpl<K, V> : AbstractStream<K, V> implements KGroupedT
         return doAggregate(aggregateSupplier, AGGREGATE_NAME, materializedInternal);
     }
 
-    @Override
+    
     public <T> KTable<K, T> aggregate( Initializer<T> initializer,
                                        Aggregator<? super K, ? super V, T> adder,
-                                       Aggregator<? super K, ? super V, T> subtractor) {
+                                       Aggregator<? super K, ? super V, T> subtractor)
+{
         return aggregate(initializer, adder, subtractor, Materialized.with(keySerde, null));
     }
 

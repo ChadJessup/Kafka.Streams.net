@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.KeyValueBytesStoreSupplier;
@@ -38,7 +38,7 @@ public class RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
         return name;
     }
 
-    public override KeyValueStore<Bytes, byte[]> get()
+    public override IKeyValueStore<Bytes, byte[]> get()
 {
         return returnTimestampedStore ? new RocksDBTimestampedStore(name) : new RocksDBStore(name);
     }

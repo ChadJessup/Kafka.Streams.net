@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.metrics.Sensor;
 import org.apache.kafka.streams.processor.AbstractProcessor;
@@ -30,14 +30,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
-public class KTableSource<K, V> implements ProcessorSupplier<K, V> {
+public class KTableSource<K, V> : ProcessorSupplier<K, V> {
     private static  Logger LOG = LoggerFactory.getLogger(KTableSource.class);
 
     private  string storeName;
     private string queryableName;
     private bool sendOldValues;
 
-    public KTableSource( string storeName,  string queryableName) {
+    public KTableSource( string storeName,  string queryableName)
+{
         Objects.requireNonNull(storeName, "storeName can't be null");
 
         this.storeName = storeName;
@@ -45,25 +46,29 @@ public class KTableSource<K, V> implements ProcessorSupplier<K, V> {
         this.sendOldValues = false;
     }
 
-    public string queryableName() {
+    public string queryableName()
+{
         return queryableName;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KTableSourceProcessor();
     }
 
     // when source ktable requires sending old values, we just
     // need to set the queryable name as the store name to enforce materialization
-    public void enableSendingOldValues() {
+    public void enableSendingOldValues()
+{
         this.sendOldValues = true;
         this.queryableName = storeName;
     }
 
     // when the source ktable requires materialization from downstream, we just
     // need to set the queryable name as the store name to enforce materialization
-    public void materialize() {
+    public void materialize()
+{
         this.queryableName = storeName;
     }
 
@@ -75,12 +80,14 @@ public class KTableSource<K, V> implements ProcessorSupplier<K, V> {
         private Sensor skippedRecordsSensor;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-            if (queryableName != null) {
+            if (queryableName != null)
+{
                 store = (TimestampedKeyValueStore<K, V>) context.getStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<>(
                     store,
@@ -90,10 +97,12 @@ public class KTableSource<K, V> implements ProcessorSupplier<K, V> {
             }
         }
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             // if the key is null, then ignore the record
-            if (key == null) {
+            if (key == null)
+{
                 LOG.warn(
                     "Skipping record due to null key. topic=[{}] partition=[{}] offset=[{}]",
                     context().topic(), context().partition(), context().offset()
@@ -102,19 +111,22 @@ public class KTableSource<K, V> implements ProcessorSupplier<K, V> {
                 return;
             }
 
-            if (queryableName != null) {
-                 ValueAndTimestamp<V> oldValueAndTimestamp = store.get(key);
+            if (queryableName != null)
+{
+                 ValueAndTimestamp<V> oldValueAndTimestamp = store[key];
                  V oldValue;
-                if (oldValueAndTimestamp != null) {
+                if (oldValueAndTimestamp != null)
+{
                     oldValue = oldValueAndTimestamp.value();
-                    if (context().timestamp() < oldValueAndTimestamp.timestamp()) {
+                    if (context().timestamp() < oldValueAndTimestamp.timestamp())
+{
                         LOG.warn("Detected out-of-order KTable update for {} at offset {}, partition {}.",
                             store.name(), context().offset(), context().partition());
                     }
                 } else {
                     oldValue = null;
                 }
-                store.put(key, ValueAndTimestamp.make(value, context().timestamp()));
+                store.Add(key, ValueAndTimestamp.make(value, context().timestamp()));
                 tupleForwarder.maybeForward(key, value, oldValue);
             } else {
                 context().forward(key, new Change<>(value, null));

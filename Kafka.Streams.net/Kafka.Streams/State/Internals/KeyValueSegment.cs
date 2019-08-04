@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Utils;
 using Kafka.Streams.Processor.IProcessorContext;
@@ -51,12 +51,12 @@ class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
         internalProcessorContext = context;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "KeyValueSegment(id=" + id + ", name=" + name() + ")";
     }
 
-    public override bool equals(object obj)
+    public override bool Equals(object obj)
 {
         if (obj == null || GetType() != obj.GetType())
 {
@@ -66,7 +66,7 @@ class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
         return id == segment.id;
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         return Objects.hash(id);
     }

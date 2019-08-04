@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals.assignment;
+namespace Kafka.streams.processor.internals.assignment;
 
 import org.apache.kafka.streams.errors.TaskAssignmentException;
 import org.apache.kafka.streams.processor.TaskId;
@@ -44,7 +44,8 @@ public class SubscriptionInfo {
 
     // used for decoding; don't apply version checks
     private SubscriptionInfo(int version,
-                             int latestSupportedVersion) {
+                             int latestSupportedVersion)
+{
         this.usedVersion = version;
         this.latestSupportedVersion = latestSupportedVersion;
     }
@@ -52,7 +53,8 @@ public class SubscriptionInfo {
     public SubscriptionInfo(UUID processId,
                             Set<TaskId> prevTasks,
                             Set<TaskId> standbyTasks,
-                            string userEndPoint) {
+                            string userEndPoint)
+{
         this(LATEST_SUPPORTED_VERSION, processId, prevTasks, standbyTasks, userEndPoint);
     }
 
@@ -60,11 +62,13 @@ public class SubscriptionInfo {
                             UUID processId,
                             Set<TaskId> prevTasks,
                             Set<TaskId> standbyTasks,
-                            string userEndPoint) {
+                            string userEndPoint)
+{
         this(version, LATEST_SUPPORTED_VERSION, processId, prevTasks, standbyTasks, userEndPoint);
 
-        if (version < 1 || version > LATEST_SUPPORTED_VERSION) {
-            throw new IllegalArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
+        if (version < 1 || version > LATEST_SUPPORTED_VERSION)
+{
+            throw new ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
                 + "; was: " + version);
         }
     }
@@ -75,7 +79,8 @@ public class SubscriptionInfo {
                                UUID processId,
                                Set<TaskId> prevTasks,
                                Set<TaskId> standbyTasks,
-                               string userEndPoint) {
+                               string userEndPoint)
+{
         this.usedVersion = version;
         this.latestSupportedVersion = latestSupportedVersion;
         this.processId = processId;
@@ -84,37 +89,45 @@ public class SubscriptionInfo {
         this.userEndPoint = userEndPoint;
     }
 
-    public int version() {
+    public int version()
+{
         return usedVersion;
     }
 
-    public int latestSupportedVersion() {
+    public int latestSupportedVersion()
+{
         return latestSupportedVersion;
     }
 
-    public UUID processId() {
+    public UUID processId()
+{
         return processId;
     }
 
-    public Set<TaskId> prevTasks() {
+    public Set<TaskId> prevTasks()
+{
         return prevTasks;
     }
 
-    public Set<TaskId> standbyTasks() {
+    public Set<TaskId> standbyTasks()
+{
         return standbyTasks;
     }
 
-    public string userEndPoint() {
+    public string userEndPoint()
+{
         return userEndPoint;
     }
 
     /**
      * @throws TaskAssignmentException if method fails to encode the data
      */
-    public ByteBuffer encode() {
+    public ByteBuffer encode()
+{
         ByteBuffer buf;
 
-        switch (usedVersion) {
+        switch (usedVersion)
+{
             case 1:
                 buf = encodeVersionOne();
                 break;
@@ -136,7 +149,8 @@ public class SubscriptionInfo {
         return buf;
     }
 
-    private ByteBuffer encodeVersionOne() {
+    private ByteBuffer encodeVersionOne()
+{
         ByteBuffer buf = ByteBuffer.allocate(getVersionOneByteLength());
 
         buf.putInt(1); // version
@@ -147,35 +161,42 @@ public class SubscriptionInfo {
         return buf;
     }
 
-    private int getVersionOneByteLength() {
+    private int getVersionOneByteLength()
+{
         return 4 + // version
                16 + // client ID
                4 + prevTasks.size() * 8 + // length + prev tasks
                4 + standbyTasks.size() * 8; // length + standby tasks
     }
 
-    protected void encodeClientUUID(ByteBuffer buf) {
+    protected void encodeClientUUID(ByteBuffer buf)
+{
         buf.putLong(processId.getMostSignificantBits());
         buf.putLong(processId.getLeastSignificantBits());
     }
 
     protected void encodeTasks(ByteBuffer buf,
-                               Collection<TaskId> taskIds) {
+                               Collection<TaskId> taskIds)
+{
         buf.putInt(taskIds.size());
-        for (TaskId id : taskIds) {
+        foreach (TaskId id in taskIds)
+{
             id.writeTo(buf);
         }
     }
 
-    protected byte[] prepareUserEndPoint() {
-        if (userEndPoint == null) {
+    protected byte[] prepareUserEndPoint()
+{
+        if (userEndPoint == null)
+{
             return new byte[0];
         } else {
             return userEndPoint.getBytes(StandardCharsets.UTF_8);
         }
     }
 
-    private ByteBuffer encodeVersionTwo() {
+    private ByteBuffer encodeVersionTwo()
+{
         byte[] endPointBytes = prepareUserEndPoint();
 
         ByteBuffer buf = ByteBuffer.allocate(getVersionTwoByteLength(endPointBytes));
@@ -189,23 +210,27 @@ public class SubscriptionInfo {
         return buf;
     }
 
-    private int getVersionTwoByteLength(byte[] endPointBytes) {
+    private int getVersionTwoByteLength(byte[] endPointBytes)
+{
         return 4 + // version
                16 + // client ID
                4 + prevTasks.size() * 8 + // length + prev tasks
                4 + standbyTasks.size() * 8 + // length + standby tasks
-               4 + endPointBytes.length; // length + userEndPoint
+               4 + endPointBytes.Length; // length + userEndPoint
     }
 
     protected void encodeUserEndPoint(ByteBuffer buf,
-                                      byte[] endPointBytes) {
-        if (endPointBytes != null) {
-            buf.putInt(endPointBytes.length);
-            buf.put(endPointBytes);
+                                      byte[] endPointBytes)
+{
+        if (endPointBytes != null)
+{
+            buf.putInt(endPointBytes.Length);
+            buf.Add(endPointBytes);
         }
     }
 
-    private ByteBuffer encodeVersionThree() {
+    private ByteBuffer encodeVersionThree()
+{
         byte[] endPointBytes = prepareUserEndPoint();
 
         ByteBuffer buf = ByteBuffer.allocate(getVersionThreeAndFourByteLength(endPointBytes));
@@ -220,7 +245,8 @@ public class SubscriptionInfo {
         return buf;
     }
 
-    private ByteBuffer encodeVersionFour() {
+    private ByteBuffer encodeVersionFour()
+{
         byte[] endPointBytes = prepareUserEndPoint();
 
         ByteBuffer buf = ByteBuffer.allocate(getVersionThreeAndFourByteLength(endPointBytes));
@@ -235,19 +261,21 @@ public class SubscriptionInfo {
         return buf;
     }
 
-    protected int getVersionThreeAndFourByteLength(byte[] endPointBytes) {
+    protected int getVersionThreeAndFourByteLength(byte[] endPointBytes)
+{
         return 4 + // used version
                4 + // latest supported version version
                16 + // client ID
                4 + prevTasks.size() * 8 + // length + prev tasks
                4 + standbyTasks.size() * 8 + // length + standby tasks
-               4 + endPointBytes.length; // length + userEndPoint
+               4 + endPointBytes.Length; // length + userEndPoint
     }
 
     /**
      * @throws TaskAssignmentException if method fails to decode the data
      */
-    public static SubscriptionInfo decode(ByteBuffer data) {
+    public static SubscriptionInfo decode(ByteBuffer data)
+{
         SubscriptionInfo subscriptionInfo;
 
         // ensure we are at the beginning of the ByteBuffer
@@ -255,7 +283,8 @@ public class SubscriptionInfo {
 
         int usedVersion = data.getInt();
         int latestSupportedVersion;
-        switch (usedVersion) {
+        switch (usedVersion)
+{
             case 1:
                 subscriptionInfo = new SubscriptionInfo(usedVersion, UNKNOWN);
                 decodeVersionOneData(subscriptionInfo, data);
@@ -280,67 +309,80 @@ public class SubscriptionInfo {
     }
 
     private static void decodeVersionOneData(SubscriptionInfo subscriptionInfo,
-                                             ByteBuffer data) {
+                                             ByteBuffer data)
+{
         decodeClientUUID(subscriptionInfo, data);
         decodeTasks(subscriptionInfo, data);
     }
 
     private static void decodeClientUUID(SubscriptionInfo subscriptionInfo,
-                                         ByteBuffer data) {
+                                         ByteBuffer data)
+{
         subscriptionInfo.processId = new UUID(data.getLong(), data.getLong());
     }
 
     private static void decodeTasks(SubscriptionInfo subscriptionInfo,
-                                    ByteBuffer data) {
+                                    ByteBuffer data)
+{
         subscriptionInfo.prevTasks = new HashSet<>();
         int numPrevTasks = data.getInt();
-        for (int i = 0; i < numPrevTasks; i++) {
+        for (int i = 0; i < numPrevTasks; i++)
+{
             subscriptionInfo.prevTasks.add(TaskId.readFrom(data));
         }
 
         subscriptionInfo.standbyTasks = new HashSet<>();
         int numStandbyTasks = data.getInt();
-        for (int i = 0; i < numStandbyTasks; i++) {
+        for (int i = 0; i < numStandbyTasks; i++)
+{
             subscriptionInfo.standbyTasks.add(TaskId.readFrom(data));
         }
     }
 
     private static void decodeVersionTwoData(SubscriptionInfo subscriptionInfo,
-                                             ByteBuffer data) {
+                                             ByteBuffer data)
+{
         decodeClientUUID(subscriptionInfo, data);
         decodeTasks(subscriptionInfo, data);
         decodeUserEndPoint(subscriptionInfo, data);
     }
 
     private static void decodeUserEndPoint(SubscriptionInfo subscriptionInfo,
-                                           ByteBuffer data) {
+                                           ByteBuffer data)
+{
         int bytesLength = data.getInt();
-        if (bytesLength != 0) {
+        if (bytesLength != 0)
+{
             byte[] bytes = new byte[bytesLength];
-            data.get(bytes);
+            data[bytes];
             subscriptionInfo.userEndPoint = new string(bytes, StandardCharsets.UTF_8);
         }
     }
 
     private static void decodeVersionThreeData(SubscriptionInfo subscriptionInfo,
-                                               ByteBuffer data) {
+                                               ByteBuffer data)
+{
         decodeClientUUID(subscriptionInfo, data);
         decodeTasks(subscriptionInfo, data);
         decodeUserEndPoint(subscriptionInfo, data);
     }
 
-    @Override
-    public int GetHashCode()() {
-        int GetHashCode() = usedVersion ^ latestSupportedVersion ^ processId.GetHashCode()() ^ prevTasks.GetHashCode()() ^ standbyTasks.GetHashCode()();
-        if (userEndPoint == null) {
+    
+    public int GetHashCode()
+{
+        int GetHashCode() = usedVersion ^ latestSupportedVersion ^ processId.GetHashCode() ^ prevTasks.GetHashCode() ^ standbyTasks.GetHashCode();
+        if (userEndPoint == null)
+{
             return GetHashCode();
         }
-        return GetHashCode() ^ userEndPoint.GetHashCode()();
+        return GetHashCode() ^ userEndPoint.GetHashCode();
     }
 
-    @Override
-    public bool equals(object o) {
-        if (o is SubscriptionInfo) {
+    
+    public bool Equals(object o)
+{
+        if (o is SubscriptionInfo)
+{
             SubscriptionInfo other = (SubscriptionInfo) o;
             return this.usedVersion == other.usedVersion &&
                     this.latestSupportedVersion == other.latestSupportedVersion &&
@@ -353,8 +395,9 @@ public class SubscriptionInfo {
         }
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "[version=" + usedVersion
             + ", supported version=" + latestSupportedVersion
             + ", process ID=" + processId

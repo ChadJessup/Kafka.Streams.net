@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -30,9 +30,9 @@ public class RecordConverters
         byte[] rawValue = record.value();
         long timestamp = record.timestamp();
         byte[] recordValue = rawValue == null ? null :
-            ByteBuffer.allocate(8 + rawValue.length)
+            ByteBuffer.allocate(8 + rawValue.Length)
                 .putLong(timestamp)
-                .put(rawValue)
+                .Add(rawValue)
                 .array();
         return new ConsumerRecord<>(
             record.topic(),

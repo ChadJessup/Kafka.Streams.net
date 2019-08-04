@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Errors.InvalidStateStoreException;
@@ -58,7 +58,7 @@ public class DelegatingPeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>, P
 {
         if (!open)
 {
-            throw new InvalidStateStoreException(string.format("Store %s has closed", storeName));
+            throw new InvalidStateStoreException(string.Format("Store %s has closed", storeName));
         }
         if (next != null)
 {
@@ -85,9 +85,9 @@ public class DelegatingPeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>, P
         return result;
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
     }
 
     public override KeyValue<K, V> peekNext()

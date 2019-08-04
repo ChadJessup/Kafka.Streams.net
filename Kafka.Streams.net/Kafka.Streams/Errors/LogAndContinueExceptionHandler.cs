@@ -28,13 +28,14 @@ import java.util.Map;
  * Deserialization handler that logs a deserialization exception and then
  * signals the processing pipeline to continue processing more records.
  */
-public class LogAndContinueExceptionHandler implements DeserializationExceptionHandler {
+public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler {
     private static  Logger log = LoggerFactory.getLogger(LogAndContinueExceptionHandler.class);
 
-    @Override
+    
     public DeserializationHandlerResponse handle( IProcessorContext context,
                                                   ConsumerRecord<byte[], byte[]> record,
-                                                  Exception exception) {
+                                                  Exception exception)
+{
 
         log.warn("Exception caught during Deserialization, " +
                  "taskId: {}, topic: {}, partition: {}, offset: {}",
@@ -44,8 +45,9 @@ public class LogAndContinueExceptionHandler implements DeserializationExceptionH
         return DeserializationHandlerResponse.CONTINUE;
     }
 
-    @Override
-    public void configure( Map<string, ?> configs) {
+    
+    public void configure( Map<string, ?> configs)
+{
         // ignore
     }
 }

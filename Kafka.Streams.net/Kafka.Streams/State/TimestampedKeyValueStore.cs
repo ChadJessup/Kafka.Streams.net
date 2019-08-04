@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 /**
  * A key-(value/timestamp) store that supports put/get/delete and range queries.
@@ -22,4 +22,4 @@ package org.apache.kafka.streams.state;
  * @param <K> The key type
  * @param <V> The value type
  */
-public interface TimestampedKeyValueStore<K, V> : KeyValueStore<K, ValueAndTimestamp<V>> { }
+public interface TimestampedKeyValueStore<K, V> : IKeyValueStore<K, ValueAndTimestamp<V>> { }

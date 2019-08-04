@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals.metrics;
+namespace Kafka.streams.processor.internals.metrics;
 
 using Kafka.Common.metrics.Sensor;
-using Kafka.Common.metrics.Sensor.RecordingLevel;
+using Kafka.Common.metrics.RecordingLevel;
 
 import java.util.Map;
 
@@ -72,7 +72,8 @@ public class ThreadMetrics {
     private static string PROCESS_LATENCY = PROCESS + LATENCY_SUFFIX;
     private static string PUNCTUATE_LATENCY = PUNCTUATE + LATENCY_SUFFIX;
 
-    public static Sensor createTaskSensor(StreamsMetricsImpl streamsMetrics) {
+    public static Sensor createTaskSensor(StreamsMetricsImpl streamsMetrics)
+{
         Sensor createTaskSensor = streamsMetrics.threadLevelSensor(CREATE_TASK, RecordingLevel.INFO);
         addInvocationRateAndCount(createTaskSensor,
                                   THREAD_LEVEL_GROUP,
@@ -83,7 +84,8 @@ public class ThreadMetrics {
         return createTaskSensor;
     }
 
-    public static Sensor closeTaskSensor(StreamsMetricsImpl streamsMetrics) {
+    public static Sensor closeTaskSensor(StreamsMetricsImpl streamsMetrics)
+{
         Sensor closeTaskSensor = streamsMetrics.threadLevelSensor(CLOSE_TASK, RecordingLevel.INFO);
         addInvocationRateAndCount(closeTaskSensor,
                                   THREAD_LEVEL_GROUP,
@@ -94,8 +96,9 @@ public class ThreadMetrics {
         return closeTaskSensor;
     }
 
-    public static Sensor commitSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor commitSensor = streamsMetrics.threadLevelSensor(COMMIT, Sensor.RecordingLevel.INFO);
+    public static Sensor commitSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor commitSensor = streamsMetrics.threadLevelSensor(COMMIT, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
         addAvgAndMax(commitSensor, THREAD_LEVEL_GROUP, tagMap, COMMIT_LATENCY);
         addInvocationRateAndCount(commitSensor,
@@ -107,8 +110,9 @@ public class ThreadMetrics {
         return commitSensor;
     }
 
-    public static Sensor pollSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor pollSensor = streamsMetrics.threadLevelSensor(POLL, Sensor.RecordingLevel.INFO);
+    public static Sensor pollSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor pollSensor = streamsMetrics.threadLevelSensor(POLL, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
         addAvgAndMax(pollSensor, THREAD_LEVEL_GROUP, tagMap, POLL_LATENCY);
         addInvocationRateAndCount(pollSensor,
@@ -120,8 +124,9 @@ public class ThreadMetrics {
         return pollSensor;
     }
 
-    public static Sensor processSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor processSensor = streamsMetrics.threadLevelSensor(PROCESS, Sensor.RecordingLevel.INFO);
+    public static Sensor processSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor processSensor = streamsMetrics.threadLevelSensor(PROCESS, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
         addAvgAndMax(processSensor, THREAD_LEVEL_GROUP, tagMap, PROCESS_LATENCY);
         addInvocationRateAndCount(processSensor,
@@ -134,8 +139,9 @@ public class ThreadMetrics {
         return processSensor;
     }
 
-    public static Sensor punctuateSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor punctuateSensor = streamsMetrics.threadLevelSensor(PUNCTUATE, Sensor.RecordingLevel.INFO);
+    public static Sensor punctuateSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor punctuateSensor = streamsMetrics.threadLevelSensor(PUNCTUATE, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
         addAvgAndMax(punctuateSensor, THREAD_LEVEL_GROUP, tagMap, PUNCTUATE_LATENCY);
         addInvocationRateAndCount(punctuateSensor,
@@ -148,8 +154,9 @@ public class ThreadMetrics {
         return punctuateSensor;
     }
 
-    public static Sensor skipRecordSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor skippedRecordsSensor = streamsMetrics.threadLevelSensor(SKIP_RECORD, Sensor.RecordingLevel.INFO);
+    public static Sensor skipRecordSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor skippedRecordsSensor = streamsMetrics.threadLevelSensor(SKIP_RECORD, RecordingLevel.INFO);
         addInvocationRateAndCount(skippedRecordsSensor,
                                   THREAD_LEVEL_GROUP,
                                   streamsMetrics.threadLevelTagMap(),
@@ -160,8 +167,9 @@ public class ThreadMetrics {
         return skippedRecordsSensor;
     }
 
-    public static Sensor commitOverTasksSensor(StreamsMetricsImpl streamsMetrics) {
-        Sensor commitOverTasksSensor = streamsMetrics.threadLevelSensor(COMMIT, Sensor.RecordingLevel.DEBUG);
+    public static Sensor commitOverTasksSensor(StreamsMetricsImpl streamsMetrics)
+{
+        Sensor commitOverTasksSensor = streamsMetrics.threadLevelSensor(COMMIT, RecordingLevel.DEBUG);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap(TASK_ID_TAG, ALL_TASKS);
         addAvgAndMax(commitOverTasksSensor,
                      TASK_LEVEL_GROUP,

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.annotation.InterfaceStability;
@@ -44,7 +44,7 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see WallclockTimestampExtractor
  */
 @InterfaceStability.Evolving
-abstract class ExtractRecordMetadataTimestamp implements TimestampExtractor {
+abstract class ExtractRecordMetadataTimestamp : TimestampExtractor {
 
     /**
      * Extracts the embedded metadata timestamp from the given {@link ConsumerRecord}.
@@ -53,11 +53,13 @@ abstract class ExtractRecordMetadataTimestamp implements TimestampExtractor {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the embedded metadata timestamp of the given {@link ConsumerRecord}
      */
-    @Override
-    public long extract(ConsumerRecord<Object, object> record, long partitionTime) {
+    
+    public long extract(ConsumerRecord<Object, object> record, long partitionTime)
+{
         long timestamp = record.timestamp();
 
-        if (timestamp < 0) {
+        if (timestamp < 0)
+{
             return onInvalidTimestamp(record, timestamp, partitionTime);
         }
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.annotation.InterfaceStability;
@@ -55,12 +55,13 @@ public class UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp 
      * @return the provided latest extracted valid timestamp as new timestamp for the record
      * @throws StreamsException if latest extracted valid timestamp is unknown
      */
-    @Override
+    
     public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
             throws StreamsException {
-        if (partitionTime < 0) {
+        if (partitionTime < 0)
+{
             throw new StreamsException("Could not infer new timestamp for input record " + record
                     + " because partition time is unknown.");
         }

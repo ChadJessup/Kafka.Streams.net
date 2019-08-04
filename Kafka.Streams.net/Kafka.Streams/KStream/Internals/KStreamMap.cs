@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
@@ -22,22 +22,25 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamMap<K, V, K1, V1> implements ProcessorSupplier<K, V> {
+class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
 
-    private  KeyValueMapper<? super K, ? super V, ? : KeyValue<? : K1, ? : V1>> mapper;
+    private  IKeyValueMapper<? super K, ? super V, ? : KeyValue<? : K1, ? : V1>> mapper;
 
-    public KStreamMap( KeyValueMapper<? super K, ? super V, ? : KeyValue<? : K1, ? : V1>> mapper) {
+    public KStreamMap( IKeyValueMapper<? super K, ? super V, ? : KeyValue<? : K1, ? : V1>> mapper)
+{
         this.mapper = mapper;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamMapProcessor();
     }
 
     private class KStreamMapProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
              KeyValue<? : K1, ? : V1> newPair = mapper.apply(key, value);
             context().forward(newPair.key, newPair.value);
         }

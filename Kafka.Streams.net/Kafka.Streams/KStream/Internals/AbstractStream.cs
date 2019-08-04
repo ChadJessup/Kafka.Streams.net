@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.ValueJoiner;
@@ -51,7 +51,8 @@ public abstract class AbstractStream<K, V> {
 
     // This copy-constructor will allow to extend KStream
     // and KTable APIs with new methods without impacting the public interface.
-    public AbstractStream( AbstractStream<K, V> stream) {
+    public AbstractStream( AbstractStream<K, V> stream)
+{
         this.name = stream.name;
         this.builder = stream.builder;
         this.keySerde = stream.keySerde;
@@ -65,9 +66,11 @@ public abstract class AbstractStream<K, V> {
                     ISerde<V> valSerde,
                     Set<string> sourceNodes,
                     StreamsGraphNode streamsGraphNode,
-                    InternalStreamsBuilder builder) {
-        if (sourceNodes == null || sourceNodes.isEmpty()) {
-            throw new IllegalArgumentException("parameter <sourceNodes> must not be null or empty");
+                    InternalStreamsBuilder builder)
+{
+        if (sourceNodes == null || sourceNodes.isEmpty())
+{
+            throw new ArgumentException("parameter <sourceNodes> must not be null or empty");
         }
 
         this.name = name;
@@ -80,11 +83,13 @@ public abstract class AbstractStream<K, V> {
 
     // This method allows to expose the InternalTopologyBuilder instance
     // to subclasses that extend AbstractStream class.
-    protected InternalTopologyBuilder internalTopologyBuilder() {
+    protected InternalTopologyBuilder internalTopologyBuilder()
+{
         return builder.internalTopologyBuilder;
     }
 
-    Set<string> ensureJoinableWith( AbstractStream<K, ?> other) {
+    Set<string> ensureJoinableWith( AbstractStream<K, ?> other)
+{
          Set<string> allSourceNodes = new HashSet<>();
         allSourceNodes.addAll(sourceNodes);
         allSourceNodes.addAll(other.sourceNodes);
@@ -94,33 +99,40 @@ public abstract class AbstractStream<K, V> {
         return allSourceNodes;
     }
 
-    static <T2, T1, R> ValueJoiner<T2, T1, R> reverseJoiner( ValueJoiner<T1, T2, R> joiner) {
+    static <T2, T1, R> ValueJoiner<T2, T1, R> reverseJoiner( ValueJoiner<T1, T2, R> joiner)
+{
         return (value2, value1) -> joiner.apply(value1, value2);
     }
 
-    static <K, V, VR> ValueMapperWithKey<K, V, VR> withKey( ValueMapper<V, VR> valueMapper) {
+    static <K, V, VR> ValueMapperWithKey<K, V, VR> withKey( ValueMapper<V, VR> valueMapper)
+{
         Objects.requireNonNull(valueMapper, "valueMapper can't be null");
         return (readOnlyKey, value) -> valueMapper.apply(value);
     }
 
     static <K, V, VR> ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier(
-         ValueTransformerSupplier<V, VR> valueTransformerSupplier) {
+         ValueTransformerSupplier<V, VR> valueTransformerSupplier)
+{
         Objects.requireNonNull(valueTransformerSupplier, "valueTransformerSupplier can't be null");
         return () -> {
-             ValueTransformer<V, VR> valueTransformer = valueTransformerSupplier.get();
-            return new ValueTransformerWithKey<K, V, VR>() {
-                @Override
-                public void init( IProcessorContext context) {
+             ValueTransformer<V, VR> valueTransformer = valueTransformerSupplier[];
+            return new ValueTransformerWithKey<K, V, VR>()
+{
+                
+                public void init( IProcessorContext context)
+{
                     valueTransformer.init(context);
                 }
 
-                @Override
-                public VR transform( K readOnlyKey,  V value) {
+                
+                public VR transform( K readOnlyKey,  V value)
+{
                     return valueTransformer.transform(value);
                 }
 
-                @Override
-                public void close() {
+                
+                public void close()
+{
                     valueTransformer.close();
                 }
             };
@@ -128,11 +140,13 @@ public abstract class AbstractStream<K, V> {
     }
 
     // for testing only
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valSerde;
     }
 }

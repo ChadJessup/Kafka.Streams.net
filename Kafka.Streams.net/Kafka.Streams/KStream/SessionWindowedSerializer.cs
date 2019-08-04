@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.serialization.Serde;
@@ -32,59 +32,69 @@ import java.util.Map;
  *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
  *  if the no-arg constructor is called and hence it is not passed during initialization.
  */
-public class SessionWindowedSerializer<T> implements WindowedSerializer<T> {
+public class SessionWindowedSerializer<T> : WindowedSerializer<T> {
 
     private Serializer<T> inner;
 
     // Default constructor needed by Kafka
     public SessionWindowedSerializer() {}
 
-    public SessionWindowedSerializer( Serializer<T> inner) {
+    public SessionWindowedSerializer( Serializer<T> inner)
+{
         this.inner = inner;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void configure( Map<string, ?> configs,  bool isKey) {
-        if (inner == null) {
+    
+    public void configure( Map<string, ?> configs,  bool isKey)
+{
+        if (inner == null)
+{
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-             string value = (string) configs.get(propertyName);
+             string value = (string) configs[propertyName];
             try {
                 inner = Serde.class.cast(Utils.newInstance(value, Serde.class)).serializer();
                 inner.configure(configs, isKey);
-            } catch ( ClassNotFoundException e) {
+            } catch ( ClassNotFoundException e)
+{
                 throw new ConfigException(propertyName, value, "Serde class " + value + " could not be found.");
             }
         }
     }
 
-    @Override
-    public byte[] serialize( string topic,  Windowed<T> data) {
+    
+    public byte[] serialize( string topic,  Windowed<T> data)
+{
         WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
-        if (data == null) {
+        if (data == null)
+{
             return null;
         }
         // for either key or value, their schema is the same hence we will just use session key schema
         return SessionKeySchema.toBinary(data, inner, topic);
     }
 
-    @Override
-    public void close() {
-        if (inner != null) {
+    
+    public void close()
+{
+        if (inner != null)
+{
             inner.close();
         }
     }
 
-    @Override
-    public byte[] serializeBaseKey( string topic,  Windowed<T> data) {
+    
+    public byte[] serializeBaseKey( string topic,  Windowed<T> data)
+{
         WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
         return inner.serialize(topic, data.key());
     }
 
     // Only for testing
-    Serializer<T> innerSerializer() {
+    Serializer<T> innerSerializer()
+{
         return inner;
     }
 }

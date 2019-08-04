@@ -27,15 +27,18 @@ public class TaskIdFormatException : StreamsException {
 
     private static  long serialVersionUID = 1L;
 
-    public TaskIdFormatException( string message) {
+    public TaskIdFormatException( string message)
+{
         super("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message));
     }
 
-    public TaskIdFormatException( string message,  Throwable throwable) {
+    public TaskIdFormatException( string message,  Throwable throwable)
+{
         super("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message), throwable);
     }
 
-    public TaskIdFormatException( Throwable throwable) {
+    public TaskIdFormatException( Throwable throwable)
+{
         super(throwable);
     }
 }

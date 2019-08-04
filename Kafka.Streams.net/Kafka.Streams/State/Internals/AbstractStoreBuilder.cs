@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Time;
@@ -31,14 +31,14 @@ abstract public class AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder
     protected string name;
     ISerde<K> keySerde;
     ISerde<V> valueSerde;
-    Time time;
+    ITime time;
     bool enableCaching;
     bool enableLogging = true;
 
     public AbstractStoreBuilder(string name,
                                 ISerde<K> keySerde,
                                 ISerde<V> valueSerde,
-                                Time time)
+                                ITime time)
 {
         Objects.requireNonNull(name, "name cannot be null");
         Objects.requireNonNull(time, "time cannot be null");

@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals.metrics;
+namespace Kafka.streams.state.internals.metrics;
 
-using Kafka.Common.MetricName;
+
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.metrics.stats.Avg;
 using Kafka.Common.metrics.stats.Max;
@@ -33,14 +33,15 @@ import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetric
 public class Sensors {
     private Sensors() {}
 
-    public static Sensor createTaskAndStoreLatencyAndThroughputSensors(Sensor.RecordingLevel level,
+    public static Sensor createTaskAndStoreLatencyAndThroughputSensors(RecordingLevel level,
                                                                        string operation,
                                                                        StreamsMetricsImpl metrics,
                                                                        string metricsGroup,
                                                                        string taskName,
                                                                        string storeName,
                                                                        Dictionary<string, string> taskTags,
-                                                                       Dictionary<string, string> storeTags) {
+                                                                       Dictionary<string, string> storeTags)
+{
         Sensor taskSensor = metrics.taskLevelSensor(taskName, operation, level);
         addAvgMaxLatency(taskSensor, metricsGroup, taskTags, operation);
         addInvocationRateAndCount(taskSensor, metricsGroup, taskTags, operation);
@@ -51,33 +52,36 @@ public class Sensors {
     }
 
     public static Sensor createBufferSizeSensor(IStateStore store,
-                                                InternalProcessorContext context) {
+                                                InternalProcessorContext context)
+{
         return getBufferSizeOrCountSensor(store, context, "size");
     }
 
     public static Sensor createBufferCountSensor(IStateStore store,
-                                                 InternalProcessorContext context) {
+                                                 InternalProcessorContext context)
+{
         return getBufferSizeOrCountSensor(store, context, "count");
     }
 
     private static Sensor getBufferSizeOrCountSensor(IStateStore store,
                                                      InternalProcessorContext context,
-                                                     string property) {
+                                                     string property)
+{
         StreamsMetricsImpl metrics = context.metrics();
 
         string sensorName = "suppression-buffer-" + property;
 
         Sensor sensor = metrics.storeLevelSensor(
-            context.taskId().toString(),
+            context.taskId().ToString(),
             store.name(),
             sensorName,
-            Sensor.RecordingLevel.DEBUG
+            RecordingLevel.DEBUG
         );
 
         string metricsGroup = "stream-buffer-metrics";
 
         Dictionary<string, string> tags = metrics.tagMap(
-            "task-id", context.taskId().toString(),
+            "task-id", context.taskId().ToString(),
             "buffer-id", store.name()
         );
 

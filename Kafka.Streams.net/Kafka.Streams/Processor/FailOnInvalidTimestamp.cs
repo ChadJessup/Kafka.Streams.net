@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.annotation.InterfaceStability;
@@ -58,7 +58,7 @@ public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @return nothing; always raises an exception
      * @throws StreamsException on every invocation
      */
-    @Override
+    
     public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
@@ -69,7 +69,7 @@ public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
             "a timestamp, or because the input topic was created before upgrading the Kafka cluster to 0.10+. " +
             "Use a different TimestampExtractor to process this data.";
 
-        log.error(message);
+        log.LogError(message);
         throw new StreamsException(message);
     }
 

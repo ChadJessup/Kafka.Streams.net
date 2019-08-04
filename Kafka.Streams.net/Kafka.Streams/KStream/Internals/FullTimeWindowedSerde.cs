@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -23,7 +23,8 @@ import org.apache.kafka.streams.kstream.TimeWindowedSerializer;
 import org.apache.kafka.streams.kstream.Windowed;
 
 class FullTimeWindowedSerde<T> : Serdes.WrapperSerde<Windowed<T>> {
-    FullTimeWindowedSerde( ISerde<T> inner,  long windowSize) {
+    FullTimeWindowedSerde( ISerde<T> inner,  long windowSize)
+{
         super(
             new TimeWindowedSerializer<>(inner.serializer()),
             new TimeWindowedDeserializer<>(inner.deserializer(), windowSize)

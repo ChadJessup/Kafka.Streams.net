@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -55,33 +55,33 @@ class WindowStoreIteratorWrapper
             this.bytesIterator = bytesIterator;
         }
 
-        @Override
+        
         public Long peekNextKey()
 {
-            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey().get());
+            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()()];
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return bytesIterator.hasNext();
         }
 
-        @Override
+        
         public KeyValue<Long, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key.get());
+            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key()];
             return KeyValue.pair(timestamp, next.value);
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+            throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
         }
 
-        @Override
+        
         public void close()
 {
             bytesIterator.close();
@@ -100,33 +100,33 @@ class WindowStoreIteratorWrapper
             this.windowSize = windowSize;
         }
 
-        @Override
+        
         public Windowed<Bytes> peekNextKey()
 {
-            byte[] nextKey = bytesIterator.peekNextKey().get();
+            byte[] nextKey = bytesIterator.peekNextKey()[];
             return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return bytesIterator.hasNext();
         }
 
-        @Override
+        
         public KeyValue<Windowed<Bytes>, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key.get(), windowSize), next.value);
+            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value];
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+            throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
         }
 
-        @Override
+        
         public void close()
 {
             bytesIterator.close();

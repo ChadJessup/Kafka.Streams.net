@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.TopicPartition;
@@ -56,7 +56,8 @@ public class RecordQueue {
                 TimestampExtractor timestampExtractor,
                 DeserializationExceptionHandler deserializationExceptionHandler,
                 InternalProcessorContext processorContext,
-                LogContext logContext) {
+                LogContext logContext)
+{
         this.source = source;
         this.partition = partition;
         this.fifoQueue = new ArrayDeque<>();
@@ -77,7 +78,8 @@ public class RecordQueue {
      *
      * @return SourceNode
      */
-    public SourceNode source() {
+    public SourceNode source()
+{
         return source;
     }
 
@@ -86,7 +88,8 @@ public class RecordQueue {
      *
      * @return TopicPartition
      */
-    public TopicPartition partition() {
+    public TopicPartition partition()
+{
         return partition;
     }
 
@@ -96,8 +99,10 @@ public class RecordQueue {
      * @param rawRecords the raw records
      * @return the size of this queue
      */
-    int addRawRecords(Iterable<ConsumerRecord<byte[], byte[]>> rawRecords) {
-        for (ConsumerRecord<byte[], byte[]> rawRecord : rawRecords) {
+    int addRawRecords(Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
+{
+        foreach (ConsumerRecord<byte[], byte[]> rawRecord in rawRecords)
+{
             fifoQueue.addLast(rawRecord);
         }
 
@@ -111,7 +116,8 @@ public class RecordQueue {
      *
      * @return StampedRecord
      */
-    public StampedRecord poll() {
+    public StampedRecord poll()
+{
         StampedRecord recordToReturn = headRecord;
         headRecord = null;
 
@@ -125,7 +131,8 @@ public class RecordQueue {
      *
      * @return the number of records
      */
-    public int size() {
+    public int size()
+{
         // plus one deserialized head record for timestamp tracking
         return fifoQueue.size() + (headRecord == null ? 0 : 1);
     }
@@ -135,7 +142,8 @@ public class RecordQueue {
      *
      * @return true if the queue is empty, otherwise false
      */
-    public bool isEmpty() {
+    public bool isEmpty()
+{
         return fifoQueue.isEmpty() && headRecord == null;
     }
 
@@ -144,7 +152,8 @@ public class RecordQueue {
      *
      * @return timestamp
      */
-    public long headRecordTimestamp() {
+    public long headRecordTimestamp()
+{
         return headRecord == null ? UNKNOWN : headRecord.timestamp;
     }
 
@@ -153,25 +162,30 @@ public class RecordQueue {
      *
      * @return partition time
      */
-    long partitionTime() {
+    long partitionTime()
+{
         return partitionTime;
     }
 
     /**
      * Clear the fifo queue of its elements, also clear the time tracker's kept stamped elements
      */
-    public void clear() {
+    public void clear()
+{
         fifoQueue.clear();
         headRecord = null;
         partitionTime = RecordQueue.UNKNOWN;
     }
 
-    private void updateHead() {
-        while (headRecord == null && !fifoQueue.isEmpty()) {
+    private void updateHead()
+{
+        while (headRecord == null && !fifoQueue.isEmpty())
+{
             ConsumerRecord<byte[], byte[]> raw = fifoQueue.pollFirst();
             ConsumerRecord<Object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
 
-            if (deserialized == null) {
+            if (deserialized == null)
+{
                 // this only happens if the deserializer decides to skip. It has already logged the reason.
                 continue;
             }
@@ -179,17 +193,20 @@ public class RecordQueue {
             long timestamp;
             try {
                 timestamp = timestampExtractor.extract(deserialized, partitionTime);
-            } catch (StreamsException internalFatalExtractorException) {
+            } catch (StreamsException internalFatalExtractorException)
+{
                 throw internalFatalExtractorException;
-            } catch (Exception fatalUserException) {
+            } catch (Exception fatalUserException)
+{
                 throw new StreamsException(
-                        string.format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
+                        string.Format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
                         fatalUserException);
             }
             log.trace("Source node {} extracted timestamp {} for record {}", source.name(), timestamp, deserialized);
 
             // drop message if TS is invalid, i.e., negative
-            if (timestamp < 0) {
+            if (timestamp < 0)
+{
                 log.warn(
                         "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
                         deserialized.topic(), deserialized.partition(), deserialized.offset(), timestamp, timestampExtractor.GetType().getCanonicalName()
@@ -201,7 +218,7 @@ public class RecordQueue {
 
             headRecord = new StampedRecord(deserialized, timestamp);
 
-            partitionTime = Math.max(partitionTime, timestamp);
+            partitionTime = Math.Max(partitionTime, timestamp);
         }
     }
 }

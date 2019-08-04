@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 
 import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 
 public abstract class StreamsGraphNode {
 
-    private  Collection<StreamsGraphNode> childNodes = new LinkedHashSet<>();
-    private  Collection<StreamsGraphNode> parentNodes = new LinkedHashSet<>();
+    private  Collection<StreamsGraphNode> childNodes = new HashSet<>();
+    private  Collection<StreamsGraphNode> parentNodes = new HashSet<>();
     private  string nodeName;
     private bool keyChangingOperation;
     private bool valueChangingOperation;
@@ -35,100 +35,124 @@ public abstract class StreamsGraphNode {
     private Integer buildPriority;
     private bool hasWrittenToTopology = false;
 
-    public StreamsGraphNode( string nodeName) {
+    public StreamsGraphNode( string nodeName)
+{
         this.nodeName = nodeName;
     }
 
-    public Collection<StreamsGraphNode> parentNodes() {
+    public Collection<StreamsGraphNode> parentNodes()
+{
         return parentNodes;
     }
 
-    string[] parentNodeNames() {
+    string[] parentNodeNames()
+{
          string[] parentNames = new string[parentNodes.size()];
         int index = 0;
-        for ( StreamsGraphNode parentNode : parentNodes) {
+        foreach ( StreamsGraphNode parentNode in parentNodes)
+{
             parentNames[index++] = parentNode.nodeName();
         }
         return parentNames;
     }
 
-    public bool allParentsWrittenToTopology() {
-        for ( StreamsGraphNode parentNode : parentNodes) {
-            if (!parentNode.hasWrittenToTopology()) {
+    public bool allParentsWrittenToTopology()
+{
+        foreach ( StreamsGraphNode parentNode in parentNodes)
+{
+            if (!parentNode.hasWrittenToTopology())
+{
                 return false;
             }
         }
         return true;
     }
 
-    public Collection<StreamsGraphNode> children() {
-        return new LinkedHashSet<>(childNodes);
+    public Collection<StreamsGraphNode> children()
+{
+        return new HashSet<>(childNodes);
     }
 
-    public void clearChildren() {
-        for ( StreamsGraphNode childNode : childNodes) {
-            childNode.parentNodes.remove(this);
+    public void clearChildren()
+{
+        foreach ( StreamsGraphNode childNode in childNodes)
+{
+            childNode.parentNodes.Remove(this);
         }
         childNodes.clear();
     }
 
-    public bool removeChild( StreamsGraphNode child) {
-        return childNodes.remove(child) && child.parentNodes.remove(this);
+    public bool removeChild( StreamsGraphNode child)
+{
+        return childNodes.Remove(child) && child.parentNodes.Remove(this);
     }
 
-    public void addChild( StreamsGraphNode childNode) {
+    public void addChild( StreamsGraphNode childNode)
+{
         this.childNodes.add(childNode);
         childNode.parentNodes.add(this);
     }
 
-    public string nodeName() {
+    public string nodeName()
+{
         return nodeName;
     }
 
-    public bool isKeyChangingOperation() {
+    public bool isKeyChangingOperation()
+{
         return keyChangingOperation;
     }
 
-    public bool isValueChangingOperation() {
+    public bool isValueChangingOperation()
+{
         return valueChangingOperation;
     }
 
-    public bool isMergeNode() {
+    public bool isMergeNode()
+{
         return mergeNode;
     }
 
-    public void setMergeNode( bool mergeNode) {
+    public void setMergeNode( bool mergeNode)
+{
         this.mergeNode = mergeNode;
     }
 
-    public void setValueChangingOperation( bool valueChangingOperation) {
+    public void setValueChangingOperation( bool valueChangingOperation)
+{
         this.valueChangingOperation = valueChangingOperation;
     }
 
-    public void keyChangingOperation( bool keyChangingOperation) {
+    public void keyChangingOperation( bool keyChangingOperation)
+{
         this.keyChangingOperation = keyChangingOperation;
     }
 
-    public void setBuildPriority( int buildPriority) {
+    public void setBuildPriority( int buildPriority)
+{
         this.buildPriority = buildPriority;
     }
 
-    public Integer buildPriority() {
+    public Integer buildPriority()
+{
         return this.buildPriority;
     }
 
     public abstract void writeToTopology( InternalTopologyBuilder topologyBuilder);
 
-    public bool hasWrittenToTopology() {
+    public bool hasWrittenToTopology()
+{
         return hasWrittenToTopology;
     }
 
-    public void setHasWrittenToTopology( bool hasWrittenToTopology) {
+    public void setHasWrittenToTopology( bool hasWrittenToTopology)
+{
         this.hasWrittenToTopology = hasWrittenToTopology;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
          string[] parentNames = parentNodeNames();
         return "StreamsGraphNode{" +
                "nodeName='" + nodeName + '\'' +
@@ -137,6 +161,6 @@ public abstract class StreamsGraphNode {
                ", keyChangingOperation=" + keyChangingOperation +
                ", valueChangingOperation=" + valueChangingOperation +
                ", mergeNode=" + mergeNode +
-               ", parentNodes=" + Arrays.toString(parentNames) + '}';
+               ", parentNodes=" + Arrays.ToString(parentNames) + '}';
     }
 }

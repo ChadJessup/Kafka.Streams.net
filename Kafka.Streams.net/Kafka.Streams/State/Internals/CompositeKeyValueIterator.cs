@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.KeyValueIterator;
@@ -48,7 +48,7 @@ class CompositeKeyValueIterator<K, V, StoreType> : KeyValueIterator<K, V>
 
     public override K peekNextKey()
 {
-        throw new UnsupportedOperationException("peekNextKey not supported");
+        throw new InvalidOperationException("peekNextKey not supported");
     }
 
     public override bool hasNext()
@@ -72,8 +72,8 @@ class CompositeKeyValueIterator<K, V, StoreType> : KeyValueIterator<K, V>
         return current.next();
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException("Remove not supported");
+        throw new InvalidOperationException("Remove not supported");
     }
 }

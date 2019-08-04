@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Suppressed;
 
 import static org.apache.kafka.streams.kstream.internals.suppress.BufferFullStrategy.SHUT_DOWN;
 
-abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> implements Suppressed.BufferConfig<BC> {
+abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppressed.BufferConfig<BC> {
     public abstract long maxRecords();
 
     public abstract long maxBytes();
@@ -28,8 +28,9 @@ abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> implements
     @SuppressWarnings("unused")
     public abstract BufferFullStrategy bufferFullStrategy();
 
-    @Override
-    public Suppressed.StrictBufferConfig withNoBound() {
+    
+    public Suppressed.StrictBufferConfig withNoBound()
+{
         return new StrictBufferConfigImpl(
             Long.MAX_VALUE,
             Long.MAX_VALUE,
@@ -37,13 +38,15 @@ abstract class BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> implements
         );
     }
 
-    @Override
-    public Suppressed.StrictBufferConfig shutDownWhenFull() {
+    
+    public Suppressed.StrictBufferConfig shutDownWhenFull()
+{
         return new StrictBufferConfigImpl(maxRecords(), maxBytes(), SHUT_DOWN);
     }
 
-    @Override
-    public Suppressed.EagerBufferConfig emitEarlyWhenFull() {
+    
+    public Suppressed.EagerBufferConfig emitEarlyWhenFull()
+{
         return new EagerBufferConfigImpl(maxRecords(), maxBytes());
     }
 }

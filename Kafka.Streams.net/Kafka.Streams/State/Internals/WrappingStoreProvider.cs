@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.QueryableStoreType;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
 /**
@@ -47,8 +47,8 @@ public class WrappingStoreProvider : StateStoreProvider
     public <T> List<T> stores(string storeName,
                               QueryableStoreType<T> type)
 {
-        List<T> allStores = new ArrayList<>();
-        for (StateStoreProvider provider : storeProviders)
+        List<T> allStores = new List<>();
+        foreach (StateStoreProvider provider in storeProviders)
 {
             List<T> stores = provider.stores(storeName, type);
             allStores.addAll(stores);

@@ -14,36 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ForeachAction;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-public class KStreamPrint<K, V> implements ProcessorSupplier<K, V> {
+public class KStreamPrint<K, V> : ProcessorSupplier<K, V> {
 
     private  ForeachAction<K, V> action;
     
-    public KStreamPrint( ForeachAction<K, V> action) {
+    public KStreamPrint( ForeachAction<K, V> action)
+{
         this.action = action;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamPrintProcessor();
     }
 
     private class KStreamPrintProcessor : AbstractProcessor<K, V> {
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             action.apply(key, value);
         }
 
-        @Override
-        public void close() {
-            if (action is PrintForeachAction) {
+        
+        public void close()
+{
+            if (action is PrintForeachAction)
+{
                 ((PrintForeachAction) action).close();
             }
         }

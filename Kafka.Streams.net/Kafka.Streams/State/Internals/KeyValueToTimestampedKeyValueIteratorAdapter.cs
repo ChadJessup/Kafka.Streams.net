@@ -54,7 +54,7 @@ class KeyValueToTimestampedKeyValueIteratorAdapter<K> : KeyValueIterator<K, byte
 
     public override KeyValue<K, byte[]> next()
 {
-        KeyValue<K, byte[]> plainKeyValue = innerIterator.next();
+        KeyValue<K, byte[]> plainKeyValue = innerIterator.next(];
         return KeyValue.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
     }
 }

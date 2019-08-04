@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import java.util.Objects;
 
@@ -27,16 +27,19 @@ public class To {
     protected long timestamp;
 
     private To(string childName,
-               long timestamp) {
+               long timestamp)
+{
         this.childName = childName;
         this.timestamp = timestamp;
     }
 
-    protected To(To to) {
+    protected To(To to)
+{
         this(to.childName, to.timestamp);
     }
 
-    protected void update(To to) {
+    protected void update(To to)
+{
         childName = to.childName;
         timestamp = to.timestamp;
     }
@@ -46,7 +49,8 @@ public class To {
      * @param childName name of downstream processor
      * @return a new {@link To} instance configured with {@code childName}
      */
-    public static To child(string childName) {
+    public static To child(string childName)
+{
         return new To(childName, -1);
     }
 
@@ -54,7 +58,8 @@ public class To {
      * Forward the key/value pair to all downstream processors
      * @return a new {@link To} instance configured for all downstream processor
      */
-    public static To all() {
+    public static To all()
+{
         return new To(null, -1);
     }
 
@@ -63,17 +68,21 @@ public class To {
      * @param timestamp the output record timestamp
      * @return itself (i.e., {@code this})
      */
-    public To withTimestamp(long timestamp) {
+    public To withTimestamp(long timestamp)
+{
         this.timestamp = timestamp;
         return this;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         To to = (To) o;
@@ -84,9 +93,10 @@ public class To {
     /**
      * Equality is implemented in support of tests, *not* for use in Hash collections, since this class is mutable.
      */
-    @Override
-    public int GetHashCode()() {
-        throw new UnsupportedOperationException("To is unsafe for use in Hash collections");
+    
+    public int GetHashCode()
+{
+        throw new InvalidOperationException("To is unsafe for use in Hash collections");
     }
 
 }

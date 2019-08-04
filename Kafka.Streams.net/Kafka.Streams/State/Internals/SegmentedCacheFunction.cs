@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.internals.SegmentedBytesStore.KeySchema;
@@ -48,16 +48,16 @@ class SegmentedCacheFunction : CacheFunction
 
     Bytes cacheKey(Bytes key, long segmentId)
 {
-        byte[] keyBytes = key.get();
-        ByteBuffer buf = ByteBuffer.allocate(SEGMENT_ID_BYTES + keyBytes.length);
-        buf.putLong(segmentId).put(keyBytes);
+        byte[] keyBytes = key[];
+        ByteBuffer buf = ByteBuffer.allocate(SEGMENT_ID_BYTES + keyBytes.Length);
+        buf.putLong(segmentId).Add(keyBytes);
         return Bytes.wrap(buf.array());
     }
 
     static byte[] bytesFromCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = new byte[cacheKey.get().length - SEGMENT_ID_BYTES];
-        System.arraycopy(cacheKey.get(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.length);
+        byte[] binaryKey = new byte[cacheKey[].Length - SEGMENT_ID_BYTES];
+        System.arraycopy(cacheKey(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length];
         return binaryKey;
     }
 
@@ -79,16 +79,16 @@ class SegmentedCacheFunction : CacheFunction
     int compareSegmentedKeys(Bytes cacheKey, Bytes storeKey)
 {
         long storeSegmentId = segmentId(storeKey);
-        long cacheSegmentId = ByteBuffer.wrap(cacheKey.get()).getLong();
+        long cacheSegmentId = ByteBuffer.wrap(cacheKey()).getLong();
 
         int segmentCompare = Long.compare(cacheSegmentId, storeSegmentId);
         if (segmentCompare == 0)
 {
-            byte[] cacheKeyBytes = cacheKey.get();
-            byte[] storeKeyBytes = storeKey.get();
+            byte[] cacheKeyBytes = cacheKey[];
+            byte[] storeKeyBytes = storeKey[];
             return Bytes.BYTES_LEXICO_COMPARATOR.compare(
-                cacheKeyBytes, SEGMENT_ID_BYTES, cacheKeyBytes.length - SEGMENT_ID_BYTES,
-                storeKeyBytes, 0, storeKeyBytes.length
+                cacheKeyBytes, SEGMENT_ID_BYTES, cacheKeyBytes.Length - SEGMENT_ID_BYTES,
+                storeKeyBytes, 0, storeKeyBytes.Length
             );
         } else
 {

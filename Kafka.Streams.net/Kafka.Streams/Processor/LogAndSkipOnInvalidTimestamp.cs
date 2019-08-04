@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.annotation.InterfaceStability;
@@ -59,10 +59,11 @@ public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the originally extracted timestamp of the record
      */
-    @Override
+    
     public long onInvalidTimestamp(ConsumerRecord<Object, object> record,
                                    long recordTimestamp,
-                                   long partitionTime) {
+                                   long partitionTime)
+{
         log.warn("Input record {} will be dropped because it has an invalid (negative) timestamp.", record);
         return recordTimestamp;
     }

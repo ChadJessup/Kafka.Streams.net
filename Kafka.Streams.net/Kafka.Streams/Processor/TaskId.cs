@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.streams.errors.TaskIdFormatException;
 
@@ -26,28 +26,32 @@ import java.nio.ByteBuffer;
 /**
  * The task ID representation composed as topic group ID plus the assigned partition ID.
  */
-public class TaskId implements Comparable<TaskId> {
+public class TaskId : Comparable<TaskId> {
 
     /** The ID of the topic group. */
     public int topicGroupId;
     /** The ID of the partition. */
     public int partition;
 
-    public TaskId(int topicGroupId, int partition) {
+    public TaskId(int topicGroupId, int partition)
+{
         this.topicGroupId = topicGroupId;
         this.partition = partition;
     }
 
-    public string toString() {
+    public string ToString()
+{
         return topicGroupId + "_" + partition;
     }
 
     /**
      * @throws TaskIdFormatException if the taskIdStr is not a valid {@link TaskId}
      */
-    public static TaskId parse(string taskIdStr) {
+    public static TaskId parse(string taskIdStr)
+{
         int index = taskIdStr.indexOf('_');
-        if (index <= 0 || index + 1 >= taskIdStr.length()) {
+        if (index <= 0 || index + 1 >= taskIdStr.Length)
+{
             throw new TaskIdFormatException(taskIdStr);
         }
 
@@ -56,7 +60,8 @@ public class TaskId implements Comparable<TaskId> {
             int partition = Integer.parseInt(taskIdStr.substring(index + 1));
 
             return new TaskId(topicGroupId, partition);
-        } catch (Exception e) {
+        } catch (Exception e)
+{
             throw new TaskIdFormatException(taskIdStr);
         }
     }
@@ -76,22 +81,27 @@ public class TaskId implements Comparable<TaskId> {
         return new TaskId(in.readInt(), in.readInt());
     }
 
-    public void writeTo(ByteBuffer buf) {
+    public void writeTo(ByteBuffer buf)
+{
         buf.putInt(topicGroupId);
         buf.putInt(partition);
     }
 
-    public static TaskId readFrom(ByteBuffer buf) {
+    public static TaskId readFrom(ByteBuffer buf)
+{
         return new TaskId(buf.getInt(), buf.getInt());
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
 
-        if (o is TaskId) {
+        if (o is TaskId)
+{
             TaskId other = (TaskId) o;
             return other.topicGroupId == this.topicGroupId && other.partition == this.partition;
         } else {
@@ -99,14 +109,16 @@ public class TaskId implements Comparable<TaskId> {
         }
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         long n = ((long) topicGroupId << 32) | (long) partition;
         return (int) (n % 0xFFFFFFFFL);
     }
 
-    @Override
-    public int compareTo(TaskId other) {
+    
+    public int compareTo(TaskId other)
+{
         int compare = Integer.compare(this.topicGroupId, other.topicGroupId);
         return compare != 0 ? compare : Integer.compare(this.partition, other.partition);
     }

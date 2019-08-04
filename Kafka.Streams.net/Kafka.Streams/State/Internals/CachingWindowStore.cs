@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.util.NoSuchElementException;
 using Kafka.Common.serialization.Serdes;
@@ -86,7 +86,7 @@ class CachingWindowStore
 
         cache.addDirtyEntryFlushListener(name, entries ->
 {
-            for (ThreadCache.DirtyEntry entry : entries)
+            foreach (ThreadCache.DirtyEntry entry in entries)
 {
                 putAndMaybeForward(entry, context);
             }
@@ -96,7 +96,7 @@ class CachingWindowStore
     private void putAndMaybeForward(ThreadCache.DirtyEntry entry,
                                     InternalProcessorContext context)
 {
-        byte[] binaryWindowKey = cacheFunction.key(entry.key()).get();
+        byte[] binaryWindowKey = cacheFunction.key(entry.key())[];
         Windowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
         long windowStartTimestamp = windowedKeyBytes.window().start();
         Bytes binaryKey = windowedKeyBytes.key();
@@ -111,7 +111,7 @@ class CachingWindowStore
             if (rawNewValue != null || rawOldValue != null)
 {
                 // we need to get the old values if needed, and then put to store, and then flush
-                wrapped().put(binaryKey, entry.newValue(), windowStartTimestamp);
+                wrapped().Add(binaryKey, entry.newValue(), windowStartTimestamp);
 
                 ProcessorRecordContext current = context.recordContext();
                 context.setRecordContext(entry.entry().context());
@@ -129,7 +129,7 @@ class CachingWindowStore
             }
         } else
 {
-            wrapped().put(binaryKey, entry.newValue(), windowStartTimestamp);
+            wrapped().Add(binaryKey, entry.newValue(), windowStartTimestamp);
         }
     }
 
@@ -166,9 +166,9 @@ class CachingWindowStore
                 context.timestamp(),
                 context.partition(),
                 context.topic());
-        cache.put(name, cacheFunction.cacheKey(keyBytes), entry);
+        cache.Add(name, cacheFunction.cacheKey(keyBytes), entry);
 
-        maxObservedTimestamp = Math.max(keySchema.segmentTimestamp(keyBytes), maxObservedTimestamp);
+        maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(keyBytes), maxObservedTimestamp);
     }
 
     public override byte[] fetch(Bytes key,
@@ -181,7 +181,7 @@ class CachingWindowStore
 {
             return wrapped().fetch(key, timestamp);
         }
-        LRUCacheEntry entry = cache.get(name, cacheKey);
+        LRUCacheEntry entry = cache[name, cacheKey];
         if (entry == null)
 {
             return wrapped().fetch(key, timestamp);
@@ -200,7 +200,7 @@ class CachingWindowStore
         // if store is open outside as well.
         validateStoreOpen();
 
-        WindowStoreIterator<byte[]> underlyingIterator = wrapped().fetch(key, timeFrom, timeTo);
+        WindowStoreIterator<byte[]> underlyingIterator = wrapped().fetch(key, timeFrom, timeTo];
         if (cache == null)
 {
             return underlyingIterator;
@@ -271,7 +271,7 @@ class CachingWindowStore
 {
         validateStoreOpen();
 
-        KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo);
+        KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo];
         ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
         HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
@@ -346,7 +346,7 @@ class CachingWindowStore
             this.keyFrom = keyFrom;
             this.keyTo = keyTo;
             this.timeTo = timeTo;
-            this.lastSegmentId = cacheFunction.segmentId(Math.min(timeTo, maxObservedTimestamp));
+            this.lastSegmentId = cacheFunction.segmentId(Math.Min(timeTo, maxObservedTimestamp));
 
             this.segmentInterval = cacheFunction.getSegmentInterval();
             this.currentSegmentId = cacheFunction.segmentId(timeFrom);
@@ -356,7 +356,7 @@ class CachingWindowStore
             this.current = cache.range(name, cacheKeyFrom, cacheKeyTo);
         }
 
-        @Override
+        
         public bool hasNext()
 {
             if (current == null)
@@ -380,7 +380,7 @@ class CachingWindowStore
             return true;
         }
 
-        @Override
+        
         public Bytes peekNextKey()
 {
             if (!hasNext())
@@ -390,7 +390,7 @@ class CachingWindowStore
             return current.peekNextKey();
         }
 
-        @Override
+        
         public KeyValue<Bytes, LRUCacheEntry> peekNext()
 {
             if (!hasNext())
@@ -400,7 +400,7 @@ class CachingWindowStore
             return current.peekNext();
         }
 
-        @Override
+        
         public KeyValue<Bytes, LRUCacheEntry> next()
 {
             if (!hasNext())
@@ -410,7 +410,7 @@ class CachingWindowStore
             return current.next();
         }
 
-        @Override
+        
         public void close()
 {
             current.close();
@@ -423,13 +423,13 @@ class CachingWindowStore
 
         private long currentSegmentLastTime()
 {
-            return Math.min(timeTo, currentSegmentBeginTime() + segmentInterval - 1);
+            return Math.Min(timeTo, currentSegmentBeginTime() + segmentInterval - 1);
         }
 
         private void getNextSegmentIterator()
 {
             ++currentSegmentId;
-            lastSegmentId = cacheFunction.segmentId(Math.min(timeTo, maxObservedTimestamp));
+            lastSegmentId = cacheFunction.segmentId(Math.Min(timeTo, maxObservedTimestamp));
 
             if (currentSegmentId > lastSegmentId)
 {
@@ -463,7 +463,7 @@ class CachingWindowStore
 
         private Bytes segmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
 {
-            return WindowKeySchema.toStoreKeyBinary(key, Math.max(0, segmentBeginTime), 0);
+            return WindowKeySchema.toStoreKeyBinary(key, Math.Max(0, segmentBeginTime), 0);
         }
 
         private Bytes segmentUpperRangeFixedSize(Bytes key, long segmentEndTime)

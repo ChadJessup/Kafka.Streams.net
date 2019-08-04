@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.metrics.Sensor;
@@ -37,14 +37,15 @@ import org.apache.kafka.streams.state.internals.TimeOrderedKeyValueBuffer;
 
 import static java.util.Objects.requireNonNull;
 
-public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSupplier<K, V, V> {
+public class KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, V, V> {
     private  SuppressedInternal<K> suppress;
     private  string storeName;
     private  KTableImpl<K, ?, V> parentKTable;
 
     public KTableSuppressProcessorSupplier( SuppressedInternal<K> suppress,
                                             string storeName,
-                                            KTableImpl<K, ?, V> parentKTable) {
+                                            KTableImpl<K, ?, V> parentKTable)
+{
         this.suppress = suppress;
         this.storeName = storeName;
         this.parentKTable = parentKTable;
@@ -52,66 +53,77 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
         parentKTable.enableSendingOldValues();
     }
 
-    @Override
-    public Processor<K, Change<V>> get() {
+    
+    public Processor<K, Change<V>> get()
+{
         return new KTableSuppressProcessor<>(suppress, storeName);
     }
 
-    @Override
-    public KTableValueGetterSupplier<K, V> view() {
+    
+    public KTableValueGetterSupplier<K, V> view()
+{
          KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
-        return new KTableValueGetterSupplier<K, V>() {
+        return new KTableValueGetterSupplier<K, V>()
+{
 
-            @Override
-            public KTableValueGetter<K, V> get() {
-                 KTableValueGetter<K, V> parentGetter = parentValueGetterSupplier.get();
-                return new KTableValueGetter<K, V>() {
+            
+            public KTableValueGetter<K, V> get()
+{
+                 KTableValueGetter<K, V> parentGetter = parentValueGetterSupplier[];
+                return new KTableValueGetter<K, V>()
+{
                     private TimeOrderedKeyValueBuffer<K, V> buffer;
 
                     @SuppressWarnings("unchecked")
-                    @Override
-                    public void init( IProcessorContext context) {
+                    
+                    public void init( IProcessorContext context)
+{
                         parentGetter.init(context);
                         // the main processor is responsible for the buffer's lifecycle
                         buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>) context.getStateStore(storeName));
                     }
 
-                    @Override
-                    public ValueAndTimestamp<V> get( K key) {
+                    
+                    public ValueAndTimestamp<V> get( K key)
+{
                          Maybe<ValueAndTimestamp<V>> maybeValue = buffer.priorValueForBuffered(key);
-                        if (maybeValue.isDefined()) {
+                        if (maybeValue.isDefined())
+{
                             return maybeValue.getNullableValue();
                         } else {
                             // not buffered, so the suppressed view is equal to the parent view
-                            return parentGetter.get(key);
+                            return parentGetter[key];
                         }
                     }
 
-                    @Override
-                    public void close() {
+                    
+                    public void close()
+{
                         parentGetter.close();
                         // the main processor is responsible for the buffer's lifecycle
                     }
                 };
             }
 
-            @Override
-            public string[] storeNames() {
+            
+            public string[] storeNames()
+{
                  string[] parentStores = parentValueGetterSupplier.storeNames();
-                 string[] stores = new string[1 + parentStores.length];
-                System.arraycopy(parentStores, 0, stores, 1, parentStores.length);
+                 string[] stores = new string[1 + parentStores.Length];
+                System.arraycopy(parentStores, 0, stores, 1, parentStores.Length);
                 stores[0] = storeName;
                 return stores;
             }
         };
     }
 
-    @Override
-    public void enableSendingOldValues() {
+    
+    public void enableSendingOldValues()
+{
         parentKTable.enableSendingOldValues();
     }
 
-    private static  class KTableSuppressProcessor<K, V> implements Processor<K, Change<V>> {
+    private static  class KTableSuppressProcessor<K, V> : Processor<K, Change<V>> {
         private  long maxRecords;
         private  long maxBytes;
         private  long suppressDurationMillis;
@@ -125,7 +137,8 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
         private Sensor suppressionEmitSensor;
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
-        private KTableSuppressProcessor( SuppressedInternal<K> suppress,  string storeName) {
+        private KTableSuppressProcessor( SuppressedInternal<K> suppress,  string storeName)
+{
             this.storeName = storeName;
             requireNonNull(suppress);
             maxRecords = suppress.bufferConfig().maxRecords();
@@ -137,8 +150,9 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
         }
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             internalProcessorContext = (InternalProcessorContext) context;
             suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);
 
@@ -146,39 +160,44 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
             buffer.setSerdesIfNull((ISerde<K>) context.keySerde(), (ISerde<V>) context.valueSerde());
         }
 
-        @Override
-        public void process( K key,  Change<V> value) {
-            observedStreamTime = Math.max(observedStreamTime, internalProcessorContext.timestamp());
+        
+        public void process( K key,  Change<V> value)
+{
+            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp());
             buffer(key, value);
             enforceConstraints();
         }
 
-        private void buffer( K key,  Change<V> value) {
+        private void buffer( K key,  Change<V> value)
+{
              long bufferTime = bufferTimeDefinition.time(internalProcessorContext, key);
 
-            buffer.put(bufferTime, key, value, internalProcessorContext.recordContext());
+            buffer.Add(bufferTime, key, value, internalProcessorContext.recordContext());
         }
 
-        private void enforceConstraints() {
+        private void enforceConstraints()
+{
              long streamTime = observedStreamTime;
              long expiryTime = streamTime - suppressDurationMillis;
 
             buffer.evictWhile(() -> buffer.minTimestamp() <= expiryTime, this::emit);
 
-            if (overCapacity()) {
-                switch (bufferFullStrategy) {
+            if (overCapacity())
+{
+                switch (bufferFullStrategy)
+{
                     case EMIT:
                         buffer.evictWhile(this::overCapacity, this::emit);
                         return;
                     case SHUT_DOWN:
-                        throw new StreamsException(string.format(
+                        throw new StreamsException(string.Format(
                             "%s buffer exceeded its max capacity. Currently [%d/%d] records and [%d/%d] bytes.",
                             internalProcessorContext.currentNode().name(),
                             buffer.numRecords(), maxRecords,
                             buffer.bufferSize(), maxBytes
                         ));
                     default:
-                        throw new UnsupportedOperationException(
+                        throw new InvalidOperationException(
                             "The bufferFullStrategy [" + bufferFullStrategy +
                                 "] is not implemented. This is a bug in Kafka Streams."
                         );
@@ -186,12 +205,15 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
             }
         }
 
-        private bool overCapacity() {
+        private bool overCapacity()
+{
             return buffer.numRecords() > maxRecords || buffer.bufferSize() > maxBytes;
         }
 
-        private void emit( TimeOrderedKeyValueBuffer.Eviction<K, V> toEmit) {
-            if (shouldForward(toEmit.value())) {
+        private void emit( TimeOrderedKeyValueBuffer.Eviction<K, V> toEmit)
+{
+            if (shouldForward(toEmit.value()))
+{
                  ProcessorRecordContext prevRecordContext = internalProcessorContext.recordContext();
                 internalProcessorContext.setRecordContext(toEmit.recordContext());
                 try {
@@ -203,12 +225,14 @@ public class KTableSuppressProcessorSupplier<K, V> implements KTableProcessorSup
             }
         }
 
-        private bool shouldForward( Change<V> value) {
+        private bool shouldForward( Change<V> value)
+{
             return value.newValue != null || !safeToDropTombstones;
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
         }
     }
 }

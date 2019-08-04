@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -42,14 +42,14 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
         return pair;
     }
 
-    @Override
+    
     Long deserializeCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = bytesFromCacheKey(cacheKey);
+        byte[] binaryKey = bytesFromCacheKey(cacheKey];
         return WindowKeySchema.extractStoreTimestamp(binaryKey);
     }
 
-    @Override
+    
     byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
 {
         return cacheEntry.value();
@@ -62,7 +62,7 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
 
     public override int compare(Bytes cacheKey, Long storeKey)
 {
-        byte[] binaryKey = bytesFromCacheKey(cacheKey);
+        byte[] binaryKey = bytesFromCacheKey(cacheKey];
 
         Long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
         return cacheTimestamp.compareTo(storeKey);

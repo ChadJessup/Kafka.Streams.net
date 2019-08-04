@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams;
+namespace Kafka.streams;
 
 import org.apache.kafka.clients.admin.Admin;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -45,7 +45,7 @@ public interface KafkaClientSupplier {
      *               {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka producer
      */
-    Producer<byte[], byte[]> getProducer( Map<string, object> config);
+    Producer<byte[], byte[]> getProducer( Map<string, object> config];
 
     /**
      * Create a {@link Consumer} which is used to read records of source topics.
@@ -54,7 +54,7 @@ public interface KafkaClientSupplier {
      *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getConsumer( Map<string, object> config);
+    Consumer<byte[], byte[]> getConsumer( Map<string, object> config];
 
     /**
      * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.
@@ -63,7 +63,7 @@ public interface KafkaClientSupplier {
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getRestoreConsumer( Map<string, object> config);
+    Consumer<byte[], byte[]> getRestoreConsumer( Map<string, object> config];
 
     /**
      * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.
@@ -72,5 +72,5 @@ public interface KafkaClientSupplier {
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    Consumer<byte[], byte[]> getGlobalConsumer( Map<string, object> config);
+    Consumer<byte[], byte[]> getGlobalConsumer( Map<string, object> config];
 }

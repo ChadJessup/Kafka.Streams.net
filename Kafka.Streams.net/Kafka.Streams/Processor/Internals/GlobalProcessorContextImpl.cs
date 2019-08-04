@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.processor.Cancellable;
@@ -45,24 +45,31 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
     public GlobalProcessorContextImpl(StreamsConfig config,
                                       StateManager stateMgr,
                                       StreamsMetricsImpl metrics,
-                                      ThreadCache cache) {
+                                      ThreadCache cache)
+{
         super(new TaskId(-1, -1), config, metrics, stateMgr, cache);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public IStateStore getStateStore(string name) {
+    
+    public IStateStore getStateStore(string name)
+{
         IStateStore store = stateManager.getGlobalStore(name);
 
-        if (store is TimestampedKeyValueStore) {
+        if (store is TimestampedKeyValueStore)
+{
             return new TimestampedKeyValueStoreReadWriteDecorator((TimestampedKeyValueStore) store);
-        } else if (store is KeyValueStore) {
-            return new KeyValueStoreReadWriteDecorator((KeyValueStore) store);
-        } else if (store is TimestampedWindowStore) {
+        } else if (store is IKeyValueStore)
+{
+            return new KeyValueStoreReadWriteDecorator((IKeyValueStore) store);
+        } else if (store is TimestampedWindowStore)
+{
             return new TimestampedWindowStoreReadWriteDecorator((TimestampedWindowStore) store);
-        } else if (store is WindowStore) {
+        } else if (store is WindowStore)
+{
             return new WindowStoreReadWriteDecorator((WindowStore) store);
-        } else if (store is SessionStore) {
+        } else if (store is SessionStore)
+{
             return new SessionStoreReadWriteDecorator((SessionStore) store);
         }
 
@@ -70,11 +77,13 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <K, V> void forward(K key, V value) {
+    
+    public <K, V> void forward(K key, V value)
+{
         ProcessorNode previousNode = currentNode();
         try {
-            for (ProcessorNode child : (List<ProcessorNode<K, V>>) currentNode().children()) {
+            foreach (ProcessorNode child in (List<ProcessorNode<K, V>>) currentNode().children())
+{
                 setCurrentNode(child);
                 child.process(key, value);
             }
@@ -86,50 +95,57 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * No-op. This should only be called on GlobalStateStore#flush and there should be no child nodes
      */
-    @Override
-    public <K, V> void forward(K key, V value, To to) {
-        if (!currentNode().children().isEmpty()) {
+    
+    public <K, V> void forward(K key, V value, To to)
+{
+        if (!currentNode().children().isEmpty())
+{
             throw new InvalidOperationException("This method should only be called on 'GlobalStateStore.flush' that should not have any children.");
         }
     }
 
     /**
-     * @throws UnsupportedOperationException on every invocation
+     * @throws InvalidOperationException on every invocation
      */
-    @Override
+    
     @Deprecated
-    public <K, V> void forward(K key, V value, int childIndex) {
-        throw new UnsupportedOperationException("this should not happen: forward() not supported in global processor context.");
+    public <K, V> void forward(K key, V value, int childIndex)
+{
+        throw new InvalidOperationException("this should not happen: forward() not supported in global processor context.");
     }
 
     /**
-     * @throws UnsupportedOperationException on every invocation
+     * @throws InvalidOperationException on every invocation
      */
-    @Override
+    
     @Deprecated
-    public <K, V> void forward(K key, V value, string childName) {
-        throw new UnsupportedOperationException("this should not happen: forward() not supported in global processor context.");
+    public <K, V> void forward(K key, V value, string childName)
+{
+        throw new InvalidOperationException("this should not happen: forward() not supported in global processor context.");
     }
 
-    @Override
-    public void commit() {
+    
+    public void commit()
+{
         //no-op
     }
 
     /**
-     * @throws UnsupportedOperationException on every invocation
+     * @throws InvalidOperationException on every invocation
      */
-    @Override
+    
     @Deprecated
-    public ICancellable schedule(long interval, PunctuationType type, Punctuator callback) {
-        throw new UnsupportedOperationException("this should not happen: schedule() not supported in global processor context.");
+    public ICancellable schedule(long interval, PunctuationType type, Punctuator callback)
+{
+        throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
     }
 
     /**
-     * @throws UnsupportedOperationException on every invocation
+     * @throws InvalidOperationException on every invocation
      */
-    @Override
-    public ICancellable schedule(Duration interval, PunctuationType type, Punctuator callback) {
-        throw new UnsupportedOperationException("this should not happen: schedule() not supported in global processor context.");
+    
+    public ICancellable schedule(Duration interval, PunctuationType type, Punctuator callback)
+{
+        throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");
     }
 }

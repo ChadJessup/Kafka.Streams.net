@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
@@ -35,7 +35,8 @@ public class StreamTableJoinNode<K, V> : StreamsGraphNode {
     public StreamTableJoinNode( string nodeName,
                                 ProcessorParameters<K, V> processorParameters,
                                 string[] storeNames,
-                                string otherJoinSideNodeName) {
+                                string otherJoinSideNodeName)
+{
         super(nodeName);
 
         // in the case of Stream-Table join the state stores associated with the KTable
@@ -44,17 +45,19 @@ public class StreamTableJoinNode<K, V> : StreamsGraphNode {
         this.otherJoinSideNodeName = otherJoinSideNodeName;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "StreamTableJoinNode{" +
-               "storeNames=" + Arrays.toString(storeNames) +
+               "storeNames=" + Arrays.ToString(storeNames) +
                ", processorParameters=" + processorParameters +
                ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
          string processorName = processorParameters.processorName();
          ProcessorSupplier processorSupplier = processorParameters.processorSupplier();
 
@@ -62,7 +65,8 @@ public class StreamTableJoinNode<K, V> : StreamsGraphNode {
         topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
 
         // Steam - KTable join only
-        if (otherJoinSideNodeName != null) {
+        if (otherJoinSideNodeName != null)
+{
             topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
         }
 

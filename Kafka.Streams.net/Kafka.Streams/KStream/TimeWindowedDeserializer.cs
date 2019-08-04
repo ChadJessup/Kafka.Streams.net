@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.config.ConfigException;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -31,7 +31,7 @@ import java.util.Map;
  *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
  *  if the no-arg constructor is called and hence it is not passed during initialization.
  */
-public class TimeWindowedDeserializer<T> implements Deserializer<Windowed<T>> {
+public class TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
 
     private  Long windowSize;
     private bool isChangelogTopic;
@@ -39,50 +39,60 @@ public class TimeWindowedDeserializer<T> implements Deserializer<Windowed<T>> {
     private Deserializer<T> inner;
     
     // Default constructor needed by Kafka
-    public TimeWindowedDeserializer() {
+    public TimeWindowedDeserializer()
+{
         this(null, Long.MAX_VALUE);
     }
 
     // TODO: fix this part as last bits of KAFKA-4468
-    public TimeWindowedDeserializer( Deserializer<T> inner) {
+    public TimeWindowedDeserializer( Deserializer<T> inner)
+{
         this(inner, Long.MAX_VALUE);
     }
 
-    public TimeWindowedDeserializer( Deserializer<T> inner,  long windowSize) {
+    public TimeWindowedDeserializer( Deserializer<T> inner,  long windowSize)
+{
         this.inner = inner;
         this.windowSize = windowSize;
         this.isChangelogTopic = false;
     }
 
-    public Long getWindowSize() {
+    public Long getWindowSize()
+{
         return this.windowSize;
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void configure( Map<string, ?> configs,  bool isKey) {
-        if (inner == null) {
+    
+    public void configure( Map<string, ?> configs,  bool isKey)
+{
+        if (inner == null)
+{
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-             string value = (string) configs.get(propertyName);
+             string value = (string) configs[propertyName];
             try {
                 inner = Serde.class.cast(Utils.newInstance(value, Serde.class)).deserializer();
                 inner.configure(configs, isKey);
-            } catch ( ClassNotFoundException e) {
+            } catch ( ClassNotFoundException e)
+{
                 throw new ConfigException(propertyName, value, "Serde class " + value + " could not be found.");
             }
         }
     }
 
-    @Override
-    public Windowed<T> deserialize( string topic,  byte[] data) {
+    
+    public Windowed<T> deserialize( string topic,  byte[] data)
+{
         WindowedSerdes.verifyInnerDeserializerNotNull(inner, this);
 
-        if (data == null || data.length == 0) {
+        if (data == null || data.Length == 0)
+{
             return null;
         }
 
         // toStoreKeyBinary was used to serialize the data.
-        if (this.isChangelogTopic) {
+        if (this.isChangelogTopic)
+{
             return WindowKeySchema.fromStoreKey(data, windowSize, inner, topic);
         }
 
@@ -90,19 +100,23 @@ public class TimeWindowedDeserializer<T> implements Deserializer<Windowed<T>> {
         return WindowKeySchema.from(data, windowSize, inner, topic);
     }
 
-    @Override
-    public void close() {
-        if (inner != null) {
+    
+    public void close()
+{
+        if (inner != null)
+{
             inner.close();
         }
     }
 
-    public void setIsChangelogTopic( bool isChangelogTopic) {
+    public void setIsChangelogTopic( bool isChangelogTopic)
+{
         this.isChangelogTopic = isChangelogTopic;
     }
 
     // Only for testing
-    Deserializer<T> innerDeserializer() {
+    Deserializer<T> innerDeserializer()
+{
         return inner;
     }
 }

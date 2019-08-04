@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals.assignment;
+namespace Kafka.streams.processor.internals.assignment;
 
 import org.apache.kafka.streams.processor.TaskId;
 
@@ -32,11 +32,13 @@ public class ClientState {
     private int capacity;
 
 
-    public ClientState() {
+    public ClientState()
+{
         this(0);
     }
 
-    ClientState(int capacity) {
+    ClientState(int capacity)
+{
         this(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), capacity);
     }
 
@@ -46,7 +48,8 @@ public class ClientState {
                         Set<TaskId> prevActiveTasks,
                         Set<TaskId> prevStandbyTasks,
                         Set<TaskId> prevAssignedTasks,
-                        int capacity) {
+                        int capacity)
+{
         this.activeTasks = activeTasks;
         this.standbyTasks = standbyTasks;
         this.assignedTasks = assignedTasks;
@@ -56,7 +59,8 @@ public class ClientState {
         this.capacity = capacity;
     }
 
-    public ClientState copy() {
+    public ClientState copy()
+{
         return new ClientState(
             new HashSet<>(activeTasks),
             new HashSet<>(standbyTasks),
@@ -67,8 +71,10 @@ public class ClientState {
             capacity);
     }
 
-    public void assign(TaskId taskId, bool active) {
-        if (active) {
+    public void assign(TaskId taskId, bool active)
+{
+        if (active)
+{
             activeTasks.add(taskId);
         } else {
             standbyTasks.add(taskId);
@@ -77,48 +83,58 @@ public class ClientState {
         assignedTasks.add(taskId);
     }
 
-    public Set<TaskId> activeTasks() {
+    public Set<TaskId> activeTasks()
+{
         return activeTasks;
     }
 
-    public Set<TaskId> standbyTasks() {
+    public Set<TaskId> standbyTasks()
+{
         return standbyTasks;
     }
 
-    public Set<TaskId> prevActiveTasks() {
+    public Set<TaskId> prevActiveTasks()
+{
         return prevActiveTasks;
     }
 
-    public Set<TaskId> prevStandbyTasks() {
+    public Set<TaskId> prevStandbyTasks()
+{
         return prevStandbyTasks;
     }
 
     @SuppressWarnings("WeakerAccess")
-    public int assignedTaskCount() {
+    public int assignedTaskCount()
+{
         return assignedTasks.size();
     }
 
-    public void incrementCapacity() {
+    public void incrementCapacity()
+{
         capacity++;
     }
 
     @SuppressWarnings("WeakerAccess")
-    public int activeTaskCount() {
+    public int activeTaskCount()
+{
         return activeTasks.size();
     }
 
-    public void addPreviousActiveTasks(Set<TaskId> prevTasks) {
+    public void addPreviousActiveTasks(Set<TaskId> prevTasks)
+{
         prevActiveTasks.addAll(prevTasks);
         prevAssignedTasks.addAll(prevTasks);
     }
 
-    public void addPreviousStandbyTasks(Set<TaskId> standbyTasks) {
+    public void addPreviousStandbyTasks(Set<TaskId> standbyTasks)
+{
         prevStandbyTasks.addAll(standbyTasks);
         prevAssignedTasks.addAll(standbyTasks);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "[activeTasks: (" + activeTasks +
                 ") standbyTasks: (" + standbyTasks +
                 ") assignedTasks: (" + assignedTasks +
@@ -129,59 +145,72 @@ public class ClientState {
                 "]";
     }
 
-    bool reachedCapacity() {
+    bool reachedCapacity()
+{
         return assignedTasks.size() >= capacity;
     }
 
-    bool hasMoreAvailableCapacityThan(ClientState other) {
-        if (this.capacity <= 0) {
+    bool hasMoreAvailableCapacityThan(ClientState other)
+{
+        if (this.capacity <= 0)
+{
             throw new InvalidOperationException("Capacity of this ClientState must be greater than 0.");
         }
 
-        if (other.capacity <= 0) {
+        if (other.capacity <= 0)
+{
             throw new InvalidOperationException("Capacity of other ClientState must be greater than 0");
         }
 
         double otherLoad = (double) other.assignedTaskCount() / other.capacity;
         double thisLoad = (double) assignedTaskCount() / capacity;
 
-        if (thisLoad < otherLoad) {
+        if (thisLoad < otherLoad)
+{
             return true;
-        } else if (thisLoad > otherLoad) {
+        } else if (thisLoad > otherLoad)
+{
             return false;
         } else {
             return capacity > other.capacity;
         }
     }
 
-    Set<TaskId> previousStandbyTasks() {
+    Set<TaskId> previousStandbyTasks()
+{
         Set<TaskId> standby = new HashSet<>(prevAssignedTasks);
         standby.removeAll(prevActiveTasks);
         return standby;
     }
 
-    Set<TaskId> previousActiveTasks() {
+    Set<TaskId> previousActiveTasks()
+{
         return prevActiveTasks;
     }
 
-    bool hasAssignedTask(TaskId taskId) {
+    bool hasAssignedTask(TaskId taskId)
+{
         return assignedTasks.contains(taskId);
     }
 
     // Visible for testing
-    Set<TaskId> assignedTasks() {
+    Set<TaskId> assignedTasks()
+{
         return assignedTasks;
     }
 
-    Set<TaskId> previousAssignedTasks() {
+    Set<TaskId> previousAssignedTasks()
+{
         return prevAssignedTasks;
     }
 
-    int capacity() {
+    int capacity()
+{
         return capacity;
     }
 
-    bool hasUnfulfilledQuota(int tasksPerThread) {
+    bool hasUnfulfilledQuota(int tasksPerThread)
+{
         return activeTasks.size() < capacity * tasksPerThread;
     }
 }

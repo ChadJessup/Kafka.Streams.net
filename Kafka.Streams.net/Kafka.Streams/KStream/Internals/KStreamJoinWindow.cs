@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
@@ -22,16 +22,18 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 import org.apache.kafka.streams.state.WindowStore;
 
-class KStreamJoinWindow<K, V> implements ProcessorSupplier<K, V> {
+class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
 
     private  string windowName;
 
-    KStreamJoinWindow( string windowName) {
+    KStreamJoinWindow( string windowName)
+{
         this.windowName = windowName;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamJoinWindowProcessor();
     }
 
@@ -40,21 +42,24 @@ class KStreamJoinWindow<K, V> implements ProcessorSupplier<K, V> {
         private WindowStore<K, V> window;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
 
             window = (WindowStore<K, V>) context.getStateStore(windowName);
         }
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             // if the key is null, we do not need to put the record into window store
             // since it will never be considered for join operations
-            if (key != null) {
+            if (key != null)
+{
                 context().forward(key, value);
                 // Every record basically starts a new window. We're using a window store mostly for the retention.
-                window.put(key, value, context().timestamp());
+                window.Add(key, value, context().timestamp());
             }
         }
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -31,7 +31,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InMemoryKeyValueStore : KeyValueStore<Bytes, byte[]>
+public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 {
     private string name;
     private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
@@ -84,23 +84,23 @@ public class InMemoryKeyValueStore : KeyValueStore<Bytes, byte[]>
 
     public override byte[] get(Bytes key)
 {
-        return map.get(key);
+        return map[key];
     }
 
     public override void put(Bytes key, byte[] value)
 {
         if (value == null)
 {
-            map.remove(key);
+            map.Remove(key);
         } else
 {
-            map.put(key, value);
+            map.Add(key, value);
         }
     }
 
     public override byte[] putIfAbsent(Bytes key, byte[] value)
 {
-        byte[] originalValue = get(key);
+        byte[] originalValue = get(key];
         if (originalValue == null)
 {
             put(key, value);
@@ -110,7 +110,7 @@ public class InMemoryKeyValueStore : KeyValueStore<Bytes, byte[]>
 
     public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
 {
-        for (KeyValue<Bytes, byte[]> entry : entries)
+        foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
             put(entry.key, entry.value);
         }
@@ -118,7 +118,7 @@ public class InMemoryKeyValueStore : KeyValueStore<Bytes, byte[]>
 
     public override byte[] delete(Bytes key)
 {
-        return map.remove(key);
+        return map.Remove(key);
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
@@ -169,35 +169,35 @@ public class InMemoryKeyValueStore : KeyValueStore<Bytes, byte[]>
             this.iter = iter;
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return iter.hasNext();
         }
 
-        @Override
+        
         public KeyValue<Bytes, byte[]> next()
 {
             Map.Entry<Bytes, byte[]> entry = iter.next();
             return new KeyValue<>(entry.getKey(), entry.getValue());
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            iter.remove();
+            iter.Remove();
         }
 
-        @Override
+        
         public void close()
 {
             // do nothing
         }
 
-        @Override
+        
         public Bytes peekNextKey()
 {
-            throw new UnsupportedOperationException("peekNextKey() not supported in " + GetType().getName());
+            throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());
         }
     }
 }

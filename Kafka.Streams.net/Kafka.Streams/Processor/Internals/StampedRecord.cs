@@ -14,43 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.header.Headers;
 
 public class StampedRecord : Stamped<ConsumerRecord<Object, object>> {
 
-    public StampedRecord(ConsumerRecord<Object, object> record, long timestamp) {
+    public StampedRecord(ConsumerRecord<Object, object> record, long timestamp)
+{
         super(record, timestamp);
     }
 
-    public string topic() {
+    public string topic()
+{
         return value.topic();
     }
 
-    public int partition() {
+    public int partition()
+{
         return value.partition();
     }
 
-    public object key() {
+    public object key()
+{
         return value.key();
     }
 
-    public object value() {
+    public object value()
+{
         return value.value();
     }
 
-    public long offset() {
+    public long offset()
+{
         return value.offset();
     }
 
-    public Headers headers() {
+    public Headers headers()
+{
         return value.headers();
     }
 
-    @Override
-    public string toString() {
-        return value.toString() + ", timestamp = " + timestamp;
+    
+    public string ToString()
+{
+        return value.ToString() + ", timestamp = " + timestamp;
     }
 }

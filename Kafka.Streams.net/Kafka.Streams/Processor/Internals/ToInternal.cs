@@ -14,28 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.streams.processor.To;
 
 public class ToInternal : To {
-    public ToInternal() {
+    public ToInternal()
+{
         super(To.all());
     }
 
-    public void update(To to) {
+    public void update(To to)
+{
         super.update(to);
     }
 
-    public bool hasTimestamp() {
+    public bool hasTimestamp()
+{
         return timestamp != -1;
     }
 
-    public long timestamp() {
+    public long timestamp()
+{
         return timestamp;
     }
 
-    public string child() {
+    public string child()
+{
         return childName;
     }
 }

@@ -19,7 +19,7 @@ namespace Kafka.Common.Utils
         private byte[] bytes;
 
         // cache the hash code for the string, default to 0
-        private int GetHashCode();
+        private int hashCode;
 
         public static Bytes wrap(byte[] bytes)
         {
@@ -41,7 +41,7 @@ namespace Kafka.Common.Utils
             this.bytes = bytes;
 
             // initialize hash code to 0
-            GetHashCode() = 0;
+            hashCode = 0;
         }
 
         /**
@@ -58,7 +58,7 @@ namespace Kafka.Common.Utils
          */
         public override int GetHashCode()
         {
-            if (this.GetHashCode() == 0)
+            if (this.hashCode == 0)
             {
                 unchecked
                 {
@@ -73,12 +73,12 @@ namespace Kafka.Common.Utils
                         hash = hash * 31 + @byte.GetHashCode();
                     }
 
-                    this.GetHashCode() = hash;
+                    this.hashCode = hash;
                     return hash;
                 }
             }
 
-            return GetHashCode();
+            return this.hashCode;
         }
 
         public override bool Equals(object other)
@@ -101,7 +101,7 @@ namespace Kafka.Common.Utils
 
             if (other is Bytes)
             {
-                return Enumerable.SequenceEqual(this.bytes, ((Bytes)other).get());
+                return Enumerable.SequenceEqual(this.bytes, (Bytes)other);
             }
 
             return false;
@@ -154,8 +154,8 @@ namespace Kafka.Common.Utils
                 else
                 {
                     result.Append("\\x");
-                    result.Append(HEX_CHARS_UPPER[ch / 0x10]);
-                    result.Append(HEX_CHARS_UPPER[ch % 0x10]);
+                    result.Append(HEX_CHARS_UPPER[ch / 0x10]];
+                    result.Append(HEX_CHARS_UPPER[ch % 0x10]];
                 }
             }
             return result.ToString();

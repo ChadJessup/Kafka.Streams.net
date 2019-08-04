@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
@@ -59,12 +59,12 @@ public class RocksDBWindowStore
 {
         maybeUpdateSeqnumForDups();
 
-        wrapped().put(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, seqnum), value);
+        wrapped().Add(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, seqnum), value);
     }
 
     public override byte[] fetch(Bytes key, long timestamp)
 {
-        byte[] bytesValue = wrapped().get(WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
+        byte[] bytesValue = wrapped()[WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum)];
         if (bytesValue == null)
 {
             return null;
@@ -75,7 +75,7 @@ public class RocksDBWindowStore
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
     public override WindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo);
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo];
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
     }
 
@@ -85,7 +85,7 @@ public class RocksDBWindowStore
                                                            long timeFrom,
                                                            long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo);
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo];
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
     }
 
@@ -98,7 +98,7 @@ public class RocksDBWindowStore
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo);
+        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo];
         return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
     }
 

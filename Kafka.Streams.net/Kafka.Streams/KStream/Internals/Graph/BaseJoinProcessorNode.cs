@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.kstream.ValueJoiner;
 
@@ -39,7 +39,8 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
                            ProcessorParameters<K, V2> joinOtherProcessorParameters,
                            ProcessorParameters<K, VR> joinMergeProcessorParameters,
                            string thisJoinSideNodeName,
-                           string otherJoinSideNodeName) {
+                           string otherJoinSideNodeName)
+{
 
         super(nodeName);
 
@@ -51,32 +52,39 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
         this.otherJoinSideNodeName = otherJoinSideNodeName;
     }
 
-    ProcessorParameters<K, V1> thisProcessorParameters() {
+    ProcessorParameters<K, V1> thisProcessorParameters()
+{
         return joinThisProcessorParameters;
     }
 
-    ProcessorParameters<K, V2> otherProcessorParameters() {
+    ProcessorParameters<K, V2> otherProcessorParameters()
+{
         return joinOtherProcessorParameters;
     }
 
-    ProcessorParameters<K, VR> mergeProcessorParameters() {
+    ProcessorParameters<K, VR> mergeProcessorParameters()
+{
         return joinMergeProcessorParameters;
     }
 
-    ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner() {
+    ValueJoiner<? super V1, ? super V2, ? : VR> valueJoiner()
+{
         return valueJoiner;
     }
 
-    string thisJoinSideNodeName() {
+    string thisJoinSideNodeName()
+{
         return thisJoinSideNodeName;
     }
 
-    string otherJoinSideNodeName() {
+    string otherJoinSideNodeName()
+{
         return otherJoinSideNodeName;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "BaseJoinProcessorNode{" +
                "joinThisProcessorParameters=" + joinThisProcessorParameters +
                ", joinOtherProcessorParameters=" + joinOtherProcessorParameters +
@@ -84,6 +92,6 @@ abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
                ", valueJoiner=" + valueJoiner +
                ", thisJoinSideNodeName='" + thisJoinSideNodeName + '\'' +
                ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 }

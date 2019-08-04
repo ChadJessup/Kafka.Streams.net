@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Suppressed;
 
@@ -22,7 +22,7 @@ import java.util.Objects;
 
 import static org.apache.kafka.streams.kstream.internals.suppress.BufferFullStrategy.SHUT_DOWN;
 
-public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBufferConfig> implements Suppressed.StrictBufferConfig {
+public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBufferConfig> : Suppressed.StrictBufferConfig {
 
     private  long maxRecords;
     private  long maxBytes;
@@ -30,49 +30,59 @@ public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBuff
 
     public StrictBufferConfigImpl( long maxRecords,
                                    long maxBytes,
-                                   BufferFullStrategy bufferFullStrategy) {
+                                   BufferFullStrategy bufferFullStrategy)
+{
         this.maxRecords = maxRecords;
         this.maxBytes = maxBytes;
         this.bufferFullStrategy = bufferFullStrategy;
     }
 
-    public StrictBufferConfigImpl() {
+    public StrictBufferConfigImpl()
+{
         this.maxRecords = Long.MAX_VALUE;
         this.maxBytes = Long.MAX_VALUE;
         this.bufferFullStrategy = SHUT_DOWN;
     }
 
-    @Override
-    public Suppressed.StrictBufferConfig withMaxRecords( long recordLimit) {
+    
+    public Suppressed.StrictBufferConfig withMaxRecords( long recordLimit)
+{
         return new StrictBufferConfigImpl(recordLimit, maxBytes, bufferFullStrategy);
     }
 
-    @Override
-    public Suppressed.StrictBufferConfig withMaxBytes( long byteLimit) {
+    
+    public Suppressed.StrictBufferConfig withMaxBytes( long byteLimit)
+{
         return new StrictBufferConfigImpl(maxRecords, byteLimit, bufferFullStrategy);
     }
 
-    @Override
-    public long maxRecords() {
+    
+    public long maxRecords()
+{
         return maxRecords;
     }
 
-    @Override
-    public long maxBytes() {
+    
+    public long maxBytes()
+{
         return maxBytes;
     }
 
-    @Override
-    public BufferFullStrategy bufferFullStrategy() {
+    
+    public BufferFullStrategy bufferFullStrategy()
+{
         return bufferFullStrategy;
     }
 
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          StrictBufferConfigImpl that = (StrictBufferConfigImpl) o;
@@ -81,13 +91,15 @@ public class StrictBufferConfigImpl : BufferConfigInternal<Suppressed.StrictBuff
             bufferFullStrategy == that.bufferFullStrategy;
     }
 
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(maxRecords, maxBytes, bufferFullStrategy);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "StrictBufferConfigImpl{maxKeys=" + maxRecords +
             ", maxBytes=" + maxBytes +
             ", bufferFullStrategy=" + bufferFullStrategy + '}';

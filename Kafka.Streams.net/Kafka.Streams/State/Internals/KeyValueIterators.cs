@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.KeyValueIterator;
@@ -29,31 +29,31 @@ class KeyValueIterators
     private static class EmptyKeyValueIterator<K, V> : KeyValueIterator<K, V>
 {
 
-        @Override
+        
         public void close()
 {
         }
 
-        @Override
+        
         public K peekNextKey()
 {
             throw new NoSuchElementException();
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return false;
         }
 
-        @Override
+        
         public KeyValue<K, V> next()
 {
             throw new NoSuchElementException();
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
         }
     }

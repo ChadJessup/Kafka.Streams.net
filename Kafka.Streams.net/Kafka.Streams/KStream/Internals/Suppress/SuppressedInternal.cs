@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Suppressed;
 import org.apache.kafka.streams.kstream.internals.suppress.TimeDefinitions.TimeDefinition;
@@ -22,7 +22,7 @@ import org.apache.kafka.streams.kstream.internals.suppress.TimeDefinitions.TimeD
 import java.time.Duration;
 import java.util.Objects;
 
-public class SuppressedInternal<K> implements Suppressed<K>, NamedSuppressed<K> {
+public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
     private static  Duration DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(Long.MAX_VALUE);
     private static  StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl) BufferConfig.unbounded();
 
@@ -49,7 +49,8 @@ public class SuppressedInternal<K> implements Suppressed<K>, NamedSuppressed<K> 
                                Duration suppressionTime,
                                BufferConfig bufferConfig,
                                TimeDefinition<K> timeDefinition,
-                               bool safeToDropTombstones) {
+                               bool safeToDropTombstones)
+{
         this.name = name;
         this.timeToWaitForMoreEvents = suppressionTime == null ? DEFAULT_SUPPRESSION_TIME : suppressionTime;
         this.timeDefinition = timeDefinition == null ? TimeDefinitions.RecordTimeDefintion.instance() : timeDefinition;
@@ -57,55 +58,66 @@ public class SuppressedInternal<K> implements Suppressed<K>, NamedSuppressed<K> 
         this.safeToDropTombstones = safeToDropTombstones;
     }
 
-    @Override
-    public Suppressed<K> withName( string name) {
+    
+    public Suppressed<K> withName( string name)
+{
         return new SuppressedInternal<>(name, timeToWaitForMoreEvents, bufferConfig, timeDefinition, safeToDropTombstones);
     }
 
-    @Override
-    public string name() {
+    
+    public string name()
+{
         return name;
     }
 
-    BufferConfigInternal bufferConfig() {
+    BufferConfigInternal bufferConfig()
+{
         return bufferConfig;
     }
 
-    TimeDefinition<K> timeDefinition() {
+    TimeDefinition<K> timeDefinition()
+{
         return timeDefinition;
     }
 
-    Duration timeToWaitForMoreEvents() {
+    Duration timeToWaitForMoreEvents()
+{
         return timeToWaitForMoreEvents == null ? Duration.ZERO : timeToWaitForMoreEvents;
     }
 
-    bool safeToDropTombstones() {
+    bool safeToDropTombstones()
+{
         return safeToDropTombstones;
     }
 
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          SuppressedInternal<?> that = (SuppressedInternal<?>) o;
         return safeToDropTombstones == that.safeToDropTombstones &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(bufferConfig, that.bufferConfig) &&
-            Objects.equals(timeToWaitForMoreEvents, that.timeToWaitForMoreEvents) &&
-            Objects.equals(timeDefinition, that.timeDefinition);
+            Objects.Equals(name, that.name) &&
+            Objects.Equals(bufferConfig, that.bufferConfig) &&
+            Objects.Equals(timeToWaitForMoreEvents, that.timeToWaitForMoreEvents) &&
+            Objects.Equals(timeDefinition, that.timeDefinition);
     }
 
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(name, bufferConfig, timeToWaitForMoreEvents, timeDefinition, safeToDropTombstones);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "SuppressedInternal{" +
                 "name='" + name + '\'' +
                 ", bufferConfig=" + bufferConfig +

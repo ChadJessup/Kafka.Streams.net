@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.metrics.Sensor;
 import org.apache.kafka.streams.kstream.ValueJoiner;
@@ -36,29 +36,34 @@ class KTableKTableLeftJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2
 
     KTableKTableLeftJoin( KTableImpl<K, ?, V1> table1,
                           KTableImpl<K, ?, V2> table2,
-                          ValueJoiner<? super V1, ? super V2, ? : R> joiner) {
+                          ValueJoiner<? super V1, ? super V2, ? : R> joiner)
+{
         super(table1, table2, joiner);
     }
 
-    @Override
-    public Processor<K, Change<V1>> get() {
-        return new KTableKTableLeftJoinProcessor(valueGetterSupplier2.get());
+    
+    public Processor<K, Change<V1>> get()
+{
+        return new KTableKTableLeftJoinProcessor(valueGetterSupplier2()];
     }
 
-    @Override
-    public KTableValueGetterSupplier<K, R> view() {
+    
+    public KTableValueGetterSupplier<K, R> view()
+{
         return new KTableKTableLeftJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
     }
 
     private class KTableKTableLeftJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> {
 
         KTableKTableLeftJoinValueGetterSupplier( KTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-                                                 KTableValueGetterSupplier<K, V2> valueGetterSupplier2) {
+                                                 KTableValueGetterSupplier<K, V2> valueGetterSupplier2)
+{
             super(valueGetterSupplier1, valueGetterSupplier2);
         }
 
-        public KTableValueGetter<K, R> get() {
-            return new KTableKTableLeftJoinValueGetter(valueGetterSupplier1.get(), valueGetterSupplier2.get());
+        public KTableValueGetter<K, R> get()
+{
+            return new KTableKTableLeftJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2()];
         }
     }
 
@@ -69,22 +74,26 @@ class KTableKTableLeftJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        KTableKTableLeftJoinProcessor( KTableValueGetter<K, V2> valueGetter) {
+        KTableKTableLeftJoinProcessor( KTableValueGetter<K, V2> valueGetter)
+{
             this.valueGetter = valueGetter;
         }
 
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             valueGetter.init(context);
         }
 
-        @Override
-        public void process( K key,  Change<V1> change) {
+        
+        public void process( K key,  Change<V1> change)
+{
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
-            if (key == null) {
+            if (key == null)
+{
                 LOG.warn(
                     "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     change, context().topic(), context().partition(), context().offset()
@@ -97,12 +106,14 @@ class KTableKTableLeftJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2
              long resultTimestamp;
             R oldValue = null;
 
-             ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter.get(key);
+             ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter[key];
              V2 value2 = getValueOrNull(valueAndTimestampRight);
              long timestampRight;
 
-            if (value2 == null) {
-                if (change.newValue == null && change.oldValue == null) {
+            if (value2 == null)
+{
+                if (change.newValue == null && change.oldValue == null)
+{
                     return;
                 }
                 timestampRight = UNKNOWN;
@@ -110,55 +121,63 @@ class KTableKTableLeftJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2
                 timestampRight = valueAndTimestampRight.timestamp();
             }
 
-            resultTimestamp = Math.max(context().timestamp(), timestampRight);
+            resultTimestamp = Math.Max(context().timestamp(), timestampRight);
 
-            if (change.newValue != null) {
+            if (change.newValue != null)
+{
                 newValue = joiner.apply(change.newValue, value2);
             }
 
-            if (sendOldValues && change.oldValue != null) {
+            if (sendOldValues && change.oldValue != null)
+{
                 oldValue = joiner.apply(change.oldValue, value2);
             }
 
             context().forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             valueGetter.close();
         }
     }
 
-    private class KTableKTableLeftJoinValueGetter implements KTableValueGetter<K, R> {
+    private class KTableKTableLeftJoinValueGetter : KTableValueGetter<K, R> {
 
         private  KTableValueGetter<K, V1> valueGetter1;
         private  KTableValueGetter<K, V2> valueGetter2;
 
         KTableKTableLeftJoinValueGetter( KTableValueGetter<K, V1> valueGetter1,
-                                         KTableValueGetter<K, V2> valueGetter2) {
+                                         KTableValueGetter<K, V2> valueGetter2)
+{
             this.valueGetter1 = valueGetter1;
             this.valueGetter2 = valueGetter2;
         }
 
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             valueGetter1.init(context);
             valueGetter2.init(context);
         }
 
-        @Override
-        public ValueAndTimestamp<R> get( K key) {
-             ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1.get(key);
+        
+        public ValueAndTimestamp<R> get( K key)
+{
+             ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
              V1 value1 = getValueOrNull(valueAndTimestamp1);
 
-            if (value1 != null) {
-                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2.get(key);
+            if (value1 != null)
+{
+                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[key];
                  V2 value2 = getValueOrNull(valueAndTimestamp2);
                  long resultTimestamp;
-                if (valueAndTimestamp2 == null) {
+                if (valueAndTimestamp2 == null)
+{
                     resultTimestamp = valueAndTimestamp1.timestamp();
                 } else {
-                    resultTimestamp = Math.max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp());
+                    resultTimestamp = Math.Max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp());
                 }
                 return ValueAndTimestamp.make(joiner.apply(value1, value2), resultTimestamp);
             } else {
@@ -166,8 +185,9 @@ class KTableKTableLeftJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2
             }
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             valueGetter1.close();
             valueGetter2.close();
         }

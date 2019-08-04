@@ -14,16 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics.stats;
+namespace Kafka.common.utils;
+
+import java.io.InputStream;
+import java.nio.ByteBuffer;
 
 /**
- * An non-sampled cumulative total maintained over all time.
- * This is a non-sampled version of {@link WindowedSum}.
- *
- * See also {@link CumulativeCount} if you just want to increment the value by 1 on each recording.
- *
- * @deprecated since 2.4 . Use {@link CumulativeSum} instead.
+ * A byte buffer backed input inputStream
  */
-@Deprecated
-public class Total : CumulativeSum {
+public final class ByteBufferInputStream extends InputStream {
+    private final ByteBuffer buffer;
+
+    public ByteBufferInputStream(ByteBuffer buffer)
+{
+        this.buffer = buffer;
+    }
+
+    public int read()
+{
+        if (!buffer.hasRemaining())
+{
+            return -1;
+        }
+        return buffer[] & 0xFF;
+    }
+
+    public int read(byte[] bytes, int off, int len)
+{
+        if (!buffer.hasRemaining())
+{
+            return -1;
+        }
+
+        len = Math.Min(len, buffer.remaining());
+        buffer[bytes, off, len];
+        return len;
+    }
 }

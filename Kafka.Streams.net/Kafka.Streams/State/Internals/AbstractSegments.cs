@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.ProcessorStateException;
 using Kafka.Streams.Processor.internals.InternalProcessorContext;
@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -70,7 +70,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override S getSegmentForTimestamp(long timestamp)
 {
-        return segments.get(segmentId(timestamp));
+        return segments[segmentId(timestamp)];
     }
 
     public override S getOrCreateSegmentIfLive(long segmentId,
@@ -104,15 +104,15 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
                 string[] list = dir.list();
                 if (list != null)
 {
-                    long[] segmentIds = new long[list.length];
-                    for (int i = 0; i < list.length; i++)
+                    long[] segmentIds = new long[list.Length];
+                    for (int i = 0; i < list.Length; i++)
 {
-                        segmentIds[i] = segmentIdFromSegmentName(list[i], dir);
+                        segmentIds[i] = segmentIdFromSegmentName(list[i], dir];
                     }
 
                     // open segments in the id order
                     Arrays.sort(segmentIds);
-                    for (long segmentId : segmentIds)
+                    foreach (long segmentId in segmentIds)
 {
                         if (segmentId >= 0)
 {
@@ -124,7 +124,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 {
                 if (!dir.mkdir())
 {
-                    throw new ProcessorStateException(string.format("dir %s doesn't exist and cannot be created for segments %s", dir, name));
+                    throw new ProcessorStateException(string.Format("dir %s doesn't exist and cannot be created for segments %s", dir, name));
                 }
             }
         } catch (Exception ex)
@@ -138,12 +138,12 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override List<S> segments(long timeFrom, long timeTo)
 {
-        List<S> result = new ArrayList<>();
+        List<S> result = new List<>();
         NavigableMap<Long, S> segmentsInRange = segments.subMap(
             segmentId(timeFrom), true,
             segmentId(timeTo), true
         );
-        for (S segment : segmentsInRange.values())
+        foreach (S segment in segmentsInRange.values())
 {
             if (segment.isOpen())
 {
@@ -155,8 +155,8 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override List<S> allSegments()
 {
-        List<S> result = new ArrayList<>();
-        for (S segment : segments.values())
+        List<S> result = new List<>();
+        foreach (S segment in segments.values())
 {
             if (segment.isOpen())
 {
@@ -168,7 +168,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override void flush()
 {
-        for (S segment : segments.values())
+        foreach (S segment in segments.values())
 {
             segment.flush();
         }
@@ -176,7 +176,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override void close()
 {
-        for (S segment : segments.values())
+        foreach (S segment in segments.values())
 {
             segment.close();
         }
@@ -191,7 +191,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
         while (toRemove.hasNext())
 {
             Map.Entry<Long, S> next = toRemove.next();
-            toRemove.remove();
+            toRemove.Remove();
             S segment = next.getValue();
             segment.close();
             try
@@ -199,7 +199,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
                 segment.destroy();
             } catch (IOException e)
 {
-                log.error("Error destroying {}", segment, e);
+                log.LogError("Error destroying {}", segment, e);
             }
         }
     }
@@ -207,7 +207,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     private long segmentIdFromSegmentName(string segmentName,
                                           File parent)
 {
-        int segmentSeparatorIndex = name.length();
+        int segmentSeparatorIndex = name.Length;
         char segmentSeparator = segmentName.charAt(segmentSeparatorIndex);
         string segmentIdString = segmentName.substring(segmentSeparatorIndex + 1);
         long segmentId;

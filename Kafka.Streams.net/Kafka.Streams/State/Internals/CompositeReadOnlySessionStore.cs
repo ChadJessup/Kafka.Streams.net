@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.kstream.Windowed;
@@ -48,7 +48,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
         Objects.requireNonNull(key, "key can't be null");
         List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
-        for (ReadOnlySessionStore<K, V> store : stores)
+        foreach (ReadOnlySessionStore<K, V> store in stores)
 {
             try
 {
@@ -65,7 +65,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
                 throw new InvalidStateStoreException("State store  [" + storeName + "] is not available anymore" +
                                                              " and may have been migrated to another instance; " +
                                                              "please re-discover its location from the state metadata. " +
-                                                             "Original error message: " + ise.toString());
+                                                             "Original error message: " + ise.ToString());
             }
         }
         return KeyValueIterators.emptyIterator();

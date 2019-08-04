@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
@@ -37,7 +37,8 @@ public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
                          ISerde<K> keySerde,
                          ISerde<V> valueSerde,
                          string sinkName,
-                         string repartitionTopic) {
+                         string repartitionTopic)
+{
 
         super(nodeName);
 
@@ -53,8 +54,9 @@ public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
 
     abstract Deserializer<V> getValueDeserializer();
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "BaseRepartitionNode{" +
                "keySerde=" + keySerde +
                ", valueSerde=" + valueSerde +
@@ -62,6 +64,6 @@ public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode {
                ", sourceName='" + sourceName + '\'' +
                ", repartitionTopic='" + repartitionTopic + '\'' +
                ", processorParameters=" + processorParameters +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 }

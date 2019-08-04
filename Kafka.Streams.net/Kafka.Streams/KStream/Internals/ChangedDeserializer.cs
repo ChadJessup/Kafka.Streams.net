@@ -14,52 +14,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Deserializer;
 
 import java.nio.ByteBuffer;
 
-public class ChangedDeserializer<T> implements Deserializer<Change<T>> {
+public class ChangedDeserializer<T> : Deserializer<Change<T>> {
 
     private static  int NEWFLAG_SIZE = 1;
 
     private Deserializer<T> inner;
 
-    public ChangedDeserializer( Deserializer<T> inner) {
+    public ChangedDeserializer( Deserializer<T> inner)
+{
         this.inner = inner;
     }
 
-    public Deserializer<T> inner() {
+    public Deserializer<T> inner()
+{
         return inner;
     }
 
-    public void setInner( Deserializer<T> inner) {
+    public void setInner( Deserializer<T> inner)
+{
         this.inner = inner;
     }
 
-    @Override
-    public Change<T> deserialize( string topic,  Headers headers,  byte[] data) {
+    
+    public Change<T> deserialize( string topic,  Headers headers,  byte[] data)
+{
 
-         byte[] bytes = new byte[data.length - NEWFLAG_SIZE];
+         byte[] bytes = new byte[data.Length - NEWFLAG_SIZE];
 
-        System.arraycopy(data, 0, bytes, 0, bytes.length);
+        System.arraycopy(data, 0, bytes, 0, bytes.Length);
 
-        if (ByteBuffer.wrap(data).get(data.length - NEWFLAG_SIZE) != 0) {
+        if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE) != 0)
+{
             return new Change<>(inner.deserialize(topic, headers, bytes), null);
         } else {
             return new Change<>(null, inner.deserialize(topic, headers, bytes));
         }
     }
 
-    @Override
-    public Change<T> deserialize( string topic,  byte[] data) {
+    
+    public Change<T> deserialize( string topic,  byte[] data)
+{
         return deserialize(topic, null, data);
     }
 
-    @Override
-    public void close() {
+    
+    public void close()
+{
         inner.close();
     }
 }

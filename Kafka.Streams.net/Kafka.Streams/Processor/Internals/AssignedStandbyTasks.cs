@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.Utils.LogContext;
 
 class AssignedStandbyTasks : AssignedTasks<StandbyTask> {
 
-    AssignedStandbyTasks(LogContext logContext) {
+    AssignedStandbyTasks(LogContext logContext)
+{
         super(logContext, "standby task");
     }
 

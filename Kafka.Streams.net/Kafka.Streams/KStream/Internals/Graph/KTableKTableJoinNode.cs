@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.internals.Change;
@@ -48,7 +48,8 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
                           ISerde<VR> valueSerde,
                           string[] joinThisStoreNames,
                           string[] joinOtherStoreNames,
-                          StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder) {
+                          StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+{
 
         super(nodeName,
             null,
@@ -65,35 +66,42 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
         this.storeBuilder = storeBuilder;
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<VR> valueSerde() {
+    public ISerde<VR> valueSerde()
+{
         return valueSerde;
     }
 
-    public string[] joinThisStoreNames() {
+    public string[] joinThisStoreNames()
+{
         return joinThisStoreNames;
     }
 
-    public string[] joinOtherStoreNames() {
+    public string[] joinOtherStoreNames()
+{
         return joinOtherStoreNames;
     }
 
-    public string queryableStoreName() {
+    public string queryableStoreName()
+{
         return ((KTableKTableJoinMerger) mergeProcessorParameters().processorSupplier()).getQueryableName();
     }
 
     /**
      * The supplier which provides processor with KTable-KTable join merge functionality.
      */
-    public KTableKTableJoinMerger<K, VR> joinMerger() {
+    public KTableKTableJoinMerger<K, VR> joinMerger()
+{
         return (KTableKTableJoinMerger<K, VR>) mergeProcessorParameters().processorSupplier();
     }
 
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
          string thisProcessorName = thisProcessorParameters().processorName();
          string otherProcessorName = otherProcessorParameters().processorName();
          string mergeProcessorName = mergeProcessorParameters().processorName();
@@ -117,20 +125,23 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
         topologyBuilder.connectProcessorAndStateStores(thisProcessorName, joinOtherStoreNames);
         topologyBuilder.connectProcessorAndStateStores(otherProcessorName, joinThisStoreNames);
 
-        if (storeBuilder != null) {
+        if (storeBuilder != null)
+{
             topologyBuilder.addStateStore(storeBuilder, mergeProcessorName);
         }
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "KTableKTableJoinNode{" +
-            "joinThisStoreNames=" + Arrays.toString(joinThisStoreNames()) +
-            ", joinOtherStoreNames=" + Arrays.toString(joinOtherStoreNames()) +
-            "} " + super.toString();
+            "joinThisStoreNames=" + Arrays.ToString(joinThisStoreNames()) +
+            ", joinOtherStoreNames=" + Arrays.ToString(joinOtherStoreNames()) +
+            "} " + super.ToString();
     }
 
-    public static <K, V1, V2, VR> KTableKTableJoinNodeBuilder<K, V1, V2, VR> kTableKTableJoinNodeBuilder() {
+    public static <K, V1, V2, VR> KTableKTableJoinNodeBuilder<K, V1, V2, VR> kTableKTableJoinNodeBuilder()
+{
         return new KTableKTableJoinNodeBuilder<>();
     }
 
@@ -147,66 +158,79 @@ public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Chan
         private string queryableStoreName;
         private StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
 
-        private KTableKTableJoinNodeBuilder() {
+        private KTableKTableJoinNodeBuilder()
+{
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withNodeName( string nodeName) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withNodeName( string nodeName)
+{
             this.nodeName = nodeName;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinThisProcessorParameters( ProcessorParameters<K, Change<V1>> joinThisProcessorParameters) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinThisProcessorParameters( ProcessorParameters<K, Change<V1>> joinThisProcessorParameters)
+{
             this.joinThisProcessorParameters = joinThisProcessorParameters;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinOtherProcessorParameters( ProcessorParameters<K, Change<V2>> joinOtherProcessorParameters) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinOtherProcessorParameters( ProcessorParameters<K, Change<V2>> joinOtherProcessorParameters)
+{
             this.joinOtherProcessorParameters = joinOtherProcessorParameters;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withThisJoinSideNodeName( string thisJoinSide) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withThisJoinSideNodeName( string thisJoinSide)
+{
             this.thisJoinSide = thisJoinSide;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withOtherJoinSideNodeName( string otherJoinSide) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withOtherJoinSideNodeName( string otherJoinSide)
+{
             this.otherJoinSide = otherJoinSide;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withKeySerde( ISerde<K> keySerde) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withKeySerde( ISerde<K> keySerde)
+{
             this.keySerde = keySerde;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withValueSerde( ISerde<VR> valueSerde) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withValueSerde( ISerde<VR> valueSerde)
+{
             this.valueSerde = valueSerde;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinThisStoreNames( string[] joinThisStoreNames) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinThisStoreNames( string[] joinThisStoreNames)
+{
             this.joinThisStoreNames = joinThisStoreNames;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinOtherStoreNames( string[] joinOtherStoreNames) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withJoinOtherStoreNames( string[] joinOtherStoreNames)
+{
             this.joinOtherStoreNames = joinOtherStoreNames;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withQueryableStoreName( string queryableStoreName) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withQueryableStoreName( string queryableStoreName)
+{
             this.queryableStoreName = queryableStoreName;
             return this;
         }
 
-        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder( StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder) {
+        public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder( StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+{
             this.storeBuilder = storeBuilder;
             return this;
         }
 
         @SuppressWarnings("unchecked")
-        public KTableKTableJoinNode<K, V1, V2, VR> build() {
+        public KTableKTableJoinNode<K, V1, V2, VR> build()
+{
             return new KTableKTableJoinNode<>(nodeName,
                 joinThisProcessorParameters,
                 joinOtherProcessorParameters,

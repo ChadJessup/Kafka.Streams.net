@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
@@ -60,7 +60,7 @@ public class RocksDBSessionStore
 
     public override byte[] fetchSession(Bytes key, long startTime, long endTime)
 {
-        return wrapped().get(SessionKeySchema.toBinary(key, startTime, endTime));
+        return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime)];
     }
 
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
@@ -73,13 +73,13 @@ public class RocksDBSessionStore
         return findSessions(from, to, 0, Long.MAX_VALUE);
     }
 
-    public override void remove(Windowed<Bytes> key)
+    public override void Remove(Windowed<Bytes> key)
 {
-        wrapped().remove(SessionKeySchema.toBinary(key));
+        wrapped().Remove(SessionKeySchema.toBinary(key));
     }
 
     public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
 {
-        wrapped().put(SessionKeySchema.toBinary(sessionKey), aggregate);
+        wrapped().Add(SessionKeySchema.toBinary(sessionKey), aggregate);
     }
 }

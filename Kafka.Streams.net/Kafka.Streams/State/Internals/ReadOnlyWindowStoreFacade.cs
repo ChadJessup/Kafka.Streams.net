@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.kstream.Windowed;
@@ -43,7 +43,7 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
         return getValueOrNull(inner.fetch(key, time));
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public WindowStoreIterator<V> fetch(K key,
                                         long timeFrom,
@@ -54,12 +54,12 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
 
     public override WindowStoreIterator<V> fetch(K key,
                                         Instant from,
-                                        Instant to) throws IllegalArgumentException
+                                        Instant to) throws ArgumentException
 {
         return new WindowStoreIteratorFacade<>(inner.fetch(key, from, to));
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to,
@@ -72,12 +72,12 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
     public override KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to,
                                                   Instant fromTime,
-                                                  Instant toTime) throws IllegalArgumentException
+                                                  Instant toTime) throws ArgumentException
 {
         return new KeyValueIteratorFacade<>(inner.fetch(from, to, fromTime, toTime));
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                      long timeTo)
@@ -86,7 +86,7 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
     }
 
     public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
-                                                     Instant to) throws IllegalArgumentException
+                                                     Instant to) throws ArgumentException
 {
         KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.fetchAll(from, to);
         return new KeyValueIteratorFacade<>(innerIterator);
@@ -107,25 +107,25 @@ public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
             innerIterator = iterator;
         }
 
-        @Override
+        
         public void close()
 {
             innerIterator.close();
         }
 
-        @Override
+        
         public Long peekNextKey()
 {
             return innerIterator.peekNextKey();
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return innerIterator.hasNext();
         }
 
-        @Override
+        
         public KeyValue<Long, V> next()
 {
             KeyValue<Long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();

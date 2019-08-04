@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.nio.ByteBuffer;
 import java.util.Iterator;
@@ -93,12 +93,12 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         this.context = (InternalProcessorContext) context;
 
         StreamsMetricsImpl metrics = this.context.metrics();
-        string taskName = context.taskId().toString();
+        string taskName = context.taskId().ToString();
         expiredRecordSensor = metrics.storeLevelSensor(
             taskName,
             name(),
             EXPIRED_WINDOW_RECORD_DROP,
-            Sensor.RecordingLevel.INFO
+            RecordingLevel.INFO
         );
         addInvocationRateAndCount(
             expiredRecordSensor,
@@ -126,7 +126,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 {
         removeExpiredSegments();
         maybeUpdateSeqnumForDups();
-        observedStreamTime = Math.max(observedStreamTime, windowStartTimestamp);
+        observedStreamTime = Math.Max(observedStreamTime, windowStartTimestamp);
 
         Bytes keyBytes = retainDuplicates ? wrapForDups(key, seqnum) : key;
 
@@ -139,15 +139,15 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             if (value != null)
 {
                 segmentMap.computeIfAbsent(windowStartTimestamp, t -> new ConcurrentSkipListMap<>());
-                segmentMap.get(windowStartTimestamp).put(keyBytes, value);
+                segmentMap[windowStartTimestamp).Add(keyBytes, value];
             } else
 {
                 segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap) ->
 {
-                    kvMap.remove(keyBytes);
+                    kvMap.Remove(keyBytes);
                     if (kvMap.isEmpty())
 {
-                        segmentMap.remove(windowStartTimestamp);
+                        segmentMap.Remove(windowStartTimestamp);
                     }
                     return kvMap;
                 });
@@ -167,13 +167,13 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             return null;
         }
 
-        ConcurrentNavigableMap<Bytes, byte[]> kvMap = segmentMap.get(windowStartTimestamp);
+        ConcurrentNavigableMap<Bytes, byte[]> kvMap = segmentMap[windowStartTimestamp];
         if (kvMap == null)
 {
             return null;
         } else
 {
-            return kvMap.get(key);
+            return kvMap[key];
         }
     }
 
@@ -186,7 +186,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         removeExpiredSegments();
 
         // add one b/c records expire exactly retentionPeriod ms after created
-        long minTime = Math.max(timeFrom, observedStreamTime - retentionPeriod + 1);
+        long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
 {
@@ -217,7 +217,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         }
 
         // add one b/c records expire exactly retentionPeriod ms after created
-        long minTime = Math.max(timeFrom, observedStreamTime - retentionPeriod + 1);
+        long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
 {
@@ -234,7 +234,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         removeExpiredSegments();
 
         // add one b/c records expire exactly retentionPeriod ms after created
-        long minTime = Math.max(timeFrom, observedStreamTime - retentionPeriod + 1);
+        long minTime = Math.Max(timeFrom, observedStreamTime - retentionPeriod + 1);
 
         if (timeTo < minTime)
 {
@@ -275,7 +275,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         if (openIterators.size() != 0)
 {
             LOG.warn("Closing {} open iterators for store {}", openIterators.size(), name);
-            for (InMemoryWindowStoreIteratorWrapper it : openIterators)
+            foreach (InMemoryWindowStoreIteratorWrapper it in openIterators)
 {
                 it.close();
             }
@@ -287,10 +287,10 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
     private void removeExpiredSegments()
 {
-        long minLiveTime = Math.max(0L, observedStreamTime - retentionPeriod + 1);
-        for (InMemoryWindowStoreIteratorWrapper it : openIterators)
+        long minLiveTime = Math.Max(0L, observedStreamTime - retentionPeriod + 1);
+        foreach (InMemoryWindowStoreIteratorWrapper it in openIterators)
 {
-            minLiveTime = Math.min(minLiveTime, it.minTime());
+            minLiveTime = Math.Min(minLiveTime, it.minTime());
         }
         segmentMap.headMap(minLiveTime, false).clear();
     }
@@ -305,8 +305,8 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
     private static Bytes wrapForDups(Bytes key, int seqnum)
 {
-        ByteBuffer buf = ByteBuffer.allocate(key.get().length + SEQNUM_SIZE);
-        buf.put(key.get());
+        ByteBuffer buf = ByteBuffer.allocate(key().Length + SEQNUM_SIZE];
+        buf.Add(key()];
         buf.putInt(seqnum);
 
         return Bytes.wrap(buf.array());
@@ -314,8 +314,8 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
 
     private static Bytes getKey(Bytes keyBytes)
 {
-        byte[] bytes = new byte[keyBytes.get().length  - SEQNUM_SIZE];
-        System.arraycopy(keyBytes.get(), 0, bytes, 0, bytes.length);
+        byte[] bytes = new byte[keyBytes[].Length  - SEQNUM_SIZE];
+        System.arraycopy(keyBytes(), 0, bytes, 0, bytes.Length];
         return Bytes.wrap(bytes);
 
     }
@@ -327,7 +327,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
         Bytes keyTo = retainDuplicates ? wrapForDups(key, Integer.MAX_VALUE) : key;
 
         WrappedInMemoryWindowStoreIterator iterator =
-            new WrappedInMemoryWindowStoreIterator(keyFrom, keyTo, segmentIterator, openIterators::remove, retainDuplicates);
+            new WrappedInMemoryWindowStoreIterator(keyFrom, keyTo, segmentIterator, openIterators::Remove, retainDuplicates);
 
         openIterators.add(iterator);
         return iterator;
@@ -344,7 +344,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             new WrappedWindowedKeyValueIterator(from,
                                                 to,
                                                 segmentIterator,
-                                                openIterators::remove,
+                                                openIterators::Remove,
                                                 retainDuplicates,
                                                 windowSize);
         openIterators.add(iterator);
@@ -482,7 +482,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             super(keyFrom, keyTo, segmentIterator, callback, retainDuplicates);
         }
 
-        @Override
+        
         public Long peekNextKey()
 {
             if (!hasNext())
@@ -492,7 +492,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
             return super.currentTime;
         }
 
-        @Override
+        
         public KeyValue<Long, byte[]> next()
 {
             if (!hasNext())
@@ -500,7 +500,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
                 throw new NoSuchElementException();
             }
 
-            KeyValue<Long, byte[]> result = new KeyValue<>(super.currentTime, super.next.value);
+            KeyValue<Long, byte[]> result = new KeyValue<>(super.currentTime, super.next.value];
             super.next = null;
             return result;
         }
@@ -543,7 +543,7 @@ public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
                 throw new NoSuchElementException();
             }
 
-            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), super.next.value);
+            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), super.next.value];
             super.next = null;
             return result;
         }

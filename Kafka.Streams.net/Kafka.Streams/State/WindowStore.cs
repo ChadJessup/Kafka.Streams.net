@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.internals.ApiUtils;
@@ -95,7 +95,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
     WindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo);
 
-    @Override
+    
     default WindowStoreIterator<V> fetch(K key,
                                          Instant from,
                                          Instant to)
@@ -122,7 +122,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetch(...) is removed
     KeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
 
-    @Override
+    
     default KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                    K to,
                                                    Instant fromTime,
@@ -146,7 +146,7 @@ public interface WindowStore<K, V> : IStateStore, ReadOnlyWindowStore<K, V>
     @SuppressWarnings("deprecation") // note, this method must be kept if super#fetchAll(...) is removed
     KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo);
 
-    @Override
+    
     default KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to)
 {
         return fetchAll(

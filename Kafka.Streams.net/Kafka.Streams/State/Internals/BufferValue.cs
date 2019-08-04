@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 
@@ -76,7 +76,7 @@ public class BufferValue
 {
         ProcessorRecordContext context = ProcessorRecordContext.deserialize(buffer);
 
-        byte[] priorValue = extractValue(buffer);
+        byte[] priorValue = extractValue(buffer];
 
         byte[] oldValue;
         int oldValueLength = buffer.getInt();
@@ -89,10 +89,10 @@ public class BufferValue
         } else
 {
             oldValue = new byte[oldValueLength];
-            buffer.get(oldValue);
+            buffer[oldValue];
         }
 
-        byte[] newValue = extractValue(buffer);
+        byte[] newValue = extractValue(buffer];
 
         return new BufferValue(priorValue, oldValue, newValue, context);
     }
@@ -106,7 +106,7 @@ public class BufferValue
         } else
 {
             byte[] value = new byte[valueLength];
-            buffer.get(value);
+            buffer[value];
             return value;
         }
     }
@@ -116,21 +116,21 @@ public class BufferValue
 
         int sizeOfValueLength = Integer.BYTES;
 
-        int sizeOfPriorValue = priorValue == null ? 0 : priorValue.length;
-        int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.length;
-        int sizeOfNewValue = newValue == null ? 0 : newValue.length;
+        int sizeOfPriorValue = priorValue == null ? 0 : priorValue.Length;
+        int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.Length;
+        int sizeOfNewValue = newValue == null ? 0 : newValue.Length;
 
         byte[] serializedContext = recordContext.serialize();
 
         ByteBuffer buffer = ByteBuffer.allocate(
-            serializedContext.length
+            serializedContext.Length
                 + sizeOfValueLength + sizeOfPriorValue
                 + sizeOfValueLength + sizeOfOldValue
                 + sizeOfValueLength + sizeOfNewValue
                 + endPadding
         );
 
-        buffer.put(serializedContext);
+        buffer.Add(serializedContext);
 
         addValue(buffer, priorValue);
 
@@ -143,7 +143,7 @@ public class BufferValue
         } else
 {
             buffer.putInt(sizeOfOldValue);
-            buffer.put(oldValue);
+            buffer.Add(oldValue);
         }
 
         addValue(buffer, newValue);
@@ -158,20 +158,20 @@ public class BufferValue
             buffer.putInt(NULL_VALUE_SENTINEL);
         } else
 {
-            buffer.putInt(value.length);
-            buffer.put(value);
+            buffer.putInt(value.Length);
+            buffer.Add(value);
         }
     }
 
     long residentMemorySizeEstimate()
 {
-        return (priorValue == null ? 0 : priorValue.length)
-            + (oldValue == null || priorValue == oldValue ? 0 : oldValue.length)
-            + (newValue == null ? 0 : newValue.length)
+        return (priorValue == null ? 0 : priorValue.Length)
+            + (oldValue == null || priorValue == oldValue ? 0 : oldValue.Length)
+            + (newValue == null ? 0 : newValue.Length)
             + recordContext.residentMemorySizeEstimate();
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o) return true;
         if (o == null || GetType() != o.GetType()) return false;
@@ -182,7 +182,7 @@ public class BufferValue
             Objects.Equals(recordContext, that.recordContext);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         int result = Objects.hash(recordContext);
         result = 31 * result + Arrays.GetHashCode()(priorValue);
@@ -191,12 +191,12 @@ public class BufferValue
         return result;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "BufferValue{" +
-            "priorValue=" + Arrays.toString(priorValue) +
-            ", oldValue=" + Arrays.toString(oldValue) +
-            ", newValue=" + Arrays.toString(newValue) +
+            "priorValue=" + Arrays.ToString(priorValue) +
+            ", oldValue=" + Arrays.ToString(oldValue) +
+            ", newValue=" + Arrays.ToString(newValue) +
             ", recordContext=" + recordContext +
             '}';
     }

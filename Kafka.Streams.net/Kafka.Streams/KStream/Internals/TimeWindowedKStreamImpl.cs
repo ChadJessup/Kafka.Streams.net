@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -43,7 +43,7 @@ import java.util.Set;
 import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.AGGREGATE_NAME;
 import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.REDUCE_NAME;
 
-public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> implements TimeWindowedKStream<K, V> {
+public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWindowedKStream<K, V> {
 
     private  Windows<W> windows;
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
@@ -55,38 +55,45 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
                              ISerde<K> keySerde,
                              ISerde<V> valSerde,
                              GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
-                             StreamsGraphNode streamsGraphNode) {
+                             StreamsGraphNode streamsGraphNode)
+{
         super(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
         this.windows = Objects.requireNonNull(windows, "windows can't be null");
         this.aggregateBuilder = aggregateBuilder;
     }
 
-    @Override
-    public KTable<Windowed<K>, Long> count() {
+    
+    public KTable<Windowed<K>, Long> count()
+{
         return doCount(Materialized.with(keySerde, Serdes.Long()));
     }
 
-    @Override
-    public KTable<Windowed<K>, Long> count( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized) {
+    
+    public KTable<Windowed<K>, Long> count( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-        // TODO: remove this when we do a topology-incompatible release
+        // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
-        if (new MaterializedInternal<>(materialized).storeName() == null) {
+        if (new MaterializedInternal<>(materialized).storeName() == null)
+{
             builder.newStoreName(AGGREGATE_NAME);
         }
 
         return doCount(materialized);
     }
 
-    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized) {
+    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized)
+{
          MaterializedInternal<K, Long, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(Serdes.Long());
         }
 
@@ -99,22 +106,25 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
             materializedInternal.valueSerde());
     }
 
-    @Override
+    
     public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
-                                                   Aggregator<? super K, ? super V, VR> aggregator) {
+                                                   Aggregator<? super K, ? super V, VR> aggregator)
+{
         return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
     }
 
-    @Override
+    
     public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
                                                    Aggregator<? super K, ? super V, VR> aggregator,
-                                                   Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized) {
+                                                   Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(initializer, "initializer can't be null");
         Objects.requireNonNull(aggregator, "aggregator can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
          MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
         return aggregateBuilder.build(
@@ -126,23 +136,27 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
             materializedInternal.valueSerde());
     }
 
-    @Override
-    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer) {
+    
+    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer)
+{
         return reduce(reducer, Materialized.with(keySerde, valSerde));
     }
 
-    @Override
-    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer,  Materialized<K, V, WindowStore<Bytes, byte[]>> materialized) {
+    
+    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer,  Materialized<K, V, WindowStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(reducer, "reducer can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
          MaterializedInternal<K, V, WindowStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(valSerde);
         }
 
@@ -156,19 +170,23 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
     }
 
     @SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-    private <VR> StoreBuilder<TimestampedWindowStore<K, VR>> materialize( MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized) {
+    private <VR> StoreBuilder<TimestampedWindowStore<K, VR>> materialize( MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized)
+{
         WindowBytesStoreSupplier supplier = (WindowBytesStoreSupplier) materialized.storeSupplier();
-        if (supplier == null) {
-            if (materialized.retention() != null) {
+        if (supplier == null)
+{
+            if (materialized.retention() != null)
+{
                 // new style retention: use Materialized retention and default segmentInterval
                  long retentionPeriod = materialized.retention().toMillis();
 
-                if ((windows.size() + windows.gracePeriodMs()) > retentionPeriod) {
-                    throw new IllegalArgumentException("The retention period of the window store "
+                if ((windows.size() + windows.gracePeriodMs()) > retentionPeriod)
+{
+                    throw new ArgumentException("The retention period of the window store "
                                                            + name + " must be no smaller than its window size plus the grace period."
                                                            + " Got size=[" + windows.size() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"
-                                                           + " retention=[" + retentionPeriod + "]");
+                                                           + " retention=[" + retentionPeriod + "]"];
                 }
 
                 supplier = Stores.persistentTimestampedWindowStore(
@@ -181,21 +199,22 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
             } else {
                 // old style retention: use deprecated Windows retention/segmentInterval.
 
-                // NOTE: in the future, when we remove Windows#maintainMs(), we should set the default retention
+                // NOTE: in the future, when we Remove Windows#maintainMs(), we should set the default retention
                 // to be (windows.size() + windows.grace()). This will yield the same default behavior.
 
-                if ((windows.size() + windows.gracePeriodMs()) > windows.maintainMs()) {
-                    throw new IllegalArgumentException("The retention period of the window store "
+                if ((windows.size() + windows.gracePeriodMs()) > windows.maintainMs())
+{
+                    throw new ArgumentException("The retention period of the window store "
                                                            + name + " must be no smaller than its window size plus the grace period."
                                                            + " Got size=[" + windows.size() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"
-                                                           + " retention=[" + windows.maintainMs() + "]");
+                                                           + " retention=[" + windows.maintainMs() + "]"];
                 }
 
                 supplier = new RocksDbWindowBytesStoreSupplier(
                     materialized.storeName(),
                     windows.maintainMs(),
-                    Math.max(windows.maintainMs() / (windows.segments - 1), 60_000L),
+                    Math.Max(windows.maintainMs() / (windows.segments - 1), 60_000L),
                     windows.size(),
                     false,
                     true);
@@ -207,19 +226,22 @@ public class TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> im
             materialized.valueSerde()
         );
 
-        if (materialized.loggingEnabled()) {
+        if (materialized.loggingEnabled())
+{
             builder.withLoggingEnabled(materialized.logConfig());
         } else {
             builder.withLoggingDisabled();
         }
 
-        if (materialized.cachingEnabled()) {
+        if (materialized.cachingEnabled())
+{
             builder.withCachingEnabled();
         }
         return builder;
     }
 
-    private Aggregator<K, V, V> aggregatorForReducer( Reducer<V> reducer) {
+    private Aggregator<K, V, V> aggregatorForReducer( Reducer<V> reducer)
+{
         return (aggKey, value, aggregate) -> aggregate == null ? value : reducer.apply(aggregate, value);
     }
 }

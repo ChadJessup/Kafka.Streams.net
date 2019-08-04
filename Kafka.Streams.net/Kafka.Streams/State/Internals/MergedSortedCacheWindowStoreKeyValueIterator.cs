@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -45,32 +45,32 @@ class MergedSortedCacheWindowStoreKeyValueIterator
         this.cacheFunction = cacheFunction;
     }
 
-    @Override
+    
     Windowed<Bytes> deserializeStoreKey(Windowed<Bytes> key)
 {
         return key;
     }
 
-    @Override
+    
     KeyValue<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValue<Windowed<Bytes>, byte[]> pair)
 {
         return pair;
     }
 
-    @Override
+    
     Windowed<Bytes> deserializeCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = cacheFunction.key(cacheKey).get();
+        byte[] binaryKey = cacheFunction.key(cacheKey)[];
         return WindowKeySchema.fromStoreKey(binaryKey, windowSize, serdes.keyDeserializer(), serdes.topic());
     }
 
-    @Override
+    
     byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
 {
         return cacheEntry.value();
     }
 
-    @Override
+    
     int compare(Bytes cacheKey, Windowed<Bytes> storeKey)
 {
         Bytes storeKeyBytes = WindowKeySchema.toStoreKeyBinary(storeKey.key(), storeKey.window().start(), 0);

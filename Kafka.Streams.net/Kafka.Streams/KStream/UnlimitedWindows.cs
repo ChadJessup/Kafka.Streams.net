@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.streams.internals.ApiUtils;
 import org.apache.kafka.streams.kstream.internals.UnlimitedWindow;
@@ -50,14 +50,16 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
     @SuppressWarnings("WeakerAccess")
     public  long startMs;
 
-    private UnlimitedWindows( long startMs) {
+    private UnlimitedWindows( long startMs)
+{
         this.startMs = startMs;
     }
 
     /**
      * Return an unlimited window starting at timestamp zero.
      */
-    public static UnlimitedWindows of() {
+    public static UnlimitedWindows of()
+{
         return new UnlimitedWindows(DEFAULT_START_TIMESTAMP_MS);
     }
 
@@ -66,13 +68,14 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      *
      * @param startMs the window start time
      * @return a new unlimited window that starts at {@code startMs}
-     * @throws IllegalArgumentException if the start time is negative
+     * @throws ArgumentException if the start time is negative
      * @deprecated Use {@link #startOn(Instant)} instead
      */
     @Deprecated
-    public UnlimitedWindows startOn( long startMs) throws IllegalArgumentException {
-        if (startMs < 0) {
-            throw new IllegalArgumentException("Window start time (startMs) cannot be negative.");
+    public UnlimitedWindows startOn( long startMs) throws ArgumentException {
+        if (startMs < 0)
+{
+            throw new ArgumentException("Window start time (startMs) cannot be negative.");
         }
         return new UnlimitedWindows(startMs);
     }
@@ -82,21 +85,23 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      *
      * @param start the window start time
      * @return a new unlimited window that starts at {@code start}
-     * @throws IllegalArgumentException if the start time is negative or can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if the start time is negative or can't be represented as {@code long milliseconds}
      */
-    public UnlimitedWindows startOn( Instant start) throws IllegalArgumentException {
+    public UnlimitedWindows startOn( Instant start) throws ArgumentException {
          string msgPrefix = prepareMillisCheckFailMsgPrefix(start, "start");
         return startOn(ApiUtils.validateMillisecondInstant(start, msgPrefix));
     }
 
-    @Override
-    public Map<Long, UnlimitedWindow> windowsFor( long timestamp) {
+    
+    public Map<Long, UnlimitedWindow> windowsFor( long timestamp)
+{
         // always return the single unlimited window
 
-        // we cannot use Collections.singleMap since it does not support remove()
+        // we cannot use Collections.singleMap since it does not support Remove()
          Map<Long, UnlimitedWindow> windows = new HashMap<>();
-        if (timestamp >= startMs) {
-            windows.put(startMs, new UnlimitedWindow(startMs));
+        if (timestamp >= startMs)
+{
+            windows.Add(startMs, new UnlimitedWindow(startMs));
         }
         return windows;
     }
@@ -107,22 +112,24 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      *
      * @return the size of the specified windows which is {@link Long#MAX_VALUE}
      */
-    @Override
-    public long size() {
+    
+    public long size()
+{
         return Long.MAX_VALUE;
     }
 
     /**
-     * Throws an {@link IllegalArgumentException} because the retention time for unlimited windows is always infinite
+     * Throws an {@link ArgumentException} because the retention time for unlimited windows is always infinite
      * and cannot be changed.
      *
-     * @throws IllegalArgumentException on every invocation.
+     * @throws ArgumentException on every invocation.
      * @deprecated since 2.1.
      */
-    @Override
+    
     @Deprecated
-    public UnlimitedWindows until( long durationMs) {
-        throw new IllegalArgumentException("Window retention time (durationMs) cannot be set for UnlimitedWindows.");
+    public UnlimitedWindows until( long durationMs)
+{
+        throw new ArgumentException("Window retention time (durationMs) cannot be set for UnlimitedWindows.");
     }
 
     /**
@@ -132,24 +139,29 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
      * @return the window retention time that is {@link Long#MAX_VALUE}
      * @deprecated since 2.1. Use {@link Materialized#retention} instead.
      */
-    @Override
+    
     @Deprecated
-    public long maintainMs() {
+    public long maintainMs()
+{
         return Long.MAX_VALUE;
     }
 
-    @Override
-    public long gracePeriodMs() {
+    
+    public long gracePeriodMs()
+{
         return 0L;
     }
 
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          UnlimitedWindows that = (UnlimitedWindows) o;
@@ -157,14 +169,16 @@ public  class UnlimitedWindows : Windows<UnlimitedWindow> {
     }
 
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(startMs, segments);
     }
 
     @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "UnlimitedWindows{" +
             "startMs=" + startMs +
             ", segments=" + segments +

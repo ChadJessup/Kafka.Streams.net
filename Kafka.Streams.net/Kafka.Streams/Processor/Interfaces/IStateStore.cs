@@ -21,7 +21,6 @@ namespace Kafka.Streams.Processor.Interfaces
      */
     public interface IStateStore
     {
-
         /**
          * The name of this store.
          * @return the storage name

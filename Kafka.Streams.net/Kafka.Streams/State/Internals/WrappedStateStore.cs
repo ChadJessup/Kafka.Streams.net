@@ -3,60 +3,60 @@ using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.State.Internals
 {
-
     /**
      * A storage engine wrapper for utilities like logging, caching, and metering.
      */
     public abstract class WrappedStateStore<S, K, V> : IStateStore, CachedStateStore<K, V>
         where S : IStateStore
     {
+        public S wrapped { get; }
 
         public static bool isTimestamped(IStateStore stateStore)
         {
             if (stateStore is TimestampedBytesStore)
             {
                 return true;
-            } else if (stateStore is WrappedStateStore)
-            {
-                return isTimestamped(((WrappedStateStore)stateStore).wrapped());
-            } else
+            }
+            //else if (stateStore is WrappedStateStore)
+            //{
+            //    return isTimestamped(((WrappedStateStore)stateStore).wrapped());
+            //}
+            else
             {
                 return false;
             }
         }
-
-        private S wrapped;
 
         public WrappedStateStore(S wrapped)
         {
             this.wrapped = wrapped;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public void init(IProcessorContext context, IStateStore root)
         {
             wrapped.init(context, root);
         }
 
-        public override bool setFlushListener(CacheFlushListener<K, V> listener, bool sendOldValues)
+        public bool setFlushListener(CacheFlushListener<K, V> listener, bool sendOldValues)
         {
-            if (wrapped is CachedStateStore)
-            {
-                return ((CachedStateStore<K, V>)wrapped).setFlushListener(listener, sendOldValues);
-            }
+            //if (wrapped is CachedStateStore)
+            //{
+            //    return ((CachedStateStore<K, V>)wrapped).setFlushListener(listener, sendOldValues);
+            //}
             return false;
         }
 
-        public override string name()
+        public string name()
         {
             return wrapped.name();
         }
 
-        public override bool persistent()
+        public bool persistent()
         {
             return wrapped.persistent();
         }
 
-        public override bool isOpen()
+        public bool isOpen()
         {
             return wrapped.isOpen();
         }
@@ -69,19 +69,14 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override void flush()
+        public void flush()
         {
             wrapped.flush();
         }
 
-        public override void close()
+        public void close()
         {
             wrapped.close();
-        }
-
-        public S wrapped()
-        {
-            return wrapped;
         }
     }
 }

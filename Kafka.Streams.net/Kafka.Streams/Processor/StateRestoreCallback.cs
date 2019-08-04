@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 using Kafka.Common.annotation.InterfaceStability;
 
@@ -25,5 +25,5 @@ using Kafka.Common.annotation.InterfaceStability;
 @InterfaceStability.Evolving
 public interface StateRestoreCallback {
 
-    void restore(byte[] key, byte[] value);
+    void restore(byte[] key, byte[] value];
 }

@@ -5,16 +5,14 @@ namespace Kafka.Common.Interfaces
      */
     public interface IMetric
     {
-
         /**
          * A name for this metric
          */
-        MetricName metricName();
+        MetricName metricName { get; }
 
         /**
          * The value of the metric, which may be measurable or a non-measurable gauge
          */
         object metricValue();
-
     }
 }

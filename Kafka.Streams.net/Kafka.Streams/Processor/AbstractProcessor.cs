@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 /**
  * An abstract implementation of {@link Processor} that manages the {@link IProcessorContext} instance and provides default no-op
@@ -23,15 +23,17 @@ package org.apache.kafka.streams.processor;
  * @param <K> the type of keys
  * @param <V> the type of values
  */
-public abstract class AbstractProcessor<K, V> implements Processor<K, V> {
+public abstract class AbstractProcessor<K, V> : Processor<K, V> {
 
     private IProcessorContext context;
 
-    protected AbstractProcessor() {
+    protected AbstractProcessor()
+{
     }
 
-    @Override
-    public void init(IProcessorContext context) {
+    
+    public void init(IProcessorContext context)
+{
         this.context = context;
     }
 
@@ -41,8 +43,9 @@ public abstract class AbstractProcessor<K, V> implements Processor<K, V> {
      * This method does nothing by default; if desired, subclasses should override it with custom functionality.
      * </p>
      */
-    @Override
-    public void close() {
+    
+    public void close()
+{
         // do nothing
     }
 
@@ -51,7 +54,8 @@ public abstract class AbstractProcessor<K, V> implements Processor<K, V> {
      *
      * @return the processor context; null only when called prior to {@link #init(IProcessorContext) initialization}.
      */
-    protected IProcessorContext context() {
+    protected IProcessorContext context()
+{
         return context;
     }
 }

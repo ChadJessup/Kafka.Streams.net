@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.metrics.Sensor;
@@ -37,10 +37,10 @@ import org.apache.kafka.streams.state.ValueAndTimestamp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 
-public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
+public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamSessionWindowAggregate.class);
 
     private  string storeName;
@@ -55,7 +55,8 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
                                           string storeName,
                                           Initializer<Agg> initializer,
                                           Aggregator<? super K, ? super V, Agg> aggregator,
-                                          Merger<? super K, Agg> sessionMerger) {
+                                          Merger<? super K, Agg> sessionMerger)
+{
         this.windows = windows;
         this.storeName = storeName;
         this.initializer = initializer;
@@ -63,17 +64,20 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
         this.sessionMerger = sessionMerger;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamSessionWindowAggregateProcessor();
     }
 
-    public SessionWindows windows() {
+    public SessionWindows windows()
+{
         return windows;
     }
 
-    @Override
-    public void enableSendingOldValues() {
+    
+    public void enableSendingOldValues()
+{
         sendOldValues = true;
     }
 
@@ -88,8 +92,9 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
         private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
             internalProcessorContext = (InternalProcessorContext) context;
             metrics = (StreamsMetricsImpl) context.metrics();
@@ -100,11 +105,13 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
             tupleForwarder = new SessionTupleForwarder<>(store, context, new SessionCacheFlushListener<>(context), sendOldValues);
         }
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             // if the key is null, we do not need proceed aggregating
             // the record with the table
-            if (key == null) {
+            if (key == null)
+{
                 LOG.warn(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     value, context().topic(), context().partition(), context().offset()
@@ -114,10 +121,10 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
             }
 
              long timestamp = context().timestamp();
-            observedStreamTime = Math.max(observedStreamTime, timestamp);
+            observedStreamTime = Math.Max(observedStreamTime, timestamp);
              long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-             List<KeyValue<Windowed<K>, Agg>> merged = new ArrayList<>();
+             List<KeyValue<Windowed<K>, Agg>> merged = new List<>();
              SessionWindow newSessionWindow = new SessionWindow(timestamp, timestamp);
             SessionWindow mergedWindow = newSessionWindow;
             Agg agg = initializer.apply();
@@ -128,8 +135,10 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
                     timestamp - windows.inactivityGap(),
                     timestamp + windows.inactivityGap()
                 )
-            ) {
-                while (iterator.hasNext()) {
+            )
+{
+                while (iterator.hasNext())
+{
                      KeyValue<Windowed<K>, Agg> next = iterator.next();
                     merged.add(next);
                     agg = sessionMerger.apply(key, agg, next.value);
@@ -137,7 +146,8 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
                 }
             }
 
-            if (mergedWindow.end() < closeTime) {
+            if (mergedWindow.end() < closeTime)
+{
                 LOG.debug(
                     "Skipping record for expired window. " +
                         "key=[{}] " +
@@ -160,60 +170,70 @@ public class KStreamSessionWindowAggregate<K, V, Agg> implements KStreamAggProce
                 );
                 lateRecordDropSensor.record();
             } else {
-                if (!mergedWindow.equals(newSessionWindow)) {
-                    for ( KeyValue<Windowed<K>, Agg> session : merged) {
-                        store.remove(session.key);
+                if (!mergedWindow.Equals(newSessionWindow))
+{
+                    foreach ( KeyValue<Windowed<K>, Agg> session in merged)
+{
+                        store.Remove(session.key);
                         tupleForwarder.maybeForward(session.key, null, sendOldValues ? session.value : null);
                     }
                 }
 
                 agg = aggregator.apply(key, value, agg);
                  Windowed<K> sessionKey = new Windowed<>(key, mergedWindow);
-                store.put(sessionKey, agg);
+                store.Add(sessionKey, agg);
                 tupleForwarder.maybeForward(sessionKey, agg, null);
             }
         }
     }
 
-    private SessionWindow mergeSessionWindow( SessionWindow one,  SessionWindow two) {
+    private SessionWindow mergeSessionWindow( SessionWindow one,  SessionWindow two)
+{
          long start = one.start() < two.start() ? one.start() : two.start();
          long end = one.end() > two.end() ? one.end() : two.end();
         return new SessionWindow(start, end);
     }
 
-    @Override
-    public KTableValueGetterSupplier<Windowed<K>, Agg> view() {
-        return new KTableValueGetterSupplier<Windowed<K>, Agg>() {
-            @Override
-            public KTableValueGetter<Windowed<K>, Agg> get() {
+    
+    public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+{
+        return new KTableValueGetterSupplier<Windowed<K>, Agg>()
+{
+            
+            public KTableValueGetter<Windowed<K>, Agg> get()
+{
                 return new KTableSessionWindowValueGetter();
             }
 
-            @Override
-            public string[] storeNames() {
+            
+            public string[] storeNames()
+{
                 return new string[] {storeName};
             }
         };
     }
 
-    private class KTableSessionWindowValueGetter implements KTableValueGetter<Windowed<K>, Agg> {
+    private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg> {
         private SessionStore<K, Agg> store;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             store = (SessionStore<K, Agg>) context.getStateStore(storeName);
         }
 
-        @Override
-        public ValueAndTimestamp<Agg> get( Windowed<K> key) {
+        
+        public ValueAndTimestamp<Agg> get( Windowed<K> key)
+{
             return ValueAndTimestamp.make(
                 store.fetchSession(key.key(), key.window().start(), key.window().end()),
                 key.window().end());
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
         }
     }
 

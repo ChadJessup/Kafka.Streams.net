@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 
 import org.apache.kafka.streams.KeyValue;
@@ -26,7 +26,7 @@ import java.util.Collection;
  * Interface for batching restoration of a {@link IStateStore}
  *
  * It is expected that implementations of this class will not call the {@link StateRestoreCallback#restore(byte[],
- * byte[])} method.
+ * byte[]]} method.
  */
 public interface BatchingStateRestoreCallback : StateRestoreCallback {
 
@@ -36,6 +36,6 @@ public interface BatchingStateRestoreCallback : StateRestoreCallback {
      *
      * @param records the records to restore.
      */
-    void restoreAll(Collection<KeyValue<byte[], byte[]>> records);
+    void restoreAll(Collection<KeyValue<byte[], byte[]>> records];
 
 }

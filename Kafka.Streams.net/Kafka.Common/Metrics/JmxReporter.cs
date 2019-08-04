@@ -14,7 +14,7 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//package org.apache.kafka.common.metrics;
+//namespace Kafka.Common.Metrics
 
 //import java.lang.management.ManagementFactory;
 //import java.util.HashMap;
@@ -36,7 +36,7 @@
 //import javax.management.ReflectionException;
 
 //using Kafka.Common.KafkaException;
-//using Kafka.Common.MetricName;
+//
 //using Kafka.Common.Utils.Sanitizer;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -44,83 +44,97 @@
 ///**
 // * Register metrics in JMX as dynamic mbeans based on the metric names
 // */
-//public class JmxReporter implements MetricsReporter {
+//public class JmxReporter : MetricsReporter {
 
 //    private static Logger log = LoggerFactory.getLogger(JmxReporter.class);
 //    private static object LOCK = new Object();
 //    private string prefix;
 //    private Dictionary<string, KafkaMbean> mbeans = new HashMap<string, KafkaMbean>();
 
-//    public JmxReporter() {
+//    public JmxReporter()
+{
 //        this("");
 //    }
 
 //    /**
 //     * Create a JMX reporter that prefixes all metrics with the given string.
 //     */
-//    public JmxReporter(string prefix) {
+//    public JmxReporter(string prefix)
+{
 //        this.prefix = prefix;
 //    }
 
-//    @Override
+//    
 //    public void configure(Dictionary<string, ?> configs) {}
 
-//    @Override
-//    public void init(List<KafkaMetric> metrics) {
-//        synchronized (LOCK) {
-//            for (KafkaMetric metric : metrics)
+//    
+//    public void init(List<KafkaMetric> metrics)
+{
+//        synchronized (LOCK)
+{
+//            foreach (KafkaMetric metric in metrics)
 //                addAttribute(metric);
-//            for (KafkaMbean mbean : mbeans.values())
+//            foreach (KafkaMbean mbean in mbeans.values())
 //                reregister(mbean);
 //        }
 //    }
 
-//    public bool containsMbean(string mbeanName) {
-//        return mbeans.containsKey(mbeanName);
+//    public bool containsMbean(string mbeanName)
+{
+//        return mbeans.ContainsKey(mbeanName);
 //    }
-//    @Override
-//    public void metricChange(KafkaMetric metric) {
-//        synchronized (LOCK) {
+//    
+//    public void metricChange(KafkaMetric metric)
+{
+//        synchronized (LOCK)
+{
 //            KafkaMbean mbean = addAttribute(metric);
 //            reregister(mbean);
 //        }
 //    }
 
-//    @Override
-//    public void metricRemoval(KafkaMetric metric) {
-//        synchronized (LOCK) {
-//            MetricName metricName = metric.metricName();
+//    
+//    public void metricRemoval(KafkaMetric metric)
+{
+//        synchronized (LOCK)
+{
+//            MetricName metricName = metric.metricName;
 //            string mBeanName = getMBeanName(prefix, metricName);
 //            KafkaMbean mbean = removeAttribute(metric, mBeanName);
-//            if (mbean != null) {
-//                if (mbean.metrics.isEmpty()) {
+//            if (mbean != null)
+{
+//                if (mbean.metrics.isEmpty())
+{
 //                    unregister(mbean);
-//                    mbeans.remove(mBeanName);
+//                    mbeans.Remove(mBeanName);
 //                } else
 //                    reregister(mbean);
 //            }
 //        }
 //    }
 
-//    private KafkaMbean removeAttribute(KafkaMetric metric, string mBeanName) {
-//        MetricName metricName = metric.metricName();
-//        KafkaMbean mbean = this.mbeans.get(mBeanName);
+//    private KafkaMbean removeAttribute(KafkaMetric metric, string mBeanName)
+{
+//        MetricName metricName = metric.metricName;
+//        KafkaMbean mbean = this.mbeans[mBeanName];
 //        if (mbean != null)
 //            mbean.removeAttribute(metricName.name());
 //        return mbean;
 //    }
 
-//    private KafkaMbean addAttribute(KafkaMetric metric) {
+//    private KafkaMbean addAttribute(KafkaMetric metric)
+{
 //        try {
-//            MetricName metricName = metric.metricName();
+//            MetricName metricName = metric.metricName;
 //            string mBeanName = getMBeanName(prefix, metricName);
-//            if (!this.mbeans.containsKey(mBeanName))
-//                mbeans.put(mBeanName, new KafkaMbean(mBeanName));
-//            KafkaMbean mbean = this.mbeans.get(mBeanName);
+//            if (!this.mbeans.ContainsKey(mBeanName))
+//                mbeans.Add(mBeanName, new KafkaMbean(mBeanName));
+//            KafkaMbean mbean = this.mbeans[mBeanName];
 //            mbean.setAttribute(metricName.name(), metric);
 //            return mbean;
-//        } catch (JMException e) {
-//            throw new KafkaException("Error creating mbean attribute for metricName :" + metric.metricName(), e);
+//        } catch (JMException e)
+{
+//            throw new KafkaException("Error creating mbean attribute for metricName :" + metric.metricName, e);
 //        }
 //    }
 
@@ -128,49 +142,57 @@
 //     * @param metricName
 //     * @return standard JMX MBean name in the following format domainName:type=metricType,key1=val1,key2=val2
 //     */
-//    static string getMBeanName(string prefix, MetricName metricName) {
+//    static string getMBeanName(string prefix, MetricName metricName)
+{
 //        StringBuilder mBeanName = new StringBuilder();
-//        mBeanName.append(prefix);
-//        mBeanName.append(":type=");
-//        mBeanName.append(metricName.group());
-//        for (Map.Entry<string, string> entry : metricName.tags().entrySet()) {
-//            if (entry.getKey().length() <= 0 || entry.getValue().length() <= 0)
+//        mBeanName.Append(prefix);
+//        mBeanName.Append(":type=");
+//        mBeanName.Append(metricName.group());
+//        foreach (Map.Entry<string, string> entry in metricName.tags().entrySet())
+{
+//            if (entry.getKey().Length <= 0 || entry.getValue().Length <= 0)
 //                continue;
-//            mBeanName.append(",");
-//            mBeanName.append(entry.getKey());
-//            mBeanName.append("=");
-//            mBeanName.append(Sanitizer.jmxSanitize(entry.getValue()));
+//            mBeanName.Append(",");
+//            mBeanName.Append(entry.getKey());
+//            mBeanName.Append("=");
+//            mBeanName.Append(Sanitizer.jmxSanitize(entry.getValue()));
 //        }
-//        return mBeanName.toString();
+//        return mBeanName.ToString();
 //    }
 
-//    public void close() {
-//        synchronized (LOCK) {
-//            for (KafkaMbean mbean : this.mbeans.values())
+//    public void close()
+{
+//        synchronized (LOCK)
+{
+//            foreach (KafkaMbean mbean in this.mbeans.values())
 //                unregister(mbean);
 //        }
 //    }
 
-//    private void unregister(KafkaMbean mbean) {
+//    private void unregister(KafkaMbean mbean)
+{
 //        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
 //        try {
 //            if (server.isRegistered(mbean.name()))
 //                server.unregisterMBean(mbean.name());
-//        } catch (JMException e) {
+//        } catch (JMException e)
+{
 //            throw new KafkaException("Error unregistering mbean", e);
 //        }
 //    }
 
-//    private void reregister(KafkaMbean mbean) {
+//    private void reregister(KafkaMbean mbean)
+{
 //        unregister(mbean);
 //        try {
 //            ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, mbean.name());
-//        } catch (JMException e) {
+//        } catch (JMException e)
+{
 //            throw new KafkaException("Error registering mbean " + mbean.name(), e);
 //        }
 //    }
 
-//    private static class KafkaMbean implements DynamicMBean {
+//    private static class KafkaMbean : DynamicMBean {
 //        private ObjectName objectName;
 //        private Dictionary<string, KafkaMetric> metrics;
 
@@ -179,49 +201,57 @@
 //            this.objectName = new ObjectName(mbeanName);
 //        }
 
-//        public ObjectName name() {
+//        public ObjectName name()
+{
 //            return objectName;
 //        }
 
-//        public void setAttribute(string name, KafkaMetric metric) {
-//            this.metrics.put(name, metric);
+//        public void setAttribute(string name, KafkaMetric metric)
+{
+//            this.metrics.Add(name, metric);
 //        }
 
-//        @Override
+//        
 //        public object getAttribute(string name) throws AttributeNotFoundException, MBeanException, ReflectionException {
-//            if (this.metrics.containsKey(name))
-//                return this.metrics.get(name).metricValue();
+//            if (this.metrics.ContainsKey(name))
+//                return this.metrics[name).metricValue();
 //            else
 //                throw new AttributeNotFoundException("Could not find attribute " + name);
 //        }
 
-//        @Override
-//        public AttributeList getAttributes(string[] names) {
+//        
+//        public AttributeList getAttributes(string[] names)
+{
 //            AttributeList list = new AttributeList();
-//            for (string name : names) {
+//            foreach (string name in names)
+{
 //                try {
 //                    list.add(new Attribute(name, getAttribute(name)));
-//                } catch (Exception e) {
+//                } catch (Exception e)
+{
 //                    log.warn("Error getting JMX attribute '{}'", name, e);
 //                }
 //            }
 //            return list;
 //        }
 
-//        public KafkaMetric removeAttribute(string name) {
-//            return this.metrics.remove(name);
+//        public KafkaMetric removeAttribute(string name)
+{
+//            return this.metrics.Remove(name);
 //        }
 
-//        @Override
-//        public MBeanInfo getMBeanInfo() {
+//        
+//        public MBeanInfo getMBeanInfo()
+{
 //            MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[metrics.size()];
 //            int i = 0;
-//            for (Map.Entry<string, KafkaMetric> entry : this.metrics.entrySet()) {
+//            foreach (Map.Entry<string, KafkaMetric> entry in this.metrics.entrySet())
+{
 //                string attribute = entry.getKey();
 //                KafkaMetric metric = entry.getValue();
 //                attrs[i] = new MBeanAttributeInfo(attribute,
 //                                                  double.class.getName(),
-//                                                  metric.metricName().description(),
+//                                                  metric.metricName.description(),
 //                                                  true,
 //                                                  false,
 //                                                  false);
@@ -230,22 +260,23 @@
 //            return new MBeanInfo(this.GetType().getName(), "", attrs, null, null, null);
 //        }
 
-//        @Override
-//        public object invoke(string name, Object[] params, string[] sig) throws MBeanException, ReflectionException {
-//            throw new UnsupportedOperationException("Set not allowed.");
+//        
+//        public object invoke(string name, Object[] params, string[] sig] throws MBeanException, ReflectionException {
+//            throw new InvalidOperationException("Set not allowed.");
 //        }
 
-//        @Override
+//        
 //        public void setAttribute(Attribute attribute) throws AttributeNotFoundException,
 //                                                     InvalidAttributeValueException,
 //                                                     MBeanException,
 //                                                     ReflectionException {
-//            throw new UnsupportedOperationException("Set not allowed.");
+//            throw new InvalidOperationException("Set not allowed.");
 //        }
 
-//        @Override
-//        public AttributeList setAttributes(AttributeList list) {
-//            throw new UnsupportedOperationException("Set not allowed.");
+//        
+//        public AttributeList setAttributes(AttributeList list)
+{
+//            throw new InvalidOperationException("Set not allowed.");
 //        }
 
 //    }

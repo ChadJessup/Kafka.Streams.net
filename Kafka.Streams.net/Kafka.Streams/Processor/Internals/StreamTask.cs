@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -22,7 +22,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.Producer;
 using Kafka.Common.KafkaException;
-using Kafka.Common.MetricName;
+
 using Kafka.Common.TopicPartition;
 using Kafka.Common.errors.ProducerFencedException;
 using Kafka.Common.errors.TimeoutException;
@@ -56,18 +56,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static java.lang.string.format;
+import static java.lang.string.Format;
 import static java.util.Collections.singleton;
 import static org.apache.kafka.streams.kstream.internals.metrics.Sensors.recordLatenessSensor;
 
 /**
  * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
  */
-public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
+public class StreamTask : AbstractTask : ProcessorNodePunctuator {
 
     private static ConsumerRecord<Object, object> DUMMY_RECORD = new ConsumerRecord<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
-    private Time time;
+    private ITime time;
     private long maxTaskIdleMs;
     private int maxBufferedSize;
     private TaskMetrics taskMetrics;
@@ -91,8 +91,9 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
         Sensor taskEnforcedProcessSensor;
         private string taskName;
 
-        TaskMetrics(TaskId id, StreamsMetricsImpl metrics) {
-            taskName = id.toString();
+        TaskMetrics(TaskId id, StreamsMetricsImpl metrics)
+{
+            taskName = id.ToString();
             this.metrics = metrics;
             string group = "stream-task-metrics";
 
@@ -101,7 +102,7 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
 
             // add the operation metrics with additional tags
             Dictionary<string, string> tagMap = metrics.tagMap("task-id", taskName);
-            taskCommitTimeSensor = metrics.taskLevelSensor(taskName, "commit", Sensor.RecordingLevel.DEBUG, parent);
+            taskCommitTimeSensor = metrics.taskLevelSensor(taskName, "commit", RecordingLevel.DEBUG, parent);
             taskCommitTimeSensor.add(
                 new MetricName("commit-latency-avg", group, "The average latency of commit operation.", tagMap),
                 new Avg()
@@ -120,7 +121,7 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
             );
 
             // add the metrics for enforced processing
-            taskEnforcedProcessSensor = metrics.taskLevelSensor(taskName, "enforced-processing", Sensor.RecordingLevel.DEBUG, parent);
+            taskEnforcedProcessSensor = metrics.taskLevelSensor(taskName, "enforced-processing", RecordingLevel.DEBUG, parent);
             taskEnforcedProcessSensor.add(
                     new MetricName("enforced-processing-rate", group, "The average number of occurrence of enforced-processing operation per second.", tagMap),
                     new Rate(TimeUnit.SECONDS, new WindowedCount())
@@ -132,7 +133,8 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
 
         }
 
-        void removeAllSensors() {
+        void removeAllSensors()
+{
             metrics.removeAllTaskLevelSensors(taskName);
         }
     }
@@ -150,8 +152,9 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
                       StreamsMetricsImpl metrics,
                       StateDirectory stateDirectory,
                       ThreadCache cache,
-                      Time time,
-                      ProducerSupplier producerSupplier) {
+                      ITime time,
+                      ProducerSupplier producerSupplier)
+{
         this(id, partitions, topology, consumer, changelogReader, config, metrics, stateDirectory, cache, time, producerSupplier, null);
     }
 
@@ -164,23 +167,25 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
                       StreamsMetricsImpl streamsMetrics,
                       StateDirectory stateDirectory,
                       ThreadCache cache,
-                      Time time,
+                      ITime time,
                       ProducerSupplier producerSupplier,
-                      RecordCollector recordCollector) {
+                      RecordCollector recordCollector)
+{
         super(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config);
 
         this.time = time;
         this.producerSupplier = producerSupplier;
-        this.producer = producerSupplier.get();
+        this.producer = producerSupplier[];
         this.taskMetrics = new TaskMetrics(id, streamsMetrics);
 
         closeTaskSensor = ThreadMetrics.closeTaskSensor(streamsMetrics);
 
         ProductionExceptionHandler productionExceptionHandler = config.defaultProductionExceptionHandler();
 
-        if (recordCollector == null) {
+        if (recordCollector == null)
+{
             this.recordCollector = new RecordCollectorImpl(
-                id.toString(),
+                id.ToString(),
                 logContext,
                 productionExceptionHandler,
                 ThreadMetrics.skipRecordSensor(streamsMetrics));
@@ -207,7 +212,8 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
 
         TimestampExtractor defaultTimestampExtractor = config.defaultTimestampExtractor();
         DeserializationExceptionHandler defaultDeserializationExceptionHandler = config.defaultDeserializationExceptionHandler();
-        for (TopicPartition partition : partitions) {
+        foreach (TopicPartition partition in partitions)
+{
             SourceNode source = topology.source(partition.topic());
             TimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
             RecordQueue queue = new RecordQueue(
@@ -218,7 +224,7 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
                 processorContext,
                 logContext
             );
-            partitionQueues.put(partition, queue);
+            partitionQueues.Add(partition, queue);
         }
 
         recordInfo = new PartitionGroup.RecordInfo();
@@ -228,13 +234,15 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
 
         // initialize transactions if eos is turned on, which will block if the previous transaction has not
         // completed yet; do not start the first transaction until the topology has been initialized later
-        if (eosEnabled) {
+        if (eosEnabled)
+{
             initializeTransactions();
         }
     }
 
-    @Override
-    public bool initializeStateStores() {
+    
+    public bool initializeStateStores()
+{
         log.trace("Initializing state stores");
         registerStateStores();
 
@@ -248,14 +256,17 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      *
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    @Override
-    public void initializeTopology() {
+    
+    public void initializeTopology()
+{
         initTopology();
 
-        if (eosEnabled) {
+        if (eosEnabled)
+{
             try {
                 this.producer.beginTransaction();
-            } catch (ProducerFencedException fatal) {
+            } catch (ProducerFencedException fatal)
+{
                 throw new TaskMigratedException(this, fatal);
             }
             transactionInFlight = true;
@@ -275,20 +286,24 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * - resume the task
      * </pre>
      */
-    @Override
-    public void resume() {
-        log.debug("Resuming");
-        if (eosEnabled) {
-            if (producer != null) {
+    
+    public void resume()
+{
+        log.LogDebug("Resuming");
+        if (eosEnabled)
+{
+            if (producer != null)
+{
                 throw new InvalidOperationException("Task producer should be null.");
             }
-            producer = producerSupplier.get();
+            producer = producerSupplier[];
             initializeTransactions();
             recordCollector.init(producer);
 
             try {
                 stateMgr.clearCheckpoints();
-            } catch (IOException e) {
+            } catch (IOException e)
+{
                 throw new ProcessorStateException(format("%sError while deleting the checkpoint file", logPrefix), e);
             }
         }
@@ -298,16 +313,21 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * An active task is processable if its buffer contains data for all of its input
      * source topic partitions, or if it is enforced to be processable
      */
-    bool isProcessable(long now) {
-        if (partitionGroup.allPartitionsBuffered()) {
+    bool isProcessable(long now)
+{
+        if (partitionGroup.allPartitionsBuffered())
+{
             idleStartTime = RecordQueue.UNKNOWN;
             return true;
-        } else if (partitionGroup.numBuffered() > 0) {
-            if (idleStartTime == RecordQueue.UNKNOWN) {
+        } else if (partitionGroup.numBuffered() > 0)
+{
+            if (idleStartTime == RecordQueue.UNKNOWN)
+{
                 idleStartTime = now;
             }
 
-            if (now - idleStartTime >= maxTaskIdleMs) {
+            if (now - idleStartTime >= maxTaskIdleMs)
+{
                 taskMetrics.taskEnforcedProcessSensor.record();
                 return true;
             } else {
@@ -325,12 +345,14 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
     @SuppressWarnings("unchecked")
-    public bool process() {
+    public bool process()
+{
         // get the next record to process
         StampedRecord record = partitionGroup.nextRecord(recordInfo);
 
         // if there is no record to process, return immediately
-        if (record == null) {
+        if (record == null)
+{
             return false;
         }
 
@@ -339,25 +361,28 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
             ProcessorNode currNode = recordInfo.node();
             TopicPartition partition = recordInfo.partition();
 
-            log.trace("Start processing one record [{}]", record);
+            log.trace("Start processing one record [{}]", record];
 
             updateProcessorContext(record, currNode);
             currNode.process(record.key(), record.value());
 
-            log.trace("Completed processing one record [{}]", record);
+            log.trace("Completed processing one record [{}]", record];
 
             // update the consumed offset map after processing is done
-            consumedOffsets.put(partition, record.offset());
+            consumedOffsets.Add(partition, record.offset());
             commitNeeded = true;
 
             // after processing this record, if its partition queue's buffered size has been
             // decreased to the threshold, we can then resume the consumption on this partition
-            if (recordInfo.queue().size() == maxBufferedSize) {
+            if (recordInfo.queue().size() == maxBufferedSize)
+{
                 consumer.resume(singleton(partition));
             }
-        } catch (ProducerFencedException fatal) {
+        } catch (ProducerFencedException fatal)
+{
             throw new TaskMigratedException(this, fatal);
-        } catch (KafkaException e) {
+        } catch (KafkaException e)
+{
             string stackTrace = getStacktraceString(e);
             throw new StreamsException(format("Exception caught in process. taskId=%s, " +
                     "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
@@ -375,14 +400,17 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
         return true;
     }
 
-    private string getStacktraceString(KafkaException e) {
+    private string getStacktraceString(KafkaException e)
+{
         string stacktrace = null;
         try (StringWriter stringWriter = new StringWriter();
-             PrintWriter printWriter = new PrintWriter(stringWriter)) {
+             PrintWriter printWriter = new PrintWriter(stringWriter))
+{
             e.printStackTrace(printWriter);
-            stacktrace = stringWriter.toString();
-        } catch (IOException ioe) {
-            log.error("Encountered error extracting stacktrace from this exception", ioe);
+            stacktrace = stringWriter.ToString();
+        } catch (IOException ioe)
+{
+            log.LogError("Encountered error extracting stacktrace from this exception", ioe);
         }
         return stacktrace;
     }
@@ -391,30 +419,36 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @throws InvalidOperationException if the current node is not null
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    @Override
-    public void punctuate(ProcessorNode node, long timestamp, PunctuationType type, Punctuator punctuator) {
-        if (processorContext.currentNode() != null) {
-            throw new InvalidOperationException(string.format("%sCurrent node is not null", logPrefix));
+    
+    public void punctuate(ProcessorNode node, long timestamp, PunctuationType type, Punctuator punctuator)
+{
+        if (processorContext.currentNode() != null)
+{
+            throw new InvalidOperationException(string.Format("%sCurrent node is not null", logPrefix));
         }
 
         updateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
-        if (log.isTraceEnabled()) {
+        if (log.isTraceEnabled())
+{
             log.trace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name(), timestamp, type);
         }
 
         try {
             node.punctuate(timestamp, punctuator);
-        } catch (ProducerFencedException fatal) {
+        } catch (ProducerFencedException fatal)
+{
             throw new TaskMigratedException(this, fatal);
-        } catch (KafkaException e) {
-            throw new StreamsException(string.format("%sException caught while punctuating processor '%s'", logPrefix, node.name()), e);
+        } catch (KafkaException e)
+{
+            throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.name()), e);
         } finally {
             processorContext.setCurrentNode(null);
         }
     }
 
-    private void updateProcessorContext(StampedRecord record, ProcessorNode currNode) {
+    private void updateProcessorContext(StampedRecord record, ProcessorNode currNode)
+{
         processorContext.setRecordContext(
             new ProcessorRecordContext(
                 record.timestamp,
@@ -435,8 +469,9 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @throws TaskMigratedException if committing offsets failed (non-EOS)
      *                               or if the task producer got fenced (EOS)
      */
-    @Override
-    public void commit() {
+    
+    public void commit()
+{
         commit(true);
     }
 
@@ -445,37 +480,43 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      *                               or if the task producer got fenced (EOS)
      */
     // visible for testing
-    void commit(bool startNewTransaction) {
+    void commit(bool startNewTransaction)
+{
         long startNs = time.nanoseconds();
-        log.debug("Committing");
+        log.LogDebug("Committing");
 
         flushState();
 
-        if (!eosEnabled) {
+        if (!eosEnabled)
+{
             stateMgr.checkpoint(activeTaskCheckpointableOffsets());
         }
 
         Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
-        for (Map.Entry<TopicPartition, Long> entry : consumedOffsets.entrySet()) {
+        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+{
             TopicPartition partition = entry.getKey();
             long offset = entry.getValue() + 1;
-            consumedOffsetsAndMetadata.put(partition, new OffsetAndMetadata(offset));
+            consumedOffsetsAndMetadata.Add(partition, new OffsetAndMetadata(offset));
             stateMgr.putOffsetLimit(partition, offset);
         }
 
         try {
-            if (eosEnabled) {
+            if (eosEnabled)
+{
                 producer.sendOffsetsToTransaction(consumedOffsetsAndMetadata, applicationId);
                 producer.commitTransaction();
                 transactionInFlight = false;
-                if (startNewTransaction) {
+                if (startNewTransaction)
+{
                     producer.beginTransaction();
                     transactionInFlight = true;
                 }
             } else {
                 consumer.commitSync(consumedOffsetsAndMetadata);
             }
-        } catch (CommitFailedException | ProducerFencedException error) {
+        } catch (CommitFailedException | ProducerFencedException error)
+{
             throw new TaskMigratedException(this, error);
         }
 
@@ -484,43 +525,52 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
         taskMetrics.taskCommitTimeSensor.record(time.nanoseconds() - startNs);
     }
 
-    @Override
-    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets() {
+    
+    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets()
+{
         Dictionary<TopicPartition, Long> checkpointableOffsets = recordCollector.offsets();
-        for (Map.Entry<TopicPartition, Long> entry : consumedOffsets.entrySet()) {
+        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+{
             checkpointableOffsets.putIfAbsent(entry.getKey(), entry.getValue());
         }
 
         return checkpointableOffsets;
     }
 
-    @Override
-    protected void flushState() {
+    
+    protected void flushState()
+{
         log.trace("Flushing state and producer");
         super.flushState();
         try {
             recordCollector.flush();
-        } catch (ProducerFencedException fatal) {
+        } catch (ProducerFencedException fatal)
+{
             throw new TaskMigratedException(this, fatal);
         }
     }
 
-    Dictionary<TopicPartition, Long> purgableOffsets() {
+    Dictionary<TopicPartition, Long> purgableOffsets()
+{
         Dictionary<TopicPartition, Long> purgableConsumedOffsets = new HashMap<>();
-        for (Map.Entry<TopicPartition, Long> entry : consumedOffsets.entrySet()) {
+        foreach (Map.Entry<TopicPartition, Long> entry in consumedOffsets.entrySet())
+{
             TopicPartition tp = entry.getKey();
-            if (topology.isRepartitionTopic(tp.topic())) {
-                purgableConsumedOffsets.put(tp, entry.getValue() + 1);
+            if (topology.isRepartitionTopic(tp.topic()))
+{
+                purgableConsumedOffsets.Add(tp, entry.getValue() + 1);
             }
         }
 
         return purgableConsumedOffsets;
     }
 
-    private void initTopology() {
+    private void initTopology()
+{
         // initialize the task by initializing all its processor nodes in the topology
         log.trace("Initializing processor nodes of the topology");
-        for (ProcessorNode node : topology.processors()) {
+        foreach (ProcessorNode node in topology.processors())
+{
             processorContext.setCurrentNode(node);
             try {
                 node.init(processorContext);
@@ -542,9 +592,10 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @throws TaskMigratedException if committing offsets failed (non-EOS)
      *                               or if the task producer got fenced (EOS)
      */
-    @Override
-    public void suspend() {
-        log.debug("Suspending");
+    
+    public void suspend()
+{
+        log.LogDebug("Suspending");
         suspend(true, false);
     }
 
@@ -562,34 +613,41 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      */
     // visible for testing
     void suspend(bool clean,
-                 bool isZombie) {
+                 bool isZombie)
+{
         try {
             closeTopology(); // should we call this only on clean suspend?
-        } catch (RuntimeException fatal) {
-            if (clean) {
+        } catch (RuntimeException fatal)
+{
+            if (clean)
+{
                 throw fatal;
             }
         }
 
-        if (clean) {
+        if (clean)
+{
             TaskMigratedException taskMigratedException = null;
             try {
                 commit(false);
             } finally {
-                if (eosEnabled) {
+                if (eosEnabled)
+{
 
                     stateMgr.checkpoint(activeTaskCheckpointableOffsets());
 
                     try {
                         recordCollector.close();
-                    } catch (ProducerFencedException e) {
+                    } catch (ProducerFencedException e)
+{
                         taskMigratedException = new TaskMigratedException(this, e);
                     } finally {
                         producer = null;
                     }
                 }
             }
-            if (taskMigratedException != null) {
+            if (taskMigratedException != null)
+{
                 throw taskMigratedException;
             }
         } else {
@@ -597,18 +655,22 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
         }
     }
 
-    private void maybeAbortTransactionAndCloseRecordCollector(bool isZombie) {
-        if (eosEnabled && !isZombie) {
+    private void maybeAbortTransactionAndCloseRecordCollector(bool isZombie)
+{
+        if (eosEnabled && !isZombie)
+{
             try {
-                if (transactionInFlight) {
+                if (transactionInFlight)
+{
                     producer.abortTransaction();
                 }
                 transactionInFlight = false;
-            } catch (ProducerFencedException ignore) {
+            } catch (ProducerFencedException ignore)
+{
                 /* TODO
                  * this should actually never happen atm as we guard the call to #abortTransaction
                  * -> the reason for the guard is a "bug" in the Producer -- it throws InvalidOperationException
-                 * instead of ProducerFencedException atm. We can remove the isZombie flag after KAFKA-5604 got
+                 * instead of ProducerFencedException atm. We can Remove the isZombie flag after KAFKA-5604 got
                  * fixed and fall-back to this catch-and-swallow code
                  */
 
@@ -616,18 +678,21 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
             }
         }
 
-        if (eosEnabled) {
+        if (eosEnabled)
+{
             try {
                 recordCollector.close();
-            } catch (Throwable e) {
-                log.error("Failed to close producer due to the following error:", e);
+            } catch (Throwable e)
+{
+                log.LogError("Failed to close producer due to the following error:", e);
             } finally {
                 producer = null;
             }
         }
     }
 
-    private void closeTopology() {
+    private void closeTopology()
+{
         log.trace("Closing processor topology");
 
         partitionGroup.clear();
@@ -635,12 +700,15 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
         // close the processors
         // make sure close() is called for each node even when there is a RuntimeException
         RuntimeException exception = null;
-        if (taskInitialized) {
-            for (ProcessorNode node : topology.processors()) {
+        if (taskInitialized)
+{
+            foreach (ProcessorNode node in topology.processors())
+{
                 processorContext.setCurrentNode(node);
                 try {
                     node.close();
-                } catch (RuntimeException e) {
+                } catch (RuntimeException e)
+{
                     exception = e;
                 } finally {
                     processorContext.setCurrentNode(null);
@@ -648,23 +716,27 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
             }
         }
 
-        if (exception != null) {
+        if (exception != null)
+{
             throw exception;
         }
     }
 
     // helper to avoid calling suspend() twice if a suspended task is not reassigned and closed
-    @Override
+    
     public void closeSuspended(bool clean,
                                bool isZombie,
-                               RuntimeException firstException) {
+                               RuntimeException firstException)
+{
         try {
             closeStateManager(clean);
-        } catch (RuntimeException e) {
-            if (firstException == null) {
+        } catch (RuntimeException e)
+{
+            if (firstException == null)
+{
                 firstException = e;
             }
-            log.error("Could not close state manager due to the following error:", e);
+            log.LogError("Could not close state manager due to the following error:", e);
         }
 
         partitionGroup.close();
@@ -672,7 +744,8 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
 
         closeTaskSensor.record();
 
-        if (firstException != null) {
+        if (firstException != null)
+{
             throw firstException;
         }
     }
@@ -695,18 +768,20 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @throws TaskMigratedException if committing offsets failed (non-EOS)
      *                               or if the task producer got fenced (EOS)
      */
-    @Override
+    
     public void close(bool clean,
-                      bool isZombie) {
-        log.debug("Closing");
+                      bool isZombie)
+{
+        log.LogDebug("Closing");
 
         RuntimeException firstException = null;
         try {
             suspend(clean, isZombie);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e)
+{
             clean = false;
             firstException = e;
-            log.error("Could not close task due to the following error:", e);
+            log.LogError("Could not close task due to the following error:", e);
         }
 
         closeSuspended(clean, isZombie, firstException);
@@ -721,16 +796,19 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @param partition the partition
      * @param records   the records
      */
-    public void addRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> records) {
+    public void addRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> records)
+{
         int newQueueSize = partitionGroup.addRawRecords(partition, records);
 
-        if (log.isTraceEnabled()) {
+        if (log.isTraceEnabled())
+{
             log.trace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
         }
 
         // if after adding these records, its partition queue's buffered size has been
         // increased beyond the threshold, we can then pause the consumption for this partition
-        if (newQueueSize > maxBufferedSize) {
+        if (newQueueSize > maxBufferedSize)
+{
             consumer.pause(singleton(partition));
         }
     }
@@ -742,8 +820,10 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @param type     the punctuation type
      * @throws InvalidOperationException if the current node is not null
      */
-    public ICancellable schedule(long interval, PunctuationType type, Punctuator punctuator) {
-        switch (type) {
+    public ICancellable schedule(long interval, PunctuationType type, Punctuator punctuator)
+{
+        switch (type)
+{
             case STREAM_TIME:
                 // align punctuation to 0L, punctuate as soon as we have data
                 return schedule(0L, interval, type, punctuator);
@@ -751,7 +831,7 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
                 // align punctuation to now, punctuate after interval has elapsed
                 return schedule(time.milliseconds() + interval, interval, type, punctuator);
             default:
-                throw new IllegalArgumentException("Unrecognized PunctuationType: " + type);
+                throw new ArgumentException("Unrecognized PunctuationType: " + type);
         }
     }
 
@@ -763,14 +843,17 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      * @param type      the punctuation type
      * @throws InvalidOperationException if the current node is not null
      */
-    ICancellable schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator) {
-        if (processorContext.currentNode() == null) {
-            throw new InvalidOperationException(string.format("%sCurrent node is null", logPrefix));
+    ICancellable schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
+{
+        if (processorContext.currentNode() == null)
+{
+            throw new InvalidOperationException(string.Format("%sCurrent node is null", logPrefix));
         }
 
         PunctuationSchedule schedule = new PunctuationSchedule(processorContext.currentNode(), startTime, interval, punctuator);
 
-        switch (type) {
+        switch (type)
+{
             case STREAM_TIME:
                 // STREAM_TIME punctuation is data driven, will first punctuate as soon as stream-time is known and >= time,
                 // stream-time is known when we have received at least one record from each input topic
@@ -779,14 +862,15 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
                 // WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
                 return systemTimePunctuationQueue.schedule(schedule);
             default:
-                throw new IllegalArgumentException("Unrecognized PunctuationType: " + type);
+                throw new ArgumentException("Unrecognized PunctuationType: " + type);
         }
     }
 
     /**
      * @return The number of records left in the buffer of this task's partition group
      */
-    int numBuffered() {
+    int numBuffered()
+{
         return partitionGroup.numBuffered();
     }
 
@@ -797,17 +881,20 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      *
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    public bool maybePunctuateStreamTime() {
+    public bool maybePunctuateStreamTime()
+{
         long streamTime = partitionGroup.streamTime();
 
         // if the timestamp is not known yet, meaning there is not enough data accumulated
         // to reason stream partition time, then skip.
-        if (streamTime == RecordQueue.UNKNOWN) {
+        if (streamTime == RecordQueue.UNKNOWN)
+{
             return false;
         } else {
             bool punctuated = streamTimePunctuationQueue.mayPunctuate(streamTime, PunctuationType.STREAM_TIME, this);
 
-            if (punctuated) {
+            if (punctuated)
+{
                 commitNeeded = true;
             }
 
@@ -822,12 +909,14 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
      *
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    public bool maybePunctuateSystemTime() {
+    public bool maybePunctuateSystemTime()
+{
         long systemTime = time.milliseconds();
 
         bool punctuated = systemTimePunctuationQueue.mayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
 
-        if (punctuated) {
+        if (punctuated)
+{
             commitNeeded = true;
         }
 
@@ -837,31 +926,37 @@ public class StreamTask : AbstractTask implements ProcessorNodePunctuator {
     /**
      * Request committing the current task's state
      */
-    void requestCommit() {
+    void requestCommit()
+{
         commitRequested = true;
     }
 
     /**
      * Whether or not a request has been made to commit the current state
      */
-    bool commitRequested() {
+    bool commitRequested()
+{
         return commitRequested;
     }
 
     // visible for testing only
-    RecordCollector recordCollector() {
+    RecordCollector recordCollector()
+{
         return recordCollector;
     }
 
-    Producer<byte[], byte[]> getProducer() {
+    Producer<byte[], byte[]> getProducer()
+{
         return producer;
     }
 
-    private void initializeTransactions() {
+    private void initializeTransactions()
+{
         try {
             producer.initTransactions();
-        } catch (TimeoutException retriable) {
-            log.error(
+        } catch (TimeoutException retriable)
+{
+            log.LogError(
                 "Timeout exception caught when initializing transactions for task {}. " +
                     "This might happen if the broker is slow to respond, if the network connection to " +
                     "the broker was interrupted, or if similar circumstances arise. " +

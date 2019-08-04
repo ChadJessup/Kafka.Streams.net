@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams;
+namespace Kafka.streams;
 
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.Admin;
@@ -66,16 +66,16 @@ import static org.apache.kafka.common.requests.IsolationLevel.READ_COMMITTED;
  * <pre>{@code
  * // potentially wrong: sets "metadata.max.age.ms" to 1 minute for producer AND consumer
  * Properties streamsProperties = new Properties();
- * streamsProperties.put(ConsumerConfig.METADATA_MAX_AGE_CONFIG, 60000);
+ * streamsProperties.Add(ConsumerConfig.METADATA_MAX_AGE_CONFIG, 60000);
  * // or
- * streamsProperties.put(ProducerConfig.METADATA_MAX_AGE_CONFIG, 60000);
+ * streamsProperties.Add(ProducerConfig.METADATA_MAX_AGE_CONFIG, 60000);
  *
  * // suggested:
  * Properties streamsProperties = new Properties();
  * // sets "metadata.max.age.ms" to 1 minute for consumer only
- * streamsProperties.put(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), 60000);
+ * streamsProperties.Add(StreamsConfig.consumerPrefix(ConsumerConfig.METADATA_MAX_AGE_CONFIG), 60000);
  * // sets "metadata.max.age.ms" to 1 minute for producer only
- * streamsProperties.put(StreamsConfig.producerPrefix(ProducerConfig.METADATA_MAX_AGE_CONFIG), 60000);
+ * streamsProperties.Add(StreamsConfig.producerPrefix(ProducerConfig.METADATA_MAX_AGE_CONFIG), 60000);
  *
  * StreamsConfig streamsConfig = new StreamsConfig(streamsProperties);
  * }</pre>
@@ -86,11 +86,11 @@ import static org.apache.kafka.common.requests.IsolationLevel.READ_COMMITTED;
  * <pre>{@code
  * Properties streamsProperties = new Properties();
  * // sets "my.custom.config" to "foo" for consumer only
- * streamsProperties.put(StreamsConfig.consumerPrefix("my.custom.config"), "foo");
+ * streamsProperties.Add(StreamsConfig.consumerPrefix("my.custom.config"), "foo");
  * // sets "my.custom.config" to "bar" for producer only
- * streamsProperties.put(StreamsConfig.producerPrefix("my.custom.config"), "bar");
+ * streamsProperties.Add(StreamsConfig.producerPrefix("my.custom.config"), "bar");
  * // sets "my.custom.config2" to "boom" for all clients universally
- * streamsProperties.put("my.custom.config2", "boom");
+ * streamsProperties.Add("my.custom.config2", "boom");
  *
  * // as a result, inside producer's serde class configure(..) function,
  * // users can now read both key-value pairs "my.custom.config" -> "foo"
@@ -162,9 +162,9 @@ public class StreamsConfig : AbstractConfig {
     /**
      * Prefix used to override {@link KafkaConsumer consumer} configs for the main consumer client from
      * the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-     * 1. main.consumer.[config-name]
-     * 2. consumer.[config-name]
-     * 3. [config-name]
+     * 1. main.consumer.[config-name)
+     * 2. consumer.[config-name)
+     * 3. [config-name)
      */
     @SuppressWarnings("WeakerAccess")
     public static  string MAIN_CONSUMER_PREFIX = "main.consumer.";
@@ -172,9 +172,9 @@ public class StreamsConfig : AbstractConfig {
     /**
      * Prefix used to override {@link KafkaConsumer consumer} configs for the restore consumer client from
      * the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-     * 1. restore.consumer.[config-name]
-     * 2. consumer.[config-name]
-     * 3. [config-name]
+     * 1. restore.consumer.[config-name)
+     * 2. consumer.[config-name)
+     * 3. [config-name)
      */
     @SuppressWarnings("WeakerAccess")
     public static  string RESTORE_CONSUMER_PREFIX = "restore.consumer.";
@@ -182,9 +182,9 @@ public class StreamsConfig : AbstractConfig {
     /**
      * Prefix used to override {@link KafkaConsumer consumer} configs for the global consumer client from
      * the general consumer client configs. The override precedence is the following (from highest to lowest precedence):
-     * 1. global.consumer.[config-name]
-     * 2. consumer.[config-name]
-     * 3. [config-name]
+     * 1. global.consumer.[config-name)
+     * 2. consumer.[config-name)
+     * 3. [config-name)
      */
     @SuppressWarnings("WeakerAccess")
     public static  string GLOBAL_CONSUMER_PREFIX = "global.consumer.";
@@ -314,14 +314,14 @@ public class StreamsConfig : AbstractConfig {
      */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG = "default.deserialization.exception.handler";
-    private static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that implements the <code>org.apache.kafka.streams.errors.DeserializationExceptionHandler</code> interface.";
+    private static  string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that : the <code>org.apache.kafka.streams.errors.DeserializationExceptionHandler</code> interface.";
 
     /**
      * {@code default.production.exception.handler}
      */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG = "default.production.exception.handler";
-    private static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that implements the <code>org.apache.kafka.streams.errors.ProductionExceptionHandler</code> interface.";
+    private static  string DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling class that : the <code>org.apache.kafka.streams.errors.ProductionExceptionHandler</code> interface.";
 
     /**
      * {@code default.windowed.key.serde.inner}
@@ -338,21 +338,21 @@ public class StreamsConfig : AbstractConfig {
     /** {@code default key.serde} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_KEY_SERDE_CLASS_CONFIG = "default.key.serde";
-    private static  string DEFAULT_KEY_SERDE_CLASS_DOC = " Default serializer / deserializer class for key that implements the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
-            + "Note when windowed serde class is used, one needs to set the inner serde class that implements the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
+    private static  string DEFAULT_KEY_SERDE_CLASS_DOC = " Default serializer / deserializer class for key that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
+            + "Note when windowed serde class is used, one needs to set the inner serde class that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
             + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
     /** {@code default value.serde} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_VALUE_SERDE_CLASS_CONFIG = "default.value.serde";
-    private static  string DEFAULT_VALUE_SERDE_CLASS_DOC = "Default serializer / deserializer class for value that implements the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
-            + "Note when windowed serde class is used, one needs to set the inner serde class that implements the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
+    private static  string DEFAULT_VALUE_SERDE_CLASS_DOC = "Default serializer / deserializer class for value that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface. "
+            + "Note when windowed serde class is used, one needs to set the inner serde class that : the <code>org.apache.kafka.common.serialization.ISerde</code> interface via '"
             + DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS + "' or '" + DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS + "' as well";
 
     /** {@code default.timestamp.extractor} */
     @SuppressWarnings("WeakerAccess")
     public static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG = "default.timestamp.extractor";
-    private static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor class that implements the <code>org.apache.kafka.streams.processor.TimestampExtractor</code> interface.";
+    private static  string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor class that : the <code>org.apache.kafka.streams.processor.TimestampExtractor</code> interface.";
 
     /** {@code metadata.max.age.ms} */
     @SuppressWarnings("WeakerAccess")
@@ -387,7 +387,7 @@ public class StreamsConfig : AbstractConfig {
     /** {@code partition.grouper} */
     @SuppressWarnings("WeakerAccess")
     public static  string PARTITION_GROUPER_CLASS_CONFIG = "partition.grouper";
-    private static  string PARTITION_GROUPER_CLASS_DOC = "Partition grouper class that implements the <code>org.apache.kafka.streams.processor.PartitionGrouper</code> interface.";
+    private static  string PARTITION_GROUPER_CLASS_DOC = "Partition grouper class that : the <code>org.apache.kafka.streams.processor.PartitionGrouper</code> interface.";
 
     /** {@code poll.ms} */
     @SuppressWarnings("WeakerAccess")
@@ -433,7 +433,7 @@ public class StreamsConfig : AbstractConfig {
     /** {@code rocksdb.config.setter} */
     @SuppressWarnings("WeakerAccess")
     public static  string ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
-    private static  string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter class or class name that implements the <code>org.apache.kafka.streams.state.RocksDBConfigSetter</code> interface";
+    private static  string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter class or class name that : the <code>org.apache.kafka.streams.state.RocksDBConfigSetter</code> interface";
 
     /** {@code security.protocol} */
     @SuppressWarnings("WeakerAccess")
@@ -611,8 +611,8 @@ public class StreamsConfig : AbstractConfig {
                     CommonClientConfigs.METRIC_REPORTER_CLASSES_DOC)
             .define(METRICS_RECORDING_LEVEL_CONFIG,
                     Type.STRING,
-                    Sensor.RecordingLevel.INFO.toString(),
-                    in(Sensor.RecordingLevel.INFO.toString(), Sensor.RecordingLevel.DEBUG.toString()),
+                    RecordingLevel.INFO.ToString(),
+                    in(RecordingLevel.INFO.ToString(), RecordingLevel.DEBUG.ToString()),
                     Importance.LOW,
                     CommonClientConfigs.METRICS_RECORDING_LEVEL_DOC)
             .define(METRICS_SAMPLE_WINDOW_MS_CONFIG,
@@ -701,15 +701,15 @@ public class StreamsConfig : AbstractConfig {
     private static  Map<string, object> PRODUCER_DEFAULT_OVERRIDES;
     static {
          Map<string, object> tempProducerDefaultOverrides = new HashMap<>();
-        tempProducerDefaultOverrides.put(ProducerConfig.LINGER_MS_CONFIG, "100");
+        tempProducerDefaultOverrides.Add(ProducerConfig.LINGER_MS_CONFIG, "100");
         PRODUCER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
     }
 
     private static  Map<string, object> PRODUCER_EOS_OVERRIDES;
     static {
          Map<string, object> tempProducerDefaultOverrides = new HashMap<>(PRODUCER_DEFAULT_OVERRIDES);
-        tempProducerDefaultOverrides.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, Integer.MAX_VALUE);
-        tempProducerDefaultOverrides.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
+        tempProducerDefaultOverrides.Add(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, Integer.MAX_VALUE);
+        tempProducerDefaultOverrides.Add(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
         PRODUCER_EOS_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
     }
@@ -717,17 +717,17 @@ public class StreamsConfig : AbstractConfig {
     private static  Map<string, object> CONSUMER_DEFAULT_OVERRIDES;
     static {
          Map<string, object> tempConsumerDefaultOverrides = new HashMap<>();
-        tempConsumerDefaultOverrides.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
-        tempConsumerDefaultOverrides.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        tempConsumerDefaultOverrides.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-        tempConsumerDefaultOverrides.put("internal.leave.group.on.close", false);
+        tempConsumerDefaultOverrides.Add(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
+        tempConsumerDefaultOverrides.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        tempConsumerDefaultOverrides.Add(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        tempConsumerDefaultOverrides.Add("internal.leave.group.on.close", false);
         CONSUMER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
     }
 
     private static  Map<string, object> CONSUMER_EOS_OVERRIDES;
     static {
          Map<string, object> tempConsumerDefaultOverrides = new HashMap<>(CONSUMER_DEFAULT_OVERRIDES);
-        tempConsumerDefaultOverrides.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name().toLowerCase(Locale.ROOT));
+        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name().toLowerCase(Locale.ROOT));
         CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
     }
 
@@ -744,7 +744,8 @@ public class StreamsConfig : AbstractConfig {
      * @return {@link #CONSUMER_PREFIX} + {@code consumerProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string consumerPrefix( string consumerProp) {
+    public static string consumerPrefix( string consumerProp)
+{
         return CONSUMER_PREFIX + consumerProp;
     }
 
@@ -756,7 +757,8 @@ public class StreamsConfig : AbstractConfig {
      * @return {@link #MAIN_CONSUMER_PREFIX} + {@code consumerProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string mainConsumerPrefix( string consumerProp) {
+    public static string mainConsumerPrefix( string consumerProp)
+{
         return MAIN_CONSUMER_PREFIX + consumerProp;
     }
 
@@ -768,7 +770,8 @@ public class StreamsConfig : AbstractConfig {
      * @return {@link #RESTORE_CONSUMER_PREFIX} + {@code consumerProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string restoreConsumerPrefix( string consumerProp) {
+    public static string restoreConsumerPrefix( string consumerProp)
+{
         return RESTORE_CONSUMER_PREFIX + consumerProp;
     }
 
@@ -780,7 +783,8 @@ public class StreamsConfig : AbstractConfig {
      * @return {@link #GLOBAL_CONSUMER_PREFIX} + {@code consumerProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string globalConsumerPrefix( string consumerProp) {
+    public static string globalConsumerPrefix( string consumerProp)
+{
         return GLOBAL_CONSUMER_PREFIX + consumerProp;
     }
 
@@ -792,7 +796,8 @@ public class StreamsConfig : AbstractConfig {
      * @return PRODUCER_PREFIX + {@code producerProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string producerPrefix( string producerProp) {
+    public static string producerPrefix( string producerProp)
+{
         return PRODUCER_PREFIX + producerProp;
     }
 
@@ -804,7 +809,8 @@ public class StreamsConfig : AbstractConfig {
      * @return ADMIN_CLIENT_PREFIX + {@code adminClientProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string adminClientPrefix( string adminClientProp) {
+    public static string adminClientPrefix( string adminClientProp)
+{
         return ADMIN_CLIENT_PREFIX + adminClientProp;
     }
 
@@ -816,7 +822,8 @@ public class StreamsConfig : AbstractConfig {
      * @return TOPIC_PREFIX + {@code topicProp}
      */
     @SuppressWarnings("WeakerAccess")
-    public static string topicPrefix( string topicProp) {
+    public static string topicPrefix( string topicProp)
+{
         return TOPIC_PREFIX + topicProp;
     }
 
@@ -826,7 +833,8 @@ public class StreamsConfig : AbstractConfig {
      * @return a copy of the config definition
      */
     @SuppressWarnings("unused")
-    public static ConfigDef configDef() {
+    public static ConfigDef configDef()
+{
         return new ConfigDef(CONFIG);
     }
 
@@ -835,32 +843,37 @@ public class StreamsConfig : AbstractConfig {
      *
      * @param props properties that specify Kafka Streams and internal consumer/producer configuration
      */
-    public StreamsConfig( Map<?, ?> props) {
+    public StreamsConfig( Map<?, ?> props)
+{
         this(props, true);
     }
 
     protected StreamsConfig( Map<?, ?> props,
-                             bool doLog) {
+                             bool doLog)
+{
         super(CONFIG, props, doLog);
-        eosEnabled = EXACTLY_ONCE.equals(getString(PROCESSING_GUARANTEE_CONFIG));
+        eosEnabled = EXACTLY_ONCE.Equals(getString(PROCESSING_GUARANTEE_CONFIG));
     }
 
-    @Override
-    protected Map<string, object> postProcessParsedConfig( Map<string, object> parsedValues) {
+    
+    protected Map<string, object> postProcessParsedConfig( Map<string, object> parsedValues)
+{
          Map<string, object> configUpdates =
             CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
-         bool eosEnabled = EXACTLY_ONCE.equals(parsedValues.get(PROCESSING_GUARANTEE_CONFIG));
-        if (eosEnabled && !originals().containsKey(COMMIT_INTERVAL_MS_CONFIG)) {
-            log.debug("Using {} default value of {} as exactly once is enabled.",
+         bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG)];
+        if (eosEnabled && !originals().ContainsKey(COMMIT_INTERVAL_MS_CONFIG))
+{
+            log.LogDebug("Using {} default value of {} as exactly once is enabled.",
                     COMMIT_INTERVAL_MS_CONFIG, EOS_DEFAULT_COMMIT_INTERVAL_MS);
-            configUpdates.put(COMMIT_INTERVAL_MS_CONFIG, EOS_DEFAULT_COMMIT_INTERVAL_MS);
+            configUpdates.Add(COMMIT_INTERVAL_MS_CONFIG, EOS_DEFAULT_COMMIT_INTERVAL_MS);
         }
 
         return configUpdates;
     }
 
-    private Map<string, object> getCommonConsumerConfigs() {
+    private Map<string, object> getCommonConsumerConfigs()
+{
          Map<string, object> clientProvidedProps = getClientPropsWithPrefix(CONSUMER_PREFIX, ConsumerConfig.configNames());
 
         checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
@@ -871,63 +884,79 @@ public class StreamsConfig : AbstractConfig {
         consumerProps.putAll(clientProvidedProps);
 
         // bootstrap.servers should be from StreamsConfig
-        consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals().get(BOOTSTRAP_SERVERS_CONFIG));
+        consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG)];
 
         return consumerProps;
     }
 
-    private void checkIfUnexpectedUserSpecifiedConsumerConfig( Map<string, object> clientProvidedProps,  string[] nonConfigurableConfigs) {
+    private void checkIfUnexpectedUserSpecifiedConsumerConfig( Map<string, object> clientProvidedProps,  string[] nonConfigurableConfigs)
+{
         // Streams does not allow users to configure certain consumer/producer configurations, for example,
         // enable.auto.commit. In cases where user tries to override such non-configurable
-        // consumer/producer configurations, log a warning and remove the user defined value from the Map.
+        // consumer/producer configurations, log a warning and Remove the user defined value from the Map.
         // Thus the default values for these consumer/producer configurations that are suitable for
         // Streams will be used instead.
 
-        if (eosEnabled) {
-             Object maxInFlightRequests = clientProvidedProps.get(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION);
+        if (eosEnabled)
+{
+             Object maxInFlightRequests = clientProvidedProps[ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION];
 
-            if (maxInFlightRequests != null) {
+            if (maxInFlightRequests != null)
+{
                  int maxInFlightRequestsAsInteger;
-                if (maxInFlightRequests is Integer) {
+                if (maxInFlightRequests is Integer)
+{
                     maxInFlightRequestsAsInteger = (Integer) maxInFlightRequests;
-                } else if (maxInFlightRequests is string) {
+                } else if (maxInFlightRequests is string)
+{
                     try {
                         maxInFlightRequestsAsInteger = Integer.parseInt(((string) maxInFlightRequests).trim());
-                    } catch ( NumberFormatException e) {
+                    } catch ( NumberFormatException e)
+{
                         throw new ConfigException(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, maxInFlightRequests, "string value could not be parsed as 32-bit integer");
                     }
                 } else {
                     throw new ConfigException(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, maxInFlightRequests, "Expected value to be a 32-bit integer, but it was a " + maxInFlightRequests.getClass().getName());
                 }
 
-                if (maxInFlightRequestsAsInteger > 5) {
+                if (maxInFlightRequestsAsInteger > 5)
+{
                     throw new ConfigException(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, maxInFlightRequestsAsInteger, "Can't exceed 5 when exactly-once processing is enabled");
                 }
             }
         }
 
-        for ( string config: nonConfigurableConfigs) {
-            if (clientProvidedProps.containsKey(config)) {
+        for ( string config: nonConfigurableConfigs)
+{
+            if (clientProvidedProps.ContainsKey(config))
+{
                  string eosMessage =  PROCESSING_GUARANTEE_CONFIG + " is set to " + EXACTLY_ONCE + ". Hence, ";
                  string nonConfigurableConfigMessage = "Unexpected user-specified %s config: %s found. %sUser setting (%s) will be ignored and the Streams default setting (%s) will be used ";
 
-                if (CONSUMER_DEFAULT_OVERRIDES.containsKey(config)) {
-                    if (!clientProvidedProps.get(config).equals(CONSUMER_DEFAULT_OVERRIDES.get(config))) {
-                        log.warn(string.format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps.get(config),  CONSUMER_DEFAULT_OVERRIDES.get(config)));
-                        clientProvidedProps.remove(config);
+                if (CONSUMER_DEFAULT_OVERRIDES.ContainsKey(config))
+{
+                    if (!clientProvidedProps[config).Equals(CONSUMER_DEFAULT_OVERRIDES[config)))
+{
+                        log.warn(string.Format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps[config),  CONSUMER_DEFAULT_OVERRIDES[config))];
+                        clientProvidedProps.Remove(config);
                     }
-                } else if (eosEnabled) {
-                    if (CONSUMER_EOS_OVERRIDES.containsKey(config)) {
-                        if (!clientProvidedProps.get(config).equals(CONSUMER_EOS_OVERRIDES.get(config))) {
-                            log.warn(string.format(nonConfigurableConfigMessage,
-                                    "consumer", config, eosMessage, clientProvidedProps.get(config), CONSUMER_EOS_OVERRIDES.get(config)));
-                            clientProvidedProps.remove(config);
+                } else if (eosEnabled)
+{
+                    if (CONSUMER_EOS_OVERRIDES.ContainsKey(config))
+{
+                        if (!clientProvidedProps[config).Equals(CONSUMER_EOS_OVERRIDES[config)))
+{
+                            log.warn(string.Format(nonConfigurableConfigMessage,
+                                    "consumer", config, eosMessage, clientProvidedProps[config), CONSUMER_EOS_OVERRIDES[config))];
+                            clientProvidedProps.Remove(config);
                         }
-                    } else if (PRODUCER_EOS_OVERRIDES.containsKey(config)) {
-                        if (!clientProvidedProps.get(config).equals(PRODUCER_EOS_OVERRIDES.get(config))) {
-                            log.warn(string.format(nonConfigurableConfigMessage,
-                                    "producer", config, eosMessage, clientProvidedProps.get(config), PRODUCER_EOS_OVERRIDES.get(config)));
-                            clientProvidedProps.remove(config);
+                    } else if (PRODUCER_EOS_OVERRIDES.ContainsKey(config))
+{
+                        if (!clientProvidedProps[config).Equals(PRODUCER_EOS_OVERRIDES[config)))
+{
+                            log.warn(string.Format(nonConfigurableConfigMessage,
+                                    "producer", config, eosMessage, clientProvidedProps[config), PRODUCER_EOS_OVERRIDES[config))];
+                            clientProvidedProps.Remove(config);
                         }
                     }
                 }
@@ -949,7 +978,8 @@ public class StreamsConfig : AbstractConfig {
      */
     @SuppressWarnings("WeakerAccess")
     @Deprecated
-    public Map<string, object> getConsumerConfigs( string groupId,  string clientId) {
+    public Map<string, object> getConsumerConfigs( string groupId,  string clientId)
+{
         return getMainConsumerConfigs(groupId, clientId, DUMMY_THREAD_INDEX);
     }
 
@@ -969,51 +999,56 @@ public class StreamsConfig : AbstractConfig {
      * @return Map of the consumer configuration.
      */
     @SuppressWarnings("WeakerAccess")
-    public Map<string, object> getMainConsumerConfigs( string groupId,  string clientId,  int threadIdx) {
+    public Map<string, object> getMainConsumerConfigs( string groupId,  string clientId,  int threadIdx)
+{
          Map<string, object> consumerProps = getCommonConsumerConfigs();
 
         // Get main consumer override configs
          Map<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
-        for ( Map.Entry<string, object> entry: mainConsumerProps.entrySet()) {
-            consumerProps.put(entry.getKey(), entry.getValue());
+        for ( Map.Entry<string, object> entry: mainConsumerProps.entrySet())
+{
+            consumerProps.Add(entry.getKey(), entry.getValue());
         }
 
         // this is a hack to work around StreamsConfig constructor inside StreamsPartitionAssignor to avoid casting
-        consumerProps.put(APPLICATION_ID_CONFIG, groupId);
+        consumerProps.Add(APPLICATION_ID_CONFIG, groupId);
 
         // add group id, client id with stream client id prefix, and group instance id
-        consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        consumerProps.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
-         string groupInstanceId = (string) consumerProps.get(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
+        consumerProps.Add(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        consumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+         string groupInstanceId = (string) consumerProps[ConsumerConfig.GROUP_INSTANCE_ID_CONFIG];
         // Suffix each thread consumer with thread.id to enforce uniqueness of group.instance.id.
-        if (groupInstanceId != null) {
-            consumerProps.put(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, groupInstanceId + "-" + threadIdx);
+        if (groupInstanceId != null)
+{
+            consumerProps.Add(ConsumerConfig.GROUP_INSTANCE_ID_CONFIG, groupInstanceId + "-" + threadIdx);
         }
 
         // add configs required for stream partition assignor
-        consumerProps.put(UPGRADE_FROM_CONFIG, getString(UPGRADE_FROM_CONFIG));
-        consumerProps.put(REPLICATION_FACTOR_CONFIG, getInt(REPLICATION_FACTOR_CONFIG));
-        consumerProps.put(APPLICATION_SERVER_CONFIG, getString(APPLICATION_SERVER_CONFIG));
-        consumerProps.put(NUM_STANDBY_REPLICAS_CONFIG, getInt(NUM_STANDBY_REPLICAS_CONFIG));
-        consumerProps.put(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.class.getName());
-        consumerProps.put(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getLong(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
+        consumerProps.Add(UPGRADE_FROM_CONFIG, getString(UPGRADE_FROM_CONFIG));
+        consumerProps.Add(REPLICATION_FACTOR_CONFIG, getInt(REPLICATION_FACTOR_CONFIG));
+        consumerProps.Add(APPLICATION_SERVER_CONFIG, getString(APPLICATION_SERVER_CONFIG));
+        consumerProps.Add(NUM_STANDBY_REPLICAS_CONFIG, getInt(NUM_STANDBY_REPLICAS_CONFIG));
+        consumerProps.Add(ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.class.getName());
+        consumerProps.Add(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getLong(WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
         // add admin retries configs for creating topics
          AdminClientConfig adminClientDefaultConfig = new AdminClientConfig(getClientPropsWithPrefix(ADMIN_CLIENT_PREFIX, AdminClientConfig.configNames()));
-        consumerProps.put(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
-        consumerProps.put(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
+        consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
+        consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
         // verify that producer batch config is no larger than segment size, then add topic configs required for creating topics
          Map<string, object> topicProps = originalsWithPrefix(TOPIC_PREFIX, false);
          Map<string, object> producerProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
-        if (topicProps.containsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
-            producerProps.containsKey(ProducerConfig.BATCH_SIZE_CONFIG)) {
-             int segmentSize = Integer.parseInt(topicProps.get(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).toString());
-             int batchSize = Integer.parseInt(producerProps.get(ProducerConfig.BATCH_SIZE_CONFIG).toString());
+        if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
+            producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
+{
+             int segmentSize = Integer.parseInt(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString()];
+             int batchSize = Integer.parseInt(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString()];
 
-            if (segmentSize < batchSize) {
-                throw new IllegalArgumentException(string.format("Specified topic segment size %d is is smaller than the configured producer batch size %d, this will cause produced batch not able to be appended to the topic",
+            if (segmentSize < batchSize)
+{
+                throw new ArgumentException(string.Format("Specified topic segment size %d is is smaller than the configured producer batch size %d, this will cause produced batch not able to be appended to the topic",
                         segmentSize,
                         batchSize));
             }
@@ -1038,20 +1073,22 @@ public class StreamsConfig : AbstractConfig {
      * @return Map of the restore consumer configuration.
      */
     @SuppressWarnings("WeakerAccess")
-    public Map<string, object> getRestoreConsumerConfigs( string clientId) {
+    public Map<string, object> getRestoreConsumerConfigs( string clientId)
+{
          Map<string, object> baseConsumerProps = getCommonConsumerConfigs();
 
         // Get restore consumer override configs
          Map<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
-        for ( Map.Entry<string, object> entry: restoreConsumerProps.entrySet()) {
-            baseConsumerProps.put(entry.getKey(), entry.getValue());
+        for ( Map.Entry<string, object> entry: restoreConsumerProps.entrySet())
+{
+            baseConsumerProps.Add(entry.getKey(), entry.getValue());
         }
 
         // no need to set group id for a restore consumer
-        baseConsumerProps.remove(ConsumerConfig.GROUP_ID_CONFIG);
+        baseConsumerProps.Remove(ConsumerConfig.GROUP_ID_CONFIG);
         // add client id with stream client id prefix
-        baseConsumerProps.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
-        baseConsumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
+        baseConsumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+        baseConsumerProps.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
 
         return baseConsumerProps;
     }
@@ -1070,20 +1107,22 @@ public class StreamsConfig : AbstractConfig {
      * @return Map of the global consumer configuration.
      */
     @SuppressWarnings("WeakerAccess")
-    public Map<string, object> getGlobalConsumerConfigs( string clientId) {
+    public Map<string, object> getGlobalConsumerConfigs( string clientId)
+{
          Map<string, object> baseConsumerProps = getCommonConsumerConfigs();
 
         // Get global consumer override configs
          Map<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
-        for ( Map.Entry<string, object> entry: globalConsumerProps.entrySet()) {
-            baseConsumerProps.put(entry.getKey(), entry.getValue());
+        for ( Map.Entry<string, object> entry: globalConsumerProps.entrySet())
+{
+            baseConsumerProps.Add(entry.getKey(), entry.getValue());
         }
 
         // no need to set group id for a global consumer
-        baseConsumerProps.remove(ConsumerConfig.GROUP_ID_CONFIG);
+        baseConsumerProps.Remove(ConsumerConfig.GROUP_ID_CONFIG);
         // add client id with stream client id prefix
-        baseConsumerProps.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId + "-global-consumer");
-        baseConsumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
+        baseConsumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId + "-global-consumer");
+        baseConsumerProps.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
 
         return baseConsumerProps;
     }
@@ -1098,7 +1137,8 @@ public class StreamsConfig : AbstractConfig {
      * @return Map of the producer configuration.
      */
     @SuppressWarnings("WeakerAccess")
-    public Map<string, object> getProducerConfigs( string clientId) {
+    public Map<string, object> getProducerConfigs( string clientId)
+{
          Map<string, object> clientProvidedProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
         checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
@@ -1108,9 +1148,9 @@ public class StreamsConfig : AbstractConfig {
         props.putAll(getClientCustomProps());
         props.putAll(clientProvidedProps);
 
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals().get(BOOTSTRAP_SERVERS_CONFIG));
+        props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG)];
         // add client id with stream client id prefix
-        props.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+        props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
 
         return props;
     }
@@ -1121,7 +1161,8 @@ public class StreamsConfig : AbstractConfig {
      * @return Map of the admin client configuration.
      */
     @SuppressWarnings("WeakerAccess")
-    public Map<string, object> getAdminConfigs( string clientId) {
+    public Map<string, object> getAdminConfigs( string clientId)
+{
          Map<string, object> clientProvidedProps = getClientPropsWithPrefix(ADMIN_CLIENT_PREFIX, AdminClientConfig.configNames());
 
          Map<string, object> props = new HashMap<>();
@@ -1129,13 +1170,14 @@ public class StreamsConfig : AbstractConfig {
         props.putAll(clientProvidedProps);
 
         // add client id with stream client id prefix
-        props.put(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+        props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
 
         return props;
     }
 
     private Map<string, object> getClientPropsWithPrefix( string prefix,
-                                                          Set<string> configNames) {
+                                                          Set<string> configNames)
+{
          Map<string, object> props = clientProps(configNames, originals());
         props.putAll(originalsWithPrefix(prefix));
         return props;
@@ -1149,7 +1191,8 @@ public class StreamsConfig : AbstractConfig {
      *
      * @return a map with the custom properties
      */
-    private Map<string, object> getClientCustomProps() {
+    private Map<string, object> getClientCustomProps()
+{
          Map<string, object> props = originals();
         props.keySet().removeAll(CONFIG.names());
         props.keySet().removeAll(ConsumerConfig.configNames());
@@ -1168,15 +1211,17 @@ public class StreamsConfig : AbstractConfig {
      * @return an configured instance of key Serde class
      */
     @SuppressWarnings("WeakerAccess")
-    public Serde defaultKeySerde() {
+    public Serde defaultKeySerde()
+{
          Object keySerdeConfigSetting = get(DEFAULT_KEY_SERDE_CLASS_CONFIG);
         try {
              ISerde<?> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde.class);
             serde.configure(originals(), true);
             return serde;
-        } catch ( Exception e) {
+        } catch ( Exception e)
+{
             throw new StreamsException(
-                string.format("Failed to configure key serde %s", keySerdeConfigSetting), e);
+                string.Format("Failed to configure key serde %s", keySerdeConfigSetting), e);
         }
     }
 
@@ -1187,30 +1232,35 @@ public class StreamsConfig : AbstractConfig {
      * @return an configured instance of value Serde class
      */
     @SuppressWarnings("WeakerAccess")
-    public Serde defaultValueSerde() {
+    public Serde defaultValueSerde()
+{
          Object valueSerdeConfigSetting = get(DEFAULT_VALUE_SERDE_CLASS_CONFIG);
         try {
              ISerde<?> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde.class);
             serde.configure(originals(), false);
             return serde;
-        } catch ( Exception e) {
+        } catch ( Exception e)
+{
             throw new StreamsException(
-                string.format("Failed to configure value serde %s", valueSerdeConfigSetting), e);
+                string.Format("Failed to configure value serde %s", valueSerdeConfigSetting), e);
         }
     }
 
     @SuppressWarnings("WeakerAccess")
-    public TimestampExtractor defaultTimestampExtractor() {
+    public TimestampExtractor defaultTimestampExtractor()
+{
         return getConfiguredInstance(DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, TimestampExtractor.class);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public DeserializationExceptionHandler defaultDeserializationExceptionHandler() {
+    public DeserializationExceptionHandler defaultDeserializationExceptionHandler()
+{
         return getConfiguredInstance(DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG, DeserializationExceptionHandler.class);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public ProductionExceptionHandler defaultProductionExceptionHandler() {
+    public ProductionExceptionHandler defaultProductionExceptionHandler()
+{
         return getConfiguredInstance(DEFAULT_PRODUCTION_EXCEPTION_HANDLER_CLASS_CONFIG, ProductionExceptionHandler.class);
     }
 
@@ -1222,20 +1272,24 @@ public class StreamsConfig : AbstractConfig {
      * @return client config with any overrides
      */
     private Map<string, object> clientProps( Set<string> configNames,
-                                             Map<string, object> originals) {
+                                             Map<string, object> originals)
+{
         // iterate all client config names, filter out non-client configs from the original
         // property map and use the overridden values when they are not specified by users
          Map<string, object> parsed = new HashMap<>();
-        for ( string configName: configNames) {
-            if (originals.containsKey(configName)) {
-                parsed.put(configName, originals.get(configName));
+        for ( string configName: configNames)
+{
+            if (originals.ContainsKey(configName))
+{
+                parsed.Add(configName, originals[configName)];
             }
         }
 
         return parsed;
     }
 
-    public static void main( string[] args) {
+    public static void main( string[] args)
+{
         System.out.println(CONFIG.toHtmlTable());
     }
 }

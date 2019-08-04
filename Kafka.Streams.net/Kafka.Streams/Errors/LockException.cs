@@ -26,15 +26,18 @@ public class LockException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
-    public LockException( string message) {
+    public LockException( string message)
+{
         super(message);
     }
 
-    public LockException( string message,  Throwable throwable) {
+    public LockException( string message,  Throwable throwable)
+{
         super(message, throwable);
     }
 
-    public LockException( Throwable throwable) {
+    public LockException( Throwable throwable)
+{
         super(throwable);
     }
 

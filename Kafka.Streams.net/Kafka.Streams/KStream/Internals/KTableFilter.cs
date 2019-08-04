@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Predicate;
 import org.apache.kafka.streams.processor.AbstractProcessor;
@@ -23,7 +23,7 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.state.TimestampedKeyValueStore;
 import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
+class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V> {
     private  KTableImpl<K, ?, V> parent;
     private  Predicate<? super K, ? super V> predicate;
     private  bool filterNot;
@@ -33,40 +33,48 @@ class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
     KTableFilter( KTableImpl<K, ?, V> parent,
                   Predicate<? super K, ? super V> predicate,
                   bool filterNot,
-                  string queryableName) {
+                  string queryableName)
+{
         this.parent = parent;
         this.predicate = predicate;
         this.filterNot = filterNot;
         this.queryableName = queryableName;
     }
 
-    @Override
-    public Processor<K, Change<V>> get() {
+    
+    public Processor<K, Change<V>> get()
+{
         return new KTableFilterProcessor();
     }
 
-    @Override
-    public void enableSendingOldValues() {
+    
+    public void enableSendingOldValues()
+{
         parent.enableSendingOldValues();
         sendOldValues = true;
     }
 
-    private V computeValue( K key,  V value) {
+    private V computeValue( K key,  V value)
+{
         V newValue = null;
 
-        if (value != null && (filterNot ^ predicate.test(key, value))) {
+        if (value != null && (filterNot ^ predicate.test(key, value)))
+{
             newValue = value;
         }
 
         return newValue;
     }
 
-    private ValueAndTimestamp<V> computeValue( K key,  ValueAndTimestamp<V> valueAndTimestamp) {
+    private ValueAndTimestamp<V> computeValue( K key,  ValueAndTimestamp<V> valueAndTimestamp)
+{
         ValueAndTimestamp<V> newValueAndTimestamp = null;
 
-        if (valueAndTimestamp != null) {
+        if (valueAndTimestamp != null)
+{
              V value = valueAndTimestamp.value();
-            if (filterNot ^ predicate.test(key, value)) {
+            if (filterNot ^ predicate.test(key, value))
+{
                 newValueAndTimestamp = valueAndTimestamp;
             }
         }
@@ -80,10 +88,12 @@ class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
-            if (queryableName != null) {
+            if (queryableName != null)
+{
                 store = (TimestampedKeyValueStore<K, V>) context.getStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<>(
                     store,
@@ -93,17 +103,20 @@ class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
             }
         }
 
-        @Override
-        public void process( K key,  Change<V> change) {
+        
+        public void process( K key,  Change<V> change)
+{
              V newValue = computeValue(key, change.newValue);
              V oldValue = sendOldValues ? computeValue(key, change.oldValue) : null;
 
-            if (sendOldValues && oldValue == null && newValue == null) {
+            if (sendOldValues && oldValue == null && newValue == null)
+{
                 return; // unnecessary to forward here.
             }
 
-            if (queryableName != null) {
-                store.put(key, ValueAndTimestamp.make(newValue, context().timestamp()));
+            if (queryableName != null)
+{
+                store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
             } else {
                 context().forward(key, new Change<>(newValue, oldValue));
@@ -111,22 +124,27 @@ class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
         }
     }
 
-    @Override
-    public KTableValueGetterSupplier<K, V> view() {
+    
+    public KTableValueGetterSupplier<K, V> view()
+{
         // if the KTable is materialized, use the materialized store to return getter value;
         // otherwise rely on the parent getter and apply filter on-the-fly
-        if (queryableName != null) {
+        if (queryableName != null)
+{
             return new KTableMaterializedValueGetterSupplier<>(queryableName);
         } else {
-            return new KTableValueGetterSupplier<K, V>() {
+            return new KTableValueGetterSupplier<K, V>()
+{
                  KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
 
-                public KTableValueGetter<K, V> get() {
-                    return new KTableFilterValueGetter(parentValueGetterSupplier.get());
+                public KTableValueGetter<K, V> get()
+{
+                    return new KTableFilterValueGetter(parentValueGetterSupplier()];
                 }
 
-                @Override
-                public string[] storeNames() {
+                
+                public string[] storeNames()
+{
                     return parentValueGetterSupplier.storeNames();
                 }
             };
@@ -134,26 +152,30 @@ class KTableFilter<K, V> implements KTableProcessorSupplier<K, V, V> {
     }
 
 
-    private class KTableFilterValueGetter implements KTableValueGetter<K, V> {
+    private class KTableFilterValueGetter : KTableValueGetter<K, V> {
         private  KTableValueGetter<K, V> parentGetter;
 
-        KTableFilterValueGetter( KTableValueGetter<K, V> parentGetter) {
+        KTableFilterValueGetter( KTableValueGetter<K, V> parentGetter)
+{
             this.parentGetter = parentGetter;
         }
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             parentGetter.init(context);
         }
 
-        @Override
-        public ValueAndTimestamp<V> get( K key) {
-            return computeValue(key, parentGetter.get(key));
+        
+        public ValueAndTimestamp<V> get( K key)
+{
+            return computeValue(key, parentGetter[key)];
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             parentGetter.close();
         }
     }

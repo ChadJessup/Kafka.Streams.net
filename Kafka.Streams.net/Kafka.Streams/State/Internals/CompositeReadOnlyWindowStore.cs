@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.internals.ApiUtils;
@@ -54,7 +54,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
 {
         Objects.requireNonNull(key, "key can't be null");
         List<ReadOnlyWindowStore<K, V>> stores = provider.stores(storeName, windowStoreType);
-        for (ReadOnlyWindowStore<K, V> windowStore : stores)
+        foreach (ReadOnlyWindowStore<K, V> windowStore in stores)
 {
             try
 {
@@ -73,7 +73,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
         return null;
     }
 
-    @Override
+    
     @Deprecated
     public WindowStoreIterator<V> fetch(K key,
                                         long timeFrom,
@@ -81,7 +81,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
 {
         Objects.requireNonNull(key, "key can't be null");
         List<ReadOnlyWindowStore<K, V>> stores = provider.stores(storeName, windowStoreType);
-        for (ReadOnlyWindowStore<K, V> windowStore : stores)
+        foreach (ReadOnlyWindowStore<K, V> windowStore in stores)
 {
             try
 {
@@ -106,7 +106,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     @SuppressWarnings("deprecation") // removing fetch(K from, long from, long to) will fix this
     public override WindowStoreIterator<V> fetch(K key,
                                         Instant from,
-                                        Instant to) throws IllegalArgumentException
+                                        Instant to) throws ArgumentException
 {
         return fetch(
             key,
@@ -134,7 +134,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     public override KeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to,
                                                   Instant fromTime,
-                                                  Instant toTime) throws IllegalArgumentException
+                                                  Instant toTime) throws ArgumentException
 {
         return fetch(
             from,
@@ -154,7 +154,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
                 nextIteratorFunction));
     }
 
-    @Override
+    
     @Deprecated
     public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                      long timeTo)
@@ -170,7 +170,7 @@ public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
 
     @SuppressWarnings("deprecation") // removing fetchAll(long from, long to) will fix this
     public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
-                                                     Instant to) throws IllegalArgumentException
+                                                     Instant to) throws ArgumentException
 {
         return fetchAll(
             ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),

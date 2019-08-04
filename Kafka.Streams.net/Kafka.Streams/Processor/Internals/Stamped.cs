@@ -14,43 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import java.util.Objects;
 
-public class Stamped<V> implements Comparable {
+public class Stamped<V> : Comparable {
 
     public V value;
     public long timestamp;
 
-    Stamped(V value, long timestamp) {
+    Stamped(V value, long timestamp)
+{
         this.value = value;
         this.timestamp = timestamp;
     }
 
-    @Override
-    public int compareTo(object other) {
+    
+    public int compareTo(object other)
+{
         long otherTimestamp = ((Stamped<?>) other).timestamp;
 
-        if (timestamp < otherTimestamp) {
+        if (timestamp < otherTimestamp)
+{
             return -1;
-        } else if (timestamp > otherTimestamp) {
+        } else if (timestamp > otherTimestamp)
+{
             return 1;
         }
         return 0;
     }
 
-    @Override
-    public bool equals(object other) {
-        if (other == null || GetType() != other.GetType()) {
+    
+    public bool Equals(object other)
+{
+        if (other == null || GetType() != other.GetType())
+{
             return false;
         }
         long otherTimestamp = ((Stamped<?>) other).timestamp;
         return timestamp == otherTimestamp;
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(timestamp);
     }
 }

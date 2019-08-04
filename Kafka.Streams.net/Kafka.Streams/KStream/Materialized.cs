@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.utils.Bytes;
@@ -65,11 +65,13 @@ public class Materialized<K, V, S : IStateStore> {
     protected Map<string, string> topicConfig = new HashMap<>();
     protected Duration retention;
 
-    private Materialized( StoreSupplier<S> storeSupplier) {
+    private Materialized( StoreSupplier<S> storeSupplier)
+{
         this.storeSupplier = storeSupplier;
     }
 
-    private Materialized( string storeName) {
+    private Materialized( string storeName)
+{
         this.storeName = storeName;
     }
 
@@ -77,7 +79,8 @@ public class Materialized<K, V, S : IStateStore> {
      * Copy constructor.
      * @param materialized  the {@link Materialized} instance to copy.
      */
-    protected Materialized( Materialized<K, V, S> materialized) {
+    protected Materialized( Materialized<K, V, S> materialized)
+{
         this.storeSupplier = materialized.storeSupplier;
         this.storeName = materialized.storeName;
         this.keySerde = materialized.keySerde;
@@ -98,7 +101,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @param <S>       type of the {@link IStateStore}
      * @return a new {@link Materialized} instance with the given storeName
      */
-    public static <K, V, S : IStateStore> Materialized<K, V, S> as( string storeName) {
+    public static <K, V, S : IStateStore> Materialized<K, V, S> as( string storeName)
+{
         Named.validate(storeName);
         return new Materialized<>(storeName);
     }
@@ -115,7 +119,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @param <V>      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
-    public static <K, V> Materialized<K, V, WindowStore<Bytes, byte[]>> as( WindowBytesStoreSupplier supplier) {
+    public static <K, V> Materialized<K, V, WindowStore<Bytes, byte[]>> as( WindowBytesStoreSupplier supplier)
+{
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
     }
@@ -133,7 +138,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @return a new {@link Materialized} instance with the given sup
      * plier
      */
-    public static <K, V> Materialized<K, V, SessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier) {
+    public static <K, V> Materialized<K, V, SessionStore<Bytes, byte[]>> as( SessionBytesStoreSupplier supplier)
+{
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
     }
@@ -146,7 +152,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @param <V>      value type of the store
      * @return a new {@link Materialized} instance with the given supplier
      */
-    public static <K, V> Materialized<K, V, KeyValueStore<Bytes, byte[]>> as( KeyValueBytesStoreSupplier supplier) {
+    public static <K, V> Materialized<K, V, IKeyValueStore<Bytes, byte[]>> as( KeyValueBytesStoreSupplier supplier)
+{
         Objects.requireNonNull(supplier, "supplier can't be null");
         return new Materialized<>(supplier);
     }
@@ -165,7 +172,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @return a new {@link Materialized} instance with the given key and value serdes
      */
     public static <K, V, S : IStateStore> Materialized<K, V, S> with( ISerde<K> keySerde,
-                                                                           ISerde<V> valueSerde) {
+                                                                           ISerde<V> valueSerde)
+{
         return new Materialized<K, V, S>((string) null).withKeySerde(keySerde).withValueSerde(valueSerde);
     }
 
@@ -177,7 +185,8 @@ public class Materialized<K, V, S : IStateStore> {
      *                   it is treated as delete operation
      * @return itself
      */
-    public Materialized<K, V, S> withValueSerde( ISerde<V> valueSerde) {
+    public Materialized<K, V, S> withValueSerde( ISerde<V> valueSerde)
+{
         this.valueSerde = valueSerde;
         return this;
     }
@@ -188,7 +197,8 @@ public class Materialized<K, V, S : IStateStore> {
      *                  serde from configs will be used
      * @return itself
      */
-    public Materialized<K, V, S> withKeySerde( ISerde<K> keySerde) {
+    public Materialized<K, V, S> withKeySerde( ISerde<K> keySerde)
+{
         this.keySerde = keySerde;
         return this;
     }
@@ -201,7 +211,8 @@ public class Materialized<K, V, S : IStateStore> {
      * @param config    any configs that should be applied to the changelog
      * @return itself
      */
-    public Materialized<K, V, S> withLoggingEnabled( Map<string, string> config) {
+    public Materialized<K, V, S> withLoggingEnabled( Map<string, string> config)
+{
         loggingEnabled = true;
         this.topicConfig = config;
         return this;
@@ -211,7 +222,8 @@ public class Materialized<K, V, S : IStateStore> {
      * Disable change logging for the materialized {@link IStateStore}.
      * @return itself
      */
-    public Materialized<K, V, S> withLoggingDisabled() {
+    public Materialized<K, V, S> withLoggingDisabled()
+{
         loggingEnabled = false;
         this.topicConfig.clear();
         return this;
@@ -221,7 +233,8 @@ public class Materialized<K, V, S : IStateStore> {
      * Enable caching for the materialized {@link IStateStore}.
      * @return itself
      */
-    public Materialized<K, V, S> withCachingEnabled() {
+    public Materialized<K, V, S> withCachingEnabled()
+{
         cachingEnabled = true;
         return this;
     }
@@ -230,7 +243,8 @@ public class Materialized<K, V, S : IStateStore> {
      * Disable caching for the materialized {@link IStateStore}.
      * @return itself
      */
-    public Materialized<K, V, S> withCachingDisabled() {
+    public Materialized<K, V, S> withCachingDisabled()
+{
         cachingEnabled = false;
         return this;
     }
@@ -246,14 +260,15 @@ public class Materialized<K, V, S : IStateStore> {
      *
      * @param retention the retention time
      * @return itself
-     * @throws IllegalArgumentException if retention is negative or can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
      */
-    public Materialized<K, V, S> withRetention( Duration retention) throws IllegalArgumentException {
+    public Materialized<K, V, S> withRetention( Duration retention) throws ArgumentException {
          string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
          long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
 
-        if (retenationMs < 0) {
-            throw new IllegalArgumentException("Retention must not be negative.");
+        if (retenationMs < 0)
+{
+            throw new ArgumentException("Retention must not be negative.");
         }
         this.retention = retention;
         return this;

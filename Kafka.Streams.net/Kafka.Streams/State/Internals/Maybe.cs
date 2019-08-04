@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -68,7 +68,7 @@ public class Maybe<T>
         return defined;
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o) return true;
         if (o == null || GetType() != o.GetType()) return false;
@@ -80,14 +80,14 @@ public class Maybe<T>
             (!defined || Objects.Equals(nullableValue, maybe.nullableValue));
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         // Since all undefined maybes are equal, we can hard-code their GetHashCode() to -1.
         // Since all defined null maybes are equal, we can hard-code their GetHashCode() to 0.
-        return defined ? nullableValue == null ? 0 : nullableValue.GetHashCode()() : -1;
+        return defined ? nullableValue == null ? 0 : nullableValue.GetHashCode() : -1;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         if (defined)
 {

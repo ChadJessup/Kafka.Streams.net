@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -42,7 +42,7 @@ class MeteredTimestampedWindowStore<K, V>
     MeteredTimestampedWindowStore(WindowStore<Bytes, byte[]> inner,
                                   long windowSizeMs,
                                   string metricScope,
-                                  Time time,
+                                  ITime time,
                                   ISerde<K> keySerde,
                                   ISerde<ValueAndTimestamp<V>> valueSerde)
 {
@@ -50,7 +50,7 @@ class MeteredTimestampedWindowStore<K, V>
     }
 
     @SuppressWarnings("unchecked")
-    @Override
+    
     void initStoreSerde(IProcessorContext context)
 {
         serdes = new StateSerdes<>(

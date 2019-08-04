@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.annotation.InterfaceStability;
 import org.apache.kafka.common.utils.Bytes;
@@ -59,10 +59,10 @@ public interface KGroupedTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
+     * KafkaStreams streams = [] // counting words
      * ReadOnlyKeyValueStore<string, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
      * string key = "some-word";
-     * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * Long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -82,7 +82,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<K, Long> count( Materialized<K, Long, KeyValueStore<Bytes, byte[]>> materialized);
+    KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Count number of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper) mapped} to
@@ -134,14 +134,16 @@ public interface KGroupedTable<K, V> {
      * Thus, {@code reduce(Reducer, Reducer, string)} can be used to compute aggregate functions like sum.
      * For sum, the adder and subtractor would work as follows:
      * <pre>{@code
-     * public class SumAdder implements Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer newValue) {
+     * public class SumAdder : Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer newValue)
+{
      *     return currentAgg + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor implements Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer oldValue) {
+     * public class SumSubtractor : Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer oldValue)
+{
      *     return currentAgg - oldValue;
      *   }
      * }
@@ -156,10 +158,10 @@ public interface KGroupedTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
+     * KafkaStreams streams = [] // counting words
      * ReadOnlyKeyValueStore<string, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
      * string key = "some-word";
-     * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * Long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -182,7 +184,7 @@ public interface KGroupedTable<K, V> {
      */
     KTable<K, V> reduce( Reducer<V> adder,
                          Reducer<V> subtractor,
-                         Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized);
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
     /**
      * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
      * mapped} to the same key into a new instance of {@link KTable}.
@@ -203,14 +205,16 @@ public interface KGroupedTable<K, V> {
      * Thus, {@code reduce(Reducer, Reducer)} can be used to compute aggregate functions like sum.
      * For sum, the adder and subtractor would work as follows:
      * <pre>{@code
-     * public class SumAdder implements Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer newValue) {
+     * public class SumAdder : Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer newValue)
+{
      *     return currentAgg + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor implements Reducer<Integer> {
-     *   public Integer apply(Integer currentAgg, Integer oldValue) {
+     * public class SumSubtractor : Reducer<Integer> {
+     *   public Integer apply(Integer currentAgg, Integer oldValue)
+{
      *     return currentAgg - oldValue;
      *   }
      * }
@@ -263,20 +267,23 @@ public interface KGroupedTable<K, V> {
      * For sum, the initializer, adder, and subtractor would work as follows:
      * <pre>{@code
      * // in this example, LongSerde.class must be set as value serde in Materialized#withValueSerde
-     * public class SumInitializer implements Initializer<Long> {
-     *   public Long apply() {
+     * public class SumInitializer : Initializer<Long> {
+     *   public Long apply()
+{
      *     return 0L;
      *   }
      * }
      *
-     * public class SumAdder implements Aggregator<string, Integer, Long> {
-     *   public Long apply(string key, Integer newValue, Long aggregate) {
+     * public class SumAdder : Aggregator<string, Integer, Long> {
+     *   public Long apply(string key, Integer newValue, Long aggregate)
+{
      *     return aggregate + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor implements Aggregator<string, Integer, Long> {
-     *   public Long apply(string key, Integer oldValue, Long aggregate) {
+     * public class SumSubtractor : Aggregator<string, Integer, Long> {
+     *   public Long apply(string key, Integer oldValue, Long aggregate)
+{
      *     return aggregate - oldValue;
      *   }
      * }
@@ -291,10 +298,10 @@ public interface KGroupedTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
+     * KafkaStreams streams = [] // counting words
      * ReadOnlyKeyValueStore<string, Long> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>keyValueStore());
      * string key = "some-word";
-     * Long countForWord = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * Long countForWord = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -320,7 +327,7 @@ public interface KGroupedTable<K, V> {
     <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<? super K, ? super V, VR> adder,
                                   Aggregator<? super K, ? super V, VR> subtractor,
-                                  Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Aggregate the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -347,20 +354,23 @@ public interface KGroupedTable<K, V> {
      * For sum, the initializer, adder, and subtractor would work as follows:
      * <pre>{@code
      * // in this example, LongSerde.class must be set as default value serde in StreamsConfig
-     * public class SumInitializer implements Initializer<Long> {
-     *   public Long apply() {
+     * public class SumInitializer : Initializer<Long> {
+     *   public Long apply()
+{
      *     return 0L;
      *   }
      * }
      *
-     * public class SumAdder implements Aggregator<string, Integer, Long> {
-     *   public Long apply(string key, Integer newValue, Long aggregate) {
+     * public class SumAdder : Aggregator<string, Integer, Long> {
+     *   public Long apply(string key, Integer newValue, Long aggregate)
+{
      *     return aggregate + newValue;
      *   }
      * }
      *
-     * public class SumSubtractor implements Aggregator<string, Integer, Long> {
-     *   public Long apply(string key, Integer oldValue, Long aggregate) {
+     * public class SumSubtractor : Aggregator<string, Integer, Long> {
+     *   public Long apply(string key, Integer oldValue, Long aggregate)
+{
      *     return aggregate - oldValue;
      *   }
      * }

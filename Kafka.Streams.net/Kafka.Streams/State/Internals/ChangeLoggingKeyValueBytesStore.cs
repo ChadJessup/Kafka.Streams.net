@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.Utils.Bytes;
@@ -29,13 +29,13 @@ using Kafka.Streams.State.StateSerdes;
 import java.util.List;
 
 public class ChangeLoggingKeyValueBytesStore
-    : WrappedStateStore<KeyValueStore<Bytes, byte[]>, byte[], byte[]>
-    : KeyValueStore<Bytes, byte[]>
+    : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
+    : IKeyValueStore<Bytes, byte[]>
 {
 
     StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-    ChangeLoggingKeyValueBytesStore(KeyValueStore<Bytes, byte[]> inner)
+    ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
 {
         super(inner);
     }
@@ -69,14 +69,14 @@ public class ChangeLoggingKeyValueBytesStore
     public override void put(Bytes key,
                     byte[] value)
 {
-        wrapped().put(key, value);
+        wrapped().Add(key, value);
         log(key, value);
     }
 
     public override byte[] putIfAbsent(Bytes key,
                               byte[] value)
 {
-        byte[] previous = wrapped().putIfAbsent(key, value);
+        byte[] previous = wrapped().putIfAbsent(key, value];
         if (previous == null)
 {
             // then it was absent
@@ -88,7 +88,7 @@ public class ChangeLoggingKeyValueBytesStore
     public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
 {
         wrapped().putAll(entries);
-        for (KeyValue<Bytes, byte[]> entry : entries)
+        foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
             log(entry.key, entry.value);
         }
@@ -96,14 +96,14 @@ public class ChangeLoggingKeyValueBytesStore
 
     public override byte[] delete(Bytes key)
 {
-        byte[] oldValue = wrapped().delete(key);
+        byte[] oldValue = wrapped().delete(key];
         log(key, null);
         return oldValue;
     }
 
     public override byte[] get(Bytes key)
 {
-        return wrapped().get(key);
+        return wrapped()[key];
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

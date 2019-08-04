@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.AbstractIterator;
 using Kafka.Common.Utils.Bytes;
@@ -50,7 +50,7 @@ class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIter
 {
         if (!open)
 {
-            throw new InvalidStateStoreException(string.format("RocksDB iterator for store %s has closed", storeName));
+            throw new InvalidStateStoreException(string.Format("RocksDB iterator for store %s has closed", storeName));
         }
         return super.hasNext();
     }
@@ -73,14 +73,14 @@ class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIter
         return new KeyValue<>(new Bytes(iter.key()), iter.value());
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException("RocksDB iterator does not support remove()");
+        throw new InvalidOperationException("RocksDB iterator does not support Remove()");
     }
 
     public override synchronized void close()
 {
-        openIterators.remove(this);
+        openIterators.Remove(this);
         iter.close();
         open = false;
     }

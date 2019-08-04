@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Windowed;
 import org.apache.kafka.streams.processor.IProcessorContext;
@@ -23,20 +23,22 @@ import org.apache.kafka.streams.processor.internals.InternalProcessorContext;
 import org.apache.kafka.streams.processor.internals.ProcessorNode;
 import org.apache.kafka.streams.state.internals.CacheFlushListener;
 
-class SessionCacheFlushListener<K, V> implements CacheFlushListener<Windowed<K>, V> {
+class SessionCacheFlushListener<K, V> : CacheFlushListener<Windowed<K>, V> {
     private  InternalProcessorContext context;
     private  ProcessorNode myNode;
 
-    SessionCacheFlushListener( IProcessorContext context) {
+    SessionCacheFlushListener( IProcessorContext context)
+{
         this.context = (InternalProcessorContext) context;
         myNode = this.context.currentNode();
     }
 
-    @Override
+    
     public void apply( Windowed<K> key,
                        V newValue,
                        V oldValue,
-                       long timestamp) {
+                       long timestamp)
+{
          ProcessorNode prev = context.currentNode();
         context.setCurrentNode(myNode);
         try {

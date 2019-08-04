@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
@@ -32,24 +32,28 @@ public class ProcessorParameters<K, V> {
     private  string processorName;
 
     public ProcessorParameters( ProcessorSupplier<K, V> processorSupplier,
-                                string processorName) {
+                                string processorName)
+{
 
         this.processorSupplier = processorSupplier;
         this.processorName = processorName;
     }
 
-    public ProcessorSupplier<K, V> processorSupplier() {
+    public ProcessorSupplier<K, V> processorSupplier()
+{
         return processorSupplier;
     }
 
-    public string processorName() {
+    public string processorName()
+{
         return processorName;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "ProcessorParameters{" +
-            "processor class=" + processorSupplier.get().getClass() +
+            "processor class=" + processorSupplier().getClass() +
             ", processor name='" + processorName + '\'' +
             '}';
     }

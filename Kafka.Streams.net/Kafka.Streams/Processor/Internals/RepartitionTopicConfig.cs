@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.config.TopicConfig;
 
@@ -32,13 +32,14 @@ public class RepartitionTopicConfig : InternalTopicConfig {
     private static Dictionary<string, string> REPARTITION_TOPIC_DEFAULT_OVERRIDES;
     static {
         Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
-        tempTopicDefaultOverrides.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
-        tempTopicDefaultOverrides.put(TopicConfig.SEGMENT_BYTES_CONFIG, "52428800");         // 50 MB
-        tempTopicDefaultOverrides.put(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(-1));  // Infinity
+        tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
+        tempTopicDefaultOverrides.Add(TopicConfig.SEGMENT_BYTES_CONFIG, "52428800");         // 50 MB
+        tempTopicDefaultOverrides.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(-1));  // Infinity
         REPARTITION_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
     }
 
-    RepartitionTopicConfig(string name, Dictionary<string, string> topicConfigs) {
+    RepartitionTopicConfig(string name, Dictionary<string, string> topicConfigs)
+{
         super(name, topicConfigs);
     }
 
@@ -49,7 +50,8 @@ public class RepartitionTopicConfig : InternalTopicConfig {
      * @param additionalRetentionMs - added to retention to allow for clock drift etc
      * @return Properties to be used when creating the topic
      */
-    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs) {
+    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
+{
         // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
         Dictionary<string, string> topicConfig = new HashMap<>(REPARTITION_TOPIC_DEFAULT_OVERRIDES);
 
@@ -60,12 +62,15 @@ public class RepartitionTopicConfig : InternalTopicConfig {
         return topicConfig;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         RepartitionTopicConfig that = (RepartitionTopicConfig) o;
@@ -73,13 +78,15 @@ public class RepartitionTopicConfig : InternalTopicConfig {
                Objects.Equals(topicConfigs, that.topicConfigs);
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(name, topicConfigs);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "RepartitionTopicConfig(" +
                 "name=" + name +
                 ", topicConfigs=" + topicConfigs +

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import java.util.Map;
 
@@ -27,30 +27,35 @@ using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.serialization.ByteArraySerializer;
 import org.apache.kafka.streams.KafkaClientSupplier;
 
-public class DefaultKafkaClientSupplier implements KafkaClientSupplier {
-    @Override
-    public Admin getAdminClient(Dictionary<string, object> config) {
+public class DefaultKafkaClientSupplier : KafkaClientSupplier {
+    
+    public Admin getAdminClient(Dictionary<string, object> config)
+{
         // create a new client upon each call; but expect this call to be only triggered once so this should be fine
         return Admin.create(config);
     }
 
-    @Override
-    public Producer<byte[], byte[]> getProducer(Dictionary<string, object> config) {
+    
+    public Producer<byte[], byte[]> getProducer(Dictionary<string, object> config)
+{
         return new KafkaProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
     }
 
-    @Override
-    public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config) {
+    
+    public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
+{
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
-    @Override
-    public Consumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config) {
+    
+    public Consumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
+{
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
-    @Override
-    public Consumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config) {
+    
+    public Consumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
+{
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 }

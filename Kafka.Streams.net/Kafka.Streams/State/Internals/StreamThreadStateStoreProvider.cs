@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
@@ -25,7 +25,7 @@ using Kafka.Streams.State.QueryableStoreTypes;
 using Kafka.Streams.State.TimestampedKeyValueStore;
 using Kafka.Streams.State.TimestampedWindowStore;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java.util.List;
 
@@ -54,8 +54,8 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
             throw new InvalidStateStoreException("Cannot get state store " + storeName + " because the stream thread is " +
                     streamThread.state() + ", not RUNNING");
         }
-        List<T> stores = new ArrayList<>();
-        for (Task streamTask : streamThread.tasks().values())
+        List<T> stores = new List<>();
+        foreach (Task streamTask in streamThread.tasks().values())
 {
             IStateStore store = streamTask.getStore(storeName);
             if (store != null && queryableStoreType.accepts(store))

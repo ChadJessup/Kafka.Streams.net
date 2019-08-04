@@ -25,15 +25,18 @@ public class TaskAssignmentException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
-    public TaskAssignmentException( string message) {
+    public TaskAssignmentException( string message)
+{
         super(message);
     }
 
-    public TaskAssignmentException( string message,  Throwable throwable) {
+    public TaskAssignmentException( string message,  Throwable throwable)
+{
         super(message, throwable);
     }
 
-    public TaskAssignmentException( Throwable throwable) {
+    public TaskAssignmentException( Throwable throwable)
+{
         super(throwable);
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serde;
@@ -65,7 +65,7 @@ public class StateSerdes<K, V>
      * @param topic         the topic name
      * @param keySerde      the serde for keys; cannot be null
      * @param valueSerde    the serde for values; cannot be null
-     * @throws IllegalArgumentException if key or value serde is null
+     * @throws ArgumentException if key or value serde is null
      */
     public StateSerdes(string topic,
                        ISerde<K> keySerde,
@@ -187,7 +187,7 @@ public class StateSerdes<K, V>
 {
             string keyClass = key == null ? "unknown because key is null" : key.GetType().getName();
             throw new StreamsException(
-                    string.format("A serializer (%s) is not compatible to the actual key type " +
+                    string.Format("A serializer (%s) is not compatible to the actual key type " +
                                     "(key type: %s). Change the default Serdes in StreamConfig or " +
                                     "provide correct Serdes via method parameters.",
                             keySerializer().GetType().getName(),
@@ -221,7 +221,7 @@ public class StateSerdes<K, V>
                 valueClass = value == null ? "unknown because value is null" : value.GetType().getName();
             }
             throw new StreamsException(
-                    string.format("A serializer (%s) is not compatible to the actual value type " +
+                    string.Format("A serializer (%s) is not compatible to the actual value type " +
                                     "(value type: %s). Change the default Serdes in StreamConfig or " +
                                     "provide correct Serdes via method parameters.",
                             serializerClass.getName(),

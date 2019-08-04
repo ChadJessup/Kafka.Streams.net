@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.KeyValueMapper;
 import org.apache.kafka.streams.kstream.ValueJoiner;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamKTableJoin<K, R, V1, V2> implements ProcessorSupplier<K, V1> {
+class KStreamKTableJoin<K, R, V1, V2> : ProcessorSupplier<K, V1> {
 
-    private  KeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>() {
-        @Override
-        public K apply( K key,  V1 value) {
+    private  IKeyValueMapper<K, V1, K> keyValueMapper = new IKeyValueMapper<K, V1, K>()
+{
+        
+        public K apply( K key,  V1 value)
+{
             return key;
         }
     };
@@ -33,15 +35,17 @@ class KStreamKTableJoin<K, R, V1, V2> implements ProcessorSupplier<K, V1> {
     private  ValueJoiner<? super V1, ? super V2, R> joiner;
     private  bool leftJoin;
 
-    KStreamKTableJoin( KTableValueGetterSupplier<K, V2> valueGetterSupplier,  ValueJoiner<? super V1, ? super V2, R> joiner,  bool leftJoin) {
+    KStreamKTableJoin( KTableValueGetterSupplier<K, V2> valueGetterSupplier,  ValueJoiner<? super V1, ? super V2, R> joiner,  bool leftJoin)
+{
         this.valueGetterSupplier = valueGetterSupplier;
         this.joiner = joiner;
         this.leftJoin = leftJoin;
     }
 
-    @Override
-    public Processor<K, V1> get() {
-        return new KStreamKTableJoinProcessor<>(valueGetterSupplier.get(), keyValueMapper, joiner, leftJoin);
+    
+    public Processor<K, V1> get()
+{
+        return new KStreamKTableJoinProcessor<>(valueGetterSupplier(), keyValueMapper, joiner, leftJoin];
     }
 
 }

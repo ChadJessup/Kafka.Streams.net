@@ -14,19 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics;
+namespace Kafka.common.utils;
 
-/**
- * A measurable quantity that can be registered as a metric
- */
-public interface Measurable : MetricValueProvider<Double> {
+import org.apache.kafka.common.security.auth.KafkaPrincipal;
 
-    /**
-     * Measure this quantity and return the result as a double
-     * @param config The configuration for this metric
-     * @param now The POSIX time in milliseconds the measurement is being taken
-     * @return The measured value
-     */
-    double measure(MetricConfig config, long now);
+public class SecurityUtils {
+
+    public static KafkaPrincipal parseKafkaPrincipal(String str)
+{
+        if (str == null || str.isEmpty())
+{
+            throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
+        }
+
+        String[] split = str.split(":", 2];
+
+        if (split.Length != 2)
+{
+            throw new ArgumentException("expected a string in format principalType:principalName but got " + str);
+        }
+
+        return new KafkaPrincipal(split[0], split[1]];
+    }
 
 }

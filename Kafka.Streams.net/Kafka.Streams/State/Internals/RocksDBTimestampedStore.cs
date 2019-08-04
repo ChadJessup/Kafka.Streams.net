@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.AbstractIterator;
 using Kafka.Common.Utils.Bytes;
@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -63,31 +63,31 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
         super(name, parentDir);
     }
 
-    @Override
+    
     void openRocksDB(DBOptions dbOptions,
                      ColumnFamilyOptions columnFamilyOptions)
 {
         List<ColumnFamilyDescriptor> columnFamilyDescriptors = asList(
             new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions),
             new ColumnFamilyDescriptor("keyValueWithTimestamp".getBytes(StandardCharsets.UTF_8), columnFamilyOptions));
-        List<ColumnFamilyHandle> columnFamilies = new ArrayList<>(columnFamilyDescriptors.size());
+        List<ColumnFamilyHandle> columnFamilies = new List<>(columnFamilyDescriptors.size());
 
         try
 {
             db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors, columnFamilies);
 
-            ColumnFamilyHandle noTimestampColumnFamily = columnFamilies.get(0);
+            ColumnFamilyHandle noTimestampColumnFamily = columnFamilies[0];
 
             RocksIterator noTimestampsIter = db.newIterator(noTimestampColumnFamily);
             noTimestampsIter.seekToFirst();
             if (noTimestampsIter.isValid())
 {
                 log.info("Opening store {} in upgrade mode", name);
-                dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies.get(1));
+                dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies[1)];
             } else
 {
                 log.info("Opening store {} in regular mode", name);
-                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies.get(1));
+                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[1)];
                 noTimestampColumnFamily.close();
             }
             noTimestampsIter.close();
@@ -98,16 +98,16 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                 try
 {
                     db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors.subList(0, 1), columnFamilies);
-                    columnFamilies.add(db.createColumnFamily(columnFamilyDescriptors.get(1)));
+                    columnFamilies.add(db.createColumnFamily(columnFamilyDescriptors[1))];
                 } catch (RocksDBException fatal)
 {
-                    throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.toString(), fatal);
+                    throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), fatal);
                 }
                 log.info("Opening store {} in upgrade mode", name);
-                dbAccessor = new DualColumnFamilyAccessor(columnFamilies.get(0), columnFamilies.get(1));
+                dbAccessor = new DualColumnFamilyAccessor(columnFamilies[0), columnFamilies[1)];
             } else
 {
-                throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.toString(), e);
+                throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
             }
         }
     }
@@ -126,7 +126,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             this.newColumnFamily = newColumnFamily;
         }
 
-        @Override
+        
         public void put(byte[] key,
                         byte[] valueWithTimestamp)
 {
@@ -160,7 +160,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                 }
                 try
 {
-                    db.put(newColumnFamily, wOptions, key, valueWithTimestamp);
+                    db.Add(newColumnFamily, wOptions, key, valueWithTimestamp);
                 } catch (RocksDBException e)
 {
                     // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -169,30 +169,30 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             }
         }
 
-        @Override
+        
         public void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
                                  WriteBatch batch) throws RocksDBException
 {
-            for (KeyValue<Bytes, byte[]> entry : entries)
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
                 Objects.requireNonNull(entry.key, "key cannot be null");
-                addToBatch(entry.key.get(), entry.value, batch);
+                addToBatch(entry.key(), entry.value, batch];
             }
         }
 
-        @Override
-        public byte[] get(byte[] key) throws RocksDBException
+        
+        public byte[] get(byte[] key] throws RocksDBException
 {
-            byte[] valueWithTimestamp = db.get(newColumnFamily, key);
+            byte[] valueWithTimestamp = db[newColumnFamily, key];
             if (valueWithTimestamp != null)
 {
                 return valueWithTimestamp;
             }
 
-            byte[] plainValue = db.get(oldColumnFamily, key);
+            byte[] plainValue = db[oldColumnFamily, key];
             if (plainValue != null)
 {
-                byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue);
+                byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue];
                 // this does only work, because the changelog topic contains correct data already
                 // for other format changes, we cannot take this short cut and can only migrate data
                 // from old to new store on put()
@@ -203,16 +203,16 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             return null;
         }
 
-        @Override
-        public byte[] getOnly(byte[] key) throws RocksDBException
+        
+        public byte[] getOnly(byte[] key] throws RocksDBException
 {
-            byte[] valueWithTimestamp = db.get(newColumnFamily, key);
+            byte[] valueWithTimestamp = db[newColumnFamily, key];
             if (valueWithTimestamp != null)
 {
                 return valueWithTimestamp;
             }
 
-            byte[] plainValue = db.get(oldColumnFamily, key);
+            byte[] plainValue = db[oldColumnFamily, key];
             if (plainValue != null)
 {
                 return convertToTimestampedFormat(plainValue);
@@ -221,7 +221,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             return null;
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
 {
@@ -233,7 +233,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                 to);
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> all()
 {
             RocksIterator innerIterWithTimestamp = db.newIterator(newColumnFamily);
@@ -243,31 +243,31 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             return new RocksDBDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
         }
 
-        @Override
+        
         public long approximateNumEntries() throws RocksDBException
 {
             return db.getLongProperty(oldColumnFamily, "rocksdb.estimate-num-keys")
                 + db.getLongProperty(newColumnFamily, "rocksdb.estimate-num-keys");
         }
 
-        @Override
+        
         public void flush() throws RocksDBException
 {
             db.flush(fOptions, oldColumnFamily);
             db.flush(fOptions, newColumnFamily);
         }
 
-        @Override
+        
         public void prepareBatchForRestore(Collection<KeyValue<byte[], byte[]>> records,
                                            WriteBatch batch) throws RocksDBException
 {
-            for (KeyValue<byte[], byte[]> record : records)
+            foreach (KeyValue<byte[], byte[]> record in records)
 {
                 addToBatch(record.key, record.value, batch);
             }
         }
 
-        @Override
+        
         public void addToBatch(byte[] key,
                                byte[] value,
                                WriteBatch batch) throws RocksDBException
@@ -279,18 +279,18 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             } else
 {
                 batch.delete(oldColumnFamily, key);
-                batch.put(newColumnFamily, key, value);
+                batch.Add(newColumnFamily, key, value);
             }
         }
 
-        @Override
+        
         public void close()
 {
             oldColumnFamily.close();
             newColumnFamily.close();
         }
 
-        @Override
+        
         @SuppressWarnings("deprecation")
         public void toggleDbForBulkLoading()
 {
@@ -339,23 +339,23 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             this.storeName = storeName;
         }
 
-        @Override
+        
         public synchronized bool hasNext()
 {
             if (!open)
 {
-                throw new InvalidStateStoreException(string.format("RocksDB iterator for store %s has closed", storeName));
+                throw new InvalidStateStoreException(string.Format("RocksDB iterator for store %s has closed", storeName));
             }
             return super.hasNext();
         }
 
-        @Override
+        
         public synchronized KeyValue<Bytes, byte[]> next()
 {
             return super.next();
         }
 
-        @Override
+        
         public KeyValue<Bytes, byte[]> makeNext()
 {
             if (nextNoTimestamp == null && iterNoTimestamp.isValid())
@@ -405,22 +405,22 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
             return next;
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            throw new UnsupportedOperationException("RocksDB iterator does not support remove()");
+            throw new InvalidOperationException("RocksDB iterator does not support Remove()");
         }
 
-        @Override
+        
         public synchronized void close()
 {
-            openIterators.remove(this);
+            openIterators.Remove(this);
             iterNoTimestamp.close();
             iterWithTimestamp.close();
             open = false;
         }
 
-        @Override
+        
         public Bytes peekNextKey()
 {
             if (!hasNext())
@@ -446,16 +446,16 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                                    Bytes to)
 {
             super(storeName, iterWithTimestamp, iterNoTimestamp);
-            iterWithTimestamp.seek(from.get());
-            iterNoTimestamp.seek(from.get());
-            upperBoundKey = to.get();
+            iterWithTimestamp.seek(from()];
+            iterNoTimestamp.seek(from()];
+            upperBoundKey = to[];
             if (upperBoundKey == null)
 {
                 throw new NullPointerException("RocksDBDualCFRangeIterator: upperBoundKey is null for key " + to);
             }
         }
 
-        @Override
+        
         public KeyValue<Bytes, byte[]> makeNext()
 {
             KeyValue<Bytes, byte[]> next = super.makeNext();
@@ -465,7 +465,7 @@ public class RocksDBTimestampedStore : RocksDBStore : TimestampedBytesStore
                 return allDone();
             } else
 {
-                if (comparator.compare(next.key.get(), upperBoundKey) <= 0)
+                if (comparator.compare(next.key(), upperBoundKey) <= 0)
 {
                     return next;
                 } else

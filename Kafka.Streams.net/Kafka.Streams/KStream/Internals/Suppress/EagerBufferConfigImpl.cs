@@ -14,53 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Suppressed;
 
 import java.util.Objects;
 
-public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> implements Suppressed.EagerBufferConfig {
+public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig {
 
     private  long maxRecords;
     private  long maxBytes;
 
-    public EagerBufferConfigImpl( long maxRecords,  long maxBytes) {
+    public EagerBufferConfigImpl( long maxRecords,  long maxBytes)
+{
         this.maxRecords = maxRecords;
         this.maxBytes = maxBytes;
     }
 
-    @Override
-    public Suppressed.EagerBufferConfig withMaxRecords( long recordLimit) {
+    
+    public Suppressed.EagerBufferConfig withMaxRecords( long recordLimit)
+{
         return new EagerBufferConfigImpl(recordLimit, maxBytes);
     }
 
-    @Override
-    public Suppressed.EagerBufferConfig withMaxBytes( long byteLimit) {
+    
+    public Suppressed.EagerBufferConfig withMaxBytes( long byteLimit)
+{
         return new EagerBufferConfigImpl(maxRecords, byteLimit);
     }
 
-    @Override
-    public long maxRecords() {
+    
+    public long maxRecords()
+{
         return maxRecords;
     }
 
-    @Override
-    public long maxBytes() {
+    
+    public long maxBytes()
+{
         return maxBytes;
     }
 
-    @Override
-    public BufferFullStrategy bufferFullStrategy() {
+    
+    public BufferFullStrategy bufferFullStrategy()
+{
         return BufferFullStrategy.EMIT;
     }
 
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          EagerBufferConfigImpl that = (EagerBufferConfigImpl) o;
@@ -68,13 +77,15 @@ public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBuffer
             maxBytes == that.maxBytes;
     }
 
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(maxRecords, maxBytes);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "EagerBufferConfigImpl{maxRecords=" + maxRecords + ", maxBytes=" + maxBytes + '}';
     }
 }

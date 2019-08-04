@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.LogContext;
@@ -98,7 +98,7 @@ public class ThreadCache
      */
     public static string taskIDfromCacheName(string cacheName)
 {
-        string[] tokens = cacheName.split("-", 2);
+        string[] tokens = cacheName.split("-", 2];
         return tokens[0];
     }
 
@@ -109,7 +109,7 @@ public class ThreadCache
      */
     public static string underlyingStoreNamefromCacheName(string cacheName)
 {
-        string[] tokens = cacheName.split("-", 2);
+        string[] tokens = cacheName.split("-", 2];
         return tokens[1];
     }
 
@@ -157,7 +157,7 @@ public class ThreadCache
 {
             return null;
         }
-        return cache.get(key);
+        return cache[key];
     }
 
     public void put(string namespace, Bytes key, LRUCacheEntry value)
@@ -165,7 +165,7 @@ public class ThreadCache
         numPuts++;
 
         NamedCache cache = getOrCreateCache(namespace);
-        cache.put(key, value);
+        cache.Add(key, value);
         maybeEvict(namespace);
     }
 
@@ -185,7 +185,7 @@ public class ThreadCache
 
     public void putAll(string namespace, List<KeyValue<Bytes, LRUCacheEntry>> entries)
 {
-        for (KeyValue<Bytes, LRUCacheEntry> entry : entries)
+        foreach (KeyValue<Bytes, LRUCacheEntry> entry in entries)
 {
             put(namespace, entry.key, entry.value);
         }
@@ -225,7 +225,7 @@ public class ThreadCache
     public long size()
 {
         long size = 0;
-        for (NamedCache cache : caches.values())
+        foreach (NamedCache cache in caches.values())
 {
             size += cache.size();
             if (isOverflowing(size))
@@ -244,7 +244,7 @@ public class ThreadCache
     long sizeBytes()
 {
         long sizeInBytes = 0;
-        for (NamedCache namedCache : caches.values())
+        foreach (NamedCache namedCache in caches.values())
 {
             sizeInBytes += namedCache.sizeInBytes();
             if (isOverflowing(sizeInBytes))
@@ -257,7 +257,7 @@ public class ThreadCache
 
     synchronized void close(string namespace)
 {
-        NamedCache removed = caches.remove(namespace);
+        NamedCache removed = caches.Remove(namespace);
         if (removed != null)
 {
             removed.close();
@@ -290,16 +290,16 @@ public class ThreadCache
 
     private synchronized NamedCache getCache(string namespace)
 {
-        return caches.get(namespace);
+        return caches[namespace];
     }
 
     private synchronized NamedCache getOrCreateCache(string name)
 {
-        NamedCache cache = caches.get(name);
+        NamedCache cache = caches[name];
         if (cache == null)
 {
             cache = new NamedCache(name, this.metrics);
-            caches.put(name, cache);
+            caches.Add(name, cache);
         }
         return cache;
     }
@@ -333,7 +333,7 @@ public class ThreadCache
             return nextEntry;
         }
 
-        @Override
+        
         public bool hasNext()
 {
             if (nextEntry != null)
@@ -349,7 +349,7 @@ public class ThreadCache
             return nextEntry != null;
         }
 
-        @Override
+        
         public KeyValue<Bytes, LRUCacheEntry> next()
 {
             if (!hasNext())
@@ -374,13 +374,13 @@ public class ThreadCache
             nextEntry = new KeyValue<>(cacheKey, entry);
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            throw new UnsupportedOperationException("remove not supported by MemoryLRUCacheBytesIterator");
+            throw new InvalidOperationException("Remove not supported by MemoryLRUCacheBytesIterator");
         }
 
-        @Override
+        
         public void close()
 {
             // do nothing

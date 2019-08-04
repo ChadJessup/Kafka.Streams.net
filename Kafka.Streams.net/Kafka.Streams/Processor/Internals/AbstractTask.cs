@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -39,7 +39,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public abstract class AbstractTask implements Task {
+public abstract class AbstractTask : Task {
 
     TaskId id;
     string applicationId;
@@ -69,7 +69,8 @@ public abstract class AbstractTask implements Task {
                  ChangelogReader changelogReader,
                  bool isStandby,
                  StateDirectory stateDirectory,
-                 StreamsConfig config) {
+                 StreamsConfig config)
+{
         this.id = id;
         this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
         this.partitions = new HashSet<>(partitions);
@@ -78,7 +79,7 @@ public abstract class AbstractTask implements Task {
         this.eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
         this.stateDirectory = stateDirectory;
 
-        this.logPrefix = string.format("%s [%s] ", isStandby ? "standby-task" : "task", id);
+        this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id];
         this.logContext = new LogContext(logPrefix);
         this.log = logContext.logger(GetType());
 
@@ -93,38 +94,45 @@ public abstract class AbstractTask implements Task {
                 changelogReader,
                 eosEnabled,
                 logContext);
-        } catch (IOException e) {
-            throw new ProcessorStateException(string.format("%sError while creating the state manager", logPrefix), e);
+        } catch (IOException e)
+{
+            throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
         }
     }
 
-    @Override
-    public TaskId id() {
+    
+    public TaskId id()
+{
         return id;
     }
 
-    @Override
-    public string applicationId() {
+    
+    public string applicationId()
+{
         return applicationId;
     }
 
-    @Override
-    public Set<TopicPartition> partitions() {
+    
+    public Set<TopicPartition> partitions()
+{
         return partitions;
     }
 
-    @Override
-    public ProcessorTopology topology() {
+    
+    public ProcessorTopology topology()
+{
         return topology;
     }
 
-    @Override
-    public IProcessorContext context() {
+    
+    public IProcessorContext context()
+{
         return processorContext;
     }
 
-    @Override
-    public IStateStore getStore(string name) {
+    
+    public IStateStore getStore(string name)
+{
         return stateMgr.getStore(name);
     }
 
@@ -134,12 +142,14 @@ public abstract class AbstractTask implements Task {
      *
      * @return A string representation of the StreamTask instance.
      */
-    @Override
-    public string toString() {
-        return toString("");
+    
+    public string ToString()
+{
+        return ToString("");
     }
 
-    public bool isEosEnabled() {
+    public bool isEosEnabled()
+{
         return eosEnabled;
     }
 
@@ -149,50 +159,61 @@ public abstract class AbstractTask implements Task {
      *
      * @return A string representation of the Task instance.
      */
-    public string toString(string indent) {
+    public string ToString(string indent)
+{
         StringBuilder sb = new StringBuilder();
-        sb.append(indent);
-        sb.append("TaskId: ");
-        sb.append(id);
-        sb.append("\n");
+        sb.Append(indent);
+        sb.Append("TaskId: ");
+        sb.Append(id);
+        sb.Append("\n");
 
         // print topology
-        if (topology != null) {
-            sb.append(indent).append(topology.toString(indent + "\t"));
+        if (topology != null)
+{
+            sb.Append(indent).Append(topology.ToString(indent + "\t"));
         }
 
         // print assigned partitions
-        if (partitions != null && !partitions.isEmpty()) {
-            sb.append(indent).append("Partitions [");
-            for (TopicPartition topicPartition : partitions) {
-                sb.append(topicPartition.toString()).append(", ");
+        if (partitions != null && !partitions.isEmpty())
+{
+            sb.Append(indent).Append("Partitions ["];
+            foreach (TopicPartition topicPartition in partitions)
+{
+                sb.Append(topicPartition.ToString()).Append(", ");
             }
-            sb.setLength(sb.length() - 2);
-            sb.append("]\n");
+            sb.setLength(sb.Length - 2);
+            sb.Append("]\n");
         }
-        return sb.toString();
+        return sb.ToString();
     }
 
-    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets() {
+    protected Dictionary<TopicPartition, Long> activeTaskCheckpointableOffsets()
+{
         return Collections.emptyMap();
     }
 
-    protected void updateOffsetLimits() {
-        for (TopicPartition partition : partitions) {
+    protected void updateOffsetLimits()
+{
+        foreach (TopicPartition partition in partitions)
+{
             try {
                 OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
                 long offset = metadata != null ? metadata.offset() : 0L;
                 stateMgr.putOffsetLimit(partition, offset);
 
-                if (log.isTraceEnabled()) {
+                if (log.isTraceEnabled())
+{
                     log.trace("Updating store offset limits {} for changelog {}", offset, partition);
                 }
-            } catch (AuthorizationException e) {
-                throw new ProcessorStateException(string.format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
-            } catch (WakeupException e) {
+            } catch (AuthorizationException e)
+{
+                throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e];
+            } catch (WakeupException e)
+{
                 throw e;
-            } catch (KafkaException e) {
-                throw new ProcessorStateException(string.format("task [%s] Failed to initialize offsets for %s", id, partition), e);
+            } catch (KafkaException e)
+{
+                throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e];
             }
         }
     }
@@ -200,7 +221,8 @@ public abstract class AbstractTask implements Task {
     /**
      * Flush all state stores owned by this task
      */
-    void flushState() {
+    void flushState()
+{
         stateMgr.flush();
     }
 
@@ -209,18 +231,22 @@ public abstract class AbstractTask implements Task {
      *
      * @throws StreamsException If the store's change log does not contain the partition
      */
-    void registerStateStores() {
-        if (topology.stateStores().isEmpty()) {
+    void registerStateStores()
+{
+        if (topology.stateStores().isEmpty())
+{
             return;
         }
 
         try {
-            if (!stateDirectory.lock(id)) {
-                throw new LockException(string.format("%sFailed to lock the state directory for task %s", logPrefix, id));
+            if (!stateDirectory.lock(id))
+{
+                throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
             }
-        } catch (IOException e) {
+        } catch (IOException e)
+{
             throw new StreamsException(
-                string.format("%sFatal error while trying to lock the state directory for task %s",
+                string.Format("%sFatal error while trying to lock the state directory for task %s",
                 logPrefix, id));
         }
         log.trace("Initializing state stores");
@@ -228,14 +254,16 @@ public abstract class AbstractTask implements Task {
         // set initial offset limits
         updateOffsetLimits();
 
-        for (IStateStore store : topology.stateStores()) {
+        foreach (IStateStore store in topology.stateStores())
+{
             log.trace("Initializing store {}", store.name());
             processorContext.uninitialize();
             store.init(processorContext, store);
         }
     }
 
-    void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions) {
+    void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions)
+{
         stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
     }
 
@@ -247,35 +275,43 @@ public abstract class AbstractTask implements Task {
         log.trace("Closing state manager");
         try {
             stateMgr.close(clean);
-        } catch (ProcessorStateException e) {
+        } catch (ProcessorStateException e)
+{
             exception = e;
         } finally {
             try {
                 stateDirectory.unlock(id);
-            } catch (IOException e) {
-                if (exception == null) {
-                    exception = new ProcessorStateException(string.format("%sFailed to release state dir lock", logPrefix), e);
+            } catch (IOException e)
+{
+                if (exception == null)
+{
+                    exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
                 }
             }
         }
-        if (exception != null) {
+        if (exception != null)
+{
             throw exception;
         }
     }
 
-    public bool isClosed() {
+    public bool isClosed()
+{
         return taskClosed;
     }
 
-    public bool commitNeeded() {
+    public bool commitNeeded()
+{
         return commitNeeded;
     }
 
-    public bool hasStateStores() {
+    public bool hasStateStores()
+{
         return !topology.stateStores().isEmpty();
     }
 
-    public Collection<TopicPartition> changelogPartitions() {
+    public Collection<TopicPartition> changelogPartitions()
+{
         return stateMgr.changelogPartitions();
     }
 }

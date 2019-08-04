@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 
@@ -41,7 +41,7 @@ public class BufferKey : Comparable<BufferKey>
         return key;
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -56,7 +56,7 @@ public class BufferKey : Comparable<BufferKey>
             Objects.Equals(key, bufferKey.key);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         return Objects.hash(time, key);
     }
@@ -68,7 +68,7 @@ public class BufferKey : Comparable<BufferKey>
         return timeComparison == 0 ? key.compareTo(o.key) : timeComparison;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "BufferKey{" +
             "key=" + key +

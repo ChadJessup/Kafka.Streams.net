@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.processor.To;
@@ -25,20 +25,22 @@ import org.apache.kafka.streams.state.internals.CacheFlushListener;
 
 import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
 
-class TimestampedCacheFlushListener<K, V> implements CacheFlushListener<K, ValueAndTimestamp<V>> {
+class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>> {
     private  InternalProcessorContext context;
     private  ProcessorNode myNode;
 
-    TimestampedCacheFlushListener( IProcessorContext context) {
+    TimestampedCacheFlushListener( IProcessorContext context)
+{
         this.context = (InternalProcessorContext) context;
         myNode = this.context.currentNode();
     }
 
-    @Override
+    
     public void apply( K key,
                        ValueAndTimestamp<V> newValue,
                        ValueAndTimestamp<V> oldValue,
-                       long timestamp) {
+                       long timestamp)
+{
          ProcessorNode prev = context.currentNode();
         context.setCurrentNode(myNode);
         try {

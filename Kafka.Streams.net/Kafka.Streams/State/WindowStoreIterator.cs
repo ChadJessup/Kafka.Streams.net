@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 import java.time.Instant;
 using Kafka.Streams.KeyValue;
@@ -33,6 +33,6 @@ import java.io.Closeable;
 public interface WindowStoreIterator<V> : KeyValueIterator<Long, V>, Closeable
 {
 
-    @Override
+    
     void close();
 }

@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.TopicPartition;
 import org.apache.kafka.streams.processor.StateRestoreListener;
 import org.apache.kafka.streams.state.internals.RecordConverter;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 
 public class StateRestorer {
@@ -46,7 +46,8 @@ public class StateRestorer {
                   long offsetLimit,
                   bool persistent,
                   string storeName,
-                  RecordConverter recordConverter) {
+                  RecordConverter recordConverter)
+{
         this.partition = partition;
         this.compositeRestoreListener = compositeRestoreListener;
         this.checkpointOffset = checkpoint == null ? NO_CHECKPOINT : checkpoint;
@@ -56,83 +57,103 @@ public class StateRestorer {
         this.recordConverter = recordConverter;
     }
 
-    public TopicPartition partition() {
+    public TopicPartition partition()
+{
         return partition;
     }
 
-    public string storeName() {
+    public string storeName()
+{
         return storeName;
     }
 
-    long checkpoint() {
+    long checkpoint()
+{
         return checkpointOffset;
     }
 
-    void setCheckpointOffset(long checkpointOffset) {
+    void setCheckpointOffset(long checkpointOffset)
+{
         this.checkpointOffset = checkpointOffset;
     }
 
-    void restoreStarted() {
+    void restoreStarted()
+{
         compositeRestoreListener.onRestoreStart(partition, storeName, startingOffset, endingOffset);
     }
 
-    void restoreDone() {
+    void restoreDone()
+{
         compositeRestoreListener.onRestoreEnd(partition, storeName, restoredNumRecords());
     }
 
-    void restoreBatchCompleted(long currentRestoredOffset, int numRestored) {
+    void restoreBatchCompleted(long currentRestoredOffset, int numRestored)
+{
         compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
     }
 
-    void restore(Collection<ConsumerRecord<byte[], byte[]>> records) {
-        Collection<ConsumerRecord<byte[], byte[]>> convertedRecords = new ArrayList<>(records.size());
-        for (ConsumerRecord<byte[], byte[]> record : records) {
+    void restore(Collection<ConsumerRecord<byte[], byte[]>> records)
+{
+        Collection<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(records.size()];
+        foreach (ConsumerRecord<byte[], byte[]> record in records)
+{
             convertedRecords.add(recordConverter.convert(record));
         }
         compositeRestoreListener.restoreBatch(convertedRecords);
     }
 
-    bool isPersistent() {
+    bool isPersistent()
+{
         return persistent;
     }
 
-    void setUserRestoreListener(StateRestoreListener userRestoreListener) {
+    void setUserRestoreListener(StateRestoreListener userRestoreListener)
+{
         this.compositeRestoreListener.setUserRestoreListener(userRestoreListener);
     }
 
-    void setRestoredOffset(long restoredOffset) {
-        this.restoredOffset = Math.min(offsetLimit, restoredOffset);
+    void setRestoredOffset(long restoredOffset)
+{
+        this.restoredOffset = Math.Min(offsetLimit, restoredOffset);
     }
 
-    void setStartingOffset(long startingOffset) {
-        this.startingOffset = Math.min(offsetLimit, startingOffset);
+    void setStartingOffset(long startingOffset)
+{
+        this.startingOffset = Math.Min(offsetLimit, startingOffset);
     }
 
-    void setEndingOffset(long endingOffset) {
-        this.endingOffset = Math.min(offsetLimit, endingOffset);
+    void setEndingOffset(long endingOffset)
+{
+        this.endingOffset = Math.Min(offsetLimit, endingOffset);
     }
 
-    long startingOffset() {
+    long startingOffset()
+{
         return startingOffset;
     }
 
-    bool hasCompleted(long recordOffset, long endOffset) {
+    bool hasCompleted(long recordOffset, long endOffset)
+{
         return endOffset == 0 || recordOffset >= readTo(endOffset);
     }
 
-    Long restoredOffset() {
+    Long restoredOffset()
+{
         return restoredOffset;
     }
 
-    long restoredNumRecords() {
+    long restoredNumRecords()
+{
         return restoredOffset - startingOffset;
     }
 
-    long offsetLimit() {
+    long offsetLimit()
+{
         return offsetLimit;
     }
 
-    private Long readTo(long endOffset) {
+    private Long readTo(long endOffset)
+{
         return endOffset < offsetLimit ? endOffset : offsetLimit;
     }
 

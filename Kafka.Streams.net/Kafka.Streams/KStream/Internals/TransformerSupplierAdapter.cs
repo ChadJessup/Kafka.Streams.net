@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import java.util.Collections;
 
@@ -23,36 +23,43 @@ import org.apache.kafka.streams.kstream.Transformer;
 import org.apache.kafka.streams.kstream.TransformerSupplier;
 import org.apache.kafka.streams.processor.IProcessorContext;
 
-public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> implements TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> {
+public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> {
 
     private TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
 
-    public TransformerSupplierAdapter( TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier) {
+    public TransformerSupplierAdapter( TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier)
+{
         this.transformerSupplier = transformerSupplier;
     }
 
-    @Override
-    public Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> get() {
-        return new Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>() {
+    
+    public Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> get()
+{
+        return new Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>()
+{
 
-            private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier.get();
+            private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier[];
 
-            @Override
-            public void init( IProcessorContext context) {
+            
+            public void init( IProcessorContext context)
+{
                 transformer.init(context);
             }
 
-            @Override
-            public Iterable<KeyValue<KOut, VOut>> transform( KIn key,  VIn value) {
+            
+            public Iterable<KeyValue<KOut, VOut>> transform( KIn key,  VIn value)
+{
                  KeyValue<KOut, VOut> pair = transformer.transform(key, value);
-                if (pair != null) {
+                if (pair != null)
+{
                     return Collections.singletonList(pair);
                 }
                 return Collections.emptyList();
             }
 
-            @Override
-            public void close() {
+            
+            public void close()
+{
                 transformer.close();
             }
         };

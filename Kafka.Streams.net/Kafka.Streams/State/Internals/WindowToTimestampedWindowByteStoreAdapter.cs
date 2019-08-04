@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.kstream.Windowed;
@@ -37,7 +37,7 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
 {
         if (!store.persistent())
 {
-            throw new IllegalArgumentException("Provided store must be a persistent store, but it is not.");
+            throw new ArgumentException("Provided store must be a persistent store, but it is not.");
         }
         this.store = store;
     }
@@ -45,14 +45,14 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
     public override void put(Bytes key,
                     byte[] valueWithTimestamp)
 {
-        store.put(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+        store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
     }
 
     public override void put(Bytes key,
                     byte[] valueWithTimestamp,
                     long windowStartTimestamp)
 {
-        store.put(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp), windowStartTimestamp);
+        store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp), windowStartTimestamp);
     }
 
     public override byte[] fetch(Bytes key,
@@ -61,7 +61,7 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
         return convertToTimestampedFormat(store.fetch(key, time));
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public WindowStoreIterator<byte[]> fetch(Bytes key,
                                              long timeFrom,
@@ -77,7 +77,7 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
         return new WindowToTimestampedWindowIteratorAdapter(store.fetch(key, from, to));
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                            Bytes to,
@@ -100,7 +100,7 @@ class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
         return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
     }
 
-    @Override
+    
     @SuppressWarnings("deprecation")
     public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -41,7 +41,7 @@ public class TimestampedWindowStoreBuilder<K, V>
     public TimestampedWindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
                                          ISerde<K> keySerde,
                                          ISerde<V> valueSerde,
-                                         Time time)
+                                         ITime time)
 {
         super(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time);
         Objects.requireNonNull(storeSupplier, "bytesStoreSupplier can't be null");
@@ -50,7 +50,7 @@ public class TimestampedWindowStoreBuilder<K, V>
 
     public override TimestampedWindowStore<K, V> build()
 {
-        WindowStore<Bytes, byte[]> store = storeSupplier.get();
+        WindowStore<Bytes, byte[]> store = storeSupplier[];
         if (!(store is TimestampedBytesStore))
 {
             if (store.persistent())
@@ -107,34 +107,34 @@ public class TimestampedWindowStoreBuilder<K, V>
 {
             if (wrapped.persistent())
 {
-                throw new IllegalArgumentException("Provided store must not be a persistent store, but it is.");
+                throw new ArgumentException("Provided store must not be a persistent store, but it is.");
             }
             this.wrapped = wrapped;
         }
 
-        @Override
+        
         public void init(IProcessorContext context,
                          IStateStore root)
 {
             wrapped.init(context, root);
         }
 
-        @Override
+        
         public void put(Bytes key,
                         byte[] value)
 {
-            wrapped.put(key, value);
+            wrapped.Add(key, value);
         }
 
-        @Override
+        
         public void put(Bytes key,
                         byte[] value,
                         long windowStartTimestamp)
 {
-            wrapped.put(key, value, windowStartTimestamp);
+            wrapped.Add(key, value, windowStartTimestamp);
         }
 
-        @Override
+        
         public byte[] fetch(Bytes key,
                             long time)
 {
@@ -142,7 +142,7 @@ public class TimestampedWindowStoreBuilder<K, V>
         }
 
         @SuppressWarnings("deprecation")
-        @Override
+        
         public WindowStoreIterator<byte[]> fetch(Bytes key,
                                                  long timeFrom,
                                                  long timeTo)
@@ -151,7 +151,7 @@ public class TimestampedWindowStoreBuilder<K, V>
         }
 
         @SuppressWarnings("deprecation")
-        @Override
+        
         public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
@@ -161,43 +161,43 @@ public class TimestampedWindowStoreBuilder<K, V>
         }
 
         @SuppressWarnings("deprecation")
-        @Override
+        
         public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                                   long timeTo)
 {
             return wrapped.fetchAll(timeFrom, timeTo);
         }
 
-        @Override
+        
         public KeyValueIterator<Windowed<Bytes>, byte[]> all()
 {
             return wrapped.all();
         }
 
-        @Override
+        
         public void flush()
 {
             wrapped.flush();
         }
 
-        @Override
+        
         public void close()
 {
             wrapped.close();
         }
-        @Override
+        
         public bool isOpen()
 {
             return wrapped.isOpen();
         }
 
-        @Override
+        
         public string name()
 {
             return wrapped.name();
         }
 
-        @Override
+        
         public bool persistent()
 {
             return false;

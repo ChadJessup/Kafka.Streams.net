@@ -14,32 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.Joined;
 
 public class JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
 
-    JoinedInternal( Joined<K, V, VO> joined) {
+    JoinedInternal( Joined<K, V, VO> joined)
+{
         super(joined);
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valueSerde;
     }
 
-    public ISerde<VO> otherValueSerde() {
+    public ISerde<VO> otherValueSerde()
+{
         return otherValueSerde;
     }
 
-    @Override // TODO remove annotation when super.name() is removed
+     // TODO Remove annotation when super.name() is removed
     @SuppressWarnings("deprecation") // this method should not be removed if super.name() is removed
-    public string name() {
+    public string name()
+{
         return name;
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.metrics.Sensor;
@@ -36,7 +36,8 @@ class RecordDeserializer {
     RecordDeserializer(SourceNode sourceNode,
                        DeserializationExceptionHandler deserializationExceptionHandler,
                        LogContext logContext,
-                       Sensor skippedRecordsSensor) {
+                       Sensor skippedRecordsSensor)
+{
         this.sourceNode = sourceNode;
         this.deserializationExceptionHandler = deserializationExceptionHandler;
         this.log = logContext.logger(RecordDeserializer.class);
@@ -50,7 +51,8 @@ class RecordDeserializer {
      */
     @SuppressWarnings("deprecation")
     ConsumerRecord<Object, object> deserialize(IProcessorContext processorContext,
-                                               ConsumerRecord<byte[], byte[]> rawRecord) {
+                                               ConsumerRecord<byte[], byte[]> rawRecord)
+{
 
         try {
             return new ConsumerRecord<>(
@@ -64,19 +66,22 @@ class RecordDeserializer {
                 rawRecord.serializedValueSize(),
                 sourceNode.deserializeKey(rawRecord.topic(), rawRecord.headers(), rawRecord.key()),
                 sourceNode.deserializeValue(rawRecord.topic(), rawRecord.headers(), rawRecord.value()), rawRecord.headers());
-        } catch (Exception deserializationException) {
+        } catch (Exception deserializationException)
+{
             DeserializationExceptionHandler.DeserializationHandlerResponse response;
             try {
                 response = deserializationExceptionHandler.handle(processorContext, rawRecord, deserializationException);
-            } catch (Exception fatalUserException) {
-                log.error(
+            } catch (Exception fatalUserException)
+{
+                log.LogError(
                     "Deserialization error callback failed after deserialization error for record {}",
                     rawRecord,
                     deserializationException);
                 throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
             }
 
-            if (response == DeserializationExceptionHandler.DeserializationHandlerResponse.FAIL) {
+            if (response == DeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
+{
                 throw new StreamsException("Deserialization exception handler is set to fail upon" +
                     " a deserialization error. If you would rather have the streaming pipeline" +
                     " continue after a deserialization error, please set the " +
@@ -96,7 +101,8 @@ class RecordDeserializer {
         }
     }
 
-    SourceNode sourceNode() {
+    SourceNode sourceNode()
+{
         return sourceNode;
     }
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.SessionBytesStoreSupplier;
@@ -56,7 +56,7 @@ public class RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
     public override long segmentIntervalMs()
 {
         // Selected somewhat arbitrarily. Profiling may reveal a different value is preferable.
-        return Math.max(retentionPeriod / 2, 60_000L);
+        return Math.Max(retentionPeriod / 2, 60_000L);
     }
 
     public override long retentionPeriod()

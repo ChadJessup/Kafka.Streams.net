@@ -163,9 +163,9 @@ public abstract class AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : Key
         }
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
     }
 
     public override void close()

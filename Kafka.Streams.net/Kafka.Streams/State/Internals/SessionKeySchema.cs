@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serializer;
@@ -42,7 +42,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public override Bytes lowerRangeFixedSize(Bytes key, long from)
 {
-        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.max(0, from)));
+        Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.Max(0, from)));
         return SessionKeySchema.toBinary(sessionKey);
     }
 
@@ -64,7 +64,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public override long segmentTimestamp(Bytes key)
 {
-        return SessionKeySchema.extractEndTimestamp(key.get());
+        return SessionKeySchema.extractEndTimestamp(key()];
     }
 
     public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
@@ -104,26 +104,26 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     static byte[] extractKeyBytes(byte[] binaryKey)
 {
-        byte[] bytes = new byte[binaryKey.length - 2 * TIMESTAMP_SIZE];
-        System.arraycopy(binaryKey, 0, bytes, 0, bytes.length);
+        byte[] bytes = new byte[binaryKey.Length - 2 * TIMESTAMP_SIZE];
+        System.arraycopy(binaryKey, 0, bytes, 0, bytes.Length);
         return bytes;
     }
 
     static long extractEndTimestamp(byte[] binaryKey)
 {
-        return ByteBuffer.wrap(binaryKey).getLong(binaryKey.length - 2 * TIMESTAMP_SIZE);
+        return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
     }
 
     static long extractStartTimestamp(byte[] binaryKey)
 {
-        return ByteBuffer.wrap(binaryKey).getLong(binaryKey.length - TIMESTAMP_SIZE);
+        return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE);
     }
 
     static Window extractWindow(byte[] binaryKey)
 {
         ByteBuffer buffer = ByteBuffer.wrap(binaryKey);
-        long start = buffer.getLong(binaryKey.length - TIMESTAMP_SIZE);
-        long end = buffer.getLong(binaryKey.length - 2 * TIMESTAMP_SIZE);
+        long start = buffer.getLong(binaryKey.Length - TIMESTAMP_SIZE);
+        long end = buffer.getLong(binaryKey.Length - 2 * TIMESTAMP_SIZE);
         return new SessionWindow(start, end);
     }
 
@@ -138,7 +138,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
 
     public static Windowed<Bytes> from(Bytes bytesKey)
 {
-        byte[] binaryKey = bytesKey.get();
+        byte[] binaryKey = bytesKey[];
         Window window = extractWindow(binaryKey);
         return new Windowed<>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
     }
@@ -147,7 +147,7 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                        Deserializer<K> keyDeserializer,
                                        string topic)
 {
-        K key = keyDeserializer.deserialize(topic, keyBytes.key().get());
+        K key = keyDeserializer.deserialize(topic, keyBytes.key()()];
         return new Windowed<>(key, keyBytes.window());
     }
 
@@ -155,8 +155,8 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                       Serializer<K> serializer,
                                       string topic)
 {
-        byte[] bytes = serializer.serialize(topic, sessionKey.key());
-        return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end()).get();
+        byte[] bytes = serializer.serialize(topic, sessionKey.key()];
+        return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[];
     }
 
     public static Bytes toBinary(Windowed<Bytes> sessionKey)
@@ -168,9 +168,9 @@ public class SessionKeySchema : SegmentedBytesStore.KeySchema
                                  long startTime,
                                  long endTime)
 {
-        byte[] bytes = key.get();
-        ByteBuffer buf = ByteBuffer.allocate(bytes.length + 2 * TIMESTAMP_SIZE);
-        buf.put(bytes);
+        byte[] bytes = key[];
+        ByteBuffer buf = ByteBuffer.allocate(bytes.Length + 2 * TIMESTAMP_SIZE);
+        buf.Add(bytes);
         buf.putLong(endTime);
         buf.putLong(startTime);
         return Bytes.wrap(buf.array());

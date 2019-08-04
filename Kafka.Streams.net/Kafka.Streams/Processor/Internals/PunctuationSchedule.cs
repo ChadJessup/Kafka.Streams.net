@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.streams.processor.Cancellable;
 import org.apache.kafka.streams.processor.Punctuator;
@@ -30,7 +30,8 @@ public class PunctuationSchedule : Stamped<ProcessorNode> {
     PunctuationSchedule(ProcessorNode node,
                         long time,
                         long interval,
-                        Punctuator punctuator) {
+                        Punctuator punctuator)
+{
         this(node, time, interval, punctuator, new RepointableCancellable());
         cancellable.setSchedule(this);
     }
@@ -39,36 +40,44 @@ public class PunctuationSchedule : Stamped<ProcessorNode> {
                                 long time,
                                 long interval,
                                 Punctuator punctuator,
-                                RepointableCancellable cancellable) {
+                                RepointableCancellable cancellable)
+{
         super(node, time);
         this.interval = interval;
         this.punctuator = punctuator;
         this.cancellable = cancellable;
     }
 
-    public ProcessorNode node() {
+    public ProcessorNode node()
+{
         return value;
     }
 
-    public Punctuator punctuator() {
+    public Punctuator punctuator()
+{
         return punctuator;
     }
 
-    public ICancellable cancellable() {
+    public ICancellable cancellable()
+{
         return cancellable;
     }
 
-    void markCancelled() {
+    void markCancelled()
+{
         isCancelled = true;
     }
 
-    bool isCancelled() {
+    bool isCancelled()
+{
         return isCancelled;
     }
 
-    public PunctuationSchedule next(long currTimestamp) {
+    public PunctuationSchedule next(long currTimestamp)
+{
         long nextPunctuationTime = timestamp + interval;
-        if (currTimestamp >= nextPunctuationTime) {
+        if (currTimestamp >= nextPunctuationTime)
+{
             // we missed one ore more punctuations
             // avoid scheduling a new punctuations immediately, this can happen:
             // - when using STREAM_TIME punctuation and there was a gap i.e., no data was
@@ -85,25 +94,29 @@ public class PunctuationSchedule : Stamped<ProcessorNode> {
         return nextSchedule;
     }
 
-    @Override
-    public bool equals(object other) {
+    
+    public bool Equals(object other)
+{
         return super.Equals(other);
     }
 
-    @Override
-    public int GetHashCode()() {
-        return super.GetHashCode()();
+    
+    public int GetHashCode()
+{
+        return super.GetHashCode();
     }
 
-    private static class RepointableCancellable implements Cancellable {
+    private static class RepointableCancellable : Cancellable {
         private PunctuationSchedule schedule;
 
-        synchronized void setSchedule(PunctuationSchedule schedule) {
+        synchronized void setSchedule(PunctuationSchedule schedule)
+{
             this.schedule = schedule;
         }
 
-        @Override
-        synchronized public void cancel() {
+        
+        synchronized public void cancel()
+{
             schedule.markCancelled();
         }
     }

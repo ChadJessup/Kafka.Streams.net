@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
@@ -39,7 +39,7 @@ public class GlobalStateStoreProvider : StateStoreProvider
     @SuppressWarnings("unchecked")
     public override <T> List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
 {
-        IStateStore store = globalStateStores.get(storeName);
+        IStateStore store = globalStateStores[storeName];
         if (store == null || !queryableStoreType.accepts(store))
 {
             return Collections.emptyList();

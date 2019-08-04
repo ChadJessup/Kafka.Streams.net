@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.Transformer;
@@ -24,45 +24,53 @@ import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-public class KStreamFlatTransform<KIn, VIn, KOut, VOut> implements ProcessorSupplier<KIn, VIn> {
+public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn> {
 
     private  TransformerSupplier<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
 
-    public KStreamFlatTransform( TransformerSupplier<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier) {
+    public KStreamFlatTransform( TransformerSupplier<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
+{
         this.transformerSupplier = transformerSupplier;
     }
 
-    @Override
-    public Processor<KIn, VIn> get() {
-        return new KStreamFlatTransformProcessor<>(transformerSupplier.get());
+    
+    public Processor<KIn, VIn> get()
+{
+        return new KStreamFlatTransformProcessor<>(transformerSupplier()];
     }
 
     public static class KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
 
         private  Transformer<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
 
-        public KStreamFlatTransformProcessor( Transformer<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformer) {
+        public KStreamFlatTransformProcessor( Transformer<? super KIn, ? super VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
+{
             this.transformer = transformer;
         }
 
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
             transformer.init(context);
         }
 
-        @Override
-        public void process( KIn key,  VIn value) {
+        
+        public void process( KIn key,  VIn value)
+{
              Iterable<KeyValue<KOut, VOut>> pairs = transformer.transform(key, value);
-            if (pairs != null) {
-                for ( KeyValue<KOut, VOut> pair : pairs) {
+            if (pairs != null)
+{
+                foreach ( KeyValue<KOut, VOut> pair in pairs)
+{
                     context().forward(pair.key, pair.value);
                 }
             }
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             transformer.close();
         }
     }

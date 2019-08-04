@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.errors.TopologyException;
 import org.apache.kafka.streams.kstream.SessionWindows;
@@ -26,13 +26,16 @@ import org.apache.kafka.streams.processor.ProcessorSupplier;
 public  class GraphGraceSearchUtil {
     private GraphGraceSearchUtil() {}
 
-    public static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode) {
+    public static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode)
+{
         return findAndVerifyWindowGrace(streamsGraphNode, "");
     }
 
-    private static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode,  string chain) {
+    private static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode,  string chain)
+{
         // error base case: we traversed off the end of the graph without finding a window definition
-        if (streamsGraphNode == null) {
+        if (streamsGraphNode == null)
+{
             throw new TopologyException(
                 "Window close time is only defined for windowed computations. Got [" + chain + "]."
             );
@@ -40,14 +43,16 @@ public  class GraphGraceSearchUtil {
         // base case: return if this node defines a grace period.
         {
              Long gracePeriod = extractGracePeriod(streamsGraphNode);
-            if (gracePeriod != null) {
+            if (gracePeriod != null)
+{
                 return gracePeriod;
             }
         }
 
-         string newChain = chain.equals("") ? streamsGraphNode.nodeName() : streamsGraphNode.nodeName() + "->" + chain;
+         string newChain = chain.Equals("") ? streamsGraphNode.nodeName() : streamsGraphNode.nodeName() + "->" + chain;
 
-        if (streamsGraphNode.parentNodes().isEmpty()) {
+        if (streamsGraphNode.parentNodes().isEmpty())
+{
             // error base case: we traversed to the end of the graph without finding a window definition
             throw new TopologyException(
                 "Window close time is only defined for windowed computations. Got [" + newChain + "]."
@@ -56,26 +61,32 @@ public  class GraphGraceSearchUtil {
 
         // recursive case: all parents must define a grace period, and we use the max of our parents' graces.
         long inheritedGrace = -1;
-        for ( StreamsGraphNode parentNode : streamsGraphNode.parentNodes()) {
+        foreach ( StreamsGraphNode parentNode in streamsGraphNode.parentNodes())
+{
              long parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
-            inheritedGrace = Math.max(inheritedGrace, parentGrace);
+            inheritedGrace = Math.Max(inheritedGrace, parentGrace);
         }
 
-        if (inheritedGrace == -1) {
+        if (inheritedGrace == -1)
+{
             throw new InvalidOperationException(); // shouldn't happen, and it's not a legal grace period
         }
 
         return inheritedGrace;
     }
 
-    private static Long extractGracePeriod( StreamsGraphNode node) {
-        if (node is StatefulProcessorNode) {
+    private static Long extractGracePeriod( StreamsGraphNode node)
+{
+        if (node is StatefulProcessorNode)
+{
              ProcessorSupplier processorSupplier = ((StatefulProcessorNode) node).processorParameters().processorSupplier();
-            if (processorSupplier is KStreamWindowAggregate) {
+            if (processorSupplier is KStreamWindowAggregate)
+{
                  KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate) processorSupplier;
                  Windows windows = kStreamWindowAggregate.windows();
                 return windows.gracePeriodMs();
-            } else if (processorSupplier is KStreamSessionWindowAggregate) {
+            } else if (processorSupplier is KStreamSessionWindowAggregate)
+{
                  KStreamSessionWindowAggregate kStreamSessionWindowAggregate = (KStreamSessionWindowAggregate) processorSupplier;
                  SessionWindows windows = kStreamSessionWindowAggregate.windows();
                 return windows.gracePeriodMs() + windows.inactivityGap();

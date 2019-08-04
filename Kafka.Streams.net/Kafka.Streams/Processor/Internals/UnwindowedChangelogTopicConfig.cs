@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.config.TopicConfig;
 
@@ -31,11 +31,12 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
     private static Dictionary<string, string> UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
     static {
         Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
-        tempTopicDefaultOverrides.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
+        tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
         UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
     }
 
-    UnwindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs) {
+    UnwindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
+{
         super(name, topicConfigs);
     }
 
@@ -46,7 +47,8 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
      * @param additionalRetentionMs - added to retention to allow for clock drift etc
      * @return Properties to be used when creating the topic
      */
-    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs) {
+    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
+{
         // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
         Dictionary<string, string> topicConfig = new HashMap<>(UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
@@ -57,12 +59,15 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
         return topicConfig;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         UnwindowedChangelogTopicConfig that = (UnwindowedChangelogTopicConfig) o;
@@ -70,13 +75,15 @@ public class UnwindowedChangelogTopicConfig : InternalTopicConfig {
                Objects.Equals(topicConfigs, that.topicConfigs);
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(name, topicConfigs);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "UnwindowedChangelogTopicConfig(" +
                 "name=" + name +
                 ", topicConfigs=" + topicConfigs +

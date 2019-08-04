@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Streams.kstream.internals.Change;
@@ -57,14 +57,14 @@ public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
             return recordContext;
         }
 
-        @Override
-        public string toString()
+        
+        public string ToString()
 {
             return "Eviction{key=" + key + ", value=" + value + ", recordContext=" + recordContext + '}';
         }
 
-        @Override
-        public bool equals(object o)
+        
+        public bool Equals(object o)
 {
             if (this == o) return true;
             if (o == null || GetType() != o.GetType()) return false;
@@ -74,8 +74,8 @@ public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
                 Objects.Equals(recordContext, eviction.recordContext);
         }
 
-        @Override
-        public int GetHashCode()()
+        
+        public int GetHashCode()
 {
             return Objects.hash(key, value, recordContext);
         }

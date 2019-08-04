@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.serialization.Serde;
 
@@ -34,12 +34,14 @@ public class Serialized<K, V> {
     protected  ISerde<V> valueSerde;
 
     private Serialized( ISerde<K> keySerde,
-                        ISerde<V> valueSerde) {
+                        ISerde<V> valueSerde)
+{
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
     }
 
-    protected Serialized( Serialized<K, V> serialized) {
+    protected Serialized( Serialized<K, V> serialized)
+{
         this(serialized.keySerde, serialized.valueSerde);
     }
 
@@ -56,7 +58,8 @@ public class Serialized<K, V> {
      * @return a new instance of {@link Serialized} configured with the provided serdes
      */
     public static <K, V> Serialized<K, V> with( ISerde<K> keySerde,
-                                                ISerde<V> valueSerde) {
+                                                ISerde<V> valueSerde)
+{
         return new Serialized<>(keySerde, valueSerde);
     }
 
@@ -68,7 +71,8 @@ public class Serialized<K, V> {
      *                 if not specified the default serdes defined in the configs will be used
      * @return a new instance of {@link Serialized} configured with the provided key serde
      */
-    public Serialized<K, V> withKeySerde( ISerde<K> keySerde) {
+    public Serialized<K, V> withKeySerde( ISerde<K> keySerde)
+{
         return new Serialized<>(keySerde, null);
     }
 
@@ -80,7 +84,8 @@ public class Serialized<K, V> {
      *                   if not specified the default serdes defined in the configs will be used
      * @return a new instance of {@link Serialized} configured with the provided key serde
      */
-    public Serialized<K, V> withValueSerde( ISerde<V> valueSerde) {
+    public Serialized<K, V> withValueSerde( ISerde<V> valueSerde)
+{
         return new Serialized<>(null, valueSerde);
     }
 

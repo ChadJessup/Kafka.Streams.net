@@ -14,28 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
 using Kafka.Common.Cluster;
 using Kafka.Common.serialization.Serializer;
 import org.apache.kafka.streams.processor.StreamPartitioner;
 
-public class DefaultStreamPartitioner<K, V> implements StreamPartitioner<K, V> {
+public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
 
     private Cluster cluster;
     private Serializer<K> keySerializer;
     private DefaultPartitioner defaultPartitioner;
 
-    public DefaultStreamPartitioner(Serializer<K> keySerializer, Cluster cluster) {
+    public DefaultStreamPartitioner(Serializer<K> keySerializer, Cluster cluster)
+{
         this.cluster = cluster;
         this.keySerializer = keySerializer;
         this.defaultPartitioner = new DefaultPartitioner();
     }
 
-    @Override
-    public Integer partition(string topic, K key, V value, int numPartitions) {
-        byte[] keyBytes = keySerializer.serialize(topic, key);
+    
+    public Integer partition(string topic, K key, V value, int numPartitions)
+{
+        byte[] keyBytes = keySerializer.serialize(topic, key];
         return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
     }
 }

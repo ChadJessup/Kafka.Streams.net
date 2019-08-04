@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
@@ -24,7 +24,8 @@ import org.apache.kafka.streams.processor.TimestampExtractor;
 
 public class ConsumedInternal<K, V> : Consumed<K, V> {
 
-    public ConsumedInternal( Consumed<K, V> consumed) {
+    public ConsumedInternal( Consumed<K, V> consumed)
+{
         super(consumed);
     }
 
@@ -32,39 +33,48 @@ public class ConsumedInternal<K, V> : Consumed<K, V> {
     public ConsumedInternal( ISerde<K> keySerde,
                              ISerde<V> valSerde,
                              TimestampExtractor timestampExtractor,
-                             Topology.AutoOffsetReset offsetReset) {
+                             Topology.AutoOffsetReset offsetReset)
+{
         this(Consumed.with(keySerde, valSerde, timestampExtractor, offsetReset));
     }
 
-    public ConsumedInternal() {
+    public ConsumedInternal()
+{
         this(Consumed.<K, V>with(null, null));
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public Deserializer<K> keyDeserializer() {
+    public Deserializer<K> keyDeserializer()
+{
         return keySerde == null ? null : keySerde.deserializer();
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valueSerde;
     }
 
-    public Deserializer<V> valueDeserializer() {
+    public Deserializer<V> valueDeserializer()
+{
         return valueSerde == null ? null : valueSerde.deserializer();
     }
 
-    public TimestampExtractor timestampExtractor() {
+    public TimestampExtractor timestampExtractor()
+{
         return timestampExtractor;
     }
 
-    public Topology.AutoOffsetReset offsetResetPolicy() {
+    public Topology.AutoOffsetReset offsetResetPolicy()
+{
         return resetPolicy;
     }
 
-    public string name() {
+    public string name()
+{
         return processorName;
     }
 }

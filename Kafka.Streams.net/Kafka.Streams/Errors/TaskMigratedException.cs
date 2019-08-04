@@ -31,7 +31,8 @@ public class TaskMigratedException : StreamsException {
     private  Task task;
 
     // this is for unit test only
-    public TaskMigratedException() {
+    public TaskMigratedException()
+{
         super("A task has been migrated unexpectedly", null);
 
         this.task = null;
@@ -40,8 +41,9 @@ public class TaskMigratedException : StreamsException {
     public TaskMigratedException( Task task,
                                   TopicPartition topicPartition,
                                   long endOffset,
-                                  long pos) {
-        super(string.format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
+                                  long pos)
+{
+        super(string.Format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
                             topicPartition,
                             endOffset,
                             pos),
@@ -50,20 +52,23 @@ public class TaskMigratedException : StreamsException {
         this.task = task;
     }
 
-    public TaskMigratedException( Task task) {
-        super(string.format("Task %s is unexpectedly closed during processing", task.id()), null);
+    public TaskMigratedException( Task task)
+{
+        super(string.Format("Task %s is unexpectedly closed during processing", task.id()), null);
 
         this.task = task;
     }
 
     public TaskMigratedException( Task task,
-                                  Throwable throwable) {
-        super(string.format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable);
+                                  Throwable throwable)
+{
+        super(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable);
 
         this.task = task;
     }
 
-    public Task migratedTask() {
+    public Task migratedTask()
+{
         return task;
     }
 

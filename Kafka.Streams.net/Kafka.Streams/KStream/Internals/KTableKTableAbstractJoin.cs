@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ValueJoiner;
 
-abstract class KTableKTableAbstractJoin<K, R, V1, V2> implements KTableProcessorSupplier<K, V1, R> {
+abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
 
     private  KTableImpl<K, ?, V1> table1;
     private  KTableImpl<K, ?, V2> table2;
@@ -30,7 +30,8 @@ abstract class KTableKTableAbstractJoin<K, R, V1, V2> implements KTableProcessor
 
     KTableKTableAbstractJoin( KTableImpl<K, ?, V1> table1,
                               KTableImpl<K, ?, V2> table2,
-                              ValueJoiner<? super V1, ? super V2, ? : R> joiner) {
+                              ValueJoiner<? super V1, ? super V2, ? : R> joiner)
+{
         this.table1 = table1;
         this.table2 = table2;
         this.valueGetterSupplier1 = table1.valueGetterSupplier();
@@ -38,8 +39,9 @@ abstract class KTableKTableAbstractJoin<K, R, V1, V2> implements KTableProcessor
         this.joiner = joiner;
     }
 
-    @Override
-    public  void enableSendingOldValues() {
+    
+    public  void enableSendingOldValues()
+{
         table1.enableSendingOldValues();
         table2.enableSendingOldValues();
         sendOldValues = true;

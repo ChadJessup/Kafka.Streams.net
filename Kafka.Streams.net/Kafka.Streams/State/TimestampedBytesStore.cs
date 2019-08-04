@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 import java.nio.ByteBuffer;
 
@@ -29,9 +29,9 @@ public interface TimestampedBytesStore
             return null;
         }
         return ByteBuffer
-            .allocate(8 + plainValue.length)
+            .allocate(8 + plainValue.Length)
             .putLong(NO_TIMESTAMP)
-            .put(plainValue)
+            .Add(plainValue)
             .array();
     }
 }

@@ -15,26 +15,30 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.Grouped;
 
 public class GroupedInternal<K, V> : Grouped<K, V> {
 
-    public GroupedInternal( Grouped<K, V> grouped) {
+    public GroupedInternal( Grouped<K, V> grouped)
+{
         super(grouped);
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valueSerde;
     }
 
-    public string name() {
+    public string name()
+{
         return name;
     }
 }

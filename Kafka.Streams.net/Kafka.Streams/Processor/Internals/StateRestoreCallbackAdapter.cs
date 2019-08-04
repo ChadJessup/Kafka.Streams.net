@@ -15,35 +15,40 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.processor.BatchingStateRestoreCallback;
 import org.apache.kafka.streams.processor.StateRestoreCallback;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 import java.util.Objects;
 
 public class StateRestoreCallbackAdapter {
     private StateRestoreCallbackAdapter() {}
 
-    public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback) {
+    public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
+{
         Objects.requireNonNull(restoreCallback, "stateRestoreCallback must not be null");
-        if (restoreCallback is RecordBatchingStateRestoreCallback) {
+        if (restoreCallback is RecordBatchingStateRestoreCallback)
+{
             return (RecordBatchingStateRestoreCallback) restoreCallback;
-        } else if (restoreCallback is BatchingStateRestoreCallback) {
+        } else if (restoreCallback is BatchingStateRestoreCallback)
+{
             return records -> {
-                List<KeyValue<byte[], byte[]>> keyValues = new ArrayList<>();
-                for (ConsumerRecord<byte[], byte[]> record : records) {
+                List<KeyValue<byte[], byte[]>> keyValues = new List<>();
+                foreach (ConsumerRecord<byte[], byte[]> record in records)
+{
                     keyValues.add(new KeyValue<>(record.key(), record.value()));
                 }
                 ((BatchingStateRestoreCallback) restoreCallback).restoreAll(keyValues);
             };
         } else {
             return records -> {
-                for (ConsumerRecord<byte[], byte[]> record : records) {
+                foreach (ConsumerRecord<byte[], byte[]> record in records)
+{
                     restoreCallback.restore(record.key(), record.value());
                 }
             };

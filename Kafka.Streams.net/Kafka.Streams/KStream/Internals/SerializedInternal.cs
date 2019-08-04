@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 
 @Deprecated
 public class SerializedInternal<K, V> : org.apache.kafka.streams.kstream.Serialized<K, V> {
-    public SerializedInternal( org.apache.kafka.streams.kstream.Serialized<K, V> serialized) {
+    public SerializedInternal( org.apache.kafka.streams.kstream.Serialized<K, V> serialized)
+{
         super(serialized);
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valueSerde;
     }
 }

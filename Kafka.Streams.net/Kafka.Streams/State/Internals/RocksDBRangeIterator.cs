@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -39,8 +39,8 @@ class RocksDBRangeIterator : RocksDbIterator
                          Bytes to)
 {
         super(storeName, iter, openIterators);
-        iter.seek(from.get());
-        rawToKey = to.get();
+        iter.seek(from()];
+        rawToKey = to[];
         if (rawToKey == null)
 {
             throw new NullPointerException("RocksDBRangeIterator: RawToKey is null for key " + to);
@@ -56,7 +56,7 @@ class RocksDBRangeIterator : RocksDbIterator
             return allDone();
         } else
 {
-            if (comparator.compare(next.key.get(), rawToKey) <= 0)
+            if (comparator.compare(next.key(), rawToKey) <= 0)
 {
                 return next;
             } else

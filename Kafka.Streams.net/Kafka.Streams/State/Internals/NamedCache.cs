@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.util.NavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
-using Kafka.Common.MetricName;
+
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.metrics.stats.Avg;
 using Kafka.Common.metrics.stats.Max;
@@ -29,9 +29,9 @@ using Kafka.Streams.Processor.internals.metrics.StreamsMetricsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,7 +41,7 @@ class NamedCache
     private static Logger log = LoggerFactory.getLogger(NamedCache.class);
     private string name;
     private NavigableMap<Bytes, LRUNode> cache = new ConcurrentSkipListMap<>();
-    private Set<Bytes> dirtyKeys = new LinkedHashSet<>();
+    private Set<Bytes> dirtyKeys = new HashSet<>();
     private ThreadCache.DirtyEntryFlushListener listener;
     private LRUNode tail;
     private LRUNode head;
@@ -123,7 +123,7 @@ class NamedCache
 
         if (listener == null)
 {
-            throw new IllegalArgumentException("No listener for namespace " + name + " registered with cache");
+            throw new ArgumentException("No listener for namespace " + name + " registered with cache");
         }
 
         if (dirtyKeys.isEmpty())
@@ -131,18 +131,18 @@ class NamedCache
             return;
         }
 
-        List<ThreadCache.DirtyEntry> entries = new ArrayList<>();
-        List<Bytes> deleted = new ArrayList<>();
+        List<ThreadCache.DirtyEntry> entries = new List<>();
+        List<Bytes> deleted = new List<>();
 
         // evicted already been removed from the cache so add it to the list of
-        // flushed entries and remove from dirtyKeys.
+        // flushed entries and Remove from dirtyKeys.
         if (evicted != null)
 {
             entries.add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
-            dirtyKeys.remove(evicted.key);
+            dirtyKeys.Remove(evicted.key);
         }
 
-        for (Bytes key : dirtyKeys)
+        foreach (Bytes key in dirtyKeys)
 {
             LRUNode node = getInternal(key);
             if (node == null)
@@ -159,7 +159,7 @@ class NamedCache
         // clear dirtyKeys before the listener is applied as it may be re-entrant.
         dirtyKeys.clear();
         listener.apply(entries);
-        for (Bytes key : deleted)
+        foreach (Bytes key in deleted)
 {
             delete(key);
         }
@@ -170,13 +170,13 @@ class NamedCache
         if (!value.isDirty() && dirtyKeys.contains(key))
 {
             throw new InvalidOperationException(
-                string.format(
+                string.Format(
                     "Attempting to put a clean entry for key [%s] into NamedCache [%s] when it already contains a dirty entry for the same key",
                     key, name
                 )
             );
         }
-        LRUNode node = cache.get(key);
+        LRUNode node = cache[key];
         if (node != null)
 {
             numOverwrites++;
@@ -189,12 +189,12 @@ class NamedCache
             node = new LRUNode(key, value);
             // put element
             putHead(node);
-            cache.put(key, node);
+            cache.Add(key, node);
         }
         if (value.isDirty())
 {
-            // first remove and then add so we can maintain ordering as the arrival order of the records.
-            dirtyKeys.remove(key);
+            // first Remove and then add so we can maintain ordering as the arrival order of the records.
+            dirtyKeys.Remove(key);
             dirtyKeys.add(key);
         }
         currentSizeBytes += node.size();
@@ -207,7 +207,7 @@ class NamedCache
 
     private LRUNode getInternal(Bytes key)
 {
-        LRUNode node = cache.get(key);
+        LRUNode node = cache[key];
         if (node == null)
 {
             numReadMisses++;
@@ -223,12 +223,12 @@ class NamedCache
 
     private void updateLRU(LRUNode node)
 {
-        remove(node);
+        Remove(node);
 
         putHead(node);
     }
 
-    private void remove(LRUNode node)
+    private void Remove(LRUNode node)
 {
         if (node.previous != null)
 {
@@ -269,8 +269,8 @@ class NamedCache
         }
         LRUNode eldest = tail;
         currentSizeBytes -= eldest.size();
-        remove(eldest);
-        cache.remove(eldest.key);
+        Remove(eldest);
+        cache.Remove(eldest.key);
         if (eldest.entry.isDirty())
 {
             flush(eldest);
@@ -289,7 +289,7 @@ class NamedCache
 
     synchronized void putAll(List<KeyValue<byte[], LRUCacheEntry>> entries)
 {
-        for (KeyValue<byte[], LRUCacheEntry> entry : entries)
+        foreach (KeyValue<byte[], LRUCacheEntry> entry in entries)
 {
             put(Bytes.wrap(entry.key), entry.value);
         }
@@ -297,15 +297,15 @@ class NamedCache
 
     synchronized LRUCacheEntry delete(Bytes key)
 {
-        LRUNode node = cache.remove(key);
+        LRUNode node = cache.Remove(key);
 
         if (node == null)
 {
             return null;
         }
 
-        remove(node);
-        dirtyKeys.remove(key);
+        Remove(node);
+        dirtyKeys.Remove(key);
         currentSizeBytes -= node.size();
         return node.entry();
     }
@@ -391,7 +391,7 @@ class NamedCache
 
         long size()
 {
-            return key.get().length +
+            return key[].Length +
                 8 + // entry
                 8 + // previous
                 8 + // next
@@ -434,7 +434,7 @@ class NamedCache
                  "task-id", taskName,
                 "record-cache-id", "all"
             );
-            Sensor taskLevelHitRatioSensor = metrics.taskLevelSensor(taskName, "hitRatio", Sensor.RecordingLevel.DEBUG);
+            Sensor taskLevelHitRatioSensor = metrics.taskLevelSensor(taskName, "hitRatio", RecordingLevel.DEBUG);
             taskLevelHitRatioSensor.add(
                 new MetricName("hitRatio-avg", group, "The average cache hit ratio.", allMetricTags),
                 new Avg()
@@ -458,7 +458,7 @@ class NamedCache
                 taskName,
                 cacheName,
                 "hitRatio",
-                Sensor.RecordingLevel.DEBUG,
+                RecordingLevel.DEBUG,
                 taskLevelHitRatioSensor
             );
             hitRatioSensor.add(

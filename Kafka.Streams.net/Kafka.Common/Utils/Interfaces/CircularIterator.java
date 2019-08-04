@@ -14,16 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.common.utils;
 
-using Kafka.Streams.KeyValue;
-import org.rocksdb.RocksDBException;
-import org.rocksdb.WriteBatch;
+import java.util.Iterator;
+import java.util.List;
 
-public interface BulkLoadingStore
+public class CircularIterator<T> : Iterator<T> {
+    int i = 0;
+    private List<T> list;
+
+    public CircularIterator(List<T> list)
 {
-    void toggleDbForBulkLoading(bool prepareForBulkload);
-    void addToBatch(KeyValue<byte[], byte[]> record,
-                    WriteBatch batch) throws RocksDBException;
-    void write(WriteBatch batch) throws RocksDBException;
+        if (list.isEmpty())
+{
+            throw new ArgumentException("CircularIterator can only be used on non-empty lists");
+        }
+        this.list = list;
+    }
+
+    
+    public boolean hasNext()
+{
+        return true;
+    }
+
+    
+    public T next()
+{
+        T next = list[i];
+        i = (i + 1) % list.size();
+        return next;
+    }
+
+    public T peek()
+{
+        return list[i];
+    }
+
+    
+    public void Remove()
+{
+        throw new InvalidOperationException();
+    }
 }

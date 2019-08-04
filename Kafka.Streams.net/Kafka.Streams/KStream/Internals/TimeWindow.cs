@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.annotation.InterfaceStability;
 import org.apache.kafka.streams.kstream.Window;
@@ -40,13 +40,14 @@ public class TimeWindow : Window {
      *
      * @param startMs the start timestamp of the window (inclusive)
      * @param endMs   the end timestamp of the window (exclusive)
-     * @throws IllegalArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than or equal to
+     * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than or equal to
      * {@code startMs}
      */
-    public TimeWindow( long startMs,  long endMs) throws IllegalArgumentException {
+    public TimeWindow( long startMs,  long endMs) throws ArgumentException {
         super(startMs, endMs);
-        if (startMs == endMs) {
-            throw new IllegalArgumentException("Window endMs must be greater than window startMs.");
+        if (startMs == endMs)
+{
+            throw new ArgumentException("Window endMs must be greater than window startMs.");
         }
     }
 
@@ -55,12 +56,13 @@ public class TimeWindow : Window {
      *
      * @param other another window
      * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
-     * @throws IllegalArgumentException if the {@code other} window has a different type than {@code this} window
+     * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
      */
-    @Override
-    public bool overlap( Window other) throws IllegalArgumentException {
-        if (getClass() != other.getClass()) {
-            throw new IllegalArgumentException("Cannot compare windows of different type. Other window has type "
+    
+    public bool overlap( Window other) throws ArgumentException {
+        if (getClass() != other.getClass())
+{
+            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
          TimeWindow otherWindow = (TimeWindow) other;

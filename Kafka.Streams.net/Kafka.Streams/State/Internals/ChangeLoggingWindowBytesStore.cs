@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.Utils.Bytes;
@@ -109,7 +109,7 @@ class ChangeLoggingWindowBytesStore
                     byte[] value,
                     long windowStartTimestamp)
 {
-        wrapped().put(key, value, windowStartTimestamp);
+        wrapped().Add(key, value, windowStartTimestamp);
         log(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, maybeUpdateSeqnumForDups()), value);
     }
 

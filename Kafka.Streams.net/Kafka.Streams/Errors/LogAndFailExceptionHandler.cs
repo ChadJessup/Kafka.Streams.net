@@ -28,15 +28,16 @@ import java.util.Map;
  * Deserialization handler that logs a deserialization exception and then
  * signals the processing pipeline to stop processing more records and fail.
  */
-public class LogAndFailExceptionHandler implements DeserializationExceptionHandler {
+public class LogAndFailExceptionHandler : IDeserializationExceptionHandler {
     private static  Logger log = LoggerFactory.getLogger(LogAndFailExceptionHandler.class);
 
-    @Override
+    
     public DeserializationHandlerResponse handle( IProcessorContext context,
                                                   ConsumerRecord<byte[], byte[]> record,
-                                                  Exception exception) {
+                                                  Exception exception)
+{
 
-        log.error("Exception caught during Deserialization, " +
+        log.LogError("Exception caught during Deserialization, " +
                   "taskId: {}, topic: {}, partition: {}, offset: {}",
                   context.taskId(), record.topic(), record.partition(), record.offset(),
                   exception);
@@ -44,8 +45,9 @@ public class LogAndFailExceptionHandler implements DeserializationExceptionHandl
         return DeserializationHandlerResponse.FAIL;
     }
 
-    @Override
-    public void configure( Map<string, ?> configs) {
+    
+    public void configure( Map<string, ?> configs)
+{
         // ignore
     }
 }

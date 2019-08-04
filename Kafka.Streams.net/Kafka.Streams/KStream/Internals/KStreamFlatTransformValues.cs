@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
@@ -23,46 +23,54 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 import org.apache.kafka.streams.processor.internals.ForwardingDisabledProcessorContext;
 
-public class KStreamFlatTransformValues<KIn, VIn, VOut> implements ProcessorSupplier<KIn, VIn> {
+public class KStreamFlatTransformValues<KIn, VIn, VOut> : ProcessorSupplier<KIn, VIn> {
 
     private  ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerSupplier;
 
-    public KStreamFlatTransformValues( ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerWithKeySupplier) {
+    public KStreamFlatTransformValues( ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerWithKeySupplier)
+{
         this.valueTransformerSupplier = valueTransformerWithKeySupplier;
     }
 
-    @Override
-    public Processor<KIn, VIn> get() {
-        return new KStreamFlatTransformValuesProcessor<>(valueTransformerSupplier.get());
+    
+    public Processor<KIn, VIn> get()
+{
+        return new KStreamFlatTransformValuesProcessor<>(valueTransformerSupplier()];
     }
 
-    public static class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> implements Processor<KIn, VIn> {
+    public static class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : Processor<KIn, VIn> {
 
         private  ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer;
         private IProcessorContext context;
 
-        KStreamFlatTransformValuesProcessor( ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer) {
+        KStreamFlatTransformValuesProcessor( ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer)
+{
             this.valueTransformer = valueTransformer;
         }
 
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             valueTransformer.init(new ForwardingDisabledProcessorContext(context));
             this.context = context;
         }
 
-        @Override
-        public void process( KIn key,  VIn value) {
+        
+        public void process( KIn key,  VIn value)
+{
              Iterable<VOut> transformedValues = valueTransformer.transform(key, value);
-            if (transformedValues != null) {
-                for ( VOut transformedValue : transformedValues) {
+            if (transformedValues != null)
+{
+                foreach ( VOut transformedValue in transformedValues)
+{
                     context.forward(key, transformedValue);
                 }
             }
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             valueTransformer.close();
         }
     }

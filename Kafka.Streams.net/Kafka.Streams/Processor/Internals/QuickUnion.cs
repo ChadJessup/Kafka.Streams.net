@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import java.util.HashMap;
 import java.util.NoSuchElementException;
@@ -23,29 +23,34 @@ public class QuickUnion<T> {
 
     private HashMap<T, T> ids = new HashMap<>();
 
-    public void add(T id) {
-        ids.put(id, id);
+    public void add(T id)
+{
+        ids.Add(id, id);
     }
 
-    public bool exists(T id) {
-        return ids.containsKey(id);
+    public bool exists(T id)
+{
+        return ids.ContainsKey(id);
     }
 
     /**
      * @throws NoSuchElementException if the parent of this node is null
      */
-    public T root(T id) {
+    public T root(T id)
+{
         T current = id;
-        T parent = ids.get(current);
+        T parent = ids[current];
 
-        if (parent == null) {
-            throw new NoSuchElementException("id: " + id.toString());
+        if (parent == null)
+{
+            throw new NoSuchElementException("id: " + id.ToString());
         }
 
-        while (!parent.Equals(current)) {
+        while (!parent.Equals(current))
+{
             // do the path splitting
-            T grandparent = ids.get(parent);
-            ids.put(current, grandparent);
+            T grandparent = ids[parent];
+            ids.Add(current, grandparent);
 
             current = parent;
             parent = grandparent;
@@ -54,18 +59,22 @@ public class QuickUnion<T> {
     }
 
     @SuppressWarnings("unchecked")
-    void unite(T id1, T... idList) {
-        for (T id2 : idList) {
+    void unite(T id1, T[] idList)
+{
+        foreach (T id2 in idList)
+{
             unitePair(id1, id2);
         }
     }
 
-    private void unitePair(T id1, T id2) {
+    private void unitePair(T id1, T id2)
+{
         T root1 = root(id1);
         T root2 = root(id2);
 
-        if (!root1.Equals(root2)) {
-            ids.put(root1, root2);
+        if (!root1.Equals(root2))
+{
+            ids.Add(root1, root2);
         }
     }
 

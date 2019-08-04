@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.Bytes;
@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
 /**
  * A persistent key-value store based on RocksDB.
  */
-public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
+public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
 {
     private static Logger log = LoggerFactory.getLogger(RocksDBStore.class);
 
@@ -83,7 +83,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 
     string name;
     private string parentDir;
-    Set<KeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<>());
+    Set<KeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<>()];
 
     File dbDir;
     RocksDB db;
@@ -151,7 +151,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
         // https://github.com/facebook/rocksdb/blob/62ad0a9b19f0be4cefa70b6b32876e764b7f3c11/util/options.cc#L580
         // subtracts one from the value passed to determine the number of compaction threads
         // (this could be a bug in the RocksDB code and their devs have been contacted).
-        userSpecifiedOptions.setIncreaseParallelism(Math.max(Runtime.getRuntime().availableProcessors(), 2));
+        userSpecifiedOptions.setIncreaseParallelism(Math.Max(Runtime.getRuntime().availableProcessors(), 2));
 
         wOptions = new WriteOptions();
         wOptions.setDisableWAL(true);
@@ -161,7 +161,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 
         Dictionary<string, object> configs = context.appConfigs();
         Class<RocksDBConfigSetter> configSetterClass =
-            (Class<RocksDBConfigSetter>) configs.get(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG);
+            (Class<RocksDBConfigSetter>) configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
 
         if (configSetterClass != null)
 {
@@ -194,15 +194,15 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 {
         List<ColumnFamilyDescriptor> columnFamilyDescriptors
             = Collections.singletonList(new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions));
-        List<ColumnFamilyHandle> columnFamilies = new ArrayList<>(columnFamilyDescriptors.size());
+        List<ColumnFamilyHandle> columnFamilies = new List<>(columnFamilyDescriptors.size());
 
         try
 {
             db = RocksDB.open(dbOptions, dbDir.getAbsolutePath(), columnFamilyDescriptors, columnFamilies);
-            dbAccessor = new SingleColumnFamilyAccessor(columnFamilies.get(0));
+            dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0)];
         } catch (RocksDBException e)
 {
-            throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.toString(), e);
+            throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
         }
     }
 
@@ -254,14 +254,14 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 {
         Objects.requireNonNull(key, "key cannot be null");
         validateStoreOpen();
-        dbAccessor.put(key.get(), value);
+        dbAccessor.Add(key(), value];
     }
 
     public override synchronized byte[] putIfAbsent(Bytes key,
                                            byte[] value)
 {
         Objects.requireNonNull(key, "key cannot be null");
-        byte[] originalValue = get(key);
+        byte[] originalValue = get(key];
         if (originalValue == null)
 {
             put(key, value);
@@ -286,7 +286,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
         validateStoreOpen();
         try
 {
-            return dbAccessor.get(key.get());
+            return dbAccessor[key()];
         } catch (RocksDBException e)
 {
             // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -300,7 +300,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
         byte[] oldValue;
         try
 {
-            oldValue = dbAccessor.getOnly(key.get());
+            oldValue = dbAccessor.getOnly(key()];
         } catch (RocksDBException e)
 {
             // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -326,7 +326,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 
         validateStoreOpen();
 
-        KeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to);
+        KeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to];
         openIterators.add(rocksDBRangeIterator);
 
         return rocksDBRangeIterator;
@@ -396,9 +396,9 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
         if (prepareForBulkload)
 {
             // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-            string[] sstFileNames = dbDir.list((dir, name) -> SST_FILE_EXTENSION.matcher(name).matches());
+            string[] sstFileNames = dbDir.list((dir, name) -> SST_FILE_EXTENSION.matcher(name).matches()];
 
-            if (sstFileNames != null && sstFileNames.length > 0)
+            if (sstFileNames != null && sstFileNames.Length > 0)
 {
                 dbAccessor.toggleDbForBulkLoading();
             }
@@ -465,7 +465,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
         if (iterators.size() != 0)
 {
             log.warn("Closing {} open iterators for store {}", iterators.size(), name);
-            for (KeyValueIterator<Bytes, byte[]> iterator : iterators)
+            foreach (KeyValueIterator<Bytes, byte[]> iterator in iterators)
 {
                 iterator.close();
             }
@@ -478,19 +478,19 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 {
 
         void put(byte[] key,
-                 byte[] value);
+                 byte[] value];
 
         void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
                           WriteBatch batch) throws RocksDBException;
 
-        byte[] get(byte[] key) throws RocksDBException;
+        byte[] get(byte[] key] throws RocksDBException;
 
         /**
          * In contrast to get(), we don't migrate the key to new CF.
          * <p>
          * Use for get() within delete() -- no need to migrate, as it's deleted anyway
          */
-        byte[] getOnly(byte[] key) throws RocksDBException;
+        byte[] getOnly(byte[] key] throws RocksDBException;
 
         KeyValueIterator<Bytes, byte[]> range(Bytes from,
                                               Bytes to);
@@ -522,7 +522,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             this.columnFamily = columnFamily;
         }
 
-        @Override
+        
         public void put(byte[] key,
                         byte[] value)
 {
@@ -540,7 +540,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
 {
                 try
 {
-                    db.put(columnFamily, wOptions, key, value);
+                    db.Add(columnFamily, wOptions, key, value);
                 } catch (RocksDBException e)
 {
                     // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
@@ -549,30 +549,30 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             }
         }
 
-        @Override
+        
         public void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
                                  WriteBatch batch) throws RocksDBException
 {
-            for (KeyValue<Bytes, byte[]> entry : entries)
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
                 Objects.requireNonNull(entry.key, "key cannot be null");
-                addToBatch(entry.key.get(), entry.value, batch);
+                addToBatch(entry.key(), entry.value, batch];
             }
         }
 
-        @Override
-        public byte[] get(byte[] key) throws RocksDBException
+        
+        public byte[] get(byte[] key] throws RocksDBException
 {
-            return db.get(columnFamily, key);
+            return db[columnFamily, key];
         }
 
-        @Override
-        public byte[] getOnly(byte[] key) throws RocksDBException
+        
+        public byte[] getOnly(byte[] key] throws RocksDBException
 {
-            return db.get(columnFamily, key);
+            return db[columnFamily, key];
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
 {
@@ -584,7 +584,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
                 to);
         }
 
-        @Override
+        
         public KeyValueIterator<Bytes, byte[]> all()
 {
             RocksIterator innerIterWithTimestamp = db.newIterator(columnFamily);
@@ -592,29 +592,29 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             return new RocksDbIterator(name, innerIterWithTimestamp, openIterators);
         }
 
-        @Override
+        
         public long approximateNumEntries() throws RocksDBException
 {
             return db.getLongProperty(columnFamily, "rocksdb.estimate-num-keys");
         }
 
-        @Override
+        
         public void flush() throws RocksDBException
 {
             db.flush(fOptions, columnFamily);
         }
 
-        @Override
+        
         public void prepareBatchForRestore(Collection<KeyValue<byte[], byte[]>> records,
                                            WriteBatch batch) throws RocksDBException
 {
-            for (KeyValue<byte[], byte[]> record : records)
+            foreach (KeyValue<byte[], byte[]> record in records)
 {
                 addToBatch(record.key, record.value, batch);
             }
         }
 
-        @Override
+        
         public void addToBatch(byte[] key,
                                byte[] value,
                                WriteBatch batch) throws RocksDBException
@@ -624,17 +624,17 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
                 batch.delete(columnFamily, key);
             } else
 {
-                batch.put(columnFamily, key, value);
+                batch.Add(columnFamily, key, value);
             }
         }
 
-        @Override
+        
         public void close()
 {
             columnFamily.close();
         }
 
-        @Override
+        
         @SuppressWarnings("deprecation")
         public void toggleDbForBulkLoading()
 {
@@ -659,7 +659,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             this.rocksDBStore = rocksDBStore;
         }
 
-        @Override
+        
         public void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
 {
             try (WriteBatch batch = new WriteBatch())
@@ -672,7 +672,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             }
         }
 
-        @Override
+        
         public void onRestoreStart(TopicPartition topicPartition,
                                    string storeName,
                                    long startingOffset,
@@ -681,7 +681,7 @@ public class RocksDBStore : KeyValueStore<Bytes, byte[]>, BulkLoadingStore
             rocksDBStore.toggleDbForBulkLoading(true);
         }
 
-        @Override
+        
         public void onRestoreEnd(TopicPartition topicPartition,
                                  string storeName,
                                  long totalRestored)

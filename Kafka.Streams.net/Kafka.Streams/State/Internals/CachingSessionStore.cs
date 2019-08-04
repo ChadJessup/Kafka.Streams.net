@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import java.util.NoSuchElementException;
 using Kafka.Common.Utils.Bytes;
@@ -73,7 +73,7 @@ class CachingSessionStore
         cache = context.getCache();
         cache.addDirtyEntryFlushListener(cacheName, entries ->
 {
-            for (ThreadCache.DirtyEntry entry : entries)
+            foreach (ThreadCache.DirtyEntry entry in entries)
 {
                 putAndMaybeForward(entry, context);
             }
@@ -95,14 +95,14 @@ class CachingSessionStore
             if (newValueBytes != null || oldValueBytes != null)
 {
                 // we need to get the old values if needed, and then put to store, and then flush
-                wrapped().put(bytesKey, entry.newValue());
+                wrapped().Add(bytesKey, entry.newValue());
 
                 ProcessorRecordContext current = context.recordContext();
                 context.setRecordContext(entry.entry().context());
                 try
 {
                     flushListener.apply(
-                        binaryKey.get(),
+                        binaryKey[],
                         newValueBytes,
                         sendOldValues ? oldValueBytes : null,
                         entry.entry().context().timestamp());
@@ -113,7 +113,7 @@ class CachingSessionStore
             }
         } else
 {
-            wrapped().put(bytesKey, entry.newValue());
+            wrapped().Add(bytesKey, entry.newValue());
         }
     }
 
@@ -139,12 +139,12 @@ class CachingSessionStore
                 context.timestamp(),
                 context.partition(),
                 context.topic());
-        cache.put(cacheName, cacheFunction.cacheKey(binaryKey), entry);
+        cache.Add(cacheName, cacheFunction.cacheKey(binaryKey), entry);
 
-        maxObservedTimestamp = Math.max(keySchema.segmentTimestamp(binaryKey), maxObservedTimestamp);
+        maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(binaryKey), maxObservedTimestamp);
     }
 
-    public override void remove(Windowed<Bytes> sessionKey)
+    public override void Remove(Windowed<Bytes> sessionKey)
 {
         validateStoreOpen();
         put(sessionKey, null);
@@ -217,7 +217,7 @@ class CachingSessionStore
 {
             Bytes bytesKey = SessionKeySchema.toBinary(key, startTime, endTime);
             Bytes cacheKey = cacheFunction.cacheKey(bytesKey);
-            LRUCacheEntry entry = cache.get(cacheName, cacheKey);
+            LRUCacheEntry entry = cache[cacheName, cacheKey];
             if (entry == null)
 {
                 return wrapped().fetchSession(key, startTime, endTime);
@@ -296,7 +296,7 @@ class CachingSessionStore
             this.current = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
         }
 
-        @Override
+        
         public bool hasNext()
 {
             if (current == null)
@@ -320,7 +320,7 @@ class CachingSessionStore
             return true;
         }
 
-        @Override
+        
         public Bytes peekNextKey()
 {
             if (!hasNext())
@@ -330,7 +330,7 @@ class CachingSessionStore
             return current.peekNextKey();
         }
 
-        @Override
+        
         public KeyValue<Bytes, LRUCacheEntry> peekNext()
 {
             if (!hasNext())
@@ -340,7 +340,7 @@ class CachingSessionStore
             return current.peekNext();
         }
 
-        @Override
+        
         public KeyValue<Bytes, LRUCacheEntry> next()
 {
             if (!hasNext())
@@ -350,7 +350,7 @@ class CachingSessionStore
             return current.next();
         }
 
-        @Override
+        
         public void close()
 {
             current.close();
@@ -403,13 +403,13 @@ class CachingSessionStore
 
         private Bytes segmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
 {
-            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.max(0, segmentBeginTime)));
+            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(0, Math.Max(0, segmentBeginTime)));
             return SessionKeySchema.toBinary(sessionKey);
         }
 
         private Bytes segmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
 {
-            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(Math.min(latestSessionStartTime, segmentEndTime), segmentEndTime));
+            Windowed<Bytes> sessionKey = new Windowed<>(key, new SessionWindow(Math.Min(latestSessionStartTime, segmentEndTime), segmentEndTime));
             return SessionKeySchema.toBinary(sessionKey);
         }
     }

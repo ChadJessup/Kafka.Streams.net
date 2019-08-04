@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Serde;
@@ -37,128 +37,150 @@ import java.util.Objects;
 /**
  * {@code IProcessorContext} implementation that will throw on any forward call.
  */
-public class ForwardingDisabledProcessorContext implements IProcessorContext {
+public class ForwardingDisabledProcessorContext : IProcessorContext {
     private IProcessorContext delegate;
 
-    public ForwardingDisabledProcessorContext(IProcessorContext delegate) {
+    public ForwardingDisabledProcessorContext(IProcessorContext delegate)
+{
         this.delegate = Objects.requireNonNull(delegate, "delegate");
     }
 
-    @Override
-    public string applicationId() {
+    
+    public string applicationId()
+{
         return delegate.applicationId();
     }
 
-    @Override
-    public TaskId taskId() {
+    
+    public TaskId taskId()
+{
         return delegate.taskId();
     }
 
-    @Override
-    public ISerde<?> keySerde() {
+    
+    public ISerde<?> keySerde()
+{
         return delegate.keySerde();
     }
 
-    @Override
-    public ISerde<?> valueSerde() {
+    
+    public ISerde<?> valueSerde()
+{
         return delegate.valueSerde();
     }
 
-    @Override
-    public File stateDir() {
+    
+    public File stateDir()
+{
         return delegate.stateDir();
     }
 
-    @Override
-    public StreamsMetrics metrics() {
+    
+    public StreamsMetrics metrics()
+{
         return delegate.metrics();
     }
 
-    @Override
+    
     public void register(IStateStore store,
-                         StateRestoreCallback stateRestoreCallback) {
+                         StateRestoreCallback stateRestoreCallback)
+{
         delegate.register(store, stateRestoreCallback);
     }
 
-    @Override
-    public IStateStore getStateStore(string name) {
+    
+    public IStateStore getStateStore(string name)
+{
         return delegate.getStateStore(name);
     }
 
-    @Override
+    
     @Deprecated
     public ICancellable schedule(long intervalMs,
                                 PunctuationType type,
-                                Punctuator callback) {
+                                Punctuator callback)
+{
         return delegate.schedule(intervalMs, type, callback);
     }
 
-    @Override
+    
     public ICancellable schedule(Duration interval,
                                 PunctuationType type,
-                                Punctuator callback) throws IllegalArgumentException {
+                                Punctuator callback) throws ArgumentException {
         return delegate.schedule(interval, type, callback);
     }
 
-    @Override
-    public <K, V> void forward(K key, V value) {
+    
+    public <K, V> void forward(K key, V value)
+{
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
-    @Override
-    public <K, V> void forward(K key, V value, To to) {
+    
+    public <K, V> void forward(K key, V value, To to)
+{
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
-    @Override
+    
     @Deprecated
-    public <K, V> void forward(K key, V value, int childIndex) {
+    public <K, V> void forward(K key, V value, int childIndex)
+{
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
-    @Override
+    
     @Deprecated
-    public <K, V> void forward(K key, V value, string childName) {
+    public <K, V> void forward(K key, V value, string childName)
+{
         throw new StreamsException("IProcessorContext#forward() not supported.");
     }
 
-    @Override
-    public void commit() {
+    
+    public void commit()
+{
         delegate.commit();
     }
 
-    @Override
-    public string topic() {
+    
+    public string topic()
+{
         return delegate.topic();
     }
 
-    @Override
-    public int partition() {
+    
+    public int partition()
+{
         return delegate.partition();
     }
 
-    @Override
-    public long offset() {
+    
+    public long offset()
+{
         return delegate.offset();
     }
 
-    @Override
-    public Headers headers() {
+    
+    public Headers headers()
+{
         return delegate.headers();
     }
 
-    @Override
-    public long timestamp() {
+    
+    public long timestamp()
+{
         return delegate.timestamp();
     }
 
-    @Override
-    public Dictionary<string, object> appConfigs() {
+    
+    public Dictionary<string, object> appConfigs()
+{
         return delegate.appConfigs();
     }
 
-    @Override
-    public Dictionary<string, object> appConfigsWithPrefix(string prefix) {
+    
+    public Dictionary<string, object> appConfigsWithPrefix(string prefix)
+{
         return delegate.appConfigsWithPrefix(prefix);
     }
 }

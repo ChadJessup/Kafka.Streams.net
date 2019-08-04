@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,7 +25,7 @@ import org.apache.kafka.streams.StreamsMetrics;
 import org.apache.kafka.streams.processor.TaskId;
 import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -58,15 +58,17 @@ public class StandbyTask : AbstractTask {
                 ChangelogReader changelogReader,
                 StreamsConfig config,
                 StreamsMetricsImpl metrics,
-                StateDirectory stateDirectory) {
+                StateDirectory stateDirectory)
+{
         super(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config);
 
-        closeTaskSensor = metrics.threadLevelSensor("task-closed", Sensor.RecordingLevel.INFO);
+        closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
         processorContext = new StandbyContextImpl(id, config, stateMgr, metrics);
     }
 
-    @Override
-    public bool initializeStateStores() {
+    
+    public bool initializeStateStores()
+{
         log.trace("Initializing state stores");
         registerStateStores();
         checkpointedOffsets = Collections.unmodifiableMap(stateMgr.checkpointed());
@@ -75,8 +77,9 @@ public class StandbyTask : AbstractTask {
         return true;
     }
 
-    @Override
-    public void initializeTopology() {
+    
+    public void initializeTopology()
+{
         //no-op
     }
 
@@ -85,9 +88,10 @@ public class StandbyTask : AbstractTask {
      * - update offset limits
      * </pre>
      */
-    @Override
-    public void resume() {
-        log.debug("Resuming");
+    
+    public void resume()
+{
+        log.LogDebug("Resuming");
         updateOffsetLimits();
     }
 
@@ -98,8 +102,9 @@ public class StandbyTask : AbstractTask {
      * - update offset limits
      * </pre>
      */
-    @Override
-    public void commit() {
+    
+    public void commit()
+{
         log.trace("Committing");
         flushAndCheckpointState();
         // reinitialize offset limits
@@ -114,13 +119,15 @@ public class StandbyTask : AbstractTask {
      * - checkpoint store
      * </pre>
      */
-    @Override
-    public void suspend() {
-        log.debug("Suspending");
+    
+    public void suspend()
+{
+        log.LogDebug("Suspending");
         flushAndCheckpointState();
     }
 
-    private void flushAndCheckpointState() {
+    private void flushAndCheckpointState()
+{
         stateMgr.flush();
         stateMgr.checkpoint(Collections.emptyMap());
     }
@@ -132,16 +139,19 @@ public class StandbyTask : AbstractTask {
      * <pre>
      * @param isZombie ignored by {@code StandbyTask} as it can never be a zombie
      */
-    @Override
+    
     public void close(bool clean,
-                      bool isZombie) {
+                      bool isZombie)
+{
         closeTaskSensor.record();
-        if (!taskInitialized) {
+        if (!taskInitialized)
+{
             return;
         }
-        log.debug("Closing");
+        log.LogDebug("Closing");
         try {
-            if (clean) {
+            if (clean)
+{
                 commit();
             }
         } finally {
@@ -151,10 +161,11 @@ public class StandbyTask : AbstractTask {
         taskClosed = true;
     }
 
-    @Override
+    
     public void closeSuspended(bool clean,
                                bool isZombie,
-                               RuntimeException e) {
+                               RuntimeException e)
+{
         close(clean, isZombie);
     }
 
@@ -164,16 +175,19 @@ public class StandbyTask : AbstractTask {
      * @return a list of records not consumed
      */
     public List<ConsumerRecord<byte[], byte[]>> update(TopicPartition partition,
-                                                       List<ConsumerRecord<byte[], byte[]>> records) {
-        log.trace("Updating standby replicas of its state store for partition [{}]", partition);
+                                                       List<ConsumerRecord<byte[], byte[]>> records)
+{
+        log.trace("Updating standby replicas of its state store for partition [{}]", partition];
         long limit = stateMgr.offsetLimit(partition);
 
         long lastOffset = -1L;
-        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new ArrayList<>(records.size());
-        List<ConsumerRecord<byte[], byte[]>> remainingRecords = new ArrayList<>();
+        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>(records.size()];
+        List<ConsumerRecord<byte[], byte[]>> remainingRecords = new List<>();
 
-        for (ConsumerRecord<byte[], byte[]> record : records) {
-            if (record.offset() < limit) {
+        foreach (ConsumerRecord<byte[], byte[]> record in records)
+{
+            if (record.offset() < limit)
+{
                 restoreRecords.add(record);
                 lastOffset = record.offset();
             } else {
@@ -183,14 +197,16 @@ public class StandbyTask : AbstractTask {
 
         stateMgr.updateStandbyStates(partition, restoreRecords, lastOffset);
 
-        if (!restoreRecords.isEmpty()) {
+        if (!restoreRecords.isEmpty())
+{
             commitNeeded = true;
         }
 
         return remainingRecords;
     }
 
-    Dictionary<TopicPartition, Long> checkpointedOffsets() {
+    Dictionary<TopicPartition, Long> checkpointedOffsets()
+{
         return checkpointedOffsets;
     }
 

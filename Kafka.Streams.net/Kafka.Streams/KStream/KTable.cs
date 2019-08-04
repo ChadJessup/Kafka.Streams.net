@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.annotation.InterfaceStability;
 import org.apache.kafka.common.serialization.Serde;
@@ -53,7 +53,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
  *     ...
  *      string queryableStoreName = table.queryableStoreName(); // returns null if KTable is not queryable
  *     ReadOnlyKeyValueStore view = streams.store(queryableStoreName, QueryableStoreTypes.keyValueStore());
- *     view.get(key);
+ *     view[key];
  *}</pre>
  *<p>
  * Records from the source topic that have null keys are dropped.
@@ -133,10 +133,10 @@ public interface KTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // filtering words
+     * KafkaStreams streams = [] // filtering words
      * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
      * K key = "some-word";
-     * V valueForKey = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -150,7 +150,7 @@ public interface KTable<K, V> {
      * @see #filterNot(Predicate, Materialized)
      */
     KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
-                         Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized);
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -172,10 +172,10 @@ public interface KTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // filtering words
+     * KafkaStreams streams = [] // filtering words
      * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
      * K key = "some-word";
-     * V valueForKey = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -191,7 +191,7 @@ public interface KTable<K, V> {
      */
     KTable<K, V> filter( Predicate<? super K, ? super V> predicate,
                          Named named,
-                         Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized);
+                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -258,10 +258,10 @@ public interface KTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // filtering words
+     * KafkaStreams streams = [] // filtering words
      * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
      * K key = "some-word";
-     * V valueForKey = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -274,7 +274,7 @@ public interface KTable<K, V> {
      * @see #filter(Predicate, Materialized)
      */
     KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
-                            Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized);
+                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -296,10 +296,10 @@ public interface KTable<K, V> {
      * To query the local {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // filtering words
+     * KafkaStreams streams = [] // filtering words
      * ReadOnlyKeyValueStore<K,V> localStore = streams.store(queryableStoreName, QueryableStoreTypes.<K, V>keyValueStore());
      * K key = "some-word";
-     * V valueForKey = localStore.get(key); // key must be local (application state is shared over all running Kafka Streams instances)
+     * V valueForKey = localStore[key); // key must be local (application state is shared over all running Kafka Streams instances)
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
@@ -314,7 +314,7 @@ public interface KTable<K, V> {
      */
     KTable<K, V> filterNot( Predicate<? super K, ? super V> predicate,
                             Named named,
-                            Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized);
+                            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -327,7 +327,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").length);
+     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").Length);
      * }</pre>
      * <p>
      * This operation preserves data co-location with respect to the key.
@@ -357,7 +357,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").length, Named.as("countTokenValue"));
+     * KTable<string, Integer> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.as("countTokenValue"));
      * }</pre>
      * <p>
      * This operation preserves data co-location with respect to the key.
@@ -390,7 +390,7 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable =
-     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").length + value.split(" ").length);
+     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length);
      * }</pre>
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -422,7 +422,7 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable =
-     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").length + value.split(" ").length, Named.as("countTokenValueAndKey"));
+     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length, Named.as("countTokenValueAndKey"));
      * }</pre>
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -458,8 +458,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapper<string, Integer> {
-     *     Integer apply(string value) {
-     *         return value.split(" ").length;
+     *     Integer apply(string value)
+{
+     *         return value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -488,7 +489,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
     <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
-                                  Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -504,8 +505,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapper<string, Integer> {
-     *     Integer apply(string value) {
-     *         return value.split(" ").length;
+     *     Integer apply(string value)
+{
+     *         return value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -536,7 +538,7 @@ public interface KTable<K, V> {
      */
     <VR> KTable<K, VR> mapValues( ValueMapper<? super V, ? : VR> mapper,
                                   Named named,
-                                  Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -552,8 +554,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value) {
-     *          return readOnlyKey.split(" ").length + value.split(" ").length;
+     *     Integer apply(string readOnlyKey, string value)
+{
+     *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -583,7 +586,7 @@ public interface KTable<K, V> {
      * @return a {@code KTable} that contains records with unmodified keys and new values (possibly of different type)
      */
     <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
-                                  Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -599,8 +602,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, Integer> outputTable = inputTable.mapValue(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value) {
-     *          return readOnlyKey.split(" ").length + value.split(" ").length;
+     *     Integer apply(string readOnlyKey, string value)
+{
+     *          return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -632,7 +636,7 @@ public interface KTable<K, V> {
      */
     <VR> KTable<K, VR> mapValues( ValueMapperWithKey<? super K, ? super V, ? : VR> mapper,
                                   Named named,
-                                  Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Convert this changelog stream to a {@link KStream}.
@@ -663,8 +667,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> table = builder.table("topic");
      * KTable<Integer, string> keyedStream = table.toStream(new KeyValueMapper<string, string, Integer> {
-     *     Integer apply(string key, string value) {
-     *         return value.length();
+     *     Integer apply(string key, string value)
+{
+     *         return value.Length;
      *     }
      * });
      * }</pre>
@@ -681,7 +686,7 @@ public interface KTable<K, V> {
      * @param <KR> the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( KeyValueMapper<? super K, ? super V, ? : KR> mapper);
+    <KR> KStream<KR, V> toStream( IKeyValueMapper<? super K, ? super V, ? : KR> mapper);
 
     /**
      * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
@@ -690,8 +695,9 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> table = builder.table("topic");
      * KTable<Integer, string> keyedStream = table.toStream(new KeyValueMapper<string, string, Integer> {
-     *     Integer apply(string key, string value) {
-     *         return value.length();
+     *     Integer apply(string key, string value)
+{
+     *         return value.Length;
      *     }
      * });
      * }</pre>
@@ -709,7 +715,7 @@ public interface KTable<K, V> {
      * @param <KR> the new key type of the result stream
      * @return a {@link KStream} that contains the same records as this {@code KTable}
      */
-    <KR> KStream<KR, V> toStream( KeyValueMapper<? super K, ? super V, ? : KR> mapper,
+    <KR> KStream<KR, V> toStream( IKeyValueMapper<? super K, ? super V, ? : KR> mapper,
                                   Named named);
 
     /**
@@ -748,7 +754,7 @@ public interface KTable<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * <p>
      * Within the {@link ValueTransformerWithKey}, the state is obtained via the
@@ -756,22 +762,28 @@ public interface KTable<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private KeyValueStore<string, string> state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -793,7 +805,7 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapperWithKey)
      */
     <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
-                                        string... stateStoreNames);
+                                        string[] stateStoreNames];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -821,7 +833,7 @@ public interface KTable<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KTable outputTable = inputTable.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * <p>
      * Within the {@link ValueTransformerWithKey}, the state is obtained via the
@@ -829,22 +841,28 @@ public interface KTable<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private KeyValueStore<string, string> state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -868,7 +886,7 @@ public interface KTable<K, V> {
      */
     <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
                                         Named named,
-                                        string... stateStoreNames);
+                                        string[] stateStoreNames];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -894,7 +912,7 @@ public interface KTable<K, V> {
      * builder.addStateStore(keyValueStoreBuilder);
      *
      * KTable outputTable = inputTable.transformValues(
-     *     new ValueTransformerWithKeySupplier() { ... },
+     *     new ValueTransformerWithKeySupplier() { [] },
      *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>as("outputTable")
      *                                 .withKeySerde(Serdes.string())
      *                                 .withValueSerde(Serdes.string()),
@@ -906,22 +924,28 @@ public interface KTable<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private KeyValueStore<string, string> state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -946,8 +970,8 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapperWithKey)
      */
     <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
-                                        Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized,
-                                        string... stateStoreNames);
+                                        Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
+                                        string[] stateStoreNames];
 
     /**
      * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -973,7 +997,7 @@ public interface KTable<K, V> {
      * builder.addStateStore(keyValueStoreBuilder);
      *
      * KTable outputTable = inputTable.transformValues(
-     *     new ValueTransformerWithKeySupplier() { ... },
+     *     new ValueTransformerWithKeySupplier() { [] },
      *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>as("outputTable")
      *                                 .withKeySerde(Serdes.string())
      *                                 .withValueSerde(Serdes.string()),
@@ -985,22 +1009,28 @@ public interface KTable<K, V> {
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private KeyValueStore<string, string> state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1026,9 +1056,9 @@ public interface KTable<K, V> {
      * @see #mapValues(ValueMapperWithKey)
      */
     <VR> KTable<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> transformerSupplier,
-                                        Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized,
+                                        Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                         Named named,
-                                        string... stateStoreNames);
+                                        string[] stateStoreNames];
 
     /**
      * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper} and default serializers
@@ -1060,7 +1090,7 @@ public interface KTable<K, V> {
      * @param <VR>     the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( KeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector);
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector);
 
     /**
      * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
@@ -1093,7 +1123,7 @@ public interface KTable<K, V> {
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KTable#groupBy(KeyValueMapper, Grouped)} instead
      */
     @Deprecated
-    <KR, VR> KGroupedTable<KR, VR> groupBy( KeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
                                             Serialized<KR, VR> serialized);
 
     /**
@@ -1126,7 +1156,7 @@ public interface KTable<K, V> {
      * @param <VR>          the value type of the result {@link KGroupedTable}
      * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
      */
-    <KR, VR> KGroupedTable<KR, VR> groupBy( KeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
+    <KR, VR> KGroupedTable<KR, VR> groupBy( IKeyValueMapper<? super K, ? super V, KeyValue<KR, VR>> selector,
                                             Grouped<KR, VR> grouped);
 
     /**
@@ -1358,7 +1388,7 @@ public interface KTable<K, V> {
      */
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<? super V, ? super VO, ? : VR> joiner,
-                                 Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1439,7 +1469,7 @@ public interface KTable<K, V> {
     <VO, VR> KTable<K, VR> join( KTable<K, VO> other,
                                  ValueJoiner<? super V, ? super VO, ? : VR> joiner,
                                  Named named,
-                                 Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1691,7 +1721,7 @@ public interface KTable<K, V> {
      */
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner,
-                                     Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1779,7 +1809,7 @@ public interface KTable<K, V> {
     <VO, VR> KTable<K, VR> leftJoin( KTable<K, VO> other,
                                      ValueJoiner<? super V, ? super VO, ? : VR> joiner,
                                      Named named,
-                                     Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -2029,7 +2059,7 @@ public interface KTable<K, V> {
      */
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<? super V, ? super VO, ? : VR> joiner,
-                                      Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
 
     /**
@@ -2117,7 +2147,7 @@ public interface KTable<K, V> {
     <VO, VR> KTable<K, VR> outerJoin( KTable<K, VO> other,
                                       ValueJoiner<? super V, ? super VO, ? : VR> joiner,
                                       Named named,
-                                      Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized);
+                                      Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized];
 
     /**
      * Get the name of the local state store used that can be used to query this {@code KTable}.

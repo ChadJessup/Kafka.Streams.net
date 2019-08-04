@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 using Kafka.Common.TopicPartition;
 
@@ -25,7 +25,7 @@ using Kafka.Common.TopicPartition;
  * Includes default no-op methods of the {@link StateRestoreListener} {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)},
  * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}, and {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}.
  */
-public abstract class AbstractNotifyingRestoreCallback implements StateRestoreCallback, StateRestoreListener {
+public abstract class AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRestoreListener {
 
 
     /**
@@ -34,11 +34,12 @@ public abstract class AbstractNotifyingRestoreCallback implements StateRestoreCa
      * This method does nothing by default; if desired, subclasses should override it with custom functionality.
      *
      */
-    @Override
+    
     public void onRestoreStart(TopicPartition topicPartition,
                                string storeName,
                                long startingOffset,
-                               long endingOffset) {
+                               long endingOffset)
+{
 
     }
 
@@ -49,11 +50,12 @@ public abstract class AbstractNotifyingRestoreCallback implements StateRestoreCa
      * This method does nothing by default; if desired, subclasses should override it with custom functionality.
      *
      */
-    @Override
+    
     public void onBatchRestored(TopicPartition topicPartition,
                                 string storeName,
                                 long batchEndOffset,
-                                long numRestored) {
+                                long numRestored)
+{
 
     }
 
@@ -63,10 +65,11 @@ public abstract class AbstractNotifyingRestoreCallback implements StateRestoreCa
      * This method does nothing by default; if desired, subclasses should override it with custom functionality.
      *
      */
-    @Override
+    
     public void onRestoreEnd(TopicPartition topicPartition,
                              string storeName,
-                             long totalRestored) {
+                             long totalRestored)
+{
 
     }
 }

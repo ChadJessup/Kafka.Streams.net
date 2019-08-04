@@ -14,13 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics;
+namespace Kafka.common.utils;
+
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
- * A MeasurableStat is a {@link Stat} that is also {@link Measurable} (i.e. can produce a single floating point value).
- * This is the interface used for most of the simple statistics such as {@link org.apache.kafka.common.metrics.stats.Avg},
- * {@link org.apache.kafka.common.metrics.stats.Max}, {@link org.apache.kafka.common.metrics.stats.CumulativeCount}, etc.
+ * A scheduler implementation that uses the system clock.
+ *
+ * Use Scheduler.SYSTEM instead of constructing an instance of this class.
  */
-public interface MeasurableStat : Stat, Measurable {
+public class SystemScheduler : Scheduler {
+    SystemScheduler()
+{
+    }
 
+    
+    public Time time()
+{
+        return Time.SYSTEM;
+    }
+
+    
+    public <T> Future<T> schedule(final ScheduledExecutorService executor,
+                                  final Callable<T> callable, long delayMs)
+{
+        return executor.schedule(callable, delayMs, TimeUnit.MILLISECONDS);
+    }
 }

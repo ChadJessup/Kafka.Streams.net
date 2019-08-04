@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.annotation.InterfaceStability;
@@ -80,7 +80,7 @@ public class StreamsMetadata
         return hostInfo.port();
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -103,15 +103,15 @@ public class StreamsMetadata
 
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
-        int result = hostInfo.GetHashCode()();
-        result = 31 * result + stateStoreNames.GetHashCode()();
-        result = 31 * result + topicPartitions.GetHashCode()();
+        int result = hostInfo.GetHashCode();
+        result = 31 * result + stateStoreNames.GetHashCode();
+        result = 31 * result + topicPartitions.GetHashCode();
         return result;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "StreamsMetadata{" +
                 "hostInfo=" + hostInfo +

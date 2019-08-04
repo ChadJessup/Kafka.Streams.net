@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.streams.KeyValue;
@@ -23,15 +23,17 @@ import org.apache.kafka.streams.processor.BatchingStateRestoreCallback;
 import java.util.Collection;
 
 public interface RecordBatchingStateRestoreCallback : BatchingStateRestoreCallback {
-    void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records);
+    void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records];
 
-    @Override
-    default void restoreAll(Collection<KeyValue<byte[], byte[]>> records) {
-        throw new UnsupportedOperationException();
+    
+    default void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
+{
+        throw new InvalidOperationException();
     }
 
-    @Override
-    default void restore(byte[] key, byte[] value) {
-        throw new UnsupportedOperationException();
+    
+    default void restore(byte[] key, byte[] value)
+{
+        throw new InvalidOperationException();
     }
 }

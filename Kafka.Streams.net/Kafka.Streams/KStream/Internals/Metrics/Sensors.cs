@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.metrics;
+namespace Kafka.streams.kstream.internals.metrics;
 
 import org.apache.kafka.common.MetricName;
 import org.apache.kafka.common.metrics.Sensor;
@@ -36,34 +36,36 @@ import static org.apache.kafka.streams.processor.internals.metrics.StreamsMetric
 public class Sensors {
     private Sensors() {}
 
-    public static Sensor lateRecordDropSensor( InternalProcessorContext context) {
+    public static Sensor lateRecordDropSensor( InternalProcessorContext context)
+{
          StreamsMetricsImpl metrics = context.metrics();
          Sensor sensor = metrics.nodeLevelSensor(
-            context.taskId().toString(),
+            context.taskId().ToString(),
             context.currentNode().name(),
             LATE_RECORD_DROP,
-            Sensor.RecordingLevel.INFO
+            RecordingLevel.INFO
         );
         StreamsMetricsImpl.addInvocationRateAndCount(
             sensor,
             PROCESSOR_NODE_METRICS_GROUP,
-            metrics.tagMap("task-id", context.taskId().toString(), PROCESSOR_NODE_ID_TAG, context.currentNode().name()),
+            metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, context.currentNode().name()),
             LATE_RECORD_DROP
         );
         return sensor;
     }
 
-    public static Sensor recordLatenessSensor( InternalProcessorContext context) {
+    public static Sensor recordLatenessSensor( InternalProcessorContext context)
+{
          StreamsMetricsImpl metrics = context.metrics();
 
          Sensor sensor = metrics.taskLevelSensor(
-            context.taskId().toString(),
+            context.taskId().ToString(),
             "record-lateness",
-            Sensor.RecordingLevel.DEBUG
+            RecordingLevel.DEBUG
         );
 
          Map<string, string> tags = metrics.tagMap(
-            "task-id", context.taskId().toString()
+            "task-id", context.taskId().ToString()
         );
         sensor.add(
             new MetricName(
@@ -84,18 +86,19 @@ public class Sensors {
         return sensor;
     }
 
-    public static Sensor suppressionEmitSensor( InternalProcessorContext context) {
+    public static Sensor suppressionEmitSensor( InternalProcessorContext context)
+{
          StreamsMetricsImpl metrics = context.metrics();
 
          Sensor sensor = metrics.nodeLevelSensor(
-            context.taskId().toString(),
+            context.taskId().ToString(),
             context.currentNode().name(),
             "suppression-emit",
-            Sensor.RecordingLevel.DEBUG
+            RecordingLevel.DEBUG
         );
 
          Map<string, string> tags = metrics.tagMap(
-            "task-id", context.taskId().toString(),
+            "task-id", context.taskId().ToString(),
             PROCESSOR_NODE_ID_TAG, context.currentNode().name()
         );
 

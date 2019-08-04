@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals.assignment;
+namespace Kafka.streams.processor.internals.assignment;
 
 public interface TaskAssignor<C, T : Comparable<T>> {
     void assign(int numStandbyReplicas);

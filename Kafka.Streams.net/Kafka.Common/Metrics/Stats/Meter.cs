@@ -14,72 +14,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics.stats;
+using System;
+using System.Collections.Generic;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-using Kafka.Common.MetricName;
-using Kafka.Common.metrics.CompoundStat;
-using Kafka.Common.metrics.MetricConfig;
-
-
-/**
- * A compound stat that includes a rate metric and a cumulative total metric.
- */
-public class Meter implements CompoundStat {
-    private MetricName rateMetricName;
-    private MetricName totalMetricName;
-    private Rate rate;
-    private CumulativeSum total;
-
+namespace Kafka.Common.Metrics.Stats
+{
     /**
-     * Construct a Meter with seconds as time unit
+     * A compound stat that includes a rate metric and a cumulative total metric.
      */
-    public Meter(MetricName rateMetricName, MetricName totalMetricName) {
-        this(TimeUnit.SECONDS, new WindowedSum(), rateMetricName, totalMetricName);
-    }
+    public class Meter : ICompoundStat
+    {
+        private MetricName rateMetricName;
+        private MetricName totalMetricName;
+        private Rate rate;
+        private CumulativeSum total;
 
-    /**
-     * Construct a Meter with provided time unit
-     */
-    public Meter(TimeUnit unit, MetricName rateMetricName, MetricName totalMetricName) {
-        this(unit, new WindowedSum(), rateMetricName, totalMetricName);
-    }
-
-    /**
-     * Construct a Meter with seconds as time unit
-     */
-    public Meter(SampledStat rateStat, MetricName rateMetricName, MetricName totalMetricName) {
-        this(TimeUnit.SECONDS, rateStat, rateMetricName, totalMetricName);
-    }
-
-    /**
-     * Construct a Meter with provided time unit
-     */
-    public Meter(TimeUnit unit, SampledStat rateStat, MetricName rateMetricName, MetricName totalMetricName) {
-        if (!(rateStat is WindowedSum)) {
-            throw new IllegalArgumentException("Meter is supported only for WindowedCount or WindowedSum.");
+        /**
+         * Construct a Meter with seconds as time unit
+         */
+        public Meter(MetricName rateMetricName, MetricName totalMetricName)
+                : this(TimeUnit.SECONDS, new WindowedSum(), rateMetricName, totalMetricName)
+        {
         }
-        this.total = new CumulativeSum();
-        this.rate = new Rate(unit, rateStat);
-        this.rateMetricName = rateMetricName;
-        this.totalMetricName = totalMetricName;
-    }
 
-    @Override
-    public List<NamedMeasurable> stats() {
-        return Arrays.asList(
-            new NamedMeasurable(totalMetricName, total),
-            new NamedMeasurable(rateMetricName, rate));
-    }
+        /**
+         * Construct a Meter with provided time unit
+         */
+        public Meter(TimeUnit unit, MetricName rateMetricName, MetricName totalMetricName)
+            : this(unit, new WindowedSum(), rateMetricName, totalMetricName)
+        {
+        }
 
-    @Override
-    public void record(MetricConfig config, double value, long timeMs) {
-        rate.record(config, value, timeMs);
-        // Total metrics with Count stat should record 1.0 (as recorded in the count)
-        double totalValue = (rate.stat is WindowedCount) ? 1.0 : value;
-        total.record(config, totalValue, timeMs);
+        /**
+         * Construct a Meter with seconds as time unit
+         */
+        public Meter(SampledStat rateStat, MetricName rateMetricName, MetricName totalMetricName)
+            : this(TimeUnit.SECONDS, rateStat, rateMetricName, totalMetricName)
+        {
+        }
+
+        /**
+         * Construct a Meter with provided time unit
+         */
+        public Meter(TimeUnit unit, SampledStat rateStat, MetricName rateMetricName, MetricName totalMetricName)
+        {
+            if (!(rateStat is WindowedSum))
+            {
+                throw new ArgumentException("Meter is supported only for WindowedCount or WindowedSum.");
+            }
+            this.total = new CumulativeSum();
+            this.rate = new Rate(unit, rateStat);
+            this.rateMetricName = rateMetricName;
+            this.totalMetricName = totalMetricName;
+        }
+
+
+        public List<NamedMeasurable> stats()
+        {
+            return new List<NamedMeasurable>
+            {
+                new NamedMeasurable(totalMetricName, total),
+                new NamedMeasurable(rateMetricName, rate),
+            };
+        }
+
+
+        public void record(MetricConfig config, double value, long timeMs)
+        {
+            rate.record(config, value, timeMs);
+            // Total metrics with Count stat should record 1.0 (as recorded in the count)
+            double totalValue = (rate.stat is WindowedCount) ? 1.0 : value;
+            total.record(config, totalValue, timeMs);
+        }
     }
 }

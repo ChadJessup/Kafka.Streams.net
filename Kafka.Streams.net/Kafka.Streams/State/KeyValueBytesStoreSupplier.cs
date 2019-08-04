@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Common.Utils.Bytes;
 
@@ -26,7 +26,7 @@ using Kafka.Common.Utils.Bytes;
  * 1. Null value bytes in put operations should be treated as delete.
  * 2. If the key does not exist, get operations should return null value bytes.
  */
-public interface KeyValueBytesStoreSupplier : StoreSupplier<KeyValueStore<Bytes, byte[]>>
+public interface KeyValueBytesStoreSupplier : StoreSupplier<IKeyValueStore<Bytes, byte[]>>
 {
 
 }

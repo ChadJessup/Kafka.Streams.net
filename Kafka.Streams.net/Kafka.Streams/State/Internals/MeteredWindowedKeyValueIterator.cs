@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.Bytes;
@@ -33,13 +33,13 @@ class MeteredWindowedKeyValueIterator<K, V> : KeyValueIterator<Windowed<K>, V>
     private StreamsMetrics metrics;
     private StateSerdes<K, V> serdes;
     private long startNs;
-    private Time time;
+    private ITime time;
 
     MeteredWindowedKeyValueIterator(KeyValueIterator<Windowed<Bytes>, byte[]> iter,
                                     Sensor sensor,
                                     StreamsMetrics metrics,
                                     StateSerdes<K, V> serdes,
-                                    Time time)
+                                    ITime time)
 {
         this.iter = iter;
         this.sensor = sensor;
@@ -62,13 +62,13 @@ class MeteredWindowedKeyValueIterator<K, V> : KeyValueIterator<Windowed<K>, V>
 
     private Windowed<K> windowedKey(Windowed<Bytes> bytesKey)
 {
-        K key = serdes.keyFrom(bytesKey.key().get());
+        K key = serdes.keyFrom(bytesKey.key()()];
         return new Windowed<>(key, bytesKey.window());
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        iter.remove();
+        iter.Remove();
     }
 
     public override void close()

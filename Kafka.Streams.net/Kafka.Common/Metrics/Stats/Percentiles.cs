@@ -1,127 +1,110 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.apache.kafka.common.metrics.stats;
+using Kafka.Common.Metrics.Stats.Interfaces;
+using System;
+using System.Collections.Generic;
 
-import java.util.ArrayList;
-import java.util.List;
+namespace Kafka.Common.Metrics.Stats
+{
 
-using Kafka.Common.metrics.CompoundStat;
-using Kafka.Common.metrics.Measurable;
-using Kafka.Common.metrics.MetricConfig;
-using Kafka.Common.metrics.stats.Histogram.BinScheme;
-using Kafka.Common.metrics.stats.Histogram.ConstantBinScheme;
-using Kafka.Common.metrics.stats.Histogram.LinearBinScheme;
+    /**
+     * A compound stat that reports one or more percentiles
+     */
+    public class Percentiles : SampledStat, ICompoundStat
+    {
 
-/**
- * A compound stat that reports one or more percentiles
- */
-public class Percentiles : SampledStat implements CompoundStat {
-
-    public enum BucketSizing {
-        CONSTANT, LINEAR
-    }
-
-    private int buckets;
-    private Percentile[] percentiles;
-    private BinScheme binScheme;
-
-    public Percentiles(int sizeInBytes, double max, BucketSizing bucketing, Percentile... percentiles) {
-        this(sizeInBytes, 0.0, max, bucketing, percentiles);
-    }
-
-    public Percentiles(int sizeInBytes, double min, double max, BucketSizing bucketing, Percentile... percentiles) {
-        super(0.0);
-        this.percentiles = percentiles;
-        this.buckets = sizeInBytes / 4;
-        if (bucketing == BucketSizing.CONSTANT) {
-            this.binScheme = new ConstantBinScheme(buckets, min, max);
-        } else if (bucketing == BucketSizing.LINEAR) {
-            if (min != 0.0d)
-                throw new IllegalArgumentException("Linear bucket sizing requires min to be 0.0.");
-            this.binScheme = new LinearBinScheme(buckets, max);
-        } else {
-            throw new IllegalArgumentException("Unknown bucket type: " + bucketing);
+        public enum BucketSizing
+        {
+            CONSTANT, LINEAR
         }
-    }
 
-    @Override
-    public List<NamedMeasurable> stats() {
-        List<NamedMeasurable> ms = new ArrayList<NamedMeasurable>(this.percentiles.length);
-        for (Percentile percentile : this.percentiles) {
-            double pct = percentile.percentile();
-            ms.add(new NamedMeasurable(percentile.name(), new Measurable() {
-                public double measure(MetricConfig config, long now) {
-                    return value(config, now, pct / 100.0);
-                }
-            }));
+        private int buckets;
+        private Percentile[] percentiles;
+        private IBinScheme binScheme;
+
+        public Percentiles(int sizeInBytes, double max, BucketSizing bucketing, Percentile[] percentiles)
+            : this(sizeInBytes, 0.0, max, bucketing, percentiles)
+        {
         }
-        return ms;
-    }
 
-    public double value(MetricConfig config, long now, double quantile) {
-        purgeObsoleteSamples(config, now);
-        float count = 0.0f;
-        for (Sample sample : this.samples)
-            count += sample.eventCount;
-        if (count == 0.0f)
-            return Double.NaN;
-        float sum = 0.0f;
-        float quant = (float) quantile;
-        for (int b = 0; b < buckets; b++) {
-            for (Sample s : this.samples) {
-                HistogramSample sample = (HistogramSample) s;
-                float[] hist = sample.histogram.counts();
-                sum += hist[b];
-                if (sum / count > quant)
-                    return binScheme.fromBin(b);
+        public Percentiles(int sizeInBytes, double min, double max, BucketSizing bucketing, Percentile[] percentiles)
+                : base(0.0)
+        {
+            this.percentiles = percentiles;
+            this.buckets = sizeInBytes / 4;
+            if (bucketing == BucketSizing.CONSTANT)
+            {
+                this.binScheme = new ConstantBinScheme(buckets, min, max);
+            }
+            else if (bucketing == BucketSizing.LINEAR)
+            {
+                if (min != 0.0d)
+                    throw new ArgumentException("Linear bucket sizing requires min to be 0.0.");
+                this.binScheme = new LinearBinScheme(buckets, max);
+            }
+            else
+            {
+                throw new ArgumentException("Unknown bucket type: " + bucketing);
             }
         }
-        return Double.POSITIVE_INFINITY;
-    }
 
-    @Override
-    public double combine(List<Sample> samples, MetricConfig config, long now) {
-        return value(config, now, 0.5);
-    }
+        public List<NamedMeasurable> stats()
+        {
+            List<NamedMeasurable> ms = new List<NamedMeasurable>(this.percentiles.Length);
 
-    @Override
-    protected HistogramSample newSample(long timeMs) {
-        return new HistogramSample(this.binScheme, timeMs);
-    }
+            foreach (Percentile percentile in this.percentiles)
+            {
+                double pct = percentile.percentile;
+                //ms.Add(new NamedMeasurable(percentile.name, new IMeasurable()
+                //{
+                //    public double measure(MetricConfig config, long now)
+{
+                //        return value(config, now, pct / 100.0);
+                //    }
+                //}));
+            }
 
-    @Override
-    protected void update(Sample sample, MetricConfig config, double value, long timeMs) {
-        HistogramSample hist = (HistogramSample) sample;
-        hist.histogram.record(value);
-    }
-
-    private static class HistogramSample : SampledStat.Sample {
-        private Histogram histogram;
-
-        private HistogramSample(BinScheme scheme, long now) {
-            super(0.0, now);
-            this.histogram = new Histogram(scheme);
+            return ms;
         }
 
-        @Override
-        public void reset(long now) {
-            super.reset(now);
-            this.histogram.clear();
+        public double value(MetricConfig config, long now, double quantile)
+        {
+            purgeObsoleteSamples(config, now);
+            float count = 0.0f;
+            foreach (Sample sample in this.samples)
+                count += sample.eventCount;
+
+            if (count == 0.0f)
+                return double.NaN;
+            float sum = 0.0f;
+            float quant = (float)quantile;
+            for (int b = 0; b < buckets; b++)
+            {
+                foreach (Sample s in this.samples)
+                {
+                    HistogramSample sample = (HistogramSample)s;
+                    float[] hist = sample.histogram.counts();
+                    sum += hist[b];
+                    if (sum / count > quant)
+                        return binScheme.fromBin(b);
+                }
+            }
+
+            return double.PositiveInfinity;
+        }
+
+        public override double combine(List<Sample> samples, MetricConfig config, long now)
+        {
+            return value(config, now, 0.5);
+        }
+
+        protected override Sample newSample(long timeMs)
+        {
+            return new HistogramSample(this.binScheme, timeMs);
+        }
+
+        protected override void update(Sample sample, MetricConfig config, double value, long timeMs)
+        {
+            HistogramSample hist = (HistogramSample)sample;
+            hist.histogram.record(value);
         }
     }
-
 }

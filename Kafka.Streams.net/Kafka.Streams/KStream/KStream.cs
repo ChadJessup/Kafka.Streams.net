@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.clients.producer.internals.DefaultPartitioner;
 import org.apache.kafka.common.annotation.InterfaceStability;
@@ -114,10 +114,11 @@ public interface KStream<K, V> {
      * extracting a key from the value within your {@link KeyValueMapper}. The example below computes the new key as the
      * length of the value string.
      * <pre>{@code
-     * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
+     * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic"];
      * KStream<Integer, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, Integer> {
-     *     Integer apply(Byte[] key, string value) {
-     *         return value.length();
+     *     Integer apply(Byte[] key, string value)
+{
+     *         return value.Length;
      *     }
      * });
      * }</pre>
@@ -134,7 +135,7 @@ public interface KStream<K, V> {
      * @see #flatMapValues(ValueMapper)
      * @see #flatMapValues(ValueMapperWithKey)
      */
-    <KR> KStream<KR, V> selectKey( KeyValueMapper<? super K, ? super V, ? : KR> mapper);
+    <KR> KStream<KR, V> selectKey( IKeyValueMapper<? super K, ? super V, ? : KR> mapper);
 
     /**
      * Set a new key (with possibly new type) for each input record.
@@ -146,10 +147,11 @@ public interface KStream<K, V> {
      * extracting a key from the value within your {@link KeyValueMapper}. The example below computes the new key as the
      * length of the value string.
      * <pre>{@code
-     * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
+     * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic"];
      * KStream<Integer, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, Integer> {
-     *     Integer apply(Byte[] key, string value) {
-     *         return value.length();
+     *     Integer apply(Byte[] key, string value)
+{
+     *         return value.Length;
      *     }
      * });
      * }</pre>
@@ -167,7 +169,7 @@ public interface KStream<K, V> {
      * @see #flatMapValues(ValueMapper)
      * @see #flatMapValues(ValueMapperWithKey)
      */
-    <KR> KStream<KR, V> selectKey( KeyValueMapper<? super K, ? super V, ? : KR> mapper,
+    <KR> KStream<KR, V> selectKey( IKeyValueMapper<? super K, ? super V, ? : KR> mapper,
                                    Named named);
 
     /**
@@ -182,8 +184,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, Integer>> {
-     *     KeyValue<string, Integer> apply(string key, string value) {
-     *         return new KeyValue<>(key.toUpperCase(), value.split(" ").length);
+     *     KeyValue<string, Integer> apply(string key, string value)
+{
+     *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
      *     }
      * });
      * }</pre>
@@ -206,7 +209,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> map( KeyValueMapper<? super K, ? super V, ? : KeyValue<? : KR, ? : VR>> mapper);
+    <KR, VR> KStream<KR, VR> map( IKeyValueMapper<? super K, ? super V, ? : KeyValue<? : KR, ? : VR>> mapper);
 
     /**
      * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -220,8 +223,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, Integer>> {
-     *     KeyValue<string, Integer> apply(string key, string value) {
-     *         return new KeyValue<>(key.toUpperCase(), value.split(" ").length);
+     *     KeyValue<string, Integer> apply(string key, string value)
+{
+     *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
      *     }
      * });
      * }</pre>
@@ -245,7 +249,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerSupplier, string...)
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> map( KeyValueMapper<? super K, ? super V, ? : KeyValue<? : KR, ? : VR>> mapper,
+    <KR, VR> KStream<KR, VR> map( IKeyValueMapper<? super K, ? super V, ? : KeyValue<? : KR, ? : VR>> mapper,
                                   Named named);
 
     /**
@@ -259,8 +263,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapper<string, Integer> {
-     *     Integer apply(string value) {
-     *         return value.split(" ").length;
+     *     Integer apply(string value)
+{
+     *         return value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -294,8 +299,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapper<string, Integer> {
-     *     Integer apply(string value) {
-     *         return value.split(" ").length;
+     *     Integer apply(string value)
+{
+     *         return value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -330,8 +336,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value) {
-     *         return readOnlyKey.split(" ").length + value.split(" ").length;
+     *     Integer apply(string readOnlyKey, string value)
+{
+     *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -365,8 +372,9 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<string, string> inputStream = builder.stream("topic");
      * KStream<string, Integer> outputStream = inputStream.mapValues(new ValueMapperWithKey<string, string, Integer> {
-     *     Integer apply(string readOnlyKey, string value) {
-     *         return readOnlyKey.split(" ").length + value.split(" ").length;
+     *     Integer apply(string readOnlyKey, string value)
+{
+     *         return readOnlyKey.split(" ").Length + value.split(" ").Length;
      *     }
      * });
      * }</pre>
@@ -402,14 +410,16 @@ public interface KStream<K, V> {
      * The example below splits input records {@code <null:string>} containing sentences as values into their words
      * and emit a record {@code <word:1>} for each word.
      * <pre>{@code
-     * KStream<byte[], string> inputStream = builder.stream("topic");
+     * KStream<byte[], string> inputStream = builder.stream("topic"];
      * KStream<string, Integer> outputStream = inputStream.flatMap(
      *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, Integer>>> {
-     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value) {
-     *             string[] tokens = value.split(" ");
-     *             List<KeyValue<string, Integer>> result = new ArrayList<>(tokens.length);
+     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value)
+{
+     *             string[] tokens = value.split(" "];
+     *             List<KeyValue<string, Integer>> result = new List<>(tokens.Length);
      *
-     *             for(string token : tokens) {
+     *             for(string token : tokens)
+{
      *                 result.add(new KeyValue<>(token, 1));
      *             }
      *
@@ -440,7 +450,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> flatMap( KeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : KR, ? : VR>>> mapper);
+    <KR, VR> KStream<KR, VR> flatMap( IKeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : KR, ? : VR>>> mapper);
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -453,14 +463,16 @@ public interface KStream<K, V> {
      * The example below splits input records {@code <null:string>} containing sentences as values into their words
      * and emit a record {@code <word:1>} for each word.
      * <pre>{@code
-     * KStream<byte[], string> inputStream = builder.stream("topic");
+     * KStream<byte[], string> inputStream = builder.stream("topic"];
      * KStream<string, Integer> outputStream = inputStream.flatMap(
      *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, Integer>>> {
-     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value) {
-     *             string[] tokens = value.split(" ");
-     *             List<KeyValue<string, Integer>> result = new ArrayList<>(tokens.length);
+     *         Iterable<KeyValue<string, Integer>> apply(byte[] key, string value)
+{
+     *             string[] tokens = value.split(" "];
+     *             List<KeyValue<string, Integer>> result = new List<>(tokens.Length);
      *
-     *             for(string token : tokens) {
+     *             for(string token : tokens)
+{
      *                 result.add(new KeyValue<>(token, 1));
      *             }
      *
@@ -492,7 +504,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    <KR, VR> KStream<KR, VR> flatMap( KeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : KR, ? : VR>>> mapper,
+    <KR, VR> KStream<KR, VR> flatMap( IKeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : KR, ? : VR>>> mapper,
                                       Named named);
 
     /**
@@ -507,9 +519,10 @@ public interface KStream<K, V> {
      * <p>
      * The example below splits input records {@code <null:string>} containing sentences as values into their words.
      * <pre>{@code
-     * KStream<byte[], string> inputStream = builder.stream("topic");
+     * KStream<byte[], string> inputStream = builder.stream("topic"];
      * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, Iterable<string>> {
-     *     Iterable<string> apply(string value) {
+     *     Iterable<string> apply(string value)
+{
      *         return Arrays.asList(value.split(" "));
      *     }
      * });
@@ -550,9 +563,10 @@ public interface KStream<K, V> {
      * <p>
      * The example below splits input records {@code <null:string>} containing sentences as values into their words.
      * <pre>{@code
-     * KStream<byte[], string> inputStream = builder.stream("topic");
+     * KStream<byte[], string> inputStream = builder.stream("topic"];
      * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, Iterable<string>> {
-     *     Iterable<string> apply(string value) {
+     *     Iterable<string> apply(string value)
+{
      *         return Arrays.asList(value.split(" "));
      *     }
      * });
@@ -597,8 +611,10 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<Integer, string> inputStream = builder.stream("topic");
      * KStream<Integer, string> outputStream = inputStream.flatMapValues(new ValueMapper<Integer, string, Iterable<string>> {
-     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value) {
-     *         if(readOnlyKey == 1) {
+     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value)
+{
+     *         if(readOnlyKey == 1)
+{
      *             return Arrays.asList(value.split(" "));
      *         } else {
      *             return Arrays.asList(value);
@@ -646,8 +662,10 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<Integer, string> inputStream = builder.stream("topic");
      * KStream<Integer, string> outputStream = inputStream.flatMapValues(new ValueMapper<Integer, string, Iterable<string>> {
-     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value) {
-     *         if(readOnlyKey == 1) {
+     *     Iterable<Integer, string> apply(Integer readOnlyKey, string value)
+{
+     *         if(readOnlyKey == 1)
+{
      *             return Arrays.asList(value.split(" "));
      *         } else {
      *             return Arrays.asList(value);
@@ -756,7 +774,7 @@ public interface KStream<K, V> {
      * @return multiple distinct substreams of this {@code KStream}
      */
     @SuppressWarnings("unchecked")
-    KStream<K, V>[] branch( Predicate<? super K, ? super V>... predicates);
+    KStream<K, V>[] branch( Predicate<? super K, ? super V>[] predicates];
 
     /**
      * Creates an array of {@code KStream} from this stream by branching the records in the original stream based on
@@ -773,7 +791,7 @@ public interface KStream<K, V> {
      * @return multiple distinct substreams of this {@code KStream}
      */
     @SuppressWarnings("unchecked")
-    KStream<K, V>[] branch( Named named,  Predicate<? super K, ? super V>... predicates);
+    KStream<K, V>[] branch( Named named,  Predicate<? super K, ? super V>[] predicates];
 
     /**
      * Merge this stream and the given stream into one larger stream.
@@ -898,7 +916,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transform(new TransformerSupplier() { ... }, "myTransformState");
+     * KStream outputStream = inputStream.transform(new TransformerSupplier() { [] }, "myTransformState"];
      * }</pre>
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -908,25 +926,31 @@ public interface KStream<K, V> {
      * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
      * in which case no record is emitted.
      * <pre>{@code
-     * new TransformerSupplier() {
-     *     Transformer get() {
-     *         return new Transformer() {
+     * new TransformerSupplier()
+{
+     *     Transformer get()
+{
+     *         return new Transformer()
+{
      *             private IProcessorContext context;
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.context = context;
      *                 this.state = context.getStateStore("myTransformState");
      *                 // punctuate each second; can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             KeyValue transform(K key, V value) {
+     *             KeyValue transform(K key, V value)
+{
      *                 // can access this.state
      *                 return new KeyValue(key, value); // can emit a single value via return -- can also be null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -966,7 +990,7 @@ public interface KStream<K, V> {
      * @see #process(ProcessorSupplier, string...)
      */
     <K1, V1> KStream<K1, V1> transform( TransformerSupplier<? super K, ? super V, KeyValue<K1, V1>> transformerSupplier,
-                                        string... stateStoreNames);
+                                        string[] stateStoreNames];
 
     /**
      * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -989,7 +1013,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transform(new TransformerSupplier() { ... }, "myTransformState");
+     * KStream outputStream = inputStream.transform(new TransformerSupplier() { [] }, "myTransformState"];
      * }</pre>
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -999,25 +1023,31 @@ public interface KStream<K, V> {
      * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
      * in which case no record is emitted.
      * <pre>{@code
-     * new TransformerSupplier() {
-     *     Transformer get() {
-     *         return new Transformer() {
+     * new TransformerSupplier()
+{
+     *     Transformer get()
+{
+     *         return new Transformer()
+{
      *             private IProcessorContext context;
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.context = context;
      *                 this.state = context.getStateStore("myTransformState");
      *                 // punctuate each second; can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             KeyValue transform(K key, V value) {
+     *             KeyValue transform(K key, V value)
+{
      *                 // can access this.state
      *                 return new KeyValue(key, value); // can emit a single value via return -- can also be null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1059,7 +1089,7 @@ public interface KStream<K, V> {
      */
     <K1, V1> KStream<K1, V1> transform( TransformerSupplier<? super K, ? super V, KeyValue<K1, V1>> transformerSupplier,
                                         Named named,
-                                        string... stateStoreNames);
+                                        string[] stateStoreNames];
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -1083,7 +1113,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransform(new TransformerSupplier() { ... }, "myTransformState");
+     * KStream outputStream = inputStream.flatTransform(new TransformerSupplier() { [] }, "myTransformState"];
      * }</pre>
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
@@ -1093,29 +1123,36 @@ public interface KStream<K, V> {
      * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
      * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
      * <pre>{@code
-     * new TransformerSupplier() {
-     *     Transformer get() {
-     *         return new Transformer() {
+     * new TransformerSupplier()
+{
+     *     Transformer get()
+{
+     *         return new Transformer()
+{
      *             private IProcessorContext context;
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.context = context;
      *                 this.state = context.getStateStore("myTransformState");
      *                 // punctuate each second; can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<KeyValue> transform(K key, V value) {
+     *             Iterable<KeyValue> transform(K key, V value)
+{
      *                 // can access this.state
-     *                 List<KeyValue> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<KeyValue> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new KeyValue(key, value));
      *                 }
      *                 return result; // emits a list of key-value pairs via return
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1151,7 +1188,7 @@ public interface KStream<K, V> {
      * @see #process(ProcessorSupplier, string...)
      */
     <K1, V1> KStream<K1, V1> flatTransform( TransformerSupplier<? super K, ? super V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
-                                            string... stateStoreNames);
+                                            string[] stateStoreNames];
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -1175,7 +1212,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransform(new TransformerSupplier() { ... }, "myTransformState");
+     * KStream outputStream = inputStream.flatTransform(new TransformerSupplier() { [] }, "myTransformState"];
      * }</pre>
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
@@ -1185,29 +1222,36 @@ public interface KStream<K, V> {
      * The return value of {@link Transformer#transform(Object, Object) Transformer#transform()} may be {@code null},
      * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
      * <pre>{@code
-     * new TransformerSupplier() {
-     *     Transformer get() {
-     *         return new Transformer() {
+     * new TransformerSupplier()
+{
+     *     Transformer get()
+{
+     *         return new Transformer()
+{
      *             private IProcessorContext context;
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.context = context;
      *                 this.state = context.getStateStore("myTransformState");
      *                 // punctuate each second; can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<KeyValue> transform(K key, V value) {
+     *             Iterable<KeyValue> transform(K key, V value)
+{
      *                 // can access this.state
-     *                 List<KeyValue> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<KeyValue> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new KeyValue(key, value));
      *                 }
      *                 return result; // emits a list of key-value pairs via return
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1245,7 +1289,7 @@ public interface KStream<K, V> {
      */
     <K1, V1> KStream<K1, V1> flatTransform( TransformerSupplier<? super K, ? super V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
                                             Named named,
-                                            string... stateStoreNames);
+                                            string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1267,7 +1311,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transformValues(new ValueTransformerSupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.transformValues(new ValueTransformerSupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1280,23 +1324,29 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerSupplier() {
-     *     ValueTransformer get() {
-     *         return new ValueTransformer() {
+     * new ValueTransformerSupplier()
+{
+     *     ValueTransformer get()
+{
+     *         return new ValueTransformer()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             NewValueType transform(V value) {
+     *             NewValueType transform(V value)
+{
      *                 // can access this.state
      *                 return new NewValueType(); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1321,7 +1371,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      */
     <VR> KStream<K, VR> transformValues( ValueTransformerSupplier<? super V, ? : VR> valueTransformerSupplier,
-                                         string... stateStoreNames);
+                                         string[] stateStoreNames];
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
      * A {@link ValueTransformer} (provided by the given {@link ValueTransformerSupplier}) is applied to each input
@@ -1342,7 +1392,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transformValues(new ValueTransformerSupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.transformValues(new ValueTransformerSupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1355,23 +1405,29 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerSupplier() {
-     *     ValueTransformer get() {
-     *         return new ValueTransformer() {
+     * new ValueTransformerSupplier()
+{
+     *     ValueTransformer get()
+{
+     *         return new ValueTransformer()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             NewValueType transform(V value) {
+     *             NewValueType transform(V value)
+{
      *                 // can access this.state
      *                 return new NewValueType(); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1398,7 +1454,7 @@ public interface KStream<K, V> {
      */
     <VR> KStream<K, VR> transformValues( ValueTransformerSupplier<? super V, ? : VR> valueTransformerSupplier,
                                          Named named,
-                                         string... stateStoreNames);
+                                         string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1420,7 +1476,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1435,23 +1491,29 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1477,7 +1539,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      */
     <VR> KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> valueTransformerSupplier,
-                                         string... stateStoreNames);
+                                         string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1499,7 +1561,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.transformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.transformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1514,23 +1576,29 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             NewValueType transform(K readOnlyKey, V value) {
+     *             NewValueType transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
      *                 return new NewValueType(readOnlyKey); // or null
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1558,7 +1626,7 @@ public interface KStream<K, V> {
      */
     <VR> KStream<K, VR> transformValues( ValueTransformerWithKeySupplier<? super K, ? super V, ? : VR> valueTransformerSupplier,
                                          Named named,
-                                         string... stateStoreNames);
+                                         string[] stateStoreNames];
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
      * type) and emit for each new value a record with the same key of the input record and the value.
@@ -1579,7 +1647,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerSupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerSupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1595,27 +1663,34 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerSupplier() {
-     *     ValueTransformer get() {
-     *         return new ValueTransformer() {
+     * new ValueTransformerSupplier()
+{
+     *     ValueTransformer get()
+{
+     *         return new ValueTransformer()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(V value) {
+     *             Iterable<NewValueType> transform(V value)
+{
      *                 // can access this.state
-     *                 List<NewValueType> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<NewValueType> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new NewValueType(value));
      *                 }
      *                 return result; // values
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1643,7 +1718,7 @@ public interface KStream<K, V> {
      * @see #flatTransform(TransformerSupplier, string...)
      */
     <VR> KStream<K, VR> flatTransformValues( ValueTransformerSupplier<? super V, Iterable<VR>> valueTransformerSupplier,
-                                             string... stateStoreNames);
+                                             string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1665,7 +1740,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerSupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerSupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1681,27 +1756,34 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
      * emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerSupplier() {
-     *     ValueTransformer get() {
-     *         return new ValueTransformer() {
+     * new ValueTransformerSupplier()
+{
+     *     ValueTransformer get()
+{
+     *         return new ValueTransformer()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(V value) {
+     *             Iterable<NewValueType> transform(V value)
+{
      *                 // can access this.state
-     *                 List<NewValueType> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<NewValueType> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new NewValueType(value));
      *                 }
      *                 return result; // values
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1731,7 +1813,7 @@ public interface KStream<K, V> {
      */
     <VR> KStream<K, VR> flatTransformValues( ValueTransformerSupplier<? super V, Iterable<VR>> valueTransformerSupplier,
                                              Named named,
-                                             string... stateStoreNames);
+                                             string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1753,7 +1835,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1769,27 +1851,34 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(K readOnlyKey, V value) {
+     *             Iterable<NewValueType> transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
-     *                 List<NewValueType> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<NewValueType> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new NewValueType(readOnlyKey));
      *                 }
      *                 return result; // values
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1818,7 +1907,7 @@ public interface KStream<K, V> {
      * @see #flatTransform(TransformerSupplier, string...)
      */
     <VR> KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<? super K, ? super V, Iterable<VR>> valueTransformerSupplier,
-                                             string... stateStoreNames);
+                                             string[] stateStoreNames];
 
     /**
      * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1840,7 +1929,7 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerWithKeySupplier() { ... }, "myValueTransformState");
+     * KStream outputStream = inputStream.flatTransformValues(new ValueTransformerWithKeySupplier() { [] }, "myValueTransformState"];
      * }</pre>
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
@@ -1856,27 +1945,34 @@ public interface KStream<K, V> {
      * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
      * to emit a {@link KeyValue} pair.
      * <pre>{@code
-     * new ValueTransformerWithKeySupplier() {
-     *     ValueTransformerWithKey get() {
-     *         return new ValueTransformerWithKey() {
+     * new ValueTransformerWithKeySupplier()
+{
+     *     ValueTransformerWithKey get()
+{
+     *         return new ValueTransformerWithKey()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myValueTransformState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(K readOnlyKey, V value) {
+     *             Iterable<NewValueType> transform(K readOnlyKey, V value)
+{
      *                 // can access this.state and use read-only key
-     *                 List<NewValueType> result = new ArrayList<>();
-     *                 for (int i = 0; i < 3; i++) {
+     *                 List<NewValueType> result = new List<>();
+     *                 for (int i = 0; i < 3; i++)
+{
      *                     result.add(new NewValueType(readOnlyKey));
      *                 }
      *                 return result; // values
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1907,7 +2003,7 @@ public interface KStream<K, V> {
      */
     <VR> KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<? super K, ? super V, Iterable<VR>> valueTransformerSupplier,
                                              Named named,
-                                             string... stateStoreNames);
+                                             string[] stateStoreNames];
 
     /**
      * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
@@ -1928,29 +2024,35 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * inputStream.process(new ProcessorSupplier() { ... }, "myProcessorState");
+     * inputStream.process(new ProcessorSupplier() { [] }, "myProcessorState"];
      * }</pre>
      * Within the {@link Processor}, the state is obtained via the
      * {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ProcessorSupplier() {
-     *     Processor get() {
-     *         return new Processor() {
+     * new ProcessorSupplier()
+{
+     *     Processor get()
+{
+     *         return new Processor()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myProcessorState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             void process(K key, V value) {
+     *             void process(K key, V value)
+{
      *                 // can access this.state
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -1966,7 +2068,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      */
     void process( ProcessorSupplier<? super K, ? super V> processorSupplier,
-                  string... stateStoreNames);
+                  string[] stateStoreNames];
 
     /**
      * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
@@ -1987,29 +2089,35 @@ public interface KStream<K, V> {
      * // register store
      * builder.addStateStore(keyValueStoreBuilder);
      *
-     * inputStream.process(new ProcessorSupplier() { ... }, "myProcessorState");
+     * inputStream.process(new ProcessorSupplier() { [] }, "myProcessorState"];
      * }</pre>
      * Within the {@link Processor}, the state is obtained via the
      * {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
      * <pre>{@code
-     * new ProcessorSupplier() {
-     *     Processor get() {
-     *         return new Processor() {
+     * new ProcessorSupplier()
+{
+     *     Processor get()
+{
+     *         return new Processor()
+{
      *             private IStateStore state;
      *
-     *             void init(IProcessorContext context) {
+     *             void init(IProcessorContext context)
+{
      *                 this.state = context.getStateStore("myProcessorState");
      *                 // punctuate each second, can access this.state
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             void process(K key, V value) {
+     *             void process(K key, V value)
+{
      *                 // can access this.state
      *             }
      *
-     *             void close() {
+     *             void close()
+{
      *                 // can access this.state
      *             }
      *         }
@@ -2027,7 +2135,7 @@ public interface KStream<K, V> {
      */
     void process( ProcessorSupplier<? super K, ? super V> processorSupplier,
                   Named named,
-                  string... stateStoreNames);
+                  string[] stateStoreNames];
 
     /**
      * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2145,7 +2253,7 @@ public interface KStream<K, V> {
      * @param <KR>     the key type of the result {@link KGroupedStream}
      * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
      */
-    <KR> KGroupedStream<KR, V> groupBy( KeyValueMapper<? super K, ? super V, KR> selector);
+    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<? super K, ? super V, KR> selector);
 
     /**
      * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2176,7 +2284,7 @@ public interface KStream<K, V> {
      * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupBy(KeyValueMapper, Grouped)} instead
      */
     @Deprecated
-    <KR> KGroupedStream<KR, V> groupBy( KeyValueMapper<? super K, ? super V, KR> selector,
+    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<? super K, ? super V, KR> selector,
                                         Serialized<KR, V> serialized);
 
     /**
@@ -2208,7 +2316,7 @@ public interface KStream<K, V> {
      * @param <KR>     the key type of the result {@link KGroupedStream}
      * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
      */
-    <KR> KGroupedStream<KR, V> groupBy( KeyValueMapper<? super K, ? super V, KR> selector,
+    <KR> KGroupedStream<KR, V> groupBy( IKeyValueMapper<? super K, ? super V, KR> selector,
                                         Grouped<KR, V> grouped);
 
     /**
@@ -3039,7 +3147,7 @@ public interface KStream<K, V> {
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
     <GK, GV, RV> KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
-                                      KeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
+                                      IKeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
                                       ValueJoiner<? super V, ? super GV, ? : RV> joiner);
 
     /**
@@ -3073,7 +3181,7 @@ public interface KStream<K, V> {
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
     <GK, GV, RV> KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
-                                      KeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
+                                      IKeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
                                       ValueJoiner<? super V, ? super GV, ? : RV> joiner,
                                       Named named);
     /**
@@ -3110,7 +3218,7 @@ public interface KStream<K, V> {
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
     <GK, GV, RV> KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
-                                          KeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
+                                          IKeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
                                           ValueJoiner<? super V, ? super GV, ? : RV> valueJoiner);
 
     /**
@@ -3148,7 +3256,7 @@ public interface KStream<K, V> {
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
     <GK, GV, RV> KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
-                                          KeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
+                                          IKeyValueMapper<? super K, ? super V, ? : GK> keyValueMapper,
                                           ValueJoiner<? super V, ? super GV, ? : RV> valueJoiner,
                                           Named named);
 }

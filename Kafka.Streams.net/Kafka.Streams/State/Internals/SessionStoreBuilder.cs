@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -33,7 +33,7 @@ public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore
     public SessionStoreBuilder(SessionBytesStoreSupplier storeSupplier,
                                ISerde<K> keySerde,
                                ISerde<V> valueSerde,
-                               Time time)
+                               ITime time)
 {
         super(Objects.requireNonNull(storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde, time);
         this.storeSupplier = storeSupplier;
@@ -42,7 +42,7 @@ public class SessionStoreBuilder<K, V> : AbstractStoreBuilder<K, V, SessionStore
     public override SessionStore<K, V> build()
 {
         return new MeteredSessionStore<>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier.get())),
+            maybeWrapCaching(maybeWrapLogging(storeSupplier())],
             storeSupplier.metricsScope(),
             keySerde,
             valueSerde,

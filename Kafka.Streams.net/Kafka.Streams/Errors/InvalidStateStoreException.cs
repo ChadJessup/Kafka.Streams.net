@@ -30,15 +30,18 @@ public class InvalidStateStoreException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
-    public InvalidStateStoreException( string message) {
+    public InvalidStateStoreException( string message)
+{
         super(message);
     }
 
-    public InvalidStateStoreException( string message,  Throwable throwable) {
+    public InvalidStateStoreException( string message,  Throwable throwable)
+{
         super(message, throwable);
     }
 
-    public InvalidStateStoreException( Throwable throwable) {
+    public InvalidStateStoreException( Throwable throwable)
+{
         super(throwable);
     }
 }

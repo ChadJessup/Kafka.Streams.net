@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.streams.errors.TaskMigratedException;
 import org.apache.kafka.streams.processor.Cancellable;
@@ -26,15 +26,19 @@ public class PunctuationQueue {
 
     private PriorityQueue<PunctuationSchedule> pq = new PriorityQueue<>();
 
-    public ICancellable schedule(PunctuationSchedule sched) {
-        synchronized (pq) {
+    public ICancellable schedule(PunctuationSchedule sched)
+{
+        synchronized (pq)
+{
             pq.add(sched);
         }
         return sched.cancellable();
     }
 
-    public void close() {
-        synchronized (pq) {
+    public void close()
+{
+        synchronized (pq)
+{
             pq.clear();
         }
     }
@@ -42,18 +46,23 @@ public class PunctuationQueue {
     /**
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    bool mayPunctuate(long timestamp, PunctuationType type, ProcessorNodePunctuator processorNodePunctuator) {
-        synchronized (pq) {
+    bool mayPunctuate(long timestamp, PunctuationType type, ProcessorNodePunctuator processorNodePunctuator)
+{
+        synchronized (pq)
+{
             bool punctuated = false;
             PunctuationSchedule top = pq.peek();
-            while (top != null && top.timestamp <= timestamp) {
+            while (top != null && top.timestamp <= timestamp)
+{
                 PunctuationSchedule sched = top;
                 pq.poll();
 
-                if (!sched.isCancelled()) {
+                if (!sched.isCancelled())
+{
                     processorNodePunctuator.punctuate(sched.node(), timestamp, type, sched.punctuator());
                     // sched can be cancelled from within the punctuator
-                    if (!sched.isCancelled()) {
+                    if (!sched.isCancelled())
+{
                         pq.add(sched.next(timestamp));
                     }
                     punctuated = true;

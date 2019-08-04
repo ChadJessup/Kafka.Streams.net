@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.header.Header;
@@ -59,9 +59,9 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
     private static BytesSerializer KEY_SERIALIZER = new BytesSerializer();
     private static ByteArraySerializer VALUE_SERIALIZER = new ByteArraySerializer();
     private static RecordHeaders V_1_CHANGELOG_HEADERS =
-        new RecordHeaders(new Header[] {new RecordHeader("v", new byte[] {(byte) 1})});
+        new RecordHeaders(new Header[] {new RecordHeader("v", new byte[] {(byte) 1})}];
     private static RecordHeaders V_2_CHANGELOG_HEADERS =
-        new RecordHeaders(new Header[] {new RecordHeader("v", new byte[] {(byte) 2})});
+        new RecordHeaders(new Header[] {new RecordHeader("v", new byte[] {(byte) 2})}];
 
     private Dictionary<Bytes, BufferKey> index = new HashMap<>();
     private TreeMap<BufferKey, BufferValue> sortedMap = new TreeMap<>();
@@ -106,7 +106,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
          * <p>
          * It's currently a no-op.
          */
-        @Override
+        
         public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingEnabled()
 {
             return this;
@@ -119,44 +119,44 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
          * <p>
          * It's currently a no-op.
          */
-        @Override
+        
         public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingDisabled()
 {
             return this;
         }
 
-        @Override
+        
         public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingEnabled(Dictionary<string, string> config)
 {
-            throw new UnsupportedOperationException();
+            throw new InvalidOperationException();
         }
 
-        @Override
+        
         public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingDisabled()
 {
             loggingEnabled = false;
             return this;
         }
 
-        @Override
+        
         public InMemoryTimeOrderedKeyValueBuffer<K, V> build()
 {
             return new InMemoryTimeOrderedKeyValueBuffer<>(storeName, loggingEnabled, keySerde, valSerde);
         }
 
-        @Override
+        
         public Dictionary<string, string> logConfig()
 {
             return Collections.emptyMap();
         }
 
-        @Override
+        
         public bool loggingEnabled()
 {
             return loggingEnabled;
         }
 
-        @Override
+        
         public string name()
 {
             return storeName;
@@ -230,10 +230,10 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         if (loggingEnabled)
 {
             // counting on this getting called before the record collector's flush
-            for (Bytes key : dirtyKeys)
+            foreach (Bytes key in dirtyKeys)
 {
 
-                BufferKey bufferKey = index.get(key);
+                BufferKey bufferKey = index[key];
 
                 if (bufferKey == null)
 {
@@ -241,7 +241,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     logTombstone(key);
                 } else
 {
-                    BufferValue value = sortedMap.get(bufferKey);
+                    BufferValue value = sortedMap[bufferKey];
 
                     logValue(key, bufferKey, value);
                 }
@@ -284,16 +284,16 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
 
     private void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> batch)
 {
-        for (ConsumerRecord<byte[], byte[]> record : batch)
+        foreach (ConsumerRecord<byte[], byte[]> record in batch)
 {
             Bytes key = Bytes.wrap(record.key());
             if (record.value() == null)
 {
                 // This was a tombstone. Delete the record.
-                BufferKey bufferKey = index.remove(key);
+                BufferKey bufferKey = index.Remove(key);
                 if (bufferKey != null)
 {
-                    BufferValue removed = sortedMap.remove(bufferKey);
+                    BufferValue removed = sortedMap.Remove(bufferKey);
                     if (removed != null)
 {
                         memBufferSize -= computeRecordSize(bufferKey.key(), removed);
@@ -307,7 +307,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                 if (record.partition() != partition)
 {
                     throw new InvalidOperationException(
-                        string.format(
+                        string.Format(
                             "record partition [%d] is being restored by the wrong suppress partition [%d]",
                             record.partition(),
                             partition
@@ -321,10 +321,10 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     // in this case, the changelog value is just the serialized record value
                     ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
                     long time = timeAndValue.getLong();
-                    byte[] changelogValue = new byte[record.value().length - 8];
-                    timeAndValue.get(changelogValue);
+                    byte[] changelogValue = new byte[record.value().Length - 8];
+                    timeAndValue[changelogValue];
 
-                    Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(changelogValue));
+                    Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(changelogValue)];
 
                     ProcessorRecordContext recordContext = new ProcessorRecordContext(
                         record.timestamp(),
@@ -338,7 +338,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                         time,
                         key,
                         new BufferValue(
-                            index.containsKey(key)
+                            index.ContainsKey(key)
                                 ? internalPriorValueForBuffered(key)
                                 : change.oldValue,
                             change.oldValue,
@@ -351,17 +351,17 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     // in this case, the changelog value is a serialized ContextualRecord
                     ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
                     long time = timeAndValue.getLong();
-                    byte[] changelogValue = new byte[record.value().length - 8];
-                    timeAndValue.get(changelogValue);
+                    byte[] changelogValue = new byte[record.value().Length - 8];
+                    timeAndValue[changelogValue];
 
                     ContextualRecord contextualRecord = ContextualRecord.deserialize(ByteBuffer.wrap(changelogValue));
-                    Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(contextualRecord.value()));
+                    Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(contextualRecord.value())];
 
                     cleanPut(
                         time,
                         key,
                         new BufferValue(
-                            index.containsKey(key)
+                            index.ContainsKey(key)
                                 ? internalPriorValueForBuffered(key)
                                 : change.oldValue,
                             change.oldValue,
@@ -379,13 +379,13 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                     cleanPut(time, key, bufferValue);
                 } else
 {
-                    throw new IllegalArgumentException("Restoring apparently invalid changelog record: " + record);
+                    throw new ArgumentException("Restoring apparently invalid changelog record: " + record);
                 }
             }
             if (record.partition() != partition)
 {
                 throw new InvalidOperationException(
-                    string.format(
+                    string.Format(
                         "record partition [%d] is being restored by the wrong suppress partition [%d]",
                         record.partition(),
                         partition
@@ -402,7 +402,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         Iterator<Map.Entry<BufferKey, BufferValue>> delegate = sortedMap.entrySet().iterator();
         int evictions = 0;
 
-        if (predicate.get())
+        if (predicate())
 {
             Map.Entry<BufferKey, BufferValue> next = null;
             if (delegate.hasNext())
@@ -410,8 +410,8 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                 next = delegate.next();
             }
 
-            // predicate being true means we read one record, call the callback, and then remove it
-            while (next != null && predicate.get())
+            // predicate being true means we read one record, call the callback, and then Remove it
+            while (next != null && predicate())
 {
                 if (next.getKey().time() != minTimestamp)
 {
@@ -420,7 +420,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                             next.getKey().time() + "]"
                     );
                 }
-                K key = keySerde.deserializer().deserialize(changelogTopic, next.getKey().key().get());
+                K key = keySerde.deserializer().deserialize(changelogTopic, next.getKey().key()()];
                 BufferValue bufferValue = next.getValue();
                 Change<V> value = valueSerde.deserializeParts(
                     changelogTopic,
@@ -428,8 +428,8 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
                 );
                 callback.accept(new Eviction<>(key, value, bufferValue.context()));
 
-                delegate.remove();
-                index.remove(next.getKey().key());
+                delegate.Remove();
+                index.Remove(next.getKey().key());
 
                 dirtyKeys.add(next.getKey().key());
 
@@ -458,9 +458,9 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
     public override Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key)
 {
         Bytes serializedKey = Bytes.wrap(keySerde.serializer().serialize(changelogTopic, key));
-        if (index.containsKey(serializedKey))
+        if (index.ContainsKey(serializedKey))
 {
-            byte[] serializedValue = internalPriorValueForBuffered(serializedKey);
+            byte[] serializedValue = internalPriorValueForBuffered(serializedKey];
 
             V deserializedValue = valueSerde.innerSerde().deserializer().deserialize(
                 changelogTopic,
@@ -479,13 +479,13 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
 
     private byte[] internalPriorValueForBuffered(Bytes key)
 {
-        BufferKey bufferKey = index.get(key);
+        BufferKey bufferKey = index[key];
         if (bufferKey == null)
 {
-            throw new NoSuchElementException("Key [" + key + "] is not in the buffer.");
+            throw new NoSuchElementException("Key [" + key + "] is not in the buffer."];
         } else
 {
-            BufferValue bufferValue = sortedMap.get(bufferKey);
+            BufferValue bufferValue = sortedMap[bufferKey];
             return bufferValue.priorValue();
         }
     }
@@ -499,7 +499,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         requireNonNull(recordContext, "recordContext cannot be null");
 
         Bytes serializedKey = Bytes.wrap(keySerde.serializer().serialize(changelogTopic, key));
-        Change<byte[]> serialChange = valueSerde.serializeParts(changelogTopic, value);
+        Change<byte[]> serialChange = valueSerde.serializeParts(changelogTopic, value];
 
         BufferValue buffered = getBuffered(serializedKey);
         byte[] serializedPriorValue;
@@ -523,8 +523,8 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
 
     private BufferValue getBuffered(Bytes key)
 {
-        BufferKey bufferKey = index.get(key);
-        return bufferKey == null ? null : sortedMap.get(bufferKey);
+        BufferKey bufferKey = index[key];
+        return bufferKey == null ? null : sortedMap[bufferKey];
     }
 
     private void cleanPut(long time, Bytes key, BufferValue value)
@@ -533,17 +533,17 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         // if there was a previous version of the same record,
         // then insert the new record in the same place in the priority queue
 
-        BufferKey previousKey = index.get(key);
+        BufferKey previousKey = index[key];
         if (previousKey == null)
 {
             BufferKey nextKey = new BufferKey(time, key);
-            index.put(key, nextKey);
-            sortedMap.put(nextKey, value);
-            minTimestamp = Math.min(minTimestamp, time);
+            index.Add(key, nextKey);
+            sortedMap.Add(nextKey, value);
+            minTimestamp = Math.Min(minTimestamp, time);
             memBufferSize += computeRecordSize(key, value);
         } else
 {
-            BufferValue removedValue = sortedMap.put(previousKey, value);
+            BufferValue removedValue = sortedMap.Add(previousKey, value);
             memBufferSize =
                 memBufferSize
                     + computeRecordSize(key, value)
@@ -570,7 +570,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
 {
         long size = 0L;
         size += 8; // buffer time
-        size += key.get().length;
+        size += key[].Length;
         if (value != null)
 {
             size += value.residentMemorySizeEstimate();
@@ -584,7 +584,7 @@ public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer
         bufferCountSensor.record(index.size());
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "InMemoryTimeOrderedKeyValueBuffer{" +
             "storeName='" + storeName + '\'' +

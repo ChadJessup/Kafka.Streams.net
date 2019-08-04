@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Streams.KafkaStreams;
 using Kafka.Streams.Topology;
@@ -108,10 +108,10 @@ public class QueryableStoreTypes
         }
 
         @SuppressWarnings("unchecked")
-        @Override
+        
         public bool accepts(IStateStore stateStore)
 {
-            for (Class matchToClass : matchTo)
+            foreach (Class matchToClass in matchTo)
 {
                 if (!matchToClass.isAssignableFrom(stateStore.GetType()))
 {
@@ -130,7 +130,7 @@ public class QueryableStoreTypes
             super(Collections.singleton(ReadOnlyKeyValueStore.class));
         }
 
-        @Override
+        
         public IReadOnlyKeyValueStore<K, V> create(StateStoreProvider storeProvider,
                                                   string storeName)
 {
@@ -150,7 +150,7 @@ public class QueryableStoreTypes
                 IReadOnlyKeyValueStore.class)));
         }
 
-        @Override
+        
         public IReadOnlyKeyValueStore<K, ValueAndTimestamp<V>> create(StateStoreProvider storeProvider,
                                                                      string storeName)
 {
@@ -166,7 +166,7 @@ public class QueryableStoreTypes
             super(Collections.singleton(ReadOnlyWindowStore.class));
         }
 
-        @Override
+        
         public ReadOnlyWindowStore<K, V> create(StateStoreProvider storeProvider,
                                                 string storeName)
 {
@@ -185,7 +185,7 @@ public class QueryableStoreTypes
                 ReadOnlyWindowStore.class)));
         }
 
-        @Override
+        
         public ReadOnlyWindowStore<K, ValueAndTimestamp<V>> create(StateStoreProvider storeProvider,
                                                                    string storeName)
 {
@@ -201,7 +201,7 @@ public class QueryableStoreTypes
             super(Collections.singleton(ReadOnlySessionStore.class));
         }
 
-        @Override
+        
         public ReadOnlySessionStore<K, V> create(StateStoreProvider storeProvider,
                                                  string storeName)
 {

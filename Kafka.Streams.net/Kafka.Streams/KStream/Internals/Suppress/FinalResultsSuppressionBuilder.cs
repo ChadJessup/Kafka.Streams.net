@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Suppressed;
 import org.apache.kafka.streams.kstream.Windowed;
@@ -22,16 +22,18 @@ import org.apache.kafka.streams.kstream.Windowed;
 import java.time.Duration;
 import java.util.Objects;
 
-public class FinalResultsSuppressionBuilder<K : Windowed> implements Suppressed<K>, NamedSuppressed<K> {
+public class FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, NamedSuppressed<K> {
     private  string name;
     private  StrictBufferConfig bufferConfig;
 
-    public FinalResultsSuppressionBuilder( string name,  Suppressed.StrictBufferConfig bufferConfig) {
+    public FinalResultsSuppressionBuilder( string name,  Suppressed.StrictBufferConfig bufferConfig)
+{
         this.name = name;
         this.bufferConfig = bufferConfig;
     }
 
-    public SuppressedInternal<K> buildFinalResultsSuppression( Duration gracePeriod) {
+    public SuppressedInternal<K> buildFinalResultsSuppression( Duration gracePeriod)
+{
         return new SuppressedInternal<>(
             name,
             gracePeriod,
@@ -41,36 +43,43 @@ public class FinalResultsSuppressionBuilder<K : Windowed> implements Suppressed<
         );
     }
 
-    @Override
-    public Suppressed<K> withName( string name) {
+    
+    public Suppressed<K> withName( string name)
+{
         return new FinalResultsSuppressionBuilder<>(name, bufferConfig);
     }
 
-    @Override
-    public bool equals( Object o) {
-        if (this == o) {
+    
+    public bool Equals( Object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass())
+{
             return false;
         }
          FinalResultsSuppressionBuilder<?> that = (FinalResultsSuppressionBuilder<?>) o;
-        return Objects.equals(name, that.name) &&
-            Objects.equals(bufferConfig, that.bufferConfig);
+        return Objects.Equals(name, that.name) &&
+            Objects.Equals(bufferConfig, that.bufferConfig);
     }
 
-    @Override
-    public string name() {
+    
+    public string name()
+{
         return name;
     }
 
-    @Override
-    public int hashCode() {
+    
+    public int hashCode()
+{
         return Objects.hash(name, bufferConfig);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "FinalResultsSuppressionBuilder{" +
             "name='" + name + '\'' +
             ", bufferConfig=" + bufferConfig +

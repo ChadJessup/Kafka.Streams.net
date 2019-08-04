@@ -1,45 +1,30 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.apache.kafka.streams.kstream.internals;
+using System.Collections.Generic;
 
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+namespace Kafka.Streams.KStream.Internals
+{
+    public class KStreamFlatMap<K, V, K1, V1> : ProcessorSupplier<K, V>
+    {
+        private IKeyValueMapper<K,V, KeyValuePair<K1, V1>> mapper;
 
-class KStreamFlatMap<K, V, K1, V1> implements ProcessorSupplier<K, V> {
+        KStreamFlatMap(IKeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : K1, ? : V1>>> mapper)
+{
+            this.mapper = mapper;
+        }
 
-    private  KeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : K1, ? : V1>>> mapper;
 
-    KStreamFlatMap( KeyValueMapper<? super K, ? super V, ? : Iterable<? : KeyValue<? : K1, ? : V1>>> mapper) {
-        this.mapper = mapper;
-    }
+        public Processor<K, V> get()
+{
+            return new KStreamFlatMapProcessor();
+        }
 
-    @Override
-    public Processor<K, V> get() {
-        return new KStreamFlatMapProcessor();
-    }
+        private class KStreamFlatMapProcessor : AbstractProcessor<K, V> {
 
-    private class KStreamFlatMapProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K key,  V value) {
-            for ( KeyValue<? : K1, ? : V1> newPair : mapper.apply(key, value)) {
-                context().forward(newPair.key, newPair.value);
+            public void process(K key, V value)
+{
+                foreach (KeyValue<K1, V1> newPair in mapper.apply(key, value))
+{
+                    context().forward(newPair.key, newPair.value);
+                }
             }
         }
     }

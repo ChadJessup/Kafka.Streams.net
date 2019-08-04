@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Named;
 
 public class NamedInternal : Named {
 
-    public static NamedInternal empty() {
+    public static NamedInternal empty()
+{
         return new NamedInternal((string) null);
     }
 
-    public static NamedInternal with( string name) {
+    public static NamedInternal with( string name)
+{
         return new NamedInternal(name);
     }
 
@@ -33,7 +35,8 @@ public class NamedInternal : Named {
      *
      * @param internal  the internal name.
      */
-    NamedInternal( Named internal) {
+    NamedInternal( Named internal)
+{
         super(internal);
     }
 
@@ -42,34 +45,41 @@ public class NamedInternal : Named {
      *
      * @param internal the internal name.
      */
-    NamedInternal( string internal) {
+    NamedInternal( string internal)
+{
         super(internal);
     }
 
     /**
      * @return a string name.
      */
-    public string name() {
+    public string name()
+{
         return name;
     }
 
-    @Override
-    public NamedInternal withName( string name) {
+    
+    public NamedInternal withName( string name)
+{
         return new NamedInternal(name);
     }
     
-    string suffixWithOrElseGet( string suffix,  string other) {
-        if (name != null) {
+    string suffixWithOrElseGet( string suffix,  string other)
+{
+        if (name != null)
+{
             return name + suffix;
         } else {
             return other;
         }
     }
 
-    string suffixWithOrElseGet( string suffix,  InternalNameProvider provider,  string prefix) {
+    string suffixWithOrElseGet( string suffix,  InternalNameProvider provider,  string prefix)
+{
         // We actually do not need to generate processor names for operation if a name is specified.
         // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
-        if (name != null) {
+        if (name != null)
+{
             provider.newProcessorName(prefix);
 
              string suffixed = name + suffix;
@@ -82,10 +92,12 @@ public class NamedInternal : Named {
         }
     }
 
-    string orElseGenerateWithPrefix( InternalNameProvider provider,  string prefix) {
+    string orElseGenerateWithPrefix( InternalNameProvider provider,  string prefix)
+{
         // We actually do not need to generate processor names for operation if a name is specified.
         // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
-        if (name != null) {
+        if (name != null)
+{
             provider.newProcessorName(prefix);
             return name;
         }  else {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.TopicPartition;
@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * Updates the state for all Global State Stores.
  */
-public class GlobalStateUpdateTask implements GlobalStateMaintainer {
+public class GlobalStateUpdateTask : GlobalStateMaintainer {
 
     private ProcessorTopology topology;
     private InternalProcessorContext processorContext;
@@ -45,7 +45,8 @@ public class GlobalStateUpdateTask implements GlobalStateMaintainer {
                                  InternalProcessorContext processorContext,
                                  GlobalStateManager stateMgr,
                                  DeserializationExceptionHandler deserializationExceptionHandler,
-                                 LogContext logContext) {
+                                 LogContext logContext)
+{
         this.topology = topology;
         this.stateMgr = stateMgr;
         this.processorContext = processorContext;
@@ -57,14 +58,16 @@ public class GlobalStateUpdateTask implements GlobalStateMaintainer {
      * @throws InvalidOperationException If store gets registered after initialized is already finished
      * @throws StreamsException      If the store's change log does not contain the partition
      */
-    @Override
-    public Dictionary<TopicPartition, Long> initialize() {
+    
+    public Dictionary<TopicPartition, Long> initialize()
+{
         Set<string> storeNames = stateMgr.initialize();
         Dictionary<string, string> storeNameToTopic = topology.storeToChangelogTopic();
-        for (string storeName : storeNames) {
-            string sourceTopic = storeNameToTopic.get(storeName);
+        foreach (string storeName in storeNames)
+{
+            string sourceTopic = storeNameToTopic[storeName];
             SourceNode source = topology.source(sourceTopic);
-            deserializers.put(
+            deserializers.Add(
                 sourceTopic,
                 new RecordDeserializer(
                     source,
@@ -80,12 +83,14 @@ public class GlobalStateUpdateTask implements GlobalStateMaintainer {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void update(ConsumerRecord<byte[], byte[]> record) {
-        RecordDeserializer sourceNodeAndDeserializer = deserializers.get(record.topic());
+    
+    public void update(ConsumerRecord<byte[], byte[]> record)
+{
+        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
         ConsumerRecord<Object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
 
-        if (deserialized != null) {
+        if (deserialized != null)
+{
             ProcessorRecordContext recordContext =
                 new ProcessorRecordContext(deserialized.timestamp(),
                     deserialized.offset(),
@@ -97,10 +102,11 @@ public class GlobalStateUpdateTask implements GlobalStateMaintainer {
             sourceNodeAndDeserializer.sourceNode().process(deserialized.key(), deserialized.value());
         }
 
-        offsets.put(new TopicPartition(record.topic(), record.partition()), record.offset() + 1);
+        offsets.Add(new TopicPartition(record.topic(), record.partition()), record.offset() + 1);
     }
 
-    public void flushState() {
+    public void flushState()
+{
         stateMgr.flush();
         stateMgr.checkpoint(offsets);
     }
@@ -109,8 +115,10 @@ public class GlobalStateUpdateTask implements GlobalStateMaintainer {
         stateMgr.close(true);
     }
 
-    private void initTopology() {
-        for (ProcessorNode node : this.topology.processors()) {
+    private void initTopology()
+{
+        foreach (ProcessorNode node in this.topology.processors())
+{
             processorContext.setCurrentNode(node);
             try {
                 node.init(this.processorContext);

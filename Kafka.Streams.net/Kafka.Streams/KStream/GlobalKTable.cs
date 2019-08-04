@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.annotation.InterfaceStability;
 import org.apache.kafka.streams.KafkaStreams;
@@ -51,7 +51,7 @@ import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
  * streams.start()
  * ...
  * ReadOnlyKeyValueStore view = streams.store("g1-store", QueryableStoreTypes.keyValueStore());
- * view.get(key); // can be done on any key, as all keys are present
+ * view[key]; // can be done on any key, as all keys are present
  *}</pre>
  * Note that in contrast to {@link KTable} a {@code GlobalKTable}'s state holds a full copy of the underlying topic,
  * thus all keys can be queried locally.

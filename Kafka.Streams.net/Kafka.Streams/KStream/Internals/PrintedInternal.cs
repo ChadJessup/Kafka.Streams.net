@@ -14,21 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Printed;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
 public class PrintedInternal<K, V> : Printed<K, V> {
-    public PrintedInternal( Printed<K, V> printed) {
+    public PrintedInternal( Printed<K, V> printed)
+{
         super(printed);
     }
 
-    public ProcessorSupplier<K, V> build( string processorName) {
+    public ProcessorSupplier<K, V> build( string processorName)
+{
         return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
     }
 
-    public string name() {
+    public string name()
+{
         return processorName;
     }
 }

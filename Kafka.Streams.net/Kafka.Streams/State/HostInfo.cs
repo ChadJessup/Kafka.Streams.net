@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.KafkaStreams;
@@ -48,7 +48,7 @@ public class HostInfo
         this.port = port;
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -63,9 +63,9 @@ public class HostInfo
         return port == hostInfo.port && host.Equals(hostInfo.host);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
-        int result = host.GetHashCode()();
+        int result = host.GetHashCode();
         result = 31 * result + port;
         return result;
     }
@@ -80,7 +80,7 @@ public class HostInfo
         return port;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "HostInfo{" +
                 "host=\'" + host + '\'' +

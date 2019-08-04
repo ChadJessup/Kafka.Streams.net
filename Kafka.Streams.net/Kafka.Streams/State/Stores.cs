@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Common.annotation.InterfaceStability;
 using Kafka.Common.serialization.Serde;
@@ -130,19 +130,19 @@ public class Stores
         Objects.requireNonNull(name, "name cannot be null");
         return new KeyValueBytesStoreSupplier()
 {
-            @Override
+            
             public string name()
 {
                 return name;
             }
 
-            @Override
-            public KeyValueStore<Bytes, byte[]> get()
+            
+            public IKeyValueStore<Bytes, byte[]> get()
 {
                 return new InMemoryKeyValueStore(name);
             }
 
-            @Override
+            
             public string metricsScope()
 {
                 return "in-memory-state";
@@ -166,23 +166,23 @@ public class Stores
         Objects.requireNonNull(name, "name cannot be null");
         if (maxCacheSize < 0)
 {
-            throw new IllegalArgumentException("maxCacheSize cannot be negative");
+            throw new ArgumentException("maxCacheSize cannot be negative");
         }
         return new KeyValueBytesStoreSupplier()
 {
-            @Override
+            
             public string name()
 {
                 return name;
             }
 
-            @Override
-            public KeyValueStore<Bytes, byte[]> get()
+            
+            public IKeyValueStore<Bytes, byte[]> get()
 {
                 return new MemoryNavigableLRUCache(name, maxCacheSize);
             }
 
-            @Override
+            
             public string metricsScope()
 {
                 return "in-memory-lru-state";
@@ -216,10 +216,10 @@ public class Stores
 {
         if (numSegments < 2)
 {
-            throw new IllegalArgumentException("numSegments cannot be smaller than 2");
+            throw new ArgumentException("numSegments cannot be smaller than 2");
         }
 
-        long legacySegmentInterval = Math.max(retentionPeriod / (numSegments - 1), 60_000L);
+        long legacySegmentInterval = Math.Max(retentionPeriod / (numSegments - 1), 60_000L);
 
         return persistentWindowStore(
             name,
@@ -246,12 +246,12 @@ public class Stores
      * @param windowSize            size of the windows (cannot be negative)
      * @param retainDuplicates      whether or not to retain duplicates.
      * @return an instance of {@link WindowBytesStoreSupplier}
-     * @throws IllegalArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier persistentWindowStore(string name,
                                                                  Duration retentionPeriod,
                                                                  Duration windowSize,
-                                                                 bool retainDuplicates) throws IllegalArgumentException
+                                                                 bool retainDuplicates) throws ArgumentException
 {
         return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, false);
     }
@@ -272,12 +272,12 @@ public class Stores
      * @param windowSize            size of the windows (cannot be negative)
      * @param retainDuplicates      whether or not to retain duplicates.
      * @return an instance of {@link WindowBytesStoreSupplier}
-     * @throws IllegalArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier persistentTimestampedWindowStore(string name,
                                                                             Duration retentionPeriod,
                                                                             Duration windowSize,
-                                                                            bool retainDuplicates) throws IllegalArgumentException
+                                                                            bool retainDuplicates) throws ArgumentException
 {
         return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, true);
     }
@@ -294,7 +294,7 @@ public class Stores
         string wsMsgPrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
         long windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, wsMsgPrefix);
 
-        long defaultSegmentInterval = Math.max(retentionMs / 2, 60_000L);
+        long defaultSegmentInterval = Math.Max(retentionMs / 2, 60_000L);
 
         return persistentWindowStore(name, retentionMs, windowSizeMs, retainDuplicates, defaultSegmentInterval, timestampedStore);
     }
@@ -309,21 +309,21 @@ public class Stores
         Objects.requireNonNull(name, "name cannot be null");
         if (retentionPeriod < 0L)
 {
-            throw new IllegalArgumentException("retentionPeriod cannot be negative");
+            throw new ArgumentException("retentionPeriod cannot be negative");
         }
         if (windowSize < 0L)
 {
-            throw new IllegalArgumentException("windowSize cannot be negative");
+            throw new ArgumentException("windowSize cannot be negative");
         }
         if (segmentInterval < 1L)
 {
-            throw new IllegalArgumentException("segmentInterval cannot be zero or negative");
+            throw new ArgumentException("segmentInterval cannot be zero or negative");
         }
         if (windowSize > retentionPeriod)
 {
-            throw new IllegalArgumentException("The retention period of the window store "
+            throw new ArgumentException("The retention period of the window store "
                 + name + " must be no smaller than its window size. Got size=["
-                + windowSize + "], retention=[" + retentionPeriod + "]");
+                + windowSize + "], retention=[" + retentionPeriod + "]"];
         }
 
         return new RocksDbWindowBytesStoreSupplier(
@@ -348,12 +348,12 @@ public class Stores
      *                              and for the entire grace period.
      * @param windowSize            size of the windows (cannot be negative)
      * @return an instance of {@link WindowBytesStoreSupplier}
-     * @throws IllegalArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
      */
     public static WindowBytesStoreSupplier inMemoryWindowStore(string name,
                                                                Duration retentionPeriod,
                                                                Duration windowSize,
-                                                               bool retainDuplicates) throws IllegalArgumentException
+                                                               bool retainDuplicates) throws ArgumentException
 {
         Objects.requireNonNull(name, "name cannot be null");
 
@@ -361,21 +361,21 @@ public class Stores
         long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
         if (retentionMs < 0L)
 {
-            throw new IllegalArgumentException("retentionPeriod cannot be negative");
+            throw new ArgumentException("retentionPeriod cannot be negative");
         }
 
         string windowSizeErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
         long windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, windowSizeErrorMessagePrefix);
         if (windowSizeMs < 0L)
 {
-            throw new IllegalArgumentException("windowSize cannot be negative");
+            throw new ArgumentException("windowSize cannot be negative");
         }
 
         if (windowSizeMs > retentionMs)
 {
-            throw new IllegalArgumentException("The retention period of the window store "
+            throw new ArgumentException("The retention period of the window store "
                 + name + " must be no smaller than its window size. Got size=["
-                + windowSize + "], retention=[" + retentionPeriod + "]");
+                + windowSize + "], retention=[" + retentionPeriod + "]"];
         }
 
         return new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
@@ -399,7 +399,7 @@ public class Stores
         Objects.requireNonNull(name, "name cannot be null");
         if (retentionPeriodMs < 0)
 {
-            throw new IllegalArgumentException("retentionPeriod cannot be negative");
+            throw new ArgumentException("retentionPeriod cannot be negative");
         }
         return new RocksDbSessionBytesStoreSupplier(name, retentionPeriodMs);
     }
@@ -440,7 +440,7 @@ public class Stores
         long retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
         if (retentionPeriodMs < 0)
 {
-            throw new IllegalArgumentException("retentionPeriod cannot be negative");
+            throw new ArgumentException("retentionPeriod cannot be negative");
         }
         return new InMemorySessionBytesStoreSupplier(name, retentionPeriodMs);
     }
@@ -459,12 +459,12 @@ public class Stores
      * @param <V>           value type
      * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
      */
-    public static <K, V> StoreBuilder<KeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
+    public static <K, V> StoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
                                                                                 ISerde<K> keySerde,
                                                                                 ISerde<V> valueSerde)
 {
         Objects.requireNonNull(supplier, "supplier cannot be null");
-        return new KeyValueStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        return new KeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
     /**
@@ -487,7 +487,7 @@ public class Stores
                                                                                                       ISerde<V> valueSerde)
 {
         Objects.requireNonNull(supplier, "supplier cannot be null");
-        return new TimestampedKeyValueStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        return new TimestampedKeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
     /**
@@ -509,7 +509,7 @@ public class Stores
                                                                             ISerde<V> valueSerde)
 {
         Objects.requireNonNull(supplier, "supplier cannot be null");
-        return new WindowStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        return new WindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
     /**
@@ -532,7 +532,7 @@ public class Stores
                                                                                                   ISerde<V> valueSerde)
 {
         Objects.requireNonNull(supplier, "supplier cannot be null");
-        return new TimestampedWindowStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        return new TimestampedWindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 
     /**
@@ -551,6 +551,6 @@ public class Stores
                                                                               ISerde<V> valueSerde)
 {
         Objects.requireNonNull(supplier, "supplier cannot be null");
-        return new SessionStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        return new SessionStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
     }
 }

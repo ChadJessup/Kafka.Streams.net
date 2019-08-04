@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.LongDeserializer;
@@ -66,11 +66,11 @@ class ValueAndTimestampDeserializer<V> : Deserializer<ValueAndTimestamp<V>>
 
     static byte[] rawValue(byte[] rawValueAndTimestamp)
 {
-        int rawValueLength = rawValueAndTimestamp.length - 8;
+        int rawValueLength = rawValueAndTimestamp.Length - 8;
 
         return ByteBuffer
             .allocate(rawValueLength)
-            .put(rawValueAndTimestamp, 8, rawValueLength)
+            .Add(rawValueAndTimestamp, 8, rawValueLength)
             .array();
     }
 
@@ -78,7 +78,7 @@ class ValueAndTimestampDeserializer<V> : Deserializer<ValueAndTimestamp<V>>
 {
         return ByteBuffer
             .allocate(8)
-            .put(rawValueAndTimestamp, 0, 8)
+            .Add(rawValueAndTimestamp, 0, 8)
             .array();
     }
 

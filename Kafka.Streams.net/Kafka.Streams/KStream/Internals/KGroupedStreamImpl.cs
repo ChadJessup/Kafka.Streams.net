@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
@@ -35,7 +35,7 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import java.util.Objects;
 import java.util.Set;
 
-class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<K, V> {
+class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V> {
 
     static  string REDUCE_NAME = "KSTREAM-REDUCE-";
     static  string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
@@ -47,7 +47,8 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
                         GroupedInternal<K, V> groupedInternal,
                         bool repartitionRequired,
                         StreamsGraphNode streamsGraphNode,
-                        InternalStreamsBuilder builder) {
+                        InternalStreamsBuilder builder)
+{
         super(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
         this.aggregateBuilder = new GroupedStreamAggregateBuilder<>(
             builder,
@@ -59,24 +60,28 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
         );
     }
 
-    @Override
-    public KTable<K, V> reduce( Reducer<V> reducer) {
+    
+    public KTable<K, V> reduce( Reducer<V> reducer)
+{
         return reduce(reducer, Materialized.with(keySerde, valSerde));
     }
 
-    @Override
+    
     public KTable<K, V> reduce( Reducer<V> reducer,
-                                Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized) {
+                                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(reducer, "reducer can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-         MaterializedInternal<K, V, KeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(valSerde);
         }
 
@@ -87,18 +92,20 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
         );
     }
 
-    @Override
+    
     public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
                                          Aggregator<? super K, ? super V, VR> aggregator,
-                                         Materialized<K, VR, KeyValueStore<Bytes, byte[]>> materialized) {
+                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(initializer, "initializer can't be null");
         Objects.requireNonNull(aggregator, "aggregator can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-         MaterializedInternal<K, VR, KeyValueStore<Bytes, byte[]>> materializedInternal =
+         MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
 
@@ -109,38 +116,45 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
         );
     }
 
-    @Override
+    
     public <VR> KTable<K, VR> aggregate( Initializer<VR> initializer,
-                                         Aggregator<? super K, ? super V, VR> aggregator) {
+                                         Aggregator<? super K, ? super V, VR> aggregator)
+{
         return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
     }
 
-    @Override
-    public KTable<K, Long> count() {
+    
+    public KTable<K, Long> count()
+{
         return doCount(Materialized.with(keySerde, Serdes.Long()));
     }
 
-    @Override
-    public KTable<K, Long> count( Materialized<K, Long, KeyValueStore<Bytes, byte[]>> materialized) {
+    
+    public KTable<K, Long> count( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-        // TODO: remove this when we do a topology-incompatible release
+        // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
-        if (new MaterializedInternal<>(materialized).storeName() == null) {
+        if (new MaterializedInternal<>(materialized).storeName() == null)
+{
             builder.newStoreName(AGGREGATE_NAME);
         }
 
         return doCount(materialized);
     }
 
-    private KTable<K, Long> doCount( Materialized<K, Long, KeyValueStore<Bytes, byte[]>> materialized) {
-         MaterializedInternal<K, Long, KeyValueStore<Bytes, byte[]>> materializedInternal =
+    private KTable<K, Long> doCount( Materialized<K, Long, IKeyValueStore<Bytes, byte[]>> materialized)
+{
+         MaterializedInternal<K, Long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(Serdes.Long());
         }
 
@@ -150,8 +164,9 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
             materializedInternal);
     }
 
-    @Override
-    public <W : Window> TimeWindowedKStream<K, V> windowedBy( Windows<W> windows) {
+    
+    public <W : Window> TimeWindowedKStream<K, V> windowedBy( Windows<W> windows)
+{
 
         return new TimeWindowedKStreamImpl<>(
             windows,
@@ -165,8 +180,9 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
         );
     }
 
-    @Override
-    public SessionWindowedKStream<K, V> windowedBy( SessionWindows windows) {
+    
+    public SessionWindowedKStream<K, V> windowedBy( SessionWindows windows)
+{
 
         return new SessionWindowedKStreamImpl<>(
             windows,
@@ -182,7 +198,8 @@ class KGroupedStreamImpl<K, V> : AbstractStream<K, V> implements KGroupedStream<
 
     private <T> KTable<K, T> doAggregate( KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
                                           string functionName,
-                                          MaterializedInternal<K, T, KeyValueStore<Bytes, byte[]>> materializedInternal) {
+                                          MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
+{
         return aggregateBuilder.build(
             functionName,
             new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize(),

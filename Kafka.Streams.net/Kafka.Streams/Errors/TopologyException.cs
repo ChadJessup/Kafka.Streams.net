@@ -25,16 +25,19 @@ public class TopologyException : StreamsException {
 
     private static  long serialVersionUID = 1L;
 
-    public TopologyException( string message) {
+    public TopologyException( string message)
+{
         super("Invalid topology" + (message == null ? "" : ": " + message));
     }
 
     public TopologyException( string message,
-                              Throwable throwable) {
+                              Throwable throwable)
+{
         super("Invalid topology" + (message == null ? "" : ": " + message), throwable);
     }
 
-    public TopologyException( Throwable throwable) {
+    public TopologyException( Throwable throwable)
+{
         super(throwable);
     }
 }

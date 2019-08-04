@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics;
+namespace Kafka.common.utils;
 
-/**
- * A gauge metric is an instantaneous reading of a particular value.
- */
-public interface Gauge<T> : MetricValueProvider<T> {
+import java.util.Locale;
 
-    /**
-     * Returns the current value associated with this gauge.
-     * @param config The configuration for this metric
-     * @param now The POSIX time in milliseconds the measurement is being taken
-     */
-    T value(MetricConfig config, long now);
+public final class OperatingSystem {
 
+    private OperatingSystem()
+{
+    }
+    
+    public static final String NAME;
+
+    public static final boolean IS_WINDOWS;
+
+    static {
+        NAME = System.getProperty("os.name").toLowerCase(Locale.ROOT);
+        IS_WINDOWS = NAME.startsWith("windows");
+    }
 }

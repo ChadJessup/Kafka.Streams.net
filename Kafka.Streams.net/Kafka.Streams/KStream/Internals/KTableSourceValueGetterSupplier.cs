@@ -14,41 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.state.TimestampedKeyValueStore;
 import org.apache.kafka.streams.state.ValueAndTimestamp;
 
-public class KTableSourceValueGetterSupplier<K, V> implements KTableValueGetterSupplier<K, V> {
+public class KTableSourceValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
     private  string storeName;
 
-    KTableSourceValueGetterSupplier( string storeName) {
+    KTableSourceValueGetterSupplier( string storeName)
+{
         this.storeName = storeName;
     }
 
-    public KTableValueGetter<K, V> get() {
+    public KTableValueGetter<K, V> get()
+{
         return new KTableSourceValueGetter();
     }
 
-    @Override
-    public string[] storeNames() {
+    
+    public string[] storeNames()
+{
         return new string[]{storeName};
     }
 
-    private class KTableSourceValueGetter implements KTableValueGetter<K, V> {
+    private class KTableSourceValueGetter : KTableValueGetter<K, V> {
         private TimestampedKeyValueStore<K, V> store = null;
 
         @SuppressWarnings("unchecked")
-        public void init( IProcessorContext context) {
+        public void init( IProcessorContext context)
+{
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
         }
 
-        public ValueAndTimestamp<V> get( K key) {
-            return store.get(key);
+        public ValueAndTimestamp<V> get( K key)
+{
+            return store[key];
         }
 
-        @Override
+        
         public void close() {}
     }
 }

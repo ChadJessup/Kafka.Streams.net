@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Deserializer;
@@ -37,7 +37,8 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
                       List<string> topics,
                       TimestampExtractor timestampExtractor,
                       Deserializer<K> keyDeserializer,
-                      Deserializer<V> valDeserializer) {
+                      Deserializer<V> valDeserializer)
+{
         super(name);
         this.topics = topics;
         this.timestampExtractor = timestampExtractor;
@@ -48,42 +49,50 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
     public SourceNode(string name,
                       List<string> topics,
                       Deserializer<K> keyDeserializer,
-                      Deserializer<V> valDeserializer) {
+                      Deserializer<V> valDeserializer)
+{
         this(name, topics, null, keyDeserializer, valDeserializer);
     }
 
-    K deserializeKey(string topic, Headers headers, byte[] data) {
+    K deserializeKey(string topic, Headers headers, byte[] data)
+{
         return keyDeserializer.deserialize(topic, headers, data);
     }
 
-    V deserializeValue(string topic, Headers headers, byte[] data) {
+    V deserializeValue(string topic, Headers headers, byte[] data)
+{
         return valDeserializer.deserialize(topic, headers, data);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void init(InternalProcessorContext context) {
+    
+    public void init(InternalProcessorContext context)
+{
         super.init(context);
         this.context = context;
 
         // if deserializers are null, get the default ones from the context
-        if (this.keyDeserializer == null) {
+        if (this.keyDeserializer == null)
+{
             this.keyDeserializer = (Deserializer<K>) context.keySerde().deserializer();
         }
-        if (this.valDeserializer == null) {
+        if (this.valDeserializer == null)
+{
             this.valDeserializer = (Deserializer<V>) context.valueSerde().deserializer();
         }
 
         // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
         if (this.valDeserializer is ChangedDeserializer &&
-                ((ChangedDeserializer) this.valDeserializer).inner() == null) {
+                ((ChangedDeserializer) this.valDeserializer).inner() == null)
+{
             ((ChangedDeserializer) this.valDeserializer).setInner(context.valueSerde().deserializer());
         }
     }
 
 
-    @Override
-    public void process(K key, V value) {
+    
+    public void process(K key, V value)
+{
         context.forward(key, value);
         sourceNodeForwardSensor().record();
     }
@@ -91,27 +100,31 @@ public class SourceNode<K, V> : ProcessorNode<K, V> {
     /**
      * @return a string representation of this node, useful for debugging.
      */
-    @Override
-    public string toString() {
-        return toString("");
+    
+    public string ToString()
+{
+        return ToString("");
     }
 
     /**
      * @return a string representation of this node starting with the given indent, useful for debugging.
      */
-    public string toString(string indent) {
-        StringBuilder sb = new StringBuilder(super.toString(indent));
-        sb.append(indent).append("\ttopics:\t\t[");
-        for (string topic : topics) {
-            sb.append(topic);
-            sb.append(", ");
+    public string ToString(string indent)
+{
+        StringBuilder sb = new StringBuilder(super.ToString(indent));
+        sb.Append(indent).Append("\ttopics:\t\t["];
+        foreach (string topic in topics)
+{
+            sb.Append(topic);
+            sb.Append(", ");
         }
-        sb.setLength(sb.length() - 2);  // remove the last comma
-        sb.append("]\n");
-        return sb.toString();
+        sb.setLength(sb.Length - 2);  // Remove the last comma
+        sb.Append("]\n");
+        return sb.ToString();
     }
 
-    public TimestampExtractor getTimestampExtractor() {
+    public TimestampExtractor getTimestampExtractor()
+{
         return timestampExtractor;
     }
 }

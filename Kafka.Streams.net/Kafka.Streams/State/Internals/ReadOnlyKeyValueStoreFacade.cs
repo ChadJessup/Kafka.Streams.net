@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.ReadOnlyKeyValueStore;
@@ -33,7 +33,7 @@ public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
 
     public override V get(K key)
 {
-        return getValueOrNull(inner.get(key));
+        return getValueOrNull(inner[key)];
     }
 
     public override KeyValueIterator<K, V> range(K from,

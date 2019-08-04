@@ -14,30 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> implements KTableValueGetterSupplier<K, R> {
+public abstract class KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> : KTableValueGetterSupplier<K, R> {
      KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
      KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
 
     KTableKTableAbstractJoinValueGetterSupplier( KTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-                                                 KTableValueGetterSupplier<K, V2> valueGetterSupplier2) {
+                                                 KTableValueGetterSupplier<K, V2> valueGetterSupplier2)
+{
         this.valueGetterSupplier1 = valueGetterSupplier1;
         this.valueGetterSupplier2 = valueGetterSupplier2;
     }
 
-    @Override
-    public string[] storeNames() {
+    
+    public string[] storeNames()
+{
          string[] storeNames1 = valueGetterSupplier1.storeNames();
          string[] storeNames2 = valueGetterSupplier2.storeNames();
-         Set<string> stores = new HashSet<>(storeNames1.length + storeNames2.length);
+         Set<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
         Collections.addAll(stores, storeNames1);
         Collections.addAll(stores, storeNames2);
-        return stores.toArray(new string[stores.size()]);
+        return stores.toArray(new string[stores.size()]];
     }
 
 }

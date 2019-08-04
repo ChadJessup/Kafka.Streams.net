@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.TopicPartition;
 import org.apache.kafka.streams.errors.StreamsException;
@@ -29,7 +29,7 @@ interface StateManager : Checkpointable {
     File baseDir();
 
     /**
-     * @throws IllegalArgumentException if the store name has already been registered or if it is not a valid name
+     * @throws ArgumentException if the store name has already been registered or if it is not a valid name
      * (e.g., when it conflicts with the names of internal topics, like the checkpoint file name)
      * @throws StreamsException if the store's change log does not contain the partition
      */

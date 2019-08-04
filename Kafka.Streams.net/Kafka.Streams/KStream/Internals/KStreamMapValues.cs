@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ValueMapperWithKey;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamMapValues<K, V, V1> implements ProcessorSupplier<K, V> {
+class KStreamMapValues<K, V, V1> : ProcessorSupplier<K, V> {
 
     private  ValueMapperWithKey<K, V, V1> mapper;
 
-    public KStreamMapValues( ValueMapperWithKey<K, V, V1> mapper) {
+    public KStreamMapValues( ValueMapperWithKey<K, V, V1> mapper)
+{
         this.mapper = mapper;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamMapProcessor();
     }
 
     private class KStreamMapProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K readOnlyKey,  V value) {
+        
+        public void process( K readOnlyKey,  V value)
+{
              V1 newValue = mapper.apply(readOnlyKey, value);
             context().forward(readOnlyKey, newValue);
         }

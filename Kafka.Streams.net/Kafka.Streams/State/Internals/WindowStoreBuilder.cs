@@ -30,7 +30,7 @@ public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K
     public WindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
                               ISerde<K> keySerde,
                               ISerde<V> valueSerde,
-                              Time time)
+                              ITime time)
 {
         super(storeSupplier.name(), keySerde, valueSerde, time);
         this.storeSupplier = storeSupplier;
@@ -39,7 +39,7 @@ public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K
     public override WindowStore<K, V> build()
 {
         return new MeteredWindowStore<>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier.get())),
+            maybeWrapCaching(maybeWrapLogging(storeSupplier())],
             storeSupplier.windowSize(),
             storeSupplier.metricsScope(),
             time,

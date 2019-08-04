@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.annotation.InterfaceStability;
 import org.apache.kafka.streams.kstream.Window;
@@ -39,9 +39,10 @@ public class UnlimitedWindow : Window {
      * Create a new window for the given start time (inclusive).
      *
      * @param startMs the start timestamp of the window (inclusive)
-     * @throws IllegalArgumentException if {@code start} is negative
+     * @throws ArgumentException if {@code start} is negative
      */
-    public UnlimitedWindow( long startMs) {
+    public UnlimitedWindow( long startMs)
+{
         super(startMs, Long.MAX_VALUE);
     }
 
@@ -51,12 +52,14 @@ public class UnlimitedWindow : Window {
      *
      * @param other another window
      * @return {@code true}
-     * @throws IllegalArgumentException if the {@code other} window has a different type than {@code this} window
+     * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
      */
-    @Override
-    public bool overlap( Window other) {
-        if (getClass() != other.getClass()) {
-            throw new IllegalArgumentException("Cannot compare windows of different type. Other window has type "
+    
+    public bool overlap( Window other)
+{
+        if (getClass() != other.getClass())
+{
+            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
         return true;

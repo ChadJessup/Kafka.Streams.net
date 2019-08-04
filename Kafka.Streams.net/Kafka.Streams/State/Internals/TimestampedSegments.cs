@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Processor.internals.InternalProcessorContext;
 
@@ -34,14 +34,14 @@ class TimestampedSegments : AbstractSegments<TimestampedSegment>
     public override TimestampedSegment getOrCreateSegment(long segmentId,
                                                  InternalProcessorContext context)
 {
-        if (segments.containsKey(segmentId))
+        if (segments.ContainsKey(segmentId))
 {
-            return segments.get(segmentId);
+            return segments[segmentId];
         } else
 {
             TimestampedSegment newSegment = new TimestampedSegment(segmentName(segmentId), name, segmentId);
 
-            if (segments.put(segmentId, newSegment) != null)
+            if (segments.Add(segmentId, newSegment) != null)
 {
                 throw new InvalidOperationException("TimestampedSegment already exists. Possible concurrent access.");
             }

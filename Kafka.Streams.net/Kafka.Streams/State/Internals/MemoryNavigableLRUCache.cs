@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -77,35 +77,35 @@ public class MemoryNavigableLRUCache : MemoryLRUCache
             this.entries = entries;
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return keys.hasNext();
         }
 
-        @Override
+        
         public KeyValue<Bytes, byte[]> next()
 {
             lastKey = keys.next();
-            return new KeyValue<>(lastKey, entries.get(lastKey));
+            return new KeyValue<>(lastKey, entries[lastKey)];
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
             // do nothing
         }
 
-        @Override
+        
         public void close()
 {
             // do nothing
         }
 
-        @Override
+        
         public Bytes peekNextKey()
 {
-            throw new UnsupportedOperationException("peekNextKey not supported");
+            throw new InvalidOperationException("peekNextKey not supported");
         }
     }
 }

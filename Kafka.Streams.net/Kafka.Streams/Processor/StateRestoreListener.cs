@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 using Kafka.Common.TopicPartition;
 

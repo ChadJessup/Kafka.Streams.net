@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.Errors.InvalidStateStoreException;
@@ -39,7 +39,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to);
+    KeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to];
 
     /**
      * Fetch all records from the segmented store in the provided key range and time range
@@ -50,7 +50,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to);
+    KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to];
     
     /**
      * Gets all the key-value pairs in the existing windows.
@@ -69,15 +69,15 @@ public interface SegmentedBytesStore : IStateStore
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if null is used for any key
      */
-    KeyValueIterator<Bytes, byte[]> fetchAll(long from, long to);
+    KeyValueIterator<Bytes, byte[]> fetchAll(long from, long to];
 
     /**
      * Remove the record with the provided key. The key
      * should be a composite of the record key, and the timestamp information etc
      * as described by the {@link KeySchema}
-     * @param key   the segmented key to remove
+     * @param key   the segmented key to Remove
      */
-    void remove(Bytes key);
+    void Remove(Bytes key);
 
     /**
      * Write a new value to the store with the provided key. The key
@@ -86,7 +86,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param key
      * @param value
      */
-    void put(Bytes key, byte[] value);
+    void put(Bytes key, byte[] value];
 
     /**
      * Get the record from the store with the given key. The key
@@ -95,7 +95,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param key
      * @return
      */
-    byte[] get(Bytes key);
+    byte[] get(Bytes key];
 
     interface KeySchema
 {

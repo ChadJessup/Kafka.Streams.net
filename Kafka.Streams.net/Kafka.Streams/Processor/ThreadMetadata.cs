@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 import org.apache.kafka.streams.KafkaStreams;
 
@@ -52,7 +52,8 @@ public class ThreadMetadata {
                           Set<string> producerClientIds,
                           string adminClientId,
                           Set<TaskMetadata> activeTasks,
-                          Set<TaskMetadata> standbyTasks) {
+                          Set<TaskMetadata> standbyTasks)
+{
         this.mainConsumerClientId = mainConsumerClientId;
         this.restoreConsumerClientId = restoreConsumerClientId;
         this.producerClientIds = producerClientIds;
@@ -63,44 +64,55 @@ public class ThreadMetadata {
         this.standbyTasks = Collections.unmodifiableSet(standbyTasks);
     }
 
-    public string threadState() {
+    public string threadState()
+{
         return threadState;
     }
 
-    public string threadName() {
+    public string threadName()
+{
         return threadName;
     }
 
-    public Set<TaskMetadata> activeTasks() {
+    public Set<TaskMetadata> activeTasks()
+{
         return activeTasks;
     }
 
-    public Set<TaskMetadata> standbyTasks() {
+    public Set<TaskMetadata> standbyTasks()
+{
         return standbyTasks;
     }
 
-    public string consumerClientId() {
+    public string consumerClientId()
+{
         return mainConsumerClientId;
     }
 
-    public string restoreConsumerClientId() {
+    public string restoreConsumerClientId()
+{
         return restoreConsumerClientId;
     }
 
-    public Set<string> producerClientIds() {
+    public Set<string> producerClientIds()
+{
         return producerClientIds;
     }
 
-    public string adminClientId() {
+    public string adminClientId()
+{
         return adminClientId;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         ThreadMetadata that = (ThreadMetadata) o;
@@ -114,8 +126,9 @@ public class ThreadMetadata {
                adminClientId.Equals(that.adminClientId);
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(
             threadName,
             threadState,
@@ -127,8 +140,9 @@ public class ThreadMetadata {
             adminClientId);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "ThreadMetadata{" +
                 "threadName=" + threadName +
                 ", threadState=" + threadState +

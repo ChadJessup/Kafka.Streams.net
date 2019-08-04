@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
 import org.apache.kafka.streams.state.StoreBuilder;
@@ -31,41 +31,47 @@ public class TableProcessorNode<K, V> : StreamsGraphNode {
 
     public TableProcessorNode( string nodeName,
                                ProcessorParameters<K, V> processorParameters,
-                               StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder) {
+                               StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
+{
         this(nodeName, processorParameters, storeBuilder, null);
     }
 
     public TableProcessorNode( string nodeName,
                                ProcessorParameters<K, V> processorParameters,
                                StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
-                               string[] storeNames) {
+                               string[] storeNames)
+{
         super(nodeName);
         this.processorParameters = processorParameters;
         this.storeBuilder = storeBuilder;
         this.storeNames = storeNames != null ? storeNames : new string[] {};
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "TableProcessorNode{" +
             ", processorParameters=" + processorParameters +
             ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name()) +
-            ", storeNames=" + Arrays.toString(storeNames) +
-            "} " + super.toString();
+            ", storeNames=" + Arrays.ToString(storeNames) +
+            "} " + super.ToString();
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
          string processorName = processorParameters.processorName();
         topologyBuilder.addProcessor(processorName, processorParameters.processorSupplier(), parentNodeNames());
 
-        if (storeNames.length > 0) {
+        if (storeNames.Length > 0)
+{
             topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
         }
 
         // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
-        if (storeBuilder != null) {
+        if (storeBuilder != null)
+{
             topologyBuilder.addStateStore(storeBuilder, processorName);
         }
     }

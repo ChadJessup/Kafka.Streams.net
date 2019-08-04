@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.Serde;
@@ -33,7 +33,7 @@ using Kafka.Streams.State.StateSerdes;
 import java.util.Map;
 import java.util.Objects;
 
-import static org.apache.kafka.common.metrics.Sensor.RecordingLevel.DEBUG;
+import static org.apache.kafka.common.metrics.RecordingLevel.DEBUG;
 import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTaskAndStoreLatencyAndThroughputSensors;
 
 public class MeteredSessionStore<K, V>
@@ -44,7 +44,7 @@ public class MeteredSessionStore<K, V>
     private string metricScope;
     private ISerde<K> keySerde;
     private ISerde<V> valueSerde;
-    private Time time;
+    private ITime time;
     private StateSerdes<K, V> serdes;
     private StreamsMetricsImpl metrics;
     private Sensor putTime;
@@ -57,7 +57,7 @@ public class MeteredSessionStore<K, V>
                         string metricScope,
                         ISerde<K> keySerde,
                         ISerde<V> valueSerde,
-                        Time time)
+                        ITime time)
 {
         super(inner);
         this.metricScope = metricScope;
@@ -77,7 +77,7 @@ public class MeteredSessionStore<K, V>
             valueSerde == null ? (ISerde<V>) context.valueSerde() : valueSerde);
         metrics = (StreamsMetricsImpl) context.metrics();
 
-        taskName = context.taskId().toString();
+        taskName = context.taskId().ToString();
         string metricsGroup = "stream-" + metricScope + "-metrics";
         Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
         Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name());
@@ -85,7 +85,7 @@ public class MeteredSessionStore<K, V>
         putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
         fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
         flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-        removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "remove", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
+        removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
         Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
 
         // register and possibly restore the state from the logs
@@ -110,7 +110,7 @@ public class MeteredSessionStore<K, V>
         SessionStore<Bytes, byte[]> wrapped = wrapped();
         if (wrapped is CachedStateStore)
 {
-            return ((CachedStateStore<byte[], byte[]>) wrapped).setFlushListener(
+            return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
                 (key, newValue, oldValue, timestamp) -> listener.apply(
                     SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.topic()),
                     newValue != null ? serdes.valueFrom(newValue) : null,
@@ -130,10 +130,10 @@ public class MeteredSessionStore<K, V>
         try
 {
             Bytes key = keyBytes(sessionKey.key());
-            wrapped().put(new Windowed<>(key, sessionKey.window()), serdes.rawValue(aggregate));
+            wrapped().Add(new Windowed<>(key, sessionKey.window()), serdes.rawValue(aggregate));
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), sessionKey.key(), aggregate);
+            string message = string.Format(e.getMessage(), sessionKey.key(), aggregate);
             throw new ProcessorStateException(message, e);
         } finally
 {
@@ -141,17 +141,17 @@ public class MeteredSessionStore<K, V>
         }
     }
 
-    public override void remove(Windowed<K> sessionKey)
+    public override void Remove(Windowed<K> sessionKey)
 {
         Objects.requireNonNull(sessionKey, "sessionKey can't be null");
         long startNs = time.nanoseconds();
         try
 {
             Bytes key = keyBytes(sessionKey.key());
-            wrapped().remove(new Windowed<>(key, sessionKey.window()));
+            wrapped().Remove(new Windowed<>(key, sessionKey.window()));
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), sessionKey.key());
+            string message = string.Format(e.getMessage(), sessionKey.key());
             throw new ProcessorStateException(message, e);
         } finally
 {
@@ -166,7 +166,7 @@ public class MeteredSessionStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            byte[] result = wrapped().fetchSession(bytesKey, startTime, endTime);
+            byte[] result = wrapped().fetchSession(bytesKey, startTime, endTime];
             if (result == null)
 {
                 return null;

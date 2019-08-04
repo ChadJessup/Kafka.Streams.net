@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals.assignment;
+namespace Kafka.streams.processor.internals.assignment;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.ByteBufferInputStream;
@@ -29,7 +29,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,7 +53,8 @@ public class AssignmentInfo {
 
     // used for decoding; don't apply version checks
     private AssignmentInfo(int version,
-                           int latestSupportedVersion) {
+                           int latestSupportedVersion)
+{
         this.usedVersion = version;
         this.latestSupportedVersion = latestSupportedVersion;
         this.errCode = 0;
@@ -61,11 +62,13 @@ public class AssignmentInfo {
 
     public AssignmentInfo(List<TaskId> activeTasks,
                           Dictionary<TaskId, Set<TopicPartition>> standbyTasks,
-                          Dictionary<HostInfo, Set<TopicPartition>> hostState) {
+                          Dictionary<HostInfo, Set<TopicPartition>> hostState)
+{
         this(LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, hostState, 0);
     }
 
-    public AssignmentInfo() {
+    public AssignmentInfo()
+{
         this(LATEST_SUPPORTED_VERSION,
             Collections.emptyList(),
             Collections.emptyMap(),
@@ -77,10 +80,12 @@ public class AssignmentInfo {
                           List<TaskId> activeTasks,
                           Dictionary<TaskId, Set<TopicPartition>> standbyTasks,
                           Dictionary<HostInfo, Set<TopicPartition>> hostState,
-                          int errCode) {
+                          int errCode)
+{
         this(version, LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, hostState, errCode);
-        if (version < 1 || version > LATEST_SUPPORTED_VERSION) {
-            throw new IllegalArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
+        if (version < 1 || version > LATEST_SUPPORTED_VERSION)
+{
+            throw new ArgumentException("version must be between 1 and " + LATEST_SUPPORTED_VERSION
                 + "; was: " + version);
         }
     }
@@ -91,7 +96,8 @@ public class AssignmentInfo {
                    List<TaskId> activeTasks,
                    Dictionary<TaskId, Set<TopicPartition>> standbyTasks,
                    Dictionary<HostInfo, Set<TopicPartition>> hostState,
-                   int errCode) {
+                   int errCode)
+{
         this.usedVersion = version;
         this.latestSupportedVersion = latestSupportedVersion;
         this.activeTasks = activeTasks;
@@ -100,27 +106,33 @@ public class AssignmentInfo {
         this.errCode = errCode;
     }
 
-    public int version() {
+    public int version()
+{
         return usedVersion;
     }
 
-    public int errCode() {
+    public int errCode()
+{
         return errCode;
     }
 
-    public int latestSupportedVersion() {
+    public int latestSupportedVersion()
+{
         return latestSupportedVersion;
     }
 
-    public List<TaskId> activeTasks() {
+    public List<TaskId> activeTasks()
+{
         return activeTasks;
     }
 
-    public Dictionary<TaskId, Set<TopicPartition>> standbyTasks() {
+    public Dictionary<TaskId, Set<TopicPartition>> standbyTasks()
+{
         return standbyTasks;
     }
 
-    public Dictionary<HostInfo, Set<TopicPartition>> partitionsByHost() {
+    public Dictionary<HostInfo, Set<TopicPartition>> partitionsByHost()
+{
         return partitionsByHost;
     }
 
@@ -128,11 +140,14 @@ public class AssignmentInfo {
      * @throws TaskAssignmentException if method fails to encode the data, e.g., if there is an
      * IO exception during encoding
      */
-    public ByteBuffer encode() {
+    public ByteBuffer encode()
+{
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        try (DataOutputStream out = new DataOutputStream(baos)) {
-            switch (usedVersion) {
+        try (DataOutputStream out = new DataOutputStream(baos))
+{
+            switch (usedVersion)
+{
                 case 1:
                     encodeVersionOne(out);
                     break;
@@ -154,7 +169,8 @@ public class AssignmentInfo {
             out.close();
 
             return ByteBuffer.wrap(baos.toByteArray());
-        } catch (IOException ex) {
+        } catch (IOException ex)
+{
             throw new TaskAssignmentException("Failed to encode AssignmentInfo", ex);
         }
     }
@@ -167,13 +183,15 @@ public class AssignmentInfo {
     private void encodeActiveAndStandbyTaskAssignment(DataOutputStream out) throws IOException {
         // encode active tasks
         out.writeInt(activeTasks.size());
-        for (TaskId id : activeTasks) {
+        foreach (TaskId id in activeTasks)
+{
             id.writeTo(out);
         }
 
         // encode standby tasks
         out.writeInt(standbyTasks.size());
-        for (Map.Entry<TaskId, Set<TopicPartition>> entry : standbyTasks.entrySet()) {
+        foreach (Map.Entry<TaskId, Set<TopicPartition>> entry in standbyTasks.entrySet())
+{
             TaskId id = entry.getKey();
             id.writeTo(out);
 
@@ -191,7 +209,8 @@ public class AssignmentInfo {
     private void encodePartitionsByHost(DataOutputStream out) throws IOException {
         // encode partitions by host
         out.writeInt(partitionsByHost.size());
-        for (Map.Entry<HostInfo, Set<TopicPartition>> entry : partitionsByHost.entrySet()) {
+        foreach (Map.Entry<HostInfo, Set<TopicPartition>> entry in partitionsByHost.entrySet())
+{
             HostInfo hostInfo = entry.getKey();
             out.writeUTF(hostInfo.host());
             out.writeInt(hostInfo.port());
@@ -202,7 +221,8 @@ public class AssignmentInfo {
     private void writeTopicPartitions(DataOutputStream out,
                                       Set<TopicPartition> partitions) throws IOException {
         out.writeInt(partitions.size());
-        for (TopicPartition partition : partitions) {
+        foreach (TopicPartition partition in partitions)
+{
             out.writeUTF(partition.topic());
             out.writeInt(partition.partition());
         }
@@ -226,16 +246,19 @@ public class AssignmentInfo {
     /**
      * @throws TaskAssignmentException if method fails to decode the data or if the data version is unknown
      */
-    public static AssignmentInfo decode(ByteBuffer data) {
+    public static AssignmentInfo decode(ByteBuffer data)
+{
         // ensure we are at the beginning of the ByteBuffer
         data.rewind();
 
-        try (DataInputStream in = new DataInputStream(new ByteBufferInputStream(data))) {
+        try (DataInputStream in = new DataInputStream(new ByteBufferInputStream(data)))
+{
             AssignmentInfo assignmentInfo;
 
             int usedVersion = in.readInt();
             int latestSupportedVersion;
-            switch (usedVersion) {
+            switch (usedVersion)
+{
                 case 1:
                     assignmentInfo = new AssignmentInfo(usedVersion, UNKNOWN);
                     decodeVersionOneData(assignmentInfo, in);
@@ -257,12 +280,13 @@ public class AssignmentInfo {
                 default:
                     TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
                         "used version: " + usedVersion + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
-                    log.error(fatalException.getMessage(), fatalException);
+                    log.LogError(fatalException.getMessage(), fatalException);
                     throw fatalException;
             }
 
             return assignmentInfo;
-        } catch (IOException ex) {
+        } catch (IOException ex)
+{
             throw new TaskAssignmentException("Failed to decode AssignmentInfo", ex);
         }
     }
@@ -277,8 +301,9 @@ public class AssignmentInfo {
     private static void decodeActiveTasks(AssignmentInfo assignmentInfo,
                                           DataInputStream in) throws IOException {
         int count = in.readInt();
-        assignmentInfo.activeTasks = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
+        assignmentInfo.activeTasks = new List<>(count);
+        for (int i = 0; i < count; i++)
+{
             assignmentInfo.activeTasks.add(TaskId.readFrom(in));
         }
     }
@@ -287,9 +312,10 @@ public class AssignmentInfo {
                                            DataInputStream in) throws IOException {
         int count = in.readInt();
         assignmentInfo.standbyTasks = new HashMap<>(count);
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+{
             TaskId id = TaskId.readFrom(in);
-            assignmentInfo.standbyTasks.put(id, readTopicPartitions(in));
+            assignmentInfo.standbyTasks.Add(id, readTopicPartitions(in));
         }
     }
 
@@ -304,16 +330,18 @@ public class AssignmentInfo {
                                                    DataInputStream in) throws IOException {
         assignmentInfo.partitionsByHost = new HashMap<>();
         int numEntries = in.readInt();
-        for (int i = 0; i < numEntries; i++) {
+        for (int i = 0; i < numEntries; i++)
+{
             HostInfo hostInfo = new HostInfo(in.readUTF(), in.readInt());
-            assignmentInfo.partitionsByHost.put(hostInfo, readTopicPartitions(in));
+            assignmentInfo.partitionsByHost.Add(hostInfo, readTopicPartitions(in));
         }
     }
 
     private static Set<TopicPartition> readTopicPartitions(DataInputStream in) throws IOException {
         int numPartitions = in.readInt();
         Set<TopicPartition> partitions = new HashSet<>(numPartitions);
-        for (int j = 0; j < numPartitions; j++) {
+        for (int j = 0; j < numPartitions; j++)
+{
             partitions.add(new TopicPartition(in.readUTF(), in.readInt()));
         }
         return partitions;
@@ -332,15 +360,18 @@ public class AssignmentInfo {
         assignmentInfo.errCode = in.readInt();
     }
 
-    @Override
-    public int GetHashCode()() {
-        return usedVersion ^ latestSupportedVersion ^ activeTasks.GetHashCode()() ^ standbyTasks.GetHashCode()()
-            ^ partitionsByHost.GetHashCode()() ^ errCode;
+    
+    public int GetHashCode()
+{
+        return usedVersion ^ latestSupportedVersion ^ activeTasks.GetHashCode() ^ standbyTasks.GetHashCode()
+            ^ partitionsByHost.GetHashCode() ^ errCode;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (o is AssignmentInfo) {
+    
+    public bool Equals(object o)
+{
+        if (o is AssignmentInfo)
+{
             AssignmentInfo other = (AssignmentInfo) o;
             return usedVersion == other.usedVersion &&
                     latestSupportedVersion == other.latestSupportedVersion &&
@@ -353,8 +384,9 @@ public class AssignmentInfo {
         }
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "[version=" + usedVersion
             + ", supported version=" + latestSupportedVersion
             + ", active tasks=" + activeTasks

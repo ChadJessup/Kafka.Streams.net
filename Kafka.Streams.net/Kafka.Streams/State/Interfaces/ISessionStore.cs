@@ -60,10 +60,10 @@ namespace Kafka.Streams.State.Interfaces
 
         /**
          * Remove the session aggregated with provided {@link Windowed} key from the store
-         * @param sessionKey key of the session to remove
+         * @param sessionKey key of the session to Remove
          * @throws NullPointerException If null is used for sessionKey.
          */
-        void remove(Windowed<K> sessionKey);
+        void Remove(Windowed<K> sessionKey);
 
         /**
          * Write the aggregated value for the provided key to the store

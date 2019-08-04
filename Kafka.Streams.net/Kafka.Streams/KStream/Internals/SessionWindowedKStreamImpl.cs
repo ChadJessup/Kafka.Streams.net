@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
@@ -42,7 +42,7 @@ import java.util.Set;
 import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.AGGREGATE_NAME;
 import static org.apache.kafka.streams.kstream.internals.KGroupedStreamImpl.REDUCE_NAME;
 
-public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements SessionWindowedKStream<K, V> {
+public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowedKStream<K, V> {
     private  SessionWindows windows;
     private  GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
     private  Merger<K, Long> countMerger = (aggKey, aggOne, aggTwo) -> aggOne + aggTwo;
@@ -54,38 +54,45 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
                                 ISerde<K> keySerde,
                                 ISerde<V> valSerde,
                                 GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
-                                StreamsGraphNode streamsGraphNode) {
+                                StreamsGraphNode streamsGraphNode)
+{
         super(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
         Objects.requireNonNull(windows, "windows can't be null");
         this.windows = windows;
         this.aggregateBuilder = aggregateBuilder;
     }
 
-    @Override
-    public KTable<Windowed<K>, Long> count() {
+    
+    public KTable<Windowed<K>, Long> count()
+{
         return doCount(Materialized.with(keySerde, Serdes.Long()));
     }
 
-    @Override
-    public KTable<Windowed<K>, Long> count( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized) {
+    
+    public KTable<Windowed<K>, Long> count( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(materialized, "materialized can't be null");
 
-        // TODO: remove this when we do a topology-incompatible release
+        // TODO: Remove this when we do a topology-incompatible release
         // we used to burn a topology name here, so we have to keep doing it for compatibility
-        if (new MaterializedInternal<>(materialized).storeName() == null) {
+        if (new MaterializedInternal<>(materialized).storeName() == null)
+{
             builder.newStoreName(AGGREGATE_NAME);
         }
 
         return doCount(materialized);
     }
 
-    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized) {
+    private KTable<Windowed<K>, Long> doCount( Materialized<K, Long, SessionStore<Bytes, byte[]>> materialized)
+{
          MaterializedInternal<K, Long, SessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(Serdes.Long());
         }
 
@@ -103,23 +110,27 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
             materializedInternal.valueSerde());
     }
 
-    @Override
-    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer) {
+    
+    public KTable<Windowed<K>, V> reduce( Reducer<V> reducer)
+{
         return reduce(reducer, Materialized.with(keySerde, valSerde));
     }
 
-    @Override
+    
     public KTable<Windowed<K>, V> reduce( Reducer<V> reducer,
-                                          Materialized<K, V, SessionStore<Bytes, byte[]>> materialized) {
+                                          Materialized<K, V, SessionStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(reducer, "reducer can't be null");
         Objects.requireNonNull(materialized, "materialized can't be null");
          Aggregator<K, V, V> reduceAggregator = aggregatorForReducer(reducer);
          MaterializedInternal<K, V, SessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
-        if (materializedInternal.valueSerde() == null) {
+        if (materializedInternal.valueSerde() == null)
+{
             materializedInternal.withValueSerde(valSerde);
         }
 
@@ -138,18 +149,20 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
             materializedInternal.valueSerde());
     }
 
-    @Override
+    
     public <T> KTable<Windowed<K>, T> aggregate( Initializer<T> initializer,
                                                  Aggregator<? super K, ? super V, T> aggregator,
-                                                 Merger<? super K, T> sessionMerger) {
+                                                 Merger<? super K, T> sessionMerger)
+{
         return aggregate(initializer, aggregator, sessionMerger, Materialized.with(keySerde, null));
     }
 
-    @Override
+    
     public <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
                                                    Aggregator<? super K, ? super V, VR> aggregator,
                                                    Merger<? super K, VR> sessionMerger,
-                                                   Materialized<K, VR, SessionStore<Bytes, byte[]>> materialized) {
+                                                   Materialized<K, VR, SessionStore<Bytes, byte[]>> materialized)
+{
         Objects.requireNonNull(initializer, "initializer can't be null");
         Objects.requireNonNull(aggregator, "aggregator can't be null");
         Objects.requireNonNull(sessionMerger, "sessionMerger can't be null");
@@ -157,7 +170,8 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
          MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materializedInternal =
             new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-        if (materializedInternal.keySerde() == null) {
+        if (materializedInternal.keySerde() == null)
+{
             materializedInternal.withKeySerde(keySerde);
         }
 
@@ -176,21 +190,24 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
     }
 
     @SuppressWarnings("deprecation") // continuing to support SessionWindows#maintainMs in fallback mode
-    private <VR> StoreBuilder<SessionStore<K, VR>> materialize( MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materialized) {
+    private <VR> StoreBuilder<SessionStore<K, VR>> materialize( MaterializedInternal<K, VR, SessionStore<Bytes, byte[]>> materialized)
+{
         SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier) materialized.storeSupplier();
-        if (supplier == null) {
-            // NOTE: in the future, when we remove Windows#maintainMs(), we should set the default retention
+        if (supplier == null)
+{
+            // NOTE: in the future, when we Remove Windows#maintainMs(), we should set the default retention
             // to be (windows.inactivityGap() + windows.grace()). This will yield the same default behavior.
              long retentionPeriod = materialized.retention() != null ? materialized.retention().toMillis() : windows.maintainMs();
 
-            if ((windows.inactivityGap() + windows.gracePeriodMs()) > retentionPeriod) {
-                throw new IllegalArgumentException("The retention period of the session store "
+            if ((windows.inactivityGap() + windows.gracePeriodMs()) > retentionPeriod)
+{
+                throw new ArgumentException("The retention period of the session store "
                                                        + materialized.storeName()
                                                        + " must be no smaller than the session inactivity gap plus the"
                                                        + " grace period."
                                                        + " Got gap=[" + windows.inactivityGap() + "],"
                                                        + " grace=[" + windows.gracePeriodMs() + "],"
-                                                       + " retention=[" + retentionPeriod + "]");
+                                                       + " retention=[" + retentionPeriod + "]"];
             }
             supplier = Stores.persistentSessionStore(
                 materialized.storeName(),
@@ -203,23 +220,27 @@ public class SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> implements 
             materialized.valueSerde()
         );
 
-        if (materialized.loggingEnabled()) {
+        if (materialized.loggingEnabled())
+{
             builder.withLoggingEnabled(materialized.logConfig());
         } else {
             builder.withLoggingDisabled();
         }
 
-        if (materialized.cachingEnabled()) {
+        if (materialized.cachingEnabled())
+{
             builder.withCachingEnabled();
         }
         return builder;
     }
 
-    private Merger<K, V> mergerForAggregator( Aggregator<K, V, V> aggregator) {
+    private Merger<K, V> mergerForAggregator( Aggregator<K, V, V> aggregator)
+{
         return (aggKey, aggOne, aggTwo) -> aggregator.apply(aggKey, aggTwo, aggOne);
     }
 
-    private Aggregator<K, V, V> aggregatorForReducer( Reducer<V> reducer) {
+    private Aggregator<K, V, V> aggregatorForReducer( Reducer<V> reducer)
+{
         return (aggKey, value, aggregate) -> aggregate == null ? value : reducer.apply(aggregate, value);
     }
 }

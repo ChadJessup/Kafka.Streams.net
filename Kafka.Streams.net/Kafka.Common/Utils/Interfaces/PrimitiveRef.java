@@ -14,15 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.common.metrics;
+namespace Kafka.common.utils;
 
 /**
- * Super-interface for {@link Measurable} or {@link Gauge} that provides
- * metric values.
- * <p>
- * In the future for Java8 and above, {@link Gauge#value(MetricConfig, long)} will be
- * moved to this interface with a default implementation in {@link Measurable} that returns
- * {@link Measurable#measure(MetricConfig, long)}.
- * </p>
+ * Primitive reference used to pass primitive typed values as parameter-by-reference.
+ *
+ * This is cheaper than using Atomic references.
  */
-public interface MetricValueProvider<T> { }
+public class PrimitiveRef {
+    public static IntRef ofInt(int value)
+{
+        return new IntRef(value);
+    }
+
+    public static class IntRef {
+        public int value;
+
+        IntRef(int value)
+{
+            this.value = value;
+        }
+    }
+}

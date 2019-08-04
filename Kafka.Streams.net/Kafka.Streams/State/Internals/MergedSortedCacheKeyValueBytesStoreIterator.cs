@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -39,13 +39,13 @@ class MergedSortedCacheKeyValueBytesStoreIterator : AbstractMergedSortedCacheSto
         return pair;
     }
 
-    @Override
+    
     Bytes deserializeCacheKey(Bytes cacheKey)
 {
         return cacheKey;
     }
 
-    @Override
+    
     byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
 {
         return cacheEntry.value();

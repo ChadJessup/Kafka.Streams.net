@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -34,8 +34,8 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class CachingKeyValueStore
-    : WrappedStateStore<KeyValueStore<Bytes, byte[]>, byte[], byte[]>
-    : KeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
+    : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
+    : IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
 {
 
     private static Logger LOG = LoggerFactory.getLogger(CachingKeyValueStore.class);
@@ -48,7 +48,7 @@ public class CachingKeyValueStore
     private Thread streamThread;
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    CachingKeyValueStore(KeyValueStore<Bytes, byte[]> underlying)
+    CachingKeyValueStore(IKeyValueStore<Bytes, byte[]> underlying)
 {
         super(underlying);
     }
@@ -69,10 +69,10 @@ public class CachingKeyValueStore
         this.context = (InternalProcessorContext) context;
 
         this.cache = this.context.getCache();
-        this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().toString(), name());
+        this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name());
         cache.addDirtyEntryFlushListener(cacheName, entries ->
 {
-            for (ThreadCache.DirtyEntry entry : entries)
+            foreach (ThreadCache.DirtyEntry entry in entries)
 {
                 putAndMaybeForward(entry, (InternalProcessorContext) context);
             }
@@ -85,21 +85,21 @@ public class CachingKeyValueStore
         if (flushListener != null)
 {
             byte[] rawNewValue = entry.newValue();
-            byte[] rawOldValue = rawNewValue == null || sendOldValues ? wrapped().get(entry.key()) : null;
+            byte[] rawOldValue = rawNewValue == null || sendOldValues ? wrapped()[entry.key()] : null;
 
             // this is an optimization: if this key did not exist in underlying store and also not in the cache,
             // we can skip flushing to downstream as well as writing to underlying store
             if (rawNewValue != null || rawOldValue != null)
 {
                 // we need to get the old values if needed, and then put to store, and then flush
-                wrapped().put(entry.key(), entry.newValue());
+                wrapped().Add(entry.key(), entry.newValue());
 
                 ProcessorRecordContext current = context.recordContext();
                 context.setRecordContext(entry.entry().context());
                 try
 {
                     flushListener.apply(
-                        entry.key().get(),
+                        entry.key()[],
                         rawNewValue,
                         sendOldValues ? rawOldValue : null,
                         entry.entry().context().timestamp());
@@ -110,7 +110,7 @@ public class CachingKeyValueStore
             }
         } else
 {
-            wrapped().put(entry.key(), entry.newValue());
+            wrapped().Add(entry.key(), entry.newValue());
         }
     }
 
@@ -142,7 +142,7 @@ public class CachingKeyValueStore
     private void putInternal(Bytes key,
                              byte[] value)
 {
-        cache.put(
+        cache.Add(
             cacheName,
             key,
             new LRUCacheEntry(
@@ -163,7 +163,7 @@ public class CachingKeyValueStore
         lock.writeLock().lock();
         try
 {
-            byte[] v = getInternal(key);
+            byte[] v = getInternal(key];
             if (v == null)
 {
                 putInternal(key, value);
@@ -181,7 +181,7 @@ public class CachingKeyValueStore
         lock.writeLock().lock();
         try
 {
-            for (KeyValue<Bytes, byte[]> entry : entries)
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
                 Objects.requireNonNull(entry.key, "key cannot be null");
                 put(entry.key, entry.value);
@@ -208,7 +208,7 @@ public class CachingKeyValueStore
 
     private byte[] deleteInternal(Bytes key)
 {
-        byte[] v = getInternal(key);
+        byte[] v = getInternal(key];
         putInternal(key, null);
         return v;
     }
@@ -240,11 +240,11 @@ public class CachingKeyValueStore
         LRUCacheEntry entry = null;
         if (cache != null)
 {
-            entry = cache.get(cacheName, key);
+            entry = cache[cacheName, key];
         }
         if (entry == null)
 {
-            byte[] rawValue = wrapped().get(key);
+            byte[] rawValue = wrapped()[key];
             if (rawValue == null)
 {
                 return null;
@@ -253,7 +253,7 @@ public class CachingKeyValueStore
             // as we don't want other threads to trigger an eviction/flush
             if (Thread.currentThread().Equals(streamThread))
 {
-                cache.put(cacheName, key, new LRUCacheEntry(rawValue));
+                cache.Add(cacheName, key, new LRUCacheEntry(rawValue));
             }
             return rawValue;
         } else
@@ -274,7 +274,7 @@ public class CachingKeyValueStore
         }
 
         validateStoreOpen();
-        KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
+        KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to];
         ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
         return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.TopicPartition;
 import org.apache.kafka.streams.errors.StreamsException;
@@ -70,6 +70,6 @@ public interface Task {
 
     bool hasStateStores();
 
-    string toString(string indent);
+    string ToString(string indent);
 
 }

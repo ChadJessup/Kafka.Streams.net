@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.config.TopicConfig;
 
@@ -31,13 +31,14 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
     private static Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
     static {
         Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
-        tempTopicDefaultOverrides.put(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE);
+        tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE);
         WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
     }
 
     private Long retentionMs;
 
-    WindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs) {
+    WindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
+{
         super(name, topicConfigs);
     }
 
@@ -48,7 +49,8 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
      * @param additionalRetentionMs - added to retention to allow for clock drift etc
      * @return Properties to be used when creating the topic
      */
-    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs) {
+    public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
+{
         // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
         Dictionary<string, string> topicConfig = new HashMap<>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
@@ -56,31 +58,38 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
 
         topicConfig.putAll(topicConfigs);
 
-        if (retentionMs != null) {
+        if (retentionMs != null)
+{
             long retentionValue;
             try {
                 retentionValue = Math.addExact(retentionMs, additionalRetentionMs);
-            } catch (ArithmeticException swallow) {
+            } catch (ArithmeticException swallow)
+{
                 retentionValue = Long.MAX_VALUE;
             }
-            topicConfig.put(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(retentionValue));
+            topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(retentionValue));
         }
 
         return topicConfig;
     }
 
-    void setRetentionMs(long retentionMs) {
-        if (!topicConfigs.containsKey(TopicConfig.RETENTION_MS_CONFIG)) {
+    void setRetentionMs(long retentionMs)
+{
+        if (!topicConfigs.ContainsKey(TopicConfig.RETENTION_MS_CONFIG))
+{
             this.retentionMs = retentionMs;
         }
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         WindowedChangelogTopicConfig that = (WindowedChangelogTopicConfig) o;
@@ -89,13 +98,15 @@ public class WindowedChangelogTopicConfig : InternalTopicConfig {
                 Objects.Equals(retentionMs, that.retentionMs);
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(name, topicConfigs, retentionMs);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "WindowedChangelogTopicConfig(" +
                 "name=" + name +
                 ", topicConfigs=" + topicConfigs +

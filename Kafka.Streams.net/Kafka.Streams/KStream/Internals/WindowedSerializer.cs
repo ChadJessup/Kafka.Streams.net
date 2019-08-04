@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.kstream.Windowed;
 
 public interface WindowedSerializer<T> : Serializer<Windowed<T>> {
 
-    byte[] serializeBaseKey(string topic, Windowed<T> data);
+    byte[] serializeBaseKey(string topic, Windowed<T> data];
 }

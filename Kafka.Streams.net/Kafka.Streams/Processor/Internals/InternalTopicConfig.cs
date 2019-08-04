@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.internals.Topic;
 
@@ -32,7 +32,8 @@ public abstract class InternalTopicConfig {
 
     private int numberOfPartitions = StreamsPartitionAssignor.UNKNOWN;
 
-    InternalTopicConfig(string name, Dictionary<string, string> topicConfigs) {
+    InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
+{
         Objects.requireNonNull(name, "name can't be null");
         Topic.validate(name);
 
@@ -49,23 +50,28 @@ public abstract class InternalTopicConfig {
      */
     abstract public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs);
 
-    public string name() {
+    public string name()
+{
         return name;
     }
 
-    public int numberOfPartitions() {
+    public int numberOfPartitions()
+{
         return numberOfPartitions;
     }
 
-    void setNumberOfPartitions(int numberOfPartitions) {
-        if (numberOfPartitions < 1) {
-            throw new IllegalArgumentException("Number of partitions must be at least 1.");
+    void setNumberOfPartitions(int numberOfPartitions)
+{
+        if (numberOfPartitions < 1)
+{
+            throw new ArgumentException("Number of partitions must be at least 1.");
         }
         this.numberOfPartitions = numberOfPartitions;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "InternalTopicConfig(" +
                 "name=" + name +
                 ", topicConfigs=" + topicConfigs +

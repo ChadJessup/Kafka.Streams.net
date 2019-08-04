@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -39,15 +39,15 @@ import static org.apache.kafka.streams.state.internals.ValueAndTimestampDeserial
  *
  * @see KeyValueToTimestampedKeyValueIteratorAdapter
  */
-public class KeyValueToTimestampedKeyValueByteStoreAdapter : KeyValueStore<Bytes, byte[]>
+public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
 {
-    KeyValueStore<Bytes, byte[]> store;
+    IKeyValueStore<Bytes, byte[]> store;
 
-    KeyValueToTimestampedKeyValueByteStoreAdapter(KeyValueStore<Bytes, byte[]> store)
+    KeyValueToTimestampedKeyValueByteStoreAdapter(IKeyValueStore<Bytes, byte[]> store)
 {
         if (!store.persistent())
 {
-            throw new IllegalArgumentException("Provided store must be a persistent store, but it is not.");
+            throw new ArgumentException("Provided store must be a persistent store, but it is not.");
         }
         this.store = store;
     }
@@ -55,7 +55,7 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : KeyValueStore<Bytes
     public override void put(Bytes key,
                     byte[] valueWithTimestamp)
 {
-        store.put(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+        store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
     }
 
     public override byte[] putIfAbsent(Bytes key,
@@ -68,10 +68,10 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : KeyValueStore<Bytes
 
     public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
 {
-        for (KeyValue<Bytes, byte[]> entry : entries)
+        foreach (KeyValue<Bytes, byte[]> entry in entries)
 {
             byte[] valueWithTimestamp = entry.value;
-            store.put(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+            store.Add(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
         }
     }
 
@@ -113,7 +113,7 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : KeyValueStore<Bytes
 
     public override byte[] get(Bytes key)
 {
-        return convertToTimestampedFormat(store.get(key));
+        return convertToTimestampedFormat(store[key)];
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

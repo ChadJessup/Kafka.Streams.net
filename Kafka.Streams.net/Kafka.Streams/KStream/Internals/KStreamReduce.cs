@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.metrics.Sensor;
 import org.apache.kafka.streams.kstream.Reducer;
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.kafka.streams.state.ValueAndTimestamp.getValueOrNull;
 
-public class KStreamReduce<K, V> implements KStreamAggProcessorSupplier<K, K, V, V> {
+public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V> {
     private static  Logger LOG = LoggerFactory.getLogger(KStreamReduce.class);
 
     private  string storeName;
@@ -38,18 +38,21 @@ public class KStreamReduce<K, V> implements KStreamAggProcessorSupplier<K, K, V,
 
     private bool sendOldValues = false;
 
-    KStreamReduce( string storeName,  Reducer<V> reducer) {
+    KStreamReduce( string storeName,  Reducer<V> reducer)
+{
         this.storeName = storeName;
         this.reducer = reducer;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamReduceProcessor();
     }
 
-    @Override
-    public void enableSendingOldValues() {
+    
+    public void enableSendingOldValues()
+{
         sendOldValues = true;
     }
 
@@ -61,8 +64,9 @@ public class KStreamReduce<K, V> implements KStreamAggProcessorSupplier<K, K, V,
         private Sensor skippedRecordsSensor;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             super.init(context);
             metrics = (StreamsMetricsImpl) context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
@@ -74,10 +78,12 @@ public class KStreamReduce<K, V> implements KStreamAggProcessorSupplier<K, K, V,
                 sendOldValues);
         }
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             // If the key or value is null we don't need to proceed
-            if (key == null || value == null) {
+            if (key == null || value == null)
+{
                 LOG.warn(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     key, value, context().topic(), context().partition(), context().offset()
@@ -86,56 +92,63 @@ public class KStreamReduce<K, V> implements KStreamAggProcessorSupplier<K, K, V,
                 return;
             }
 
-             ValueAndTimestamp<V> oldAggAndTimestamp = store.get(key);
+             ValueAndTimestamp<V> oldAggAndTimestamp = store[key];
              V oldAgg = getValueOrNull(oldAggAndTimestamp);
 
              V newAgg;
              long newTimestamp;
 
-            if (oldAgg == null) {
+            if (oldAgg == null)
+{
                 newAgg = value;
                 newTimestamp = context().timestamp();
             } else {
                 newAgg = reducer.apply(oldAgg, value);
-                newTimestamp = Math.max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
             }
 
-            store.put(key, ValueAndTimestamp.make(newAgg, newTimestamp));
+            store.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp));
             tupleForwarder.maybeForward(key, newAgg, sendOldValues ? oldAgg : null, newTimestamp);
         }
     }
 
-    @Override
-    public KTableValueGetterSupplier<K, V> view() {
-        return new KTableValueGetterSupplier<K, V>() {
+    
+    public KTableValueGetterSupplier<K, V> view()
+{
+        return new KTableValueGetterSupplier<K, V>()
+{
 
-            public KTableValueGetter<K, V> get() {
+            public KTableValueGetter<K, V> get()
+{
                 return new KStreamReduceValueGetter();
             }
 
-            @Override
-            public string[] storeNames() {
+            
+            public string[] storeNames()
+{
                 return new string[]{storeName};
             }
         };
     }
 
 
-    private class KStreamReduceValueGetter implements KTableValueGetter<K, V> {
+    private class KStreamReduceValueGetter : KTableValueGetter<K, V> {
         private TimestampedKeyValueStore<K, V> store;
 
         @SuppressWarnings("unchecked")
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
         }
 
-        @Override
-        public ValueAndTimestamp<V> get( K key) {
-            return store.get(key);
+        
+        public ValueAndTimestamp<V> get( K key)
+{
+            return store[key];
         }
 
-        @Override
+        
         public void close() {}
     }
 }

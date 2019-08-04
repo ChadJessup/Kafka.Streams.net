@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
 
@@ -29,26 +29,30 @@ public class ProcessorGraphNode<K, V> : StreamsGraphNode {
     private  ProcessorParameters<K, V> processorParameters;
 
     public ProcessorGraphNode( string nodeName,
-                               ProcessorParameters<K, V> processorParameters) {
+                               ProcessorParameters<K, V> processorParameters)
+{
 
         super(nodeName);
 
         this.processorParameters = processorParameters;
     }
 
-    public ProcessorParameters processorParameters() {
+    public ProcessorParameters processorParameters()
+{
         return processorParameters;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "ProcessorNode{" +
                "processorParameters=" + processorParameters +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
 
         topologyBuilder.addProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), parentNodeNames());
     }

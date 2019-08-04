@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -35,31 +35,31 @@ class FilteredCacheIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
         this.hasNextCondition = hasNextCondition;
         this.wrappedIterator = new PeekingKeyValueIterator<Bytes, LRUCacheEntry>()
 {
-            @Override
+            
             public KeyValue<Bytes, LRUCacheEntry> peekNext()
 {
                 return cachedPair(cacheIterator.peekNext());
             }
 
-            @Override
+            
             public void close()
 {
                 cacheIterator.close();
             }
 
-            @Override
+            
             public Bytes peekNextKey()
 {
                 return cacheFunction.key(cacheIterator.peekNextKey());
             }
 
-            @Override
+            
             public bool hasNext()
 {
                 return cacheIterator.hasNext();
             }
 
-            @Override
+            
             public KeyValue<Bytes, LRUCacheEntry> next()
 {
                 return cachedPair(cacheIterator.next());
@@ -70,10 +70,10 @@ class FilteredCacheIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
                 return KeyValue.pair(cacheFunction.key(next.key), next.value);
             }
 
-            @Override
-            public void remove()
+            
+            public void Remove()
 {
-                cacheIterator.remove();
+                cacheIterator.Remove();
             }
         };
     }
@@ -107,9 +107,9 @@ class FilteredCacheIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
 
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException();
+        throw new InvalidOperationException();
     }
 
     public override KeyValue<Bytes, LRUCacheEntry> peekNext()

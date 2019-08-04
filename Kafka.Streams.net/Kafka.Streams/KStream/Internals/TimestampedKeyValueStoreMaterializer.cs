@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
@@ -24,18 +24,21 @@ import org.apache.kafka.streams.state.Stores;
 import org.apache.kafka.streams.state.TimestampedKeyValueStore;
 
 public class TimestampedKeyValueStoreMaterializer<K, V> {
-    private  MaterializedInternal<K, V, KeyValueStore<Bytes, byte[]>> materialized;
+    private  MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
 
-    public TimestampedKeyValueStoreMaterializer( MaterializedInternal<K, V, KeyValueStore<Bytes, byte[]>> materialized) {
+    public TimestampedKeyValueStoreMaterializer( MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+{
         this.materialized = materialized;
     }
 
     /**
      * @return  StoreBuilder
      */
-    public StoreBuilder<TimestampedKeyValueStore<K, V>> materialize() {
+    public StoreBuilder<TimestampedKeyValueStore<K, V>> materialize()
+{
         KeyValueBytesStoreSupplier supplier = (KeyValueBytesStoreSupplier) materialized.storeSupplier();
-        if (supplier == null) {
+        if (supplier == null)
+{
              string name = materialized.storeName();
             supplier = Stores.persistentTimestampedKeyValueStore(name);
         }
@@ -44,13 +47,15 @@ public class TimestampedKeyValueStoreMaterializer<K, V> {
             materialized.keySerde(),
             materialized.valueSerde());
 
-        if (materialized.loggingEnabled()) {
+        if (materialized.loggingEnabled())
+{
             builder.withLoggingEnabled(materialized.logConfig());
         } else {
             builder.withLoggingDisabled();
         }
 
-        if (materialized.cachingEnabled()) {
+        if (materialized.cachingEnabled())
+{
             builder.withCachingEnabled();
         }
         return builder;

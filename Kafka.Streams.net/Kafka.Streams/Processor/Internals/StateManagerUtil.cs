@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.FixedOrderMap;
@@ -43,7 +43,8 @@ class StateManagerUtil {
 
     private StateManagerUtil() {}
 
-    static RecordConverter converterForStore(IStateStore store) {
+    static RecordConverter converterForStore(IStateStore store)
+{
         return isTimestamped(store) ? rawValueToTimestampedValue() : identity();
     }
 
@@ -55,20 +56,24 @@ class StateManagerUtil {
                                                             Collection<TopicPartition> partitions,
                                                             InternalProcessorContext processorContext,
                                                             OffsetCheckpoint checkpointFile,
-                                                            Dictionary<TopicPartition, Long> checkpointFileCache) {
+                                                            Dictionary<TopicPartition, Long> checkpointFileCache)
+{
         Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
         Set<string> storesToBeReinitialized = new HashSet<>();
 
-        for (TopicPartition topicPartition : partitions) {
-            checkpointFileCache.remove(topicPartition);
-            storesToBeReinitialized.add(changelogTopicToStore.get(topicPartition.topic()));
+        foreach (TopicPartition topicPartition in partitions)
+{
+            checkpointFileCache.Remove(topicPartition);
+            storesToBeReinitialized.add(changelogTopicToStore[topicPartition.topic())];
         }
 
-        if (!eosEnabled) {
+        if (!eosEnabled)
+{
             try {
                 checkpointFile.write(checkpointFileCache);
-            } catch (IOException fatalException) {
-                log.error("Failed to write offset checkpoint file to {} while re-initializing {}: {}",
+            } catch (IOException fatalException)
+{
+                log.LogError("Failed to write offset checkpoint file to {} while re-initializing {}: {}",
                           checkpointFile,
                           stateStores,
                           fatalException);
@@ -76,13 +81,15 @@ class StateManagerUtil {
             }
         }
 
-        for (string storeName : storesToBeReinitialized) {
-            if (!stateStores.containsKey(storeName)) {
+        foreach (string storeName in storesToBeReinitialized)
+{
+            if (!stateStores.ContainsKey(storeName))
+{
                 // the store has never been registered; carry on...
                 continue;
             }
             IStateStore stateStore = stateStores
-                .get(storeName)
+                [storeName)
                 .orElseThrow(
                     () -> new InvalidOperationException(
                         "Re-initializing store that has not been initialized. This is a bug in Kafka Streams."
@@ -93,34 +100,38 @@ class StateManagerUtil {
                 stateStore.close();
             } catch (RuntimeException ignoreAndSwallow) { /* ignore */ }
             processorContext.uninitialize();
-            stateStores.put(storeName, Optional.empty());
+            stateStores.Add(storeName, Optional.empty());
 
-            // TODO remove this eventually
+            // TODO Remove this eventually
             // -> (only after we are sure, we don't need it for backward compatibility reasons anymore; maybe 2.0 release?)
             // this is an ugly "hack" that is required because RocksDBStore does not follow the pattern to put the
             // store directory as <taskDir>/<storeName> but nests it with an intermediate <taskDir>/rocksdb/<storeName>
             try {
                 Utils.delete(new File(baseDir + File.separator + "rocksdb" + File.separator + storeName));
-            } catch (IOException fatalException) {
-                log.error("Failed to reinitialize store {}.", storeName, fatalException);
-                throw new StreamsException(string.format("Failed to reinitialize store %s.", storeName), fatalException);
+            } catch (IOException fatalException)
+{
+                log.LogError("Failed to reinitialize store {}.", storeName, fatalException);
+                throw new StreamsException(string.Format("Failed to reinitialize store %s.", storeName), fatalException);
             }
 
             try {
                 Utils.delete(new File(baseDir + File.separator + storeName));
-            } catch (IOException fatalException) {
-                log.error("Failed to reinitialize store {}.", storeName, fatalException);
-                throw new StreamsException(string.format("Failed to reinitialize store %s.", storeName), fatalException);
+            } catch (IOException fatalException)
+{
+                log.LogError("Failed to reinitialize store {}.", storeName, fatalException);
+                throw new StreamsException(string.Format("Failed to reinitialize store %s.", storeName), fatalException);
             }
 
             stateStore.init(processorContext, stateStore);
         }
     }
 
-    private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin) {
+    private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
+{
         Dictionary<string, string> reversedMap = new HashMap<>();
-        for (Map.Entry<string, string> entry : origin.entrySet()) {
-            reversedMap.put(entry.getValue(), entry.getKey());
+        foreach (Map.Entry<string, string> entry in origin.entrySet())
+{
+            reversedMap.Add(entry.getValue(), entry.getKey());
         }
         return reversedMap;
     }

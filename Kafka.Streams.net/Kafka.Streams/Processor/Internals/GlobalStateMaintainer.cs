@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 using Kafka.Common.TopicPartition;
@@ -33,5 +33,5 @@ interface GlobalStateMaintainer {
 
     void close() throws IOException;
 
-    void update(ConsumerRecord<byte[], byte[]> record);
+    void update(ConsumerRecord<byte[], byte[]> record];
 }

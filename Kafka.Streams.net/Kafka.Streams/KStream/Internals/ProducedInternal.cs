@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.streams.kstream.Produced;
@@ -22,23 +22,28 @@ import org.apache.kafka.streams.processor.StreamPartitioner;
 
 public class ProducedInternal<K, V> : Produced<K, V> {
 
-    public ProducedInternal( Produced<K, V> produced) {
+    public ProducedInternal( Produced<K, V> produced)
+{
         super(produced);
     }
 
-    public ISerde<K> keySerde() {
+    public ISerde<K> keySerde()
+{
         return keySerde;
     }
 
-    public ISerde<V> valueSerde() {
+    public ISerde<V> valueSerde()
+{
         return valueSerde;
     }
 
-    public StreamPartitioner<? super K, ? super V> streamPartitioner() {
+    public StreamPartitioner<? super K, ? super V> streamPartitioner()
+{
         return partitioner;
     }
 
-    public string name() {
+    public string name()
+{
         return processorName;
     }
 

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -114,8 +114,8 @@ class SegmentIterator<S : Segment> : KeyValueIterator<Bytes, byte[]>
         return currentIterator.next();
     }
 
-    public void remove()
+    public void Remove()
 {
-        throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
     }
 }

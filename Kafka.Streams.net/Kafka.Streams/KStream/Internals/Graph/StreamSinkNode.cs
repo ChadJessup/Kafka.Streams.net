@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.kstream.internals.ProducedInternal;
@@ -32,7 +32,8 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
 
     public StreamSinkNode( string nodeName,
                            TopicNameExtractor<K, V> topicNameExtractor,
-                           ProducedInternal<K, V> producedInternal) {
+                           ProducedInternal<K, V> producedInternal)
+{
 
         super(nodeName);
 
@@ -41,22 +42,25 @@ public class StreamSinkNode<K, V> : StreamsGraphNode {
     }
 
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "StreamSinkNode{" +
                "topicNameExtractor=" + topicNameExtractor +
                ", producedInternal=" + producedInternal +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
          Serializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().serializer();
          Serializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().serializer();
          StreamPartitioner<? super K, ? super V> partitioner = producedInternal.streamPartitioner();
          string[] parentNames = parentNodeNames();
 
-        if (partitioner == null && keySerializer is WindowedSerializer) {
+        if (partitioner == null && keySerializer is WindowedSerializer)
+{
             @SuppressWarnings("unchecked")
              StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<Object, V>((WindowedSerializer) keySerializer);
             topologyBuilder.addSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);

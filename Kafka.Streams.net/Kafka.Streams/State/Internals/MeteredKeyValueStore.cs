@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.serialization.Serde;
@@ -30,11 +30,11 @@ using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using Kafka.Streams.State.StateSerdes;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.kafka.common.metrics.Sensor.RecordingLevel.DEBUG;
+import static org.apache.kafka.common.metrics.RecordingLevel.DEBUG;
 import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTaskAndStoreLatencyAndThroughputSensors;
 
 /**
@@ -46,8 +46,8 @@ import static org.apache.kafka.streams.state.internals.metrics.Sensors.createTas
  * @param <V>
  */
 public class MeteredKeyValueStore<K, V>
-    : WrappedStateStore<KeyValueStore<Bytes, byte[]>, K, V>
-    : KeyValueStore<K, V>
+    : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, K, V>
+    : IKeyValueStore<K, V>
 {
 
     ISerde<K> keySerde;
@@ -55,7 +55,7 @@ public class MeteredKeyValueStore<K, V>
     StateSerdes<K, V> serdes;
 
     private string metricScope;
-    protected Time time;
+    protected ITime time;
     private Sensor putTime;
     private Sensor putIfAbsentTime;
     private Sensor getTime;
@@ -67,15 +67,15 @@ public class MeteredKeyValueStore<K, V>
     private StreamsMetricsImpl metrics;
     private string taskName;
 
-    MeteredKeyValueStore(KeyValueStore<Bytes, byte[]> inner,
+    MeteredKeyValueStore(IKeyValueStore<Bytes, byte[]> inner,
                          string metricScope,
-                         Time time,
+                         ITime time,
                          ISerde<K> keySerde,
                          ISerde<V> valueSerde)
 {
         super(inner);
         this.metricScope = metricScope;
-        this.time = time != null ? time : Time.SYSTEM;
+        this.time = time != null ? time : ITime.SYSTEM;
         this.keySerde = keySerde;
         this.valueSerde = valueSerde;
     }
@@ -85,7 +85,7 @@ public class MeteredKeyValueStore<K, V>
 {
         metrics = (StreamsMetricsImpl) context.metrics();
 
-        taskName = context.taskId().toString();
+        taskName = context.taskId().ToString();
         string metricsGroup = "stream-" + metricScope + "-metrics";
         Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
         Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name());
@@ -131,10 +131,10 @@ public class MeteredKeyValueStore<K, V>
     public override bool setFlushListener(CacheFlushListener<K, V> listener,
                                     bool sendOldValues)
 {
-        KeyValueStore<Bytes, byte[]> wrapped = wrapped();
+        IKeyValueStore<Bytes, byte[]> wrapped = wrapped();
         if (wrapped is CachedStateStore)
 {
-            return ((CachedStateStore<byte[], byte[]>) wrapped).setFlushListener(
+            return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
                 (rawKey, rawNewValue, rawOldValue, timestamp) -> listener.apply(
                     serdes.keyFrom(rawKey),
                     rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
@@ -152,14 +152,14 @@ public class MeteredKeyValueStore<K, V>
 {
             if (getTime.shouldRecord())
 {
-                return measureLatency(() -> outerValue(wrapped().get(keyBytes(key))), getTime);
+                return measureLatency(() -> outerValue(wrapped()[keyBytes(key))), getTime];
             } else
 {
-                return outerValue(wrapped().get(keyBytes(key)));
+                return outerValue(wrapped()[keyBytes(key))];
             }
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), key);
+            string message = string.Format(e.getMessage(), key);
             throw new ProcessorStateException(message, e);
         }
     }
@@ -173,16 +173,16 @@ public class MeteredKeyValueStore<K, V>
 {
                 measureLatency(() ->
 {
-                    wrapped().put(keyBytes(key), serdes.rawValue(value));
+                    wrapped().Add(keyBytes(key), serdes.rawValue(value));
                     return null;
                 }, putTime);
             } else
 {
-                wrapped().put(keyBytes(key), serdes.rawValue(value));
+                wrapped().Add(keyBytes(key), serdes.rawValue(value));
             }
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), key, value);
+            string message = string.Format(e.getMessage(), key, value);
             throw new ProcessorStateException(message, e);
         }
     }
@@ -231,7 +231,7 @@ public class MeteredKeyValueStore<K, V>
             }
         } catch (ProcessorStateException e)
 {
-            string message = string.format(e.getMessage(), key);
+            string message = string.Format(e.getMessage(), key);
             throw new ProcessorStateException(message, e);
         }
     }
@@ -307,8 +307,8 @@ public class MeteredKeyValueStore<K, V>
 
     private List<KeyValue<Bytes, byte[]>> innerEntries(List<KeyValue<K, V>> from)
 {
-        List<KeyValue<Bytes, byte[]>> byteEntries = new ArrayList<>();
-        for (KeyValue<K, V> entry : from)
+        List<KeyValue<Bytes, byte[]>> byteEntries = new List<>();
+        foreach (KeyValue<K, V> entry in from)
 {
             byteEntries.add(KeyValue.pair(Bytes.wrap(serdes.rawKey(entry.key)), serdes.rawValue(entry.value)));
         }
@@ -330,28 +330,28 @@ public class MeteredKeyValueStore<K, V>
             this.startNs = time.nanoseconds();
         }
 
-        @Override
+        
         public bool hasNext()
 {
             return iter.hasNext();
         }
 
-        @Override
+        
         public KeyValue<K, V> next()
 {
             KeyValue<Bytes, byte[]> keyValue = iter.next();
             return KeyValue.pair(
-                serdes.keyFrom(keyValue.key.get()),
+                serdes.keyFrom(keyValue.key()],
                 outerValue(keyValue.value));
         }
 
-        @Override
-        public void remove()
+        
+        public void Remove()
 {
-            iter.remove();
+            iter.Remove();
         }
 
-        @Override
+        
         public void close()
 {
             try
@@ -363,10 +363,10 @@ public class MeteredKeyValueStore<K, V>
             }
         }
 
-        @Override
+        
         public K peekNextKey()
 {
-            return serdes.keyFrom(iter.peekNextKey().get());
+            return serdes.keyFrom(iter.peekNextKey()()];
         }
     }
 }

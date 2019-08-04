@@ -14,32 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.Processor;
 import org.apache.kafka.streams.kstream.Predicate;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 
-class KStreamFilter<K, V> implements ProcessorSupplier<K, V> {
+class KStreamFilter<K, V> : ProcessorSupplier<K, V> {
 
     private  Predicate<K, V> predicate;
     private  bool filterNot;
 
-    public KStreamFilter( Predicate<K, V> predicate,  bool filterNot) {
+    public KStreamFilter( Predicate<K, V> predicate,  bool filterNot)
+{
         this.predicate = predicate;
         this.filterNot = filterNot;
     }
 
-    @Override
-    public Processor<K, V> get() {
+    
+    public Processor<K, V> get()
+{
         return new KStreamFilterProcessor();
     }
 
     private class KStreamFilterProcessor : AbstractProcessor<K, V> {
-        @Override
-        public void process( K key,  V value) {
-            if (filterNot ^ predicate.test(key, value)) {
+        
+        public void process( K key,  V value)
+{
+            if (filterNot ^ predicate.test(key, value))
+{
                 context().forward(key, value);
             }
         }

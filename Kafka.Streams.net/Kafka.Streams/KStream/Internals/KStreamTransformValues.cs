@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ValueTransformerWithKey;
 import org.apache.kafka.streams.kstream.ValueTransformerWithKeySupplier;
@@ -23,41 +23,47 @@ import org.apache.kafka.streams.processor.IProcessorContext;
 import org.apache.kafka.streams.processor.ProcessorSupplier;
 import org.apache.kafka.streams.processor.internals.ForwardingDisabledProcessorContext;
 
-public class KStreamTransformValues<K, V, R> implements ProcessorSupplier<K, V> {
+public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
 
     private  ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
 
-    KStreamTransformValues( ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier) {
+    KStreamTransformValues( ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier)
+{
         this.valueTransformerSupplier = valueTransformerSupplier;
     }
 
-    @Override
-    public Processor<K, V> get() {
-        return new KStreamTransformValuesProcessor<>(valueTransformerSupplier.get());
+    
+    public Processor<K, V> get()
+{
+        return new KStreamTransformValuesProcessor<>(valueTransformerSupplier()];
     }
 
-    public static class KStreamTransformValuesProcessor<K, V, R> implements Processor<K, V> {
+    public static class KStreamTransformValuesProcessor<K, V, R> : Processor<K, V> {
 
         private  ValueTransformerWithKey<K, V, R> valueTransformer;
         private IProcessorContext context;
 
-        KStreamTransformValuesProcessor( ValueTransformerWithKey<K, V, R> valueTransformer) {
+        KStreamTransformValuesProcessor( ValueTransformerWithKey<K, V, R> valueTransformer)
+{
             this.valueTransformer = valueTransformer;
         }
 
-        @Override
-        public void init( IProcessorContext context) {
+        
+        public void init( IProcessorContext context)
+{
             valueTransformer.init(new ForwardingDisabledProcessorContext(context));
             this.context = context;
         }
 
-        @Override
-        public void process( K key,  V value) {
+        
+        public void process( K key,  V value)
+{
             context.forward(key, valueTransformer.transform(key, value));
         }
 
-        @Override
-        public void close() {
+        
+        public void close()
+{
             valueTransformer.close();
         }
     }

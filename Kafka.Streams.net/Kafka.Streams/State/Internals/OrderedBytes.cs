@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 
@@ -32,30 +32,30 @@ class OrderedBytes
      */
     static Bytes upperRange(Bytes key, byte[] maxSuffix)
 {
-        byte[] bytes = key.get();
-        ByteBuffer rangeEnd = ByteBuffer.allocate(bytes.length + maxSuffix.length);
+        byte[] bytes = key[];
+        ByteBuffer rangeEnd = ByteBuffer.allocate(bytes.Length + maxSuffix.Length);
 
         int i = 0;
-        while (i < bytes.length && (
+        while (i < bytes.Length && (
             i < MIN_KEY_LENGTH // assumes keys are at least one byte long
             || (bytes[i] & 0xFF) >= (maxSuffix[0] & 0xFF)
             ))
 {
-            rangeEnd.put(bytes[i++]);
+            rangeEnd.Add(bytes[i++]];
         }
 
-        rangeEnd.put(maxSuffix);
+        rangeEnd.Add(maxSuffix);
         rangeEnd.flip();
 
         byte[] res = new byte[rangeEnd.remaining()];
-        ByteBuffer.wrap(res).put(rangeEnd);
+        ByteBuffer.wrap(res).Add(rangeEnd);
         return Bytes.wrap(res);
     }
 
     static Bytes lowerRange(Bytes key, byte[] minSuffix)
 {
-        byte[] bytes = key.get();
-        ByteBuffer rangeStart = ByteBuffer.allocate(bytes.length + minSuffix.length);
+        byte[] bytes = key[];
+        ByteBuffer rangeStart = ByteBuffer.allocate(bytes.Length + minSuffix.Length);
         // any key in the range would start at least with the given prefix to be
         // in the range, and have at least SUFFIX_SIZE number of trailing zero bytes.
 
@@ -64,8 +64,8 @@ class OrderedBytes
         // KeySchema.toBinaryKey(keyFrom, from, 0) in byte order
         return Bytes.wrap(
             rangeStart
-                .put(bytes)
-                .put(minSuffix)
+                .Add(bytes)
+                .Add(minSuffix)
                 .array()
         );
     }

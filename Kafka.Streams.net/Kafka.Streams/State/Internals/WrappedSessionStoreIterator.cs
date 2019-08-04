@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -52,8 +52,8 @@ class WrappedSessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
         return KeyValue.pair(SessionKeySchema.from(next.key), next.value);
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        throw new UnsupportedOperationException("remove() is not supported in " + GetType().getName());
+        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
     }
 }

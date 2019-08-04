@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.producer.Producer;
 using Kafka.Common.TopicPartition;
@@ -48,7 +48,7 @@ public interface RecordCollector : AutoCloseable {
      * Initialize the collector with a producer.
      * @param producer the producer that should be used by this collector
      */
-    void init(Producer<byte[], byte[]> producer);
+    void init(Producer<byte[], byte[]> producer];
 
     /**
      * Flush the internal {@link Producer}.

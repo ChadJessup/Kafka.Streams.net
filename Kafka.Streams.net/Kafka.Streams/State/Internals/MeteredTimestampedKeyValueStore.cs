@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
@@ -39,9 +39,9 @@ public class MeteredTimestampedKeyValueStore<K, V>
     : TimestampedKeyValueStore<K, V>
 {
 
-    MeteredTimestampedKeyValueStore(KeyValueStore<Bytes, byte[]> inner,
+    MeteredTimestampedKeyValueStore(IKeyValueStore<Bytes, byte[]> inner,
                                     string metricScope,
-                                    Time time,
+                                    ITime time,
                                     ISerde<K> keySerde,
                                     ISerde<ValueAndTimestamp<V>> valueSerde)
 {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.State.KeyValueIterator;
@@ -52,11 +52,11 @@ public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
 {
         Objects.requireNonNull(key);
         List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
-        for (IReadOnlyKeyValueStore<K, V> store : stores)
+        foreach (IReadOnlyKeyValueStore<K, V> store in stores)
 {
             try
 {
-                V result = store.get(key);
+                V result = store[key];
                 if (result != null)
 {
                     return result;
@@ -76,7 +76,7 @@ public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
         Objects.requireNonNull(to);
         NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
 {
-            @Override
+            
             public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
 {
                 try
@@ -96,7 +96,7 @@ public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
 {
         NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
 {
-            @Override
+            
             public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
 {
                 try
@@ -116,7 +116,7 @@ public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
 {
         List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
         long total = 0;
-        for (IReadOnlyKeyValueStore<K, V> store : stores)
+        foreach (IReadOnlyKeyValueStore<K, V> store in stores)
 {
             total += store.approximateNumEntries();
             if (total < 0)

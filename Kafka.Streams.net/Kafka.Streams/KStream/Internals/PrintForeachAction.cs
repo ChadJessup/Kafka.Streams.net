@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.ForeachAction;
 import org.apache.kafka.streams.kstream.KeyValueMapper;
@@ -24,12 +24,12 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-public class PrintForeachAction<K, V> implements ForeachAction<K, V> {
+public class PrintForeachAction<K, V> : ForeachAction<K, V> {
 
     private  string label;
     private  PrintWriter printWriter;
     private  bool closable;
-    private  KeyValueMapper<? super K, ? super V, string> mapper;
+    private  IKeyValueMapper<? super K, ? super V, string> mapper;
 
     /**
      * Print customized output with given writer. The {@link OutputStream} can be {@link System#out} or the others.
@@ -39,25 +39,30 @@ public class PrintForeachAction<K, V> implements ForeachAction<K, V> {
      * @param label The given name will be printed.
      */
     PrintForeachAction( OutputStream outputStream,
-                        KeyValueMapper<? super K, ? super V, string> mapper,
-                        string label) {
+                        IKeyValueMapper<? super K, ? super V, string> mapper,
+                        string label)
+{
         this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         this.closable = outputStream != System.out && outputStream != System.err;
         this.mapper = mapper;
         this.label = label;
     }
 
-    @Override
-    public void apply( K key,  V value) {
-         string data = string.format("[%s]: %s", label, mapper.apply(key, value));
+    
+    public void apply( K key,  V value)
+{
+         string data = string.Format("[%s]: %s", label, mapper.apply(key, value)];
         printWriter.println(data);
-        if (!closable) {
+        if (!closable)
+{
             printWriter.flush();
         }
     }
 
-    public void close() {
-        if (closable) {
+    public void close()
+{
+        if (closable)
+{
             printWriter.close();
         } else {
             printWriter.flush();

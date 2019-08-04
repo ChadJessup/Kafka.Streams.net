@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.streams.kstream.Window;
 
@@ -35,9 +35,9 @@ public  class SessionWindow : Window {
      *
      * @param startMs the start timestamp of the window
      * @param endMs   the end timestamp of the window
-     * @throws IllegalArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
+     * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
      */
-    public SessionWindow( long startMs,  long endMs) throws IllegalArgumentException {
+    public SessionWindow( long startMs,  long endMs) throws ArgumentException {
         super(startMs, endMs);
     }
 
@@ -46,11 +46,12 @@ public  class SessionWindow : Window {
      *
      * @param other another window
      * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
-     * @throws IllegalArgumentException if the {@code other} window has a different type than {@code this} window
+     * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
      */
-    public bool overlap( Window other) throws IllegalArgumentException {
-        if (getClass() != other.getClass()) {
-            throw new IllegalArgumentException("Cannot compare windows of different type. Other window has type "
+    public bool overlap( Window other) throws ArgumentException {
+        if (getClass() != other.getClass())
+{
+            throw new ArgumentException("Cannot compare windows of different type. Other window has type "
                 + other.getClass() + ".");
         }
          SessionWindow otherWindow = (SessionWindow) other;

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Streams.KeyValue;
 
@@ -33,7 +33,7 @@ import java.util.Iterator;
 public interface KeyValueIterator<K, V> : Iterator<KeyValue<K, V>>, Closeable
 {
 
-    @Override
+    
     void close();
 
     /**

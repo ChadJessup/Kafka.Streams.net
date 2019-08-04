@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals.suppress;
+namespace Kafka.streams.kstream.internals.suppress;
 
 import org.apache.kafka.streams.kstream.Windowed;
 import org.apache.kafka.streams.processor.IProcessorContext;
@@ -35,44 +35,50 @@ import org.apache.kafka.streams.processor.IProcessorContext;
         TimeDefinitionType type();
     }
 
-    public static class RecordTimeDefintion<K> implements TimeDefinition<K> {
+    public static class RecordTimeDefintion<K> : TimeDefinition<K> {
         private static  RecordTimeDefintion INSTANCE = new RecordTimeDefintion();
 
         private RecordTimeDefintion() {}
 
         @SuppressWarnings("unchecked")
-        public static <K> RecordTimeDefintion<K> instance() {
+        public static <K> RecordTimeDefintion<K> instance()
+{
             return RecordTimeDefintion.INSTANCE;
         }
 
-        @Override
-        public long time( IProcessorContext context,  K key) {
+        
+        public long time( IProcessorContext context,  K key)
+{
             return context.timestamp();
         }
 
-        @Override
-        public TimeDefinitionType type() {
+        
+        public TimeDefinitionType type()
+{
             return TimeDefinitionType.RECORD_TIME;
         }
     }
 
-    public static class WindowEndTimeDefinition<K : Windowed> implements TimeDefinition<K> {
+    public static class WindowEndTimeDefinition<K : Windowed> : TimeDefinition<K> {
         private static  WindowEndTimeDefinition INSTANCE = new WindowEndTimeDefinition();
 
         private WindowEndTimeDefinition() {}
 
         @SuppressWarnings("unchecked")
-        public static <K : Windowed> WindowEndTimeDefinition<K> instance() {
+        public static <K : Windowed> WindowEndTimeDefinition<K> instance()
+{
             return WindowEndTimeDefinition.INSTANCE;
         }
 
-        @Override
-        public long time( IProcessorContext context,  K key) {
+        
+        public long time( IProcessorContext context,  K key)
+{
             return key.window().end();
         }
 
-        @Override
-        public TimeDefinitionType type() {
+        
+        public TimeDefinitionType type()
+{
             return TimeDefinitionType.WINDOW_END_TIME;
         }
     }

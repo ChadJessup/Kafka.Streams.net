@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Streams.KeyValue;
 
@@ -76,12 +76,12 @@ public class ValueAndTimestamp<V>
         return timestamp;
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "<" + value + "," + timestamp + ">";
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -96,7 +96,7 @@ public class ValueAndTimestamp<V>
             Objects.Equals(value, that.value);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         return Objects.hash(value, timestamp);
     }

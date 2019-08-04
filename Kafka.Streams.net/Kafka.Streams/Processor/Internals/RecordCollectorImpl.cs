@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.Producer;
@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class RecordCollectorImpl implements RecordCollector {
+public class RecordCollectorImpl : RecordCollector {
     private Logger log;
     private string logPrefix;
     private Sensor skippedRecordsSensor;
@@ -67,20 +67,22 @@ public class RecordCollectorImpl implements RecordCollector {
     public RecordCollectorImpl(string streamTaskId,
                                LogContext logContext,
                                ProductionExceptionHandler productionExceptionHandler,
-                               Sensor skippedRecordsSensor) {
+                               Sensor skippedRecordsSensor)
+{
         this.offsets = new HashMap<>();
-        this.logPrefix = string.format("task [%s] ", streamTaskId);
+        this.logPrefix = string.Format("task [%s] ", streamTaskId];
         this.log = logContext.logger(GetType());
         this.productionExceptionHandler = productionExceptionHandler;
         this.skippedRecordsSensor = skippedRecordsSensor;
     }
 
-    @Override
-    public void init(Producer<byte[], byte[]> producer) {
+    
+    public void init(Producer<byte[], byte[]> producer)
+{
         this.producer = producer;
     }
 
-    @Override
+    
     public <K, V> void send(string topic,
                             K key,
                             V value,
@@ -88,12 +90,15 @@ public class RecordCollectorImpl implements RecordCollector {
                             Long timestamp,
                             Serializer<K> keySerializer,
                             Serializer<V> valueSerializer,
-                            StreamPartitioner<? super K, ? super V> partitioner) {
+                            StreamPartitioner<? super K, ? super V> partitioner)
+{
         Integer partition = null;
 
-        if (partitioner != null) {
+        if (partitioner != null)
+{
             List<PartitionInfo> partitions = producer.partitionsFor(topic);
-            if (partitions.size() > 0) {
+            if (partitions.size() > 0)
+{
                 partition = partitioner.partition(topic, key, value, partitions.size());
             } else {
                 throw new StreamsException("Could not get partition information for topic '" + topic + "'." +
@@ -104,7 +109,8 @@ public class RecordCollectorImpl implements RecordCollector {
         send(topic, key, value, headers, partition, timestamp, keySerializer, valueSerializer);
     }
 
-    private bool productionExceptionIsFatal(Exception exception) {
+    private bool productionExceptionIsFatal(Exception exception)
+{
         bool securityException = exception is AuthenticationException ||
             exception is AuthorizationException ||
             exception is SecurityDisabledException;
@@ -124,33 +130,35 @@ public class RecordCollectorImpl implements RecordCollector {
         Long timestamp,
         string topic,
         Exception exception
-    ) {
+    )
+{
         string errorLogMessage = LOG_MESSAGE;
         string errorMessage = EXCEPTION_MESSAGE;
         // There is no documented API for detecting retriable errors, so we rely on `RetriableException`
         // even though it's an implementation detail (i.e. we do the best we can given what's available)
-        if (exception is RetriableException) {
+        if (exception is RetriableException)
+{
             errorLogMessage += PARAMETER_HINT;
             errorMessage += PARAMETER_HINT;
         }
-        log.error(errorLogMessage, topic, exception.getMessage(), exception);
+        log.LogError(errorLogMessage, topic, exception.getMessage(), exception);
 
         // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
         log.trace("Failed message: key {} value {} timestamp {}", key, value, timestamp);
 
         sendException = new StreamsException(
-            string.format(
+            string.Format(
                 errorMessage,
                 logPrefix,
                 "an error caught",
                 timestamp,
                 topic,
-                exception.toString()
+                exception.ToString()
             ),
             exception);
     }
 
-    @Override
+    
     public <K, V> void send(string topic,
                             K key,
                             V value,
@@ -158,46 +166,55 @@ public class RecordCollectorImpl implements RecordCollector {
                             Integer partition,
                             Long timestamp,
                             Serializer<K> keySerializer,
-                            Serializer<V> valueSerializer) {
+                            Serializer<V> valueSerializer)
+{
         checkForException();
-        byte[] keyBytes = keySerializer.serialize(topic, headers, key);
-        byte[] valBytes = valueSerializer.serialize(topic, headers, value);
+        byte[] keyBytes = keySerializer.serialize(topic, headers, key];
+        byte[] valBytes = valueSerializer.serialize(topic, headers, value];
 
-        ProducerRecord<byte[], byte[]> serializedRecord = new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes, headers);
+        ProducerRecord<byte[], byte[]> serializedRecord = new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes, headers];
 
         try {
-            producer.send(serializedRecord, new Callback() {
-                @Override
+            producer.send(serializedRecord, new Callback()
+{
+                
                 public void onCompletion(RecordMetadata metadata,
-                                         Exception exception) {
-                    if (exception == null) {
-                        if (sendException != null) {
+                                         Exception exception)
+{
+                    if (exception == null)
+{
+                        if (sendException != null)
+{
                             return;
                         }
                         TopicPartition tp = new TopicPartition(metadata.topic(), metadata.partition());
-                        offsets.put(tp, metadata.offset());
+                        offsets.Add(tp, metadata.offset());
                     } else {
-                        if (sendException == null) {
-                            if (exception is ProducerFencedException) {
+                        if (sendException == null)
+{
+                            if (exception is ProducerFencedException)
+{
                                 log.warn(LOG_MESSAGE, topic, exception.getMessage(), exception);
 
                                 // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
-                                log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
+                                log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition];
 
                                 sendException = new ProducerFencedException(
-                                    string.format(
+                                    string.Format(
                                         EXCEPTION_MESSAGE,
                                         logPrefix,
                                         "producer got fenced",
                                         timestamp,
                                         topic,
-                                        exception.toString()
+                                        exception.ToString()
                                     )
                                 );
                             } else {
-                                if (productionExceptionIsFatal(exception)) {
+                                if (productionExceptionIsFatal(exception))
+{
                                     recordSendError(key, value, timestamp, topic, exception);
-                                } else if (productionExceptionHandler.handle(serializedRecord, exception) == ProductionExceptionHandlerResponse.FAIL) {
+                                } else if (productionExceptionHandler.handle(serializedRecord, exception) == ProductionExceptionHandlerResponse.FAIL)
+{
                                     recordSendError(key, value, timestamp, topic, exception);
                                 } else {
                                     log.warn(
@@ -208,7 +225,7 @@ public class RecordCollectorImpl implements RecordCollector {
                                     );
 
                                     // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
-                                    log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition);
+                                    log.trace("Failed message: (key {} value {} timestamp {}) topic=[{}] partition=[{}]", key, value, timestamp, topic, partition];
 
                                     skippedRecordsSensor.record();
                                 }
@@ -217,8 +234,9 @@ public class RecordCollectorImpl implements RecordCollector {
                     }
                 }
             });
-        } catch (TimeoutException e) {
-            log.error(
+        } catch (TimeoutException e)
+{
+            log.LogError(
                 "Timeout exception caught when sending record to topic {}. " +
                     "This might happen if the producer cannot send data to the Kafka cluster and thus, " +
                     "its internal buffer fills up. " +
@@ -229,61 +247,70 @@ public class RecordCollectorImpl implements RecordCollector {
                 e
             );
             throw new StreamsException(
-                string.format("%sFailed to send record to topic %s due to timeout.", logPrefix, topic),
+                string.Format("%sFailed to send record to topic %s due to timeout.", logPrefix, topic),
                 e
             );
-        } catch (Exception uncaughtException) {
+        } catch (Exception uncaughtException)
+{
             if (uncaughtException is KafkaException &&
-                uncaughtException.getCause() is ProducerFencedException) {
+                uncaughtException.getCause() is ProducerFencedException)
+{
                 KafkaException kafkaException = (KafkaException) uncaughtException;
                 // producer.send() call may throw a KafkaException which wraps a FencedException,
                 // in this case we should throw its wrapped inner cause so that it can be captured and re-wrapped as TaskMigrationException
                 throw (ProducerFencedException) kafkaException.getCause();
             } else {
                 throw new StreamsException(
-                    string.format(
+                    string.Format(
                         EXCEPTION_MESSAGE,
                         logPrefix,
                         "an error caught",
                         timestamp,
                         topic,
-                        uncaughtException.toString()
+                        uncaughtException.ToString()
                     ),
                     uncaughtException);
             }
         }
     }
 
-    private void checkForException() {
-        if (sendException != null) {
+    private void checkForException()
+{
+        if (sendException != null)
+{
             throw sendException;
         }
     }
 
-    @Override
-    public void flush() {
-        log.debug("Flushing producer");
+    
+    public void flush()
+{
+        log.LogDebug("Flushing producer");
         producer.flush();
         checkForException();
     }
 
-    @Override
-    public void close() {
-        log.debug("Closing producer");
-        if (producer != null) {
+    
+    public void close()
+{
+        log.LogDebug("Closing producer");
+        if (producer != null)
+{
             producer.close();
             producer = null;
         }
         checkForException();
     }
 
-    @Override
-    public Dictionary<TopicPartition, Long> offsets() {
+    
+    public Dictionary<TopicPartition, Long> offsets()
+{
         return offsets;
     }
 
     // for testing only
-    Producer<byte[], byte[]> producer() {
+    Producer<byte[], byte[]> producer()
+{
         return producer;
     }
 

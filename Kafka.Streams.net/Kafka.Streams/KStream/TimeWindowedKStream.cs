@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -95,8 +95,8 @@ public interface TimeWindowedKStream<K, V> {
      * To query the local windowed {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
-     * Store queryableStoreName = ... // the queryableStoreName should be the name of the store as defined by the Materialized instance
+     * KafkaStreams streams = [] // counting words
+     * Store queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
      * ReadOnlyWindowStore<string,Long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>windowStore());
      *
      * string key = "some-word";
@@ -124,7 +124,7 @@ public interface TimeWindowedKStream<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys and {@link Long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<Windowed<K>, Long> count( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized);
+    KTable<Windowed<K>, Long> count( Materialized<K, Long, WindowStore<Bytes, byte[]>> materialized];
 
     /**
      * Aggregate the values of records in this stream by the grouped key.
@@ -199,8 +199,8 @@ public interface TimeWindowedKStream<K, V> {
      * To query the local windowed {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
-     * Store queryableStoreName = ... // the queryableStoreName should be the name of the store as defined by the Materialized instance
+     * KafkaStreams streams = [] // counting words
+     * Store queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
      * ReadOnlyWindowStore<string,Long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>windowStore());
      *
      * string key = "some-word";
@@ -229,7 +229,7 @@ public interface TimeWindowedKStream<K, V> {
      */
     <VR> KTable<Windowed<K>, VR> aggregate( Initializer<VR> initializer,
                                             Aggregator<? super K, ? super V, VR> aggregator,
-                                            Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized);
+                                            Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized];
 
     /**
      * Combine the values of records in this stream by the grouped key.
@@ -290,8 +290,8 @@ public interface TimeWindowedKStream<K, V> {
      * To query the local windowed {@link KeyValueStore} it must be obtained via
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * <pre>{@code
-     * KafkaStreams streams = ... // counting words
-     * Store queryableStoreName = ... // the queryableStoreName should be the name of the store as defined by the Materialized instance
+     * KafkaStreams streams = [] // counting words
+     * Store queryableStoreName = [] // the queryableStoreName should be the name of the store as defined by the Materialized instance
      * ReadOnlyWindowStore<string,Long> localWindowStore = streams.store(queryableStoreName, QueryableStoreTypes.<string, Long>windowStore());
      *
      * string key = "some-word";
@@ -317,5 +317,5 @@ public interface TimeWindowedKStream<K, V> {
      * latest (rolling) aggregate for each key
      */
     KTable<Windowed<K>, V> reduce( Reducer<V> reducer,
-                                   Materialized<K, V, WindowStore<Bytes, byte[]>> materialized);
+                                   Materialized<K, V, WindowStore<Bytes, byte[]>> materialized];
 }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.LongSerializer;
 using Kafka.Common.serialization.Serializer;
@@ -61,12 +61,12 @@ public class ValueAndTimestampSerializer<V> : Serializer<ValueAndTimestamp<V>>
 {
             return null;
         }
-        byte[] rawValue = valueSerializer.serialize(topic, data);
-        byte[] rawTimestamp = timestampSerializer.serialize(topic, timestamp);
+        byte[] rawValue = valueSerializer.serialize(topic, data];
+        byte[] rawTimestamp = timestampSerializer.serialize(topic, timestamp];
         return ByteBuffer
-            .allocate(rawTimestamp.length + rawValue.length)
-            .put(rawTimestamp)
-            .put(rawValue)
+            .allocate(rawTimestamp.Length + rawValue.Length)
+            .Add(rawTimestamp)
+            .Add(rawValue)
             .array();
     }
 

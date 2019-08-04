@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 using Kafka.Common.Cluster;
 using Kafka.Common.TopicPartition;
@@ -40,7 +40,7 @@ public interface PartitionGrouper {
      * task should always be the same regardless of the input parameters to this function. This is to ensure task's
      * local state stores remain valid through workload rebalances among Kafka Streams instances.
      *
-     * The default partition grouper implements this interface by assigning all partitions across different topics with the same
+     * The default partition grouper : this interface by assigning all partitions across different topics with the same
      * partition id into the same task. See {@link DefaultPartitionGrouper} for more information.
      *
      * @param topicGroups The map from the topic group id to topics

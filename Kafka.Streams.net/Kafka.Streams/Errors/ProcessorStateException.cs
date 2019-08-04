@@ -26,15 +26,18 @@ public class ProcessorStateException : StreamsException {
 
     private  static long serialVersionUID = 1L;
 
-    public ProcessorStateException( string message) {
+    public ProcessorStateException( string message)
+{
         super(message);
     }
 
-    public ProcessorStateException( string message,  Throwable throwable) {
+    public ProcessorStateException( string message,  Throwable throwable)
+{
         super(message, throwable);
     }
 
-    public ProcessorStateException( Throwable throwable) {
+    public ProcessorStateException( Throwable throwable)
+{
         super(throwable);
     }
 }

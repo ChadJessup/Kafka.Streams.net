@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.streams.errors.TopologyException;
 
@@ -31,18 +31,21 @@ import java.util.Objects;
  * @param <V> value type
  * @see KStream#print(Printed)
  */
-public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
+public class Printed<K, V> : NamedOperation<Printed<K, V>> {
     protected  OutputStream outputStream;
     protected string label;
     protected string processorName;
-    protected KeyValueMapper<? super K, ? super V, string> mapper = new KeyValueMapper<K, V, string>() {
-        @Override
-        public string apply( K key,  V value) {
-            return string.format("%s, %s", key, value);
+    protected IKeyValueMapper<? super K, ? super V, string> mapper = new IKeyValueMapper<K, V, string>()
+{
+        
+        public string apply( K key,  V value)
+{
+            return string.Format("%s, %s", key, value);
         }
     };
 
-    private Printed( OutputStream outputStream) {
+    private Printed( OutputStream outputStream)
+{
         this.outputStream = outputStream;
     }
 
@@ -50,7 +53,8 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * Copy constructor.
      * @param printed   instance of {@link Printed} to copy
      */
-    protected Printed( Printed<K, V> printed) {
+    protected Printed( Printed<K, V> printed)
+{
         this.outputStream = printed.outputStream;
         this.label = printed.label;
         this.mapper = printed.mapper;
@@ -65,15 +69,18 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * @param <V>      value type
      * @return a new Printed instance
      */
-    public static <K, V> Printed<K, V> toFile( string filePath) {
+    public static <K, V> Printed<K, V> toFile( string filePath)
+{
         Objects.requireNonNull(filePath, "filePath can't be null");
-        if (filePath.trim().isEmpty()) {
+        if (filePath.trim().isEmpty())
+{
             throw new TopologyException("filePath can't be an empty string");
         }
         try {
-            return new Printed<>(Files.newOutputStream(Paths.get(filePath)));
-        } catch ( IOException e) {
-            throw new TopologyException("Unable to write stream to file at [" + filePath + "] " + e.getMessage());
+            return new Printed<>(Files.newOutputStream(Paths[filePath))];
+        } catch ( IOException e)
+{
+            throw new TopologyException("Unable to write stream to file at [" + filePath + "] " + e.getMessage()];
         }
     }
 
@@ -84,7 +91,8 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * @param <V> value type
      * @return a new Printed instance
      */
-    public static <K, V> Printed<K, V> toSysOut() {
+    public static <K, V> Printed<K, V> toSysOut()
+{
         return new Printed<>(System.out);
     }
 
@@ -94,7 +102,8 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * @param label label to use
      * @return this
      */
-    public Printed<K, V> withLabel( string label) {
+    public Printed<K, V> withLabel( string label)
+{
         Objects.requireNonNull(label, "label can't be null");
         this.label = label;
         return this;
@@ -106,20 +115,23 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * <p>
      * The example below shows how to customize output data.
      * <pre>{@code
-     *  KeyValueMapper<Integer, string, string> mapper = new KeyValueMapper<Integer, string, string>() {
-     *     public string apply(Integer key, string value) {
-     *         return string.format("(%d, %s)", key, value);
+     *  KeyValueMapper<Integer, string, string> mapper = new KeyValueMapper<Integer, string, string>()
+{
+     *     public string apply(Integer key, string value)
+{
+     *         return string.Format("(%d, %s)", key, value);
      *     }
      * };
      * }</pre>
      *
-     * Implementors will need to override {@code toString()} for keys and values that are not of type {@link string},
+     * Implementors will need to override {@code ToString()} for keys and values that are not of type {@link string},
      * {@link Integer} etc. to get meaningful information.
      *
      * @param mapper mapper to use
      * @return this
      */
-    public Printed<K, V> withKeyValueMapper( KeyValueMapper<? super K, ? super V, string> mapper) {
+    public Printed<K, V> withKeyValueMapper( IKeyValueMapper<? super K, ? super V, string> mapper)
+{
         Objects.requireNonNull(mapper, "mapper can't be null");
         this.mapper = mapper;
         return this;
@@ -131,8 +143,9 @@ public class Printed<K, V> implements NamedOperation<Printed<K, V>> {
      * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
      ** @return this
      */
-    @Override
-    public Printed<K, V> withName( string processorName) {
+    
+    public Printed<K, V> withName( string processorName)
+{
         this.processorName = processorName;
         return this;
     }

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
@@ -47,7 +47,8 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
                              ConsumedInternal<K, V> consumedInternal,
                              MaterializedInternal<K, V, ?> materializedInternal,
                              ProcessorParameters<K, V> processorParameters,
-                             bool isGlobalKTable) {
+                             bool isGlobalKTable)
+{
 
         super(nodeName,
               Collections.singletonList(topic),
@@ -60,35 +61,40 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
     }
 
 
-    public void reuseSourceTopicForChangeLog( bool shouldReuseSourceTopicForChangelog) {
+    public void reuseSourceTopicForChangeLog( bool shouldReuseSourceTopicForChangelog)
+{
         this.shouldReuseSourceTopicForChangelog = shouldReuseSourceTopicForChangelog;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "TableSourceNode{" +
                "materializedInternal=" + materializedInternal +
                ", processorParameters=" + processorParameters +
                ", sourceName='" + sourceName + '\'' +
                ", isGlobalKTable=" + isGlobalKTable +
-               "} " + super.toString();
+               "} " + super.ToString();
     }
 
-    public static <K, V> TableSourceNodeBuilder<K, V> tableSourceNodeBuilder() {
+    public static <K, V> TableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
+{
         return new TableSourceNodeBuilder<>();
     }
 
-    @Override
+    
     @SuppressWarnings("unchecked")
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
          string topicName = getTopicNames().iterator().next();
 
         // TODO: we assume source KTables can only be timestamped-key-value stores for now.
         // should be expanded for other types of stores as well.
          StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder =
-            new TimestampedKeyValueStoreMaterializer<>((MaterializedInternal<K, V, KeyValueStore<Bytes, byte[]>>) materializedInternal).materialize();
+            new TimestampedKeyValueStoreMaterializer<>((MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>) materializedInternal).materialize();
 
-        if (isGlobalKTable) {
+        if (isGlobalKTable)
+{
             topologyBuilder.addGlobalStore(storeBuilder,
                                            sourceName,
                                            consumedInternal().timestampExtractor(),
@@ -109,10 +115,12 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
 
             // only add state store if the source KTable should be materialized
              KTableSource<K, V> ktableSource = (KTableSource<K, V>) processorParameters.processorSupplier();
-            if (ktableSource.queryableName() != null) {
+            if (ktableSource.queryableName() != null)
+{
                 topologyBuilder.addStateStore(storeBuilder, nodeName());
 
-                if (shouldReuseSourceTopicForChangelog) {
+                if (shouldReuseSourceTopicForChangelog)
+{
                     storeBuilder.withLoggingDisabled();
                     topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name(), topicName);
                 }
@@ -131,45 +139,54 @@ public class TableSourceNode<K, V> : StreamSourceNode<K, V> {
         private ProcessorParameters<K, V> processorParameters;
         private bool isGlobalKTable = false;
 
-        private TableSourceNodeBuilder() {
+        private TableSourceNodeBuilder()
+{
         }
 
-        public TableSourceNodeBuilder<K, V> withSourceName( string sourceName) {
+        public TableSourceNodeBuilder<K, V> withSourceName( string sourceName)
+{
             this.sourceName = sourceName;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withTopic( string topic) {
+        public TableSourceNodeBuilder<K, V> withTopic( string topic)
+{
             this.topic = topic;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withMaterializedInternal( MaterializedInternal<K, V, ?> materializedInternal) {
+        public TableSourceNodeBuilder<K, V> withMaterializedInternal( MaterializedInternal<K, V, ?> materializedInternal)
+{
             this.materializedInternal = materializedInternal;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withConsumedInternal( ConsumedInternal<K, V> consumedInternal) {
+        public TableSourceNodeBuilder<K, V> withConsumedInternal( ConsumedInternal<K, V> consumedInternal)
+{
             this.consumedInternal = consumedInternal;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withProcessorParameters( ProcessorParameters<K, V> processorParameters) {
+        public TableSourceNodeBuilder<K, V> withProcessorParameters( ProcessorParameters<K, V> processorParameters)
+{
             this.processorParameters = processorParameters;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withNodeName( string nodeName) {
+        public TableSourceNodeBuilder<K, V> withNodeName( string nodeName)
+{
             this.nodeName = nodeName;
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> isGlobalKTable( bool isGlobaKTable) {
+        public TableSourceNodeBuilder<K, V> isGlobalKTable( bool isGlobaKTable)
+{
             this.isGlobalKTable = isGlobaKTable;
             return this;
         }
 
-        public TableSourceNode<K, V> build() {
+        public TableSourceNode<K, V> build()
+{
             return new TableSourceNode<>(nodeName,
                                          sourceName,
                                          topic,

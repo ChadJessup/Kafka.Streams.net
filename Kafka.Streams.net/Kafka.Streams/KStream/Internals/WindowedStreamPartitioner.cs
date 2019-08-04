@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream.internals;
+namespace Kafka.streams.kstream.internals;
 
 import org.apache.kafka.common.utils.Utils;
 import org.apache.kafka.streams.kstream.Windowed;
@@ -22,11 +22,12 @@ import org.apache.kafka.streams.processor.StreamPartitioner;
 
 import static org.apache.kafka.common.utils.Utils.toPositive;
 
-public class WindowedStreamPartitioner<K, V> implements StreamPartitioner<Windowed<K>, V> {
+public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V> {
 
     private  WindowedSerializer<K> serializer;
 
-    public WindowedStreamPartitioner( WindowedSerializer<K> serializer) {
+    public WindowedStreamPartitioner( WindowedSerializer<K> serializer)
+{
         this.serializer = serializer;
     }
 
@@ -41,9 +42,10 @@ public class WindowedStreamPartitioner<K, V> implements StreamPartitioner<Window
      * @param numPartitions the total number of partitions
      * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
      */
-    @Override
-    public Integer partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions) {
-         byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
+    
+    public Integer partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions)
+{
+         byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey];
 
         // hash the keyBytes to choose a partition
         return toPositive(Utils.murmur2(keyBytes)) % numPartitions;

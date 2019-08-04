@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Common.serialization.Serde;
@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public abstract class AbstractProcessorContext implements InternalProcessorContext {
+public abstract class AbstractProcessorContext : InternalProcessorContext {
 
     public static string NONEXIST_TOPIC = "__null_topic__";
     private TaskId taskId;
@@ -50,7 +50,8 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
                                     StreamsConfig config,
                                     StreamsMetricsImpl metrics,
                                     StateManager stateManager,
-                                    ThreadCache cache) {
+                                    ThreadCache cache)
+{
         this.taskId = taskId;
         this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
         this.config = config;
@@ -61,40 +62,48 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
         this.cache = cache;
     }
 
-    @Override
-    public string applicationId() {
+    
+    public string applicationId()
+{
         return applicationId;
     }
 
-    @Override
-    public TaskId taskId() {
+    
+    public TaskId taskId()
+{
         return taskId;
     }
 
-    @Override
-    public ISerde<?> keySerde() {
+    
+    public ISerde<?> keySerde()
+{
         return keySerde;
     }
 
-    @Override
-    public ISerde<?> valueSerde() {
+    
+    public ISerde<?> valueSerde()
+{
         return valueSerde;
     }
 
-    @Override
-    public File stateDir() {
+    
+    public File stateDir()
+{
         return stateManager.baseDir();
     }
 
-    @Override
-    public StreamsMetricsImpl metrics() {
+    
+    public StreamsMetricsImpl metrics()
+{
         return metrics;
     }
 
-    @Override
+    
     public void register(IStateStore store,
-                         StateRestoreCallback stateRestoreCallback) {
-        if (initialized) {
+                         StateRestoreCallback stateRestoreCallback)
+{
+        if (initialized)
+{
             throw new InvalidOperationException("Can only create state stores during initialization.");
         }
         Objects.requireNonNull(store, "store must not be null");
@@ -104,15 +113,18 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
     /**
      * @throws InvalidOperationException if the task's record is null
      */
-    @Override
-    public string topic() {
-        if (recordContext == null) {
+    
+    public string topic()
+{
+        if (recordContext == null)
+{
             throw new InvalidOperationException("This should not happen as topic() should only be called while a record is processed");
         }
 
         string topic = recordContext.topic();
 
-        if (topic.Equals(NONEXIST_TOPIC)) {
+        if (topic.Equals(NONEXIST_TOPIC))
+{
             return null;
         }
 
@@ -122,9 +134,11 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
     /**
      * @throws InvalidOperationException if partition is null
      */
-    @Override
-    public int partition() {
-        if (recordContext == null) {
+    
+    public int partition()
+{
+        if (recordContext == null)
+{
             throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
         }
         return recordContext.partition();
@@ -133,17 +147,21 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
     /**
      * @throws InvalidOperationException if offset is null
      */
-    @Override
-    public long offset() {
-        if (recordContext == null) {
+    
+    public long offset()
+{
+        if (recordContext == null)
+{
             throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
         }
         return recordContext.offset();
     }
 
-    @Override
-    public Headers headers() {
-        if (recordContext == null) {
+    
+    public Headers headers()
+{
+        if (recordContext == null)
+{
             throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
         }
         return recordContext.headers();
@@ -152,59 +170,70 @@ public abstract class AbstractProcessorContext implements InternalProcessorConte
     /**
      * @throws InvalidOperationException if timestamp is null
      */
-    @Override
-    public long timestamp() {
-        if (recordContext == null) {
+    
+    public long timestamp()
+{
+        if (recordContext == null)
+{
             throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
         }
         return recordContext.timestamp();
     }
 
-    @Override
-    public Dictionary<string, object> appConfigs() {
+    
+    public Dictionary<string, object> appConfigs()
+{
         Dictionary<string, object> combined = new HashMap<>();
         combined.putAll(config.originals());
         combined.putAll(config.values());
         return combined;
     }
 
-    @Override
-    public Dictionary<string, object> appConfigsWithPrefix(string prefix) {
+    
+    public Dictionary<string, object> appConfigsWithPrefix(string prefix)
+{
         return config.originalsWithPrefix(prefix);
     }
 
-    @Override
-    public void setRecordContext(ProcessorRecordContext recordContext) {
+    
+    public void setRecordContext(ProcessorRecordContext recordContext)
+{
         this.recordContext = recordContext;
     }
 
-    @Override
-    public ProcessorRecordContext recordContext() {
+    
+    public ProcessorRecordContext recordContext()
+{
         return recordContext;
     }
 
-    @Override
-    public void setCurrentNode(ProcessorNode currentNode) {
+    
+    public void setCurrentNode(ProcessorNode currentNode)
+{
         this.currentNode = currentNode;
     }
 
-    @Override
-    public ProcessorNode currentNode() {
+    
+    public ProcessorNode currentNode()
+{
         return currentNode;
     }
 
-    @Override
-    public ThreadCache getCache() {
+    
+    public ThreadCache getCache()
+{
         return cache;
     }
 
-    @Override
-    public void initialize() {
+    
+    public void initialize()
+{
         initialized = true;
     }
 
-    @Override
-    public void uninitialize() {
+    
+    public void uninitialize()
+{
         initialized = false;
     }
 }

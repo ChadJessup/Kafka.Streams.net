@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.header.Headers;
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
@@ -81,7 +81,7 @@ class LRUCacheEntry
         return record.recordContext();
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -97,7 +97,7 @@ class LRUCacheEntry
             Objects.Equals(record, that.record);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         return Objects.hash(record, sizeBytes, isDirty());
     }

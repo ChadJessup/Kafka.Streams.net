@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.Utils.Bytes;
@@ -65,15 +65,15 @@ class ChangeLoggingSessionBytesStore
         return wrapped().findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
     }
 
-    public override void remove(Windowed<Bytes> sessionKey)
+    public override void Remove(Windowed<Bytes> sessionKey)
 {
-        wrapped().remove(sessionKey);
+        wrapped().Remove(sessionKey);
         changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), null);
     }
 
     public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
 {
-        wrapped().put(sessionKey, aggregate);
+        wrapped().Add(sessionKey, aggregate);
         changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), aggregate);
 
     }

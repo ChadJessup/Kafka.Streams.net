@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor;
+namespace Kafka.streams.processor;
 
 using Kafka.Common.TopicPartition;
 import org.apache.kafka.streams.KafkaStreams;
@@ -33,25 +33,31 @@ public class TaskMetadata {
     private Set<TopicPartition> topicPartitions;
 
     public TaskMetadata(string taskId,
-                        Set<TopicPartition> topicPartitions) {
+                        Set<TopicPartition> topicPartitions)
+{
         this.taskId = taskId;
         this.topicPartitions = Collections.unmodifiableSet(topicPartitions);
     }
 
-    public string taskId() {
+    public string taskId()
+{
         return taskId;
     }
 
-    public Set<TopicPartition> topicPartitions() {
+    public Set<TopicPartition> topicPartitions()
+{
         return topicPartitions;
     }
 
-    @Override
-    public bool equals(object o) {
-        if (this == o) {
+    
+    public bool Equals(object o)
+{
+        if (this == o)
+{
             return true;
         }
-        if (o == null || GetType() != o.GetType()) {
+        if (o == null || GetType() != o.GetType())
+{
             return false;
         }
         TaskMetadata that = (TaskMetadata) o;
@@ -59,13 +65,15 @@ public class TaskMetadata {
                Objects.Equals(topicPartitions, that.topicPartitions);
     }
 
-    @Override
-    public int GetHashCode()() {
+    
+    public int GetHashCode()
+{
         return Objects.hash(taskId, topicPartitions);
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "TaskMetadata{" +
                 "taskId=" + taskId +
                 ", topicPartitions=" + topicPartitions +

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.metrics.Sensor;
 using Kafka.Common.Utils.Time;
@@ -31,13 +31,13 @@ class MeteredWindowStoreIterator<V> : WindowStoreIterator<V>
     private StreamsMetrics metrics;
     private StateSerdes<?, V> serdes;
     private long startNs;
-    private Time time;
+    private ITime time;
 
     MeteredWindowStoreIterator(WindowStoreIterator<byte[]> iter,
                                Sensor sensor,
                                StreamsMetrics metrics,
                                StateSerdes<?, V> serdes,
-                               Time time)
+                               ITime time)
 {
         this.iter = iter;
         this.sensor = sensor;
@@ -58,9 +58,9 @@ class MeteredWindowStoreIterator<V> : WindowStoreIterator<V>
         return KeyValue.pair(next.key, serdes.valueFrom(next.value));
     }
 
-    public override void remove()
+    public override void Remove()
 {
-        iter.remove();
+        iter.Remove();
     }
 
     public override void close()

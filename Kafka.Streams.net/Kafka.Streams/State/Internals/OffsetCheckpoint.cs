@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.Utils;
@@ -92,7 +92,7 @@ public class OffsetCheckpoint
                 writeIntLine(writer, VERSION);
                 writeIntLine(writer, offsets.size());
 
-                for (Map.Entry<TopicPartition, Long> entry : offsets.entrySet())
+                foreach (Map.Entry<TopicPartition, Long> entry in offsets.entrySet())
 {
                     writeEntry(writer, entry.getKey(), entry.getValue());
                 }
@@ -112,7 +112,7 @@ public class OffsetCheckpoint
     private void writeIntLine(BufferedWriter writer,
                               int number) throws IOException
 {
-        writer.write(Integer.toString(number));
+        writer.write(Integer.ToString(number));
         writer.newLine();
     }
 
@@ -125,16 +125,16 @@ public class OffsetCheckpoint
 {
         writer.write(part.topic());
         writer.write(' ');
-        writer.write(Integer.toString(part.partition()));
+        writer.write(Integer.ToString(part.partition()));
         writer.write(' ');
-        writer.write(Long.toString(offset));
+        writer.write(Long.ToString(offset));
         writer.newLine();
     }
 
 
     /**
      * @throws IOException if any file operation fails with an IO exception
-     * @throws IllegalArgumentException if the offset checkpoint version is unknown
+     * @throws ArgumentException if the offset checkpoint version is unknown
      */
     public Dictionary<TopicPartition, Long> read() throws IOException
 {
@@ -151,28 +151,28 @@ public class OffsetCheckpoint
                         string line = reader.readLine();
                         while (line != null)
 {
-                            string[] pieces = WHITESPACE_MINIMUM_ONCE.split(line);
-                            if (pieces.length != 3)
+                            string[] pieces = WHITESPACE_MINIMUM_ONCE.split(line];
+                            if (pieces.Length != 3)
 {
                                 throw new IOException(
-                                    string.format("Malformed line in offset checkpoint file: '%s'.", line));
+                                    string.Format("Malformed line in offset checkpoint file: '%s'.", line));
                             }
 
                             string topic = pieces[0];
-                            int partition = Integer.parseInt(pieces[1]);
-                            long offset = Long.parseLong(pieces[2]);
-                            offsets.put(new TopicPartition(topic, partition), offset);
+                            int partition = Integer.parseInt(pieces[1]];
+                            long offset = Long.parseLong(pieces[2]];
+                            offsets.Add(new TopicPartition(topic, partition), offset);
                             line = reader.readLine();
                         }
                         if (offsets.size() != expectedSize)
 {
                             throw new IOException(
-                                string.format("Expected %d entries but found only %d", expectedSize, offsets.size()));
+                                string.Format("Expected %d entries but found only %d", expectedSize, offsets.size()));
                         }
                         return offsets;
 
                     default:
-                        throw new IllegalArgumentException("Unknown offset checkpoint version: " + version);
+                        throw new ArgumentException("Unknown offset checkpoint version: " + version);
                 }
             } catch (NoSuchFileException e)
 {
@@ -202,7 +202,7 @@ public class OffsetCheckpoint
         Files.deleteIfExists(file.toPath());
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return file.getAbsolutePath();
     }

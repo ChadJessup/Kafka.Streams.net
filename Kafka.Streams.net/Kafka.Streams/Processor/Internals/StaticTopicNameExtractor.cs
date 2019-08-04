@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 import org.apache.kafka.streams.processor.RecordContext;
 import org.apache.kafka.streams.processor.TopicNameExtractor;
@@ -22,20 +22,23 @@ import org.apache.kafka.streams.processor.TopicNameExtractor;
 /**
  * Static topic name extractor
  */
-public class StaticTopicNameExtractor<K, V> implements TopicNameExtractor<K, V> {
+public class StaticTopicNameExtractor<K, V> : TopicNameExtractor<K, V> {
 
     public string topicName;
 
-    public StaticTopicNameExtractor(string topicName) {
+    public StaticTopicNameExtractor(string topicName)
+{
         this.topicName = topicName;
     }
 
-    public string extract(K key, V value, RecordContext recordContext) {
+    public string extract(K key, V value, RecordContext recordContext)
+{
         return topicName;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "StaticTopicNameExtractor(" + topicName + ")";
     }
 }

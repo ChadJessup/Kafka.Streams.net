@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.kafka.streams.kstream.internals.graph;
+namespace Kafka.streams.kstream.internals.graph;
 
 
 import org.apache.kafka.streams.processor.ProcessorSupplier;
@@ -36,7 +36,8 @@ public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
      */
     public StatefulProcessorNode( string nodeName,
                                   ProcessorParameters<K, V> processorParameters,
-                                  string[] storeNames) {
+                                  string[] storeNames)
+{
         super(nodeName, processorParameters);
 
         this.storeNames = storeNames;
@@ -50,34 +51,39 @@ public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
      */
     public StatefulProcessorNode( string nodeName,
                                   ProcessorParameters<K, V> processorParameters,
-                                  StoreBuilder<? : IStateStore> materializedKTableStoreBuilder) {
+                                  StoreBuilder<? : IStateStore> materializedKTableStoreBuilder)
+{
         super(nodeName, processorParameters);
 
         this.storeNames = null;
         this.storeBuilder = materializedKTableStoreBuilder;
     }
 
-    @Override
-    public string toString() {
+    
+    public string ToString()
+{
         return "StatefulProcessorNode{" +
-            "storeNames=" + Arrays.toString(storeNames) +
+            "storeNames=" + Arrays.ToString(storeNames) +
             ", storeBuilder=" + storeBuilder +
-            "} " + super.toString();
+            "} " + super.ToString();
     }
 
-    @Override
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder) {
+    
+    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
+{
 
          string processorName = processorParameters().processorName();
          ProcessorSupplier processorSupplier = processorParameters().processorSupplier();
 
         topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
 
-        if (storeNames != null && storeNames.length > 0) {
+        if (storeNames != null && storeNames.Length > 0)
+{
             topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
         }
 
-        if (storeBuilder != null) {
+        if (storeBuilder != null)
+{
             topologyBuilder.addStateStore(storeBuilder, processorName);
         }
     }

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.kstream;
+namespace Kafka.streams.kstream;
 
 import org.apache.kafka.streams.kstream.internals.suppress.EagerBufferConfigImpl;
 import org.apache.kafka.streams.kstream.internals.suppress.FinalResultsSuppressionBuilder;
@@ -46,7 +46,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
         /**
          * Create a size-constrained buffer in terms of the maximum number of keys it will store.
          */
-        static EagerBufferConfig maxRecords( long recordLimit) {
+        static EagerBufferConfig maxRecords( long recordLimit)
+{
             return new EagerBufferConfigImpl(recordLimit, Long.MAX_VALUE);
         }
 
@@ -58,7 +59,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
         /**
          * Create a size-constrained buffer in terms of the maximum number of bytes it will use.
          */
-        static EagerBufferConfig maxBytes( long byteLimit) {
+        static EagerBufferConfig maxBytes( long byteLimit)
+{
             return new EagerBufferConfigImpl(Long.MAX_VALUE, byteLimit);
         }
 
@@ -82,7 +84,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
          * This buffer is "strict" in the sense that it will enforce the time bound or crash.
          * It will never emit early.
          */
-        static StrictBufferConfig unbounded() {
+        static StrictBufferConfig unbounded()
+{
             return new StrictBufferConfigImpl();
         }
 
@@ -140,7 +143,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      *                     property to emit early and then issue an update later.
      * @return a " results" mode suppression configuration
      */
-    static Suppressed<Windowed> untilWindowCloses( StrictBufferConfig bufferConfig) {
+    static Suppressed<Windowed> untilWindowCloses( StrictBufferConfig bufferConfig)
+{
         return new FinalResultsSuppressionBuilder<>(null, bufferConfig);
     }
 
@@ -154,7 +158,8 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      * @param <K> The key type for the KTable to apply this suppression to.
      * @return a suppression configuration
      */
-    static <K> Suppressed<K> untilTimeLimit( Duration timeToWaitForMoreEvents,  BufferConfig bufferConfig) {
+    static <K> Suppressed<K> untilTimeLimit( Duration timeToWaitForMoreEvents,  BufferConfig bufferConfig)
+{
         return new SuppressedInternal<>(null, timeToWaitForMoreEvents, bufferConfig, null, false);
     }
 
@@ -172,6 +177,6 @@ public interface Suppressed<K> : NamedOperation<Suppressed<K>> {
      * @param name The name to be used for the suppression node and changelog topic
      * @return The same configuration with the addition of the given {@code name}.
      */
-    @Override
+    
     Suppressed<K> withName( string name);
 }

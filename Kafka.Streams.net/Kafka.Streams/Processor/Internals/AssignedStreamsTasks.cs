@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.processor.internals;
+namespace Kafka.streams.processor.internals;
 
 using Kafka.Common.KafkaException;
 using Kafka.Common.TopicPartition;
@@ -31,56 +31,65 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks {
+class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
     private Dictionary<TaskId, StreamTask> restoring = new HashMap<>();
     private Set<TopicPartition> restoredPartitions = new HashSet<>();
     private Dictionary<TopicPartition, StreamTask> restoringByPartition = new HashMap<>();
 
-    AssignedStreamsTasks(LogContext logContext) {
+    AssignedStreamsTasks(LogContext logContext)
+{
         super(logContext, "stream task");
     }
 
-    @Override
-    public StreamTask restoringTaskFor(TopicPartition partition) {
-        return restoringByPartition.get(partition);
+    
+    public StreamTask restoringTaskFor(TopicPartition partition)
+{
+        return restoringByPartition[partition];
     }
 
-    @Override
-    List<StreamTask> allTasks() {
+    
+    List<StreamTask> allTasks()
+{
         List<StreamTask> tasks = super.allTasks();
         tasks.addAll(restoring.values());
         return tasks;
     }
 
-    @Override
-    Set<TaskId> allAssignedTaskIds() {
+    
+    Set<TaskId> allAssignedTaskIds()
+{
         Set<TaskId> taskIds = super.allAssignedTaskIds();
         taskIds.addAll(restoring.keySet());
         return taskIds;
     }
 
-    @Override
-    bool allTasksRunning() {
+    
+    bool allTasksRunning()
+{
         return super.allTasksRunning() && restoring.isEmpty();
     }
 
-    RuntimeException closeAllRestoringTasks() {
+    RuntimeException closeAllRestoringTasks()
+{
         RuntimeException exception = null;
 
         log.trace("Closing all restoring stream tasks {}", restoring.keySet());
         Iterator<StreamTask> restoringTaskIterator = restoring.values().iterator();
-        while (restoringTaskIterator.hasNext()) {
+        while (restoringTaskIterator.hasNext())
+{
             StreamTask task = restoringTaskIterator.next();
-            log.debug("Closing restoring task {}", task.id());
+            log.LogDebug("Closing restoring task {}", task.id());
             try {
                 task.closeStateManager(true);
-            } catch (RuntimeException e) {
-                log.error("Failed to remove restoring task {} due to the following error:", task.id(), e);
-                if (exception == null) {
+            } catch (RuntimeException e)
+{
+                log.LogError("Failed to Remove restoring task {} due to the following error:", task.id(), e);
+                if (exception == null)
+{
                     exception = e;
                 }
             } finally {
-                restoringTaskIterator.remove();
+                restoringTaskIterator.Remove();
             }
         }
 
@@ -91,23 +100,28 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
         return exception;
     }
 
-    void updateRestored(Collection<TopicPartition> restored) {
-        if (restored.isEmpty()) {
+    void updateRestored(Collection<TopicPartition> restored)
+{
+        if (restored.isEmpty())
+{
             return;
         }
         log.trace("Stream task changelog partitions that have completed restoring so far: {}", restored);
         restoredPartitions.addAll(restored);
-        for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); ) {
+        for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
+{
             Map.Entry<TaskId, StreamTask> entry = it.next();
             StreamTask task = entry.getValue();
-            if (restoredPartitions.containsAll(task.changelogPartitions())) {
+            if (restoredPartitions.containsAll(task.changelogPartitions()))
+{
                 transitionToRunning(task);
-                it.remove();
+                it.Remove();
                 log.trace("Stream task {} completed restoration as all its changelog partitions {} have been applied to restore state",
                     task.id(),
                     task.changelogPartitions());
             } else {
-                if (log.isTraceEnabled()) {
+                if (log.isTraceEnabled())
+{
                     HashSet<TopicPartition> outstandingPartitions = new HashSet<>(task.changelogPartitions());
                     outstandingPartitions.removeAll(restoredPartitions);
                     log.trace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
@@ -116,18 +130,22 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
                 }
             }
         }
-        if (allTasksRunning()) {
+        if (allTasksRunning())
+{
             restoredPartitions.clear();
         }
     }
 
-    void addToRestoring(StreamTask task) {
-        restoring.put(task.id(), task);
-        for (TopicPartition topicPartition : task.partitions()) {
-            restoringByPartition.put(topicPartition, task);
+    void addToRestoring(StreamTask task)
+{
+        restoring.Add(task.id(), task);
+        foreach (TopicPartition topicPartition in task.partitions())
+{
+            restoringByPartition.Add(topicPartition, task);
         }
-        for (TopicPartition topicPartition : task.changelogPartitions()) {
-            restoringByPartition.put(topicPartition, task);
+        foreach (TopicPartition topicPartition in task.changelogPartitions())
+{
+            restoringByPartition.Add(topicPartition, task);
         }
     }
 
@@ -135,38 +153,46 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
      * @throws TaskMigratedException if committing offsets failed (non-EOS)
      *                               or if the task producer got fenced (EOS)
      */
-    int maybeCommitPerUserRequested() {
+    int maybeCommitPerUserRequested()
+{
         int committed = 0;
         RuntimeException firstException = null;
 
-        for (Iterator<StreamTask> it = running().iterator(); it.hasNext(); ) {
+        for (Iterator<StreamTask> it = running().iterator(); it.hasNext(); )
+{
             StreamTask task = it.next();
             try {
-                if (task.commitRequested() && task.commitNeeded()) {
+                if (task.commitRequested() && task.commitNeeded())
+{
                     task.commit();
                     committed++;
-                    log.debug("Committed active task {} per user request in", task.id());
+                    log.LogDebug("Committed active task {} per user request in", task.id());
                 }
-            } catch (TaskMigratedException e) {
+            } catch (TaskMigratedException e)
+{
                 log.info("Failed to commit {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
-                if (fatalException != null) {
+                if (fatalException != null)
+{
                     throw fatalException;
                 }
-                it.remove();
+                it.Remove();
                 throw e;
-            } catch (RuntimeException t) {
-                log.error("Failed to commit StreamTask {} due to the following error:",
+            } catch (RuntimeException t)
+{
+                log.LogError("Failed to commit StreamTask {} due to the following error:",
                         task.id(),
                         t);
-                if (firstException == null) {
+                if (firstException == null)
+{
                     firstException = t;
                 }
             }
         }
 
-        if (firstException != null) {
+        if (firstException != null)
+{
             throw firstException;
         }
 
@@ -177,9 +203,11 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
      * Returns a map of offsets up to which the records can be deleted; this function should only be called
      * after the commit call to make sure all consumed offsets are actually committed as well
      */
-    Dictionary<TopicPartition, Long> recordsToDelete() {
+    Dictionary<TopicPartition, Long> recordsToDelete()
+{
         Dictionary<TopicPartition, Long> recordsToDelete = new HashMap<>();
-        for (StreamTask task : running.values()) {
+        foreach (StreamTask task in running.values())
+{
             recordsToDelete.putAll(task.purgableOffsets());
         }
 
@@ -189,27 +217,33 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
     /**
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    int process(long now) {
+    int process(long now)
+{
         int processed = 0;
 
         Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
-        while (it.hasNext()) {
+        while (it.hasNext())
+{
             StreamTask task = it.next().getValue();
             try {
-                if (task.isProcessable(now) && task.process()) {
+                if (task.isProcessable(now) && task.process())
+{
                     processed++;
                 }
-            } catch (TaskMigratedException e) {
+            } catch (TaskMigratedException e)
+{
                 log.info("Failed to process stream task {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
-                if (fatalException != null) {
+                if (fatalException != null)
+{
                     throw fatalException;
                 }
-                it.remove();
+                it.Remove();
                 throw e;
-            } catch (RuntimeException e) {
-                log.error("Failed to process stream task {} due to the following error:", task.id(), e);
+            } catch (RuntimeException e)
+{
+                log.LogError("Failed to process stream task {} due to the following error:", task.id(), e);
                 throw e;
             }
         }
@@ -220,52 +254,62 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> implements RestoringTasks
     /**
      * @throws TaskMigratedException if the task producer got fenced (EOS only)
      */
-    int punctuate() {
+    int punctuate()
+{
         int punctuated = 0;
         Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
-        while (it.hasNext()) {
+        while (it.hasNext())
+{
             StreamTask task = it.next().getValue();
             try {
-                if (task.maybePunctuateStreamTime()) {
+                if (task.maybePunctuateStreamTime())
+{
                     punctuated++;
                 }
-                if (task.maybePunctuateSystemTime()) {
+                if (task.maybePunctuateSystemTime())
+{
                     punctuated++;
                 }
-            } catch (TaskMigratedException e) {
+            } catch (TaskMigratedException e)
+{
                 log.info("Failed to punctuate stream task {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
-                if (fatalException != null) {
+                if (fatalException != null)
+{
                     throw fatalException;
                 }
-                it.remove();
+                it.Remove();
                 throw e;
-            } catch (KafkaException e) {
-                log.error("Failed to punctuate stream task {} due to the following error:", task.id(), e);
+            } catch (KafkaException e)
+{
+                log.LogError("Failed to punctuate stream task {} due to the following error:", task.id(), e);
                 throw e;
             }
         }
         return punctuated;
     }
 
-    void clear() {
+    void clear()
+{
         super.clear();
         restoring.clear();
         restoringByPartition.clear();
         restoredPartitions.clear();
     }
 
-    public string toString(string indent) {
+    public string ToString(string indent)
+{
         StringBuilder builder = new StringBuilder();
-        builder.append(super.toString(indent));
+        builder.Append(super.ToString(indent));
         describe(builder, restoring.values(), indent, "Restoring:");
-        return builder.toString();
+        return builder.ToString();
     }
 
     // for testing only
 
-    Collection<StreamTask> restoringTasks() {
+    Collection<StreamTask> restoringTasks()
+{
         return Collections.unmodifiableCollection(restoring.values());
     }
 

@@ -23,8 +23,8 @@ namespace Kafka.Common
      * // set up metrics:
      *
      * Dictionary<string, string> metricTags = new LinkedHashMap<string, string>();
-     * metricTags.put("client-id", "producer-1");
-     * metricTags.put("topic", "topic");
+     * metricTags.Add("client-id", "producer-1");
+     * metricTags.Add("topic", "topic");
      *
      * MetricConfig metricConfig = new MetricConfig().tags(metricTags);
      * Metrics metrics = new Metrics(metricConfig); // this is the global repository of metrics and sensors
@@ -57,7 +57,8 @@ namespace Kafka.Common
          * @param description A human-readable description to include in the metric
          * @param tags        additional key/value attributes of the metric
          */
-        public MetricName(string name, string group, string description, Dictionary<string, string> tags) {
+        public MetricName(string name, string group, string description, Dictionary<string, string> tags)
+{
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
             this.Group = group ?? throw new ArgumentNullException(nameof(group));
             this.Description = description ?? throw new ArgumentNullException(nameof(description));
@@ -72,7 +73,8 @@ namespace Kafka.Common
 
         public string Description { get; }
 
-        public override int GetHashCode() {
+        public override int GetHashCode()
+{
             if (hash != 0)
             {
                 return hash;
@@ -88,7 +90,8 @@ namespace Kafka.Common
             return result;
         }
 
-        public override bool Equals(object obj) {
+        public override bool Equals(object obj)
+{
             if (this == obj)
                 return true;
             if (obj == null)
@@ -100,7 +103,8 @@ namespace Kafka.Common
             return Group.Equals(other.Group) && Name.Equals(other.Name) && Tags.Equals(other.Tags);
         }
 
-        public override string ToString() {
+        public override string ToString()
+{
             return "MetricName [name=" + Name + ", group=" + Group + ", description="
                     + Description + ", tags=" +Tags + "]";
         }

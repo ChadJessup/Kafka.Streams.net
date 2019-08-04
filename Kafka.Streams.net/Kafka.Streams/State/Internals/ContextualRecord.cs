@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+namespace Kafka.streams.state.internals;
 
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 
@@ -45,26 +45,26 @@ public class ContextualRecord
 
     long residentMemorySizeEstimate()
 {
-        return (value == null ? 0 : value.length) + recordContext.residentMemorySizeEstimate();
+        return (value == null ? 0 : value.Length) + recordContext.residentMemorySizeEstimate();
     }
 
     ByteBuffer serialize(int endPadding)
 {
         byte[] serializedContext = recordContext.serialize();
 
-        int sizeOfContext = serializedContext.length;
+        int sizeOfContext = serializedContext.Length;
         int sizeOfValueLength = Integer.BYTES;
-        int sizeOfValue = value == null ? 0 : value.length;
+        int sizeOfValue = value == null ? 0 : value.Length;
         ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + endPadding);
 
-        buffer.put(serializedContext);
+        buffer.Add(serializedContext);
         if (value == null)
 {
             buffer.putInt(-1);
         } else
 {
-            buffer.putInt(value.length);
-            buffer.put(value);
+            buffer.putInt(value.Length);
+            buffer.Add(value);
         }
 
         return buffer;
@@ -81,12 +81,12 @@ public class ContextualRecord
         } else
 {
             byte[] value = new byte[valueLength];
-            buffer.get(value);
+            buffer[value];
             return new ContextualRecord(value, context);
         }
     }
 
-    public override bool equals(object o)
+    public override bool Equals(object o)
 {
         if (this == o)
 {
@@ -101,16 +101,16 @@ public class ContextualRecord
             Objects.Equals(recordContext, that.recordContext);
     }
 
-    public override int GetHashCode()()
+    public override int GetHashCode()
 {
         return Objects.hash(value, recordContext);
     }
 
-    public override string toString()
+    public override string ToString()
 {
         return "ContextualRecord{" +
             "recordContext=" + recordContext +
-            ", value=" + Arrays.toString(value) +
+            ", value=" + Arrays.ToString(value) +
             '}';
     }
 }

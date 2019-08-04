@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state;
+namespace Kafka.streams.state;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.kstream.Windowed;
@@ -111,9 +111,9 @@ public interface ReadOnlyWindowStore<K, V>
      * @return an iterator over key-value pairs {@code <timestamp, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException If {@code null} is used for key.
-     * @throws IllegalArgumentException if duration is negative or can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
-    WindowStoreIterator<V> fetch(K key, Instant from, Instant to) throws IllegalArgumentException;
+    WindowStoreIterator<V> fetch(K key, Instant from, Instant to) throws ArgumentException;
 
     /**
      * Get all the key-value pairs in the given key range and time range from all the existing windows.
@@ -144,10 +144,10 @@ public interface ReadOnlyWindowStore<K, V>
      * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException If {@code null} is used for any key.
-     * @throws IllegalArgumentException if duration is negative or can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
     KeyValueIterator<Windowed<K>, V> fetch(K from, K to, Instant fromTime, Instant toTime)
-        throws IllegalArgumentException;
+        throws ArgumentException;
 
     /**
     * Gets all the key-value pairs in the existing windows.
@@ -178,7 +178,7 @@ public interface ReadOnlyWindowStore<K, V>
      * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if {@code null} is used for any key
-     * @throws IllegalArgumentException if duration is negative or can't be represented as {@code long milliseconds}
+     * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
-    KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to) throws IllegalArgumentException;
+    KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to) throws ArgumentException;
 }
