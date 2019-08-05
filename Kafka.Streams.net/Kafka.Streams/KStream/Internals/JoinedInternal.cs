@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -42,7 +44,7 @@ public JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
     }
 
      // TODO Remove annotation when base.name() is removed
-    @SuppressWarnings("deprecation") // this method should not be removed if base.name() is removed
+    
     public string name()
 {
         return name;

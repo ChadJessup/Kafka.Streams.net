@@ -31,7 +31,9 @@ using Kafka.Common.Utils.LogContext;
 /**
  * Updates the state for all Global State Stores.
  */
-public GlobalStateUpdateTask : GlobalStateMaintainer {
+public GlobalStateUpdateTask : GlobalStateMaintainer
+{
+
 
     private ProcessorTopology topology;
     private InternalProcessorContext processorContext;
@@ -120,9 +122,13 @@ public GlobalStateUpdateTask : GlobalStateMaintainer {
         foreach (ProcessorNode node in this.topology.processors())
 {
             processorContext.setCurrentNode(node);
-            try {
+            try
+{
+
                 node.init(this.processorContext);
-            } finally {
+            } finally
+{
+
                 processorContext.setCurrentNode(null);
             }
         }

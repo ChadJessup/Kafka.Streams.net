@@ -87,7 +87,8 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else {
+            } else
+{
                 keySerde = this.keySerde;
                 valueSerde = this.valSerde;
                 queryableStoreName = null;
@@ -209,7 +210,8 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else {
+            } else
+{
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -376,7 +378,8 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else {
+            } else
+{
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -463,7 +466,8 @@ namespace Kafka.Streams.KStream.Internals
             {
                 string givenName = ((NamedSuppressed <?>) suppressed).name();
                 name = givenName != null ? givenName : builder.newProcessorName(SUPPRESS_NAME);
-            } else {
+            } else
+{
                 throw new System.ArgumentException("Custom sues of Suppressed are not supported.");
             }
 
@@ -504,7 +508,7 @@ namespace Kafka.Streams.KStream.Internals
             if (suppress is FinalResultsSuppressionBuilder)
             {
                 long grace = findAndVerifyWindowGrace(streamsGraphNode);
-                LOG.info("Using grace period of [{}] as the suppress duration for node [{}].",
+                LOG.LogInformation("Using grace period of [{}] as the suppress duration for node [{}].",
                          Duration.ofMillis(grace), name);
 
                 FinalResultsSuppressionBuilder <?> builder = (FinalResultsSuppressionBuilder <?>) suppress;
@@ -516,7 +520,8 @@ namespace Kafka.Streams.KStream.Internals
             } else if (suppress is SuppressedInternal)
             {
                 return (SuppressedInternal<K>)suppress;
-            } else {
+            } else
+{
                 throw new System.ArgumentException("Custom sues of Suppressed are not allowed.");
             }
         }
@@ -684,7 +689,8 @@ namespace Kafka.Streams.KStream.Internals
                 valueSerde = materializedInternal.valueSerde();
                 queryableStoreName = materializedInternal.storeName();
                 storeBuilder = new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize();
-            } else {
+            } else
+{
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -776,7 +782,8 @@ namespace Kafka.Streams.KStream.Internals
             } else if (processorSupplier is KStreamAggProcessorSupplier)
             {
                 return ((KStreamAggProcessorSupplier <?, K, S, V >) processorSupplier).view();
-            } else {
+            } else
+{
                 return ((KTableProcessorSupplier<K, S, V>)processorSupplier).view();
             }
         }
@@ -793,7 +800,8 @@ namespace Kafka.Streams.KStream.Internals
                 } else if (processorSupplier is KStreamAggProcessorSupplier)
                 {
                     ((KStreamAggProcessorSupplier <?, K, S, V >) processorSupplier).enableSendingOldValues();
-                } else {
+                } else
+{
                     ((KTableProcessorSupplier<K, S, V>)processorSupplier).enableSendingOldValues();
                 }
                 sendOldValues = true;

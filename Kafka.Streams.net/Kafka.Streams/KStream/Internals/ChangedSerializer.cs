@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -62,7 +64,9 @@ public ChangedSerializer<T> : Serializer<Change<T>> {
             }
 
             serializedKey = inner.serialize(topic, headers, data.newValue);
-        } else {
+        } else
+{
+
             if (data.oldValue == null)
 {
                 throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");

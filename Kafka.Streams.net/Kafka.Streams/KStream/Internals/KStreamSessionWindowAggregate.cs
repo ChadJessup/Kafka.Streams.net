@@ -131,7 +131,9 @@ namespace Kafka.Streams.KStream.Internals
                     observedStreamTime
                 );
                 lateRecordDropSensor.record();
-            } else {
+            } else
+{
+
                 if (!mergedWindow.Equals(newSessionWindow))
                 {
                     foreach (KeyValue<Windowed<K>, Agg> session in merged)

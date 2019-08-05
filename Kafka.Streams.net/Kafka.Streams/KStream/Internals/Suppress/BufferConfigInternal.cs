@@ -25,7 +25,7 @@ abstract BufferConfigInternal<BC : Suppressed.BufferConfig<BC>> : Suppressed.Buf
 
     public abstract long maxBytes();
 
-    @SuppressWarnings("unused")
+    
     public abstract BufferFullStrategy bufferFullStrategy();
 
     

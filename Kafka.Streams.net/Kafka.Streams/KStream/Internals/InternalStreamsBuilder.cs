@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
 
 
 
@@ -55,7 +56,10 @@ namespace Kafka.Streams.KStream.Internals {
 
 
 
-public InternalStreamsBuilder : InternalNameProvider {
+
+public InternalStreamsBuilder : InternalNameProvider
+{
+
 
      InternalTopologyBuilder internalTopologyBuilder;
     private  AtomicInteger index = new AtomicInteger(0);
@@ -191,12 +195,12 @@ public InternalStreamsBuilder : InternalNameProvider {
         return prefix + string.Format(KTableImpl.STATE_STORE_NAME + "%010d", index.getAndIncrement());
     }
 
-    public synchronized void.AddStateStore( StoreBuilder builder)
+    public synchronized void addStateStore( StoreBuilder builder)
 {
        .AddGraphNode(root, new StateStoreNode(builder));
     }
 
-    public synchronized void.AddGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
+    public synchronized void addGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
                                              string sourceName,
                                              string topic,
                                              ConsumedInternal consumed,
@@ -214,7 +218,7 @@ public InternalStreamsBuilder : InternalNameProvider {
        .AddGraphNode(root, globalStoreNode);
     }
 
-    public synchronized void.AddGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
+    public synchronized void addGlobalStore( StoreBuilder<IKeyValueStore> storeBuilder,
                                              string topic,
                                              ConsumedInternal consumed,
                                              ProcessorSupplier stateUpdateSupplier)
@@ -231,7 +235,7 @@ public InternalStreamsBuilder : InternalNameProvider {
                        stateUpdateSupplier);
     }
 
-    void.AddGraphNode( StreamsGraphNode parent,
+    void addGraphNode( StreamsGraphNode parent,
                        StreamsGraphNode child)
 {
         parent = parent ?? throw new System.ArgumentNullException("parent node can't be null", nameof(parent));
@@ -241,7 +245,7 @@ public InternalStreamsBuilder : InternalNameProvider {
     }
 
 
-    void.AddGraphNode( Collection<StreamsGraphNode> parents,
+    void addGraphNode( Collection<StreamsGraphNode> parents,
                        StreamsGraphNode child)
 {
         parents = parents ?? throw new System.ArgumentNullException("parent node can't be null", nameof(parents));

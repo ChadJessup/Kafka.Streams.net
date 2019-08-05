@@ -34,7 +34,9 @@ using Kafka.Common.Utils.LogContext;
  * partition timestamp defined as the largest timestamp seen on the partition so far; this is passed to the
  * timestamp extractor.
  */
-public RecordQueue {
+public class RecordQueue
+{
+
 
     public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
 
@@ -191,7 +193,9 @@ public RecordQueue {
             }
 
             long timestamp;
-            try {
+            try
+{
+
                 timestamp = timestampExtractor.extract(deserialized, partitionTime);
             } catch (StreamsException internalFatalExtractorException)
 {
@@ -202,7 +206,7 @@ public RecordQueue {
                         string.Format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
                         fatalUserException);
             }
-            log.trace("Source node {} extracted timestamp {} for record {}", source.name(), timestamp, deserialized);
+            log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name(), timestamp, deserialized);
 
             // drop message if TS is invalid, i.e., negative
             if (timestamp < 0)

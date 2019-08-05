@@ -26,7 +26,7 @@ using Kafka.Streams.State.KeyValueIterator;
 
 
 
-public MemoryNavigableLRUCache : MemoryLRUCache
+public class MemoryNavigableLRUCache : MemoryLRUCache
 {
 
     private static ILogger LOG= new LoggerFactory().CreateLogger<MemoryNavigableLRUCache);
@@ -77,32 +77,32 @@ public MemoryNavigableLRUCache : MemoryLRUCache
             this.entries = entries;
         }
 
-        
+
         public bool hasNext()
 {
             return keys.hasNext();
         }
 
-        
+
         public KeyValue<Bytes, byte[]> next()
 {
             lastKey = keys.next();
             return new KeyValue<>(lastKey, entries[lastKey));
         }
 
-        
+
         public void Remove()
 {
             // do nothing
         }
 
-        
+
         public void close()
 {
             // do nothing
         }
 
-        
+
         public Bytes peekNextKey()
 {
             throw new InvalidOperationException("peekNextKey not supported");

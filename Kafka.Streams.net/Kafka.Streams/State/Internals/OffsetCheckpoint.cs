@@ -24,7 +24,7 @@ namespace Kafka.Streams.State.Internals
      *   a number giving the total number of offsets. Each successive line gives a topic/partition/offset triple
      *   separated by spaces.
      */
-    public OffsetCheckpoint
+    public class OffsetCheckpoint
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<OffsetCheckpoint>();
 
@@ -158,31 +158,30 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-    /**
-     * @throws IOException if file read ended prematurely
-     */
-    private int readInt(BufferedReader reader)
-    {
-        string line = reader.readLine();
-        if (line == null)
+        /**
+         * @throws IOException if file read ended prematurely
+         */
+        private int readInt(BufferedReader reader)
         {
-            throw new Exception("File ended prematurely.");
+            string line = reader.readLine();
+            if (line == null)
+            {
+                throw new Exception("File ended prematurely.");
+            }
+            return int.Parse(line);
         }
-        return int.Parse(line);
-    }
 
-    /**
-     * @throws IOException if there is any IO exception during delete
-     */
-    public void delete()
-    {
-        file.Delete();
-    }
+        /**
+         * @throws IOException if there is any IO exception during delete
+         */
+        public void delete()
+        {
+            file.Delete();
+        }
 
-    public override string ToString()
-    {
-        return file.FullName;
+        public override string ToString()
+        {
+            return file.FullName;
+        }
     }
-
-}
 }

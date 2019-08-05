@@ -113,7 +113,7 @@ public interface ReadOnlyWindowStore<K, V>
      * @throws NullPointerException If {@code null} is used for key.
      * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
-    WindowStoreIterator<V> fetch(K key, Instant from, Instant to) throws ArgumentException;
+    WindowStoreIterator<V> fetch(K key, Instant from, Instant to);
 
     /**
      * Get all the key-value pairs in the given key range and time range from all the existing windows.
@@ -147,7 +147,7 @@ public interface ReadOnlyWindowStore<K, V>
      * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
     KeyValueIterator<Windowed<K>, V> fetch(K from, K to, Instant fromTime, Instant toTime)
-        throws ArgumentException;
+       ;
 
     /**
     * Gets all the key-value pairs in the existing windows.
@@ -180,5 +180,5 @@ public interface ReadOnlyWindowStore<K, V>
      * @throws NullPointerException if {@code null} is used for any key
      * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
      */
-    KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to) throws ArgumentException;
+    KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to);
 }

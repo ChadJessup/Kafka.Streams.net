@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 /**
  * The {@code ValueMapperWithKey} interface for mapping a value to a new value of arbitrary type.

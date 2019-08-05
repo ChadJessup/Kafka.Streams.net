@@ -38,7 +38,9 @@ using Kafka.Common.Utils.Utils;
 
 
 
-class StateManagerUtil {
+class StateManagerUtil
+{
+
     static string CHECKPOINT_FILE_NAME = ".checkpoint";
 
     private StateManagerUtil() {}
@@ -69,7 +71,9 @@ class StateManagerUtil {
 
         if (!eosEnabled)
 {
-            try {
+            try
+{
+
                 checkpointFile.write(checkpointFileCache);
             } catch (IOException fatalException)
 {
@@ -96,7 +100,9 @@ class StateManagerUtil {
                     )
                 );
 
-            try {
+            try
+{
+
                 stateStore.close();
             } catch (RuntimeException ignoreAndSwallow) { /* ignore */ }
             processorContext.uninitialize();
@@ -106,7 +112,9 @@ class StateManagerUtil {
             // -> (only after we are sure, we don't need it for backward compatibility reasons anymore; maybe 2.0 release?)
             // this is an ugly "hack" that is required because RocksDBStore does not follow the pattern to put the
             // store directory as <taskDir>/<storeName> but nests it with an intermediate <taskDir>/rocksdb/<storeName>
-            try {
+            try
+{
+
                 Utils.delete(new File(baseDir + File.separator + "rocksdb" + File.separator + storeName));
             } catch (IOException fatalException)
 {
@@ -114,7 +122,9 @@ class StateManagerUtil {
                 throw new StreamsException(string.Format("Failed to reinitialize store %s.", storeName), fatalException);
             }
 
-            try {
+            try
+{
+
                 Utils.delete(new File(baseDir + File.separator + storeName));
             } catch (IOException fatalException)
 {

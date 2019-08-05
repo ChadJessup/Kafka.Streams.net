@@ -21,7 +21,7 @@ using Kafka.Common.annotation.InterfaceStability;
 /**
  * An interface that allows to dynamically determine the name of the Kafka topic to send at the sink node of the topology.
  */
-@InterfaceStability.Evolving
+
 public interface TopicNameExtractor<K, V> {
 
     /**

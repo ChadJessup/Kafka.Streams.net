@@ -14,61 +14,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
-
-
-
-
-
-
-
-
-
-
-
-
-public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
-
-    private  string storeName;
-    private  Initializer<T> initializer;
-    private  Aggregator<K, V, T>.Add;
-    private  Aggregator<K, V, T> Remove;
-
-    private bool sendOldValues = false;
-
-    KTableAggregate( string storeName,
-                     Initializer<T> initializer,
-                     Aggregator<K, V, T>.Add,
-                     Aggregator<K, V, T> Remove)
+namespace Kafka.Streams.KStream.Internals
 {
-        this.storeName = storeName;
-        this.initializer = initializer;
-        this.Add =.Add;
-        this.Remove = Remove;
-    }
 
 
-    public void enableSendingOldValues()
-{
-        sendOldValues = true;
-    }
 
 
-    public Processor<K, Change<V>> get()
-{
-        return new KTableAggregateProcessor();
-    }
 
-    private KTableAggregateProcessor : AbstractProcessor<K, Change<V>> {
+
+
+
+
+
+
+
+
+    public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T>
+    {
+
+        private string storeName;
+        private Initializer<T> initializer;
+        private Aggregator<K, V, T>.Add;
+    private Aggregator<K, V, T> Remove;
+
+        private bool sendOldValues = false;
+
+        KTableAggregate(string storeName,
+                         Initializer<T> initializer,
+                         Aggregator<K, V, T>.Add,
+                         Aggregator<K, V, T> Remove)
+        {
+            this.storeName = storeName;
+            this.initializer = initializer;
+            this.Add =.Add;
+            this.Remove = Remove;
+        }
+
+
+        public void enableSendingOldValues()
+        {
+            sendOldValues = true;
+        }
+
+
+        public Processor<K, Change<V>> get()
+        {
+            return new KTableAggregateProcessor();
+        }
+
+        private KTableAggregateProcessor : AbstractProcessor<K, Change<V>> {
         private TimestampedKeyValueStore<K, T> store;
         private TimestampedTupleForwarder<K, T> tupleForwarder;
 
 
 
-        public void init( IProcessorContext context)
-{
+        public void init(IProcessorContext context)
+        {
             base.init(context);
-            store = (TimestampedKeyValueStore<K, T>) context.getStateStore(storeName);
+            store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<>(
                 store,
                 context,
@@ -80,46 +83,54 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
          * @throws StreamsException if key is null
          */
 
-        public void process( K key,  Change<V> value)
-{
+        public void process(K key, Change<V> value)
+        {
             // the keys should never be null
             if (key == null)
-{
+            {
                 throw new StreamsException("Record key for KTable aggregate operator with state " + storeName + " should not be null.");
             }
 
-             ValueAndTimestamp<T> oldAggAndTimestamp = store[key];
-             T oldAgg = getValueOrNull(oldAggAndTimestamp);
-             T intermediateAgg;
+            ValueAndTimestamp<T> oldAggAndTimestamp = store[key];
+            T oldAgg = getValueOrNull(oldAggAndTimestamp);
+            T intermediateAgg;
             long newTimestamp = context().timestamp();
 
             // first try to Remove the old value
             if (value.oldValue != null && oldAgg != null)
-{
+            {
                 intermediateAgg = Remove.apply(key, value.oldValue, oldAgg);
                 newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
-            } else {
+            }
+            else
+            {
                 intermediateAgg = oldAgg;
             }
 
             // then try to.Add the new value
-             T newAgg;
+            T newAgg;
             if (value.newValue != null)
-{
-                 T initializedAgg;
+            {
+                T initializedAgg;
                 if (intermediateAgg == null)
-{
+                {
                     initializedAgg = initializer.apply();
-                } else {
+                }
+                else
+                {
+
                     initializedAgg = intermediateAgg;
                 }
 
                 newAgg =.Add.apply(key, value.newValue, initializedAgg);
                 if (oldAggAndTimestamp != null)
-{
+                {
                     newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
                 }
-            } else {
+            }
+            else
+            {
+
                 newAgg = intermediateAgg;
             }
 
@@ -132,7 +143,7 @@ public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T> {
 
 
     public KTableValueGetterSupplier<K, T> view()
-{
+    {
         return new KTableMaterializedValueGetterSupplier<>(storeName);
     }
 }

@@ -22,7 +22,7 @@ using Kafka.Common.serialization.Serializer;
 
 
 
-public SinkNode<K, V> : ProcessorNode<K, V> {
+public class SinkNode<K, V> : ProcessorNode<K, V> {
 
     private Serializer<K> keySerializer;
     private Serializer<V> valSerializer;
@@ -48,14 +48,14 @@ public SinkNode<K, V> : ProcessorNode<K, V> {
     /**
      * @throws InvalidOperationException if this method.Adds a child to a sink node
      */
-    
-    public void.AddChild(ProcessorNode<?, ?> child)
+
+    public void addChild(ProcessorNode<?, ?> child)
 {
         throw new InvalidOperationException("sink node does not allow.AddChild");
     }
 
-    
-    
+
+
     public void init(InternalProcessorContext context)
 {
         base.init(context);
@@ -80,7 +80,7 @@ public SinkNode<K, V> : ProcessorNode<K, V> {
     }
 
 
-    
+
     public void process(K key, V value)
 {
         RecordCollector collector = ((RecordCollector.Supplier) context).recordCollector();
@@ -93,7 +93,9 @@ public SinkNode<K, V> : ProcessorNode<K, V> {
 
         string topic = topicExtractor.extract(key, value, this.context.recordContext());
 
-        try {
+        try
+{
+
             collector.send(topic, key, value, context.headers(), timestamp, keySerializer, valSerializer, partitioner);
         } catch (ClassCastException e)
 {
@@ -114,7 +116,7 @@ public SinkNode<K, V> : ProcessorNode<K, V> {
     /**
      * @return a string representation of this node, useful for debugging.
      */
-    
+
     public string ToString()
 {
         return ToString("");
@@ -123,7 +125,7 @@ public SinkNode<K, V> : ProcessorNode<K, V> {
     /**
      * @return a string representation of this node starting with the given indent, useful for debugging.
      */
-    
+
     public string ToString(string indent)
 {
         StringBuilder sb = new StringBuilder(base.ToString(indent));

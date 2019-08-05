@@ -25,7 +25,7 @@ using Kafka.Streams.KeyValue;
  *
  * @param <V>
  */
-public ValueAndTimestamp<V>
+public class ValueAndTimestamp<V>
 {
     private V value;
     private long timestamp;

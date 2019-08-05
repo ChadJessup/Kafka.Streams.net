@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 namespace Kafka.Streams.State.Internals;
-
+using Kafka.Common.Utils;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.IProcessorContext;
@@ -39,7 +39,7 @@ using Kafka.Streams.State.KeyValueStore;
  *
  * @see KeyValueToTimestampedKeyValueIteratorAdapter
  */
-public KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
+public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
 {
     IKeyValueStore<Bytes, byte[]> store;
 

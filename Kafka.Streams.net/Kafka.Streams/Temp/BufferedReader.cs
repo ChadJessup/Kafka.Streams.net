@@ -2,7 +2,7 @@
 
 namespace Kafka.Streams.Temp
 {
-    public BufferedReader : IDisposable
+    public class BufferedReader : IDisposable
     {
 
         #region IDisposable Support

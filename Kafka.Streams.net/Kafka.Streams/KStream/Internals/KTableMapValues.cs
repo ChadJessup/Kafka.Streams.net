@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -53,7 +55,9 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
         if (queryableName != null)
 {
             return new KTableMaterializedValueGetterSupplier<>(queryableName);
-        } else {
+        } else
+{
+
             return new KTableValueGetterSupplier<K, V1>()
 {
                  KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
@@ -136,7 +140,9 @@ class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 {
                 store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
-            } else {
+            } else
+{
+
                 context().forward(key, new Change<>(newValue, oldValue));
             }
         }

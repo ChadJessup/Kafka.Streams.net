@@ -14,33 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.WindowStore;
-
-
-
-
-class ChangeLoggingTimestampedWindowBytesStore : ChangeLoggingWindowBytesStore
+namespace Kafka.Streams.State.Internals
 {
 
-    ChangeLoggingTimestampedWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
-                                             bool retainDuplicates)
-{
-        base(bytesStore, retainDuplicates);
-    }
+    class ChangeLoggingTimestampedWindowBytesStore : ChangeLoggingWindowBytesStore
+    {
 
-    
-    void log(Bytes key,
-             byte[] valueAndTimestamp)
-{
-        if (valueAndTimestamp != null)
-{
-            changeLogger.logChange(key, rawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
-        } else
-{
-            changeLogger.logChange(key, null);
+        ChangeLoggingTimestampedWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
+                                                 bool retainDuplicates)
+            : base(bytesStore, retainDuplicates)
+        {
+        }
+
+
+        void log(Bytes key,
+                 byte[] valueAndTimestamp)
+        {
+            if (valueAndTimestamp != null)
+            {
+                changeLogger.logChange(key, rawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
+            }
+            else
+            {
+                changeLogger.logChange(key, null);
+            }
         }
     }
 }

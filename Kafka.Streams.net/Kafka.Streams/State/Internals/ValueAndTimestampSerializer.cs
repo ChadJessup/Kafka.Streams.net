@@ -14,65 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Confluent.Kafka;
+using System.Collections.Generic;
 
-using Kafka.Common.serialization.LongSerializer;
-using Kafka.Common.serialization.Serializer;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-
-
-public ValueAndTimestampSerializer<V> : Serializer<ValueAndTimestamp<V>>
+namespace Kafka.Streams.State.Internals
 {
-    public Serializer<V> valueSerializer;
-    private Serializer<long> timestampSerializer;
 
-    ValueAndTimestampSerializer(Serializer<V> valueSerializer)
-{
-        Objects.requireNonNull(valueSerializer);
-        this.valueSerializer = valueSerializer;
-        timestampSerializer = new LongSerializer();
-    }
+    public class ValueAndTimestampSerializer<V> : ISerializer<ValueAndTimestamp<V>>
+    {
+        public ISerializer<V> valueSerializer;
+        private ISerializer<long> timestampSerializer;
 
-    public override void configure(Dictionary<string, ?> configs,
-                          bool isKey)
-{
-        valueSerializer.configure(configs, isKey);
-        timestampSerializer.configure(configs, isKey);
-    }
-
-    public override byte[] serialize(string topic,
-                            ValueAndTimestamp<V> data)
-{
-        if (data == null)
-{
-            return null;
+        ValueAndTimestampSerializer(ISerializer<V> valueSerializer)
+        {
+            Objects.requireNonNull(valueSerializer);
+            this.valueSerializer = valueSerializer;
+            timestampSerializer = new LongSerializer();
         }
-        return serialize(topic, data.value(), data.timestamp());
-    }
 
-    public byte[] serialize(string topic,
-                            V data,
-                            long timestamp)
-{
-        if (data == null)
-{
-            return null;
+        public override void configure(Dictionary<string, ?> configs,
+                              bool isKey)
+        {
+            valueSerializer.configure(configs, isKey);
+            timestampSerializer.configure(configs, isKey);
         }
-        byte[] rawValue = valueSerializer.serialize(topic, data);
-        byte[] rawTimestamp = timestampSerializer.serialize(topic, timestamp);
-        return ByteBuffer
-            .allocate(rawTimestamp.Length + rawValue.Length)
-            .Add(rawTimestamp)
-            .Add(rawValue)
-            .array();
-    }
 
-    public override void close()
-{
-        valueSerializer.close();
-        timestampSerializer.close();
+        public override byte[] serialize(string topic,
+                                ValueAndTimestamp<V> data)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+            return serialize(topic, data.value(), data.timestamp());
+        }
+
+        public byte[] serialize(string topic,
+                                V data,
+                                long timestamp)
+        {
+            if (data == null)
+            {
+                return null;
+            }
+            byte[] rawValue = valueSerializer.serialize(topic, data);
+            byte[] rawTimestamp = timestampSerializer.serialize(topic, timestamp);
+            return ByteBuffer
+                .allocate(rawTimestamp.Length + rawValue.Length)
+                .Add(rawTimestamp)
+                .Add(rawValue)
+                .array();
+        }
+
+        public override void close()
+        {
+            valueSerializer.close();
+            timestampSerializer.close();
+        }
     }
 }

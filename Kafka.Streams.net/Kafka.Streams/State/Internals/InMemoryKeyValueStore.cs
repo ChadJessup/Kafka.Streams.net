@@ -31,7 +31,7 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
+public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 {
     private string name;
     private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
@@ -160,7 +160,7 @@ public InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         open = false;
     }
 
-    private static InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
+    private static class InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
 {
         private Iterator<Map.Entry<Bytes, byte[]>> iter;
 
@@ -169,32 +169,32 @@ public InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
             this.iter = iter;
         }
 
-        
+
         public bool hasNext()
 {
             return iter.hasNext();
         }
 
-        
+
         public KeyValue<Bytes, byte[]> next()
 {
             Map.Entry<Bytes, byte[]> entry = iter.next();
             return new KeyValue<>(entry.Key, entry.Value);
         }
 
-        
+
         public void Remove()
 {
             iter.Remove();
         }
 
-        
+
         public void close()
 {
             // do nothing
         }
 
-        
+
         public Bytes peekNextKey()
 {
             throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());

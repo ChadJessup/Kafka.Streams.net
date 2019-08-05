@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.KeyValueIterator;
 
-interface HasNextCondition
+namespace Kafka.Streams.State.Internals
 {
-    bool hasNext(KeyValueIterator<Bytes, ?> iterator);
+
+
+    public interface HasNextCondition
+    {
+        bool hasNext(KeyValueIterator<Bytes, ?> iterator);
+    }
 }

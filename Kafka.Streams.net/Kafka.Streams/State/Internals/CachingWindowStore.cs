@@ -191,7 +191,7 @@ class CachingWindowStore
         }
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
+    
     public override synchronized WindowStoreIterator<byte[]> fetch(Bytes key,
                                                           long timeFrom,
                                                           long timeTo)
@@ -221,7 +221,7 @@ class CachingWindowStore
         return new MergedSortedCacheWindowStoreIterator(filteredCacheIterator, underlyingIterator);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
+    
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                            Bytes to,
                                                            long timeFrom,
@@ -265,7 +265,7 @@ class CachingWindowStore
         );
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
+    
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {

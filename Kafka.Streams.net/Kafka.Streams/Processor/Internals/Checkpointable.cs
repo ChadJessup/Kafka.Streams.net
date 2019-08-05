@@ -21,7 +21,9 @@ using Kafka.Common.TopicPartition;
 
 
 // Interface to indicate that an object has associated partition offsets that can be checkpointed
-interface Checkpointable {
+interface Checkpointable
+{
+
     void checkpoint(Dictionary<TopicPartition, long> offsets);
     Dictionary<TopicPartition, long> checkpointed();
 }

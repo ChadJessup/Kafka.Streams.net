@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
+
 
 
 
@@ -23,7 +25,9 @@ namespace Kafka.Streams.KStream.Internals.Graph {
  * Utility base containing the common fields between
  * a Stream-Stream join and a Table-Table join
  */
-abstract BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode {
+abstract BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
+{
+
 
     private  ProcessorParameters<K, V1> joinThisProcessorParameters;
     private  ProcessorParameters<K, V2> joinOtherProcessorParameters;

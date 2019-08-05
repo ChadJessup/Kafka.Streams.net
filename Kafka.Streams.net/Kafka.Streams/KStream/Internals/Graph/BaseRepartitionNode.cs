@@ -15,13 +15,17 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
 
 
-public abstract BaseRepartitionNode<K, V> : StreamsGraphNode {
+
+public abstract BaseRepartitionNode<K, V> : StreamsGraphNode
+{
+
 
     protected  ISerde<K> keySerde;
     protected  ISerde<V> valueSerde;

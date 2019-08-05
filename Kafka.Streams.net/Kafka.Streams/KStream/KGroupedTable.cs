@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -38,7 +40,7 @@ namespace Kafka.Streams.KStream {
  * @param Type of values
  * @see KTable
  */
-@InterfaceStability.Evolving
+
 public interface KGroupedTable<K, V> {
 
     /**

@@ -58,7 +58,9 @@ using Kafka.Common.Utils.Utils;
 
 
 
-public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
+public class StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable
+{
+
 
     static int UNKNOWN = -1;
     private static int VERSION_ONE = 1;
@@ -70,7 +72,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
 
     private Logger log;
     private string logPrefix;
-    public enum Error {
+    public enum Error
+{
+
         NONE(0),
         INCOMPLETE_SOURCE_TOPIC_METADATA(1),
         VERSION_PROBING(2);
@@ -103,7 +107,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         }
     }
 
-    private static AssignedPartition : Comparable<AssignedPartition> {
+    private static class AssignedPartition : Comparable<AssignedPartition> {
         public TaskId taskId;
         public TopicPartition partition;
 
@@ -114,13 +118,13 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             this.partition = partition;
         }
 
-        
+
         public int compareTo(AssignedPartition that)
 {
             return PARTITION_COMPARATOR.compare(this.partition, that.partition);
         }
 
-        
+
         public bool Equals(object o)
 {
             if (!(o is AssignedPartition))
@@ -131,7 +135,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             return compareTo(other) == 0;
         }
 
-        
+
         public int GetHashCode()
 {
             // Only partition is important for compareTo, Equals and GetHashCode().
@@ -139,7 +143,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         }
     }
 
-    private static ClientMetadata {
+    private static ClientMetadata
+{
+
         HostInfo hostInfo;
         HashSet<string> consumers;
         ClientState state;
@@ -159,7 +165,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                 }
 
                 hostInfo = new HostInfo(host, port);
-            } else {
+            } else
+{
+
                 hostInfo = null;
             }
 
@@ -170,7 +178,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             state = new ClientState();
         }
 
-        void.AddConsumer(string consumerMemberId,
+        void addConsumer(string consumerMemberId,
                          SubscriptionInfo info)
 {
             consumers.Add(consumerMemberId);
@@ -179,7 +187,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             state.incrementCapacity();
         }
 
-        
+
         public string ToString()
 {
             return "ClientMetadata{" +
@@ -190,7 +198,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         }
     }
 
-    private static InternalStreamsConfig : StreamsConfig {
+    private static class InternalStreamsConfig : StreamsConfig
+{
+
         private InternalStreamsConfig(Dictionary<?, ?> props)
 {
             base(props, false);
@@ -203,7 +213,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         if (result != 0)
 {
             return result;
-        } else {
+        } else
+{
+
             return int.compare(p1.partition(), p2.partition());
         }
     };
@@ -236,7 +248,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
      * and the latter needs former's returned assignment when.Adding tasks.
      * @throws KafkaException if the stream thread is not specified
      */
-    
+
     public void configure(Dictionary<string, ?> configs)
 {
         StreamsConfig streamsConfig = new InternalStreamsConfig(configs);
@@ -252,7 +264,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             switch (upgradeFrom)
 {
                 case StreamsConfig.UPGRADE_FROM_0100:
-                    log.info("Downgrading metadata version from {} to 1 for upgrade from 0.10.0.x.", SubscriptionInfo.LATEST_SUPPORTED_VERSION);
+                    log.LogInformation("Downgrading metadata version from {} to 1 for upgrade from 0.10.0.x.", SubscriptionInfo.LATEST_SUPPORTED_VERSION);
                     usedSubscriptionMetadataVersion = VERSION_ONE;
                     break;
                 case StreamsConfig.UPGRADE_FROM_0101:
@@ -260,7 +272,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                 case StreamsConfig.UPGRADE_FROM_0110:
                 case StreamsConfig.UPGRADE_FROM_10:
                 case StreamsConfig.UPGRADE_FROM_11:
-                    log.info("Downgrading metadata version from {} to 2 for upgrade from {}.x.", SubscriptionInfo.LATEST_SUPPORTED_VERSION, upgradeFrom);
+                    log.LogInformation("Downgrading metadata version from {} to 2 for upgrade from {}.x.", SubscriptionInfo.LATEST_SUPPORTED_VERSION, upgradeFrom);
                     usedSubscriptionMetadataVersion = VERSION_TWO;
                     break;
                 default:
@@ -309,7 +321,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         string userEndPoint = streamsConfig.getString(StreamsConfig.APPLICATION_SERVER_CONFIG);
         if (userEndPoint != null && !userEndPoint.isEmpty())
 {
-            try {
+            try
+{
+
                 string host = getHost(userEndPoint);
                 int port = getPort(userEndPoint);
 
@@ -333,13 +347,13 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         copartitionedTopicsValidator = new CopartitionedTopicsValidator(logPrefix);
     }
 
-    
+
     public string name()
 {
         return "stream";
     }
 
-    
+
     public ByteBuffer subscriptionUserData(Set<string> topics)
 {
         // Adds the following information to subscription
@@ -405,7 +419,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
      *
      * 3. within each client, tasks are assigned to consumer clients in round-robin manner.
      */
-    
+
     public GroupAssignment assign(Cluster metadata, GroupSubscription groupSubscription)
 {
         Dictionary<string, Subscription> subscriptions = groupSubscription.groupSubscription();
@@ -454,21 +468,25 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
 {
             if (minReceivedMetadataVersion >= EARLIEST_PROBEABLE_VERSION)
 {
-                log.info("Received a future (version probing) subscription (version: {}). Sending empty assignment back (with supported version {}).",
+                log.LogInformation("Received a future (version probing) subscription (version: {}). Sending empty assignment back (with supported version {}).",
                     futureMetadataVersion,
                     SubscriptionInfo.LATEST_SUPPORTED_VERSION);
                 versionProbing = true;
-            } else {
+            } else
+{
+
                 throw new InvalidOperationException("Received a future (version probing) subscription (version: " + futureMetadataVersion
                     + ") and an incompatible pre Kafka 2.0 subscription (version: " + minReceivedMetadataVersion + ") at the same time.");
             }
-        } else {
+        } else
+{
+
             versionProbing = false;
         }
 
         if (minReceivedMetadataVersion < SubscriptionInfo.LATEST_SUPPORTED_VERSION)
 {
-            log.info("Downgrading metadata to version {}. Latest supported version is {}.",
+            log.LogInformation("Downgrading metadata to version {}. Latest supported version is {}.",
                 minReceivedMetadataVersion,
                 SubscriptionInfo.LATEST_SUPPORTED_VERSION);
         }
@@ -502,7 +520,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         }
 
         bool numPartitionsNeeded;
-        do {
+        do
+{
+
             numPartitionsNeeded = false;
 
             foreach (InternalTopologyBuilder.TopicsInfo topicsInfo in topicGroups.values())
@@ -530,7 +550,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                                     if (repartitionTopicMetadata.ContainsKey(sourceTopicName))
 {
                                         numPartitionsCandidate = repartitionTopicMetadata[sourceTopicName).numberOfPartitions();
-                                    } else {
+                                    } else
+{
+
                                         numPartitionsCandidate = metadata.partitionCountForTopic(sourceTopicName);
                                     }
 
@@ -546,7 +568,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                         if (numPartitions == UNKNOWN)
 {
                             numPartitionsNeeded = true;
-                        } else {
+                        } else
+{
+
                             repartitionTopicMetadata[topicName).setNumberOfPartitions(numPartitions);
                         }
                     }
@@ -632,7 +656,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                                  + " resulting in no tasks created for this topology at all.", partition, partitionsForTask);
                     }
                 }
-            } else {
+            } else
+{
+
                 log.LogWarning("No partitions found for topic {}", topic);
             }
         }
@@ -660,7 +686,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
                     topicConfig.setNumberOfPartitions(numPartitions);
 
                     changelogTopicMetadata.Add(topicConfig.name(), topicConfig);
-                } else {
+                } else
+{
+
                     log.LogDebug("No tasks found for topic group {}", topicGroupId);
                 }
             }
@@ -685,7 +713,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         StickyTaskAssignor<UUID> taskAssignor = new StickyTaskAssignor<>(states, partitionsForTask.keySet());
         taskAssignor.assign(numStandbyReplicas);
 
-        log.info("Assigned tasks to clients as {}.", states);
+        log.LogInformation("Assigned tasks to clients as {}.", states);
 
         // ---------------- Step Three ---------------- //
 
@@ -717,7 +745,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         if (versionProbing)
 {
             assignment = versionProbingAssignment(clientMetadataMap, partitionsForTask, partitionsByHostState, futureConsumers, minReceivedMetadataVersion);
-        } else {
+        } else
+{
+
             assignment = computeNewAssignment(clientMetadataMap, partitionsForTask, partitionsByHostState, minReceivedMetadataVersion);
         }
 
@@ -873,7 +903,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
     /**
      * @throws TaskAssignmentException if there is no task id for one of the partitions specified
      */
-    
+
     public void onAssignment(Assignment assignment, ConsumerGroupMetadata metadata)
 {
         List<TopicPartition> partitions = new List<>(assignment.partitions());
@@ -901,13 +931,15 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
 
             if (receivedAssignmentMetadataVersion == leaderSupportedVersion)
 {
-                log.info("Sent a version {} subscription and got version {} assignment back (successful version probing). " +
+                log.LogInformation("Sent a version {} subscription and got version {} assignment back (successful version probing). " +
                         "Downgrading subscription metadata to received version and trigger new rebalance.",
                     usedSubscriptionMetadataVersion,
                     receivedAssignmentMetadataVersion);
                 usedSubscriptionMetadataVersion = receivedAssignmentMetadataVersion;
-            } else {
-                log.info("Sent a version {} subscription and got version {} assignment back (successful version probing). " +
+            } else
+{
+
+                log.LogInformation("Sent a version {} subscription and got version {} assignment back (successful version probing). " +
                     "Setting subscription metadata to leaders supported version {} and trigger new rebalance.",
                     usedSubscriptionMetadataVersion,
                     receivedAssignmentMetadataVersion,
@@ -938,7 +970,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             case VERSION_THREE:
                 if (leaderSupportedVersion > usedSubscriptionMetadataVersion)
 {
-                    log.info("Sent a version {} subscription and group leader's latest supported version is {}. " +
+                    log.LogInformation("Sent a version {} subscription and group leader's latest supported version is {}. " +
                         "Upgrading subscription metadata version to {} for next rebalance.",
                         usedSubscriptionMetadataVersion,
                         leaderSupportedVersion,
@@ -951,7 +983,7 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
             case VERSION_FOUR:
                 if (leaderSupportedVersion > usedSubscriptionMetadataVersion)
 {
-                    log.info("Sent a version {} subscription and group leader's latest supported version is {}. " +
+                    log.LogInformation("Sent a version {} subscription and group leader's latest supported version is {}. " +
                         "Upgrading subscription metadata version to {} for next rebalance.",
                         usedSubscriptionMetadataVersion,
                         leaderSupportedVersion,
@@ -1080,7 +1112,9 @@ public StreamsPartitionAssignor : ConsumerPartitionAssignor, Configurable {
         }
     }
 
-    static CopartitionedTopicsValidator {
+    static CopartitionedTopicsValidator
+{
+
         private string logPrefix;
         private Logger log;
 

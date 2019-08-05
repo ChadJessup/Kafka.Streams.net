@@ -2,7 +2,8 @@
 
 namespace Kafka.Streams.Temp
 {
-    public static Files
+
+    public static class Files
     {
         internal static BufferedReader newBufferedReader(object p)
         {

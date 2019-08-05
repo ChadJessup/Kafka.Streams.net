@@ -12,7 +12,7 @@ namespace Kafka.Streams.Errors
      *
      * @see org.apache.kafka.streams.StreamsConfig
      */
-    public BrokerNotFoundException : StreamsException
+    public class BrokerNotFoundException : StreamsException
     {
         public BrokerNotFoundException(Confluent.Kafka.Error error) : base(error)
         {

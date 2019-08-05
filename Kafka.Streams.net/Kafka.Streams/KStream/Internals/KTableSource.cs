@@ -94,12 +94,16 @@ public KTableSource<K, V> : ProcessorSupplier<K, V>
                     LOG.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
                         store.name(), context().offset(), context().partition());
                 }
-            } else {
+            } else
+{
+
                 oldValue = null;
             }
             store.Add(key, ValueAndTimestamp.make(value, context().timestamp()));
             tupleForwarder.maybeForward(key, value, oldValue);
-        } else {
+        } else
+{
+
             context().forward(key, new Change<>(value, null));
         }
     }

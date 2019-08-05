@@ -29,7 +29,9 @@ namespace Kafka.streams;
  *
  * @see KafkaStreams#KafkaStreams(Topology, java.util.Properties, KafkaClientSupplier)
  */
-public interface KafkaClientSupplier {
+public interface KafkaClientSupplier
+{
+
     /**
      * Create an {@link Admin} which is used for internal topic management.
      *

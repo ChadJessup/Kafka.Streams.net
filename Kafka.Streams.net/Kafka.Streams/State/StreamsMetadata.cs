@@ -30,8 +30,8 @@ using Kafka.Streams.KafkaStreams;
  * the instance and the Set of {@link TopicPartition}s available on the instance.
  * NOTE: This is a point in time view. It may change when rebalances happen.
  */
-@InterfaceStability.Evolving
-public StreamsMetadata
+
+public class StreamsMetadata
 {
     /**
      * Sentinel to indicate that the StreamsMetadata is currently unavailable. This can occur during rebalance

@@ -18,6 +18,7 @@ namespace Kafka.Streams.Processor;
 
 
 using Kafka.Common.annotation.InterfaceStability;
+using Microsoft.Extensions.Logging;
 
 
 
@@ -45,9 +46,11 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see UsePreviousTimeOnInvalidTimestamp
  * @see WallclockTimestampExtractor
  */
-@InterfaceStability.Evolving
-public FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
-    private static Logger log = new LoggerFactory().CreateLogger<FailOnInvalidTimestamp);
+
+public class FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp
+{
+
+    private static ILogger log = new LoggerFactory().CreateLogger<FailOnInvalidTimestamp>();
 
     /**
      * Raises an exception on every call.
@@ -58,7 +61,7 @@ public FailOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @return nothing; always raises an exception
      * @throws StreamsException on every invocation
      */
-    
+
     public long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)

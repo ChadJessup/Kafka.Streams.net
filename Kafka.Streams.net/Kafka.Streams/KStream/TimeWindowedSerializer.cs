@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -37,7 +39,7 @@ public TimeWindowedSerializer<T> : WindowedSerializer<T> {
     private Serializer<T> inner;
 
     // Default constructor needed by Kafka
-    @SuppressWarnings("WeakerAccess")
+    
     public TimeWindowedSerializer() {}
 
     public TimeWindowedSerializer( Serializer<T> inner)
@@ -53,7 +55,9 @@ public TimeWindowedSerializer<T> : WindowedSerializer<T> {
 {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
              string value = (string) configs[propertyName);
-            try {
+            try
+{
+
                 inner = Utils.newInstance(value, Serde).serializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)

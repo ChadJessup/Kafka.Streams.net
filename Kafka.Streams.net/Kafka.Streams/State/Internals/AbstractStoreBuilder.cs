@@ -14,79 +14,74 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.Processor.Interfaces;
 
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.StoreBuilder;
-
-
-
-
-
-abstract public AbstractStoreBuilder<K, V, T : IStateStore> : StoreBuilder<T>
+namespace Kafka.Streams.State.Internals
 {
-    private Dictionary<string, string> logConfig = new HashMap<>();
-    protected string name;
-    ISerde<K> keySerde;
-    ISerde<V> valueSerde;
-    ITime time;
-    bool enableCaching;
-    bool enableLogging = true;
+    public abstract class AbstractStoreBuilder<K, V, T> : StoreBuilder<T>
+        where T : IStateStore
+    {
+        private Dictionary<string, string> logConfig = new HashMap<>();
+        protected string name;
+        ISerde<K> keySerde;
+        ISerde<V> valueSerde;
+        ITime time;
+        bool enableCaching;
+        bool enableLogging = true;
 
-    public AbstractStoreBuilder(string name,
-                                ISerde<K> keySerde,
-                                ISerde<V> valueSerde,
-                                ITime time)
-{
-        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        time = time ?? throw new System.ArgumentNullException("time cannot be null", nameof(time));
-        this.name = name;
-        this.keySerde = keySerde;
-        this.valueSerde = valueSerde;
-        this.time = time;
-    }
+        public AbstractStoreBuilder(string name,
+                                    ISerde<K> keySerde,
+                                    ISerde<V> valueSerde,
+                                    ITime time)
+        {
+            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+            time = time ?? throw new System.ArgumentNullException("time cannot be null", nameof(time));
+            this.name = name;
+            this.keySerde = keySerde;
+            this.valueSerde = valueSerde;
+            this.time = time;
+        }
 
-    public override StoreBuilder<T> withCachingEnabled()
-{
-        enableCaching = true;
-        return this;
-    }
+        public override StoreBuilder<T> withCachingEnabled()
+        {
+            enableCaching = true;
+            return this;
+        }
 
-    public override StoreBuilder<T> withCachingDisabled()
-{
-        enableCaching = false;
-        return this;
-    }
+        public override StoreBuilder<T> withCachingDisabled()
+        {
+            enableCaching = false;
+            return this;
+        }
 
-    public override StoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
-{
-        config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
-        enableLogging = true;
-        logConfig = config;
-        return this;
-    }
+        public override StoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
+        {
+            config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
+            enableLogging = true;
+            logConfig = config;
+            return this;
+        }
 
-    public override StoreBuilder<T> withLoggingDisabled()
-{
-        enableLogging = false;
-        logConfig.clear();
-        return this;
-    }
+        public override StoreBuilder<T> withLoggingDisabled()
+        {
+            enableLogging = false;
+            logConfig.clear();
+            return this;
+        }
 
-    public override Dictionary<string, string> logConfig()
-{
-        return logConfig;
-    }
+        public override Dictionary<string, string> logConfig()
+        {
+            return logConfig;
+        }
 
-    public override bool loggingEnabled()
-{
-        return enableLogging;
-    }
+        public override bool loggingEnabled()
+        {
+            return enableLogging;
+        }
 
-    public override string name()
-{
-        return name;
+        public override string name()
+        {
+            return name;
+        }
     }
 }

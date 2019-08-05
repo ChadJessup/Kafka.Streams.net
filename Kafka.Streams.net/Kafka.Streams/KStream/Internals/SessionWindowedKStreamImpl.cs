@@ -16,7 +16,9 @@
  */
 using Kafka.Streams.State.Interfaces;
 
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -193,7 +195,7 @@ public SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowed
             materializedInternal.valueSerde());
     }
 
-    @SuppressWarnings("deprecation") // continuing to support SessionWindows#maintainMs in fallback mode
+    
     private StoreBuilder<ISessionStore<K, VR>> materialize( MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
 {
         SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier) materialized.storeSupplier();
@@ -227,7 +229,9 @@ public SessionWindowedKStreamImpl<K, V> : AbstractStream<K, V> : SessionWindowed
         if (materialized.loggingEnabled())
 {
             builder.withLoggingEnabled(materialized.logConfig());
-        } else {
+        } else
+{
+
             builder.withLoggingDisabled();
         }
 

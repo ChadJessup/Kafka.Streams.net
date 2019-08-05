@@ -18,7 +18,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public Stamped<V> : Comparable {
+public Stamped<V> : Comparable
+{
+
 
     public V value;
     public long timestamp;

@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -53,7 +55,9 @@ public ChangedDeserializer<T> : Deserializer<Change<T>> {
         if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE) != 0)
 {
             return new Change<>(inner.deserialize(topic, headers, bytes), null);
-        } else {
+        } else
+{
+
             return new Change<>(null, inner.deserialize(topic, headers, bytes));
         }
     }

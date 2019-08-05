@@ -24,8 +24,10 @@ using Kafka.Common.annotation.InterfaceStability;
  * An interface that allows the Kafka Streams framework to extract a timestamp from an instance of {@link ConsumerRecord}.
  * The extracted timestamp is defined as milliseconds.
  */
-@InterfaceStability.Evolving
-public interface TimestampExtractor {
+
+public interface TimestampExtractor
+{
+
 
     /**
      * Extracts a timestamp from a record. The timestamp must be positive to be considered a valid timestamp.

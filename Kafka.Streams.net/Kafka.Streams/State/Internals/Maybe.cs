@@ -14,87 +14,90 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-
-
-
-/**
- * A container that may be empty, may contain null, or may contain a value.
- * Distinct from {@link java.util.Optional<T>}, since Optional cannot contain null.
- *
- * @param <T>
- */
-public Maybe<T>
+namespace Kafka.Streams.State.Internals
 {
-    private T nullableValue;
-    private bool defined;
 
-    public static Maybe<T> defined(T nullableValue)
-{
-        return new Maybe<>(nullableValue);
-    }
 
-    public static Maybe<T> undefined()
-{
-        return new Maybe<>();
-    }
 
-    private Maybe(T nullableValue)
-{
-        this.nullableValue = nullableValue;
-        defined = true;
-    }
+    /**
+     * A container that may be empty, may contain null, or may contain a value.
+     * Distinct from {@link java.util.Optional<T>}, since Optional cannot contain null.
+     *
+     * @param <T>
+     */
+    public class Maybe<T>
+    {
+        private T nullableValue;
+        private bool defined;
 
-    private Maybe()
-{
-        nullableValue = null;
-        defined = false;
-    }
-
-    public T getNullableValue()
-{
-        if (defined)
-{
-            return nullableValue;
-        } else
-{
-            throw new NoSuchElementException();
+        public static Maybe<T> defined(T nullableValue)
+        {
+            return new Maybe<>(nullableValue);
         }
-    }
 
-    public bool isDefined()
-{
-        return defined;
-    }
+        public static Maybe<T> undefined()
+        {
+            return new Maybe<>();
+        }
 
-    public override bool Equals(object o)
-{
-        if (this == o) return true;
-        if (o == null || GetType() != o.GetType()) return false;
-        Maybe<?> maybe = (Maybe<?>) o;
+        private Maybe(T nullableValue)
+        {
+            this.nullableValue = nullableValue;
+            defined = true;
+        }
 
-        // All undefined maybes are equal
-        // All defined null maybes are equal
-        return defined == maybe.defined &&
-            (!defined || Objects.Equals(nullableValue, maybe.nullableValue));
-    }
+        private Maybe()
+        {
+            nullableValue = default;
+            defined = false;
+        }
 
-    public override int GetHashCode()
-{
-        // Since all undefined maybes are equal, we can hard-code their GetHashCode() to -1.
-        // Since all defined null maybes are equal, we can hard-code their GetHashCode() to 0.
-        return defined ? nullableValue == null ? 0 : nullableValue.GetHashCode() : -1;
-    }
+        public T getNullableValue()
+        {
+            if (defined)
+            {
+                return nullableValue;
+            }
+            else
+            {
+                throw new NoSuchElementException();
+            }
+        }
 
-    public override string ToString()
-{
-        if (defined)
-{
-            return "DefinedMaybe{" + nullableValue + "}";
-        } else
-{
-            return "UndefinedMaybe{}";
+        public bool isDefined()
+        {
+            return defined;
+        }
+
+        public override bool Equals(object o)
+        {
+            if (this == o) return true;
+            if (o == null || GetType() != o.GetType()) return false;
+            Maybe <?> maybe = (Maybe <?>) o;
+
+            // All undefined maybes are equal
+            // All defined null maybes are equal
+            return defined == maybe.defined &&
+                (!defined || Objects.Equals(nullableValue, maybe.nullableValue));
+        }
+
+        public override int GetHashCode()
+        {
+            // Since all undefined maybes are equal, we can hard-code their GetHashCode() to -1.
+            // Since all defined null maybes are equal, we can hard-code their GetHashCode() to 0.
+            return defined ? nullableValue == null ? 0 : nullableValue.GetHashCode() : -1;
+        }
+
+        public override string ToString()
+        {
+            if (defined)
+            {
+                return "DefinedMaybe{" + nullableValue + "}";
+            }
+            else
+            {
+                return "UndefinedMaybe{}";
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ namespace Kafka.Streams.Processor;
 using Kafka.Common.Cluster;
 using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
+using Microsoft.Extensions.Logging;
 
 
 
@@ -37,9 +38,11 @@ using Kafka.Common.TopicPartition;
  * number of partitions. Copartitioning is ensured by having the same number of partitions on
  * joined topics, and by using the serialization and Producer's default partitioner.
  */
-public DefaultPartitionGrouper : PartitionGrouper {
+public class DefaultPartitionGrouper : PartitionGrouper
+{
 
-    private static Logger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper);
+
+    private static ILogger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper>();
     /**
      * Generate tasks with the assigned topic partitions.
      *

@@ -14,144 +14,141 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
-
-
-
-
-
-
-
-/**
- * Represents the state of a single thread running within a {@link KafkaStreams} application.
- */
-public ThreadMetadata {
-
-    private string threadName;
-
-    private string threadState;
-
-    private HashSet<TaskMetadata> activeTasks;
-
-    private HashSet<TaskMetadata> standbyTasks;
-
-    private string mainConsumerClientId;
-
-    private string restoreConsumerClientId;
-
-    private HashSet<string> producerClientIds;
-
-    // the admin client should be shared among all threads, so the client id should be the same;
-    // we keep it at the thread-level for user's convenience and possible extensions in the future
-    private string adminClientId;
-
-    public ThreadMetadata(string threadName,
-                          string threadState,
-                          string mainConsumerClientId,
-                          string restoreConsumerClientId,
-                          HashSet<string> producerClientIds,
-                          string adminClientId,
-                          HashSet<TaskMetadata> activeTasks,
-                          HashSet<TaskMetadata> standbyTasks)
+namespace Kafka.Streams.Processor
 {
-        this.mainConsumerClientId = mainConsumerClientId;
-        this.restoreConsumerClientId = restoreConsumerClientId;
-        this.producerClientIds = producerClientIds;
-        this.adminClientId = adminClientId;
-        this.threadName = threadName;
-        this.threadState = threadState;
-        this.activeTasks = Collections.unmodifiableSet(activeTasks);
-        this.standbyTasks = Collections.unmodifiableSet(standbyTasks);
-    }
+    /**
+     * Represents the state of a single thread running within a {@link KafkaStreams} application.
+     */
+    public class ThreadMetadata
+    {
 
-    public string threadState()
-{
-        return threadState;
-    }
 
-    public string threadName()
-{
-        return threadName;
-    }
+        private string threadName;
 
-    public HashSet<TaskMetadata> activeTasks()
-{
-        return activeTasks;
-    }
+        private string threadState;
 
-    public HashSet<TaskMetadata> standbyTasks()
-{
-        return standbyTasks;
-    }
+        private HashSet<TaskMetadata> activeTasks;
 
-    public string consumerClientId()
-{
-        return mainConsumerClientId;
-    }
+        private HashSet<TaskMetadata> standbyTasks;
 
-    public string restoreConsumerClientId()
-{
-        return restoreConsumerClientId;
-    }
+        private string mainConsumerClientId;
 
-    public HashSet<string> producerClientIds()
-{
-        return producerClientIds;
-    }
+        private string restoreConsumerClientId;
 
-    public string adminClientId()
-{
-        return adminClientId;
-    }
+        private HashSet<string> producerClientIds;
 
-    
-    public bool Equals(object o)
-{
-        if (this == o)
-{
-            return true;
+        // the admin client should be shared among all threads, so the client id should be the same;
+        // we keep it at the thread-level for user's convenience and possible extensions in the future
+        private string adminClientId;
+
+        public ThreadMetadata(string threadName,
+                              string threadState,
+                              string mainConsumerClientId,
+                              string restoreConsumerClientId,
+                              HashSet<string> producerClientIds,
+                              string adminClientId,
+                              HashSet<TaskMetadata> activeTasks,
+                              HashSet<TaskMetadata> standbyTasks)
+        {
+            this.mainConsumerClientId = mainConsumerClientId;
+            this.restoreConsumerClientId = restoreConsumerClientId;
+            this.producerClientIds = producerClientIds;
+            this.adminClientId = adminClientId;
+            this.threadName = threadName;
+            this.threadState = threadState;
+            this.activeTasks = Collections.unmodifiableSet(activeTasks);
+            this.standbyTasks = Collections.unmodifiableSet(standbyTasks);
         }
-        if (o == null || GetType() != o.GetType())
-{
-            return false;
+
+        public string threadState()
+        {
+            return threadState;
         }
-        ThreadMetadata that = (ThreadMetadata) o;
-        return Objects.Equals(threadName, that.threadName) &&
-               Objects.Equals(threadState, that.threadState) &&
-               Objects.Equals(activeTasks, that.activeTasks) &&
-               Objects.Equals(standbyTasks, that.standbyTasks) &&
-               mainConsumerClientId.Equals(that.mainConsumerClientId) &&
-               restoreConsumerClientId.Equals(that.restoreConsumerClientId) &&
-               Objects.Equals(producerClientIds, that.producerClientIds) &&
-               adminClientId.Equals(that.adminClientId);
-    }
 
-    
-    public int GetHashCode()
-{
-        return Objects.hash(
-            threadName,
-            threadState,
-            activeTasks,
-            standbyTasks,
-            mainConsumerClientId,
-            restoreConsumerClientId,
-            producerClientIds,
-            adminClientId);
-    }
+        public string threadName()
+        {
+            return threadName;
+        }
 
-    
-    public string ToString()
-{
-        return "ThreadMetadata{" +
-                "threadName=" + threadName +
-                ", threadState=" + threadState +
-                ", activeTasks=" + activeTasks +
-                ", standbyTasks=" + standbyTasks +
-                ", consumerClientId=" + mainConsumerClientId +
-                ", restoreConsumerClientId=" + restoreConsumerClientId +
-                ", producerClientIds=" + producerClientIds +
-                ", adminClientId=" + adminClientId +
-                '}';
+        public HashSet<TaskMetadata> activeTasks()
+        {
+            return activeTasks;
+        }
+
+        public HashSet<TaskMetadata> standbyTasks()
+        {
+            return standbyTasks;
+        }
+
+        public string consumerClientId()
+        {
+            return mainConsumerClientId;
+        }
+
+        public string restoreConsumerClientId()
+        {
+            return restoreConsumerClientId;
+        }
+
+        public HashSet<string> producerClientIds()
+        {
+            return producerClientIds;
+        }
+
+        public string adminClientId()
+        {
+            return adminClientId;
+        }
+
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+            ThreadMetadata that = (ThreadMetadata)o;
+            return Objects.Equals(threadName, that.threadName) &&
+                   Objects.Equals(threadState, that.threadState) &&
+                   Objects.Equals(activeTasks, that.activeTasks) &&
+                   Objects.Equals(standbyTasks, that.standbyTasks) &&
+                   mainConsumerClientId.Equals(that.mainConsumerClientId) &&
+                   restoreConsumerClientId.Equals(that.restoreConsumerClientId) &&
+                   Objects.Equals(producerClientIds, that.producerClientIds) &&
+                   adminClientId.Equals(that.adminClientId);
+        }
+
+
+        public int GetHashCode()
+        {
+            return Objects.hash(
+                threadName,
+                threadState,
+                activeTasks,
+                standbyTasks,
+                mainConsumerClientId,
+                restoreConsumerClientId,
+                producerClientIds,
+                adminClientId);
+        }
+
+
+        public string ToString()
+        {
+            return "ThreadMetadata{" +
+                    "threadName=" + threadName +
+                    ", threadState=" + threadState +
+                    ", activeTasks=" + activeTasks +
+                    ", standbyTasks=" + standbyTasks +
+                    ", consumerClientId=" + mainConsumerClientId +
+                    ", restoreConsumerClientId=" + restoreConsumerClientId +
+                    ", producerClientIds=" + producerClientIds +
+                    ", adminClientId=" + adminClientId +
+                    '}';
+        }
     }
 }

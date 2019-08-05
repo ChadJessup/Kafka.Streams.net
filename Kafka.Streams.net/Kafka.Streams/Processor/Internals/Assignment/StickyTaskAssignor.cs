@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Internals.assignment;
 
 
 
-public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
+public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
 
     private static Logger log = new LoggerFactory().CreateLogger<StickyTaskAssignor);
     private Dictionary<ID, ClientState> clients;
@@ -48,7 +48,7 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         mapPreviousTaskAssignment(clients);
     }
 
-    
+
     public void assign(int numStandbyReplicas)
 {
         assignActive();
@@ -298,7 +298,9 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
         return capacity;
     }
 
-    private static TaskPairs {
+    private static TaskPairs
+{
+
         private HashSet<Pair> pairs;
         private int maxPairs;
 
@@ -325,7 +327,7 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             return false;
         }
 
-        void.AddPairs(TaskId taskId, HashSet<TaskId> assigned)
+        void addPairs(TaskId taskId, HashSet<TaskId> assigned)
 {
             foreach (TaskId id in assigned)
 {
@@ -342,7 +344,9 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
             return new Pair(task2, task1);
         }
 
-        private static Pair {
+        private static Pair
+{
+
             private TaskId task1;
             private TaskId task2;
 
@@ -352,7 +356,7 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
                 this.task2 = task2;
             }
 
-            
+
             public bool Equals(object o)
 {
                 if (this == o)
@@ -368,7 +372,7 @@ public StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId> {
                         Objects.Equals(task2, pair.task2);
             }
 
-            
+
             public int GetHashCode()
 {
                 return Objects.hash(task1, task2);

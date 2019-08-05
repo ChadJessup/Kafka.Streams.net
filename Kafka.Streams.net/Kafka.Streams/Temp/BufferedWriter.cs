@@ -2,7 +2,7 @@
 
 namespace Kafka.Streams.Temp
 {
-    public BufferedWriter
+    public class BufferedWriter
     {
         internal void write(string v)
         {

@@ -25,7 +25,9 @@ using Kafka.Common.internals.Topic;
  * InternalTopicConfig captures the properties required for configuring
  * the internal topics we create for change-logs and repartitioning etc.
  */
-public abstract InternalTopicConfig {
+public abstract InternalTopicConfig
+{
+
 
     string name;
     Dictionary<string, string> topicConfigs;

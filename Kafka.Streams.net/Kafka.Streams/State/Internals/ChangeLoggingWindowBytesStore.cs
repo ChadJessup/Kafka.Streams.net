@@ -67,7 +67,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().fetch(key, timestamp);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
+    
     public override WindowStoreIterator<byte[]> fetch(Bytes key,
                                              long from,
                                              long to)
@@ -75,7 +75,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().fetch(key, from, to);
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetch(...) is removed
+    
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes keyFrom,
                                                            Bytes keyTo,
                                                            long from,
@@ -89,7 +89,7 @@ class ChangeLoggingWindowBytesStore
         return wrapped().all();
     }
 
-    @SuppressWarnings("deprecation") // note, this method must be kept if base.fetchAll(...) is removed
+    
     public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {

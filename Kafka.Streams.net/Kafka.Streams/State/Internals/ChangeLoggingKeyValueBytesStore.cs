@@ -14,112 +14,101 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.serialization.Serdes;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.internals.ProcessorStateManager;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.KeyValueStore;
-using Kafka.Streams.State.StateSerdes;
-
-
-
-public ChangeLoggingKeyValueBytesStore
-    : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
+namespace Kafka.Streams.State.Internals
+{
+    public class ChangeLoggingKeyValueBytesStore
+        : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
     : IKeyValueStore<Bytes, byte[]>
-{
+    {
 
-    StoreChangeLogger<Bytes, byte[]> changeLogger;
+        StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-    ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
-{
-        base(inner);
-    }
-
-    public override void init(IProcessorContext context,
-                     IStateStore root)
-{
-        base.init(context, root);
-        string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
-        changeLogger = new StoreChangeLogger<>(
-            name(),
-            context,
-            new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
-
-        // if the inner store is an LRU cache,.Add the eviction listener to log removed record
-        if (wrapped() is MemoryLRUCache)
-{
-            ((MemoryLRUCache) wrapped()).setWhenEldestRemoved((key, value) ->
-{
-                // pass null to indicate removal
-                log(key, null);
-            });
+        ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
+        {
+            base(inner);
         }
-    }
 
-    public override long approximateNumEntries()
-{
-        return wrapped().approximateNumEntries();
-    }
+        public override void init(IProcessorContext context,
+                         IStateStore root)
+        {
+            base.init(context, root);
+            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
+            changeLogger = new StoreChangeLogger<>(
+                name(),
+                context,
+                new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
 
-    public override void put(Bytes key,
-                    byte[] value)
-{
-        wrapped().Add(key, value);
-        log(key, value);
-    }
+            // if the inner store is an LRU cache,.Add the eviction listener to log removed record
+            if (wrapped() is MemoryLRUCache)
+            {
+                ((MemoryLRUCache)wrapped()).setWhenEldestRemoved((key, value)->
+    {
+                    // pass null to indicate removal
+                    log(key, null);
+                });
+            }
+        }
 
-    public override byte[] putIfAbsent(Bytes key,
-                              byte[] value)
-{
-        byte[] previous = wrapped().putIfAbsent(key, value);
-        if (previous == null)
-{
-            // then it was absent
+        public override long approximateNumEntries()
+        {
+            return wrapped().approximateNumEntries();
+        }
+
+        public override void put(Bytes key,
+                        byte[] value)
+        {
+            wrapped().Add(key, value);
             log(key, value);
         }
-        return previous;
-    }
 
-    public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
-{
-        wrapped().putAll(entries);
-        foreach (KeyValue<Bytes, byte[]> entry in entries)
-{
-            log(entry.key, entry.value);
+        public override byte[] putIfAbsent(Bytes key,
+                                  byte[] value)
+        {
+            byte[] previous = wrapped().putIfAbsent(key, value);
+            if (previous == null)
+            {
+                // then it was absent
+                log(key, value);
+            }
+            return previous;
         }
-    }
 
-    public override byte[] delete(Bytes key)
-{
-        byte[] oldValue = wrapped().delete(key);
-        log(key, null);
-        return oldValue;
-    }
+        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        {
+            wrapped().putAll(entries);
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            {
+                log(entry.key, entry.value);
+            }
+        }
 
-    public override byte[] get(Bytes key)
-{
-        return wrapped()[key);
-    }
+        public override byte[] delete(Bytes key)
+        {
+            byte[] oldValue = wrapped().delete(key);
+            log(key, null);
+            return oldValue;
+        }
 
-    public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
-                                                 Bytes to)
-{
-        return wrapped().range(from, to);
-    }
+        public override byte[] get(Bytes key)
+        {
+            return wrapped()[key);
+        }
 
-    public override KeyValueIterator<Bytes, byte[]> all()
-{
-        return wrapped().all();
-    }
+        public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
+                                                     Bytes to)
+        {
+            return wrapped().range(from, to);
+        }
 
-    void log(Bytes key,
-             byte[] value)
-{
-        changeLogger.logChange(key, value);
+        public override KeyValueIterator<Bytes, byte[]> all()
+        {
+            return wrapped().all();
+        }
+
+        void log(Bytes key,
+                 byte[] value)
+        {
+            changeLogger.logChange(key, value);
+        }
     }
 }

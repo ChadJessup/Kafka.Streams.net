@@ -14,19 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-
-
-
-
-public RecordConverters
+namespace Kafka.Streams.State.Internals
 {
-    private static RecordConverter IDENTITY_INSTANCE = record -> record;
+    public class RecordConverters
+    {
+        private static RecordConverter IDENTITY_INSTANCE = record->record;
 
-    @SuppressWarnings("deprecation")
-    private static RecordConverter RAW_TO_TIMESTAMED_INSTANCE = record ->
-{
+
+        private static RecordConverter RAW_TO_TIMESTAMED_INSTANCE = record =>
+    {
         byte[] rawValue = record.value();
         long timestamp = record.timestamp();
         byte[] recordValue = rawValue == null ? null :
@@ -50,16 +46,17 @@ public RecordConverters
         );
     };
 
-    // privatize the constructor so the cannot be instantiated (only used for its static members)
-    private RecordConverters() {}
+        // privatize the constructor so the cannot be instantiated (only used for its static members)
+        private RecordConverters() { }
 
-    public static RecordConverter rawValueToTimestampedValue()
-{
-        return RAW_TO_TIMESTAMED_INSTANCE;
-    }
+        public static RecordConverter rawValueToTimestampedValue()
+        {
+            return RAW_TO_TIMESTAMED_INSTANCE;
+        }
 
-    public static RecordConverter identity()
-{
-        return IDENTITY_INSTANCE;
+        public static RecordConverter identity()
+        {
+            return IDENTITY_INSTANCE;
+        }
     }
 }

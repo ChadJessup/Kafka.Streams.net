@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processor.Internals
  * This is responsible for the initialization, restoration, closing, flushing etc
  * of Global State Stores. There is only ever 1 instance of this per Application Instance.
  */
-public GlobalStateManagerImpl : GlobalStateManager
+public class GlobalStateManagerImpl : GlobalStateManager
     {
     private ILogger log;
     private bool eosEnabled;
@@ -76,7 +76,9 @@ public GlobalStateManagerImpl : GlobalStateManager
 
     public HashSet<string> initialize()
 {
-        try {
+        try
+{
+
             if (!stateDirectory.lockGlobalState())
 {
                 throw new LockException(string.Format("Failed to lock the global state directory: %s", baseDir));
@@ -86,11 +88,15 @@ public GlobalStateManagerImpl : GlobalStateManager
             throw new LockException(string.Format("Failed to lock the global state directory: %s", baseDir), e);
         }
 
-        try {
+        try
+{
+
             checkpointFileCache.putAll(checkpointFile.read());
         } catch (IOException e)
 {
-            try {
+            try
+{
+
                 stateDirectory.unlockGlobalState();
             } catch (IOException e1)
 {
@@ -164,14 +170,16 @@ public GlobalStateManagerImpl : GlobalStateManager
             throw new System.ArgumentException(string.Format("The stateRestoreCallback provided for store %s was null", store.name()));
         }
 
-        log.info("Restoring state for global store {}", store.name());
+        log.LogInformation("Restoring state for global store {}", store.name());
         List<TopicPartition> topicPartitions = topicPartitionsForStore(store);
         Dictionary<TopicPartition, long> highWatermarks = null;
 
         int attempts = 0;
         while (highWatermarks == null)
 {
-            try {
+            try
+{
+
                 highWatermarks = globalConsumer.endOffsets(topicPartitions);
             } catch (TimeoutException retryableException)
 {
@@ -195,7 +203,9 @@ public GlobalStateManagerImpl : GlobalStateManager
                 Utils.sleep(retryBackoffMs);
             }
         }
-        try {
+        try
+{
+
             restoreState(
                 stateRestoreCallback,
                 topicPartitions,
@@ -204,7 +214,9 @@ public GlobalStateManagerImpl : GlobalStateManager
                 converterForStore(store)
             );
             globalStores.Add(store.name(), Optional.of(store));
-        } finally {
+        } finally
+{
+
             globalConsumer.unsubscribe();
         }
 
@@ -217,7 +229,9 @@ public GlobalStateManagerImpl : GlobalStateManager
         int attempts = 0;
         while (true)
 {
-            try {
+            try
+{
+
                 partitionInfos = globalConsumer.partitionsFor(sourceTopic);
                 break;
             } catch (TimeoutException retryableException)
@@ -273,7 +287,9 @@ public GlobalStateManagerImpl : GlobalStateManager
             if (checkpoint != null)
 {
                 globalConsumer.seek(topicPartition, checkpoint);
-            } else {
+            } else
+{
+
                 globalConsumer.seekToBeginning(Collections.singletonList(topicPartition));
             }
 
@@ -287,7 +303,9 @@ public GlobalStateManagerImpl : GlobalStateManager
 
             while (offset < highWatermark)
 {
-                try {
+                try
+{
+
                     ConsumerRecords<byte[], byte[]> records = globalConsumer.poll(pollTime);
                     List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>();
                     foreach (ConsumerRecord<byte[], byte[]> record in records.records(topicPartition))
@@ -326,8 +344,10 @@ public GlobalStateManagerImpl : GlobalStateManager
             if (entry.Value.isPresent())
 {
                 IStateStore store = entry.Value[);
-                try {
-                    log.trace("Flushing global store={}", store.name());
+                try
+{
+
+                    log.LogTrace("Flushing global store={}", store.name());
                     store.flush();
                 } catch (Exception e)
 {
@@ -336,7 +356,9 @@ public GlobalStateManagerImpl : GlobalStateManager
                         e
                     );
                 }
-            } else {
+            } else
+{
+
                 throw new InvalidOperationException("Expected " + entry.Key + " to have been initialized");
             }
         }
@@ -344,7 +366,9 @@ public GlobalStateManagerImpl : GlobalStateManager
 
     public void close(bool clean)
     {
-        try {
+        try
+{
+
             if (globalStores.isEmpty())
 {
                 return;
@@ -356,7 +380,9 @@ public GlobalStateManagerImpl : GlobalStateManager
                 if (entry.Value.isPresent())
 {
                     log.LogDebug("Closing global storage engine {}", entry.Key);
-                    try {
+                    try
+{
+
                         entry.Value().close();
                     } catch (RuntimeException e)
 {
@@ -368,15 +394,19 @@ public GlobalStateManagerImpl : GlobalStateManager
                                    .Append("\n");
                     }
                     globalStores.Add(entry.Key, Optional.empty());
-                } else {
-                    log.info("Skipping to close non-initialized store {}", entry.Key);
+                } else
+{
+
+                    log.LogInformation("Skipping to close non-initialized store {}", entry.Key);
                 }
             }
             if (closeFailed.Length > 0)
 {
                 throw new ProcessorStateException("Exceptions caught during close of 1 or more global state globalStores\n" + closeFailed);
             }
-        } finally {
+        } finally
+{
+
             stateDirectory.unlockGlobalState();
         }
     }
@@ -398,7 +428,9 @@ public GlobalStateManagerImpl : GlobalStateManager
             }
         }
 
-        try {
+        try
+{
+
             checkpointFile.write(filteredOffsets);
         } catch (IOException e)
 {

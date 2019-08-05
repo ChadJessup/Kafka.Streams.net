@@ -54,7 +54,7 @@ abstract AssignedTasks<T : Task> {
         this.log = logContext.logger(GetType());
     }
 
-    void.AddNewTask(T task)
+    void addNewTask(T task)
 {
         created.Add(task.id(), task);
     }
@@ -73,19 +73,23 @@ abstract AssignedTasks<T : Task> {
         for (Iterator<Map.Entry<TaskId, T>> it = created.entrySet().iterator(); it.hasNext(); )
 {
             Map.Entry<TaskId, T> entry = it.next();
-            try {
+            try
+{
+
                 if (!entry.Value.initializeStateStores())
 {
                     log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
                     ((AssignedStreamsTasks) this).AddToRestoring((StreamTask) entry.Value);
-                } else {
+                } else
+{
+
                     transitionToRunning(entry.Value);
                 }
                 it.Remove();
             } catch (LockException e)
 {
                 // made this trace as it will spam the logs in the poll loop.
-                log.trace("Could not create {} {} due to {}; will retry", taskTypeName, entry.Key, e.ToString());
+                log.LogTrace("Could not create {} {} due to {}; will retry", taskTypeName, entry.Key, e.ToString());
             }
         }
     }
@@ -103,9 +107,9 @@ abstract AssignedTasks<T : Task> {
     RuntimeException suspend()
 {
         AtomicReference<RuntimeException> firstException = new AtomicReference<>(null);
-        log.trace("Suspending running {} {}", taskTypeName, runningTaskIds());
+        log.LogTrace("Suspending running {} {}", taskTypeName, runningTaskIds());
         firstException.compareAndSet(null, suspendTasks(running.values()));
-        log.trace("Close created {} {}", taskTypeName, created.keySet());
+        log.LogTrace("Close created {} {}", taskTypeName, created.keySet());
         firstException.compareAndSet(null, closeNonRunningTasks(created.values()));
         previousActiveTasks.clear();
         previousActiveTasks.AddAll(running.keySet());
@@ -120,7 +124,9 @@ abstract AssignedTasks<T : Task> {
         RuntimeException exception = null;
         foreach (T task in tasks)
 {
-            try {
+            try
+{
+
                 task.close(false, false);
             } catch (RuntimeException e)
 {
@@ -140,13 +146,15 @@ abstract AssignedTasks<T : Task> {
         for (Iterator<T> it = tasks.iterator(); it.hasNext(); )
 {
             T task = it.next();
-            try {
+            try
+{
+
                 task.suspend();
                 suspended.Add(task.id(), task);
             } catch (TaskMigratedException closeAsZombieAndSwallow)
 {
                 // as we suspend a task, we are either shutting down or rebalancing, thus, we swallow and move on
-                log.info("Failed to suspend {} {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to suspend {} {} since it got migrated to another thread already. " +
                         "Closing it as zombie and move on.", taskTypeName, task.id());
                 firstException.compareAndSet(null, closeZombieTask(task));
                 it.Remove();
@@ -154,7 +162,9 @@ abstract AssignedTasks<T : Task> {
 {
                 log.LogError("Suspending {} {} failed due to the following error:", taskTypeName, task.id(), e);
                 firstException.compareAndSet(null, e);
-                try {
+                try
+{
+
                     task.close(false, false);
                 } catch (RuntimeException f)
 {
@@ -167,7 +177,9 @@ abstract AssignedTasks<T : Task> {
 
     RuntimeException closeZombieTask(T task)
 {
-        try {
+        try
+{
+
             task.close(false, true);
         } catch (RuntimeException e)
 {
@@ -190,18 +202,20 @@ abstract AssignedTasks<T : Task> {
         if (suspended.ContainsKey(taskId))
 {
             T task = suspended[taskId];
-            log.trace("Found suspended {} {}", taskTypeName, taskId);
+            log.LogTrace("Found suspended {} {}", taskTypeName, taskId);
             if (task.partitions().Equals(partitions))
 {
                 suspended.Remove(taskId);
                 task.resume();
-                try {
+                try
+{
+
                     transitionToRunning(task);
                 } catch (TaskMigratedException e)
 {
                     // we need to catch migration exception internally since this function
                     // is triggered in the rebalance callback
-                    log.info("Failed to resume {} {} since it got migrated to another thread already. " +
+                    log.LogInformation("Failed to resume {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id());
                     RuntimeException fatalException = closeZombieTask(task);
                     running.Remove(task.id());
@@ -211,9 +225,11 @@ abstract AssignedTasks<T : Task> {
                     }
                     throw e;
                 }
-                log.trace("Resuming suspended {} {}", taskTypeName, task.id());
+                log.LogTrace("Resuming suspended {} {}", taskTypeName, task.id());
                 return true;
-            } else {
+            } else
+{
+
                 log.LogWarning("Couldn't resume task {} assigned partitions {}, task partitions {}", taskId, partitions, task.partitions());
             }
         }
@@ -323,7 +339,9 @@ abstract AssignedTasks<T : Task> {
         for (Iterator<T> it = running().iterator(); it.hasNext(); )
 {
             T task = it.next();
-            try {
+            try
+{
+
                 if (task.commitNeeded())
 {
                     task.commit();
@@ -331,7 +349,7 @@ abstract AssignedTasks<T : Task> {
                 }
             } catch (TaskMigratedException e)
 {
-                log.info("Failed to commit {} {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to commit {} {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id());
                 RuntimeException fatalException = closeZombieTask(task);
                 if (fatalException != null)
@@ -370,12 +388,16 @@ abstract AssignedTasks<T : Task> {
             if (!newAssignment.ContainsKey(suspendedTask.id()) || !suspendedTask.partitions().Equals(newAssignment[suspendedTask.id())))
 {
                 log.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedTask.id());
-                try {
+                try
+{
+
                     suspendedTask.closeSuspended(true, false, null);
                 } catch (Exception e)
 {
                     log.LogError("Failed to Remove suspended {} {} due to the following error:", taskTypeName, suspendedTask.id(), e);
-                } finally {
+                } finally
+{
+
                     standByTaskIterator.Remove();
                 }
             }
@@ -387,11 +409,13 @@ abstract AssignedTasks<T : Task> {
         AtomicReference<RuntimeException> firstException = new AtomicReference<>(null);
         foreach (T task in allTasks())
 {
-            try {
+            try
+{
+
                 task.close(clean, false);
             } catch (TaskMigratedException e)
 {
-                log.info("Failed to close {} {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to close {} {} since it got migrated to another thread already. " +
                         "Closing it as zombie and move on.", taskTypeName, task.id());
                 firstException.compareAndSet(null, closeZombieTask(task));
             } catch (RuntimeException t)
@@ -406,7 +430,9 @@ abstract AssignedTasks<T : Task> {
 {
                         firstException.compareAndSet(null, t);
                     }
-                } else {
+                } else
+{
+
                     firstException.compareAndSet(null, t);
                 }
             }
@@ -423,8 +449,10 @@ abstract AssignedTasks<T : Task> {
 
     private bool closeUnclean(T task)
 {
-        log.info("Try to close {} {} unclean.", task.GetType().getSimpleName(), task.id());
-        try {
+        log.LogInformation("Try to close {} {} unclean.", task.GetType().getSimpleName(), task.id());
+        try
+{
+
             task.close(false, false);
         } catch (RuntimeException fatalException)
 {

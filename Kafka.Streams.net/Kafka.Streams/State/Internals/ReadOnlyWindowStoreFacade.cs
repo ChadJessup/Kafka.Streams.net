@@ -14,122 +14,76 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.streams.state;
 
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.kstream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.ReadOnlyWindowStore;
-using Kafka.Streams.State.TimestampedWindowStore;
-using Kafka.Streams.State.ValueAndTimestamp;
-using Kafka.Streams.State.WindowStoreIterator;
-
-
-
-
-
-public ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
+namespace Kafka.Streams.State.Internals
 {
-    protected TimestampedWindowStore<K, V> inner;
+    public class ReadOnlyWindowStoreFacade<K, V> : ReadOnlyWindowStore<K, V>
+    {
+        protected TimestampedWindowStore<K, V> inner;
 
-    protected ReadOnlyWindowStoreFacade(TimestampedWindowStore<K, V> store)
-{
-        inner = store;
-    }
-
-    public override V fetch(K key,
-                   long time)
-{
-        return getValueOrNull(inner.fetch(key, time));
-    }
-
-    
-    @SuppressWarnings("deprecation")
-    public WindowStoreIterator<V> fetch(K key,
-                                        long timeFrom,
-                                        long timeTo)
-{
-        return new WindowStoreIteratorFacade<>(inner.fetch(key, timeFrom, timeTo));
-    }
-
-    public override WindowStoreIterator<V> fetch(K key,
-                                        Instant from,
-                                        Instant to) throws ArgumentException
-{
-        return new WindowStoreIteratorFacade<>(inner.fetch(key, from, to));
-    }
-
-    
-    @SuppressWarnings("deprecation")
-    public KeyValueIterator<Windowed<K>, V> fetch(K from,
-                                                  K to,
-                                                  long timeFrom,
-                                                  long timeTo)
-{
-        return new KeyValueIteratorFacade<>(inner.fetch(from, to, timeFrom, timeTo));
-    }
-
-    public override KeyValueIterator<Windowed<K>, V> fetch(K from,
-                                                  K to,
-                                                  Instant fromTime,
-                                                  Instant toTime) throws ArgumentException
-{
-        return new KeyValueIteratorFacade<>(inner.fetch(from, to, fromTime, toTime));
-    }
-
-    
-    @SuppressWarnings("deprecation")
-    public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
-                                                     long timeTo)
-{
-        return new KeyValueIteratorFacade<>(inner.fetchAll(timeFrom, timeTo));
-    }
-
-    public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
-                                                     Instant to) throws ArgumentException
-{
-        KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.fetchAll(from, to);
-        return new KeyValueIteratorFacade<>(innerIterator);
-    }
-
-    public override KeyValueIterator<Windowed<K>, V> all()
-{
-        KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.all();
-        return new KeyValueIteratorFacade<>(innerIterator);
-    }
-
-    private static WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
-{
-        KeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
-
-        WindowStoreIteratorFacade(KeyValueIterator<long, ValueAndTimestamp<V>> iterator)
-{
-            innerIterator = iterator;
+        protected ReadOnlyWindowStoreFacade(TimestampedWindowStore<K, V> store)
+        {
+            inner = store;
         }
 
-        
-        public void close()
-{
-            innerIterator.close();
+        public override V fetch(K key,
+                       long time)
+        {
+            return getValueOrNull(inner.fetch(key, time));
         }
 
-        
-        public long peekNextKey()
-{
-            return innerIterator.peekNextKey();
+
+
+        public WindowStoreIterator<V> fetch(K key,
+                                            long timeFrom,
+                                            long timeTo)
+        {
+            return new WindowStoreIteratorFacade<>(inner.fetch(key, timeFrom, timeTo));
         }
 
-        
-        public bool hasNext()
-{
-            return innerIterator.hasNext();
+        public override WindowStoreIterator<V> fetch(K key,
+                                            Instant from,
+                                            Instant to)
+        {
+            return new WindowStoreIteratorFacade<>(inner.fetch(key, from, to));
         }
 
-        
-        public KeyValue<long, V> next()
-{
-            KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
-            return KeyValue.pair(innerKeyValue.key, getValueOrNull(innerKeyValue.value));
+
+
+        public KeyValueIterator<Windowed<K>, V> fetch(K from,
+                                                      K to,
+                                                      long timeFrom,
+                                                      long timeTo)
+        {
+            return new KeyValueIteratorFacade<>(inner.fetch(from, to, timeFrom, timeTo));
+        }
+
+        public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+                                                      K to,
+                                                      Instant fromTime,
+                                                      Instant toTime)
+        {
+            return new KeyValueIteratorFacade<>(inner.fetch(from, to, fromTime, toTime));
+        }
+
+        public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+                                                         long timeTo)
+        {
+            return new KeyValueIteratorFacade<>(inner.fetchAll(timeFrom, timeTo));
+        }
+
+        public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
+                                                         Instant to)
+        {
+            KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.fetchAll(from, to);
+            return new KeyValueIteratorFacade<>(innerIterator);
+        }
+
+        public override KeyValueIterator<Windowed<K>, V> all()
+        {
+            KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.all();
+            return new KeyValueIteratorFacade<>(innerIterator);
         }
     }
 }

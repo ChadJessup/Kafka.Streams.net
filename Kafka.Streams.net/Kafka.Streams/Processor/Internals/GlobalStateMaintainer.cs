@@ -25,7 +25,9 @@ using Kafka.Common.TopicPartition;
 /**
  * Interface for maintaining global state stores. see {@link GlobalStateUpdateTask}
  */
-interface GlobalStateMaintainer {
+interface GlobalStateMaintainer
+{
+
 
     Dictionary<TopicPartition, long> initialize();
 

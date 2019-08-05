@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Errors {
+namespace Kafka.Streams.Errors
+{
+
 
 
 
@@ -28,7 +30,9 @@ namespace Kafka.Streams.Errors {
  * Deserialization handler that logs a deserialization exception and then
  * signals the processing pipeline to stop processing more records and fail.
  */
-public LogAndFailExceptionHandler : IDeserializationExceptionHandler {
+public LogAndFailExceptionHandler : IDeserializationExceptionHandler
+{
+
     private static  Logger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler);
 
     

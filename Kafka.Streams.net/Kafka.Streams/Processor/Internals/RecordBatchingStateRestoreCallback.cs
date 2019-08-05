@@ -22,7 +22,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public interface RecordBatchingStateRestoreCallback : BatchingStateRestoreCallback {
+public interface RecordBatchingStateRestoreCallback : BatchingStateRestoreCallback
+{
+
     void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records);
 
     

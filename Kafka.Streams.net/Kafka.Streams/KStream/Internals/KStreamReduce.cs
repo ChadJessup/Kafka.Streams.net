@@ -80,7 +80,9 @@ public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
 {
                 newAgg = value;
                 newTimestamp = context().timestamp();
-            } else {
+            } else
+{
+
                 newAgg = reducer.apply(oldAgg, value);
                 newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
             }

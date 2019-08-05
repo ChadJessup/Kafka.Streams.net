@@ -14,14 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Errors {
+namespace Kafka.Streams.Errors
+{
+
 
 
 /**
  * Indicates a pre run time error occurred while parsing the {@link org.apache.kafka.streams.Topology logical topology}
  * to construct the {@link org.apache.kafka.streams.processor.internals.ProcessorTopology physical processor topology}.
  */
-public TopologyException : StreamsException {
+public TopologyException : StreamsException
+{
+
 
     private static  long serialVersionUID = 1L;
 

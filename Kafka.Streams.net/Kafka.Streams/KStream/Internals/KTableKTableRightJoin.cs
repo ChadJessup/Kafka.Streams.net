@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -165,11 +167,15 @@ class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
                 if (valueAndTimestamp1 == null)
 {
                     resultTimestamp = valueAndTimestamp2.timestamp();
-                } else {
+                } else
+{
+
                     resultTimestamp = Math.Max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp());
                 }
                 return ValueAndTimestamp.make(joiner.apply(value1, value2), resultTimestamp);
-            } else {
+            } else
+{
+
                 return null;
             }
         }

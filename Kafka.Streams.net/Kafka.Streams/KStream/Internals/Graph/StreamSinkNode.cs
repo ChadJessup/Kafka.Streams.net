@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -25,7 +26,10 @@ namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
-public StreamSinkNode<K, V> : StreamsGraphNode {
+
+public StreamSinkNode<K, V> : StreamsGraphNode
+{
+
 
     private  TopicNameExtractor<K, V> topicNameExtractor;
     private  ProducedInternal<K, V> producedInternal;
@@ -64,7 +68,9 @@ public StreamSinkNode<K, V> : StreamsGraphNode {
             
              StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<object, V>((WindowedSerializer) keySerializer);
             topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
-        } else {
+        } else
+{
+
             topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner,  parentNames);
         }
     }

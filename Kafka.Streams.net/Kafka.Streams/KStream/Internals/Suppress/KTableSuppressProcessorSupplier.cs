@@ -90,7 +90,9 @@ public KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, V, V> 
                         if (maybeValue.isDefined())
 {
                             return maybeValue.getNullableValue();
-                        } else {
+                        } else
+{
+
                             // not buffered, so the suppressed view is equal to the parent view
                             return parentGetter[key];
                         }
@@ -216,10 +218,14 @@ public KTableSuppressProcessorSupplier<K, V> : KTableProcessorSupplier<K, V, V> 
 {
                  ProcessorRecordContext prevRecordContext = internalProcessorContext.recordContext();
                 internalProcessorContext.setRecordContext(toEmit.recordContext());
-                try {
+                try
+{
+
                     internalProcessorContext.forward(toEmit.key(), toEmit.value());
                     suppressionEmitSensor.record();
-                } finally {
+                } finally
+{
+
                     internalProcessorContext.setRecordContext(prevRecordContext);
                 }
             }

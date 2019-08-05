@@ -19,7 +19,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public interface ProcessorNodePunctuator {
+public interface ProcessorNodePunctuator
+{
+
 
     void punctuate(ProcessorNode node, long streamTime, PunctuationType type, Punctuator punctuator);
 

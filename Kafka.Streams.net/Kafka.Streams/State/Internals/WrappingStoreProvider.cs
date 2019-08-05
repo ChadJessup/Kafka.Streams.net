@@ -14,49 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using System.Collections.Generic;
 
-using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.QueryableStoreType;
-
-
-
-
-/**
- * Provides a wrapper over multiple underlying {@link StateStoreProvider}s
- */
-public WrappingStoreProvider : StateStoreProvider
+namespace Kafka.Streams.State.Internals
 {
-
-    private List<StateStoreProvider> storeProviders;
-
-    WrappingStoreProvider(List<StateStoreProvider> storeProviders)
-{
-        this.storeProviders = storeProviders;
-    }
-
     /**
-     * Provides access to {@link org.apache.kafka.streams.processor.IStateStore}s accepted
-     * by {@link QueryableStoreType#accepts(IStateStore)}
-     * @param storeName  name of the store
-     * @param type      The {@link QueryableStoreType}
-     * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
-     * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
+     * Provides a wrapper over multiple underlying {@link StateStoreProvider}s
      */
-    public List<T> stores(string storeName,
-                              QueryableStoreType<T> type)
-{
-        List<T> allStores = new List<>();
-        foreach (StateStoreProvider provider in storeProviders)
-{
-            List<T> stores = provider.stores(storeName, type);
-            allStores.AddAll(stores);
+    public class WrappingStoreProvider : StateStoreProvider
+    {
+
+        private List<StateStoreProvider> storeProviders;
+
+        WrappingStoreProvider(List<StateStoreProvider> storeProviders)
+        {
+            this.storeProviders = storeProviders;
         }
-        if (allStores.isEmpty())
-{
-            throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
+
+        /**
+         * Provides access to {@link org.apache.kafka.streams.processor.IStateStore}s accepted
+         * by {@link QueryableStoreType#accepts(IStateStore)}
+         * @param storeName  name of the store
+         * @param type      The {@link QueryableStoreType}
+         * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
+         * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
+         */
+        public List<T> stores(string storeName,
+                                  QueryableStoreType<T> type)
+        {
+            List<T> allStores = new List<>();
+            foreach (StateStoreProvider provider in storeProviders)
+            {
+                List<T> stores = provider.stores(storeName, type);
+                allStores.AddAll(stores);
+            }
+            if (allStores.isEmpty())
+            {
+                throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
+            }
+            return allStores;
         }
-        return allStores;
     }
 }

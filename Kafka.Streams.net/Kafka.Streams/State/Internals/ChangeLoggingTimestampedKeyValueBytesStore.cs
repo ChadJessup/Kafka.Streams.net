@@ -14,32 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.KeyValueStore;
-
-
-
-
-public ChangeLoggingTimestampedKeyValueBytesStore : ChangeLoggingKeyValueBytesStore
+namespace Kafka.Streams.State.Internals
 {
+    public class ChangeLoggingTimestampedKeyValueBytesStore : ChangeLoggingKeyValueBytesStore
+    {
 
-    ChangeLoggingTimestampedKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
-{
-        base(inner);
-    }
+        ChangeLoggingTimestampedKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
+            : base(inner)
+        {
+        }
 
-    
-    void log(Bytes key,
-             byte[] valueAndTimestamp)
-{
-        if (valueAndTimestamp != null)
-{
-            changeLogger.logChange(key, rawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
-        } else
-{
-            changeLogger.logChange(key, null);
+
+        void log(Bytes key,
+                 byte[] valueAndTimestamp)
+        {
+            if (valueAndTimestamp != null)
+            {
+                changeLogger.logChange(key, rawValue(valueAndTimestamp), timestamp(valueAndTimestamp));
+            }
+            else
+            {
+                changeLogger.logChange(key, null);
+            }
         }
     }
 }

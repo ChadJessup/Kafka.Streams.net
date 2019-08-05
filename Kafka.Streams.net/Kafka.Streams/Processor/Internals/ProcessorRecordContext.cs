@@ -27,7 +27,9 @@ using Kafka.Common.header.internals.RecordHeaders;
 
 
 
-public ProcessorRecordContext : RecordContext {
+public class ProcessorRecordContext : RecordContext
+{
+
 
     private long timestamp;
     private long offset;
@@ -49,31 +51,31 @@ public ProcessorRecordContext : RecordContext {
         this.headers = headers;
     }
 
-    
+
     public long offset()
 {
         return offset;
     }
 
-    
+
     public long timestamp()
 {
         return timestamp;
     }
 
-    
+
     public string topic()
 {
         return topic;
     }
 
-    
+
     public int partition()
 {
         return partition;
     }
 
-    
+
     public Headers headers()
 {
         return headers;
@@ -122,7 +124,9 @@ public ProcessorRecordContext : RecordContext {
         if (headers == null)
 {
             headerKeysBytes = headerValuesBytes = null;
-        } else {
+        } else
+{
+
             Header[] headers = this.headers.toArray();
             headerKeysBytes = new byte[headers.Length][];
             headerValuesBytes = new byte[headers.Length][];
@@ -156,7 +160,9 @@ public ProcessorRecordContext : RecordContext {
         if (headers == null)
 {
             buffer.putInt(-1);
-        } else {
+        } else
+{
+
             buffer.putInt(headerKeysBytes.Length);
             for (int i = 0; i < headerKeysBytes.Length; i++)
 {
@@ -167,7 +173,9 @@ public ProcessorRecordContext : RecordContext {
 {
                     buffer.putInt(headerValuesBytes[i].Length);
                     buffer.Add(headerValuesBytes[i]);
-                } else {
+                } else
+{
+
                     buffer.putInt(-1);
                 }
             }
@@ -194,7 +202,9 @@ public ProcessorRecordContext : RecordContext {
         if (headerCount == -1)
 {
             headers = null;
-        } else {
+        } else
+{
+
             Header[] headerArr = new Header[headerCount];
             for (int i = 0; i < headerCount; i++)
 {
@@ -207,7 +217,9 @@ public ProcessorRecordContext : RecordContext {
                 if (valueSize == -1)
 {
                     valueBytes = null;
-                } else {
+                } else
+{
+
                     valueBytes = new byte[valueSize];
                     buffer[valueBytes];
                 }
@@ -220,7 +232,7 @@ public ProcessorRecordContext : RecordContext {
         return new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
     }
 
-    
+
     public bool Equals(object o)
 {
         if (this == o)
@@ -243,13 +255,13 @@ public ProcessorRecordContext : RecordContext {
      * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
      */
     [System.Obsolete]
-    
+
     public int GetHashCode()
 {
         throw new InvalidOperationException("ProcessorRecordContext is unsafe for use in Hash collections");
     }
 
-    
+
     public string ToString()
 {
         return "ProcessorRecordContext{" +

@@ -29,7 +29,9 @@ using Kafka.Common.metrics.RecordingLevel;
 
 
 
-public ThreadMetrics {
+public ThreadMetrics
+{
+
     private ThreadMetrics() {}
 
     private static string COMMIT = "commit";

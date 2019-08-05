@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -51,7 +53,9 @@ public SessionWindowedDeserializer<T> : Deserializer<Windowed<T>> {
 {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
              string value = (string) configs[propertyName);
-            try {
+            try
+{
+
                 inner = Serde.cast(Utils.newInstance(value, Serde)).deserializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)

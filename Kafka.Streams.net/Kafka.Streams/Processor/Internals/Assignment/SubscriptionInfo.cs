@@ -30,7 +30,9 @@ namespace Kafka.Streams.Processor.Internals.assignment;
 
 
 
-public SubscriptionInfo {
+public SubscriptionInfo
+{
+
 
     private static ILogger log = new LoggerFactory().CreateLogger<SubscriptionInfo>();
 
@@ -192,7 +194,9 @@ public SubscriptionInfo {
         if (userEndPoint == null)
 {
             return new byte[0];
-        } else {
+        } else
+{
+
             return userEndPoint.getBytes(System.Text.Encoding.UTF8);
         }
     }
@@ -304,7 +308,7 @@ public SubscriptionInfo {
             default:
                 latestSupportedVersion = data.getInt();
                 subscriptionInfo = new SubscriptionInfo(usedVersion, latestSupportedVersion);
-                log.info("Unable to decode subscription data: used version: {}; latest supported version: {}", usedVersion, LATEST_SUPPORTED_VERSION);
+                log.LogInformation("Unable to decode subscription data: used version: {}; latest supported version: {}", usedVersion, LATEST_SUPPORTED_VERSION);
         }
 
         return subscriptionInfo;
@@ -392,7 +396,9 @@ public SubscriptionInfo {
                     this.prevTasks.Equals(other.prevTasks) &&
                     this.standbyTasks.Equals(other.standbyTasks) &&
                     this.userEndPoint != null ? this.userEndPoint.Equals(other.userEndPoint) : other.userEndPoint == null;
-        } else {
+        } else
+{
+
             return false;
         }
     }

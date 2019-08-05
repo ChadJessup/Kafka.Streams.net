@@ -34,9 +34,9 @@ using Kafka.Streams.Processor.internals.InternalProcessorContext;
 
 
 
-abstract AbstractSegments<S : Segment> : Segments<S>
+abstract class AbstractSegments<S : Segment> : Segments<S>
 {
-    private static Logger log = new LoggerFactory().CreateLogger<AbstractSegments);
+    private static ILogger log = new LoggerFactory().CreateLogger<AbstractSegments>();
 
     TreeMap<long, S> segments = new TreeMap<>();
     string name;
@@ -87,7 +87,7 @@ abstract AbstractSegments<S : Segment> : Segments<S>
             toReturn = getOrCreateSegment(segmentId, context);
         } else
 {
-            toReturn = null;
+            toReturn = default;
         }
 
         cleanupEarlierThan(minLiveSegment);

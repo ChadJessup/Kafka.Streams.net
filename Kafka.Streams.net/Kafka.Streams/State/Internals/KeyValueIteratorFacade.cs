@@ -14,41 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-public KeyValueIteratorFacade<K, V> : KeyValueIterator<K, V>
+namespace Kafka.Streams.State.Internals
 {
-    private KeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
+    public class KeyValueIteratorFacade<K, V> : KeyValueIterator<K, V>
+    {
+        private KeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
 
-    public KeyValueIteratorFacade(KeyValueIterator<K, ValueAndTimestamp<V>> iterator)
-{
-        innerIterator = iterator;
-    }
+        public KeyValueIteratorFacade(KeyValueIterator<K, ValueAndTimestamp<V>> iterator)
+        {
+            innerIterator = iterator;
+        }
 
-    public override bool hasNext()
-{
-        return innerIterator.hasNext();
-    }
+        public override bool hasNext()
+        {
+            return innerIterator.hasNext();
+        }
 
-    public override K peekNextKey()
-{
-        return innerIterator.peekNextKey();
-    }
+        public override K peekNextKey()
+        {
+            return innerIterator.peekNextKey();
+        }
 
-    public override KeyValue<K, V> next()
-{
-        KeyValue<K, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
-        return KeyValue.pair(innerKeyValue.key, getValueOrNull(innerKeyValue.value));
-    }
+        public override KeyValue<K, V> next()
+        {
+            KeyValue<K, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
+            return KeyValue.pair(innerKeyValue.key, getValueOrNull(innerKeyValue.value));
+        }
 
-    public override void close()
-{
-        innerIterator.close();
+        public override void close()
+        {
+            innerIterator.close();
+        }
     }
 }

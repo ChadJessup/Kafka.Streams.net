@@ -27,7 +27,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-class RecordDeserializer {
+class RecordDeserializer
+{
+
     private SourceNode sourceNode;
     private DeserializationExceptionHandler deserializationExceptionHandler;
     private Logger log;
@@ -49,12 +51,14 @@ class RecordDeserializer {
      *                          {@link DeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
      *                          oritself
      */
-    @SuppressWarnings("deprecation")
+    
     ConsumerRecord<object, object> deserialize(IProcessorContext processorContext,
                                                ConsumerRecord<byte[], byte[]> rawRecord)
 {
 
-        try {
+        try
+{
+
             return new ConsumerRecord<>(
                 rawRecord.topic(),
                 rawRecord.partition(),
@@ -69,7 +73,9 @@ class RecordDeserializer {
         } catch (Exception deserializationException)
 {
             DeserializationExceptionHandler.DeserializationHandlerResponse response;
-            try {
+            try
+{
+
                 response = deserializationExceptionHandler.handle(processorContext, rawRecord, deserializationException);
             } catch (Exception fatalUserException)
 {
@@ -87,7 +93,9 @@ class RecordDeserializer {
                     " continue after a deserialization error, please set the " +
                     DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG + " appropriately.",
                     deserializationException);
-            } else {
+            } else
+{
+
                 log.LogWarning(
                     "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
                     rawRecord.topic(),

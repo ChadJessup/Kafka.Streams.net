@@ -14,65 +14,62 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-
-
-
-public BufferKey : Comparable<BufferKey>
+namespace Kafka.Streams.State.Internals
 {
-    private long time;
-    private Bytes key;
+    public class BufferKey : Comparable<BufferKey>
+    {
+        private long time;
+        private Bytes key;
 
-    BufferKey(long time, Bytes key)
-{
-        this.time = time;
-        this.key = key;
-    }
-
-    long time()
-{
-        return time;
-    }
-
-    Bytes key()
-{
-        return key;
-    }
-
-    public override bool Equals(object o)
-{
-        if (this == o)
-{
-            return true;
+        BufferKey(long time, Bytes key)
+        {
+            this.time = time;
+            this.key = key;
         }
-        if (o == null || GetType() != o.GetType())
-{
-            return false;
+
+        long time()
+        {
+            return time;
         }
-        BufferKey bufferKey = (BufferKey) o;
-        return time == bufferKey.time &&
-            Objects.Equals(key, bufferKey.key);
-    }
 
-    public override int GetHashCode()
-{
-        return Objects.hash(time, key);
-    }
+        Bytes key()
+        {
+            return key;
+        }
 
-    public override int compareTo(BufferKey o)
-{
-        // ordering of keys within a time uses GetHashCode().
-        int timeComparison = long.compare(time, o.time);
-        return timeComparison == 0 ? key.compareTo(o.key) : timeComparison;
-    }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+            BufferKey bufferKey = (BufferKey)o;
+            return time == bufferKey.time &&
+                Objects.Equals(key, bufferKey.key);
+        }
 
-    public override string ToString()
-{
-        return "BufferKey{" +
-            "key=" + key +
-            ", time=" + time +
-            '}';
+        public override int GetHashCode()
+        {
+            return Objects.hash(time, key);
+        }
+
+        public override int compareTo(BufferKey o)
+        {
+            // ordering of keys within a time uses GetHashCode().
+            int timeComparison = long.compare(time, o.time);
+            return timeComparison == 0 ? key.compareTo(o.key) : timeComparison;
+        }
+
+        public override string ToString()
+        {
+            return "BufferKey{" +
+                "key=" + key +
+                ", time=" + time +
+                '}';
+        }
     }
 }

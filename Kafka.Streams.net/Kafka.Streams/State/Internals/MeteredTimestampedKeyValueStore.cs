@@ -34,7 +34,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
  * @param <K>
  * @param <V>
  */
-public MeteredTimestampedKeyValueStore<K, V>
+public class MeteredTimestampedKeyValueStore<K, V>
     : MeteredKeyValueStore<K, ValueAndTimestamp<V>>
     : TimestampedKeyValueStore<K, V>
 {
@@ -48,7 +48,7 @@ public MeteredTimestampedKeyValueStore<K, V>
         base(inner, metricScope, time, keySerde, valueSerde);
     }
 
-    
+
     void initStoreSerde(IProcessorContext context)
 {
         serdes = new StateSerdes<>(

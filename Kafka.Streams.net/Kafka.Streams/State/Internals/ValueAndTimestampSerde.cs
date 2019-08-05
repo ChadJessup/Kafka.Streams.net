@@ -14,48 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.serialization.Deserializer;
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.serialization.Serializer;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-
-public ValueAndTimestampSerde<V> : ISerde<ValueAndTimestamp<V>>
+namespace Kafka.Streams.State.Internals
 {
-    private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
-    private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
+    public class ValueAndTimestampSerde<V> : ISerde<ValueAndTimestamp<V>>
+    {
+        private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
+        private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
 
-    public ValueAndTimestampSerde(ISerde<V> valueSerde)
-{
-        Objects.requireNonNull(valueSerde);
-        valueAndTimestampSerializer = new ValueAndTimestampSerializer<>(valueSerde.serializer());
-        valueAndTimestampDeserializer = new ValueAndTimestampDeserializer<>(valueSerde.deserializer());
-    }
+        public ValueAndTimestampSerde(ISerde<V> valueSerde)
+        {
+            Objects.requireNonNull(valueSerde);
+            valueAndTimestampSerializer = new ValueAndTimestampSerializer<>(valueSerde.serializer());
+            valueAndTimestampDeserializer = new ValueAndTimestampDeserializer<>(valueSerde.deserializer());
+        }
 
-    public override void configure(Dictionary<string, ?> configs,
-                          bool isKey)
-{
-        valueAndTimestampSerializer.configure(configs, isKey);
-        valueAndTimestampDeserializer.configure(configs, isKey);
-    }
+        public override void configure(Dictionary<string, ?> configs,
+                              bool isKey)
+        {
+            valueAndTimestampSerializer.configure(configs, isKey);
+            valueAndTimestampDeserializer.configure(configs, isKey);
+        }
 
-    public override void close()
-{
-        valueAndTimestampSerializer.close();
-        valueAndTimestampDeserializer.close();
-    }
+        public override void close()
+        {
+            valueAndTimestampSerializer.close();
+            valueAndTimestampDeserializer.close();
+        }
 
-    public override Serializer<ValueAndTimestamp<V>> serializer()
-{
-        return valueAndTimestampSerializer;
-    }
+        public override Serializer<ValueAndTimestamp<V>> serializer()
+        {
+            return valueAndTimestampSerializer;
+        }
 
-    public override Deserializer<ValueAndTimestamp<V>> deserializer()
-{
-        return valueAndTimestampDeserializer;
+        public override Deserializer<ValueAndTimestamp<V>> deserializer()
+        {
+            return valueAndTimestampDeserializer;
+        }
     }
 }

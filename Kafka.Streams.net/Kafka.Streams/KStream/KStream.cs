@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -52,7 +54,7 @@ namespace Kafka.Streams.KStream {
  * @see KGroupedStream
  * @see StreamsBuilder#stream(string)
  */
-@InterfaceStability.Evolving
+
 public interface KStream<K, V> {
 
     /**
@@ -616,7 +618,9 @@ public interface KStream<K, V> {
      *         if(readOnlyKey == 1)
 {
      *             return Arrays.asList(value.split(" "));
-     *         } else {
+     *         } else
+{
+
      *             return Arrays.asList(value);
      *         }
      *     }
@@ -667,7 +671,9 @@ public interface KStream<K, V> {
      *         if(readOnlyKey == 1)
 {
      *             return Arrays.asList(value.split(" "));
-     *         } else {
+     *         } else
+{
+
      *             return Arrays.asList(value);
      *         }
      *     }

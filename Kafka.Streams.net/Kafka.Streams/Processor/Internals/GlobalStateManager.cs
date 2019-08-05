@@ -20,7 +20,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public interface GlobalStateManager : StateManager {
+public interface GlobalStateManager : StateManager
+{
+
 
     void setGlobalProcessorContext(InternalProcessorContext processorContext);
 

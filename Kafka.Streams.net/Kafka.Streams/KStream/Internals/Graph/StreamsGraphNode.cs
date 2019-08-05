@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -24,7 +25,10 @@ namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
-public abstract StreamsGraphNode {
+
+public abstract StreamsGraphNode
+{
+
 
     private  Collection<StreamsGraphNode> childNodes = new HashSet<>();
     private  Collection<StreamsGraphNode> parentNodes = new HashSet<>();
@@ -87,7 +91,7 @@ public abstract StreamsGraphNode {
         return childNodes.Remove(child) && child.parentNodes.Remove(this);
     }
 
-    public void.AddChild( StreamsGraphNode childNode)
+    public void addChild( StreamsGraphNode childNode)
 {
         this.childNodes.Add(childNode);
         childNode.parentNodes.Add(this);

@@ -26,7 +26,9 @@ using Kafka.Common.TopicPartition;
  * restore  {@link org.apache.kafka.streams.processor.IStateStore}s from their
  * change logs
  */
-public interface ChangelogReader {
+public interface ChangelogReader
+{
+
     /**
      * Register a state store and it's partition for later restoration.
      * @param restorer the state restorer to register

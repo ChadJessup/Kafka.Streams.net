@@ -36,7 +36,7 @@ using Kafka.Streams.State.StateSerdes;
 
 
 
-public MeteredSessionStore<K, V>
+public class MeteredSessionStore<K, V>
     : WrappedStateStore<ISessionStore<Bytes, byte[]>, Windowed<K>, V>
     : ISessionStore<K, V>
 {
@@ -66,7 +66,7 @@ public MeteredSessionStore<K, V>
         this.time = time;
     }
 
-    
+
     public override void init(IProcessorContext context,
                      IStateStore root)
 {
@@ -103,7 +103,7 @@ public MeteredSessionStore<K, V>
         }
     }
 
-    
+
     public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                     bool sendOldValues)
 {
@@ -169,7 +169,7 @@ public MeteredSessionStore<K, V>
             byte[] result = wrapped().fetchSession(bytesKey, startTime, endTime);
             if (result == null)
 {
-                return null;
+                return default;
             }
             return serdes.valueFrom(result);
         } finally

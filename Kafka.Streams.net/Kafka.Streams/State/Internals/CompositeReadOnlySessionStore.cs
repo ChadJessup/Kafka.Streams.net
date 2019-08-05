@@ -29,7 +29,7 @@ using Kafka.Streams.State.ReadOnlySessionStore;
  * Wrapper over the underlying {@link ReadOnlySessionStore}s found in a {@link
  * org.apache.kafka.streams.processor.internals.ProcessorTopology}
  */
-public CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
+public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
     private StateStoreProvider storeProvider;
     private QueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;

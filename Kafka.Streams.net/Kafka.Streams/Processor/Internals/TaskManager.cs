@@ -42,7 +42,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public TaskManager {
+public class TaskManager
+{
+
     // initialize the task list
     // activeTasks needs to be concurrent as it can be accessed
     // by QueryableState
@@ -110,11 +112,11 @@ public TaskManager {
        .AddStreamTasks(assignment);
        .AddStandbyTasks();
         // Pause all the partitions until the underlying state store is ready for all the active tasks.
-        log.trace("Pausing partitions: {}", assignment);
+        log.LogTrace("Pausing partitions: {}", assignment);
         consumer.pause(assignment);
     }
 
-    private void.AddStreamTasks(Collection<TopicPartition> assignment)
+    private void addStreamTasks(Collection<TopicPartition> assignment)
 {
         if (assignedActiveTasks.isEmpty())
 {
@@ -130,7 +132,9 @@ public TaskManager {
 
             if (assignment.containsAll(partitions))
 {
-                try {
+                try
+{
+
                     if (!active.maybeResumeSuspendedTask(taskId, partitions))
 {
                         newTasks.Add(taskId, partitions);
@@ -140,7 +144,9 @@ public TaskManager {
                     log.LogError("Failed to resume an active task {} due to the following error:", taskId, e);
                     throw e;
                 }
-            } else {
+            } else
+{
+
                 log.LogWarning("Task {} owned partitions {} are not contained in the assignment {}", taskId, partitions, assignment);
             }
         }
@@ -153,7 +159,7 @@ public TaskManager {
         // CANNOT FIND RETRY AND BACKOFF LOGIC
         // create all newly assigned tasks (guard against race condition with other thread via backoff and retry)
         // -> other thread will call removeSuspendedTasks(); eventually
-        log.trace("New active tasks to be created: {}", newTasks);
+        log.LogTrace("New active tasks to be created: {}", newTasks);
 
         foreach (StreamTask task in taskCreator.createTasks(consumer, newTasks))
 {
@@ -161,7 +167,7 @@ public TaskManager {
         }
     }
 
-    private void.AddStandbyTasks()
+    private void addStandbyTasks()
 {
         Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks = this.assignedStandbyTasks;
         if (assignedStandbyTasks.isEmpty())
@@ -188,7 +194,7 @@ public TaskManager {
 
         // create all newly assigned standby tasks (guard against race condition with other thread via backoff and retry)
         // -> other thread will call removeSuspendedStandbyTasks(); eventually
-        log.trace("New standby tasks to be created: {}", newStandbyTasks);
+        log.LogTrace("New standby tasks to be created: {}", newStandbyTasks);
 
         foreach (StandbyTask task in standbyTaskCreator.createTasks(consumer, newStandbyTasks))
 {
@@ -228,7 +234,9 @@ public TaskManager {
 {
             foreach (File dir in stateDirs)
 {
-                try {
+                try
+{
+
                     TaskId id = TaskId.parse(dir.getName());
                     // if the checkpoint file exists, the state is valid.
                     if (new File(dir, StateManagerUtil.CHECKPOINT_FILE_NAME).exists())
@@ -292,7 +300,9 @@ public TaskManager {
         log.LogDebug("Shutting down all active tasks {}, standby tasks {}, suspended tasks {}, and suspended standby tasks {}", active.runningTaskIds(), standby.runningTaskIds(),
                   active.previousTaskIds(), standby.previousTaskIds());
 
-        try {
+        try
+{
+
             active.close(clean);
         } catch (RuntimeException fatalException)
 {
@@ -301,7 +311,9 @@ public TaskManager {
         standby.close(clean);
 
         // Remove the changelog partitions from restore consumer
-        try {
+        try
+{
+
             restoreConsumer.unsubscribe();
         } catch (RuntimeException fatalException)
 {
@@ -373,7 +385,7 @@ public TaskManager {
         if (active.allTasksRunning())
 {
             HashSet<TopicPartition> assignment = consumer.assignment();
-            log.trace("Resuming partitions {}", assignment);
+            log.LogTrace("Resuming partitions {}", assignment);
             consumer.resume(assignment);
             assignStandbyPartitions();
             return standby.allTasksRunning();
@@ -408,7 +420,9 @@ public TaskManager {
             if (offset >= 0)
 {
                 restoreConsumer.seek(partition, offset);
-            } else {
+            } else
+{
+
                 restoreConsumer.seekToBeginning(singleton(partition));
             }
         }
@@ -517,7 +531,7 @@ public TaskManager {
             }
             deleteRecordsResult = adminClient.deleteRecords(recordsToDelete);
 
-            log.trace("Sent delete-records request: {}", recordsToDelete);
+            log.LogTrace("Sent delete-records request: {}", recordsToDelete);
         }
     }
 
@@ -527,7 +541,7 @@ public TaskManager {
      *
      * @return A string representation of the TaskManager instance.
      */
-    
+
     public string ToString()
 {
         return ToString("");

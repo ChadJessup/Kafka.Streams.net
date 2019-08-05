@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -122,7 +124,9 @@ class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1> {
 {
                  V1 oldValue = sendOldValues ? valueTransformer.transform(key, change.oldValue) : null;
                 context().forward(key, new Change<>(newValue, oldValue));
-            } else {
+            } else
+{
+
                  V1 oldValue = sendOldValues ? getValueOrNull(store[key)] : null;
                 store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);

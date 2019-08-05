@@ -14,47 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.QueryableStoreType;
-using Kafka.Streams.State.QueryableStoreTypes;
-using Kafka.Streams.State.TimestampedKeyValueStore;
-using Kafka.Streams.State.TimestampedWindowStore;
-
-
-
-
-
-public GlobalStateStoreProvider : StateStoreProvider
+namespace Kafka.Streams.State.Internals
 {
-    private Dictionary<string, IStateStore> globalStateStores;
+    public class GlobalStateStoreProvider : StateStoreProvider
+    {
+        private Dictionary<string, IStateStore> globalStateStores;
 
-    public GlobalStateStoreProvider(Dictionary<string, IStateStore> globalStateStores)
-{
-        this.globalStateStores = globalStateStores;
-    }
-
-    
-    public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
-{
-        IStateStore store = globalStateStores[storeName];
-        if (store == null || !queryableStoreType.accepts(store))
-{
-            return Collections.emptyList();
+        public GlobalStateStoreProvider(Dictionary<string, IStateStore> globalStateStores)
+        {
+            this.globalStateStores = globalStateStores;
         }
-        if (!store.isOpen())
-{
-            throw new InvalidStateStoreException("the state store, " + storeName + ", is not open.");
+
+
+        public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
+        {
+            IStateStore store = globalStateStores[storeName];
+            if (store == null || !queryableStoreType.accepts(store))
+            {
+                return Collections.emptyList();
+            }
+            if (!store.isOpen())
+            {
+                throw new InvalidStateStoreException("the state store, " + storeName + ", is not open.");
+            }
+            if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
+            {
+                return (List<T>)Collections.singletonList(new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>)store));
+            }
+            else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
+            {
+                return (List<T>)Collections.singletonList(new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>)store));
+            }
+            return (List<T>)Collections.singletonList(store);
         }
-        if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
-{
-            return (List<T>) Collections.singletonList(new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>) store));
-        } else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
-{
-            return (List<T>) Collections.singletonList(new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>) store));
-        }
-        return (List<T>) Collections.singletonList(store);
     }
 }

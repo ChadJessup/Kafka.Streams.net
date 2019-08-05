@@ -21,7 +21,7 @@
  * @param <K>
  * @param <V>
  */
-public abstract AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : KeyValueIterator<K, V>
+public abstract class AbstractMergedSortedCacheStoreIterator<K, KS, V, VS> : KeyValueIterator<K, V>
 {
     private PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
     private KeyValueIterator<KS, VS> storeIterator;

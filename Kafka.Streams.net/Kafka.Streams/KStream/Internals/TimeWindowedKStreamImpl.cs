@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -169,7 +171,7 @@ public TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWi
             materializedInternal.valueSerde());
     }
 
-    @SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+    
     private StoreBuilder<TimestampedWindowStore<K, VR>> materialize( MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized)
 {
         WindowBytesStoreSupplier supplier = (WindowBytesStoreSupplier) materialized.storeSupplier();
@@ -196,7 +198,9 @@ public TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWi
                     false
                 );
 
-            } else {
+            } else
+{
+
                 // old style retention: use deprecated Windows retention/segmentInterval.
 
                 // NOTE: in the future, when we Remove Windows#maintainMs(), we should set the default retention
@@ -229,7 +233,9 @@ public TimeWindowedKStreamImpl<K, V, W : Window> : AbstractStream<K, V> : TimeWi
         if (materialized.loggingEnabled())
 {
             builder.withLoggingEnabled(materialized.logConfig());
-        } else {
+        } else
+{
+
             builder.withLoggingDisabled();
         }
 

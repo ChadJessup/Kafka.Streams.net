@@ -6,7 +6,7 @@ namespace Kafka.Streams.State.Internals
     /**
      * A storage engine wrapper for utilities like logging, caching, and metering.
      */
-    public abstract WrappedStateStore<S, K, V> : IStateStore, CachedStateStore<K, V>
+    public abstract class WrappedStateStore<S, K, V> : IStateStore, CachedStateStore<K, V>
         where S : IStateStore
     {
         public S wrapped { get; }

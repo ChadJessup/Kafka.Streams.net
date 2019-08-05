@@ -35,7 +35,9 @@ using Kafka.Common.TopicPartition;
  *
  * Incremental updates are exposed so users can estimate how much progress has been made.
  */
-public interface StateRestoreListener {
+public interface StateRestoreListener
+{
+
 
     /**
      * Method called at the very beginning of {@link IStateStore} restoration.

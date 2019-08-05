@@ -14,72 +14,68 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.kstream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.ISessionStore;
-
-
-public RocksDBSessionStore
-    : WrappedStateStore<SegmentedBytesStore, object, object>
-    : ISessionStore<Bytes, byte[]>
+namespace Kafka.Streams.State.Internals
 {
+    public class RocksDBSessionStore
+        : WrappedStateStore<SegmentedBytesStore, object, object>, ISessionStore<Bytes, byte[]>
+    {
+        public RocksDBSessionStore(SegmentedBytesStore bytesStore)
+            : base(bytesStore)
+        {
+        }
 
-    RocksDBSessionStore(SegmentedBytesStore bytesStore)
-{
-        base(bytesStore);
-    }
+        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
+                                                                      long earliestSessionEndTime,
+                                                                      long latestSessionStartTime)
+        {
+            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+                key,
+                earliestSessionEndTime,
+                latestSessionStartTime
+            );
+            return new WrappedSessionStoreIterator(bytesIterator);
+        }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
-                                                                  long earliestSessionEndTime,
-                                                                  long latestSessionStartTime)
-{
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
-            key,
-            earliestSessionEndTime,
-            latestSessionStartTime
-        );
-        return new WrappedSessionStoreIterator(bytesIterator);
-    }
+        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
+                                                                      Bytes keyTo,
+                                                                      long earliestSessionEndTime,
+                                                                      long latestSessionStartTime)
+        {
+            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+                keyFrom,
+                keyTo,
+                earliestSessionEndTime,
+                latestSessionStartTime
+            );
+            return new WrappedSessionStoreIterator(bytesIterator);
+        }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
-                                                                  Bytes keyTo,
-                                                                  long earliestSessionEndTime,
-                                                                  long latestSessionStartTime)
-{
-        KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
-            keyFrom,
-            keyTo,
-            earliestSessionEndTime,
-            latestSessionStartTime
-        );
-        return new WrappedSessionStoreIterator(bytesIterator);
-    }
+        public override byte[] fetchSession(Bytes key, long startTime, long endTime)
+        {
+            return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime));
+        }
 
-    public override byte[] fetchSession(Bytes key, long startTime, long endTime)
-{
-        return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime));
-    }
+        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+        {
+            return findSessions(key, 0, long.MaxValue);
+        }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
-{
-        return findSessions(key, 0, long.MaxValue);
-    }
+        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+        {
+            return findSessions(from, to, 0, long.MaxValue);
+        }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
-{
-        return findSessions(from, to, 0, long.MaxValue);
-    }
+        public override void Remove(Windowed<Bytes> key)
+        {
+            wrapped().Remove(SessionKeySchema.toBinary(key));
+        }
 
-    public override void Remove(Windowed<Bytes> key)
-{
-        wrapped().Remove(SessionKeySchema.toBinary(key));
-    }
-
-    public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
-{
-        wrapped().Add(SessionKeySchema.toBinary(sessionKey), aggregate);
+        public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        {
+            wrapped().Add(SessionKeySchema.toBinary(sessionKey), aggregate);
+        }
     }
 }

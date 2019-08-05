@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
 
 
 
@@ -93,7 +94,8 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
 {
                 intermediateAgg = removeReducer.apply(oldAgg, value.oldValue);
                 newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
-            } else {
+            } else
+{
                 intermediateAgg = oldAgg;
                 newTimestamp = context().timestamp();
             }
@@ -105,11 +107,13 @@ public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
                 if (intermediateAgg == null)
 {
                     newAgg = value.newValue;
-                } else {
+                } else
+{
                     newAgg =.AddReducer.apply(intermediateAgg, value.newValue);
                     newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
                 }
-            } else {
+            } else
+{
                 newAgg = intermediateAgg;
             }
 

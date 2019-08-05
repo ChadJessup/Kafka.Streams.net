@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Errors {
+namespace Kafka.Streams.Errors
+{
+
 
 
 
@@ -24,7 +26,9 @@ namespace Kafka.Streams.Errors {
  * Indicates that a task got migrated to another thread.
  * Thus, the task raising this exception can be cleaned up and closed as "zombie".
  */
-public TaskMigratedException : StreamsException {
+public TaskMigratedException : StreamsException
+{
+
 
     private  static long serialVersionUID = 1L;
 

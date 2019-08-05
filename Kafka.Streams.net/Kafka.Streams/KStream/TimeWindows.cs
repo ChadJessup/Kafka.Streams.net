@@ -14,21 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+namespace Kafka.Streams.KStream
+{
 /**
  * The fixed-size time-based window specifications used for aggregations.
  * <p>
@@ -55,19 +42,19 @@ namespace Kafka.Streams.KStream {
  * @see KGroupedStream#windowedBy(Windows)
  * @see TimestampExtractor
  */
-public  TimeWindows : Windows<TimeWindow> {
+public class TimeWindows : Windows<TimeWindow> {
 
     private  long maintainDurationMs;
 
     /** The size of the windows in milliseconds. */
-    @SuppressWarnings("WeakerAccess")
+
     public  long sizeMs;
 
     /**
      * The size of the window's advance interval in milliseconds, i.e., by how much a window moves forward relative to
      * the previous one.
      */
-    @SuppressWarnings("WeakerAccess")
+
     public  long advanceMs;
     private  long graceMs;
 
@@ -129,7 +116,7 @@ public  TimeWindows : Windows<TimeWindow> {
      * @return a new window definition with default maintain duration of 1 day
      * @throws ArgumentException if the specified window size is zero or negative or can't be represented as {@code long milliseconds}
      */
-    @SuppressWarnings("deprecation") // removing #of( long sizeMs) will fix this
+
     public static TimeWindows of( TimeSpan size){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(size, "size");
         return of(ApiUtils.validateMillisecondDuration(size, msgPrefix));
@@ -169,14 +156,14 @@ public  TimeWindows : Windows<TimeWindow> {
      * @return a new window definition with default maintain duration of 1 day
      * @throws ArgumentException if the advance interval is negative, zero, or larger than the window size
      */
-    @SuppressWarnings("deprecation") // removing #advanceBy( long advanceMs) will fix this
+
     public TimeWindows advanceBy( TimeSpan advance)
 {
          string msgPrefix = prepareMillisCheckFailMsgPrefix(advance, "advance");
         return advanceBy(ApiUtils.validateMillisecondDuration(advance, msgPrefix));
     }
 
-    
+
     public Map<long, TimeWindow> windowsFor( long timestamp)
 {
         long windowStart = (Math.Max(0, timestamp - sizeMs + advanceMs) / advanceMs) * advanceMs;
@@ -190,7 +177,7 @@ public  TimeWindows : Windows<TimeWindow> {
         return windows;
     }
 
-    
+
     public long size()
 {
         return sizeMs;
@@ -206,7 +193,7 @@ public  TimeWindows : Windows<TimeWindow> {
      * @return this updated builder
      * @throws ArgumentException if {@code afterWindowEnd} is negative or can't be represented as {@code long milliseconds}
      */
-    @SuppressWarnings("deprecation") // will be fixed when we Remove segments from Windows
+
     public TimeWindows grace( TimeSpan afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
@@ -218,8 +205,8 @@ public  TimeWindows : Windows<TimeWindow> {
         return new TimeWindows(sizeMs, advanceMs, afterWindowEndMs, maintainDurationMs, segments);
     }
 
-    @SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-    
+
+
     public long gracePeriodMs()
 {
         // NOTE: in the future, when we Remove maintainMs,
@@ -236,7 +223,7 @@ public  TimeWindows : Windows<TimeWindow> {
      * @deprecated since 2.1. Use {@link Materialized#retention} or directly configure the retention in a store supplier
      *             and use {@link Materialized#as(WindowBytesStoreSupplier)}.
      */
-    
+
     [System.Obsolete]
     public TimeWindows until( long durationMs){
         if (durationMs < sizeMs)
@@ -254,15 +241,15 @@ public  TimeWindows : Windows<TimeWindow> {
      * @return the window maintain duration
      * @deprecated since 2.1. Use {@link Materialized#retention} instead.
      */
-    
+
     [System.Obsolete]
     public long maintainMs()
 {
         return Math.Max(maintainDurationMs, sizeMs);
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    
+
+
     public bool Equals( object o)
 {
         if (this == o)
@@ -281,15 +268,15 @@ public  TimeWindows : Windows<TimeWindow> {
             graceMs == that.graceMs;
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    
+
+
     public int hashCode()
 {
         return Objects.hash(maintainDurationMs, segments, sizeMs, advanceMs, graceMs);
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
-    
+
+
     public string ToString()
 {
         return "TimeWindows{" +

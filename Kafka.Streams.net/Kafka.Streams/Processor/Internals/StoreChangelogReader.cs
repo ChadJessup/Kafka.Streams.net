@@ -39,7 +39,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public StoreChangelogReader : ChangelogReader {
+public StoreChangelogReader : ChangelogReader
+{
+
 
     private Logger log;
     private Consumer<byte[], byte[]> restoreConsumer;
@@ -71,7 +73,7 @@ public StoreChangelogReader : ChangelogReader {
             restorer.setUserRestoreListener(userStateRestoreListener);
             stateRestorers.Add(restorer.partition(), restorer);
 
-            log.trace("Added restorer for changelog {}", restorer.partition());
+            log.LogTrace("Added restorer for changelog {}", restorer.partition());
         }
 
         needsInitializing.Add(restorer.partition());
@@ -90,7 +92,9 @@ public StoreChangelogReader : ChangelogReader {
             return completed();
         }
 
-        try {
+        try
+{
+
             ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(pollTime);
 
             foreach (TopicPartition partition in needsRestoring)
@@ -112,7 +116,7 @@ public StoreChangelogReader : ChangelogReader {
             foreach (TopicPartition partition in partitions)
 {
                 StreamTask task = active.restoringTaskFor(partition);
-                log.info("Reinitializing StreamTask {} for changelog {}", task, partition);
+                log.LogInformation("Reinitializing StreamTask {} for changelog {}", task, partition);
 
                 needsInitializing.Remove(partition);
                 needsRestoring.Remove(partition);
@@ -156,7 +160,9 @@ public StoreChangelogReader : ChangelogReader {
 
         // try to fetch end offsets for the initializable restorers and Remove any partitions
         // where we already have all of the data
-        try {
+        try
+{
+
             endOffsets.putAll(restoreConsumer.endOffsets(initializable));
         } catch (TimeoutException e)
 {
@@ -186,12 +192,16 @@ public StoreChangelogReader : ChangelogReader {
                     restorer.setRestoredOffset(0);
                     iter.Remove();
                     completedRestorers.Add(topicPartition);
-                } else {
+                } else
+{
+
                     restorer.setEndingOffset(endOffset);
                 }
                 needsInitializing.Remove(topicPartition);
-            } else {
-                log.info("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
+            } else
+{
+
+                log.LogInformation("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
                 iter.Remove();
             }
         }
@@ -219,7 +229,7 @@ public StoreChangelogReader : ChangelogReader {
             StateRestorer restorer = stateRestorers[partition];
             if (restorer.checkpoint() != StateRestorer.NO_CHECKPOINT)
 {
-                log.trace("Found checkpoint {} from changelog {} for store {}.", restorer.checkpoint(), partition, restorer.storeName());
+                log.LogTrace("Found checkpoint {} from changelog {} for store {}.", restorer.checkpoint(), partition, restorer.storeName());
 
                 restoreConsumer.seek(partition, restorer.checkpoint());
                 logRestoreOffsets(partition,
@@ -227,8 +237,10 @@ public StoreChangelogReader : ChangelogReader {
                         endOffsets[partition)];
                 restorer.setStartingOffset(restoreConsumer.position(partition));
                 restorer.restoreStarted();
-            } else {
-                log.trace("Did not find checkpoint from changelog {} for store {}, rewinding to beginning.", partition, restorer.storeName());
+            } else
+{
+
+                log.LogTrace("Did not find checkpoint from changelog {} for store {}, rewinding to beginning.", partition, restorer.storeName());
 
                 restoreConsumer.seekToBeginning(Collections.singletonList(partition));
                 needsPositionUpdate.Add(restorer);
@@ -244,7 +256,7 @@ public StoreChangelogReader : ChangelogReader {
             StreamTask task = active.restoringTaskFor(partition);
             if (task.isEosEnabled())
 {
-                log.info("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
+                log.LogInformation("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
                         "Reinitializing the task and restore its state from the beginning.", task.id, restorer.storeName(), partition);
 
                 needsInitializing.Remove(partition);
@@ -252,8 +264,10 @@ public StoreChangelogReader : ChangelogReader {
                 restorer.setCheckpointOffset(restoreConsumer.position(partition));
 
                 task.reinitializeStateStoresForPartitions(Collections.singleton(partition));
-            } else {
-                log.info("Restoring task {}'s state store {} from beginning of the changelog {} ", task.id, restorer.storeName(), partition);
+            } else
+{
+
+                log.LogInformation("Restoring task {}'s state store {} from beginning of the changelog {} ", task.id, restorer.storeName(), partition);
 
                 long position = restoreConsumer.position(restorer.partition());
                 logRestoreOffsets(restorer.partition(),
@@ -284,7 +298,9 @@ public StoreChangelogReader : ChangelogReader {
 
     private void refreshChangelogInfo()
 {
-        try {
+        try
+{
+
             partitionInfo.putAll(restoreConsumer.listTopics());
         } catch (TimeoutException e)
 {
@@ -357,7 +373,7 @@ public StoreChangelogReader : ChangelogReader {
             restorer.restore(restoreRecords);
             restorer.restoreBatchCompleted(lastRestoredOffset, records.size());
 
-            log.trace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
+            log.LogTrace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
                     restorer.partition(), restorer.storeName(), records.size(), lastRestoredOffset, nextPosition);
         }
 

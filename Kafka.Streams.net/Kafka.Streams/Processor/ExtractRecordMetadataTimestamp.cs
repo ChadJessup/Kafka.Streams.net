@@ -43,8 +43,10 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see UsePreviousTimeOnInvalidTimestamp
  * @see WallclockTimestampExtractor
  */
-@InterfaceStability.Evolving
-abstract ExtractRecordMetadataTimestamp : TimestampExtractor {
+
+abstract class ExtractRecordMetadataTimestamp : TimestampExtractor
+{
+
 
     /**
      * Extracts the embedded metadata timestamp from the given {@link ConsumerRecord}.
@@ -53,7 +55,7 @@ abstract ExtractRecordMetadataTimestamp : TimestampExtractor {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the embedded metadata timestamp of the given {@link ConsumerRecord}
      */
-    
+
     public long extract(ConsumerRecord<object, object> record, long partitionTime)
 {
         long timestamp = record.timestamp();

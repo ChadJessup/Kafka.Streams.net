@@ -24,7 +24,7 @@ using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 /**
  * A cache entry
  */
-class LRUCacheEntry
+public class LRUCacheEntry
 {
     private ContextualRecord record;
     private long sizeBytes;

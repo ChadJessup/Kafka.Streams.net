@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -143,7 +145,9 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
 {
                         oldAgg = initializer.apply();
                         newTimestamp = context().timestamp();
-                    } else {
+                    } else
+{
+
                         newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
                     }
 
@@ -156,7 +160,9 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
                         newAgg,
                         sendOldValues ? oldAgg : null,
                         newTimestamp);
-                } else {
+                } else
+{
+
                     log.LogDebug(
                         "Skipping record for expired window. " +
                             "key=[{}] " +

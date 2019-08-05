@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -31,13 +33,13 @@ namespace Kafka.Streams.KStream {
  *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
  *  if the no-arg constructor is called and hence it is not passed during initialization.
  */
-public TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
+public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
 
     private  long windowSize;
     private bool isChangelogTopic;
 
     private Deserializer<T> inner;
-    
+
     // Default constructor needed by Kafka
     public TimeWindowedDeserializer()
 {
@@ -62,15 +64,17 @@ public TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
         return this.windowSize;
     }
 
-    
-    
+
+
     public void configure( Map<string, ?> configs,  bool isKey)
 {
         if (inner == null)
 {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
              string value = (string) configs[propertyName);
-            try {
+            try
+{
+
                 inner = Serde.cast(Utils.newInstance(value, Serde)).deserializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)
@@ -80,7 +84,7 @@ public TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
         }
     }
 
-    
+
     public Windowed<T> deserialize( string topic,  byte[] data)
 {
         WindowedSerdes.verifyInnerDeserializerNotNull(inner, this);
@@ -100,7 +104,7 @@ public TimeWindowedDeserializer<T> : Deserializer<Windowed<T>> {
         return WindowKeySchema.from(data, windowSize, inner, topic);
     }
 
-    
+
     public void close()
 {
         if (inner != null)

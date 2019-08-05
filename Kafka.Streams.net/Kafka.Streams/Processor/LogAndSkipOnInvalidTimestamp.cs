@@ -18,6 +18,7 @@ namespace Kafka.Streams.Processor;
 
 
 using Kafka.Common.annotation.InterfaceStability;
+using Microsoft.Extensions.Logging;
 
 
 
@@ -46,9 +47,11 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see UsePreviousTimeOnInvalidTimestamp
  * @see WallclockTimestampExtractor
  */
-@InterfaceStability.Evolving
-public LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
-    private static Logger log = new LoggerFactory().CreateLogger<LogAndSkipOnInvalidTimestamp);
+
+public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp
+{
+
+    private static ILogger log = new LoggerFactory().CreateLogger<LogAndSkipOnInvalidTimestamp>();
 
     /**
      * Writes a log WARN message when the extracted timestamp is invalid (negative) but returns the invalid timestamp as-is,
@@ -59,7 +62,7 @@ public LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the originally extracted timestamp of the record
      */
-    
+
     public long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)

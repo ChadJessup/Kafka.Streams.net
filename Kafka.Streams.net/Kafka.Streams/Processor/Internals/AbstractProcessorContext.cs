@@ -31,7 +31,9 @@ using Kafka.Common.serialization.Serde;
 
 
 
-public abstract AbstractProcessorContext : InternalProcessorContext {
+public abstract AbstractProcessorContext : InternalProcessorContext
+{
+
 
     public static string NONEXIST_TOPIC = "__null_topic__";
     private TaskId taskId;

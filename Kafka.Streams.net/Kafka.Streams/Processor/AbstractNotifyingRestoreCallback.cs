@@ -25,7 +25,9 @@ using Kafka.Common.TopicPartition;
  * Includes default no-op methods of the {@link StateRestoreListener} {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)},
  * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}, and {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}.
  */
-public abstract AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRestoreListener {
+public abstract class AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRestoreListener
+{
+
 
 
     /**
@@ -34,7 +36,7 @@ public abstract AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRe
      * This method does nothing by default; if desired, sues should override it with custom functionality.
      *
      */
-    
+
     public void onRestoreStart(TopicPartition topicPartition,
                                string storeName,
                                long startingOffset,
@@ -50,7 +52,7 @@ public abstract AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRe
      * This method does nothing by default; if desired, sues should override it with custom functionality.
      *
      */
-    
+
     public void onBatchRestored(TopicPartition topicPartition,
                                 string storeName,
                                 long batchEndOffset,
@@ -65,7 +67,7 @@ public abstract AbstractNotifyingRestoreCallback : StateRestoreCallback, StateRe
      * This method does nothing by default; if desired, sues should override it with custom functionality.
      *
      */
-    
+
     public void onRestoreEnd(TopicPartition topicPartition,
                              string storeName,
                              long totalRestored)

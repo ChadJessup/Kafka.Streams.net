@@ -18,7 +18,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.TopicPartition;
 
-public interface RestoringTasks {
+public interface RestoringTasks
+{
+
 
     StreamTask restoringTaskFor(TopicPartition partition);
 

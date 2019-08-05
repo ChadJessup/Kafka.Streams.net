@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processor.Internals
             return childByName[childName];
         }
 
-        public void.AddChild(ProcessorNode<K, V> child)
+        public void addChild(ProcessorNode<K, V> child)
 {
             children.Add(child);
             childByName.Add(child.name, child);
@@ -51,7 +51,9 @@ namespace Kafka.Streams.Processor.Internals
 
         public void init(InternalProcessorContext context)
 {
-            try {
+            try
+{
+
                 nodeMetrics = new NodeMetrics(context.metrics(), name, context);
                 long startNs = time.nanoseconds();
                 if (processor != null)
@@ -67,7 +69,9 @@ namespace Kafka.Streams.Processor.Internals
 
         public void close()
 {
-            try {
+            try
+{
+
                 long startNs = time.nanoseconds();
                 if (processor != null)
 {

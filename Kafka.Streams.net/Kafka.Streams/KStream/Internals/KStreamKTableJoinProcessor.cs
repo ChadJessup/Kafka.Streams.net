@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -77,7 +79,9 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
                 key, value, context().topic(), context().partition(), context().offset()
             );
             skippedRecordsSensor.record();
-        } else {
+        } else
+{
+
              K2 mappedKey = keyMapper.apply(key, value);
              V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey));
             if (leftJoin || value2 != null)

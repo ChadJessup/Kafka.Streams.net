@@ -24,7 +24,9 @@ using Kafka.Common.serialization.Serializer;
 
 
 
-public interface RecordCollector : AutoCloseable {
+public interface RecordCollector : AutoCloseable
+{
+
 
     void send(string topic,
                      K key,
@@ -70,7 +72,9 @@ public interface RecordCollector : AutoCloseable {
     /**
      * A supplier of a {@link RecordCollectorImpl} instance.
      */
-    interface Supplier {
+    interface Supplier
+{
+
         /**
          * Get the record collector.
          * @return the record collector

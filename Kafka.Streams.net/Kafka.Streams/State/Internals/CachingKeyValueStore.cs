@@ -24,21 +24,14 @@ using Kafka.Streams.Processor.internals.InternalProcessorContext;
 using Kafka.Streams.Processor.internals.ProcessorRecordContext;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
+using Microsoft.Extensions.Logging;
 
-
-
-
-
-
-
-
-
-public CachingKeyValueStore
+public class CachingKeyValueStore
     : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
-    : IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
+    , IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
 {
 
-    private static ILogger LOG= new LoggerFactory().CreateLogger<CachingKeyValueStore);
+    private static ILogger LOG= new LoggerFactory().CreateLogger<CachingKeyValueStore>();
 
     private CacheFlushListener<byte[], byte[]> flushListener;
     private bool sendOldValues;
@@ -63,7 +56,7 @@ public CachingKeyValueStore
         streamThread = Thread.currentThread();
     }
 
-    
+
     private void initInternal(IProcessorContext context)
 {
         this.context = (InternalProcessorContext) context;

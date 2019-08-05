@@ -20,7 +20,9 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
-public EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig {
+public EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig
+{
+
 
     private  long maxRecords;
     private  long maxBytes;

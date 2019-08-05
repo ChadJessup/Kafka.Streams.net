@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
 
 
 
@@ -26,7 +27,8 @@ namespace Kafka.Streams.KStream.Internals {
 
 
 
-public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
+
+public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 
     private  KTableProcessorSupplier<K, ?, V> parent1;
     private  KTableProcessorSupplier<K, ?, V> parent2;
@@ -47,13 +49,13 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         return queryableName;
     }
 
-    
+
     public Processor<K, Change<V>> get()
 {
         return new KTableKTableJoinMergeProcessor();
     }
 
-    
+
     public KTableValueGetterSupplier<K, V> view()
 {
         // if the result KTable is materialized, use the materialized store to return getter value;
@@ -61,7 +63,9 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         if (queryableName != null)
 {
             return new KTableMaterializedValueGetterSupplier<>(queryableName);
-        } else {
+        } else
+{
+
             return new KTableValueGetterSupplier<K, V>()
 {
 
@@ -70,7 +74,7 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
                     return parent1.view()[);
                 }
 
-                
+
                 public string[] storeNames()
 {
                      string[] storeNames1 = parent1.view().storeNames();
@@ -84,7 +88,7 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         }
     }
 
-    
+
     public void enableSendingOldValues()
 {
         parent1.enableSendingOldValues();
@@ -105,12 +109,12 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
         return new KTableKTableJoinMerger<>(parent1, parent2, queryableName);
     }
 
-    private KTableKTableJoinMergeProcessor : AbstractProcessor<K, Change<V>> {
+    private class KTableKTableJoinMergeProcessor : AbstractProcessor<K, Change<V>> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
             base.init(context);
@@ -125,18 +129,22 @@ public KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
             }
         }
 
-        
+
         public void process( K key,  Change<V> value)
 {
             if (queryableName != null)
 {
                 store.Add(key, ValueAndTimestamp.make(value.newValue, context().timestamp()));
                 tupleForwarder.maybeForward(key, value.newValue, sendOldValues ? value.oldValue : null);
-            } else {
+            } else
+{
+
                 if (sendOldValues)
 {
                     context().forward(key, value);
-                } else {
+                } else
+{
+
                     context().forward(key, new Change<>(value.newValue, null));
                 }
             }

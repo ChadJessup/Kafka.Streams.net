@@ -31,7 +31,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
+class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
+{
+
     private Dictionary<TaskId, StreamTask> restoring = new HashMap<>();
     private HashSet<TopicPartition> restoredPartitions = new HashSet<>();
     private Dictionary<TopicPartition, StreamTask> restoringByPartition = new HashMap<>();
@@ -73,13 +75,15 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 {
         RuntimeException exception = null;
 
-        log.trace("Closing all restoring stream tasks {}", restoring.keySet());
+        log.LogTrace("Closing all restoring stream tasks {}", restoring.keySet());
         Iterator<StreamTask> restoringTaskIterator = restoring.values().iterator();
         while (restoringTaskIterator.hasNext())
 {
             StreamTask task = restoringTaskIterator.next();
             log.LogDebug("Closing restoring task {}", task.id());
-            try {
+            try
+{
+
                 task.closeStateManager(true);
             } catch (RuntimeException e)
 {
@@ -88,7 +92,9 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 {
                     exception = e;
                 }
-            } finally {
+            } finally
+{
+
                 restoringTaskIterator.Remove();
             }
         }
@@ -106,7 +112,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 {
             return;
         }
-        log.trace("Stream task changelog partitions that have completed restoring so far: {}", restored);
+        log.LogTrace("Stream task changelog partitions that have completed restoring so far: {}", restored);
         restoredPartitions.AddAll(restored);
         for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
 {
@@ -116,15 +122,17 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
 {
                 transitionToRunning(task);
                 it.Remove();
-                log.trace("Stream task {} completed restoration as all its changelog partitions {} have been applied to restore state",
+                log.LogTrace("Stream task {} completed restoration as all its changelog partitions {} have been applied to restore state",
                     task.id(),
                     task.changelogPartitions());
-            } else {
+            } else
+{
+
                 if (log.isTraceEnabled())
 {
                     HashSet<TopicPartition> outstandingPartitions = new HashSet<>(task.changelogPartitions());
                     outstandingPartitions.removeAll(restoredPartitions);
-                    log.trace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
+                    log.LogTrace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
                         task.id(),
                         outstandingPartitions);
                 }
@@ -136,7 +144,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         }
     }
 
-    void.AddToRestoring(StreamTask task)
+    void addToRestoring(StreamTask task)
 {
         restoring.Add(task.id(), task);
         foreach (TopicPartition topicPartition in task.partitions())
@@ -161,7 +169,9 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         for (Iterator<StreamTask> it = running().iterator(); it.hasNext(); )
 {
             StreamTask task = it.next();
-            try {
+            try
+{
+
                 if (task.commitRequested() && task.commitNeeded())
 {
                     task.commit();
@@ -170,7 +180,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
                 }
             } catch (TaskMigratedException e)
 {
-                log.info("Failed to commit {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to commit {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
                 if (fatalException != null)
@@ -225,14 +235,16 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;
-            try {
+            try
+{
+
                 if (task.isProcessable(now) && task.process())
 {
                     processed++;
                 }
             } catch (TaskMigratedException e)
 {
-                log.info("Failed to process stream task {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to process stream task {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
                 if (fatalException != null)
@@ -261,7 +273,9 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;
-            try {
+            try
+{
+
                 if (task.maybePunctuateStreamTime())
 {
                     punctuated++;
@@ -272,7 +286,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks {
                 }
             } catch (TaskMigratedException e)
 {
-                log.info("Failed to punctuate stream task {} since it got migrated to another thread already. " +
+                log.LogInformation("Failed to punctuate stream task {} since it got migrated to another thread already. " +
                         "Closing it as zombie before triggering a new rebalance.", task.id());
                 RuntimeException fatalException = closeZombieTask(task);
                 if (fatalException != null)

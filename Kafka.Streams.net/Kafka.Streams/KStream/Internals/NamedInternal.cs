@@ -52,7 +52,9 @@ public NamedInternal : Named
         if (name != null)
 {
             return name + suffix;
-        } else {
+        } else
+{
+
             return other;
         }
     }
@@ -70,7 +72,9 @@ public NamedInternal : Named
             Named.validate(suffixed);
 
             return suffixed;
-        } else {
+        } else
+{
+
             return provider.newProcessorName(prefix);
         }
     }
@@ -83,7 +87,9 @@ public NamedInternal : Named
 {
             provider.newProcessorName(prefix);
             return name;
-        }  else {
+        }  else
+{
+
             return provider.newProcessorName(prefix);
         }
     }

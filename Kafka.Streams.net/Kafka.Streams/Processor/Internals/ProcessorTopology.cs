@@ -23,7 +23,9 @@ namespace Kafka.Streams.Processor.Internals
 {
 
 
-    public ProcessorTopology {
+    public ProcessorTopology
+{
+
 
         private List<ProcessorNode> processorNodes;
         private Dictionary<string, SourceNode> sourcesByTopic;

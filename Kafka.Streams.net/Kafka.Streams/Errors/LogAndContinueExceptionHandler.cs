@@ -18,7 +18,9 @@ using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Kafka.Streams.Errors {
+namespace Kafka.Streams.Errors
+{
+
 
 
 

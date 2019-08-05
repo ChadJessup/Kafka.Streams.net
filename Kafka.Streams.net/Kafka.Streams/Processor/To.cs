@@ -22,7 +22,9 @@ namespace Kafka.Streams.Processor;
  * This is used to provide the optional parameters when sending output records to downstream processor
  * using {@link IProcessorContext#forward(object, object, To)}.
  */
-public To {
+public class To
+{
+
     protected string childName;
     protected long timestamp;
 
@@ -74,7 +76,7 @@ public To {
         return this;
     }
 
-    
+
     public bool Equals(object o)
 {
         if (this == o)
@@ -93,7 +95,7 @@ public To {
     /**
      * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
      */
-    
+
     public int GetHashCode()
 {
         throw new InvalidOperationException("To is unsafe for use in Hash collections");

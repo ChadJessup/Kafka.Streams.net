@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public Windows<TWindow>
+    public class Windows<TWindow>
         where TWindow : Window
-   
-{
+    {
     }
 }

@@ -33,7 +33,9 @@ namespace Kafka.streams;
  * When {@link KafkaStreams#start()} is called, different sub-topologies will be constructed and executed as independent
  * {@link StreamTask tasks}.
  */
-public interface TopologyDescription {
+public interface TopologyDescription
+{
+
     /**
      * A connected sub-graph of a {@link Topology}.
      * <p>
@@ -42,7 +44,9 @@ public interface TopologyDescription {
      * {@link Topology#connectProcessorAndStateStores(string, string...) state stores}
      * (i.e., if multiple processors share the same state).
      */
-    interface Subtopology {
+    interface Subtopology
+{
+
         /**
          * Internally assigned unique ID.
          * @return the ID of the sub-topology
@@ -66,7 +70,9 @@ public interface TopologyDescription {
      * Furthermore, global stores are available to all processors without connecting them explicitly, and thus global
      * stores will never be part of any {@link Subtopology}.
      */
-    interface GlobalStore {
+    interface GlobalStore
+{
+
         /**
          * The source node reading from a "global" topic.
          * @return the "global" source node
@@ -85,7 +91,9 @@ public interface TopologyDescription {
     /**
      * A node of a topology. Can be a source, sink, or processor node.
      */
-    interface Node {
+    interface Node
+{
+
         /**
          * The name of the node. Will never be {@code null}.
          * @return the name of the node
@@ -111,7 +119,9 @@ public interface TopologyDescription {
     /**
      * A source node of a topology.
      */
-    interface Source : Node {
+    interface Source : Node
+{
+
         /**
          * The topic names this source node is reading from.
          * @return comma separated list of topic names or pattern (as string)
@@ -136,7 +146,9 @@ public interface TopologyDescription {
     /**
      * A processor node of a topology.
      */
-    interface Processor : Node {
+    interface Processor : Node
+{
+
         /**
          * The names of all connected stores.
          * @return set of store names
@@ -147,7 +159,9 @@ public interface TopologyDescription {
     /**
      * A sink node of a topology.
      */
-    interface Sink : Node {
+    interface Sink : Node
+{
+
         /**
          * The topic name this sink node is writing to.
          * Could be {@code null} if the topic name can only be dynamically determined based on {@link TopicNameExtractor}

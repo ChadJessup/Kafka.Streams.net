@@ -26,7 +26,9 @@ using Kafka.Common.TopicPartition;
 /**
  * Represents the state of a single task running within a {@link KafkaStreams} application.
  */
-public TaskMetadata {
+public TaskMetadata
+{
+
 
     private string taskId;
 

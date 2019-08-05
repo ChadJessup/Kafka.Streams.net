@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -23,7 +24,10 @@ namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
-public  GraphGraceSearchUtil {
+
+public  GraphGraceSearchUtil
+{
+
     private GraphGraceSearchUtil() {}
 
     public static long findAndVerifyWindowGrace( StreamsGraphNode streamsGraphNode)
@@ -90,10 +94,14 @@ public  GraphGraceSearchUtil {
                  KStreamSessionWindowAggregate kStreamSessionWindowAggregate = (KStreamSessionWindowAggregate) processorSupplier;
                  SessionWindows windows = kStreamSessionWindowAggregate.windows();
                 return windows.gracePeriodMs() + windows.inactivityGap();
-            } else {
+            } else
+{
+
                 return null;
             }
-        } else {
+        } else
+{
+
             return null;
         }
     }

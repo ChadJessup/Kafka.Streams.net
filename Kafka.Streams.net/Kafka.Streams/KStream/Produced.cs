@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -30,7 +32,7 @@ namespace Kafka.Streams.KStream {
  * @param key type
  * @param value type
  */
-public Produced<K, V> : NamedOperation<Produced<K, V>> {
+public class Produced<K, V> : NamedOperation<Produced<K, V>> {
 
     protected ISerde<K> keySerde;
     protected ISerde<V> valueSerde;
@@ -185,7 +187,7 @@ public Produced<K, V> : NamedOperation<Produced<K, V>> {
         return this;
     }
 
-    
+
     public bool Equals( object o)
 {
         if (this == o)
@@ -202,13 +204,13 @@ public Produced<K, V> : NamedOperation<Produced<K, V>> {
                Objects.Equals(partitioner, produced.partitioner);
     }
 
-    
+
     public int hashCode()
 {
         return Objects.hash(keySerde, valueSerde, partitioner);
     }
 
-    
+
     public Produced<K, V> withName( string name)
 {
         this.processorName = name;

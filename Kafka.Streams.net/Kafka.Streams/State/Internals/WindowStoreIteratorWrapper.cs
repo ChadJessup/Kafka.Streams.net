@@ -55,19 +55,19 @@ class WindowStoreIteratorWrapper
             this.bytesIterator = bytesIterator;
         }
 
-        
+
         public long peekNextKey()
 {
             return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()());
         }
 
-        
+
         public bool hasNext()
 {
             return bytesIterator.hasNext();
         }
 
-        
+
         public KeyValue<long, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
@@ -75,20 +75,20 @@ class WindowStoreIteratorWrapper
             return KeyValue.pair(timestamp, next.value);
         }
 
-        
+
         public void Remove()
 {
             throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
         }
 
-        
+
         public void close()
 {
             bytesIterator.close();
         }
     }
 
-    private static WrappedKeyValueIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+    private static class WrappedKeyValueIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
 {
         KeyValueIterator<Bytes, byte[]> bytesIterator;
         long windowSize;
@@ -100,33 +100,33 @@ class WindowStoreIteratorWrapper
             this.windowSize = windowSize;
         }
 
-        
+
         public Windowed<Bytes> peekNextKey()
 {
             byte[] nextKey = bytesIterator.peekNextKey()[);
             return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
         }
 
-        
+
         public bool hasNext()
 {
             return bytesIterator.hasNext();
         }
 
-        
+
         public KeyValue<Windowed<Bytes>, byte[]> next()
 {
             KeyValue<Bytes, byte[]> next = bytesIterator.next();
             return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
         }
 
-        
+
         public void Remove()
 {
             throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
         }
 
-        
+
         public void close()
 {
             bytesIterator.close();

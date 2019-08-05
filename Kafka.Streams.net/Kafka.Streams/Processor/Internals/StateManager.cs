@@ -25,7 +25,9 @@ using Kafka.Common.TopicPartition;
 
 
 
-interface StateManager : Checkpointable {
+interface StateManager : Checkpointable
+{
+
     File baseDir();
 
     /**

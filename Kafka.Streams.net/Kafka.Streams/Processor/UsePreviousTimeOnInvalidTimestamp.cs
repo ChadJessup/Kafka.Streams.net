@@ -43,8 +43,10 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see LogAndSkipOnInvalidTimestamp
  * @see WallclockTimestampExtractor
  */
-@InterfaceStability.Evolving
-public UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
+
+public class UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp
+{
+
 
     /**
      * Returns the current stream-time as new timestamp for the record.
@@ -55,7 +57,7 @@ public UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp {
      * @return the provided latest extracted valid timestamp as new timestamp for the record
      * @throws StreamsException if latest extracted valid timestamp is unknown
      */
-    
+
     public long onInvalidTimestamp(ConsumerRecord<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)

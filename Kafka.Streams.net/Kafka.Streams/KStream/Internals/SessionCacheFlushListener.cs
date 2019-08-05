@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -41,9 +43,13 @@ class SessionCacheFlushListener<K, V> : CacheFlushListener<Windowed<K>, V> {
 {
          ProcessorNode prev = context.currentNode();
         context.setCurrentNode(myNode);
-        try {
+        try
+{
+
             context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(key.window().end()));
-        } finally {
+        } finally
+{
+
             context.setCurrentNode(prev);
         }
     }

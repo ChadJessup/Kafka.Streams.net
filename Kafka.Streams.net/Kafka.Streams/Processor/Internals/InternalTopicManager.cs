@@ -38,11 +38,15 @@ using Kafka.Common.Utils.Utils;
 
 
 
-public InternalTopicManager {
+public InternalTopicManager
+{
+
     private static string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
         "Please report at https://issues.apache.org/jira/projects/KAFKA or dev-mailing list (https://kafka.apache.org/contact).";
 
-    private static InternalAdminClientConfig : AdminClientConfig {
+    private static InternalAdminClientConfig : AdminClientConfig
+{
+
         private InternalAdminClientConfig(Dictionary<?, ?> props)
 {
             base(props, false);
@@ -136,7 +140,9 @@ public InternalTopicManager {
                 foreach (Map.Entry<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.values().entrySet())
 {
                     string topicName = createTopicResult.Key;
-                    try {
+                    try
+{
+
                         createTopicResult.Value[);
                         topicsNotReady.Remove(topicName);
                     } catch (InterruptedException fatalException)
@@ -151,10 +157,12 @@ public InternalTopicManager {
                         if (cause is TopicExistsException)
 {
                             // This topic didn't exist earlier or its leader not known before; just retain it for next round of validation.
-                            log.info("Could not create topic {}. Topic is probably marked for deletion (number of partitions is unknown).\n" +
+                            log.LogInformation("Could not create topic {}. Topic is probably marked for deletion (number of partitions is unknown).\n" +
                                 "Will retry to create this topic in {} ms (to let broker finish async delete operation first).\n" +
                                 "Error message was: {}", topicName, retryBackOffMs, cause.ToString());
-                        } else {
+                        } else
+{
+
                             log.LogError("Unexpected error during topic creation for {}.\n" +
                                 "Error message was: {}", topicName, cause.ToString());
                             throw new StreamsException(string.Format("Could not create topic %s.", topicName), cause);
@@ -166,7 +174,7 @@ public InternalTopicManager {
 
             if (!topicsNotReady.isEmpty())
 {
-                log.info("Topics {} can not be made ready with {} retries left", topicsNotReady, retries);
+                log.LogInformation("Topics {} can not be made ready with {} retries left", topicsNotReady, retries);
 
                 Utils.sleep(retryBackOffMs);
 
@@ -201,7 +209,9 @@ public InternalTopicManager {
         foreach (Map.Entry<string, KafkaFuture<TopicDescription>> topicFuture in futures.entrySet())
 {
             string topicName = topicFuture.Key;
-            try {
+            try
+{
+
                 TopicDescription topicDescription = topicFuture.Value[);
                 existedTopicPartition.Add(
                     topicFuture.Key,
@@ -220,7 +230,9 @@ public InternalTopicManager {
 {
                     // This topic didn't exist or leader is not known yet, proceed to try to create it
                     log.LogDebug("Topic {} is unknown or not found, hence not existed yet.", topicName);
-                } else {
+                } else
+{
+
                     log.LogError("Unexpected error during topic description for {}.\n" +
                         "Error message was: {}", topicName, cause.ToString());
                     throw new StreamsException(string.Format("Could not create topic %s.", topicName), cause);
@@ -256,7 +268,9 @@ public InternalTopicManager {
                     log.LogError(errorMsg);
                     throw new StreamsException(errorMsg);
                 }
-            } else {
+            } else
+{
+
                 topicsToCreate.Add(topicName);
             }
         }

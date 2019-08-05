@@ -22,7 +22,9 @@ using Kafka.Common.header.Headers;
  * The context associated with the current record being processed by
  * an {@link Processor}
  */
-public interface RecordContext {
+public interface RecordContext
+{
+
     /**
      * @return  The offset of the original record received from Kafka;
      *          could be -1 if it is not available

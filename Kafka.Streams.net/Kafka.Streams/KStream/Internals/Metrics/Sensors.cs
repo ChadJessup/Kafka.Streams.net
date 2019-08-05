@@ -33,7 +33,9 @@ namespace Kafka.streams.kstream.internals.metrics;
 
 
 
-public Sensors {
+public Sensors
+{
+
     private Sensors() {}
 
     public static Sensor lateRecordDropSensor( InternalProcessorContext context)

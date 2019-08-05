@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Errors {
+namespace Kafka.Streams.Errors
+{
+
 
 
 /**
@@ -22,7 +24,9 @@ namespace Kafka.Streams.Errors {
  *
  * @see org.apache.kafka.streams.processor.IStateStore
  */
-public LockException : StreamsException {
+public LockException : StreamsException
+{
+
 
     private  static long serialVersionUID = 1L;
 

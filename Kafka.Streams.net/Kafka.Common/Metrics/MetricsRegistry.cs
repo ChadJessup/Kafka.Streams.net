@@ -172,7 +172,7 @@ namespace Kafka.Common.Metrics
             // GC.SuppressFinalize(this);
         }
 
-        //void.AddMetric(metricName("count", "kafka-metrics-count", "total number of registered metrics"),
+        //void addMetric(metricName("count", "kafka-metrics-count", "total number of registered metrics"),
         //    new Measurable()
         //    {
         //        public double measure(MetricConfig config, long now)
@@ -545,7 +545,7 @@ namespace Kafka.Common.Metrics
          * @param metricName The name of the metric
          * @param measurable The measurable that will be measured by this metric
          */
-        public void.AddMetric(MetricName metricName, IMeasurable measurable)
+        public void addMetric(MetricName metricName, IMeasurable measurable)
 {
            .AddMetric(metricName, null, measurable);
         }
@@ -561,7 +561,7 @@ namespace Kafka.Common.Metrics
          * @param config The configuration to use when measuring this measurable
          * @param measurable The measurable that will be measured by this metric
          */
-        public void.AddMetric(MetricName metricName, MetricConfig config, IMeasurable measurable)
+        public void addMetric(MetricName metricName, MetricConfig config, IMeasurable measurable)
         {
            .AddMetric(metricName, config, (IMetricValueProvider)measurable);
         }
@@ -574,7 +574,7 @@ namespace Kafka.Common.Metrics
          * @param metricName The name of the metric
          * @param metricValueProvider The metric value provider associated with this metric
          */
-        public void.AddMetric(MetricName metricName, MetricConfig config, IMetricValueProvider metricValueProvider)
+        public void addMetric(MetricName metricName, MetricConfig config, IMetricValueProvider metricValueProvider)
         {
             var m = new KafkaMetric(
                 new object(),
@@ -594,7 +594,7 @@ namespace Kafka.Common.Metrics
          * @param metricName The name of the metric
          * @param metricValueProvider The metric value provider associated with this metric
          */
-        public void.AddMetric(MetricName metricName, IMetricValueProvider metricValueProvider)
+        public void addMetric(MetricName metricName, IMetricValueProvider metricValueProvider)
         {
            .AddMetric(metricName, null, metricValueProvider);
         }
@@ -638,7 +638,7 @@ namespace Kafka.Common.Metrics
          * Add a MetricReporter
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void.AddReporter(IMetricsReporter reporter)
+        public void addReporter(IMetricsReporter reporter)
         {
             reporter.init(new List<KafkaMetric>(metrics.Values));
             this.reporters.Add(reporter);

@@ -23,7 +23,7 @@ public QuickUnion<T> {
 
     private HashMap<T, T> ids = new HashMap<>();
 
-    public void.Add(T id)
+    public void add(T id)
 {
         ids.Add(id, id);
     }

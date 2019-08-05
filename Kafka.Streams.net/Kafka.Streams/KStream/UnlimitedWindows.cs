@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -47,7 +49,7 @@ public  UnlimitedWindows : Windows<UnlimitedWindow> {
     private static  long DEFAULT_START_TIMESTAMP_MS = 0L;
 
     /** The start timestamp of the window. */
-    @SuppressWarnings("WeakerAccess")
+    
     public  long startMs;
 
     private UnlimitedWindows( long startMs)
@@ -152,7 +154,7 @@ public  UnlimitedWindows : Windows<UnlimitedWindow> {
         return 0L;
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public bool Equals( object o)
 {
@@ -168,14 +170,14 @@ public  UnlimitedWindows : Windows<UnlimitedWindow> {
         return startMs == that.startMs && segments == that.segments;
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public int hashCode()
 {
         return Objects.hash(startMs, segments);
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public string ToString()
 {

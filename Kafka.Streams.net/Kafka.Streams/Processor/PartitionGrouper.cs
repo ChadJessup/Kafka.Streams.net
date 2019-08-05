@@ -30,7 +30,9 @@ using Kafka.Common.TopicPartition;
  * the created task ids will then be assigned to Kafka Streams instances that host the stream
  * processing application.
  */
-public interface PartitionGrouper {
+public interface PartitionGrouper
+{
+
 
     /**
      * Returns a map of task ids to groups of partitions. A partition group forms a task, thus, partitions that are

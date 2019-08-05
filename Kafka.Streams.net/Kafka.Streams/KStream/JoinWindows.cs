@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -230,7 +232,7 @@ public  JoinWindows : Windows<Window> {
      * @return this updated builder
      * @throws ArgumentException if the {@code afterWindowEnd} is negative of can't be represented as {@code long milliseconds}
      */
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     public JoinWindows grace( TimeSpan afterWindowEnd){
          string msgPrefix = prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
          long afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
@@ -282,7 +284,7 @@ public  JoinWindows : Windows<Window> {
         return Math.Max(maintainDurationMs, size());
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public bool Equals( object o)
 {
@@ -302,14 +304,14 @@ public  JoinWindows : Windows<Window> {
             graceMs == that.graceMs;
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public int hashCode()
 {
         return Objects.hash(beforeMs, afterMs, graceMs, maintainDurationMs, segments);
     }
 
-    @SuppressWarnings("deprecation") // removing segments from Windows will fix this
+    
     
     public string ToString()
 {

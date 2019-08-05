@@ -46,7 +46,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public ProcessorStateManager : StateManager {
+public class ProcessorStateManager : StateManager
+{
+
     private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
 
     private Logger log;
@@ -111,7 +113,7 @@ public ProcessorStateManager : StateManager {
         checkpointFile = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
         initialLoadedCheckpoints = checkpointFile.read();
 
-        log.trace("Checkpointable offsets read from checkpoint: {}", initialLoadedCheckpoints);
+        log.LogTrace("Checkpointable offsets read from checkpoint: {}", initialLoadedCheckpoints);
 
         if (eosEnabled)
 {
@@ -131,13 +133,13 @@ public ProcessorStateManager : StateManager {
         return applicationId + "-" + storeName + STATE_CHANGELOG_TOPIC_SUFFIX;
     }
 
-    
+
     public File baseDir()
 {
         return baseDir;
     }
 
-    
+
     public void register(IStateStore store,
                          StateRestoreCallback stateRestoreCallback)
 {
@@ -164,17 +166,19 @@ public ProcessorStateManager : StateManager {
 
             if (isStandby)
 {
-                log.trace("Preparing standby replica of persistent state store {} with changelog topic {}", storeName, topic);
+                log.LogTrace("Preparing standby replica of persistent state store {} with changelog topic {}", storeName, topic);
 
                 restoreCallbacks.Add(topic, stateRestoreCallback);
                 recordConverters.Add(topic, recordConverter);
-            } else {
+            } else
+{
+
                 long restoreCheckpoint = store.persistent() ? initialLoadedCheckpoints[storePartition] : null;
                 if (restoreCheckpoint != null)
 {
                     checkpointFileCache.Add(storePartition, restoreCheckpoint);
                 }
-                log.trace("Restoring state store {} from changelog topic {} at checkpoint {}", storeName, topic, restoreCheckpoint);
+                log.LogTrace("Restoring state store {} from changelog topic {} at checkpoint {}", storeName, topic, restoreCheckpoint);
 
                 StateRestorer restorer = new StateRestorer(
                     storePartition,
@@ -194,7 +198,7 @@ public ProcessorStateManager : StateManager {
         registeredStores.Add(storeName, Optional.of(store));
     }
 
-    
+
     public void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
                                                      InternalProcessorContext processorContext)
 {
@@ -220,7 +224,7 @@ public ProcessorStateManager : StateManager {
         }
     }
 
-    
+
     public Dictionary<TopicPartition, long> checkpointed()
 {
         updateCheckpointFileCache(emptyMap());
@@ -253,7 +257,9 @@ public ProcessorStateManager : StateManager {
                 convertedRecords.Add(converter.convert(record));
             }
 
-            try {
+            try
+{
+
                 restoreCallback.restoreBatch(convertedRecords);
             } catch (RuntimeException e)
 {
@@ -268,7 +274,7 @@ public ProcessorStateManager : StateManager {
     void putOffsetLimit(TopicPartition partition,
                         long limit)
 {
-        log.trace("Updating store offset limit for partition {} to {}", partition, limit);
+        log.LogTrace("Updating store offset limit for partition {} to {}", partition, limit);
         offsetLimits.Add(partition, limit);
     }
 
@@ -278,13 +284,13 @@ public ProcessorStateManager : StateManager {
         return limit != null ? limit : long.MaxValue;
     }
 
-    
+
     public IStateStore getStore(string name)
 {
         return registeredStores.getOrDefault(name, Optional.empty()).orElse(null);
     }
 
-    
+
     public void flush()
 {
         ProcessorStateException firstException = null;
@@ -297,8 +303,10 @@ public ProcessorStateManager : StateManager {
                 if (entry.Value.isPresent())
 {
                     IStateStore store = entry.Value[);
-                    log.trace("Flushing store {}", store.name());
-                    try {
+                    log.LogTrace("Flushing store {}", store.name());
+                    try
+{
+
                         store.flush();
                     } catch (RuntimeException e)
 {
@@ -308,7 +316,9 @@ public ProcessorStateManager : StateManager {
                         }
                         log.LogError("Failed to flush state store {}: ", store.name(), e);
                     }
-                } else {
+                } else
+{
+
                     throw new InvalidOperationException("Expected " + entry.Key + " to have been initialized");
                 }
             }
@@ -326,7 +336,7 @@ public ProcessorStateManager : StateManager {
      *
      * @throws ProcessorStateException if any error happens when closing the state stores
      */
-    
+
     public void close(bool clean){
         ProcessorStateException firstException = null;
         // attempting to close the stores, just in case they
@@ -340,7 +350,9 @@ public ProcessorStateManager : StateManager {
 {
                     IStateStore store = entry.Value[);
                     log.LogDebug("Closing storage engine {}", store.name());
-                    try {
+                    try
+{
+
                         store.close();
                         registeredStores.Add(store.name(), Optional.empty());
                     } catch (RuntimeException e)
@@ -351,8 +363,10 @@ public ProcessorStateManager : StateManager {
                         }
                         log.LogError("Failed to close state store {}: ", store.name(), e);
                     }
-                } else {
-                    log.info("Skipping to close non-initialized store {}", entry.Key);
+                } else
+{
+
+                    log.LogInformation("Skipping to close non-initialized store {}", entry.Key);
                 }
             }
         }
@@ -360,7 +374,9 @@ public ProcessorStateManager : StateManager {
         if (!clean && eosEnabled)
 {
             // delete the checkpoint file if this is an unclean close
-            try {
+            try
+{
+
                 clearCheckpoints();
             } catch (IOException e)
 {
@@ -374,7 +390,7 @@ public ProcessorStateManager : StateManager {
         }
     }
 
-    
+
     public void checkpoint(Dictionary<TopicPartition, long> checkpointableOffsetsFromProcessing)
 {
         ensureStoresRegistered();
@@ -387,10 +403,12 @@ public ProcessorStateManager : StateManager {
 
         updateCheckpointFileCache(checkpointableOffsetsFromProcessing);
 
-        log.trace("Checkpointable offsets updated with active acked offsets: {}", checkpointFileCache);
+        log.LogTrace("Checkpointable offsets updated with active acked offsets: {}", checkpointFileCache);
 
-        log.trace("Writing checkpoint: {}", checkpointFileCache);
-        try {
+        log.LogTrace("Writing checkpoint: {}", checkpointFileCache);
+        try
+{
+
             checkpointFile.write(checkpointFileCache);
         } catch (IOException e)
 {
@@ -405,7 +423,7 @@ public ProcessorStateManager : StateManager {
             changelogReader.restoredOffsets(),
             validCheckpointableTopics
         );
-        log.trace("Checkpointable offsets updated with restored offsets: {}", checkpointFileCache);
+        log.LogTrace("Checkpointable offsets updated with restored offsets: {}", checkpointFileCache);
         foreach (TopicPartition topicPartition in validCheckpointableTopics)
 {
             if (checkpointableOffsetsFromProcessing.ContainsKey(topicPartition))
@@ -424,7 +442,9 @@ public ProcessorStateManager : StateManager {
             } else if (checkpointFileCache.ContainsKey(topicPartition))
 {
                 // or if we have a prior value we've cached (and written to the checkpoint file), then keep it
-            } else {
+            } else
+{
+
                 // As a last resort, fall back to the offset we loaded from the checkpoint file at startup, but
                 // only if the offset is actually valid for our current state stores.
                 long loadedOffset =
@@ -452,7 +472,7 @@ public ProcessorStateManager : StateManager {
         }
     }
 
-    
+
     public IStateStore getGlobalStore(string name)
 {
         return globalStores.getOrDefault(name, Optional.empty()).orElse(null);

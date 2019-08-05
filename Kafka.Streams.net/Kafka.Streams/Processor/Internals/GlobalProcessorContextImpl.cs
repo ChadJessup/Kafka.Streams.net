@@ -39,7 +39,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public GlobalProcessorContextImpl : AbstractProcessorContext {
+public class GlobalProcessorContextImpl : AbstractProcessorContext
+{
+
 
 
     public GlobalProcessorContextImpl(StreamsConfig config,
@@ -50,8 +52,8 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
         base(new TaskId(-1, -1), config, metrics, stateMgr, cache);
     }
 
-    
-    
+
+
     public IStateStore getStateStore(string name)
 {
         IStateStore store = stateManager.getGlobalStore(name);
@@ -76,18 +78,22 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
         return store;
     }
 
-    
-    
+
+
     public void forward(K key, V value)
 {
         ProcessorNode previousNode = currentNode();
-        try {
+        try
+{
+
             foreach (ProcessorNode child in (List<ProcessorNode<K, V>>) currentNode().children())
 {
                 setCurrentNode(child);
                 child.process(key, value);
             }
-        } finally {
+        } finally
+{
+
             setCurrentNode(previousNode);
         }
     }
@@ -95,7 +101,7 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * No-op. This should only be called on GlobalStateStore#flush and there should be no child nodes
      */
-    
+
     public void forward(K key, V value, To to)
 {
         if (!currentNode().children().isEmpty())
@@ -107,7 +113,7 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * @throws InvalidOperationException on every invocation
      */
-    
+
     [System.Obsolete]
     public void forward(K key, V value, int childIndex)
 {
@@ -117,14 +123,14 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * @throws InvalidOperationException on every invocation
      */
-    
+
     [System.Obsolete]
     public void forward(K key, V value, string childName)
 {
         throw new InvalidOperationException("this should not happen: forward() not supported in global processor context.");
     }
 
-    
+
     public void commit()
 {
         //no-op
@@ -133,7 +139,7 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * @throws InvalidOperationException on every invocation
      */
-    
+
     [System.Obsolete]
     public ICancellable schedule(long interval, PunctuationType type, Punctuator callback)
 {
@@ -143,7 +149,7 @@ public GlobalProcessorContextImpl : AbstractProcessorContext {
     /**
      * @throws InvalidOperationException on every invocation
      */
-    
+
     public ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
 {
         throw new InvalidOperationException("this should not happen: schedule() not supported in global processor context.");

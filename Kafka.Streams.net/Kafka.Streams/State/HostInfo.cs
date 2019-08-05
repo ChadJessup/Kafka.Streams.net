@@ -36,7 +36,7 @@ using Kafka.Streams.Processor.internals.StreamsPartitionAssignor;
  *  If developers wish to expose an endpoint in their KafkaStreams applications they should provide the above
  *  config.
  */
-public HostInfo
+public class HostInfo
 {
     private string host;
     private int port;

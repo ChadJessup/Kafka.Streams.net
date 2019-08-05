@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Kafka.Streams
 {
-    public StreamsBuilder
-   
-{
+    public class StreamsBuilder
+    {
     }
 }

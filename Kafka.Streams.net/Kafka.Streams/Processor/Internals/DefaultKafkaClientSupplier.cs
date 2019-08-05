@@ -27,33 +27,35 @@ using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.serialization.ByteArraySerializer;
 
 
-public DefaultKafkaClientSupplier : KafkaClientSupplier {
-    
+public class DefaultKafkaClientSupplier : KafkaClientSupplier
+{
+
+
     public Admin getAdminClient(Dictionary<string, object> config)
 {
         // create a new client upon each call; but expect this call to be only triggered once so this should be fine
         return Admin.create(config);
     }
 
-    
+
     public Producer<byte[], byte[]> getProducer(Dictionary<string, object> config)
 {
         return new KafkaProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
     }
 
-    
+
     public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
-    
+
     public Consumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
-    
+
     public Consumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());

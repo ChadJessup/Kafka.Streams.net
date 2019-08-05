@@ -28,7 +28,7 @@ using Kafka.Streams.State.QueryableStoreType;
 /**
  * A wrapper over all of the {@link StateStoreProvider}s in a Topology
  */
-public QueryableStoreProvider
+public class QueryableStoreProvider
 {
 
     private List<StateStoreProvider> storeProviders;

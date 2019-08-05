@@ -37,7 +37,9 @@ using Kafka.Common.serialization.Serde;
 /**
  * {@code IProcessorContext} implementation that will throw on any forward call.
  */
-public ForwardingDisabledProcessorContext : IProcessorContext {
+public ForwardingDisabledProcessorContext : IProcessorContext
+{
+
     private IProcessorContext delegate;
 
     public ForwardingDisabledProcessorContext(IProcessorContext delegate)

@@ -22,7 +22,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public PunctuationQueue {
+public PunctuationQueue
+{
+
 
     private PriorityQueue<PunctuationSchedule> pq = new PriorityQueue<>();
 

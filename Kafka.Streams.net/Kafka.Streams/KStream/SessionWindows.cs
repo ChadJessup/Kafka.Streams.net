@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -70,7 +72,9 @@ namespace Kafka.Streams.KStream {
  * @see KGroupedStream#windowedBy(SessionWindows)
  * @see TimestampExtractor
  */
-public  SessionWindows {
+public  SessionWindows
+{
+
 
     private  long gapMs;
     private  long maintainDurationMs;
@@ -166,7 +170,7 @@ public  SessionWindows {
         );
     }
 
-    @SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+    
     public long gracePeriodMs()
 {
         // NOTE: in the future, when we Remove maintainMs,

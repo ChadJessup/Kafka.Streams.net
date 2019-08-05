@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
 
-public  WindowingDefaults {
+
+public  WindowingDefaults
+{
+
     private WindowingDefaults() {}
 
     public static  long DEFAULT_RETENTION_MS = 24 * 60 * 60 * 1000L; // one day

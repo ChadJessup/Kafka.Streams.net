@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream {
+namespace Kafka.Streams.KStream
+{
+
 
 
 
@@ -65,7 +67,7 @@ namespace Kafka.Streams.KStream {
  * @see GlobalKTable
  * @see StreamsBuilder#table(string)
  */
-@InterfaceStability.Evolving
+
 public interface KTable<K, V> {
 
     /**

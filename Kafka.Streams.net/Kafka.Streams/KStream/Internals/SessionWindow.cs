@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -28,7 +30,9 @@ namespace Kafka.Streams.KStream.Internals {
  * @see org.apache.kafka.streams.kstream.SessionWindows
  * @see org.apache.kafka.streams.processor.TimestampExtractor
  */
-public  SessionWindow : Window {
+public  SessionWindow : Window
+{
+
 
     /**
      * Create a new window for the given start time and end time (both inclusive).

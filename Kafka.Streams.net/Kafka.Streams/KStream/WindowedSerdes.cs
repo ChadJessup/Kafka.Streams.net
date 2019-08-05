@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public WindowedSerdes
-   
-{
+    public class WindowedSerdes
+
+    {
 
     }
 }

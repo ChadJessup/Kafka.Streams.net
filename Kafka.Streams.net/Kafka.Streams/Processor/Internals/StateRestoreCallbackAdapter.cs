@@ -26,7 +26,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public StateRestoreCallbackAdapter {
+public StateRestoreCallbackAdapter
+{
+
     private StateRestoreCallbackAdapter() {}
 
     public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
@@ -45,7 +47,9 @@ public StateRestoreCallbackAdapter {
                 }
                 ((BatchingStateRestoreCallback) restoreCallback).restoreAll(keyValues);
             };
-        } else {
+        } else
+{
+
             return records -> {
                 foreach (ConsumerRecord<byte[], byte[]> record in records)
 {

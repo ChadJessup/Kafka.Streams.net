@@ -19,10 +19,14 @@ namespace Kafka.streams.kstream.internals.suppress;
 
 
 
- TimeDefinitions {
+ TimeDefinitions
+{
+
     private TimeDefinitions() {}
 
-    enum TimeDefinitionType {
+    enum TimeDefinitionType
+{
+
         RECORD_TIME, WINDOW_END_TIME
     }
 

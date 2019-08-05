@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
+
 
 
 
@@ -103,7 +105,9 @@ public TableSourceNode<K, V> : StreamSourceNode<K, V> {
                                            topicName,
                                            processorParameters.processorName(),
                                            processorParameters.processorSupplier());
-        } else {
+        } else
+{
+
             topologyBuilder.AddSource(consumedInternal().offsetResetPolicy(),
                                       sourceName,
                                       consumedInternal().timestampExtractor(),

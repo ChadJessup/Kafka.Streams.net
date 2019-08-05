@@ -30,7 +30,9 @@ namespace Kafka.Streams.Processor;
  *   by how long an iteration of the processing loop takes to complete</li>
  * </ul>
  */
-public enum PunctuationType {
+public enum PunctuationType
+{
+
    STREAM_TIME,
    WALL_CLOCK_TIME,
 }

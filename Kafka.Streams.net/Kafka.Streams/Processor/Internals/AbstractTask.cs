@@ -39,7 +39,9 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public abstract AbstractTask : Task {
+public abstract class AbstractTask : Task
+{
+
 
     TaskId id;
     string applicationId;
@@ -84,7 +86,9 @@ public abstract AbstractTask : Task {
         this.log = logContext.logger(GetType());
 
         // create the processor state manager
-        try {
+        try
+{
+
             stateMgr = new ProcessorStateManager(
                 id,
                 partitions,
@@ -100,37 +104,37 @@ public abstract AbstractTask : Task {
         }
     }
 
-    
+
     public TaskId id()
 {
         return id;
     }
 
-    
+
     public string applicationId()
 {
         return applicationId;
     }
 
-    
+
     public HashSet<TopicPartition> partitions()
 {
         return partitions;
     }
 
-    
+
     public ProcessorTopology topology()
 {
         return topology;
     }
 
-    
+
     public IProcessorContext context()
 {
         return processorContext;
     }
 
-    
+
     public IStateStore getStore(string name)
 {
         return stateMgr.getStore(name);
@@ -142,7 +146,7 @@ public abstract AbstractTask : Task {
      *
      * @return A string representation of the StreamTask instance.
      */
-    
+
     public string ToString()
 {
         return ToString("");
@@ -196,14 +200,16 @@ public abstract AbstractTask : Task {
 {
         foreach (TopicPartition partition in partitions)
 {
-            try {
+            try
+{
+
                 OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
                 long offset = metadata != null ? metadata.offset() : 0L;
                 stateMgr.putOffsetLimit(partition, offset);
 
                 if (log.isTraceEnabled())
 {
-                    log.trace("Updating store offset limits {} for changelog {}", offset, partition);
+                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
                 }
             } catch (AuthorizationException e)
 {
@@ -238,7 +244,9 @@ public abstract AbstractTask : Task {
             return;
         }
 
-        try {
+        try
+{
+
             if (!stateDirectory.lock(id))
 {
                 throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
@@ -249,14 +257,14 @@ public abstract AbstractTask : Task {
                 string.Format("%sFatal error while trying to lock the state directory for task %s",
                 logPrefix, id));
         }
-        log.trace("Initializing state stores");
+        log.LogTrace("Initializing state stores");
 
         // set initial offset limits
         updateOffsetLimits();
 
         foreach (IStateStore store in topology.stateStores())
 {
-            log.trace("Initializing store {}", store.name());
+            log.LogTrace("Initializing store {}", store.name());
             processorContext.uninitialize();
             store.init(processorContext, store);
         }
@@ -272,14 +280,20 @@ public abstract AbstractTask : Task {
      */
     void closeStateManager(bool clean){
         ProcessorStateException exception = null;
-        log.trace("Closing state manager");
-        try {
+        log.LogTrace("Closing state manager");
+        try
+{
+
             stateMgr.close(clean);
         } catch (ProcessorStateException e)
 {
             exception = e;
-        } finally {
-            try {
+        } finally
+{
+
+            try
+{
+
                 stateDirectory.unlock(id);
             } catch (IOException e)
 {

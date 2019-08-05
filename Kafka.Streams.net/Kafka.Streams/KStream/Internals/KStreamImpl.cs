@@ -908,7 +908,9 @@ namespace Kafka.Streams.KStream.Internals
                 joined.valueSerde()
             );
             return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, false);
-        } else {
+        } else
+{
+
             return doStreamTableJoin(other, joiner, joined, false);
         }
     }
@@ -938,7 +940,9 @@ namespace Kafka.Streams.KStream.Internals
                 joined.valueSerde()
             );
             return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, true);
-        } else {
+        } else
+{
+
             return doStreamTableJoin(other, joiner, joined, true);
         }
     }
@@ -1098,7 +1102,7 @@ public KStream<K, VR> leftJoin(
             builder);
     }
 
-    //@SuppressWarnings("deprecation") // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+    //
     private static StoreBuilder<WindowStore<K, V>> joinWindowStoreBuilder(
         string joinName,
         JoinWindows windows,
@@ -1117,7 +1121,9 @@ public KStream<K, VR> leftJoin(
         );
     }
 
-    private KStreamImplJoin {
+    private KStreamImplJoin
+{
+
 
         private  bool leftOuter;
         private  bool rightOuter;

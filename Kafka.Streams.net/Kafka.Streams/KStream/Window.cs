@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public abstract Window
-   
-{
+    public abstract class Window
+
+    {
     }
 }

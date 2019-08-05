@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals {
+namespace Kafka.Streams.KStream.Internals
+{
+
 
 
 
@@ -114,7 +116,9 @@ class KTableKTableOuterJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
                     return;
                 }
                 resultTimestamp = context().timestamp();
-            } else {
+            } else
+{
+
                 resultTimestamp = Math.Max(context().timestamp(), valueAndTimestamp2.timestamp());
             }
 
@@ -169,7 +173,9 @@ class KTableKTableOuterJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 {
                 value1 = null;
                 timestamp1 = UNKNOWN;
-            } else {
+            } else
+{
+
                 value1 = valueAndTimestamp1.value();
                 timestamp1 = valueAndTimestamp1.timestamp();
             }
@@ -181,7 +187,9 @@ class KTableKTableOuterJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 {
                 value2 = null;
                 timestamp2 = UNKNOWN;
-            } else {
+            } else
+{
+
                 value2 = valueAndTimestamp2.value();
                 timestamp2 = valueAndTimestamp2.timestamp();
             }

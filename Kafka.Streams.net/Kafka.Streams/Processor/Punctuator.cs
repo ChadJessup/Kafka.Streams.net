@@ -23,7 +23,9 @@ namespace Kafka.Streams.Processor;
  *
  * @see Cancellable
  */
-public interface Punctuator {
+public interface Punctuator
+{
+
 
     /**
      * Perform the scheduled periodic operation.

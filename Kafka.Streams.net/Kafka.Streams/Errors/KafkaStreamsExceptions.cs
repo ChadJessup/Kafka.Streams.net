@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kafka.Streams.Errors
 {
-    public KafkaStreamsExceptions : Exception
+    public class KafkaStreamsExceptions : Exception
     {
         public KafkaStreamsExceptions()
         {

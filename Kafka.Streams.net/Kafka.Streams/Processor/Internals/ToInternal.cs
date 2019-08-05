@@ -18,7 +18,9 @@ namespace Kafka.Streams.Processor.Internals;
 
 
 
-public ToInternal : To {
+public class ToInternal : To
+{
+
     public ToInternal()
 {
         base(To.all());

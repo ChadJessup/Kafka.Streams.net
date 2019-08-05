@@ -16,7 +16,9 @@
  */
 namespace Kafka.streams.kstream.internals.suppress;
 
-public enum BufferFullStrategy {
+public enum BufferFullStrategy
+{
+
     EMIT,
     SPILL_TO_DISK,
     SHUT_DOWN

@@ -14,17 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-public RocksDBTimestampedSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<TimestampedSegment>
+namespace Kafka.Streams.State.Internals
 {
+    public class RocksDBTimestampedSegmentedBytesStore : AbstractRocksDBSegmentedBytesStore<TimestampedSegment>
+    {
 
-    RocksDBTimestampedSegmentedBytesStore(string name,
-                                          string metricScope,
-                                          long retention,
-                                          long segmentInterval,
-                                          KeySchema keySchema)
-{
-        base(name, metricScope, keySchema, new TimestampedSegments(name, retention, segmentInterval));
+        public RocksDBTimestampedSegmentedBytesStore(string name,
+                                              string metricScope,
+                                              long retention,
+                                              long segmentInterval,
+                                              KeySchema keySchema)
+            : base(name, metricScope, keySchema, new TimestampedSegments(name, retention, segmentInterval))
+        {
+        }
     }
 }

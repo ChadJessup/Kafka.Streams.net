@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -25,7 +26,10 @@ namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
-public StreamSourceNode<K, V> : StreamsGraphNode {
+
+public StreamSourceNode<K, V> : StreamsGraphNode
+{
+
 
     private Collection<string> topicNames;
     private Pattern topicPattern;
@@ -100,7 +104,9 @@ public StreamSourceNode<K, V> : StreamsGraphNode {
                                       consumedInternal.keyDeserializer(),
                                       consumedInternal.valueDeserializer(),
                                       topicPattern);
-        } else {
+        } else
+{
+
             topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
                                       nodeName(),
                                       consumedInternal.timestampExtractor(),

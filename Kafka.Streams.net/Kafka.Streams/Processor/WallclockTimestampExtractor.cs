@@ -31,8 +31,10 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see LogAndSkipOnInvalidTimestamp
  * @see UsePreviousTimeOnInvalidTimestamp
  */
-@InterfaceStability.Evolving
-public WallclockTimestampExtractor : TimestampExtractor {
+
+public class WallclockTimestampExtractor : TimestampExtractor
+{
+
 
     /**
      * Return the current wall clock time as timestamp.
@@ -41,7 +43,7 @@ public WallclockTimestampExtractor : TimestampExtractor {
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return the current wall clock time, expressed in milliseconds since midnight, January 1, 1970 UTC
      */
-    
+
     public long extract(ConsumerRecord<object, object> record, long partitionTime)
 {
         return System.currentTimeMillis();

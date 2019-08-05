@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
+
 
 
 
@@ -26,7 +28,9 @@ namespace Kafka.Streams.KStream.Internals.Graph {
  * Represents a join between a KStream and a KTable or GlobalKTable
  */
 
-public StreamTableJoinNode<K, V> : StreamsGraphNode {
+public StreamTableJoinNode<K, V> : StreamsGraphNode
+{
+
 
     private  string[] storeNames;
     private  ProcessorParameters<K, V> processorParameters;

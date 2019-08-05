@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Internals
     /**
      * An in-memory LRU cache store based on HashSet and HashMap.
      */
-    public MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
+    public class MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
     {
         private string name;
         protected Dictionary<Bytes, byte[]> map;

@@ -15,12 +15,16 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
 
-public StateStoreNode : StreamsGraphNode {
+
+public StateStoreNode : StreamsGraphNode
+{
+
 
     protected  StoreBuilder storeBuilder;
 

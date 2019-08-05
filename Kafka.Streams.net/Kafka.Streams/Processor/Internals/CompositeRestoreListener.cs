@@ -28,7 +28,9 @@ using Kafka.Common.TopicPartition;
 
 
 
-public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateRestoreListener {
+public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateRestoreListener
+{
+
 
     public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
     private RecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
@@ -41,7 +43,9 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
         if (stateRestoreCallback is StateRestoreListener)
 {
             storeRestoreListener = (StateRestoreListener) stateRestoreCallback;
-        } else {
+        } else
+{
+
             storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
         }
 
@@ -52,7 +56,7 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
      * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
      * {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)}
      */
-    
+
     public void onRestoreStart(TopicPartition topicPartition,
                                string storeName,
                                long startingOffset,
@@ -66,7 +70,7 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
      * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
      * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}
      */
-    
+
     public void onBatchRestored(TopicPartition topicPartition,
                                 string storeName,
                                 long batchEndOffset,
@@ -80,7 +84,7 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
      * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
      * {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}
      */
-    
+
     public void onRestoreEnd(TopicPartition topicPartition,
                              string storeName,
                              long totalRestored)
@@ -89,7 +93,7 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
         storeRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
     }
 
-    
+
     public void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records)
 {
         internalBatchingRestoreCallback.restoreBatch(records);
@@ -103,13 +107,13 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
         }
     }
 
-    
+
     public void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
 {
         throw new InvalidOperationException();
     }
 
-    
+
     public void restore(byte[] key,
                         byte[] value)
 {
@@ -117,8 +121,10 @@ public CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateResto
                                                     + "through the delegated StateRestoreCallback instance");
     }
 
-    private static NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : RecordBatchingStateRestoreCallback {
-        
+    private static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : RecordBatchingStateRestoreCallback
+{
+
+
         public void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records)
 {
 

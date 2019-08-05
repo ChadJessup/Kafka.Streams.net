@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.KStream.Internals.Graph {
+namespace Kafka.Streams.KStream.Internals.Graph
+{
 
 
 
@@ -23,7 +24,10 @@ namespace Kafka.Streams.KStream.Internals.Graph {
 
 
 
-public GlobalStoreNode : StateStoreNode {
+
+public GlobalStoreNode : StateStoreNode
+{
+
 
 
     private  string sourceName;

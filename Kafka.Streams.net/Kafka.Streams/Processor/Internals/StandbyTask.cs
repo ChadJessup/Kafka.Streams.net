@@ -35,7 +35,9 @@ using Kafka.Common.metrics.Sensor;
 /**
  * A StandbyTask
  */
-public StandbyTask : AbstractTask {
+public class StandbyTask : AbstractTask
+{
+
 
     private Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
     private Sensor closeTaskSensor;
@@ -66,10 +68,10 @@ public StandbyTask : AbstractTask {
         processorContext = new StandbyContextImpl(id, config, stateMgr, metrics);
     }
 
-    
+
     public bool initializeStateStores()
 {
-        log.trace("Initializing state stores");
+        log.LogTrace("Initializing state stores");
         registerStateStores();
         checkpointedOffsets = Collections.unmodifiableMap(stateMgr.checkpointed());
         processorContext.initialize();
@@ -77,7 +79,7 @@ public StandbyTask : AbstractTask {
         return true;
     }
 
-    
+
     public void initializeTopology()
 {
         //no-op
@@ -88,7 +90,7 @@ public StandbyTask : AbstractTask {
      * - update offset limits
      * </pre>
      */
-    
+
     public void resume()
 {
         log.LogDebug("Resuming");
@@ -102,10 +104,10 @@ public StandbyTask : AbstractTask {
      * - update offset limits
      * </pre>
      */
-    
+
     public void commit()
 {
-        log.trace("Committing");
+        log.LogTrace("Committing");
         flushAndCheckpointState();
         // reinitialize offset limits
         updateOffsetLimits();
@@ -119,7 +121,7 @@ public StandbyTask : AbstractTask {
      * - checkpoint store
      * </pre>
      */
-    
+
     public void suspend()
 {
         log.LogDebug("Suspending");
@@ -139,7 +141,7 @@ public StandbyTask : AbstractTask {
      * <pre>
      * @param isZombie ignored by {@code StandbyTask} as it can never be a zombie
      */
-    
+
     public void close(bool clean,
                       bool isZombie)
 {
@@ -149,19 +151,23 @@ public StandbyTask : AbstractTask {
             return;
         }
         log.LogDebug("Closing");
-        try {
+        try
+{
+
             if (clean)
 {
                 commit();
             }
-        } finally {
+        } finally
+{
+
             closeStateManager(true);
         }
 
         taskClosed = true;
     }
 
-    
+
     public void closeSuspended(bool clean,
                                bool isZombie,
                                RuntimeException e)
@@ -177,7 +183,7 @@ public StandbyTask : AbstractTask {
     public List<ConsumerRecord<byte[], byte[]>> update(TopicPartition partition,
                                                        List<ConsumerRecord<byte[], byte[]>> records)
 {
-        log.trace("Updating standby replicas of its state store for partition [{}]", partition);
+        log.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
         long limit = stateMgr.offsetLimit(partition);
 
         long lastOffset = -1L;
@@ -190,7 +196,9 @@ public StandbyTask : AbstractTask {
 {
                 restoreRecords.Add(record);
                 lastOffset = record.offset();
-            } else {
+            } else
+{
+
                 remainingRecords.Add(record);
             }
         }
