@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class TableSourceNode<K, V> : StreamSourceNode<K, V>
     {
 
-        private MaterializedInternal<K, V, ?> materializedInternal;
+        private MaterializedInternal<K, V, object> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
         private string sourceName;
         private bool isGlobalKTable;
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                                  string sourceName,
                                  string topic,
                                  ConsumedInternal<K, V> consumedInternal,
-                                 MaterializedInternal<K, V, ?> materializedInternal,
+                                 MaterializedInternal<K, V, object> materializedInternal,
                                  ProcessorParameters<K, V> processorParameters,
                                  bool isGlobalKTable)
 
@@ -141,7 +141,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private string sourceName;
         private string topic;
         private ConsumedInternal<K, V> consumedInternal;
-        private MaterializedInternal<K, V, ?> materializedInternal;
+        private MaterializedInternal<K, V, object> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
         private bool isGlobalKTable = false;
 
@@ -161,7 +161,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             return this;
         }
 
-        public TableSourceNodeBuilder<K, V> withMaterializedInternal(MaterializedInternal<K, V, ?> materializedInternal)
+        public TableSourceNodeBuilder<K, V> withMaterializedInternal(MaterializedInternal<K, V, object> materializedInternal)
         {
             this.materializedInternal = materializedInternal;
             return this;

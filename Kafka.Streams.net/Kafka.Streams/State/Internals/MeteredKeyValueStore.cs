@@ -2,6 +2,7 @@ using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -178,7 +179,7 @@ namespace Kafka.Streams.State.Internals
             if (putAllTime.shouldRecord())
             {
                 measureLatency(
-                    ()->
+                    ()=>
     {
                     wrapped().putAll(innerEntries(entries));
                     return null;

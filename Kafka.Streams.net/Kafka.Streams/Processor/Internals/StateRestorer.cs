@@ -94,10 +94,10 @@ public class StateRestorer
         compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
     }
 
-    void restore(Collection<ConsumerRecord<byte[], byte[]>> records)
+    void restore(Collection<ConsumeResult<byte[], byte[]>> records)
 {
-        Collection<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(records.size());
-        foreach (ConsumerRecord<byte[], byte[]> record in records)
+        Collection<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(records.size());
+        foreach (ConsumeResult<byte[], byte[]> record in records)
 {
             convertedRecords.Add(recordConverter.convert(record));
         }

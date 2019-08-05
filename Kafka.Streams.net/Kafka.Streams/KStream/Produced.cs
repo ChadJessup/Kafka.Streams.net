@@ -189,7 +189,7 @@ namespace Kafka.Streams.KStream
             {
                 return false;
             }
-            Produced <?, ?> produced = (Produced <?, ?>) o;
+            Produced <?, object> produced = (Produced <?, object>) o;
             return Objects.Equals(keySerde, produced.keySerde) &&
                    Objects.Equals(valueSerde, produced.valueSerde) &&
                    Objects.Equals(partitioner, produced.partitioner);

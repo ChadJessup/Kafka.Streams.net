@@ -35,5 +35,5 @@ interface GlobalStateMaintainer
 
     void close();
 
-    void update(ConsumerRecord<byte[], byte[]> record);
+    void update(ConsumeResult<byte[], byte[]> record);
 }

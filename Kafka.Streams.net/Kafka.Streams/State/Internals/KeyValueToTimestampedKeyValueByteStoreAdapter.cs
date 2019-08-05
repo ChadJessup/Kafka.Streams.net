@@ -23,6 +23,7 @@ using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.KeyValueBytesStoreSupplier;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
+using System.Collections.Generic;
 
 
 

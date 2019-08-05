@@ -88,7 +88,7 @@ namespace Kafka.Streams.KStream.Internals
         private InternalProcessorContext internalProcessorContext;
         private Sensor lateRecordDropSensor;
         private Sensor skippedRecordsSensor;
-        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
 
 
@@ -127,7 +127,7 @@ namespace Kafka.Streams.KStream.Internals
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
             long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-            Map<long, W> matchedWindows = windows.windowsFor(timestamp);
+            Dictionary<long, W> matchedWindows = windows.windowsFor(timestamp);
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
             foreach (Map.Entry<long, W> entry in matchedWindows.entrySet())

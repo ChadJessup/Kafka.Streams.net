@@ -77,13 +77,13 @@ public abstract class AbstractProcessorContext : InternalProcessorContext
     }
 
 
-    public ISerde<?> keySerde()
+    public ISerde<object> keySerde()
     {
         return keySerde;
     }
 
 
-    public ISerde<?> valueSerde()
+    public ISerde<object> valueSerde()
     {
         return valueSerde;
     }

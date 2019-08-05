@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
                 .putLong(timestamp)
                 .Add(rawValue)
                 .array();
-        return new ConsumerRecord<>(
+        return new ConsumeResult<>(
             record.topic(),
             record.partition(),
             record.offset(),

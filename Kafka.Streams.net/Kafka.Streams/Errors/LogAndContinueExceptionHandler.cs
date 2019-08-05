@@ -40,7 +40,7 @@ public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler
 
 
     public DeserializationHandlerResponse handle( IProcessorContext context,
-                                                  ConsumerRecord<byte[], byte[]> record,
+                                                  ConsumeResult<byte[], byte[]> record,
                                                   Exception exception)
 {
 
@@ -53,7 +53,7 @@ public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler
     }
 
 
-    public void configure( Map<string, ?> configs)
+    public void configure( Dictionary<string, object> configs)
 {
         // ignore
     }

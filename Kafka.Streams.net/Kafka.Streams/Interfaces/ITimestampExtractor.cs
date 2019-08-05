@@ -3,7 +3,7 @@
 namespace Kafka.Streams.Interfaces
 {
     /**
-     * An interface that allows the Kafka Streams framework to extract a timestamp from an instance of {@link ConsumerRecord}.
+     * An interface that allows the Kafka Streams framework to extract a timestamp from an instance of {@link ConsumeResult}.
      * The extracted timestamp is defined as milliseconds.
      */
     public interface ITimestampExtractor

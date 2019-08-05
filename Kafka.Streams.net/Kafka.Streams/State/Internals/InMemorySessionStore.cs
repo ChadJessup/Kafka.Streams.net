@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
         private string name;
         private string metricScope;
         private Sensor expiredRecordSensor;
-        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
         private long retentionPeriod;
 

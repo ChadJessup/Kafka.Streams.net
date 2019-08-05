@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream.Internals
         private InternalProcessorContext internalProcessorContext;
         private Sensor lateRecordDropSensor;
         private Sensor skippedRecordsSensor;
-        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
 
 

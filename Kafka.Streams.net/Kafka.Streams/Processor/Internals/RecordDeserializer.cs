@@ -52,14 +52,14 @@ class RecordDeserializer
      *                          oritself
      */
     
-    ConsumerRecord<object, object> deserialize(IProcessorContext processorContext,
-                                               ConsumerRecord<byte[], byte[]> rawRecord)
+    ConsumeResult<object, object> deserialize(IProcessorContext processorContext,
+                                               ConsumeResult<byte[], byte[]> rawRecord)
 {
 
         try
 {
 
-            return new ConsumerRecord<>(
+            return new ConsumeResult<>(
                 rawRecord.topic(),
                 rawRecord.partition(),
                 rawRecord.offset(),

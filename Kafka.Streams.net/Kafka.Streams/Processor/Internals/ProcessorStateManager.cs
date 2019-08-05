@@ -15,36 +15,12 @@
  * limitations under the License.
  */
 namespace Kafka.Streams.Processor.Internals;
-
-
+using Confluent.Kafka;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.Utils.FixedOrderMap;
 using Kafka.Common.Utils.LogContext;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
 
 public class ProcessorStateManager : StateManager
 {
@@ -66,7 +42,7 @@ public class ProcessorStateManager : StateManager
     private FixedOrderMap<string, Optional<IStateStore>> registeredStores = new FixedOrderMap<>();
     private FixedOrderMap<string, Optional<IStateStore>> globalStores = new FixedOrderMap<>();
 
-    private List<TopicPartition> changelogPartitions = new List<>();
+    private List<TopicPartition> changelogPartitions = new List<TopicPartition>();
 
     // TODO: this map does not work with customized grouper where multiple partitions
     // of the same topic can be assigned to the same task.
@@ -242,7 +218,7 @@ public class ProcessorStateManager : StateManager
     }
 
     void updateStandbyStates(TopicPartition storePartition,
-                             List<ConsumerRecord<byte[], byte[]>> restoreRecords,
+                             List<ConsumeResult<byte[], byte[]>> restoreRecords,
                              long lastOffset)
 {
         // restore states from changelog records
@@ -251,8 +227,8 @@ public class ProcessorStateManager : StateManager
         if (!restoreRecords.isEmpty())
 {
             RecordConverter converter = recordConverters[storePartition.topic()];
-            List<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size());
-            foreach (ConsumerRecord<byte[], byte[]> record in restoreRecords)
+            List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size());
+            foreach (ConsumeResult<byte[], byte[]> record in restoreRecords)
 {
                 convertedRecords.Add(converter.convert(record));
             }

@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             {
                 return false;
             }
-            FinalResultsSuppressionBuilder <?> that = (FinalResultsSuppressionBuilder <?>) o;
+            FinalResultsSuppressionBuilder <object> that = (FinalResultsSuppressionBuilder <object>) o;
             return Objects.Equals(name, that.name) &&
                 Objects.Equals(bufferConfig, that.bufferConfig);
         }

@@ -66,7 +66,7 @@ public class Sensors
             RecordingLevel.DEBUG
         );
 
-         Map<string, string> tags = metrics.tagMap(
+         Dictionary<string, string> tags = metrics.tagMap(
             "task-id", context.taskId().ToString()
         );
         sensor.Add(
@@ -99,7 +99,7 @@ public class Sensors
             RecordingLevel.DEBUG
         );
 
-         Map<string, string> tags = metrics.tagMap(
+         Dictionary<string, string> tags = metrics.tagMap(
             "task-id", context.taskId().ToString(),
             PROCESSOR_NODE_ID_TAG, context.currentNode().name()
         );

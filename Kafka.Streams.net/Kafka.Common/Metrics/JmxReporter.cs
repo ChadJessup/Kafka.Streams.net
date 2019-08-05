@@ -67,7 +67,7 @@
 ////    }
 
 ////
-////    public void configure(Dictionary<string, ?> configs) {}
+////    public void configure(Dictionary<string, object> configs) {}
 
 ////
 ////    public void init(List<KafkaMetric> metrics)

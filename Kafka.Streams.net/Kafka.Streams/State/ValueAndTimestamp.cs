@@ -91,7 +91,7 @@ public class ValueAndTimestamp<V>
 {
             return false;
         }
-        ValueAndTimestamp<?> that = (ValueAndTimestamp<?>) o;
+        ValueAndTimestamp<object> that = (ValueAndTimestamp<object>) o;
         return timestamp == that.timestamp &&
             Objects.Equals(value, that.value);
     }

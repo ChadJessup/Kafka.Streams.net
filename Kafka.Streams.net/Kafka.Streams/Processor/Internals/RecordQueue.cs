@@ -30,7 +30,7 @@ using Kafka.Common.Utils.LogContext;
 
 
 /**
- * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumerRecord + timestamp). It also keeps track of the
+ * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumeResult + timestamp). It also keeps track of the
  * partition timestamp defined as the largest timestamp seen on the partition so far; this is passed to the
  * timestamp extractor.
  */
@@ -38,7 +38,7 @@ public class RecordQueue
 {
 
 
-    public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
+    public static long UNKNOWN = ConsumeResult.NO_TIMESTAMP;
 
     private ILogger log;
     private SourceNode source;
@@ -46,7 +46,7 @@ public class RecordQueue
     private IProcessorContext processorContext;
     private TimestampExtractor timestampExtractor;
     private RecordDeserializer recordDeserializer;
-    private ArrayDeque<ConsumerRecord<byte[], byte[]>> fifoQueue;
+    private ArrayDeque<ConsumeResult<byte[], byte[]>> fifoQueue;
 
     private StampedRecord headRecord = null;
     private long partitionTime = RecordQueue.UNKNOWN;
@@ -96,14 +96,14 @@ public class RecordQueue
     }
 
     /**
-     * Add a batch of {@link ConsumerRecord} into the queue
+     * Add a batch of {@link ConsumeResult} into the queue
      *
      * @param rawRecords the raw records
      * @return the size of this queue
      */
-    int.AddRawRecords(Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
+    int.AddRawRecords(Iterable<ConsumeResult<byte[], byte[]>> rawRecords)
 {
-        foreach (ConsumerRecord<byte[], byte[]> rawRecord in rawRecords)
+        foreach (ConsumeResult<byte[], byte[]> rawRecord in rawRecords)
 {
             fifoQueue.AddLast(rawRecord);
         }
@@ -183,8 +183,8 @@ public class RecordQueue
 {
         while (headRecord == null && !fifoQueue.isEmpty())
 {
-            ConsumerRecord<byte[], byte[]> raw = fifoQueue.pollFirst();
-            ConsumerRecord<object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
+            ConsumeResult<byte[], byte[]> raw = fifoQueue.pollFirst();
+            ConsumeResult<object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
 
             if (deserialized == null)
 {

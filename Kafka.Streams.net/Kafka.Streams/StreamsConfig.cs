@@ -686,31 +686,31 @@ namespace Kafka.Streams
 
         // this is the list of configs for underlying clients
         // that streams prefer different default values
-        //    private static  Map<string, object> PRODUCER_DEFAULT_OVERRIDES;
+        //    private static  Dictionary<string, object> PRODUCER_DEFAULT_OVERRIDES;
         //    static
         //{
 
-        //         Map<string, object> tempProducerDefaultOverrides = new HashMap<>();
+        //         Dictionary<string, object> tempProducerDefaultOverrides = new HashMap<>();
         //        tempProducerDefaultOverrides.Add(ProducerConfig.LINGER_MS_CONFIG, "100");
         //        PRODUCER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
         //    }
 
-        //    private static  Map<string, object> PRODUCER_EOS_OVERRIDES;
+        //    private static  Dictionary<string, object> PRODUCER_EOS_OVERRIDES;
         //    static
         //{
 
-        //         Map<string, object> tempProducerDefaultOverrides = new HashMap<>(PRODUCER_DEFAULT_OVERRIDES);
+        //         Dictionary<string, object> tempProducerDefaultOverrides = new HashMap<>(PRODUCER_DEFAULT_OVERRIDES);
         //        tempProducerDefaultOverrides.Add(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, int.MaxValue);
         //        tempProducerDefaultOverrides.Add(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
         //        PRODUCER_EOS_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
         //    }
 
-        //    private static  Map<string, object> CONSUMER_DEFAULT_OVERRIDES;
+        //    private static  Dictionary<string, object> CONSUMER_DEFAULT_OVERRIDES;
         //    static
         //{
 
-        //         Map<string, object> tempConsumerDefaultOverrides = new HashMap<>();
+        //         Dictionary<string, object> tempConsumerDefaultOverrides = new HashMap<>();
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
@@ -718,11 +718,11 @@ namespace Kafka.Streams
         //        CONSUMER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
         //    }
 
-        //    private static  Map<string, object> CONSUMER_EOS_OVERRIDES;
+        //    private static  Dictionary<string, object> CONSUMER_EOS_OVERRIDES;
         //    static
         //{
 
-        //         Map<string, object> tempConsumerDefaultOverrides = new HashMap<>(CONSUMER_DEFAULT_OVERRIDES);
+        //         Dictionary<string, object> tempConsumerDefaultOverrides = new HashMap<>(CONSUMER_DEFAULT_OVERRIDES);
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name().toLowerCase(Locale.ROOT));
         //        CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
         //    }
@@ -837,12 +837,12 @@ namespace Kafka.Streams
          *
          * @param props properties that specify Kafka Streams and internal consumer/producer configuration
          */
-        public StreamsConfig(Map<?, ?> props)
+        public StreamsConfig(Map<?, object> props)
         {
             this(props, true);
         }
 
-        protected StreamsConfig(Map<?, ?> props,
+        protected StreamsConfig(Map<?, object> props,
                                  bool doLog)
         {
             base(CONFIG, props, doLog);
@@ -850,9 +850,9 @@ namespace Kafka.Streams
         }
 
 
-        protected Map<string, object> postProcessParsedConfig(Map<string, object> parsedValues)
+        protected Dictionary<string, object> postProcessParsedConfig(Map<string, object> parsedValues)
         {
-            Map<string, object> configUpdates =
+            Dictionary<string, object> configUpdates =
                CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
             bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG]);
@@ -866,14 +866,14 @@ namespace Kafka.Streams
             return configUpdates;
         }
 
-        private Map<string, object> getCommonConsumerConfigs()
+        private Dictionary<string, object> getCommonConsumerConfigs()
         {
-            Map<string, object> clientProvidedProps = getClientPropsWithPrefix(CONSUMER_PREFIX, ConsumerConfig.configNames());
+            Dictionary<string, object> clientProvidedProps = getClientPropsWithPrefix(CONSUMER_PREFIX, ConsumerConfig.configNames());
 
             checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
             checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
 
-            Map<string, object> consumerProps = new HashMap<>(eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES);
+            Dictionary<string, object> consumerProps = new HashMap<>(eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES);
             consumerProps.putAll(getClientCustomProps());
             consumerProps.putAll(clientProvidedProps);
 
@@ -981,7 +981,7 @@ namespace Kafka.Streams
          */
 
         [System.Obsolete]
-        public Map<string, object> getConsumerConfigs(string groupId, string clientId)
+        public Dictionary<string, object> getConsumerConfigs(string groupId, string clientId)
         {
             return getMainConsumerConfigs(groupId, clientId, DUMMY_THREAD_INDEX);
         }
@@ -1002,12 +1002,12 @@ namespace Kafka.Streams
          * @return Map of the consumer configuration.
          */
 
-        public Map<string, object> getMainConsumerConfigs(string groupId, string clientId, int threadIdx)
+        public Dictionary<string, object> getMainConsumerConfigs(string groupId, string clientId, int threadIdx)
         {
-            Map<string, object> consumerProps = getCommonConsumerConfigs();
+            Dictionary<string, object> consumerProps = getCommonConsumerConfigs();
 
             // Get main consumer override configs
-            Map<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
+            Dictionary<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
             for (Map.Entry<string, object> entry: mainConsumerProps.entrySet())
             {
                 consumerProps.Add(entry.Key, entry.Value);
@@ -1040,8 +1040,8 @@ namespace Kafka.Streams
             consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
             // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
-            Map<string, object> topicProps = originalsWithPrefix(TOPIC_PREFIX, false);
-            Map<string, object> producerProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
+            Dictionary<string, object> topicProps = originalsWithPrefix(TOPIC_PREFIX, false);
+            Dictionary<string, object> producerProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
             if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
                 producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
@@ -1076,12 +1076,12 @@ namespace Kafka.Streams
          * @return Map of the restore consumer configuration.
          */
 
-        public Map<string, object> getRestoreConsumerConfigs(string clientId)
+        public Dictionary<string, object> getRestoreConsumerConfigs(string clientId)
         {
-            Map<string, object> baseConsumerProps = getCommonConsumerConfigs();
+            Dictionary<string, object> baseConsumerProps = getCommonConsumerConfigs();
 
             // Get restore consumer override configs
-            Map<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
+            Dictionary<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
             for (Map.Entry<string, object> entry: restoreConsumerProps.entrySet())
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
@@ -1110,12 +1110,12 @@ namespace Kafka.Streams
          * @return Map of the global consumer configuration.
          */
 
-        public Map<string, object> getGlobalConsumerConfigs(string clientId)
+        public Dictionary<string, object> getGlobalConsumerConfigs(string clientId)
         {
-            Map<string, object> baseConsumerProps = getCommonConsumerConfigs();
+            Dictionary<string, object> baseConsumerProps = getCommonConsumerConfigs();
 
             // Get global consumer override configs
-            Map<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
+            Dictionary<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
             for (Map.Entry<string, object> entry: globalConsumerProps.entrySet())
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
@@ -1140,14 +1140,14 @@ namespace Kafka.Streams
          * @return Map of the producer configuration.
          */
 
-        public Map<string, object> getProducerConfigs(string clientId)
+        public Dictionary<string, object> getProducerConfigs(string clientId)
         {
-            Map<string, object> clientProvidedProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
+            Dictionary<string, object> clientProvidedProps = getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
 
             checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
 
             // generate producer configs from original properties and overridden maps
-            Map<string, object> props = new HashMap<>(eosEnabled ? PRODUCER_EOS_OVERRIDES : PRODUCER_DEFAULT_OVERRIDES);
+            Dictionary<string, object> props = new HashMap<>(eosEnabled ? PRODUCER_EOS_OVERRIDES : PRODUCER_DEFAULT_OVERRIDES);
             props.putAll(getClientCustomProps());
             props.putAll(clientProvidedProps);
 
@@ -1164,11 +1164,11 @@ namespace Kafka.Streams
          * @return Map of the admin client configuration.
          */
 
-        public Map<string, object> getAdminConfigs(string clientId)
+        public Dictionary<string, object> getAdminConfigs(string clientId)
         {
-            Map<string, object> clientProvidedProps = getClientPropsWithPrefix(ADMIN_CLIENT_PREFIX, AdminClientConfig.configNames());
+            Dictionary<string, object> clientProvidedProps = getClientPropsWithPrefix(ADMIN_CLIENT_PREFIX, AdminClientConfig.configNames());
 
-            Map<string, object> props = new HashMap<>();
+            Dictionary<string, object> props = new HashMap<>();
             props.putAll(getClientCustomProps());
             props.putAll(clientProvidedProps);
 
@@ -1178,10 +1178,10 @@ namespace Kafka.Streams
             return props;
         }
 
-        private Map<string, object> getClientPropsWithPrefix(string prefix,
+        private Dictionary<string, object> getClientPropsWithPrefix(string prefix,
                                                               HashSet<string> configNames)
         {
-            Map<string, object> props = clientProps(configNames, originals());
+            Dictionary<string, object> props = clientProps(configNames, originals());
             props.putAll(originalsWithPrefix(prefix));
             return props;
         }
@@ -1194,9 +1194,9 @@ namespace Kafka.Streams
          *
          * @return a map with the custom properties
          */
-        private Map<string, object> getClientCustomProps()
+        private Dictionary<string, object> getClientCustomProps()
         {
-            Map<string, object> props = originals();
+            Dictionary<string, object> props = originals();
             props.keySet().removeAll(CONFIG.names());
             props.keySet().removeAll(ConsumerConfig.configNames());
             props.keySet().removeAll(ProducerConfig.configNames());
@@ -1220,7 +1220,7 @@ namespace Kafka.Streams
             try
             {
 
-                ISerde <?> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde);
+                ISerde <object> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde);
                 serde.configure(originals(), true);
                 return serde;
             }
@@ -1244,7 +1244,7 @@ namespace Kafka.Streams
             try
             {
 
-                ISerde <?> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde);
+                ISerde <object> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde);
                 serde.configure(originals(), false);
                 return serde;
             }
@@ -1280,12 +1280,12 @@ namespace Kafka.Streams
          * @param originals   The original configs to be filtered.
          * @return client config with any overrides
          */
-        private Map<string, object> clientProps(HashSet<string> configNames,
-                                                 Map<string, object> originals)
+        private Dictionary<string, object> clientProps(HashSet<string> configNames,
+                                                 Dictionary<string, object> originals)
         {
             // iterate all client config names, filter out non-client configs from the original
             // property map and use the overridden values when they are not specified by users
-            Map<string, object> parsed = new HashMap<>();
+            Dictionary<string, object> parsed = new HashMap<>();
             for (string configName: configNames)
             {
                 if (originals.ContainsKey(configName))

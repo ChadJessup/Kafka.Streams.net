@@ -397,7 +397,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private void maybeUpdateKeyChangingRepartitionNodeMap()
         {
-            Map<StreamsGraphNode, HashSet<StreamsGraphNode>> mergeNodesToKeyChangers = new HashMap<>();
+            Dictionary<StreamsGraphNode, HashSet<StreamsGraphNode>> mergeNodesToKeyChangers = new HashMap<>();
             foreach (StreamsGraphNode mergeNode in mergeNodes)
             {
                 mergeNodesToKeyChangers.Add(mergeNode, new HashSet<>());

@@ -218,7 +218,7 @@ namespace Kafka.Streams.KStream
          * @throws InvalidOperationException at every invocation
          */
 
-        public Map<long, Window> windowsFor(long timestamp)
+        public Dictionary<long, Window> windowsFor(long timestamp)
         {
             throw new InvalidOperationException("windowsFor() is not supported by JoinWindows.");
         }

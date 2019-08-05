@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,7 +33,7 @@ namespace Kafka.Streams.Errors
 
 
         public DeserializationHandlerResponse handle(IProcessorContext context,
-                                                      ConsumerRecord<byte[], byte[]> record,
+                                                      ConsumeResult<byte[], byte[]> record,
                                                       Exception exception)
         {
 
@@ -45,7 +46,7 @@ namespace Kafka.Streams.Errors
         }
 
 
-        public void configure(Map<string, ?> configs)
+        public void configure(Dictionary<string, object> configs)
         {
             // ignore
         }

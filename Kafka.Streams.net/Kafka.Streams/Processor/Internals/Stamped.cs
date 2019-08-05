@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public int compareTo(object other)
         {
-            long otherTimestamp = ((Stamped <?>) other).timestamp;
+            long otherTimestamp = ((Stamped <object>) other).timestamp;
 
             if (timestamp < otherTimestamp)
             {
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 return false;
             }
-            long otherTimestamp = ((Stamped <?>) other).timestamp;
+            long otherTimestamp = ((Stamped <object>) other).timestamp;
             return timestamp == otherTimestamp;
         }
 

@@ -46,14 +46,14 @@ namespace Kafka.Streams.State.Internals
             cache = context.getCache();
             cache.AddDirtyEntryFlushListener(cacheName, entries->
     {
-                foreach (ThreadCache.DirtyEntry entry in entries)
+                foreach (DirtyEntry entry in entries)
                 {
                     putAndMaybeForward(entry, context);
                 }
             });
         }
 
-        private void putAndMaybeForward(ThreadCache.DirtyEntry entry, InternalProcessorContext context)
+        private void putAndMaybeForward(DirtyEntry entry, InternalProcessorContext context)
         {
             Bytes binaryKey = cacheFunction.key(entry.key());
             Windowed<Bytes> bytesKey = SessionKeySchema.from(binaryKey);

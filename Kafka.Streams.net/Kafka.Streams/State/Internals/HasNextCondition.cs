@@ -23,6 +23,6 @@ namespace Kafka.Streams.State.Internals
 
     public interface HasNextCondition
     {
-        bool hasNext(KeyValueIterator<Bytes, ?> iterator);
+        bool hasNext(KeyValueIterator<Bytes, object> iterator);
     }
 }

@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processor.Internals
         private static class InternalAdminClientConfig : AdminClientConfig
         {
 
-            private InternalAdminClientConfig(Dictionary<?, ?> props)
+            private InternalAdminClientConfig(Dictionary<?, object> props)
                 : base(props, false)
             {
             }

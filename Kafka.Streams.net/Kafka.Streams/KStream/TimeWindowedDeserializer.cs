@@ -66,7 +66,7 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
 
 
 
-    public void configure( Map<string, ?> configs,  bool isKey)
+    public void configure( Dictionary<string, object> configs,  bool isKey)
 {
         if (inner == null)
 {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Processor.Internals.assignment;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals.Assignment
 {
@@ -111,8 +112,9 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             }
 
             // assign any remaining unassigned tasks
-            List<TaskId> sortedTasks = new List<>(unassigned);
-            Collections.sort(sortedTasks);
+            List<TaskId> sortedTasks = new List<TaskId>(unassigned);
+            sortedTasks.Sort();
+
             foreach (TaskId taskId in sortedTasks)
             {
                 allocateTaskWithClientCandidates(taskId, clients.keySet(), true);

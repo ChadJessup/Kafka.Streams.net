@@ -1,6 +1,8 @@
+using Confluent.Kafka;
 using Kafka.Common.Utils.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -497,7 +499,7 @@ namespace Kafka.Streams.Processor.Internals
         private volatile State state = State.CREATED;
         private volatile ThreadMetadata threadMetadata;
         private StreamThread.StateListener stateListener;
-        private Dictionary<TopicPartition, List<ConsumerRecord<byte[], byte[]>>> standbyRecords;
+        private Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> standbyRecords;
 
         // package-private for testing
         ConsumerRebalanceListener rebalanceListener;
@@ -1130,12 +1132,12 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     if (!standbyRecords.isEmpty())
                     {
-                        Dictionary<TopicPartition, List<ConsumerRecord<byte[], byte[]>>> remainingStandbyRecords = new HashMap<>();
+                        Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> remainingStandbyRecords = new HashMap<>();
 
-                        foreach (Map.Entry<TopicPartition, List<ConsumerRecord<byte[], byte[]>>> entry in standbyRecords.entrySet())
+                        foreach (var entry in standbyRecords.entrySet())
                         {
                             TopicPartition partition = entry.Key;
-                            List<ConsumerRecord<byte[], byte[]>> remaining = entry.Value;
+                            List<ConsumeResult<byte[], byte[]>> remaining = entry.Value;
                             if (remaining != null)
                             {
                                 StandbyTask task = taskManager.standbyTask(partition);
@@ -1197,7 +1199,7 @@ namespace Kafka.Streams.Processor.Internals
                                 throw new TaskMigratedException(task);
                             }
 
-                            List<ConsumerRecord<byte[], byte[]>> remaining = task.update(partition, records.records(partition));
+                            List<ConsumeResult<byte[], byte[]>> remaining = task.update(partition, records.records(partition));
                             if (!remaining.isEmpty())
                             {
                                 restoreConsumer.pause(singleton(partition));
@@ -1448,7 +1450,7 @@ namespace Kafka.Streams.Processor.Internals
             return taskManager;
         }
 
-        Dictionary<TopicPartition, List<ConsumerRecord<byte[], byte[]>>> standbyRecords()
+        Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> standbyRecords()
         {
             return standbyRecords;
         }

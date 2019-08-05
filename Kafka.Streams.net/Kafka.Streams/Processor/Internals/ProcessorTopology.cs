@@ -130,7 +130,7 @@ namespace Kafka.Streams.Processor.Internals
             sb.Append("]\n");
 
             // recursively print children
-            foreach (ProcessorNode <?, ?> child in children)
+            foreach (ProcessorNode <?, object> child in children)
 {
                 sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children()));
             }
@@ -169,7 +169,7 @@ namespace Kafka.Streams.Processor.Internals
         // for testing only
         public HashSet<string> processorConnectedStateStores(string processorName)
         {
-            foreach (ProcessorNode <?, ?> node in processorNodes)
+            foreach (ProcessorNode <?, object> node in processorNodes)
 {
                 if (node.name().Equals(processorName))
                 {

@@ -48,7 +48,7 @@ public class Change<T> {
 {
             return false;
         }
-         Change<?> change = (Change<?>) o;
+         Change<object> change = (Change<object>) o;
         return Objects.Equals(newValue, change.newValue) &&
                 Objects.Equals(oldValue, change.oldValue);
     }

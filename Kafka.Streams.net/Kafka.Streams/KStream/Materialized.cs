@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream
         protected ISerde<K> keySerde;
         protected bool loggingEnabled = true;
         protected bool cachingEnabled = true;
-        protected Map<string, string> topicConfig = new HashMap<>();
+        protected Dictionary<string, string> topicConfig = new HashMap<>();
         protected TimeSpan retention;
 
         private Materialized(StoreSupplier<S> storeSupplier)

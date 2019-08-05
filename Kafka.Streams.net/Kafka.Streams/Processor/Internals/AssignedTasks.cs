@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -293,7 +294,7 @@ namespace Kafka.Streams.Processor.Internals
 
         List<T> allTasks()
         {
-            List<T> tasks = new List<>();
+            List<T> tasks = new List<T>();
             tasks.AddAll(running.values());
             tasks.AddAll(suspended.values());
             tasks.AddAll(created.values());

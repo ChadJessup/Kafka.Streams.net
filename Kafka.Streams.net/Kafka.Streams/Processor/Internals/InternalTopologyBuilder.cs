@@ -102,7 +102,7 @@ namespace Kafka.Streams.Processor.Internals
             private StoreBuilder builder;
             private HashSet<string> users = new HashSet<>();
 
-            private StateStoreFactory(StoreBuilder<?> builder)
+            private StateStoreFactory(StoreBuilder<object> builder)
             {
                 this.builder = builder;
             }
@@ -186,12 +186,12 @@ namespace Kafka.Streams.Processor.Internals
         private static class ProcessorNodeFactory : NodeFactory
         {
 
-            private ProcessorSupplier<?, ?> supplier;
+            private ProcessorSupplier<?, object> supplier;
             private HashSet<string> stateStoreNames = new HashSet<>();
 
             ProcessorNodeFactory(string name,
                                  string[] predecessors,
-                                 ProcessorSupplier<?, ?> supplier)
+                                 ProcessorSupplier<?, object> supplier)
             {
                 base(name, predecessors.clone());
                 this.supplier = supplier;
@@ -220,16 +220,16 @@ namespace Kafka.Streams.Processor.Internals
 
             private List<string> topics;
             private Pattern pattern;
-            private IDeserializer<?> keyDeserializer;
-            private IDeserializer<?> valDeserializer;
+            private IDeserializer<object> keyDeserializer;
+            private IDeserializer<object> valDeserializer;
             private TimestampExtractor timestampExtractor;
 
             private SourceNodeFactory(string name,
                                       string[] topics,
                                       Pattern pattern,
                                       TimestampExtractor timestampExtractor,
-                                      IDeserializer<?> keyDeserializer,
-                                      IDeserializer<?> valDeserializer)
+                                      IDeserializer<object> keyDeserializer,
+                                      IDeserializer<object> valDeserializer)
                 : base(name, NO_PREDECESSORS)
             {
                 this.topics = topics != null ? Arrays.asList(topics) : new List<>();
@@ -573,13 +573,13 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addStateStore(StoreBuilder<?> storeBuilder,
+        public void addStateStore(StoreBuilder<object> storeBuilder,
                                         string[] processorNames)
         {
             addStateStore(storeBuilder, false, processorNames);
         }
 
-        public void addStateStore(StoreBuilder<?> storeBuilder,
+        public void addStateStore(StoreBuilder<object> storeBuilder,
                                         bool allowOverride,
                                         string[] processorNames)
         {
@@ -1103,7 +1103,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (string predecessor in factory.predecessors)
             {
-                ProcessorNode <?, ?> predecessorNode = processorMap[predecessor];
+                ProcessorNode <?, object> predecessorNode = processorMap[predecessor];
                 predecessorNode.AddChild(node);
             }
             foreach (string stateStoreName in factory.stateStoreNames)

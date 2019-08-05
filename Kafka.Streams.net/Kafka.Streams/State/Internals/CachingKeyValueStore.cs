@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Common.Utils;
 using Kafka.Streams.Processor.Internals;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -60,14 +61,14 @@ namespace Kafka.Streams.State.Internals
             this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name());
             //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
             //{
-            //    foreach (ThreadCache.DirtyEntry entry in entries)
+            //    foreach (DirtyEntry entry in entries)
             //    {
             //        putAndMaybeForward(entry, (InternalProcessorContext)context);
             //    }
             //});
         }
 
-        private void putAndMaybeForward(ThreadCache.DirtyEntry entry,
+        private void putAndMaybeForward(DirtyEntry entry,
                                         InternalProcessorContext context)
         {
             if (flushListener != null)
@@ -87,7 +88,7 @@ namespace Kafka.Streams.State.Internals
                     try
                     {
                         flushListener.apply(
-                            entry.key()[],
+                            entry.key(),
                             rawNewValue,
                             sendOldValues ? rawOldValue : null,
                             entry.entry().context().timestamp());
@@ -153,7 +154,7 @@ namespace Kafka.Streams.State.Internals
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             validateStoreOpen();
-            lock.writeLock().lock () ;
+            @lock.writeLock().@lock();
             try
             {
                 byte[] v = getInternal(key);
@@ -165,14 +166,14 @@ namespace Kafka.Streams.State.Internals
             }
             finally
             {
-                lock.writeLock().unlock();
+                @lock.writeLock().unlock();
             }
         }
 
         public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
         {
             validateStoreOpen();
-            lock.writeLock().lock () ;
+            @lock.writeLock().@lock();
             try
             {
                 foreach (KeyValue<Bytes, byte[]> entry in entries)
@@ -183,7 +184,7 @@ namespace Kafka.Streams.State.Internals
             }
             finally
             {
-                lock.writeLock().unlock();
+                @lock.writeLock().unlock();
             }
         }
 
@@ -191,14 +192,14 @@ namespace Kafka.Streams.State.Internals
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             validateStoreOpen();
-            lock.writeLock().lock () ;
+            @lock.writeLock().@lock();
             try
             {
                 return deleteInternal(key);
             }
             finally
             {
-                lock.writeLock().unlock();
+                @lock.writeLock().unlock();
             }
         }
 
@@ -307,7 +308,7 @@ namespace Kafka.Streams.State.Internals
 
         public override void flush()
         {
-            lock.writeLock().lock () ;
+            @lock.writeLock().@lock();
             try
             {
                 cache.flush(cacheName);
@@ -315,7 +316,7 @@ namespace Kafka.Streams.State.Internals
             }
             finally
             {
-                lock.writeLock().unlock();
+                @lock.writeLock().unlock();
             }
         }
 

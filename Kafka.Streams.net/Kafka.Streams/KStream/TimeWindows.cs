@@ -164,10 +164,10 @@ public class TimeWindows : Windows<TimeWindow> {
     }
 
 
-    public Map<long, TimeWindow> windowsFor( long timestamp)
+    public Dictionary<long, TimeWindow> windowsFor( long timestamp)
 {
         long windowStart = (Math.Max(0, timestamp - sizeMs + advanceMs) / advanceMs) * advanceMs;
-         Map<long, TimeWindow> windows = new LinkedHashMap<>();
+         Dictionary<long, TimeWindow> windows = new LinkedHashMap<>();
         while (windowStart <= timestamp)
 {
              TimeWindow window = new TimeWindow(windowStart, windowStart + sizeMs);

@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class StreamTask : AbstractTask, ProcessorNodePunctuator
     {
-        private static ConsumerRecord<object, object> DUMMY_RECORD = new ConsumerRecord<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
+        private static ConsumeResult<object, object> DUMMY_RECORD = new ConsumeResult<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
         private ITime time;
         private long maxTaskIdleMs;
@@ -835,7 +835,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param partition the partition
          * @param records   the records
          */
-        public void addRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> records)
+        public void addRecords(TopicPartition partition, Iterable<ConsumeResult<byte[], byte[]>> records)
         {
             int newQueueSize = partitionGroup.AddRawRecords(partition, records);
 

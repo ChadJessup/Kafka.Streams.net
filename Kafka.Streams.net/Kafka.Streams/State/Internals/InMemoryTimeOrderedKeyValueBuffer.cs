@@ -248,9 +248,9 @@ namespace Kafka.Streams.State.Internals
             );
         }
 
-        private void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> batch)
+        private void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> batch)
         {
-            foreach (ConsumerRecord<byte[], byte[]> record in batch)
+            foreach (ConsumeResult<byte[], byte[]> record in batch)
             {
                 Bytes key = Bytes.wrap(record.key());
                 if (record.value() == null)

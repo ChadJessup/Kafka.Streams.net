@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 return records-> {
                     List<KeyValue<byte[], byte[]>> keyValues = new List<>();
-                    foreach (ConsumerRecord<byte[], byte[]> record in records)
+                    foreach (ConsumeResult<byte[], byte[]> record in records)
                     {
                         keyValues.Add(new KeyValue<>(record.key(), record.value()));
                     }
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Processor.Internals
 
                 //return records =>
                 //{
-                //    foreach (ConsumerRecord<byte[], byte[]> record in records)
+                //    foreach (ConsumeResult<byte[], byte[]> record in records)
                 //    {
                 //        restoreCallback.restore(record.key(), record.value());
                 //    }

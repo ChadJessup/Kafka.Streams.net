@@ -38,7 +38,7 @@ public interface KafkaClientSupplier
      * @param config Supplied by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of {@link Admin}
      */
-    Admin getAdminClient( Map<string, object> config);
+    Admin getAdminClient( Dictionary<string, object> config);
 
     /**
      * Create a {@link Producer} which is used to write records to sink topics.
@@ -47,7 +47,7 @@ public interface KafkaClientSupplier
      *               {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka producer
      */
-    IProducer<byte[], byte[]> getProducer( Map<string, object> config);
+    IProducer<byte[], byte[]> getProducer( Dictionary<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to read records of source topics.
@@ -56,7 +56,7 @@ public interface KafkaClientSupplier
      *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
      * @return an instance of Kafka consumer
      */
-    IConsumer<byte[], byte[]> getConsumer( Map<string, object> config);
+    IConsumer<byte[], byte[]> getConsumer( Dictionary<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.
@@ -65,7 +65,7 @@ public interface KafkaClientSupplier
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    IConsumer<byte[], byte[]> getRestoreConsumer( Map<string, object> config);
+    IConsumer<byte[], byte[]> getRestoreConsumer( Dictionary<string, object> config);
 
     /**
      * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.
@@ -74,5 +74,5 @@ public interface KafkaClientSupplier
      *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
      * @return an instance of Kafka consumer
      */
-    IConsumer<byte[], byte[]> getGlobalConsumer( Map<string, object> config);
+    IConsumer<byte[], byte[]> getGlobalConsumer( Dictionary<string, object> config);
 }

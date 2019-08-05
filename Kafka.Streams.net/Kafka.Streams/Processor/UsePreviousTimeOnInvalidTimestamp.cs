@@ -58,7 +58,7 @@ public class UsePreviousTimeOnInvalidTimestamp : ExtractRecordMetadataTimestamp
      * @throws StreamsException if latest extracted valid timestamp is unknown
      */
 
-    public long onInvalidTimestamp(ConsumerRecord<object, object> record,
+    public long onInvalidTimestamp(ConsumeResult<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
            {

@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Internals
         private InternalProcessorContext context;
         private Sensor expiredRecordSensor;
         private int seqnum = 0;
-        private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
         private long retentionPeriod;
         private long windowSize;

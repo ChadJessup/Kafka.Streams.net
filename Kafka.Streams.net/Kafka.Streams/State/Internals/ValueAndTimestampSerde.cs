@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
             valueAndTimestampDeserializer = new ValueAndTimestampDeserializer<>(valueSerde.deserializer());
         }
 
-        public override void configure(Dictionary<string, ?> configs,
+        public override void configure(Dictionary<string, object> configs,
                               bool isKey)
         {
             valueAndTimestampSerializer.configure(configs, isKey);

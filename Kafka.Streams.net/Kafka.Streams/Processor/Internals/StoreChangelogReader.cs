@@ -24,20 +24,8 @@ using Kafka.Common.PartitionInfo;
 using Kafka.Common.TopicPartition;
 using Kafka.Common.errors.TimeoutException;
 using Kafka.Common.Utils.LogContext;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+using System.Collections.Generic;
+using Confluent.Kafka;
 
 public class StoreChangelogReader : ChangelogReader
 {
@@ -218,11 +206,11 @@ public class StoreChangelogReader : ChangelogReader
 {
         log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 
-        HashSet<TopicPartition> assignment = new HashSet<>(restoreConsumer.assignment());
-        assignment.AddAll(initialized);
+        HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(restoreConsumer.assignment());
+        assignment.addAll(initialized);
         restoreConsumer.assign(assignment);
 
-        List<StateRestorer> needsPositionUpdate = new List<>();
+        List<StateRestorer> needsPositionUpdate = new List<StateRestorer>();
 
         foreach (TopicPartition partition in initialized)
 {
@@ -334,16 +322,16 @@ public class StoreChangelogReader : ChangelogReader
         completedRestorers.clear();
     }
 
-    private long processNext(List<ConsumerRecord<byte[], byte[]>> records,
+    private long processNext(List<ConsumeResult<byte[], byte[]>> records,
                              StateRestorer restorer,
                              long endOffset)
 {
-        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>();
+        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<>();
         long nextPosition = -1;
         int numberRecords = records.size();
         int numberRestored = 0;
         long lastRestoredOffset = -1;
-        foreach (ConsumerRecord<byte[], byte[]> record in records)
+        foreach (ConsumeResult<byte[], byte[]> record in records)
 {
             long offset = record.offset();
             if (restorer.hasCompleted(offset, endOffset))

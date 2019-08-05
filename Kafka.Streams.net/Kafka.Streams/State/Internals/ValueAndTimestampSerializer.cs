@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
             timestampSerializer = new LongSerializer();
         }
 
-        public override void configure(Dictionary<string, ?> configs,
+        public override void configure(Dictionary<string, object> configs,
                               bool isKey)
         {
             valueSerializer.configure(configs, isKey);

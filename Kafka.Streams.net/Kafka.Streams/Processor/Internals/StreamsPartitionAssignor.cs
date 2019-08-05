@@ -210,7 +210,7 @@ namespace Kafka.Streams.Processor.Internals
          * @throws KafkaException if the stream thread is not specified
          */
 
-        public void configure(Dictionary<string, ?> configs)
+        public void configure(Dictionary<string, object> configs)
         {
             StreamsConfig streamsConfig = new InternalStreamsConfig(configs);
 

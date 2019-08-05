@@ -38,7 +38,7 @@ class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
         timestampDeserializer = new LongDeserializer();
     }
 
-    public override void configure(Dictionary<string, ?> configs,
+    public override void configure(Dictionary<string, object> configs,
                           bool isKey)
 {
         valueDeserializer.configure(configs, isKey);

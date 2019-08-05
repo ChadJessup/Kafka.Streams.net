@@ -146,7 +146,7 @@ public class PartitionGroup
      * @param rawRecords  the raw records
      * @return the queue size for the partition
      */
-    int.AddRawRecords(TopicPartition partition, Iterable<ConsumerRecord<byte[], byte[]>> rawRecords)
+    int.AddRawRecords(TopicPartition partition, Iterable<ConsumeResult<byte[], byte[]>> rawRecords)
 {
         RecordQueue recordQueue = partitionQueues[partition];
 

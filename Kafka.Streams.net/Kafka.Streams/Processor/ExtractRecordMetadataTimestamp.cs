@@ -49,14 +49,14 @@ abstract class ExtractRecordMetadataTimestamp : TimestampExtractor
 
 
     /**
-     * Extracts the embedded metadata timestamp from the given {@link ConsumerRecord}.
+     * Extracts the embedded metadata timestamp from the given {@link ConsumeResult}.
      *
      * @param record a data record
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
-     * @return the embedded metadata timestamp of the given {@link ConsumerRecord}
+     * @return the embedded metadata timestamp of the given {@link ConsumeResult}
      */
 
-    public long extract(ConsumerRecord<object, object> record, long partitionTime)
+    public long extract(ConsumeResult<object, object> record, long partitionTime)
 {
         long timestamp = record.timestamp();
 
@@ -76,7 +76,7 @@ abstract class ExtractRecordMetadataTimestamp : TimestampExtractor
      * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
      * @return a new timestamp for the record (if negative, record will not be processed but dropped silently)
      */
-    public abstract long onInvalidTimestamp(ConsumerRecord<object, object> record,
+    public abstract long onInvalidTimestamp(ConsumeResult<object, object> record,
                                             long recordTimestamp,
                                             long partitionTime);
 }

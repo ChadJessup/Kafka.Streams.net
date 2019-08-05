@@ -24,6 +24,7 @@ using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.KStream.Internals.TimeWindow;
 using Kafka.Streams.State.StateSerdes;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 {
@@ -70,29 +71,30 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                              long from,
                                              long to)
     {
-        return iterator->
-{
-            while (iterator.hasNext())
-            {
-                Bytes bytes = iterator.peekNextKey();
-                Bytes keyBytes = Bytes.wrap(WindowKeySchema.extractStoreKeyBytes(bytes()));
-                long time = WindowKeySchema.extractStoreTimestamp(bytes());
-                if ((binaryKeyFrom == null || keyBytes.compareTo(binaryKeyFrom) >= 0)
-                    && (binaryKeyTo == null || keyBytes.compareTo(binaryKeyTo) <= 0)
-                    && time >= from
-                    && time <= to)
-                {
-                    return true;
-                }
-                iterator.next();
-            }
-            return false;
-        };
+        //        return iterator=>
+        //{
+        //            while (iterator.hasNext())
+        //            {
+        //                Bytes bytes = iterator.peekNextKey();
+        //                Bytes keyBytes = Bytes.wrap(WindowKeySchema.extractStoreKeyBytes(bytes()));
+        //                long time = WindowKeySchema.extractStoreTimestamp(bytes());
+        //                if ((binaryKeyFrom == null || keyBytes.compareTo(binaryKeyFrom) >= 0)
+        //                    && (binaryKeyTo == null || keyBytes.compareTo(binaryKeyTo) <= 0)
+        //                    && time >= from
+        //                    && time <= to)
+        //                {
+        //                    return true;
+        //                }
+        //                iterator.next();
+        //            }
+        //            return false;
+        //        };
     }
 
-    public override <S : Segment> List<S> segmentsToSearch(Segments<S> segments,
-                                                        long from,
-                                                        long to)
+    public override List<S> segmentsToSearch<S>(
+        Segments<S> segments,
+        long from,
+        long to)
     {
         return segments.segments(from, to);
     }
@@ -161,7 +163,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     public static Bytes toStoreKeyBinary(K key,
                                              long timestamp,
                                              int seqnum,
-                                             StateSerdes<K, ?> serdes)
+                                             StateSerdes<K, object> serdes)
     {
         byte[] serializedKey = serdes.rawKey(key);
         return toStoreKeyBinary(serializedKey, timestamp, seqnum);
@@ -176,7 +178,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
     public static Bytes toStoreKeyBinary(Windowed<K> timeKey,
                                              int seqnum,
-                                             StateSerdes<K, ?> serdes)
+                                             StateSerdes<K, object> serdes)
     {
         byte[] serializedKey = serdes.rawKey(timeKey.key());
         return toStoreKeyBinary(serializedKey, timeKey.window().start(), seqnum);
@@ -203,7 +205,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     }
 
     static K extractStoreKey(byte[] binaryKey,
-                                 StateSerdes<K, ?> serdes)
+                                 StateSerdes<K, object> serdes)
     {
         byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE];
         System.arraycopy(binaryKey, 0, bytes, 0, bytes.Length);

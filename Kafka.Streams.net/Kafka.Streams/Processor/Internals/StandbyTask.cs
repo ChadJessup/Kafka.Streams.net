@@ -180,17 +180,17 @@ public class StandbyTask : AbstractTask
      *
      * @return a list of records not consumed
      */
-    public List<ConsumerRecord<byte[], byte[]>> update(TopicPartition partition,
-                                                       List<ConsumerRecord<byte[], byte[]>> records)
+    public List<ConsumeResult<byte[], byte[]>> update(TopicPartition partition,
+                                                       List<ConsumeResult<byte[], byte[]>> records)
 {
         log.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
         long limit = stateMgr.offsetLimit(partition);
 
         long lastOffset = -1L;
-        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>(records.size());
-        List<ConsumerRecord<byte[], byte[]>> remainingRecords = new List<>();
+        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<>(records.size());
+        List<ConsumeResult<byte[], byte[]>> remainingRecords = new List<>();
 
-        foreach (ConsumerRecord<byte[], byte[]> record in records)
+        foreach (ConsumeResult<byte[], byte[]> record in records)
 {
             if (record.offset() < limit)
 {

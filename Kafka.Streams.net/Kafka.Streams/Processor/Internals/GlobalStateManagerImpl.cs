@@ -314,8 +314,8 @@ namespace Kafka.Streams.Processor.Internals
                     {
 
                         ConsumerRecords<byte[], byte[]> records = globalConsumer.poll(pollTime);
-                        List<ConsumerRecord<byte[], byte[]>> restoreRecords = new List<>();
-                        foreach (ConsumerRecord<byte[], byte[]> record in records.records(topicPartition))
+                        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<>();
+                        foreach (ConsumeResult<byte[], byte[]> record in records.records(topicPartition))
                         {
                             if (record.key() != null)
                             {

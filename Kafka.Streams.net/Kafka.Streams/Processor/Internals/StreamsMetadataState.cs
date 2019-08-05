@@ -182,7 +182,7 @@ namespace Kafka.Streams.Processor.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public StreamsMetadata getMetadataWithKey(string storeName,
                                                                    K key,
-                                                                   StreamPartitioner<K, ?> partitioner)
+                                                                   StreamPartitioner<K, object> partitioner)
         {
             storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
             key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
@@ -270,7 +270,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private StreamsMetadata getStreamsMetadataForKey(string storeName,
                                                              K key,
-                                                             StreamPartitioner<K, ?> partitioner,
+                                                             StreamPartitioner<K, object> partitioner,
                                                              SourceTopicsInfo sourceTopicsInfo)
         {
 

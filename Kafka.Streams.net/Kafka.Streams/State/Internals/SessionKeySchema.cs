@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -60,28 +61,29 @@ namespace Kafka.Streams.State.Internals
 
         public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom, Bytes binaryKeyTo, long from, long to)
         {
-            return iterator=>
-    {
-                while (iterator.hasNext())
-                {
-                    Bytes bytes = iterator.peekNextKey();
-                    Windowed<Bytes> windowedKey = SessionKeySchema.from(bytes);
-                    if ((binaryKeyFrom == null || windowedKey.key().compareTo(binaryKeyFrom) >= 0)
-                        && (binaryKeyTo == null || windowedKey.key().compareTo(binaryKeyTo) <= 0)
-                        && windowedKey.window().end() >= from
-                        && windowedKey.window().start() <= to)
-                    {
-                        return true;
-                    }
-                    iterator.next();
-                }
-                return false;
-            };
+            //        return iterator=>
+            //{
+            //            while (iterator.hasNext())
+            //            {
+            //                Bytes bytes = iterator.peekNextKey();
+            //                Windowed<Bytes> windowedKey = SessionKeySchema.from(bytes);
+            //                if ((binaryKeyFrom == null || windowedKey.key().compareTo(binaryKeyFrom) >= 0)
+            //                    && (binaryKeyTo == null || windowedKey.key().compareTo(binaryKeyTo) <= 0)
+            //                    && windowedKey.window().end() >= from
+            //                    && windowedKey.window().start() <= to)
+            //                {
+            //                    return true;
+            //                }
+            //                iterator.next();
+            //            }
+            //            return false;
+            //        };
         }
 
-        public override List<S> segmentsToSearch(Segments<S> segments,
-                                                            long from,
-                                                            long to)
+        public override List<S> segmentsToSearch<S>(
+            Segments<S> segments,
+            long from,
+            long to)
         {
             return segments.segments(from, long.MaxValue);
         }

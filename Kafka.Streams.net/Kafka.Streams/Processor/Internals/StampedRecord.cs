@@ -17,10 +17,10 @@
 namespace Kafka.Streams.Processor.Internals
 {
 
-    public class StampedRecord : Stamped<ConsumerRecord<object, object>>
+    public class StampedRecord : Stamped<ConsumeResult<object, object>>
     {
 
-        public StampedRecord(ConsumerRecord<object, object> record, long timestamp)
+        public StampedRecord(ConsumeResult<object, object> record, long timestamp)
             : base(record, timestamp)
         {
         }

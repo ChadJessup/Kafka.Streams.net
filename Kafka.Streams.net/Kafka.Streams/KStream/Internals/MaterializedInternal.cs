@@ -85,7 +85,7 @@ namespace Kafka.Streams.KStream.Internals
             return loggingEnabled;
         }
 
-        Map<string, string> logConfig()
+        Dictionary<string, string> logConfig()
         {
             return topicConfig;
         }

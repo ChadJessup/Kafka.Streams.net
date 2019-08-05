@@ -177,7 +177,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * Returns the current timestamp.
          *
          * If it is triggered while processing a record streamed from the source processor, timestamp is defined as the timestamp of the current input record; the timestamp is extracted from
-         * {@link org.apache.kafka.clients.consumer.ConsumerRecord ConsumerRecord} by {@link TimestampExtractor}.
+         * {@link org.apache.kafka.clients.consumer.ConsumeResult ConsumeResult} by {@link TimestampExtractor}.
          *
          * If it is triggered while processing a record generated not from the source processor (for example,
          * if this method is invoked from the punctuate call), timestamp is defined as the current

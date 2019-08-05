@@ -240,7 +240,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
 
                     ConsumerRecords<byte[], byte[]> received = globalConsumer.poll(pollTime);
-                    foreach (ConsumerRecord<byte[], byte[]> record in received)
+                    foreach (ConsumeResult<byte[], byte[]> record in received)
                     {
                         stateMaintainer.update(record);
                     }

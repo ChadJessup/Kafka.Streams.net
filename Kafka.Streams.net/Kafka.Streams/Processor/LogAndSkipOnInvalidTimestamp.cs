@@ -63,7 +63,7 @@ public class LogAndSkipOnInvalidTimestamp : ExtractRecordMetadataTimestamp
      * @return the originally extracted timestamp of the record
      */
 
-    public long onInvalidTimestamp(ConsumerRecord<object, object> record,
+    public long onInvalidTimestamp(ConsumeResult<object, object> record,
                                    long recordTimestamp,
                                    long partitionTime)
 {

@@ -18,21 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.ProcessorStateException;
 using Kafka.Streams.Processor.Internals.InternalProcessorContext;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+using System.Collections.Generic;
 
 abstract class AbstractSegments<S : Segment> : Segments<S>
 {
@@ -138,7 +124,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override List<S> segments(long timeFrom, long timeTo)
 {
-        List<S> result = new List<>();
+        List<S> result = new List<S>();
         NavigableMap<long, S> segmentsInRange = segments.subMap(
             segmentId(timeFrom), true,
             segmentId(timeTo), true

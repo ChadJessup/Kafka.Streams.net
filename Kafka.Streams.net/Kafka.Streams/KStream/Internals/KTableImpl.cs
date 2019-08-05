@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
 
-        private ProcessorSupplier<?, ?> processorSupplier;
+        private ProcessorSupplier<?, object> processorSupplier;
 
         private string queryableStoreName;
 
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
                            ISerde<V> valSerde,
                            HashSet<string> sourceNodes,
                            string queryableStoreName,
-                           ProcessorSupplier<?, ?> processorSupplier,
+                           ProcessorSupplier<?, object> processorSupplier,
                            StreamsGraphNode streamsGraphNode,
                            InternalStreamsBuilder builder)
         {
@@ -464,7 +464,7 @@ namespace Kafka.Streams.KStream.Internals
             string name;
             if (suppressed is NamedSuppressed)
             {
-                string givenName = ((NamedSuppressed <?>) suppressed).name();
+                string givenName = ((NamedSuppressed <object>) suppressed).name();
                 name = givenName != null ? givenName : builder.newProcessorName(SUPPRESS_NAME);
             } else
 {
@@ -511,9 +511,9 @@ namespace Kafka.Streams.KStream.Internals
                 LOG.LogInformation("Using grace period of [{}] as the suppress duration for node [{}].",
                          Duration.ofMillis(grace), name);
 
-                FinalResultsSuppressionBuilder <?> builder = (FinalResultsSuppressionBuilder <?>) suppress;
+                FinalResultsSuppressionBuilder <object> builder = (FinalResultsSuppressionBuilder <object>) suppress;
 
-                SuppressedInternal <?> finalResultsSuppression =
+                SuppressedInternal <object> finalResultsSuppression =
                    builder.buildFinalResultsSuppression(Duration.ofMillis(grace));
 
                 return (SuppressedInternal<K>)finalResultsSuppression;
@@ -795,7 +795,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 if (processorSupplier is KTableSource)
                 {
-                    KTableSource < K, ?> source = (KTableSource<K, V>)processorSupplier;
+                    KTableSource < K, object> source = (KTableSource<K, V>)processorSupplier;
                     source.enableSendingOldValues();
                 } else if (processorSupplier is KStreamAggProcessorSupplier)
                 {

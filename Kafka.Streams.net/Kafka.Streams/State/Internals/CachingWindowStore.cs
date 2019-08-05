@@ -86,14 +86,14 @@ class CachingWindowStore
 
         cache.AddDirtyEntryFlushListener(name, entries ->
 {
-            foreach (ThreadCache.DirtyEntry entry in entries)
+            foreach (DirtyEntry entry in entries)
 {
                 putAndMaybeForward(entry, context);
             }
         });
     }
 
-    private void putAndMaybeForward(ThreadCache.DirtyEntry entry,
+    private void putAndMaybeForward(DirtyEntry entry,
                                     InternalProcessorContext context)
 {
         byte[] binaryWindowKey = cacheFunction.key(entry.key())[];

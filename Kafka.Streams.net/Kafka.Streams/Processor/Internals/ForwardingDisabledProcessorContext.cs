@@ -45,13 +45,13 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public ISerde<?> keySerde()
+        public ISerde<object> keySerde()
         {
             return @delegate.keySerde();
         }
 
 
-        public ISerde<?> valueSerde()
+        public ISerde<object> valueSerde()
         {
             return @delegate.valueSerde();
         }

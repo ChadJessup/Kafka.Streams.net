@@ -94,7 +94,7 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
     }
 
 
-    public void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records)
+    public void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> records)
 {
         internalBatchingRestoreCallback.restoreBatch(records);
     }
@@ -125,7 +125,7 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
 {
 
 
-        public void restoreBatch(Collection<ConsumerRecord<byte[], byte[]>> records)
+        public void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> records)
 {
 
         }

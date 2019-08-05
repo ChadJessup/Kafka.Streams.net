@@ -186,7 +186,7 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return this;
     }
 
-    public override Options setComparator(AbstractComparator<AbstractSlice<?>> comparator)
+    public override Options setComparator(AbstractComparator<AbstractSlice<object>> comparator)
 {
         columnFamilyOptions.setComparator(comparator);
         return this;
@@ -1375,13 +1375,13 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return dbOptions.writeBufferManager();
     }
 
-    public Options setCompactionFilter(AbstractCompactionFilter<AbstractSlice<?>> compactionFilter)
+    public Options setCompactionFilter(AbstractCompactionFilter<AbstractSlice<object>> compactionFilter)
 {
         columnFamilyOptions.setCompactionFilter(compactionFilter);
         return this;
     }
 
-    public Options setCompactionFilterFactory(AbstractCompactionFilterFactory<AbstractCompactionFilter<?>> compactionFilterFactory)
+    public Options setCompactionFilterFactory(AbstractCompactionFilterFactory<AbstractCompactionFilter<object>> compactionFilterFactory)
 {
         columnFamilyOptions.setCompactionFilterFactory(compactionFilterFactory);
         return this;

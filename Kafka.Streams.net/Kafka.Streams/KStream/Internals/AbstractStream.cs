@@ -78,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
             return builder.internalTopologyBuilder;
         }
 
-        HashSet<string> ensureJoinableWith(AbstractStream<K, ?> other)
+        HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
         {
             HashSet<string> allSourceNodes = new HashSet<>();
             allSourceNodes.AddAll(sourceNodes);

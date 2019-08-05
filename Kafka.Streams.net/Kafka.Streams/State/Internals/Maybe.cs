@@ -73,7 +73,7 @@ namespace Kafka.Streams.State.Internals
         {
             if (this == o) return true;
             if (o == null || GetType() != o.GetType()) return false;
-            Maybe <?> maybe = (Maybe <?>) o;
+            Maybe <object> maybe = (Maybe <object>) o;
 
             // All undefined maybes are equal
             // All defined null maybes are equal

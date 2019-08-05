@@ -96,7 +96,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K>
         {
             return false;
         }
-        SuppressedInternal <?> that = (SuppressedInternal <?>) o;
+        SuppressedInternal <object> that = (SuppressedInternal <object>) o;
         return safeToDropTombstones == that.safeToDropTombstones &&
             Objects.Equals(name, that.name) &&
             Objects.Equals(bufferConfig, that.bufferConfig) &&

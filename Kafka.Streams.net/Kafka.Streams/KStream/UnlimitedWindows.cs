@@ -98,12 +98,12 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public Map<long, UnlimitedWindow> windowsFor(long timestamp)
+        public Dictionary<long, UnlimitedWindow> windowsFor(long timestamp)
         {
             // always return the single unlimited window
 
             // we cannot use Collections.singleMap since it does not support Remove()
-            Map<long, UnlimitedWindow> windows = new HashMap<>();
+            Dictionary<long, UnlimitedWindow> windows = new HashMap<>();
             if (timestamp >= startMs)
             {
                 windows.Add(startMs, new UnlimitedWindow(startMs));

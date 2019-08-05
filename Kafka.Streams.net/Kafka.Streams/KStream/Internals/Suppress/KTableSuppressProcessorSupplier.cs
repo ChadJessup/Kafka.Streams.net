@@ -117,7 +117,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             private TimeOrderedKeyValueBuffer<K, V> buffer;
             private InternalProcessorContext internalProcessorContext;
             private Sensor suppressionEmitSensor;
-            private long observedStreamTime = ConsumerRecord.NO_TIMESTAMP;
+            private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
             private KTableSuppressProcessor(SuppressedInternal<K> suppress, string storeName)
             {

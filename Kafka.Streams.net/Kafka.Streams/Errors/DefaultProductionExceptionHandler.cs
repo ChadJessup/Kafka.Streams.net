@@ -16,7 +16,7 @@ public class DefaultProductionExceptionHandler : IProductionExceptionHandler
     }
 
 
-    public void configure( Map<string, object> configs)
+    public void configure( Dictionary<string, object> configs)
 {
         // ignore
     }

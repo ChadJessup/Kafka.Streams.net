@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream
 
 
 
-        public void configure(Map<string, ?> configs, bool isKey)
+        public void configure(Map<string, object> configs, bool isKey)
         {
             if (inner == null)
             {

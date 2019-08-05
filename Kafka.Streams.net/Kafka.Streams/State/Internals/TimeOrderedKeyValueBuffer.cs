@@ -68,7 +68,7 @@ public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
 {
             if (this == o) return true;
             if (o == null || GetType() != o.GetType()) return false;
-            Eviction<?, ?> eviction = (Eviction<?, ?>) o;
+            Eviction<?, object> eviction = (Eviction<?, object>) o;
             return Objects.Equals(key, eviction.key) &&
                 Objects.Equals(value, eviction.value) &&
                 Objects.Equals(recordContext, eviction.recordContext);

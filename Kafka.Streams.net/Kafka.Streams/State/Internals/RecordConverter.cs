@@ -20,5 +20,5 @@ namespace Kafka.Streams.State.Internals;
 
 public interface RecordConverter
 {
-    ConsumerRecord<byte[], byte[]> convert(ConsumerRecord<byte[], byte[]> record);
+    ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record);
 }

@@ -86,10 +86,10 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
 
 
 
-    public void update(ConsumerRecord<byte[], byte[]> record)
+    public void update(ConsumeResult<byte[], byte[]> record)
 {
         RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
-        ConsumerRecord<object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
+        ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
 
         if (deserialized != null)
 {

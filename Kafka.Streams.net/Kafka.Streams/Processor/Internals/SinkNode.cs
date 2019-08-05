@@ -49,7 +49,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
      * @throws InvalidOperationException if this method.Adds a child to a sink node
      */
 
-    public void addChild(ProcessorNode<?, ?> child)
+    public void addChild(ProcessorNode<?, object> child)
 {
         throw new InvalidOperationException("sink node does not allow.AddChild");
     }
