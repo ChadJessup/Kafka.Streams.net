@@ -40,7 +40,7 @@ public class RecordQueue
 
     public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
 
-    private Logger log;
+    private ILogger log;
     private SourceNode source;
     private TopicPartition partition;
     private IProcessorContext processorContext;

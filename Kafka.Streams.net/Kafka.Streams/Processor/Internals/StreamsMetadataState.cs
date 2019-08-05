@@ -93,7 +93,7 @@ namespace Kafka.Streams.Processor.Internals
                 return allMetadata;
             }
 
-            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName);
+            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null)
             {
                 return Collections.emptyList();
@@ -128,7 +128,7 @@ namespace Kafka.Streams.Processor.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public StreamsMetadata getMetadataWithKey(string storeName,
                                                                    K key,
-                                                                   Serializer<K> keySerializer)
+                                                                   ISerializer<K> keySerializer)
         {
             keySerializer = keySerializer ?? throw new System.ArgumentNullException("keySerializer can't be null", nameof(keySerializer));
             storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
@@ -297,7 +297,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private SourceTopicsInfo getSourceTopicsInfo(string storeName)
         {
-            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName);
+            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null || sourceTopics.isEmpty())
             {
                 return null;
@@ -326,7 +326,7 @@ namespace Kafka.Streams.Processor.Internals
                     if (partitions.size() > maxPartitions)
                     {
                         maxPartitions = partitions.size();
-                        topicWithMostPartitions = partitions[0).topic();
+                        topicWithMostPartitions = partitions[0].topic();
                     }
                 }
             }

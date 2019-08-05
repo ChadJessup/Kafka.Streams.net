@@ -24,8 +24,8 @@ using Kafka.Common.serialization.Serializer;
 
 public class SinkNode<K, V> : ProcessorNode<K, V> {
 
-    private Serializer<K> keySerializer;
-    private Serializer<V> valSerializer;
+    private ISerializer<K> keySerializer;
+    private ISerializer<V> valSerializer;
     private TopicNameExtractor<K, V> topicExtractor;
     private StreamPartitioner<K, V> partitioner;
 
@@ -33,8 +33,8 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
 
     SinkNode(string name,
              TopicNameExtractor<K, V> topicExtractor,
-             Serializer<K> keySerializer,
-             Serializer<V> valSerializer,
+             ISerializer<K> keySerializer,
+             ISerializer<V> valSerializer,
              StreamPartitioner<K, V> partitioner)
 {
         base(name);
@@ -64,11 +64,11 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
         // if serializers are null, get the default ones from the context
         if (keySerializer == null)
 {
-            keySerializer = (Serializer<K>) context.keySerde().serializer();
+            keySerializer = (ISerializer<K>) context.keySerde().serializer();
         }
         if (valSerializer == null)
 {
-            valSerializer = (Serializer<V>) context.valueSerde().serializer();
+            valSerializer = (ISerializer<V>) context.valueSerde().serializer();
         }
 
         // if value serializers are for {@code Change} values, set the inner serializer when necessary

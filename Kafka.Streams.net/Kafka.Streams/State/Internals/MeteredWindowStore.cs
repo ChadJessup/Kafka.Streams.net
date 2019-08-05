@@ -17,7 +17,7 @@
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;

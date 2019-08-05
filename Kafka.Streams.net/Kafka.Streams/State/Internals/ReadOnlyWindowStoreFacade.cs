@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.streams.state;
+using Kafka.Streams.State;
 
 namespace Kafka.Streams.State.Internals
 {

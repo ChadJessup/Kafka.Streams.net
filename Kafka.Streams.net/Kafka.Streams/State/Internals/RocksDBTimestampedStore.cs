@@ -1,5 +1,5 @@
 using Kafka.Common.Utils;
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
 using System.Collections.Generic;
@@ -44,12 +44,12 @@ namespace Kafka.Streams.State.Internals
                 if (noTimestampsIter.isValid())
                 {
                     log.LogInformation("Opening store {} in upgrade mode", name);
-                    dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies[1));
+                    dbAccessor = new DualColumnFamilyAccessor(noTimestampColumnFamily, columnFamilies[1]);
                 }
                 else
                 {
                     log.LogInformation("Opening store {} in regular mode", name);
-                    dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[1));
+                    dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[1]);
                     noTimestampColumnFamily.close();
                 }
                 noTimestampsIter.close();
@@ -61,14 +61,14 @@ namespace Kafka.Streams.State.Internals
                     try
                     {
                         db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors.subList(0, 1), columnFamilies);
-                        columnFamilies.Add(db.createColumnFamily(columnFamilyDescriptors[1)));
+                        columnFamilies.Add(db.createColumnFamily(columnFamilyDescriptors[1]));
                     }
                     catch (RocksDBException fatal)
                     {
                         throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), fatal);
                     }
                     log.LogInformation("Opening store {} in upgrade mode", name);
-                    dbAccessor = new DualColumnFamilyAccessor(columnFamilies[0), columnFamilies[1));
+                    dbAccessor = new DualColumnFamilyAccessor(columnFamilies[0], columnFamilies[1]);
                 }
                 else
                 {

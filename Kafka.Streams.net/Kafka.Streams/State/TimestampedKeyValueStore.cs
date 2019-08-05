@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state;
+namespace Kafka.Streams.State;
 
 /**
  * A key-(value/timestamp) store that supports put/get/delete and range queries.

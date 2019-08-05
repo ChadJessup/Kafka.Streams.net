@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public TimestampedKeyValueStoreMaterializer<K, V> {
+public class TimestampedKeyValueStoreMaterializer<K, V> {
     private  MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
 
     public TimestampedKeyValueStoreMaterializer( MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)

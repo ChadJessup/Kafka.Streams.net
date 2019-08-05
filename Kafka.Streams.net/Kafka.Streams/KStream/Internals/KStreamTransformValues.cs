@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
+public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
 
     private  ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
 
@@ -34,7 +34,7 @@ public KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
         this.valueTransformerSupplier = valueTransformerSupplier;
     }
 
-    
+
     public Processor<K, V> get()
 {
         return new KStreamTransformValuesProcessor<>(valueTransformerSupplier());
@@ -50,20 +50,20 @@ public KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
             this.valueTransformer = valueTransformer;
         }
 
-        
+
         public void init( IProcessorContext context)
 {
             valueTransformer.init(new ForwardingDisabledProcessorContext(context));
             this.context = context;
         }
 
-        
+
         public void process( K key,  V value)
 {
             context.forward(key, valueTransformer.transform(key, value));
         }
 
-        
+
         public void close()
 {
             valueTransformer.close();

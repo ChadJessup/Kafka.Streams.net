@@ -19,9 +19,9 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serializer;
 using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.kstream.Window;
-using Kafka.Streams.kstream.Windowed;
-using Kafka.Streams.kstream.internals.TimeWindow;
+using Kafka.Streams.KStream.Window;
+using Kafka.Streams.KStream.Windowed;
+using Kafka.Streams.KStream.Internals.TimeWindow;
 using Kafka.Streams.State.StateSerdes;
 using Microsoft.Extensions.Logging;
 
@@ -117,7 +117,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     // for pipe serdes
 
     public static byte[] toBinary(Windowed<K> timeKey,
-                                      Serializer<K> serializer,
+                                      ISerializer<K> serializer,
                                       string topic)
     {
         byte[] bytes = serializer.serialize(topic, timeKey.key());
@@ -130,7 +130,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
     public static Windowed<K> from(byte[] binaryKey,
                                        long windowSize,
-                                       Deserializer<K> deserializer,
+                                       IDeserializer<K> deserializer,
                                        string topic)
     {
         byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE];
@@ -170,7 +170,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     public static Bytes toStoreKeyBinary(Windowed<Bytes> timeKey,
                                          int seqnum)
     {
-        byte[] bytes = timeKey.key()[);
+        byte[] bytes = timeKey.key()[];
         return toStoreKeyBinary(bytes, timeKey.window().start(), seqnum);
     }
 
@@ -222,7 +222,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
 
     public static Windowed<K> fromStoreKey(byte[] binaryKey,
                                                long windowSize,
-                                               Deserializer<K> deserializer,
+                                               IDeserializer<K> deserializer,
                                                string topic)
     {
         K key = deserializer.deserialize(topic, extractStoreKeyBytes(binaryKey));
@@ -231,7 +231,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     }
 
     public static Windowed<K> fromStoreKey(Windowed<Bytes> windowedKey,
-                                               Deserializer<K> deserializer,
+                                               IDeserializer<K> deserializer,
                                                string topic)
     {
         K key = deserializer.deserialize(topic, windowedKey.key()());

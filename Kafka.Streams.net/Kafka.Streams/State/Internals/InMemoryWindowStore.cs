@@ -94,11 +94,11 @@ namespace Kafka.Streams.State.Internals
                 if (value != null)
                 {
                     segmentMap.computeIfAbsent(windowStartTimestamp, t-> new ConcurrentSkipListMap<>());
-                    segmentMap[windowStartTimestamp).Add(keyBytes, value);
+                    segmentMap[windowStartTimestamp].Add(keyBytes, value);
                 }
                 else
                 {
-                    segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap)->
+                    segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap)=>
   {
                         kvMap.Remove(keyBytes);
                         if (kvMap.isEmpty())

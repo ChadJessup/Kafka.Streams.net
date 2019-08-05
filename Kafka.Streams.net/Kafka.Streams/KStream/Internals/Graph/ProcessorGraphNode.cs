@@ -21,43 +21,43 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-/**
- * Used to represent any type of stateless operation:
- *
- * map, mapValues, flatMap, flatMapValues, filter, filterNot, branch
- */
-public ProcessorGraphNode<K, V> : StreamsGraphNode
-{
+    /**
+     * Used to represent any type of stateless operation:
+     *
+     * map, mapValues, flatMap, flatMapValues, filter, filterNot, branch
+     */
+    public class ProcessorGraphNode<K, V> : StreamsGraphNode
+    {
 
 
-    private  ProcessorParameters<K, V> processorParameters;
+        private ProcessorParameters<K, V> processorParameters;
 
-    public ProcessorGraphNode( string nodeName,
-                               ProcessorParameters<K, V> processorParameters)
-{
+        public ProcessorGraphNode(string nodeName,
+                                   ProcessorParameters<K, V> processorParameters)
+            : base(nodeName)
+        {
 
-        base(nodeName);
 
-        this.processorParameters = processorParameters;
+            this.processorParameters = processorParameters;
+        }
+
+        public ProcessorParameters processorParameters()
+        {
+            return processorParameters;
+        }
+
+
+        public string ToString()
+        {
+            return "ProcessorNode{" +
+                   "processorParameters=" + processorParameters +
+                   "} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+
+            topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), parentNodeNames());
+        }
     }
-
-    public ProcessorParameters processorParameters()
-{
-        return processorParameters;
-    }
-
-    
-    public string ToString()
-{
-        return "ProcessorNode{" +
-               "processorParameters=" + processorParameters +
-               "} " + base.ToString();
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-
-        topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), parentNodeNames());
-    }
-}

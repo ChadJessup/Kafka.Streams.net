@@ -41,46 +41,47 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
-    private  Logger log = new LoggerFactory().CreateLogger<getClass());
+    public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+    {
+        private ILogger log = new LoggerFactory().CreateLogger < getClass());
 
-    private  string storeName;
-    private  Windows<W> windows;
-    private  Initializer<Agg> initializer;
-    private  Aggregator<K, V, Agg> aggregator;
+        private string storeName;
+        private Windows<W> windows;
+        private Initializer<Agg> initializer;
+        private Aggregator<K, V, Agg> aggregator;
 
-    private bool sendOldValues = false;
+        private bool sendOldValues = false;
 
-    public KStreamWindowAggregate( Windows<W> windows,
-                                   string storeName,
-                                   Initializer<Agg> initializer,
-                                   Aggregator<K, V, Agg> aggregator)
-{
-        this.windows = windows;
-        this.storeName = storeName;
-        this.initializer = initializer;
-        this.aggregator = aggregator;
-    }
-
-
-    public Processor<K, V> get()
-{
-        return new KStreamWindowAggregateProcessor();
-    }
-
-    public Windows<W> windows()
-{
-        return windows;
-    }
+        public KStreamWindowAggregate(Windows<W> windows,
+                                       string storeName,
+                                       Initializer<Agg> initializer,
+                                       Aggregator<K, V, Agg> aggregator)
+        {
+            this.windows = windows;
+            this.storeName = storeName;
+            this.initializer = initializer;
+            this.aggregator = aggregator;
+        }
 
 
-    public void enableSendingOldValues()
-{
-        sendOldValues = true;
-    }
+        public Processor<K, V> get()
+        {
+            return new KStreamWindowAggregateProcessor();
+        }
+
+        public Windows<W> windows()
+        {
+            return windows;
+        }
 
 
-    private KStreamWindowAggregateProcessor : AbstractProcessor<K, V> {
+        public void enableSendingOldValues()
+        {
+            sendOldValues = true;
+        }
+
+
+        private KStreamWindowAggregateProcessor : AbstractProcessor<K, V> {
         private TimestampedWindowStore<K, Agg> windowStore;
         private TimestampedTupleForwarder<Windowed<K>, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
@@ -91,16 +92,16 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
 
 
 
-        public void init( IProcessorContext context)
-{
+        public void init(IProcessorContext context)
+        {
             base.init(context);
-            internalProcessorContext = (InternalProcessorContext) context;
+            internalProcessorContext = (InternalProcessorContext)context;
 
             metrics = internalProcessorContext.metrics();
 
             lateRecordDropSensor = Sensors.lateRecordDropSensor(internalProcessorContext);
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-            windowStore = (TimestampedWindowStore<K, Agg>) context.getStateStore(storeName);
+            windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<>(
                 windowStore,
                 context,
@@ -109,10 +110,10 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
         }
 
 
-        public void process( K key,  V value)
-{
+        public void process(K key, V value)
+        {
             if (key == null)
-{
+            {
                 log.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     value, context().topic(), context().partition(), context().offset()
@@ -122,31 +123,32 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
             }
 
             // first get the matching windows
-             long timestamp = context().timestamp();
+            long timestamp = context().timestamp();
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
-             long closeTime = observedStreamTime - windows.gracePeriodMs();
+            long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-             Map<long, W> matchedWindows = windows.windowsFor(timestamp);
+            Map<long, W> matchedWindows = windows.windowsFor(timestamp);
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
-            foreach ( Map.Entry<long, W> entry in matchedWindows.entrySet())
-{
-                 long windowStart = entry.Key;
-                 long windowEnd = entry.Value.end();
+            foreach (Map.Entry<long, W> entry in matchedWindows.entrySet())
+            {
+                long windowStart = entry.Key;
+                long windowEnd = entry.Value.end();
                 if (windowEnd > closeTime)
-{
-                     ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
+                {
+                    ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
                     Agg oldAgg = getValueOrNull(oldAggAndTimestamp);
 
-                     Agg newAgg;
-                     long newTimestamp;
+                    Agg newAgg;
+                    long newTimestamp;
 
                     if (oldAgg == null)
-{
+                    {
                         oldAgg = initializer.apply();
                         newTimestamp = context().timestamp();
-                    } else
-{
+                    }
+                    else
+                    {
 
                         newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
                     }
@@ -160,8 +162,9 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
                         newAgg,
                         sendOldValues ? oldAgg : null,
                         newTimestamp);
-                } else
-{
+                }
+                else
+                {
 
                     log.LogDebug(
                         "Skipping record for expired window. " +
@@ -190,44 +193,45 @@ public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessor
 
 
     public KTableValueGetterSupplier<Windowed<K>, Agg> view()
-{
-        return new KTableValueGetterSupplier<Windowed<K>, Agg>()
-{
+    {
+        //return new KTableValueGetterSupplier<Windowed<K>, Agg>()
+        //{
 
-            public KTableValueGetter<Windowed<K>, Agg> get()
-{
-                return new KStreamWindowAggregateValueGetter();
-            }
+        //    public KTableValueGetter<Windowed<K>, Agg> get()
+        //{
+        //                return new KStreamWindowAggregateValueGetter();
+        //            }
 
 
-            public string[] storeNames()
-{
-                return new string[] {storeName};
-            }
-        };
+        //            public string[] storeNames()
+        //{
+        //                return new string[] {storeName};
+        //            }
+        //        };
     }
 
 
-    private class KStreamWindowAggregateValueGetter : KTableValueGetter<Windowed<K>, Agg> {
+    private class KStreamWindowAggregateValueGetter : KTableValueGetter<Windowed<K>, Agg>
+    {
         private TimestampedWindowStore<K, Agg> windowStore;
 
 
 
-        public void init( IProcessorContext context)
-{
-            windowStore = (TimestampedWindowStore<K, Agg>) context.getStateStore(storeName);
+        public void init(IProcessorContext context)
+        {
+            windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
         }
 
 
 
-        public ValueAndTimestamp<Agg> get( Windowed<K> windowedKey)
-{
-             K key = windowedKey.key();
-             W window = (W) windowedKey.window();
+        public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
+        {
+            K key = windowedKey.key();
+            W window = (W)windowedKey.window();
             return windowStore.fetch(key, window.start());
         }
 
 
-        public void close() {}
+        public void close() { }
     }
 }

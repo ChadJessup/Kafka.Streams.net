@@ -14,52 +14,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-
-public Stamped<V> : Comparable
+namespace Kafka.Streams.Processor.Internals
 {
 
 
-    public V value;
-    public long timestamp;
+    public class Stamped<V> : Comparable
+    {
 
-    Stamped(V value, long timestamp)
-{
-        this.value = value;
-        this.timestamp = timestamp;
-    }
 
-    
-    public int compareTo(object other)
-{
-        long otherTimestamp = ((Stamped<?>) other).timestamp;
+        public V value;
+        public long timestamp;
 
-        if (timestamp < otherTimestamp)
-{
-            return -1;
-        } else if (timestamp > otherTimestamp)
-{
-            return 1;
+        Stamped(V value, long timestamp)
+        {
+            this.value = value;
+            this.timestamp = timestamp;
         }
-        return 0;
-    }
 
-    
-    public bool Equals(object other)
-{
-        if (other == null || GetType() != other.GetType())
-{
-            return false;
+
+        public int compareTo(object other)
+        {
+            long otherTimestamp = ((Stamped <?>) other).timestamp;
+
+            if (timestamp < otherTimestamp)
+            {
+                return -1;
+            }
+            else if (timestamp > otherTimestamp)
+            {
+                return 1;
+            }
+            return 0;
         }
-        long otherTimestamp = ((Stamped<?>) other).timestamp;
-        return timestamp == otherTimestamp;
-    }
 
-    
-    public int GetHashCode()
-{
-        return Objects.hash(timestamp);
+
+        public bool Equals(object other)
+        {
+            if (other == null || GetType() != other.GetType())
+            {
+                return false;
+            }
+            long otherTimestamp = ((Stamped <?>) other).timestamp;
+            return timestamp == otherTimestamp;
+        }
+
+
+        public int GetHashCode()
+        {
+            return Objects.hash(timestamp);
+        }
     }
 }

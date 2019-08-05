@@ -21,81 +21,81 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-/**
- * Utility base containing the common fields between
- * a Stream-Stream join and a Table-Table join
- */
-abstract BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
-{
+    /**
+     * Utility base containing the common fields between
+     * a Stream-Stream join and a Table-Table join
+     */
+    abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
+    {
 
 
-    private  ProcessorParameters<K, V1> joinThisProcessorParameters;
-    private  ProcessorParameters<K, V2> joinOtherProcessorParameters;
-    private  ProcessorParameters<K, VR> joinMergeProcessorParameters;
-    private  ValueJoiner<V1, V2, VR> valueJoiner;
-    private  string thisJoinSideNodeName;
-    private  string otherJoinSideNodeName;
+        private ProcessorParameters<K, V1> joinThisProcessorParameters;
+        private ProcessorParameters<K, V2> joinOtherProcessorParameters;
+        private ProcessorParameters<K, VR> joinMergeProcessorParameters;
+        private ValueJoiner<V1, V2, VR> valueJoiner;
+        private string thisJoinSideNodeName;
+        private string otherJoinSideNodeName;
 
 
-    BaseJoinProcessorNode( string nodeName,
-                           ValueJoiner<V1, V2, VR> valueJoiner,
-                           ProcessorParameters<K, V1> joinThisProcessorParameters,
-                           ProcessorParameters<K, V2> joinOtherProcessorParameters,
-                           ProcessorParameters<K, VR> joinMergeProcessorParameters,
-                           string thisJoinSideNodeName,
-                           string otherJoinSideNodeName)
-{
+        BaseJoinProcessorNode(string nodeName,
+                               ValueJoiner<V1, V2, VR> valueJoiner,
+                               ProcessorParameters<K, V1> joinThisProcessorParameters,
+                               ProcessorParameters<K, V2> joinOtherProcessorParameters,
+                               ProcessorParameters<K, VR> joinMergeProcessorParameters,
+                               string thisJoinSideNodeName,
+                               string otherJoinSideNodeName)
+            : base(nodeName)
+        {
 
-        base(nodeName);
 
-        this.valueJoiner = valueJoiner;
-        this.joinThisProcessorParameters = joinThisProcessorParameters;
-        this.joinOtherProcessorParameters = joinOtherProcessorParameters;
-        this.joinMergeProcessorParameters = joinMergeProcessorParameters;
-        this.thisJoinSideNodeName = thisJoinSideNodeName;
-        this.otherJoinSideNodeName = otherJoinSideNodeName;
+            this.valueJoiner = valueJoiner;
+            this.joinThisProcessorParameters = joinThisProcessorParameters;
+            this.joinOtherProcessorParameters = joinOtherProcessorParameters;
+            this.joinMergeProcessorParameters = joinMergeProcessorParameters;
+            this.thisJoinSideNodeName = thisJoinSideNodeName;
+            this.otherJoinSideNodeName = otherJoinSideNodeName;
+        }
+
+        ProcessorParameters<K, V1> thisProcessorParameters()
+        {
+            return joinThisProcessorParameters;
+        }
+
+        ProcessorParameters<K, V2> otherProcessorParameters()
+        {
+            return joinOtherProcessorParameters;
+        }
+
+        ProcessorParameters<K, VR> mergeProcessorParameters()
+        {
+            return joinMergeProcessorParameters;
+        }
+
+        ValueJoiner<V1, V2, VR> valueJoiner()
+        {
+            return valueJoiner;
+        }
+
+        string thisJoinSideNodeName()
+        {
+            return thisJoinSideNodeName;
+        }
+
+        string otherJoinSideNodeName()
+        {
+            return otherJoinSideNodeName;
+        }
+
+
+        public string ToString()
+        {
+            return "BaseJoinProcessorNode{" +
+                   "joinThisProcessorParameters=" + joinThisProcessorParameters +
+                   ", joinOtherProcessorParameters=" + joinOtherProcessorParameters +
+                   ", joinMergeProcessorParameters=" + joinMergeProcessorParameters +
+                   ", valueJoiner=" + valueJoiner +
+                   ", thisJoinSideNodeName='" + thisJoinSideNodeName + '\'' +
+                   ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
+                   "} " + base.ToString();
+        }
     }
-
-    ProcessorParameters<K, V1> thisProcessorParameters()
-{
-        return joinThisProcessorParameters;
-    }
-
-    ProcessorParameters<K, V2> otherProcessorParameters()
-{
-        return joinOtherProcessorParameters;
-    }
-
-    ProcessorParameters<K, VR> mergeProcessorParameters()
-{
-        return joinMergeProcessorParameters;
-    }
-
-    ValueJoiner<V1, V2, VR> valueJoiner()
-{
-        return valueJoiner;
-    }
-
-    string thisJoinSideNodeName()
-{
-        return thisJoinSideNodeName;
-    }
-
-    string otherJoinSideNodeName()
-{
-        return otherJoinSideNodeName;
-    }
-
-    
-    public string ToString()
-{
-        return "BaseJoinProcessorNode{" +
-               "joinThisProcessorParameters=" + joinThisProcessorParameters +
-               ", joinOtherProcessorParameters=" + joinOtherProcessorParameters +
-               ", joinMergeProcessorParameters=" + joinMergeProcessorParameters +
-               ", valueJoiner=" + valueJoiner +
-               ", thisJoinSideNodeName='" + thisJoinSideNodeName + '\'' +
-               ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
-               "} " + base.ToString();
-    }
-}

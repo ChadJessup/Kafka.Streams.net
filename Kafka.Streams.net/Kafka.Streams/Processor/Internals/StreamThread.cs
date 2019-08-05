@@ -190,12 +190,12 @@ namespace Kafka.Streams.Processor.Internals
         private ITime time;
         private TaskManager taskManager;
         private StreamThread streamThread;
-        private Logger log;
+        private ILogger log;
 
         RebalanceListener(ITime time,
                           TaskManager taskManager,
                           StreamThread streamThread,
-                          Logger log)
+                          ILogger log)
         {
             this.time = time;
             this.taskManager = taskManager;
@@ -329,7 +329,7 @@ namespace Kafka.Streams.Processor.Internals
         StateDirectory stateDirectory;
         ChangelogReader storeChangelogReader;
         ITime time;
-        Logger log;
+        ILogger log;
 
 
         AbstractTaskCreator(InternalTopologyBuilder builder,
@@ -338,7 +338,7 @@ namespace Kafka.Streams.Processor.Internals
                             StateDirectory stateDirectory,
                             ChangelogReader storeChangelogReader,
                             ITime time,
-                            Logger log)
+                            ILogger log)
         {
             this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
             this.builder = builder;
@@ -360,7 +360,7 @@ namespace Kafka.Streams.Processor.Internals
             return stateDirectory;
         }
 
-        Collection<T> createTasks(Consumer<byte[], byte[]> consumer,
+        Collection<T> createTasks(IConsumer<byte[], byte[]> consumer,
                                   Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
             List<T> createdTasks = new List<>();
@@ -379,7 +379,7 @@ namespace Kafka.Streams.Processor.Internals
             return createdTasks;
         }
 
-        abstract T createTask(Consumer<byte[], byte[]> consumer, TaskId id, HashSet<TopicPartition> partitions);
+        abstract T createTask(IConsumer<byte[], byte[]> consumer, TaskId id, HashSet<TopicPartition> partitions);
 
         public void close() { }
     }
@@ -389,7 +389,7 @@ namespace Kafka.Streams.Processor.Internals
         private ThreadCache cache;
         private KafkaClientSupplier clientSupplier;
         private string threadClientId;
-        private Producer<byte[], byte[]> threadProducer;
+        private IProducer<byte[], byte[]> threadProducer;
         private Sensor createTaskSensor;
 
         TaskCreator(InternalTopologyBuilder builder,
@@ -400,9 +400,9 @@ namespace Kafka.Streams.Processor.Internals
                     ThreadCache cache,
                     ITime time,
                     KafkaClientSupplier clientSupplier,
-                    Producer<byte[], byte[]> threadProducer,
+                    IProducer<byte[], byte[]> threadProducer,
                     string threadClientId,
-                    Logger log)
+                    ILogger log)
             : base(
                 builder,
                 config,
@@ -420,7 +420,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        StreamTask createTask(Consumer<byte[], byte[]> consumer,
+        StreamTask createTask(IConsumer<byte[], byte[]> consumer,
                               TaskId taskId,
                               HashSet<TopicPartition> partitions)
         {
@@ -440,7 +440,7 @@ namespace Kafka.Streams.Processor.Internals
                 ()->createProducer(taskId));
         }
 
-        private Producer<byte[], byte[]> createProducer(TaskId id)
+        private IProducer<byte[], byte[]> createProducer(TaskId id)
         {
             // eos
             if (threadProducer == null)
@@ -501,9 +501,9 @@ namespace Kafka.Streams.Processor.Internals
 
         // package-private for testing
         ConsumerRebalanceListener rebalanceListener;
-        Producer<byte[], byte[]> producer;
-        Consumer<byte[], byte[]> restoreConsumer;
-        Consumer<byte[], byte[]> consumer;
+        IProducer<byte[], byte[]> producer;
+        IConsumer<byte[], byte[]> restoreConsumer;
+        IConsumer<byte[], byte[]> consumer;
         InternalTopologyBuilder builder;
 
         public static StreamThread create(InternalTopologyBuilder builder,
@@ -524,15 +524,15 @@ namespace Kafka.Streams.Processor.Internals
 
             string logPrefix = string.Format("stream-thread [%s] ", threadClientId);
             LogContext logContext = new LogContext(logPrefix);
-            Logger log = logContext.logger(StreamThread);
+            ILogger log = logContext.logger(StreamThread);
 
             log.LogInformation("Creating restore consumer client");
             Dictionary<string, object> restoreConsumerConfigs = config.getRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
-            Consumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs);
+            IConsumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs);
             TimeSpan pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
             StoreChangelogReader changelogReader = new StoreChangelogReader(restoreConsumer, pollTime, userStateRestoreListener, logContext);
 
-            Producer<byte[], byte[]> threadProducer = null;
+            IProducer<byte[], byte[]> threadProducer = null;
             bool eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
             if (!eosEnabled)
             {
@@ -586,11 +586,11 @@ namespace Kafka.Streams.Processor.Internals
             string originalReset = null;
             if (!builder.latestResetTopicsPattern().pattern().Equals("") || !builder.earliestResetTopicsPattern().pattern().Equals(""))
             {
-                originalReset = (string)consumerConfigs[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG);
+                originalReset = (string)consumerConfigs[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG];
                 consumerConfigs.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
             }
 
-            Consumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs);
+            IConsumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs);
             taskManager.setConsumer(consumer);
 
             return new StreamThread(
@@ -611,9 +611,9 @@ namespace Kafka.Streams.Processor.Internals
 
         public StreamThread(ITime time,
                             StreamsConfig config,
-                            Producer<byte[], byte[]> producer,
-                            Consumer<byte[], byte[]> restoreConsumer,
-                            Consumer<byte[], byte[]> consumer,
+                            IProducer<byte[], byte[]> producer,
+                            IConsumer<byte[], byte[]> restoreConsumer,
+                            IConsumer<byte[], byte[]> consumer,
                             string originalReset,
                             TaskManager taskManager,
                             StreamsMetricsImpl streamsMetrics,

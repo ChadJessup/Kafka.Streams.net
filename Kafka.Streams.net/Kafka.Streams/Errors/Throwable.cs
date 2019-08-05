@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -16,32 +16,7 @@
  */
 namespace Kafka.Streams.Errors
 {
-
-
-    /**
-     * Indicates a run time error incurred while trying to assign
-     * {@link org.apache.kafka.streams.processor.Internals.StreamTask stream tasks} to
-     * {@link org.apache.kafka.streams.processor.Internals.StreamThread threads}.
-     */
-    public class TaskAssignmentException : StreamsException
+    public class Throwable
     {
-
-
-        private static long serialVersionUID = 1L;
-
-        public TaskAssignmentException(string message)
-            : base(message)
-        {
-        }
-
-        public TaskAssignmentException(string message, Throwable throwable)
-            : base(message, throwable)
-        {
-        }
-
-        public TaskAssignmentException(Throwable throwable)
-            : base(throwable)
-        {
-        }
     }
 }

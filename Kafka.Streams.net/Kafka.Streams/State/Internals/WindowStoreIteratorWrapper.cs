@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.kstream.Windowed;
+using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.WindowStoreIterator;
 
@@ -103,7 +103,7 @@ class WindowStoreIteratorWrapper
 
         public Windowed<Bytes> peekNextKey()
 {
-            byte[] nextKey = bytesIterator.peekNextKey()[);
+            byte[] nextKey = bytesIterator.peekNextKey()[];
             return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
         }
 

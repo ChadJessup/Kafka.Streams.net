@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class InternalTopologyBuilder
     {
-        private static Logger log = new LoggerFactory().CreateLogger < InternalTopologyBuilder);
+        private static ILogger log = new LoggerFactory().CreateLogger < InternalTopologyBuilder);
         private static Pattern EMPTY_ZERO_LENGTH_PATTERN = Pattern.compile("");
         private static string[] NO_PREDECESSORS = { };
 
@@ -252,7 +252,7 @@ namespace Kafka.Streams.Processor.Internals
                 List<string> matchedTopics = new List<>();
                 foreach (string update in subscribedTopics)
                 {
-                    if (pattern == topicToPatterns[update))
+                    if (pattern == topicToPatterns[update])
                     {
                         matchedTopics.Add(update);
                     }
@@ -308,7 +308,7 @@ namespace Kafka.Streams.Processor.Internals
         {
 
             private ISerializer<K> keySerializer;
-            private Serializer<V> valSerializer;
+            private ISerializer<V> valSerializer;
             private StreamPartitioner<K, V> partitioner;
             private TopicNameExtractor<K, V> topicExtractor;
 
@@ -478,8 +478,8 @@ namespace Kafka.Streams.Processor.Internals
 
         public void addSink(string name,
                                          string topic,
-                                         Serializer<K> keySerializer,
-                                         Serializer<V> valSerializer,
+                                         ISerializer<K> keySerializer,
+                                         ISerializer<V> valSerializer,
                                          StreamPartitioner<K, V> partitioner,
                                          string[] predecessorNames)
         {
@@ -498,8 +498,8 @@ namespace Kafka.Streams.Processor.Internals
 
         public void addSink(string name,
                                          TopicNameExtractor<K, V> topicExtractor,
-                                         Serializer<K> keySerializer,
-                                         Serializer<V> valSerializer,
+                                         ISerializer<K> keySerializer,
+                                         ISerializer<V> valSerializer,
                                          StreamPartitioner<K, V> partitioner,
                                          string[] predecessorNames)
         {
@@ -924,7 +924,7 @@ namespace Kafka.Streams.Processor.Internals
             HashSet<string> nodeGroup;
             if (topicGroupId != null)
             {
-                nodeGroup = nodeGroups()[topicGroupId);
+                nodeGroup = nodeGroups()[topicGroupId];
             }
             else
             {
@@ -1046,7 +1046,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (string predecessor in sinkNodeFactory.predecessors)
             {
-                processorMap[predecessor).AddChild(node);
+                processorMap[predecessor].AddChild(node);
                 if (sinkNodeFactory.topicExtractor is StaticTopicNameExtractor)
                 {
                     string topic = ((StaticTopicNameExtractor)sinkNodeFactory.topicExtractor).topicName;
@@ -1125,7 +1125,7 @@ namespace Kafka.Streams.Processor.Internals
                     else
                     {
 
-                        stateStoreMap.Add(stateStoreName, globalStateStores[stateStoreName));
+                        stateStoreMap.Add(stateStoreName, globalStateStores[stateStoreName]);
                     }
                 }
             }
@@ -1259,7 +1259,7 @@ namespace Kafka.Streams.Processor.Internals
                 foreach (Map.Entry<string, Pattern> stringPatternEntry in nodeToSourcePatterns.entrySet())
                 {
                     SourceNodeFactory sourceNode =
-                        (SourceNodeFactory)nodeFactories[stringPatternEntry.Key);
+                        (SourceNodeFactory)nodeFactories[stringPatternEntry.Key];
                     //need to update nodeToSourceTopics with topics matched from given regex
                     nodeToSourceTopics.Add(
                         stringPatternEntry.Key,
@@ -1288,7 +1288,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                     if (!updatedTopicsForStateStore.isEmpty())
                     {
-                        Collection<string> storeTopics = stateStoreNameToSourceTopics[storePattern.Key);
+                        Collection<string> storeTopics = stateStoreNameToSourceTopics[storePattern.Key];
                         if (storeTopics != null)
                         {
                             updatedTopicsForStateStore.AddAll(storeTopics);
@@ -1462,7 +1462,7 @@ namespace Kafka.Streams.Processor.Internals
             if (nodeFactory is SourceNodeFactory)
             {
                 List<string> topics = ((SourceNodeFactory)nodeFactory).topics;
-                return topics != null && topics.size() == 1 && globalTopics.contains(topics[0));
+                return topics != null && topics.size() == 1 && globalTopics.contains(topics[0]);
             }
             return false;
         }
@@ -1509,8 +1509,8 @@ namespace Kafka.Streams.Processor.Internals
                     description.AddGlobalStore(new GlobalStore(
                         node,
                         processorNode,
-                        ((ProcessorNodeFactory)nodeFactories[processorNode)).stateStoreNames.iterator().next(),
-                        nodeToSourceTopics[node)[0],
+                        ((ProcessorNodeFactory)nodeFactories[processorNode]).stateStoreNames.iterator().next(),
+                        nodeToSourceTopics[node][0],
                         id
                     ));
                     break;
@@ -1582,13 +1582,13 @@ namespace Kafka.Streams.Processor.Internals
             //.Add all nodes
             foreach (string nodeName in nodeNames)
             {
-                nodesByName.Add(nodeName, nodeFactories[nodeName).describe());
+                nodesByName.Add(nodeName, nodeFactories[nodeName].describe());
             }
 
             // connect each node to its predecessors and successors
             foreach (AbstractNode node in nodesByName.values())
             {
-                foreach (string predecessorName in nodeFactories[node.name()).predecessors)
+                foreach (string predecessorName in nodeFactories[node.name()].predecessors)
                 {
                     AbstractNode predecessor = nodesByName[predecessorName];
                     node.AddPredecessor(predecessor);

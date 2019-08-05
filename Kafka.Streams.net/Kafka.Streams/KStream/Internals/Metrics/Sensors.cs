@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.metrics;
+namespace Kafka.Streams.KStream.Internals.metrics;
 
 
 
@@ -33,7 +33,7 @@ namespace Kafka.streams.kstream.internals.metrics;
 
 
 
-public Sensors
+public class Sensors
 {
 
     private Sensors() {}

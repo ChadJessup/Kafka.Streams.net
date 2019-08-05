@@ -39,12 +39,12 @@ using Kafka.Common.Utils.LogContext;
 
 
 
-public StoreChangelogReader : ChangelogReader
+public class StoreChangelogReader : ChangelogReader
 {
 
 
-    private Logger log;
-    private Consumer<byte[], byte[]> restoreConsumer;
+    private ILogger log;
+    private IConsumer<byte[], byte[]> restoreConsumer;
     private StateRestoreListener userStateRestoreListener;
     private Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
     private Dictionary<string, List<PartitionInfo>> partitionInfo = new HashMap<>();
@@ -54,7 +54,7 @@ public StoreChangelogReader : ChangelogReader
     private HashSet<TopicPartition> completedRestorers = new HashSet<>();
     private TimeSpan pollTime;
 
-    public StoreChangelogReader(Consumer<byte[], byte[]> restoreConsumer,
+    public StoreChangelogReader(IConsumer<byte[], byte[]> restoreConsumer,
                                 TimeSpan pollTime,
                                 StateRestoreListener userStateRestoreListener,
                                 LogContext logContext)
@@ -65,7 +65,7 @@ public StoreChangelogReader : ChangelogReader
         this.userStateRestoreListener = userStateRestoreListener;
     }
 
-    
+
     public void register(StateRestorer restorer)
 {
         if (!stateRestorers.ContainsKey(restorer.partition()))
@@ -100,9 +100,9 @@ public StoreChangelogReader : ChangelogReader
             foreach (TopicPartition partition in needsRestoring)
 {
                 StateRestorer restorer = stateRestorers[partition];
-                long pos = processNext(records.records(partition), restorer, endOffsets[partition));
+                long pos = processNext(records.records(partition), restorer, endOffsets[partition]);
                 restorer.setRestoredOffset(pos);
-                if (restorer.hasCompleted(pos, endOffsets[partition)))
+                if (restorer.hasCompleted(pos, endOffsets[partition]))
 {
                     restorer.restoreDone();
                     endOffsets.Remove(partition);
@@ -234,7 +234,7 @@ public StoreChangelogReader : ChangelogReader
                 restoreConsumer.seek(partition, restorer.checkpoint());
                 logRestoreOffsets(partition,
                         restorer.checkpoint(),
-                        endOffsets[partition)];
+                        endOffsets[partition];
                 restorer.setStartingOffset(restoreConsumer.position(partition));
                 restorer.restoreStarted();
             } else
@@ -272,7 +272,7 @@ public StoreChangelogReader : ChangelogReader
                 long position = restoreConsumer.position(restorer.partition());
                 logRestoreOffsets(restorer.partition(),
                         position,
-                        endOffsets[restorer.partition()));
+                        endOffsets[restorer.partition()]);
                 restorer.setStartingOffset(position);
                 restorer.restoreStarted();
             }
@@ -308,7 +308,7 @@ public StoreChangelogReader : ChangelogReader
         }
     }
 
-    
+
     public Dictionary<TopicPartition, long> restoredOffsets()
 {
         Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
@@ -323,7 +323,7 @@ public StoreChangelogReader : ChangelogReader
         return restoredOffsets;
     }
 
-    
+
     public void reset()
 {
         partitionInfo.clear();
@@ -384,7 +384,7 @@ public StoreChangelogReader : ChangelogReader
 
     private bool hasPartition(TopicPartition topicPartition)
 {
-        List<PartitionInfo> partitions = partitionInfo[topicPartition.topic());
+        List<PartitionInfo> partitions = partitionInfo[topicPartition.topic()];
 
         if (partitions == null)
 {

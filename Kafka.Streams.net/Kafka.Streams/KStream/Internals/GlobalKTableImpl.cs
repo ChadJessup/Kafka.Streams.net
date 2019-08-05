@@ -16,31 +16,29 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
+    public class GlobalKTableImpl<K, V> : GlobalKTable<K, V>
+    {
+
+        private KTableValueGetterSupplier<K, V> valueGetterSupplier;
+        private string queryableStoreName;
+
+        GlobalKTableImpl(KTableValueGetterSupplier<K, V> valueGetterSupplier,
+                          string queryableStoreName)
+        {
+            this.valueGetterSupplier = valueGetterSupplier;
+            this.queryableStoreName = queryableStoreName;
+        }
+
+        KTableValueGetterSupplier<K, V> valueGetterSupplier()
+        {
+            return valueGetterSupplier;
+        }
 
 
+        public string queryableStoreName()
+        {
+            return queryableStoreName;
+        }
 
-
-public GlobalKTableImpl<K, V> : GlobalKTable<K, V> {
-
-    private  KTableValueGetterSupplier<K, V> valueGetterSupplier;
-    private  string queryableStoreName;
-
-    GlobalKTableImpl( KTableValueGetterSupplier<K, V> valueGetterSupplier,
-                      string queryableStoreName)
-{
-        this.valueGetterSupplier = valueGetterSupplier;
-        this.queryableStoreName = queryableStoreName;
     }
-
-    KTableValueGetterSupplier<K, V> valueGetterSupplier()
-{
-        return valueGetterSupplier;
-    }
-
-    
-    public string queryableStoreName()
-{
-        return queryableStoreName;
-    }
-
 }

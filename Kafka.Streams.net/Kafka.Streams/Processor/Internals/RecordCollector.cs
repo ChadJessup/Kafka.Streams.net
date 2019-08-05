@@ -34,23 +34,23 @@ public interface RecordCollector : AutoCloseable
                      Headers headers,
                      int partition,
                      long timestamp,
-                     Serializer<K> keySerializer,
-                     Serializer<V> valueSerializer);
+                     ISerializer<K> keySerializer,
+                     ISerializer<V> valueSerializer);
 
     void send(string topic,
                      K key,
                      V value,
                      Headers headers,
                      long timestamp,
-                     Serializer<K> keySerializer,
-                     Serializer<V> valueSerializer,
+                     ISerializer<K> keySerializer,
+                     ISerializer<V> valueSerializer,
                      StreamPartitioner<K, V> partitioner);
 
     /**
      * Initialize the collector with a producer.
      * @param producer the producer that should be used by this collector
      */
-    void init(Producer<byte[], byte[]> producer);
+    void init(IProducer<byte[], byte[]> producer);
 
     /**
      * Flush the internal {@link Producer}.

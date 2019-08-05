@@ -41,12 +41,12 @@ namespace Kafka.Streams.State.Internals
             valueAndTimestampDeserializer.close();
         }
 
-        public override Serializer<ValueAndTimestamp<V>> serializer()
+        public override ISerializer<ValueAndTimestamp<V>> serializer()
         {
             return valueAndTimestampSerializer;
         }
 
-        public override Deserializer<ValueAndTimestamp<V>> deserializer()
+        public override IDeserializer<ValueAndTimestamp<V>> deserializer()
         {
             return valueAndTimestampDeserializer;
         }

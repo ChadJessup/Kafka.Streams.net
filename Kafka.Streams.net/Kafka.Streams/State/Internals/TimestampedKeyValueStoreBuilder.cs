@@ -14,184 +14,171 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.KeyValueBytesStoreSupplier;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.KeyValueStore;
-using Kafka.Streams.State.TimestampedBytesStore;
-using Kafka.Streams.State.TimestampedKeyValueStore;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-
-public TimestampedKeyValueStoreBuilder<K, V>
-    : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedKeyValueStore<K, V>>
+namespace Kafka.Streams.State.Internals
 {
+    public class TimestampedKeyValueStoreBuilder<K, V>
+        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedKeyValueStore<K, V>>
+    {
 
-    private KeyValueBytesStoreSupplier storeSupplier;
+        private KeyValueBytesStoreSupplier storeSupplier;
 
-    public TimestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier storeSupplier,
-                                           ISerde<K> keySerde,
-                                           ISerde<V> valueSerde,
-                                           ITime time)
-{
-        base(
-            storeSupplier.name(),
-            keySerde,
-            valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde),
-            time);
-        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
-        this.storeSupplier = storeSupplier;
-    }
+        public TimestampedKeyValueStoreBuilder(
+            KeyValueBytesStoreSupplier storeSupplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            ITime time)
+            : base(
+                storeSupplier.name(),
+                keySerde,
+                valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde),
+                time)
+        {
+            storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
+            this.storeSupplier = storeSupplier;
+        }
 
-    public override TimestampedKeyValueStore<K, V> build()
-{
-        IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
-        if (!(store is TimestampedBytesStore))
-{
-            if (store.persistent())
-{
-                store = new KeyValueToTimestampedKeyValueByteStoreAdapter(store);
-            } else
-{
-                store = new InMemoryTimestampedKeyValueStoreMarker(store);
+        public override TimestampedKeyValueStore<K, V> build()
+        {
+            IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
+            if (!(store is TimestampedBytesStore))
+            {
+                if (store.persistent())
+                {
+                    store = new KeyValueToTimestampedKeyValueByteStoreAdapter(store);
+                }
+                else
+                {
+                    store = new InMemoryTimestampedKeyValueStoreMarker(store);
+                }
             }
+            return new MeteredTimestampedKeyValueStore<>(
+                maybeWrapCaching(maybeWrapLogging(store)),
+                storeSupplier.metricsScope(),
+                time,
+                keySerde,
+                valueSerde);
         }
-        return new MeteredTimestampedKeyValueStore<>(
-            maybeWrapCaching(maybeWrapLogging(store)),
-            storeSupplier.metricsScope(),
-            time,
-            keySerde,
-            valueSerde);
-    }
 
-    private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
-{
-        if (!enableCaching)
-{
-            return inner;
+        private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
+        {
+            if (!enableCaching)
+            {
+                return inner;
+            }
+            return new CachingKeyValueStore(inner);
         }
-        return new CachingKeyValueStore(inner);
-    }
 
-    private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
-{
-        if (!enableLogging)
-{
-            return inner;
+        private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
+        {
+            if (!enableLogging)
+            {
+                return inner;
+            }
+            return new ChangeLoggingTimestampedKeyValueBytesStore(inner);
         }
-        return new ChangeLoggingTimestampedKeyValueBytesStore(inner);
-    }
 
-    private static InMemoryTimestampedKeyValueStoreMarker
+        private static class InMemoryTimestampedKeyValueStoreMarker
         : IKeyValueStore<Bytes, byte[]>, TimestampedBytesStore
-{
+        {
 
-        IKeyValueStore<Bytes, byte[]> wrapped;
+            IKeyValueStore<Bytes, byte[]> wrapped;
 
-        private InMemoryTimestampedKeyValueStoreMarker(IKeyValueStore<Bytes, byte[]> wrapped)
-{
-            if (wrapped.persistent())
-{
-                throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
+            private InMemoryTimestampedKeyValueStoreMarker(IKeyValueStore<Bytes, byte[]> wrapped)
+            {
+                if (wrapped.persistent())
+                {
+                    throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
+                }
+                this.wrapped = wrapped;
             }
-            this.wrapped = wrapped;
-        }
 
-        
-        public void init(IProcessorContext context,
-                         IStateStore root)
-{
-            wrapped.init(context, root);
-        }
 
-        
-        public void put(Bytes key,
-                        byte[] value)
-{
-            wrapped.Add(key, value);
-        }
+            public void init(IProcessorContext context,
+                             IStateStore root)
+            {
+                wrapped.init(context, root);
+            }
 
-        
-        public byte[] putIfAbsent(Bytes key,
-                                  byte[] value)
-{
-            return wrapped.putIfAbsent(key, value);
-        }
 
-        
-        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
-{
-            wrapped.putAll(entries);
-        }
+            public void put(Bytes key,
+                            byte[] value)
+            {
+                wrapped.Add(key, value);
+            }
 
-        
-        public byte[] delete(Bytes key)
-{
-            return wrapped.delete(key);
-        }
 
-        
-        public byte[] get(Bytes key)
-{
-            return wrapped[key];
-        }
+            public byte[] putIfAbsent(Bytes key,
+                                      byte[] value)
+            {
+                return wrapped.putIfAbsent(key, value);
+            }
 
-        
-        public KeyValueIterator<Bytes, byte[]> range(Bytes from,
-                                                     Bytes to)
-{
-            return wrapped.range(from, to);
-        }
 
-        
-        public KeyValueIterator<Bytes, byte[]> all()
-{
-            return wrapped.all();
-        }
+            public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+            {
+                wrapped.putAll(entries);
+            }
 
-        
-        public long approximateNumEntries()
-{
-            return wrapped.approximateNumEntries();
-        }
 
-        
-        public void flush()
-{
-            wrapped.flush();
-        }
+            public byte[] delete(Bytes key)
+            {
+                return wrapped.delete(key);
+            }
 
-        
-        public void close()
-{
-            wrapped.close();
-        }
 
-        
-        public bool isOpen()
-{
-            return wrapped.isOpen();
-        }
+            public byte[] get(Bytes key)
+            {
+                return wrapped[key];
+            }
 
-        
-        public string name()
-{
-            return wrapped.name();
-        }
 
-        
-        public bool persistent()
-{
-            return false;
+            public KeyValueIterator<Bytes, byte[]> range(Bytes from,
+                                                         Bytes to)
+            {
+                return wrapped.range(from, to);
+            }
+
+
+            public KeyValueIterator<Bytes, byte[]> all()
+            {
+                return wrapped.all();
+            }
+
+
+            public long approximateNumEntries()
+            {
+                return wrapped.approximateNumEntries();
+            }
+
+
+            public void flush()
+            {
+                wrapped.flush();
+            }
+
+
+            public void close()
+            {
+                wrapped.close();
+            }
+
+
+            public bool isOpen()
+            {
+                return wrapped.isOpen();
+            }
+
+
+            public string name()
+            {
+                return wrapped.name();
+            }
+
+
+            public bool persistent()
+            {
+                return false;
+            }
         }
     }
 }

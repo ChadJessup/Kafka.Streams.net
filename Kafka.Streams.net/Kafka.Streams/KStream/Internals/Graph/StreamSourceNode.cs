@@ -27,94 +27,95 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public StreamSourceNode<K, V> : StreamsGraphNode
-{
+    public class StreamSourceNode<K, V> : StreamsGraphNode
+    {
 
 
-    private Collection<string> topicNames;
-    private Pattern topicPattern;
-    private  ConsumedInternal<K, V> consumedInternal;
+        private Collection<string> topicNames;
+        private Pattern topicPattern;
+        private ConsumedInternal<K, V> consumedInternal;
 
 
-    public StreamSourceNode( string nodeName,
-                             Collection<string> topicNames,
-                             ConsumedInternal<K, V> consumedInternal)
-{
-        base(nodeName);
+        public StreamSourceNode(string nodeName,
+                                 Collection<string> topicNames,
+                                 ConsumedInternal<K, V> consumedInternal)
+            : base(nodeName)
+        {
 
-        this.topicNames = topicNames;
-        this.consumedInternal = consumedInternal;
-    }
-
-    public StreamSourceNode( string nodeName,
-                             Pattern topicPattern,
-                             ConsumedInternal<K, V> consumedInternal)
-{
-
-        base(nodeName);
-
-        this.topicPattern = topicPattern;
-        this.consumedInternal = consumedInternal;
-    }
-
-    public Collection<string> getTopicNames()
-{
-        return new List<>(topicNames);
-    }
-
-    public Pattern topicPattern()
-{
-        return topicPattern;
-    }
-
-    public ConsumedInternal<K, V> consumedInternal()
-{
-        return consumedInternal;
-    }
-
-    public ISerde<K> keySerde()
-{
-        return consumedInternal.keySerde();
-    }
-
-    public ISerde<V> valueSerde()
-{
-        return consumedInternal.valueSerde();
-    }
-
-    
-    public string ToString()
-{
-        return "StreamSourceNode{" +
-               "topicNames=" + topicNames +
-               ", topicPattern=" + topicPattern +
-               ", consumedInternal=" + consumedInternal +
-               "} " + base.ToString();
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-
-        if (topicPattern != null)
-{
-            topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
-                                      nodeName(),
-                                      consumedInternal.timestampExtractor(),
-                                      consumedInternal.keyDeserializer(),
-                                      consumedInternal.valueDeserializer(),
-                                      topicPattern);
-        } else
-{
-
-            topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
-                                      nodeName(),
-                                      consumedInternal.timestampExtractor(),
-                                      consumedInternal.keyDeserializer(),
-                                      consumedInternal.valueDeserializer(),
-                                      topicNames.toArray(new string[topicNames.size()]));
-
+            this.topicNames = topicNames;
+            this.consumedInternal = consumedInternal;
         }
-    }
 
-}
+        public StreamSourceNode(string nodeName,
+                                 Pattern topicPattern,
+                                 ConsumedInternal<K, V> consumedInternal)
+            : base(nodeName)
+        {
+
+
+            this.topicPattern = topicPattern;
+            this.consumedInternal = consumedInternal;
+        }
+
+        public Collection<string> getTopicNames()
+        {
+            return new List<>(topicNames);
+        }
+
+        public Pattern topicPattern()
+        {
+            return topicPattern;
+        }
+
+        public ConsumedInternal<K, V> consumedInternal()
+        {
+            return consumedInternal;
+        }
+
+        public ISerde<K> keySerde()
+        {
+            return consumedInternal.keySerde();
+        }
+
+        public ISerde<V> valueSerde()
+        {
+            return consumedInternal.valueSerde();
+        }
+
+
+        public string ToString()
+        {
+            return "StreamSourceNode{" +
+                   "topicNames=" + topicNames +
+                   ", topicPattern=" + topicPattern +
+                   ", consumedInternal=" + consumedInternal +
+                   "} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+
+            if (topicPattern != null)
+            {
+                topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
+                                          nodeName(),
+                                          consumedInternal.timestampExtractor(),
+                                          consumedInternal.keyDeserializer(),
+                                          consumedInternal.valueDeserializer(),
+                                          topicPattern);
+            }
+            else
+            {
+
+                topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
+                                          nodeName(),
+                                          consumedInternal.timestampExtractor(),
+                                          consumedInternal.keyDeserializer(),
+                                          consumedInternal.valueDeserializer(),
+                                          topicNames.toArray(new string[topicNames.size()]));
+
+            }
+        }
+
+    }

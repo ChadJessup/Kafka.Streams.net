@@ -14,53 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.SessionBytesStoreSupplier;
-using Kafka.Streams.State.ISessionStore;
-
-public RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
+namespace Kafka.Streams.State.Internals
 {
-    private string name;
-    private long retentionPeriod;
+    public class RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
+    {
+        private string name;
+        private long retentionPeriod;
 
-    public RocksDbSessionBytesStoreSupplier(string name,
-                                            long retentionPeriod)
-{
-        this.name = name;
-        this.retentionPeriod = retentionPeriod;
-    }
+        public RocksDbSessionBytesStoreSupplier(string name,
+                                                long retentionPeriod)
+        {
+            this.name = name;
+            this.retentionPeriod = retentionPeriod;
+        }
 
-    public override string name()
-{
-        return name;
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    public override ISessionStore<Bytes, byte[]> get()
-{
-        RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(
-            name,
-            metricsScope(),
-            retentionPeriod,
-            segmentIntervalMs(),
-            new SessionKeySchema());
-        return new RocksDBSessionStore(segmented);
-    }
+        public override ISessionStore<Bytes, byte[]> get()
+        {
+            RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(
+                name,
+                metricsScope(),
+                retentionPeriod,
+                segmentIntervalMs(),
+                new SessionKeySchema());
+            return new RocksDBSessionStore(segmented);
+        }
 
-    public override string metricsScope()
-{
-        return "rocksdb-session-state";
-    }
+        public override string metricsScope()
+        {
+            return "rocksdb-session-state";
+        }
 
-    public override long segmentIntervalMs()
-{
-        // Selected somewhat arbitrarily. Profiling may reveal a different value is preferable.
-        return Math.Max(retentionPeriod / 2, 60_000L);
-    }
+        public override long segmentIntervalMs()
+        {
+            // Selected somewhat arbitrarily. Profiling may reveal a different value is preferable.
+            return Math.Max(retentionPeriod / 2, 60_000L);
+        }
 
-    public override long retentionPeriod()
-{
-        return retentionPeriod;
+        public override long retentionPeriod()
+        {
+            return retentionPeriod;
+        }
     }
 }

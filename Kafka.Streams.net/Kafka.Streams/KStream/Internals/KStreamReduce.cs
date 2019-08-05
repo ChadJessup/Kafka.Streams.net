@@ -1,54 +1,54 @@
 using Kafka.Common.Metrics;
-using Kafka.streams.kstream;
-using Kafka.streams.kstream.internals;
+using Kafka.Streams.kstream;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processor.Internals.metrics;
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
+    public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
     {
-    private static  ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
 
-    private  string storeName;
-    private  Reducer<V> reducer;
+        private string storeName;
+        private Reducer<V> reducer;
 
-    private bool sendOldValues = false;
+        private bool sendOldValues = false;
 
-    KStreamReduce( string storeName,  Reducer<V> reducer)
-{
-        this.storeName = storeName;
-        this.reducer = reducer;
-    }
-
-
-    public Processor<K, V> get()
-{
-        return new KStreamReduceProcessor();
-    }
+        KStreamReduce(string storeName, Reducer<V> reducer)
+        {
+            this.storeName = storeName;
+            this.reducer = reducer;
+        }
 
 
-    public void enableSendingOldValues()
-{
-        sendOldValues = true;
-    }
+        public Processor<K, V> get()
+        {
+            return new KStreamReduceProcessor();
+        }
 
 
-    private KStreamReduceProcessor : AbstractProcessor<K, V> {
+        public void enableSendingOldValues()
+        {
+            sendOldValues = true;
+        }
+
+
+        private KStreamReduceProcessor : AbstractProcessor<K, V> {
         private TimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        public void init( IProcessorContext context)
-{
+        public void init(IProcessorContext context)
+        {
             base.init(context);
-            metrics = (StreamsMetricsImpl) context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-            store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
+            store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<K, V>(
                 store,
                 context,
@@ -57,11 +57,11 @@ public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
         }
 
 
-        public void process( K key,  V value)
-{
+        public void process(K key, V value)
+        {
             // If the key or value is null we don't need to proceed
             if (key == null || value == null)
-{
+            {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
                     key, value, context().topic(), context().partition(), context().offset()
@@ -70,18 +70,19 @@ public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
                 return;
             }
 
-             ValueAndTimestamp<V> oldAggAndTimestamp = store[key];
-             V oldAgg = getValueOrNull(oldAggAndTimestamp);
+            ValueAndTimestamp<V> oldAggAndTimestamp = store[key];
+            V oldAgg = getValueOrNull(oldAggAndTimestamp);
 
-             V newAgg;
-             long newTimestamp;
+            V newAgg;
+            long newTimestamp;
 
             if (oldAgg == null)
-{
+            {
                 newAgg = value;
                 newTimestamp = context().timestamp();
-            } else
-{
+            }
+            else
+            {
 
                 newAgg = reducer.apply(oldAgg, value);
                 newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
@@ -94,42 +95,42 @@ public KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
 
 
     public KTableValueGetterSupplier<K, V> view()
-{
-        return new KTableValueGetterSupplier<K, V>()
-{
+    {
+        //    return new KTableValueGetterSupplier<K, V>()
+        //    {
 
-            public KTableValueGetter<K, V> get()
-{
-                return new KStreamReduceValueGetter();
-            }
+        //        public KTableValueGetter<K, V> get()
+        //    {
+        //        return new KStreamReduceValueGetter();
+        //    }
 
 
-            public string[] storeNames()
-{
-                return new string[]{storeName};
-            }
-        };
+        //    public string[] storeNames()
+        //    {
+        //        return new string[] { storeName };
+        //    }
+        //};
     }
 
 
-    private KStreamReduceValueGetter : KTableValueGetter<K, V>
+    private class KStreamReduceValueGetter : KTableValueGetter<K, V>
     {
         private TimestampedKeyValueStore<K, V> store;
 
 
 
-        public void init( IProcessorContext context)
-{
-            store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
+        public void init(IProcessorContext context)
+        {
+            store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }
 
 
-        public ValueAndTimestamp<V> get( K key)
-{
+        public ValueAndTimestamp<V> get(K key)
+        {
             return store[key];
         }
 
 
-        public void close() {}
+        public void close() { }
     }
 }

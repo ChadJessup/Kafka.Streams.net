@@ -34,7 +34,7 @@ using Kafka.Streams.State.KeyValueStore;
  * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and {@link KeyValueStore}.
  * <p>
  * If a user provides a supplier for plain {@code KeyValueStores} via
- * {@link org.apache.kafka.streams.kstream.Materialized#as(KeyValueBytesStoreSupplier)} this adapter is used to
+ * {@link org.apache.kafka.streams.kstream.Materialized#As(KeyValueBytesStoreSupplier)} this adapter is used to
  * translate between old a new {@code byte[]} format of the value.
  *
  * @see KeyValueToTimestampedKeyValueIteratorAdapter
@@ -113,7 +113,7 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Byte
 
     public override byte[] get(Bytes key)
 {
-        return convertToTimestampedFormat(store[key));
+        return convertToTimestampedFormat(store[key]);
     }
 
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

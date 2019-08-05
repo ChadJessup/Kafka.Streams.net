@@ -51,7 +51,7 @@ public class ProcessorStateManager : StateManager
 
     private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
 
-    private Logger log;
+    private ILogger log;
     private TaskId taskId;
     private string logPrefix;
     private bool isStandby;
@@ -151,7 +151,7 @@ public class ProcessorStateManager : StateManager
             throw new System.ArgumentException(string.Format("%sIllegal store name: %s", logPrefix, storeName));
         }
 
-        if (registeredStores.ContainsKey(storeName) && registeredStores[storeName).isPresent())
+        if (registeredStores.ContainsKey(storeName) && registeredStores[storeName].isPresent())
 {
             throw new System.ArgumentException(string.Format("%sStore %s has already been registered.", logPrefix, storeName));
         }
@@ -246,11 +246,11 @@ public class ProcessorStateManager : StateManager
                              long lastOffset)
 {
         // restore states from changelog records
-        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.topic()));
+        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.topic()]);
 
         if (!restoreRecords.isEmpty())
 {
-            RecordConverter converter = recordConverters[storePartition.topic());
+            RecordConverter converter = recordConverters[storePartition.topic()];
             List<ConsumerRecord<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size());
             foreach (ConsumerRecord<byte[], byte[]> record in restoreRecords)
 {
@@ -302,7 +302,7 @@ public class ProcessorStateManager : StateManager
 {
                 if (entry.Value.isPresent())
 {
-                    IStateStore store = entry.Value[);
+                    IStateStore store = entry.Value[];
                     log.LogTrace("Flushing store {}", store.name());
                     try
 {
@@ -348,7 +348,7 @@ public class ProcessorStateManager : StateManager
 {
                 if (entry.Value.isPresent())
 {
-                    IStateStore store = entry.Value[);
+                    IStateStore store = entry.Value[];
                     log.LogDebug("Closing storage engine {}", store.name());
                     try
 {
@@ -430,15 +430,15 @@ public class ProcessorStateManager : StateManager
 {
                 // if we have just recently processed some offsets,
                 // store the last offset + 1 (the log position after restoration)
-                checkpointFileCache.Add(topicPartition, checkpointableOffsetsFromProcessing[topicPartition) + 1);
+                checkpointFileCache.Add(topicPartition, checkpointableOffsetsFromProcessing[topicPartition] + 1);
             } else if (standbyRestoredOffsets.ContainsKey(topicPartition))
 {
                 // or if we restored some offset as a standby task, use it
-                checkpointFileCache.Add(topicPartition, standbyRestoredOffsets[topicPartition));
+                checkpointFileCache.Add(topicPartition, standbyRestoredOffsets[topicPartition]);
             } else if (restoredOffsets.ContainsKey(topicPartition))
 {
                 // or if we restored some offset as an active task, use it
-                checkpointFileCache.Add(topicPartition, restoredOffsets[topicPartition));
+                checkpointFileCache.Add(topicPartition, restoredOffsets[topicPartition]);
             } else if (checkpointFileCache.ContainsKey(topicPartition))
 {
                 // or if we have a prior value we've cached (and written to the checkpoint file), then keep it
@@ -448,7 +448,7 @@ public class ProcessorStateManager : StateManager
                 // As a last resort, fall back to the offset we loaded from the checkpoint file at startup, but
                 // only if the offset is actually valid for our current state stores.
                 long loadedOffset =
-                    validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics)[topicPartition);
+                    validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics)[topicPartition]);
                 if (loadedOffset != null)
 {
                     checkpointFileCache.Add(topicPartition, loadedOffset);
@@ -505,8 +505,8 @@ public class ProcessorStateManager : StateManager
 {
             string storeName = storeToChangelog.Key;
             if (registeredStores.ContainsKey(storeName)
-                && registeredStores[storeName).isPresent()
-                && registeredStores[storeName)().persistent())
+                && registeredStores[storeName].isPresent()
+                && registeredStores[storeName]().persistent())
 {
 
                 string changelogTopic = storeToChangelog.Value;

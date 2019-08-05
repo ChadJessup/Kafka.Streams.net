@@ -29,10 +29,10 @@ using Kafka.Common.metrics.RecordingLevel;
 
 
 
-public ThreadMetrics
+public class ThreadMetrics
 {
 
-    private ThreadMetrics() {}
+    private ThreadMetrics() { }
 
     private static string COMMIT = "commit";
     private static string POLL = "poll";
@@ -75,7 +75,7 @@ public ThreadMetrics
     private static string PUNCTUATE_LATENCY = PUNCTUATE + LATENCY_SUFFIX;
 
     public static Sensor createTaskSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor createTaskSensor = streamsMetrics.threadLevelSensor(CREATE_TASK, RecordingLevel.INFO);
        .AddInvocationRateAndCount(createTaskSensor,
                                   THREAD_LEVEL_GROUP,
@@ -87,7 +87,7 @@ public ThreadMetrics
     }
 
     public static Sensor closeTaskSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor closeTaskSensor = streamsMetrics.threadLevelSensor(CLOSE_TASK, RecordingLevel.INFO);
        .AddInvocationRateAndCount(closeTaskSensor,
                                   THREAD_LEVEL_GROUP,
@@ -99,7 +99,7 @@ public ThreadMetrics
     }
 
     public static Sensor commitSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor commitSensor = streamsMetrics.threadLevelSensor(COMMIT, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
        .AddAvgAndMax(commitSensor, THREAD_LEVEL_GROUP, tagMap, COMMIT_LATENCY);
@@ -113,7 +113,7 @@ public ThreadMetrics
     }
 
     public static Sensor pollSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor pollSensor = streamsMetrics.threadLevelSensor(POLL, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
        .AddAvgAndMax(pollSensor, THREAD_LEVEL_GROUP, tagMap, POLL_LATENCY);
@@ -127,7 +127,7 @@ public ThreadMetrics
     }
 
     public static Sensor processSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor processSensor = streamsMetrics.threadLevelSensor(PROCESS, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
        .AddAvgAndMax(processSensor, THREAD_LEVEL_GROUP, tagMap, PROCESS_LATENCY);
@@ -142,7 +142,7 @@ public ThreadMetrics
     }
 
     public static Sensor punctuateSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor punctuateSensor = streamsMetrics.threadLevelSensor(PUNCTUATE, RecordingLevel.INFO);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap();
        .AddAvgAndMax(punctuateSensor, THREAD_LEVEL_GROUP, tagMap, PUNCTUATE_LATENCY);
@@ -157,7 +157,7 @@ public ThreadMetrics
     }
 
     public static Sensor skipRecordSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor skippedRecordsSensor = streamsMetrics.threadLevelSensor(SKIP_RECORD, RecordingLevel.INFO);
        .AddInvocationRateAndCount(skippedRecordsSensor,
                                   THREAD_LEVEL_GROUP,
@@ -170,7 +170,7 @@ public ThreadMetrics
     }
 
     public static Sensor commitOverTasksSensor(StreamsMetricsImpl streamsMetrics)
-{
+    {
         Sensor commitOverTasksSensor = streamsMetrics.threadLevelSensor(COMMIT, RecordingLevel.DEBUG);
         Dictionary<string, string> tagMap = streamsMetrics.threadLevelTagMap(TASK_ID_TAG, ALL_TASKS);
        .AddAvgAndMax(commitOverTasksSensor,

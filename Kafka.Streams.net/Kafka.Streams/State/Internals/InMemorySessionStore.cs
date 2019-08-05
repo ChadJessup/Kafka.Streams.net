@@ -96,7 +96,7 @@ namespace Kafka.Streams.State.Internals
                     endTimeMap.computeIfAbsent(windowEndTimestamp, t-> new ConcurrentSkipListMap<>());
                     ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
                     keyMap.computeIfAbsent(sessionKey.key(), t-> new ConcurrentSkipListMap<>());
-                    keyMap[sessionKey.key()).Add(sessionKey.window().start(), aggregate);
+                    keyMap[sessionKey.key()].Add(sessionKey.window().start(), aggregate);
                 }
                 else
                 {
@@ -107,13 +107,13 @@ namespace Kafka.Streams.State.Internals
 
         public override void Remove(Windowed<Bytes> sessionKey)
         {
-            ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[sessionKey.window().end());
+            ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[sessionKey.window().end()];
             if (keyMap == null)
             {
                 return;
             }
 
-            ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[sessionKey.key());
+            ConcurrentNavigableMap<long, byte[]> startTimeMap = keyMap[sessionKey.key()];
             if (startTimeMap == null)
             {
                 return;

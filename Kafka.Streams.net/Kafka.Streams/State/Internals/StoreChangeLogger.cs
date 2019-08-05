@@ -18,8 +18,8 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.internals.ProcessorStateManager;
-using Kafka.Streams.Processor.internals.RecordCollector;
+using Kafka.Streams.Processor.Internals.ProcessorStateManager;
+using Kafka.Streams.Processor.Internals.RecordCollector;
 using Kafka.Streams.State.StateSerdes;
 
 /**
@@ -37,8 +37,8 @@ class StoreChangeLogger<K, V>
     private int partition;
     private IProcessorContext context;
     private RecordCollector collector;
-    private Serializer<K> keySerializer;
-    private Serializer<V> valueSerializer;
+    private ISerializer<K> keySerializer;
+    private ISerializer<V> valueSerializer;
 
     StoreChangeLogger(string storeName,
                       IProcessorContext context,

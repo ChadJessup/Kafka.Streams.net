@@ -14,63 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class ChangedDeserializer<T> : IDeserializer<Change<T>>
+    {
 
+        private static int NEWFLAG_SIZE = 1;
 
+        private IDeserializer<T> inner;
 
-
-
-
-
-public ChangedDeserializer<T> : Deserializer<Change<T>> {
-
-    private static  int NEWFLAG_SIZE = 1;
-
-    private Deserializer<T> inner;
-
-    public ChangedDeserializer( Deserializer<T> inner)
-{
-        this.inner = inner;
-    }
-
-    public Deserializer<T> inner()
-{
-        return inner;
-    }
-
-    public void setInner( Deserializer<T> inner)
-{
-        this.inner = inner;
-    }
-
-    
-    public Change<T> deserialize( string topic,  Headers headers,  byte[] data)
-{
-
-         byte[] bytes = new byte[data.Length - NEWFLAG_SIZE];
-
-        System.arraycopy(data, 0, bytes, 0, bytes.Length);
-
-        if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE) != 0)
-{
-            return new Change<>(inner.deserialize(topic, headers, bytes), null);
-        } else
-{
-
-            return new Change<>(null, inner.deserialize(topic, headers, bytes));
+        public ChangedDeserializer(IDeserializer<T> inner)
+        {
+            this.inner = inner;
         }
-    }
 
-    
-    public Change<T> deserialize( string topic,  byte[] data)
-{
-        return deserialize(topic, null, data);
-    }
+        public IDeserializer<T> inner()
+        {
+            return inner;
+        }
 
-    
-    public void close()
-{
-        inner.close();
+        public void setInner(IDeserializer<T> inner)
+        {
+            this.inner = inner;
+        }
+
+
+        public Change<T> deserialize(string topic, Headers headers, byte[] data)
+        {
+
+            byte[] bytes = new byte[data.Length - NEWFLAG_SIZE];
+
+            System.arraycopy(data, 0, bytes, 0, bytes.Length);
+
+            if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE] != 0)
+            {
+                return new Change<>(inner.deserialize(topic, headers, bytes), null);
+            }
+            else
+            {
+
+                return new Change<>(null, inner.deserialize(topic, headers, bytes));
+            }
+        }
+
+
+        public Change<T> deserialize(string topic, byte[] data)
+        {
+            return deserialize(topic, null, data);
+        }
+
+
+        public void close()
+        {
+            inner.close();
+        }
     }
 }

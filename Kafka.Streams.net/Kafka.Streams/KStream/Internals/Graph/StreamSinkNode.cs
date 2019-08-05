@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -27,52 +29,53 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public StreamSinkNode<K, V> : StreamsGraphNode
-{
+    public class StreamSinkNode<K, V> : StreamsGraphNode
+    {
 
 
-    private  TopicNameExtractor<K, V> topicNameExtractor;
-    private  ProducedInternal<K, V> producedInternal;
+        private TopicNameExtractor<K, V> topicNameExtractor;
+        private ProducedInternal<K, V> producedInternal;
 
-    public StreamSinkNode( string nodeName,
-                           TopicNameExtractor<K, V> topicNameExtractor,
-                           ProducedInternal<K, V> producedInternal)
-{
-
-        base(nodeName);
-
-        this.topicNameExtractor = topicNameExtractor;
-        this.producedInternal = producedInternal;
-    }
+        public StreamSinkNode(string nodeName,
+                               TopicNameExtractor<K, V> topicNameExtractor,
+                               ProducedInternal<K, V> producedInternal)
+            : base(nodeName)
+        {
 
 
-    
-    public string ToString()
-{
-        return "StreamSinkNode{" +
-               "topicNameExtractor=" + topicNameExtractor +
-               ", producedInternal=" + producedInternal +
-               "} " + base.ToString();
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-         Serializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().serializer();
-         Serializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().serializer();
-         StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
-         string[] parentNames = parentNodeNames();
-
-        if (partitioner == null && keySerializer is WindowedSerializer)
-{
-            
-             StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>) new WindowedStreamPartitioner<object, V>((WindowedSerializer) keySerializer);
-            topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
-        } else
-{
-
-            topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner,  parentNames);
+            this.topicNameExtractor = topicNameExtractor;
+            this.producedInternal = producedInternal;
         }
-    }
 
-}
+
+
+        public string ToString()
+        {
+            return "StreamSinkNode{" +
+                   "topicNameExtractor=" + topicNameExtractor +
+                   ", producedInternal=" + producedInternal +
+                   "} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            ISerializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().serializer();
+            ISerializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().serializer();
+            StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
+            string[] parentNames = parentNodeNames();
+
+            if (partitioner == null && keySerializer is WindowedSerializer)
+            {
+
+                StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>)new WindowedStreamPartitioner<object, V>((WindowedSerializer)keySerializer);
+                topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
+            }
+            else
+            {
+
+                topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner, parentNames);
+            }
+        }
+
+    }

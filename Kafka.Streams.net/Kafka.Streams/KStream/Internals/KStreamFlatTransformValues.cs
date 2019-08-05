@@ -25,56 +25,58 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public KStreamFlatTransformValues<KIn, VIn, VOut> : ProcessorSupplier<KIn, VIn> {
+    public class KStreamFlatTransformValues<KIn, VIn, VOut> : ProcessorSupplier<KIn, VIn>
+    {
 
-    private  ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerSupplier;
+        private ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerSupplier;
 
-    public KStreamFlatTransformValues( ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerWithKeySupplier)
-{
-        this.valueTransformerSupplier = valueTransformerWithKeySupplier;
-    }
-
-    
-    public Processor<KIn, VIn> get()
-{
-        return new KStreamFlatTransformValuesProcessor<>(valueTransformerSupplier());
-    }
-
-    public static KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : Processor<KIn, VIn> {
-
-        private  ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer;
-        private IProcessorContext context;
-
-        KStreamFlatTransformValuesProcessor( ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer)
-{
-            this.valueTransformer = valueTransformer;
+        public KStreamFlatTransformValues(ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerWithKeySupplier)
+        {
+            this.valueTransformerSupplier = valueTransformerWithKeySupplier;
         }
 
-        
-        public void init( IProcessorContext context)
-{
-            valueTransformer.init(new ForwardingDisabledProcessorContext(context));
-            this.context = context;
+
+        public Processor<KIn, VIn> get()
+        {
+            return new KStreamFlatTransformValuesProcessor<>(valueTransformerSupplier());
         }
 
-        
-        public void process( KIn key,  VIn value)
-{
-             Iterable<VOut> transformedValues = valueTransformer.transform(key, value);
-            if (transformedValues != null)
-{
-                foreach ( VOut transformedValue in transformedValues)
-{
-                    context.forward(key, transformedValue);
+        public static class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : Processor<KIn, VIn>
+        {
+
+            private ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer;
+            private IProcessorContext context;
+
+            KStreamFlatTransformValuesProcessor(ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer)
+            {
+                this.valueTransformer = valueTransformer;
+            }
+
+
+            public void init(IProcessorContext context)
+            {
+                valueTransformer.init(new ForwardingDisabledProcessorContext(context));
+                this.context = context;
+            }
+
+
+            public void process(KIn key, VIn value)
+            {
+                Iterable<VOut> transformedValues = valueTransformer.transform(key, value);
+                if (transformedValues != null)
+                {
+                    foreach (VOut transformedValue in transformedValues)
+                    {
+                        context.forward(key, transformedValue);
+                    }
                 }
+            }
+
+
+            public void close()
+            {
+                valueTransformer.close();
             }
         }
 
-        
-        public void close()
-{
-            valueTransformer.close();
-        }
     }
-
-}

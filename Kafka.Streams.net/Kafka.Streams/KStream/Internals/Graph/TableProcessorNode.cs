@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -25,58 +27,58 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public TableProcessorNode<K, V> : StreamsGraphNode
-{
+    public class TableProcessorNode<K, V> : StreamsGraphNode
+    {
 
 
-    private  ProcessorParameters<K, V> processorParameters;
-    private  StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
-    private  string[] storeNames;
+        private ProcessorParameters<K, V> processorParameters;
+        private StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
+        private string[] storeNames;
 
-    public TableProcessorNode( string nodeName,
-                               ProcessorParameters<K, V> processorParameters,
-                               StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
-{
-        this(nodeName, processorParameters, storeBuilder, null);
-    }
-
-    public TableProcessorNode( string nodeName,
-                               ProcessorParameters<K, V> processorParameters,
-                               StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
-                               string[] storeNames)
-{
-        base(nodeName);
-        this.processorParameters = processorParameters;
-        this.storeBuilder = storeBuilder;
-        this.storeNames = storeNames != null ? storeNames : new string[] {};
-    }
-
-    
-    public string ToString()
-{
-        return "TableProcessorNode{" +
-            ", processorParameters=" + processorParameters +
-            ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name()) +
-            ", storeNames=" + Arrays.ToString(storeNames) +
-            "} " + base.ToString();
-    }
-
-    
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-         string processorName = processorParameters.processorName();
-        topologyBuilder.AddProcessor(processorName, processorParameters.processorSupplier(), parentNodeNames());
-
-        if (storeNames.Length > 0)
-{
-            topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+        public TableProcessorNode(string nodeName,
+                                   ProcessorParameters<K, V> processorParameters,
+                                   StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
+        {
+            this(nodeName, processorParameters, storeBuilder, null);
         }
 
-        // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
-        if (storeBuilder != null)
-{
-            topologyBuilder.AddStateStore(storeBuilder, processorName);
+        public TableProcessorNode(string nodeName,
+                                   ProcessorParameters<K, V> processorParameters,
+                                   StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
+                                   string[] storeNames)
+            : base(nodeName)
+        {
+            this.processorParameters = processorParameters;
+            this.storeBuilder = storeBuilder;
+            this.storeNames = storeNames != null ? storeNames : new string[] { };
+        }
+
+
+        public string ToString()
+        {
+            return "TableProcessorNode{" +
+                ", processorParameters=" + processorParameters +
+                ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name()) +
+                ", storeNames=" + Arrays.ToString(storeNames) +
+                "} " + base.ToString();
+        }
+
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            string processorName = processorParameters.processorName();
+            topologyBuilder.AddProcessor(processorName, processorParameters.processorSupplier(), parentNodeNames());
+
+            if (storeNames.Length > 0)
+            {
+                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+            }
+
+            // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
+            if (storeBuilder != null)
+            {
+                topologyBuilder.AddStateStore(storeBuilder, processorName);
+            }
         }
     }
-}

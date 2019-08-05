@@ -21,42 +21,43 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-/**
- * Class used to represent a {@link ProcessorSupplier} and the name
- * used to register it with the {@link org.apache.kafka.streams.processor.internals.InternalTopologyBuilder}
- *
- * Used by the Join nodes as there are several parameters, this abstraction helps
- * keep the number of arguments more reasonable.
- */
-public ProcessorParameters<K, V> {
+    /**
+     * Class used to represent a {@link ProcessorSupplier} and the name
+     * used to register it with the {@link org.apache.kafka.streams.processor.Internals.InternalTopologyBuilder}
+     *
+     * Used by the Join nodes as there are several parameters, this abstraction helps
+     * keep the number of arguments more reasonable.
+     */
+    public class ProcessorParameters<K, V>
+    {
 
-    private  ProcessorSupplier<K, V> processorSupplier;
-    private  string processorName;
+        private ProcessorSupplier<K, V> processorSupplier;
+        private string processorName;
 
-    public ProcessorParameters( ProcessorSupplier<K, V> processorSupplier,
-                                string processorName)
-{
+        public ProcessorParameters(ProcessorSupplier<K, V> processorSupplier,
+                                    string processorName)
+        {
 
-        this.processorSupplier = processorSupplier;
-        this.processorName = processorName;
+            this.processorSupplier = processorSupplier;
+            this.processorName = processorName;
+        }
+
+        public ProcessorSupplier<K, V> processorSupplier()
+        {
+            return processorSupplier;
+        }
+
+        public string processorName()
+        {
+            return processorName;
+        }
+
+
+        public string ToString()
+        {
+            return "ProcessorParameters{" +
+                "processor=" + processorSupplier().getClass() +
+                ", processor name='" + processorName + '\'' +
+                '}';
+        }
     }
-
-    public ProcessorSupplier<K, V> processorSupplier()
-{
-        return processorSupplier;
-    }
-
-    public string processorName()
-{
-        return processorName;
-    }
-
-    
-    public string ToString()
-{
-        return "ProcessorParameters{" +
-            "processor=" + processorSupplier().getClass() +
-            ", processor name='" + processorName + '\'' +
-            '}';
-    }
-}

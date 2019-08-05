@@ -109,7 +109,7 @@ namespace Kafka.Streams.KStream.Internals
                storeBuilder
            );
 
-            builder.AddGraphNode(this.streamsGraphNode, tableNode);
+            builder.addGraphNode(this.streamsGraphNode, tableNode);
 
             return new KTableImpl<>(name,
                                     keySerde,
@@ -233,7 +233,7 @@ namespace Kafka.Streams.KStream.Internals
                storeBuilder
            );
 
-            builder.AddGraphNode(this.streamsGraphNode, tableNode);
+            builder.addGraphNode(this.streamsGraphNode, tableNode);
 
             // don't inherit parent value serde, since this operation may change the value type, more specifically:
             // we preserve the key following the order of 1) materialized, 2) parent, 3) null
@@ -404,7 +404,7 @@ namespace Kafka.Streams.KStream.Internals
                stateStoreNames
            );
 
-            builder.AddGraphNode(this.streamsGraphNode, tableNode);
+            builder.addGraphNode(this.streamsGraphNode, tableNode);
 
             return new KTableImpl<>(
                 name,
@@ -439,7 +439,7 @@ namespace Kafka.Streams.KStream.Internals
                processorParameters
            );
 
-            builder.AddGraphNode(this.streamsGraphNode, toStreamNode);
+            builder.addGraphNode(this.streamsGraphNode, toStreamNode);
 
             // we can inherit parent key and value serde
             return new KStreamImpl<>(name, keySerde, valSerde, sourceNodes, false, toStreamNode, builder);
@@ -488,7 +488,7 @@ namespace Kafka.Streams.KStream.Internals
                new InMemoryTimeOrderedKeyValueBuffer.Builder<>(storeName, keySerde, valSerde)
            );
 
-            builder.AddGraphNode(streamsGraphNode, node);
+            builder.addGraphNode(streamsGraphNode, node);
 
             return new KTableImpl<K, S, V>(
                 name,
@@ -711,7 +711,7 @@ namespace Kafka.Streams.KStream.Internals
                     .withQueryableStoreName(queryableStoreName)
                     .withStoreBuilder(storeBuilder)
                     .build();
-            builder.AddGraphNode(this.streamsGraphNode, kTableKTableJoinNode);
+            builder.addGraphNode(this.streamsGraphNode, kTableKTableJoinNode);
 
             // we can inherit parent key serde if user do not provide specific overrides
             return new KTableImpl<K, Change<VR>, VR>(
@@ -758,7 +758,7 @@ namespace Kafka.Streams.KStream.Internals
             // select the aggregate key and values (old and new), it would require parent to send old values
             ProcessorGraphNode<K, Change<V>> groupByMapNode = new ProcessorGraphNode<>(selectName, processorParameters);
 
-            builder.AddGraphNode(this.streamsGraphNode, groupByMapNode);
+            builder.addGraphNode(this.streamsGraphNode, groupByMapNode);
 
             this.enableSendingOldValues();
             return new KGroupedTableImpl<>(

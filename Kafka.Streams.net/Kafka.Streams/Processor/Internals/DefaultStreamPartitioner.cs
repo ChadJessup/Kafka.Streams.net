@@ -24,10 +24,10 @@ using Kafka.Common.serialization.Serializer;
 public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
 
     private Cluster cluster;
-    private Serializer<K> keySerializer;
+    private ISerializer<K> keySerializer;
     private DefaultPartitioner defaultPartitioner;
 
-    public DefaultStreamPartitioner(Serializer<K> keySerializer, Cluster cluster)
+    public DefaultStreamPartitioner(ISerializer<K> keySerializer, Cluster cluster)
 {
         this.cluster = cluster;
         this.keySerializer = keySerializer;

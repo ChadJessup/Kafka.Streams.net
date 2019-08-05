@@ -17,9 +17,9 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.serialization.Serde;
-using Kafka.Streams.kstream.internals.Change;
+using Kafka.Streams.KStream.Internals.Change;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.internals.ProcessorRecordContext;
+using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 using Kafka.Streams.State.ValueAndTimestamp;
 
 
@@ -83,7 +83,7 @@ public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
 
     void setSerdesIfNull(ISerde<K> keySerde, ISerde<V> valueSerde);
 
-    void evictWhile(Supplier<Boolean> predicate, Consumer<Eviction<K, V>> callback);
+    void evictWhile(Supplier<Boolean> predicate, IConsumer<Eviction<K, V>> callback);
 
     Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key);
 

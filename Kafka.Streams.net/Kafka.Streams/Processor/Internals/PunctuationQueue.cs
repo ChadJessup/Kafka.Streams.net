@@ -14,68 +14,63 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-
-
-
-
-
-public PunctuationQueue
+namespace Kafka.Streams.Processor.Internals
 {
+    public class PunctuationQueue
+    {
 
 
-    private PriorityQueue<PunctuationSchedule> pq = new PriorityQueue<>();
+        private PriorityQueue<PunctuationSchedule> pq = new PriorityQueue<>();
 
-    public ICancellable schedule(PunctuationSchedule sched)
-{
-        synchronized (pq)
-{
-            pq.Add(sched);
+        public ICancellable schedule(PunctuationSchedule sched)
+        {
+            synchronized(pq)
+    {
+                pq.Add(sched);
+            }
+            return sched.cancellable();
         }
-        return sched.cancellable();
-    }
 
-    public void close()
-{
-        synchronized (pq)
-{
-            pq.clear();
+        public void close()
+        {
+            synchronized(pq)
+    {
+                pq.clear();
+            }
         }
-    }
 
-    /**
-     * @throws TaskMigratedException if the task producer got fenced (EOS only)
-     */
-    bool mayPunctuate(long timestamp, PunctuationType type, ProcessorNodePunctuator processorNodePunctuator)
-{
-        synchronized (pq)
-{
-            bool punctuated = false;
-            PunctuationSchedule top = pq.peek();
-            while (top != null && top.timestamp <= timestamp)
-{
-                PunctuationSchedule sched = top;
-                pq.poll();
+        /**
+         * @throws TaskMigratedException if the task producer got fenced (EOS only)
+         */
+        bool mayPunctuate(long timestamp, PunctuationType type, ProcessorNodePunctuator processorNodePunctuator)
+        {
+            synchronized(pq)
+    {
+                bool punctuated = false;
+                PunctuationSchedule top = pq.peek();
+                while (top != null && top.timestamp <= timestamp)
+                {
+                    PunctuationSchedule sched = top;
+                    pq.poll();
 
-                if (!sched.isCancelled())
-{
-                    processorNodePunctuator.punctuate(sched.node(), timestamp, type, sched.punctuator());
-                    // sched can be cancelled from within the punctuator
                     if (!sched.isCancelled())
-{
-                        pq.Add(sched.next(timestamp));
+                    {
+                        processorNodePunctuator.punctuate(sched.node(), timestamp, type, sched.punctuator());
+                        // sched can be cancelled from within the punctuator
+                        if (!sched.isCancelled())
+                        {
+                            pq.Add(sched.next(timestamp));
+                        }
+                        punctuated = true;
                     }
-                    punctuated = true;
+
+
+                    top = pq.peek();
                 }
 
-
-                top = pq.peek();
+                return punctuated;
             }
-
-            return punctuated;
         }
-    }
 
+    }
 }

@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.Processor.Internals
 {
     /**
@@ -21,8 +24,6 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class StreamTask : AbstractTask, ProcessorNodePunctuator
     {
-
-
         private static ConsumerRecord<object, object> DUMMY_RECORD = new ConsumerRecord<>(ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
         private ITime time;
@@ -39,7 +40,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private Sensor closeTaskSensor;
         private long idleStartTime;
-        private Producer<byte[], byte[]> producer;
+        private IProducer<byte[], byte[]> producer;
         private bool commitRequested = false;
         private bool transactionInFlight = false;
 
@@ -99,16 +100,10 @@ namespace Kafka.Streams.Processor.Internals
         }
     }
 
-    public interface ProducerSupplier
-    {
-
-        Producer<byte[], byte[]> get();
-    }
-
     public StreamTask(TaskId id,
                       Collection<TopicPartition> partitions,
                       ProcessorTopology topology,
-                      Consumer<byte[], byte[]> consumer,
+                      IConsumer<byte[], byte[]> consumer,
                       ChangelogReader changelogReader,
                       StreamsConfig config,
                       StreamsMetricsImpl metrics,
@@ -116,14 +111,14 @@ namespace Kafka.Streams.Processor.Internals
                       ThreadCache cache,
                       ITime time,
                       ProducerSupplier producerSupplier)
+        : this(id, partitions, topology, consumer, changelogReader, config, metrics, stateDirectory, cache, time, producerSupplier, null)
     {
-        this(id, partitions, topology, consumer, changelogReader, config, metrics, stateDirectory, cache, time, producerSupplier, null);
     }
 
     public StreamTask(TaskId id,
                       Collection<TopicPartition> partitions,
                       ProcessorTopology topology,
-                      Consumer<byte[], byte[]> consumer,
+                      IConsumer<byte[], byte[]> consumer,
                       ChangelogReader changelogReader,
                       StreamsConfig config,
                       StreamsMetricsImpl streamsMetrics,
@@ -132,8 +127,8 @@ namespace Kafka.Streams.Processor.Internals
                       ITime time,
                       ProducerSupplier producerSupplier,
                       RecordCollector recordCollector)
+        : base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config)
     {
-        base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config);
 
         this.time = time;
         this.producerSupplier = producerSupplier;
@@ -992,7 +987,7 @@ namespace Kafka.Streams.Processor.Internals
             return recordCollector;
         }
 
-        Producer<byte[], byte[]> getProducer()
+        IProducer<byte[], byte[]> getProducer()
         {
             return producer;
         }

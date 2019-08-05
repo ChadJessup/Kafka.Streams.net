@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
 
     class NamedCache
     {
-        private static Logger log = new LoggerFactory().CreateLogger < NamedCache);
+        private static ILogger log = new LoggerFactory().CreateLogger < NamedCache);
         private string name;
         private NavigableMap<Bytes, LRUNode> cache = new ConcurrentSkipListMap<>();
         private HashSet<Bytes> dirtyKeys = new HashSet<>();

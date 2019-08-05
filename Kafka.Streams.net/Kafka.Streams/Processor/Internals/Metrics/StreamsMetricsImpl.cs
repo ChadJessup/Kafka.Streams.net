@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals.Metrics
 {
-    public StreamsMetricsImpl : IStreamsMetrics
+    public class StreamsMetricsImpl : IStreamsMetrics
     {
         private Dictionary<Sensor, Sensor> parentSensors;
         public Dictionary<MetricName, IMetric> streamMetrics { get; }

@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-using Kafka.Streams.Processor.internals.InternalProcessorContext;
+using Kafka.Streams.Processor.Internals.InternalProcessorContext;
 
 /**
  * Manages the {@link TimestampedSegment}s that are used by the {@link RocksDBTimestampedSegmentedBytesStore}

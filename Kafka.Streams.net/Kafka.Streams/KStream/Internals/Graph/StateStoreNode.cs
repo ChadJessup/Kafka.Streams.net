@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -22,33 +24,33 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public StateStoreNode : StreamsGraphNode
-{
+    public class StateStoreNode : StreamsGraphNode
+    {
 
 
-    protected  StoreBuilder storeBuilder;
+        protected StoreBuilder storeBuilder;
 
-    public StateStoreNode( StoreBuilder storeBuilder)
-{
-        base(storeBuilder.name());
+        public StateStoreNode(StoreBuilder storeBuilder)
+            : base(storeBuilder.name())
+        {
 
-        this.storeBuilder = storeBuilder;
+            this.storeBuilder = storeBuilder;
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+
+            topologyBuilder.AddStateStore(storeBuilder);
+        }
+
+
+        public string ToString()
+        {
+            return "StateStoreNode{" +
+                   " name='" + storeBuilder.name() + '\'' +
+                   ", logConfig=" + storeBuilder.logConfig() +
+                   ", loggingEnabled='" + storeBuilder.loggingEnabled() + '\'' +
+                   "} ";
+        }
     }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-
-        topologyBuilder.AddStateStore(storeBuilder);
-    }
-
-    
-    public string ToString()
-{
-        return "StateStoreNode{" +
-               " name='" + storeBuilder.name() +  '\'' +
-               ", logConfig=" + storeBuilder.logConfig() +
-               ", loggingEnabled='" + storeBuilder.loggingEnabled() + '\'' +
-               "} ";
-    }
-}

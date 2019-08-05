@@ -91,7 +91,7 @@ namespace Kafka.Streams.State.Internals
 
         public override byte[] get(Bytes key)
         {
-            return wrapped()[key);
+            return wrapped()[key];
         }
 
         public override KeyValueIterator<Bytes, byte[]> range(Bytes from,

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,34 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Errors
+using Confluent.Kafka;
+
+namespace Kafka.Streams.Processor.Internals
 {
-
-
-    /**
-     * Indicates a run time error incurred while trying to assign
-     * {@link org.apache.kafka.streams.processor.Internals.StreamTask stream tasks} to
-     * {@link org.apache.kafka.streams.processor.Internals.StreamThread threads}.
-     */
-    public class TaskAssignmentException : StreamsException
+    public interface ProducerSupplier
     {
 
-
-        private static long serialVersionUID = 1L;
-
-        public TaskAssignmentException(string message)
-            : base(message)
-        {
-        }
-
-        public TaskAssignmentException(string message, Throwable throwable)
-            : base(message, throwable)
-        {
-        }
-
-        public TaskAssignmentException(Throwable throwable)
-            : base(throwable)
-        {
-        }
+        IProducer<byte[], byte[]> get();
     }
 }

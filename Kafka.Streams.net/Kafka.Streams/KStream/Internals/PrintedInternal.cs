@@ -16,24 +16,21 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
+    public class PrintedInternal<K, V> : Printed<K, V>
+    {
+        public PrintedInternal(Printed<K, V> printed)
+            : base(printed)
+        {
+        }
 
+        public ProcessorSupplier<K, V> build(string processorName)
+        {
+            return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
+        }
 
-
-
-
-public PrintedInternal<K, V> : Printed<K, V> {
-    public PrintedInternal( Printed<K, V> printed)
-{
-        base(printed);
-    }
-
-    public ProcessorSupplier<K, V> build( string processorName)
-{
-        return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
-    }
-
-    public string name()
-{
-        return processorName;
+        public string name()
+        {
+            return processorName;
+        }
     }
 }

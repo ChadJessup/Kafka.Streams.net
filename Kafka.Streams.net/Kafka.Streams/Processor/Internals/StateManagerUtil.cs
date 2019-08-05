@@ -50,7 +50,7 @@ class StateManagerUtil
         return isTimestamped(store) ? rawValueToTimestampedValue() : identity();
     }
 
-    public static void reinitializeStateStoresForPartitions(Logger log,
+    public static void reinitializeStateStoresForPartitions(ILogger log,
                                                             bool eosEnabled,
                                                             File baseDir,
                                                             FixedOrderMap<string, Optional<IStateStore>> stateStores,
@@ -66,7 +66,7 @@ class StateManagerUtil
         foreach (TopicPartition topicPartition in partitions)
 {
             checkpointFileCache.Remove(topicPartition);
-            storesToBeReinitialized.Add(changelogTopicToStore[topicPartition.topic()));
+            storesToBeReinitialized.Add(changelogTopicToStore[topicPartition.topic()]);
         }
 
         if (!eosEnabled)
@@ -93,7 +93,7 @@ class StateManagerUtil
                 continue;
             }
             IStateStore stateStore = stateStores
-                [storeName)
+                [storeName]
                 .orElseThrow(
                     () -> new InvalidOperationException(
                         "Re-initializing store that has not been initialized. This is a bug in Kafka Streams."

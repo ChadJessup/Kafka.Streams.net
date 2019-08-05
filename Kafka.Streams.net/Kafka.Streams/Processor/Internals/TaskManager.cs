@@ -48,13 +48,13 @@ public class TaskManager
     // initialize the task list
     // activeTasks needs to be concurrent as it can be accessed
     // by QueryableState
-    private Logger log;
+    private ILogger log;
     private UUID processId;
     private AssignedStreamsTasks active;
     private AssignedStandbyTasks standby;
     private ChangelogReader changelogReader;
     private string logPrefix;
-    private Consumer<byte[], byte[]> restoreConsumer;
+    private IConsumer<byte[], byte[]> restoreConsumer;
     private StreamThread.AbstractTaskCreator<StreamTask> taskCreator;
     private StreamThread.AbstractTaskCreator<StandbyTask> standbyTaskCreator;
     private StreamsMetadataState streamsMetadataState;
@@ -67,12 +67,12 @@ public class TaskManager
     private Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks;
     private Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks;
 
-    private Consumer<byte[], byte[]> consumer;
+    private IConsumer<byte[], byte[]> consumer;
 
     TaskManager(ChangelogReader changelogReader,
                 UUID processId,
                 string logPrefix,
-                Consumer<byte[], byte[]> restoreConsumer,
+                IConsumer<byte[], byte[]> restoreConsumer,
                 StreamsMetadataState streamsMetadataState,
                 StreamThread.AbstractTaskCreator<StreamTask> taskCreator,
                 StreamThread.AbstractTaskCreator<StandbyTask> standbyTaskCreator,
@@ -364,7 +364,7 @@ public class TaskManager
         return standby.runningTaskMap();
     }
 
-    void setConsumer(Consumer<byte[], byte[]> consumer)
+    void setConsumer(IConsumer<byte[], byte[]> consumer)
 {
         this.consumer = consumer;
     }

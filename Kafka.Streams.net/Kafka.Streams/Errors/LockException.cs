@@ -19,30 +19,30 @@ namespace Kafka.Streams.Errors
 
 
 
-/**
- * Indicates that the state store directory lock could not be acquired because another thread holds the lock.
- *
- * @see org.apache.kafka.streams.processor.IStateStore
- */
-public LockException : StreamsException
-{
+    /**
+     * Indicates that the state store directory lock could not be acquired because another thread holds the lock.
+     *
+     * @see org.apache.kafka.streams.processor.IStateStore
+     */
+    public class LockException : StreamsException
+    {
 
 
-    private  static long serialVersionUID = 1L;
+        private static long serialVersionUID = 1L;
 
-    public LockException( string message)
-{
-        base(message);
+        public LockException(string message)
+            : base(message)
+        {
+        }
+
+        public LockException(string message, Throwable throwable)
+            : base(message, throwable)
+        {
+        }
+
+        public LockException(Throwable throwable)
+            : base(throwable)
+        {
+        }
     }
-
-    public LockException( string message,  Throwable throwable)
-{
-        base(message, throwable);
-    }
-
-    public LockException( Throwable throwable)
-{
-        base(throwable);
-    }
-
 }

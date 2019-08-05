@@ -14,62 +14,60 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.internals;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Interfaces;
 
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.State.WindowBytesStoreSupplier;
-using Kafka.Streams.State.WindowStore;
-
-public WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K, V>>
+namespace Kafka.Streams.State.Internals
 {
+    public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K, V>>
+    {
 
-    private WindowBytesStoreSupplier storeSupplier;
+        private WindowBytesStoreSupplier storeSupplier;
 
-    public WindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
-                              ISerde<K> keySerde,
-                              ISerde<V> valueSerde,
-                              ITime time)
-{
-        base(storeSupplier.name(), keySerde, valueSerde, time);
-        this.storeSupplier = storeSupplier;
-    }
-
-    public override WindowStore<K, V> build()
-{
-        return new MeteredWindowStore<>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier())],
-            storeSupplier.windowSize(),
-            storeSupplier.metricsScope(),
-            time,
-            keySerde,
-            valueSerde);
-    }
-
-    private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
-{
-        if (!enableCaching)
-{
-            return inner;
+        public WindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
+                                  ISerde<K> keySerde,
+                                  ISerde<V> valueSerde,
+                                  ITime time)
+            : base(storeSupplier.name(), keySerde, valueSerde, time)
+        {
+            this.storeSupplier = storeSupplier;
         }
-        return new CachingWindowStore(
-            inner,
-            storeSupplier.windowSize(),
-            storeSupplier.segmentIntervalMs());
-    }
 
-    private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
-{
-        if (!enableLogging)
-{
-            return inner;
+        public override WindowStore<K, V> build()
+        {
+            return new MeteredWindowStore<>(
+                maybeWrapCaching(maybeWrapLogging(storeSupplier())],
+                storeSupplier.windowSize(),
+                storeSupplier.metricsScope(),
+                time,
+                keySerde,
+                valueSerde);
         }
-        return new ChangeLoggingWindowBytesStore(inner, storeSupplier.retainDuplicates());
-    }
 
-    public long retentionPeriod()
-{
-        return storeSupplier.retentionPeriod();
+        private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
+        {
+            if (!enableCaching)
+            {
+                return inner;
+            }
+            return new CachingWindowStore(
+                inner,
+                storeSupplier.windowSize(),
+                storeSupplier.segmentIntervalMs());
+        }
+
+        private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
+        {
+            if (!enableLogging)
+            {
+                return inner;
+            }
+            return new ChangeLoggingWindowBytesStore(inner, storeSupplier.retainDuplicates());
+        }
+
+        public long retentionPeriod()
+        {
+            return storeSupplier.retentionPeriod();
+        }
     }
 }

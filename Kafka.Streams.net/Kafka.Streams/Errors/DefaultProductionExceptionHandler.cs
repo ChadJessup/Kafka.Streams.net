@@ -1,3 +1,5 @@
+using Kafka.Streams.Errors.Interfaces;
+
 namespace Kafka.Streams.Errors
 {
 /**
@@ -14,7 +16,7 @@ public class DefaultProductionExceptionHandler : IProductionExceptionHandler
     }
 
 
-    public void configure( Map<string, ?> configs)
+    public void configure( Map<string, object> configs)
 {
         // ignore
     }

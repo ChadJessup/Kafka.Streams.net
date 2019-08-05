@@ -14,74 +14,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.WindowBytesStoreSupplier;
-using Kafka.Streams.State.WindowStore;
-
-public InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
+namespace Kafka.Streams.State.Internals
 {
-    private string name;
-    private long retentionPeriod;
-    private long windowSize;
-    private bool retainDuplicates;
+    public class InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
+    {
+        private string name;
+        private long retentionPeriod;
+        private long windowSize;
+        private bool retainDuplicates;
 
-    public InMemoryWindowBytesStoreSupplier(string name,
-                                            long retentionPeriod,
-                                            long windowSize,
-                                            bool retainDuplicates)
-{
-        this.name = name;
-        this.retentionPeriod = retentionPeriod;
-        this.windowSize = windowSize;
-        this.retainDuplicates = retainDuplicates;
-    }
+        public InMemoryWindowBytesStoreSupplier(string name,
+                                                long retentionPeriod,
+                                                long windowSize,
+                                                bool retainDuplicates)
+        {
+            this.name = name;
+            this.retentionPeriod = retentionPeriod;
+            this.windowSize = windowSize;
+            this.retainDuplicates = retainDuplicates;
+        }
 
-    public override string name()
-{
-        return name;
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    public override WindowStore<Bytes, byte[]> get()
-{
-        return new InMemoryWindowStore(name,
-                                       retentionPeriod,
-                                       windowSize,
-                                       retainDuplicates,
-                                       metricsScope());
-    }
+        public override WindowStore<Bytes, byte[]> get()
+        {
+            return new InMemoryWindowStore(name,
+                                           retentionPeriod,
+                                           windowSize,
+                                           retainDuplicates,
+                                           metricsScope());
+        }
 
-    public override string metricsScope()
-{
-        return "in-memory-window-state";
-    }
+        public override string metricsScope()
+        {
+            return "in-memory-window-state";
+        }
 
-    [System.Obsolete]
-    public override int segments()
-{
-        throw new InvalidOperationException("Segments is deprecated and should not be called");
-    }
+        [System.Obsolete]
+        public override int segments()
+        {
+            throw new InvalidOperationException("Segments is deprecated and should not be called");
+        }
 
-    public override long retentionPeriod()
-{
-        return retentionPeriod;
-    }
+        public override long retentionPeriod()
+        {
+            return retentionPeriod;
+        }
 
 
-    public override long windowSize()
-{
-        return windowSize;
-    }
+        public override long windowSize()
+        {
+            return windowSize;
+        }
 
-    // In-memory window store is not *really* segmented, so just say size is 1 ms
-    public override long segmentIntervalMs()
-{
-        return 1;
-    }
+        // In-memory window store is not *really* segmented, so just say size is 1 ms
+        public override long segmentIntervalMs()
+        {
+            return 1;
+        }
 
-    public override bool retainDuplicates()
-{
-        return retainDuplicates;
+        public override bool retainDuplicates()
+        {
+            return retainDuplicates;
+        }
     }
 }

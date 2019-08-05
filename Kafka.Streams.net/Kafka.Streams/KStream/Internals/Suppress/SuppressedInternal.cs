@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.suppress;
+namespace Kafka.Streams.KStream.Internals.Suppress
+{
+public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K>
+{
+    private static TimeSpan DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MaxValue);
+    private static StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl)BufferConfig.unbounded();
 
-
-
-
-
-
-
-public SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
-    private static  TimeSpan DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MaxValue);
-    private static  StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl) BufferConfig.unbounded();
-
-    private  string name;
-    private  BufferConfigInternal bufferConfig;
-    private  TimeSpan timeToWaitForMoreEvents;
-    private  TimeDefinition<K> timeDefinition;
-    private  bool safeToDropTombstones;
+    private string name;
+    private BufferConfigInternal bufferConfig;
+    private TimeSpan timeToWaitForMoreEvents;
+    private TimeDefinition<K> timeDefinition;
+    private bool safeToDropTombstones;
 
     /**
      * @param safeToDropTombstones Note: it's *only* safe to drop tombstones for windowed KTables in " results" mode.
@@ -45,63 +40,63 @@ public SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
      *                             buffer immediately forgets all about a key when we emit, which helps to keep it
      *                             compact).
      */
-    public SuppressedInternal( string name,
+    public SuppressedInternal(string name,
                                TimeSpan suppressionTime,
                                BufferConfig bufferConfig,
                                TimeDefinition<K> timeDefinition,
                                bool safeToDropTombstones)
-{
+    {
         this.name = name;
         this.timeToWaitForMoreEvents = suppressionTime == null ? DEFAULT_SUPPRESSION_TIME : suppressionTime;
         this.timeDefinition = timeDefinition == null ? TimeDefinitions.RecordTimeDefintion.instance() : timeDefinition;
-        this.bufferConfig = bufferConfig == null ? DEFAULT_BUFFER_CONFIG : (BufferConfigInternal) bufferConfig;
+        this.bufferConfig = bufferConfig == null ? DEFAULT_BUFFER_CONFIG : (BufferConfigInternal)bufferConfig;
         this.safeToDropTombstones = safeToDropTombstones;
     }
 
-    
-    public Suppressed<K> withName( string name)
-{
+
+    public Suppressed<K> withName(string name)
+    {
         return new SuppressedInternal<>(name, timeToWaitForMoreEvents, bufferConfig, timeDefinition, safeToDropTombstones);
     }
 
-    
+
     public string name()
-{
+    {
         return name;
     }
 
     BufferConfigInternal bufferConfig()
-{
+    {
         return bufferConfig;
     }
 
     TimeDefinition<K> timeDefinition()
-{
+    {
         return timeDefinition;
     }
 
     TimeSpan timeToWaitForMoreEvents()
-{
+    {
         return timeToWaitForMoreEvents == null ? Duration.ZERO : timeToWaitForMoreEvents;
     }
 
     bool safeToDropTombstones()
-{
+    {
         return safeToDropTombstones;
     }
 
-    
-    public bool Equals( object o)
-{
+
+    public bool Equals(object o)
+    {
         if (this == o)
-{
+        {
             return true;
         }
         if (o == null || getClass() != o.getClass())
-{
+        {
             return false;
         }
-         SuppressedInternal<?> that = (SuppressedInternal<?>) o;
+        SuppressedInternal <?> that = (SuppressedInternal <?>) o;
         return safeToDropTombstones == that.safeToDropTombstones &&
             Objects.Equals(name, that.name) &&
             Objects.Equals(bufferConfig, that.bufferConfig) &&
@@ -109,15 +104,15 @@ public SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K> {
             Objects.Equals(timeDefinition, that.timeDefinition);
     }
 
-    
+
     public int hashCode()
-{
+    {
         return Objects.hash(name, bufferConfig, timeToWaitForMoreEvents, timeDefinition, safeToDropTombstones);
     }
 
-    
+
     public string ToString()
-{
+    {
         return "SuppressedInternal{" +
                 "name='" + name + '\'' +
                 ", bufferConfig=" + bufferConfig +

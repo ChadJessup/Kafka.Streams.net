@@ -16,32 +16,30 @@
  */
 namespace Kafka.Streams.Errors
 {
+    /**
+     * Indicates a processor state operation (e.g. put, get) has failed.
+     *
+     * @see org.apache.kafka.streams.processor.IStateStore
+     */
+    public class ProcessorStateException : StreamsException
+    {
 
 
+        private static long serialVersionUID = 1L;
 
-/**
- * Indicates a processor state operation (e.g. put, get) has failed.
- *
- * @see org.apache.kafka.streams.processor.IStateStore
- */
-public ProcessorStateException : StreamsException
-{
+        public ProcessorStateException(string message)
+            : base(message)
+        {
+        }
 
+        public ProcessorStateException(string message, Throwable throwable)
+            : base(message, throwable)
+        {
+        }
 
-    private  static long serialVersionUID = 1L;
-
-    public ProcessorStateException( string message)
-{
-        base(message);
-    }
-
-    public ProcessorStateException( string message,  Throwable throwable)
-{
-        base(message, throwable);
-    }
-
-    public ProcessorStateException( Throwable throwable)
-{
-        base(throwable);
+        public ProcessorStateException(Throwable throwable)
+            : base(throwable)
+        {
+        }
     }
 }

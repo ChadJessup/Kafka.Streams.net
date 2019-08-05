@@ -14,51 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-using Kafka.Common.header.Headers;
-
-public StampedRecord : Stamped<ConsumerRecord<object, object>> {
-
-    public StampedRecord(ConsumerRecord<object, object> record, long timestamp)
+namespace Kafka.Streams.Processor.Internals
 {
-        base(record, timestamp);
-    }
 
-    public string topic()
-{
-        return value.topic();
-    }
+    public class StampedRecord : Stamped<ConsumerRecord<object, object>>
+    {
 
-    public int partition()
-{
-        return value.partition();
-    }
+        public StampedRecord(ConsumerRecord<object, object> record, long timestamp)
+            : base(record, timestamp)
+        {
+        }
 
-    public object key()
-{
-        return value.key();
-    }
+        public string topic()
+        {
+            return value.topic();
+        }
 
-    public object value()
-{
-        return value.value();
-    }
+        public int partition()
+        {
+            return value.partition();
+        }
 
-    public long offset()
-{
-        return value.offset();
-    }
+        public object key()
+        {
+            return value.key();
+        }
 
-    public Headers headers()
-{
-        return value.headers();
-    }
+        public object value()
+        {
+            return value.value();
+        }
 
-    
-    public string ToString()
-{
-        return value.ToString() + ", timestamp = " + timestamp;
+        public long offset()
+        {
+            return value.offset();
+        }
+
+        public Headers headers()
+        {
+            return value.headers();
+        }
+
+
+        public string ToString()
+        {
+            return value.ToString() + ", timestamp = " + timestamp;
+        }
     }
 }

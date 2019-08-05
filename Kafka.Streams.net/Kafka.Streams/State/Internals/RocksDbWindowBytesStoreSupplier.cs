@@ -14,96 +14,94 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+    public class RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
+    {
+        private string name;
+        private long retentionPeriod;
+        private long segmentInterval;
+        private long windowSize;
+        private bool retainDuplicates;
+        private bool returnTimestampedStore;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.WindowBytesStoreSupplier;
-using Kafka.Streams.State.WindowStore;
-
-public RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
-{
-    private string name;
-    private long retentionPeriod;
-    private long segmentInterval;
-    private long windowSize;
-    private bool retainDuplicates;
-    private bool returnTimestampedStore;
-
-    public RocksDbWindowBytesStoreSupplier(string name,
-                                           long retentionPeriod,
-                                           long segmentInterval,
-                                           long windowSize,
-                                           bool retainDuplicates,
-                                           bool returnTimestampedStore)
-{
-        this.name = name;
-        this.retentionPeriod = retentionPeriod;
-        this.segmentInterval = segmentInterval;
-        this.windowSize = windowSize;
-        this.retainDuplicates = retainDuplicates;
-        this.returnTimestampedStore = returnTimestampedStore;
-    }
-
-    public override string name()
-{
-        return name;
-    }
-
-    public override WindowStore<Bytes, byte[]> get()
-{
-        if (!returnTimestampedStore)
-{
-            return new RocksDBWindowStore(
-                new RocksDBSegmentedBytesStore(
-                    name,
-                    metricsScope(),
-                    retentionPeriod,
-                    segmentInterval,
-                    new WindowKeySchema()),
-                retainDuplicates,
-                windowSize);
-        } else
-{
-            return new RocksDBTimestampedWindowStore(
-                new RocksDBTimestampedSegmentedBytesStore(
-                    name,
-                    metricsScope(),
-                    retentionPeriod,
-                    segmentInterval,
-                    new WindowKeySchema()),
-                retainDuplicates,
-                windowSize);
+        public RocksDbWindowBytesStoreSupplier(string name,
+                                               long retentionPeriod,
+                                               long segmentInterval,
+                                               long windowSize,
+                                               bool retainDuplicates,
+                                               bool returnTimestampedStore)
+        {
+            this.name = name;
+            this.retentionPeriod = retentionPeriod;
+            this.segmentInterval = segmentInterval;
+            this.windowSize = windowSize;
+            this.retainDuplicates = retainDuplicates;
+            this.returnTimestampedStore = returnTimestampedStore;
         }
-    }
 
-    public override string metricsScope()
-{
-        return "rocksdb-window-state";
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    [System.Obsolete]
-    public override int segments()
-{
-        return (int) (retentionPeriod / segmentInterval) + 1;
-    }
+        public override WindowStore<Bytes, byte[]> get()
+        {
+            if (!returnTimestampedStore)
+            {
+                return new RocksDBWindowStore(
+                    new RocksDBSegmentedBytesStore(
+                        name,
+                        metricsScope(),
+                        retentionPeriod,
+                        segmentInterval,
+                        new WindowKeySchema()),
+                    retainDuplicates,
+                    windowSize);
+            }
+            else
+            {
+                return new RocksDBTimestampedWindowStore(
+                    new RocksDBTimestampedSegmentedBytesStore(
+                        name,
+                        metricsScope(),
+                        retentionPeriod,
+                        segmentInterval,
+                        new WindowKeySchema()),
+                    retainDuplicates,
+                    windowSize);
+            }
+        }
 
-    public override long segmentIntervalMs()
-{
-        return segmentInterval;
-    }
+        public override string metricsScope()
+        {
+            return "rocksdb-window-state";
+        }
 
-    public override long windowSize()
-{
-        return windowSize;
-    }
+        [System.Obsolete]
+        public override int segments()
+        {
+            return (int)(retentionPeriod / segmentInterval) + 1;
+        }
 
-    public override bool retainDuplicates()
-{
-        return retainDuplicates;
-    }
+        public override long segmentIntervalMs()
+        {
+            return segmentInterval;
+        }
 
-    public override long retentionPeriod()
-{
-        return retentionPeriod;
+        public override long windowSize()
+        {
+            return windowSize;
+        }
+
+        public override bool retainDuplicates()
+        {
+            return retainDuplicates;
+        }
+
+        public override long retentionPeriod()
+        {
+            return retentionPeriod;
+        }
     }
 }

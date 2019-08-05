@@ -31,7 +31,7 @@ using Kafka.Common.Utils.LogContext;
 /**
  * Updates the state for all Global State Stores.
  */
-public GlobalStateUpdateTask : GlobalStateMaintainer
+public class GlobalStateUpdateTask : GlobalStateMaintainer
 {
 
 
@@ -60,7 +60,7 @@ public GlobalStateUpdateTask : GlobalStateMaintainer
      * @throws InvalidOperationException If store gets registered after initialized is already finished
      * @throws StreamsException      If the store's change log does not contain the partition
      */
-    
+
     public Dictionary<TopicPartition, long> initialize()
 {
         HashSet<string> storeNames = stateMgr.initialize();
@@ -84,11 +84,11 @@ public GlobalStateUpdateTask : GlobalStateMaintainer
         return stateMgr.checkpointed();
     }
 
-    
-    
+
+
     public void update(ConsumerRecord<byte[], byte[]> record)
 {
-        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic());
+        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
         ConsumerRecord<object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
 
         if (deserialized != null)

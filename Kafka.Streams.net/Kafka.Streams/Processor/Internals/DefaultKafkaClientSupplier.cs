@@ -38,25 +38,25 @@ public class DefaultKafkaClientSupplier : KafkaClientSupplier
     }
 
 
-    public Producer<byte[], byte[]> getProducer(Dictionary<string, object> config)
+    public IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config)
 {
         return new KafkaProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
     }
 
 
-    public Consumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
+    public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
 
-    public Consumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
+    public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }
 
 
-    public Consumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
+    public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
 {
         return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
     }

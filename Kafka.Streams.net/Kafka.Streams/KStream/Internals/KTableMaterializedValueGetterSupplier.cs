@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
+public class KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
     private  string storeName;
 
     KTableMaterializedValueGetterSupplier( string storeName)
@@ -35,7 +35,7 @@ public KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K
         return new KTableMaterializedValueGetter();
     }
 
-    
+
     public string[] storeNames()
 {
         return new string[]{storeName};
@@ -44,20 +44,20 @@ public KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K
     private KTableMaterializedValueGetter : KTableValueGetter<K, V> {
         private TimestampedKeyValueStore<K, V> store;
 
-        
-        
+
+
         public void init( IProcessorContext context)
 {
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
         }
 
-        
+
         public ValueAndTimestamp<V> get( K key)
 {
             return store[key];
         }
 
-        
+
         public void close() {}
     }
 }

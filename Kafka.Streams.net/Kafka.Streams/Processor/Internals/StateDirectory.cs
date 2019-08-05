@@ -14,7 +14,7 @@ namespace Kafka.Streams.Processor.Internals
         private static Pattern PATH_NAME = Pattern.compile("\\d+_\\d+");
 
         static string LOCK_FILE_NAME = ".lock";
-        private static Logger log = new LoggerFactory().CreateLogger < StateDirectory);
+        private static ILogger log = new LoggerFactory().CreateLogger < StateDirectory);
 
         private File stateDir;
         private bool createStateDirectory;

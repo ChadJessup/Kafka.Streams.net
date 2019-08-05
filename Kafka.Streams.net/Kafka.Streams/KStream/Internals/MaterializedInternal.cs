@@ -26,76 +26,77 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S> {
+    public class MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S>
+    {
 
-    private  bool queriable;
+        private bool queriable;
 
-    public MaterializedInternal( Materialized<K, V, S> materialized)
-{
-        this(materialized, null, null);
-    }
+        public MaterializedInternal(Materialized<K, V, S> materialized)
+        {
+            this(materialized, null, null);
+        }
 
-    public MaterializedInternal( Materialized<K, V, S> materialized,
-                                 InternalNameProvider nameProvider,
-                                 string generatedStorePrefix)
-{
-        base(materialized);
+        public MaterializedInternal(Materialized<K, V, S> materialized,
+                                     InternalNameProvider nameProvider,
+                                     string generatedStorePrefix)
+            : base(materialized)
+        {
 
-        // if storeName is not provided, the corresponding KTable would never be queryable;
-        // but we still need to provide an internal name for it in case we materialize.
-        queriable = storeName() != null;
-        if (!queriable && nameProvider != null)
-{
-            storeName = nameProvider.newStoreName(generatedStorePrefix);
+            // if storeName is not provided, the corresponding KTable would never be queryable;
+            // but we still need to provide an internal name for it in case we materialize.
+            queriable = storeName() != null;
+            if (!queriable && nameProvider != null)
+            {
+                storeName = nameProvider.newStoreName(generatedStorePrefix);
+            }
+        }
+
+        public string queryableStoreName()
+        {
+            return queriable ? storeName() : null;
+        }
+
+        public string storeName()
+        {
+            if (storeSupplier != null)
+            {
+                return storeSupplier.name();
+            }
+            return storeName;
+        }
+
+        public StoreSupplier<S> storeSupplier()
+        {
+            return storeSupplier;
+        }
+
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
+
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
+
+        public bool loggingEnabled()
+        {
+            return loggingEnabled;
+        }
+
+        Map<string, string> logConfig()
+        {
+            return topicConfig;
+        }
+
+        public bool cachingEnabled()
+        {
+            return cachingEnabled;
+        }
+
+        TimeSpan retention()
+        {
+            return retention;
         }
     }
-
-    public string queryableStoreName()
-{
-        return queriable ? storeName() : null;
-    }
-
-    public string storeName()
-{
-        if (storeSupplier != null)
-{
-            return storeSupplier.name();
-        }
-        return storeName;
-    }
-
-    public StoreSupplier<S> storeSupplier()
-{
-        return storeSupplier;
-    }
-
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
-
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
-
-    public bool loggingEnabled()
-{
-        return loggingEnabled;
-    }
-
-    Map<string, string> logConfig()
-{
-        return topicConfig;
-    }
-
-    public bool cachingEnabled()
-{
-        return cachingEnabled;
-    }
-
-    TimeSpan retention()
-{
-        return retention;
-    }
-}

@@ -1,11 +1,11 @@
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
     /**
      * A wrapper over the underlying {@link ReadOnlyKeyValueStore}s found in a {@link
-     * org.apache.kafka.streams.processor.internals.ProcessorTopology}
+     * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
      *
      * @param key type
      * @param value type

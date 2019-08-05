@@ -24,55 +24,55 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-/**
- * Represents a join between a KStream and a KTable or GlobalKTable
- */
+    /**
+     * Represents a join between a KStream and a KTable or GlobalKTable
+     */
 
-public StreamTableJoinNode<K, V> : StreamsGraphNode
-{
+    public class StreamTableJoinNode<K, V> : StreamsGraphNode
+    {
 
 
-    private  string[] storeNames;
-    private  ProcessorParameters<K, V> processorParameters;
-    private  string otherJoinSideNodeName;
+        private string[] storeNames;
+        private ProcessorParameters<K, V> processorParameters;
+        private string otherJoinSideNodeName;
 
-    public StreamTableJoinNode( string nodeName,
-                                ProcessorParameters<K, V> processorParameters,
-                                string[] storeNames,
-                                string otherJoinSideNodeName)
-{
-        base(nodeName);
+        public StreamTableJoinNode(string nodeName,
+                                    ProcessorParameters<K, V> processorParameters,
+                                    string[] storeNames,
+                                    string otherJoinSideNodeName)
+            : base(nodeName)
+        {
 
-        // in the case of Stream-Table join the state stores associated with the KTable
-        this.storeNames = storeNames;
-        this.processorParameters = processorParameters;
-        this.otherJoinSideNodeName = otherJoinSideNodeName;
-    }
-
-    
-    public string ToString()
-{
-        return "StreamTableJoinNode{" +
-               "storeNames=" + Arrays.ToString(storeNames) +
-               ", processorParameters=" + processorParameters +
-               ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
-               "} " + base.ToString();
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-         string processorName = processorParameters.processorName();
-         ProcessorSupplier processorSupplier = processorParameters.processorSupplier();
-
-        // Stream - Table join (Global or KTable)
-        topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
-
-        // Steam - KTable join only
-        if (otherJoinSideNodeName != null)
-{
-            topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+            // in the case of Stream-Table join the state stores associated with the KTable
+            this.storeNames = storeNames;
+            this.processorParameters = processorParameters;
+            this.otherJoinSideNodeName = otherJoinSideNodeName;
         }
 
+
+        public string ToString()
+        {
+            return "StreamTableJoinNode{" +
+                   "storeNames=" + Arrays.ToString(storeNames) +
+                   ", processorParameters=" + processorParameters +
+                   ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
+                   "} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            string processorName = processorParameters.processorName();
+            ProcessorSupplier processorSupplier = processorParameters.processorSupplier();
+
+            // Stream - Table join (Global or KTable)
+            topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
+
+            // Steam - KTable join only
+            if (otherJoinSideNodeName != null)
+            {
+                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+            }
+
+        }
     }
-}

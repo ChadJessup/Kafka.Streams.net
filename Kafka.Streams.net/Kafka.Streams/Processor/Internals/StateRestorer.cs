@@ -24,7 +24,7 @@ using Kafka.Common.TopicPartition;
 
 
 
-public StateRestorer
+public class StateRestorer
 {
 
 

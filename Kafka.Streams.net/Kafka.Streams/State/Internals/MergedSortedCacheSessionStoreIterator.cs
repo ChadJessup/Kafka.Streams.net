@@ -18,8 +18,8 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.kstream.Window;
-using Kafka.Streams.kstream.Windowed;
+using Kafka.Streams.KStream.Window;
+using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.State.KeyValueIterator;
 
 /**
@@ -47,7 +47,7 @@ class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIter
     
     Windowed<Bytes> deserializeCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = cacheFunction.key(cacheKey)[);
+        byte[] binaryKey = cacheFunction.key(cacheKey)[];
         byte[] keyBytes = SessionKeySchema.extractKeyBytes(binaryKey);
         Window window = SessionKeySchema.extractWindow(binaryKey);
         return new Windowed<>(Bytes.wrap(keyBytes), window);

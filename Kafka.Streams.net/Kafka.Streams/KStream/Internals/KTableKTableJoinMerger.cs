@@ -71,7 +71,7 @@ public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
 
                 public KTableValueGetter<K, V> get()
 {
-                    return parent1.view()[);
+                    return parent1.view()[];
                 }
 
 

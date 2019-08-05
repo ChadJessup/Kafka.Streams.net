@@ -119,11 +119,11 @@ namespace Kafka.Streams.State.Internals
             {
                 if (getTime.shouldRecord())
                 {
-                    return measureLatency(()->outerValue(wrapped()[keyBytes(key))), getTime);
+                    return measureLatency(()->outerValue(wrapped()[keyBytes(key)]), getTime);
                 }
                 else
                 {
-                    return outerValue(wrapped()[keyBytes(key)));
+                    return outerValue(wrapped()[keyBytes(key)]);
                 }
             }
             catch (ProcessorStateException e)

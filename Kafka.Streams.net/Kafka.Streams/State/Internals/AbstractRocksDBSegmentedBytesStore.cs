@@ -25,7 +25,7 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.State.Internals
 {
-    public AbstractRocksDBSegmentedBytesStore<S> : SegmentedBytesStore
+    public class AbstractRocksDBSegmentedBytesStore<S> : SegmentedBytesStore
         where S : ISegment
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDBSegmentedBytesStore<S>>();
@@ -137,7 +137,8 @@ namespace Kafka.Streams.State.Internals
             {
                 expiredRecordSensor.record();
                 LOG.LogDebug("Skipping record for expired segment.");
-            } else
+            }
+            else
             {
                 segment.Add(key, value);
             }
@@ -229,7 +230,8 @@ namespace Kafka.Streams.State.Internals
                     segment.write(batch);
                     batch.close();
                 }
-            } catch (RocksDbException e)
+            }
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error restoring batch to store " + this.name, e);
             }
@@ -269,7 +271,8 @@ namespace Kafka.Streams.State.Internals
                     {
                         WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s-> new WriteBatch());
                         segment.AddToBatch(record, batch);
-                    } catch (RocksDbException e)
+                    }
+                    catch (RocksDbException e)
                     {
                         throw new ProcessorStateException("Error restoring batch to store " + this.name, e);
                     }
@@ -289,26 +292,25 @@ namespace Kafka.Streams.State.Internals
         private RocksDBSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
         {
             public override void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
-            {
-                restoreAllInternal(records);
-            }
+        {
+            restoreAllInternal(records);
+        }
 
-            public override void onRestoreStart(
-                TopicPartition topicPartition,
-                string storeName,
-                long startingOffset,
-                long endingOffset)
-            {
-                toggleForBulkLoading(true);
-            }
+        public override void onRestoreStart(
+            TopicPartition topicPartition,
+            string storeName,
+            long startingOffset,
+            long endingOffset)
+        {
+            toggleForBulkLoading(true);
+        }
 
-            public override void onRestoreEnd(
-                TopicPartition topicPartition,
-                string storeName,
-                long totalRestored)
-            {
-                toggleForBulkLoading(false);
-            }
+        public override void onRestoreEnd(
+            TopicPartition topicPartition,
+            string storeName,
+            long totalRestored)
+        {
+            toggleForBulkLoading(false);
         }
     }
 }

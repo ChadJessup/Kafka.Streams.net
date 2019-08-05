@@ -87,7 +87,7 @@ public class MemoryNavigableLRUCache : MemoryLRUCache
         public KeyValue<Bytes, byte[]> next()
 {
             lastKey = keys.next();
-            return new KeyValue<>(lastKey, entries[lastKey));
+            return new KeyValue<>(lastKey, entries[lastKey]);
         }
 
 

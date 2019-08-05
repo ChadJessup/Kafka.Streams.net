@@ -100,7 +100,7 @@ class GroupedStreamAggregateBuilder<K, V> {
                 repartitionNode = repartitionNodeBuilder.build();
             }
 
-            builder.AddGraphNode(parentNode, repartitionNode);
+            builder.addGraphNode(parentNode, repartitionNode);
             parentNode = repartitionNode;
         }
 
@@ -111,7 +111,7 @@ class GroupedStreamAggregateBuilder<K, V> {
                 storeBuilder
             );
 
-        builder.AddGraphNode(parentNode, statefulProcessorNode);
+        builder.addGraphNode(parentNode, statefulProcessorNode);
 
         return new KTableImpl<>(aggFunctionName,
                                 keySerde,

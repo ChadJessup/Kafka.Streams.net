@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.Processor.Internals;
+
 namespace Kafka.Streams.Errors
 {
 
@@ -22,58 +25,58 @@ namespace Kafka.Streams.Errors
 
 
 
-/**
- * Indicates that a task got migrated to another thread.
- * Thus, the task raising this exception can be cleaned up and closed as "zombie".
- */
-public TaskMigratedException : StreamsException
-{
+    /**
+     * Indicates that a task got migrated to another thread.
+     * Thus, the task raising this exception can be cleaned up and closed as "zombie".
+     */
+    public class TaskMigratedException : StreamsException
+    {
 
 
-    private  static long serialVersionUID = 1L;
+        private static long serialVersionUID = 1L;
 
-    private  Task task;
+        private Task task;
 
-    // this is for unit test only
-    public TaskMigratedException()
-{
-        base("A task has been migrated unexpectedly", null);
+        // this is for unit test only
+        public TaskMigratedException()
+            : base("A task has been migrated unexpectedly", null)
+        {
 
-        this.task = null;
+            this.task = null;
+        }
+
+        public TaskMigratedException(Task task,
+                                      TopicPartition topicPartition,
+                                      long endOffset,
+                                      long pos)
+            : base(string.Format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
+                                topicPartition,
+                                endOffset,
+                                pos),
+                null)
+        {
+
+            this.task = task;
+        }
+
+        public TaskMigratedException(Task task)
+            : base(string.Format("Task %s is unexpectedly closed during processing", task.id()), null)
+        {
+
+            this.task = task;
+        }
+
+        public TaskMigratedException(Task task,
+                                      Throwable throwable)
+            : base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable)
+        {
+
+            this.task = task;
+        }
+
+        public Task migratedTask()
+        {
+            return task;
+        }
+
     }
-
-    public TaskMigratedException( Task task,
-                                  TopicPartition topicPartition,
-                                  long endOffset,
-                                  long pos)
-{
-        base(string.Format("Log end offset of %s should not change while restoring: old end offset %d, current offset %d",
-                            topicPartition,
-                            endOffset,
-                            pos),
-            null);
-
-        this.task = task;
-    }
-
-    public TaskMigratedException( Task task)
-{
-        base(string.Format("Task %s is unexpectedly closed during processing", task.id()), null);
-
-        this.task = task;
-    }
-
-    public TaskMigratedException( Task task,
-                                  Throwable throwable)
-{
-        base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable);
-
-        this.task = task;
-    }
-
-    public Task migratedTask()
-{
-        return task;
-    }
-
-}

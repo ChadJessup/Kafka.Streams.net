@@ -18,8 +18,8 @@ namespace Kafka.Streams.Processor.Internals;
 
 using Kafka.Common.header.Header;
 using Kafka.Common.header.Headers;
-using Kafka.Common.header.internals.RecordHeader;
-using Kafka.Common.header.internals.RecordHeaders;
+using Kafka.Common.header.Internals.RecordHeader;
+using Kafka.Common.header.Internals.RecordHeaders;
 
 
 

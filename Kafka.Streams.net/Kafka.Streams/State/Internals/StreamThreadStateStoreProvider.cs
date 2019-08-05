@@ -18,8 +18,8 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.internals.StreamThread;
-using Kafka.Streams.Processor.internals.Task;
+using Kafka.Streams.Processor.Internals.StreamThread;
+using Kafka.Streams.Processor.Internals.Task;
 using Kafka.Streams.State.QueryableStoreType;
 using Kafka.Streams.State.QueryableStoreTypes;
 using Kafka.Streams.State.TimestampedKeyValueStore;

@@ -14,44 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+using static Kafka.Streams.Errors.Interfaces.IDeserializationExceptionHandler;
+
 namespace Kafka.Streams.Errors
 {
+    /**
+     * Deserialization handler that logs a deserialization exception and then
+     * signals the processing pipeline to stop processing more records and fail.
+     */
+    public class LogAndFailExceptionHandler : IDeserializationExceptionHandler
+    {
+
+        private static ILogger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler>();
 
 
+        public DeserializationHandlerResponse handle(IProcessorContext context,
+                                                      ConsumerRecord<byte[], byte[]> record,
+                                                      Exception exception)
+        {
+
+            log.LogError("Exception caught during Deserialization, " +
+                      "taskId: {}, topic: {}, partition: {}, offset: {}",
+                      context.taskId(), record.topic(), record.partition(), record.offset(),
+                      exception);
+
+            return DeserializationHandlerResponse.FAIL;
+        }
 
 
-
-
-
-
-
-
-/**
- * Deserialization handler that logs a deserialization exception and then
- * signals the processing pipeline to stop processing more records and fail.
- */
-public LogAndFailExceptionHandler : IDeserializationExceptionHandler
-{
-
-    private static  Logger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler);
-
-    
-    public DeserializationHandlerResponse handle( IProcessorContext context,
-                                                  ConsumerRecord<byte[], byte[]> record,
-                                                  Exception exception)
-{
-
-        log.LogError("Exception caught during Deserialization, " +
-                  "taskId: {}, topic: {}, partition: {}, offset: {}",
-                  context.taskId(), record.topic(), record.partition(), record.offset(),
-                  exception);
-
-        return DeserializationHandlerResponse.FAIL;
-    }
-
-    
-    public void configure( Map<string, ?> configs)
-{
-        // ignore
+        public void configure(Map<string, ?> configs)
+        {
+            // ignore
+        }
     }
 }

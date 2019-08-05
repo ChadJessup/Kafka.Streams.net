@@ -51,7 +51,7 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
         this.leftJoin = leftJoin;
     }
 
-    
+
     public void init( IProcessorContext context)
 {
         base.init(context);
@@ -61,7 +61,7 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
         valueGetter.init(context);
     }
 
-    
+
     public void process( K1 key,  V1 value)
 {
         // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
@@ -83,7 +83,7 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
 {
 
              K2 mappedKey = keyMapper.apply(key, value);
-             V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey));
+             V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey]);
             if (leftJoin || value2 != null)
 {
                 context().forward(key, joiner.apply(value, value2));
@@ -91,7 +91,7 @@ class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1> 
         }
     }
 
-    
+
     public void close()
 {
         valueGetter.close();

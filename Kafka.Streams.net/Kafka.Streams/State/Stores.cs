@@ -1,4 +1,4 @@
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using System;
 
 namespace Kafka.Streams.State
@@ -16,7 +16,7 @@ namespace Kafka.Streams.State
      * KeyValueBytesStoreSupplier storeSupplier = Stores.inMemoryKeyValueStore("queryable-store-name");
      * KTable<long,string> table = builder.table(
      *   "topicName",
-     *   Materialized.<long,string>as(storeSupplier)
+     *   Materialized.<long,string>As(storeSupplier)
      *               .withKeySerde(Serdes.long())
      *               .withValueSerde(Serdes.string())
      *               .withCachingDisabled());

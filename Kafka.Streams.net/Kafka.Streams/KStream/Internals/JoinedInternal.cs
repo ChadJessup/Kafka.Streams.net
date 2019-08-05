@@ -21,32 +21,33 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public JoinedInternal<K, V, VO> : Joined<K, V, VO>  {
+    public class JoinedInternal<K, V, VO> : Joined<K, V, VO>
+    {
 
-    JoinedInternal( Joined<K, V, VO> joined)
-{
-        base(joined);
-    }
+        JoinedInternal(Joined<K, V, VO> joined)
+            : base(joined)
+        {
+        }
 
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
 
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
 
-    public ISerde<VO> otherValueSerde()
-{
-        return otherValueSerde;
-    }
+        public ISerde<VO> otherValueSerde()
+        {
+            return otherValueSerde;
+        }
 
-     // TODO Remove annotation when base.name() is removed
-    
-    public string name()
-{
-        return name;
+        // TODO Remove annotation when base.name() is removed
+
+        public string name()
+        {
+            return name;
+        }
     }
-}

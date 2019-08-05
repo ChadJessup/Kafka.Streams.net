@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Internals
 
     /**
      * Wrapper over the underlying {@link ReadOnlyWindowStore}s found in a {@link
-     * org.apache.kafka.streams.processor.internals.ProcessorTopology}
+     * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
      */
     public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     {

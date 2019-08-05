@@ -19,30 +19,31 @@ namespace Kafka.Streams.Errors
 
 
 
-/**
- * Indicates a run time error incurred while trying parse the {@link org.apache.kafka.streams.processor.TaskId task id}
- * from the read string.
- *
- * @see org.apache.kafka.streams.processor.internals.StreamTask
- */
-public TaskIdFormatException : StreamsException
-{
+    /**
+     * Indicates a run time error incurred while trying parse the {@link org.apache.kafka.streams.processor.TaskId task id}
+     * from the read string.
+     *
+     * @see org.apache.kafka.streams.processor.Internals.StreamTask
+     */
+    public class TaskIdFormatException : StreamsException
+    {
 
 
-    private static  long serialVersionUID = 1L;
+        private static long serialVersionUID = 1L;
 
-    public TaskIdFormatException( string message)
-{
-        base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message));
-    }
+        public TaskIdFormatException(string message)
+            : base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message))
+        {
+        }
 
-    public TaskIdFormatException( string message,  Throwable throwable)
-{
-        base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message), throwable);
-    }
+        public TaskIdFormatException(string message, Throwable throwable)
+            :base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message), throwable)
+        {
+        }
 
-    public TaskIdFormatException( Throwable throwable)
-{
-        base(throwable);
+        public TaskIdFormatException(Throwable throwable)
+            : base(throwable)
+        {
+        }
     }
 }

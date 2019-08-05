@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream
  *  @deprecated since 2.1. Use {@link  org.apache.kafka.streams.kstream.Grouped} instead
  */
 [System.Obsolete]
-public Serialized<K, V> {
+public  class Serialized<K, V> {
 
     protected  ISerde<K> keySerde;
     protected  ISerde<V> valueSerde;

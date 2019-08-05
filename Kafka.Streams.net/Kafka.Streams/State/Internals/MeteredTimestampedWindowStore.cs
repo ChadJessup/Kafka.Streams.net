@@ -20,7 +20,7 @@ using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.Time;
 using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.internals.ProcessorStateManager;
+using Kafka.Streams.Processor.Internals.ProcessorStateManager;
 using Kafka.Streams.State.StateSerdes;
 using Kafka.Streams.State.TimestampedWindowStore;
 using Kafka.Streams.State.ValueAndTimestamp;

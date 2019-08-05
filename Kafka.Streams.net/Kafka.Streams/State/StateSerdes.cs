@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state;
+namespace Kafka.Streams.State;
 
 using Kafka.Common.serialization.Deserializer;
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.serialization.Serdes;
 using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.Errors.StreamsException;
-using Kafka.Streams.State.internals.ValueAndTimestampSerializer;
+using Kafka.Streams.State.Internals.ValueAndTimestampSerializer;
 
 
 
@@ -31,7 +31,7 @@ using Kafka.Streams.State.internals.ValueAndTimestampSerializer;
  * @param key type of serde
  * @param value type of serde
  */
-public StateSerdes<K, V>
+public class StateSerdes<K, V>
 {
 
     /**
@@ -105,7 +105,7 @@ public StateSerdes<K, V>
      *
      * @return the key deserializer
      */
-    public Deserializer<K> keyDeserializer()
+    public IDeserializer<K> keyDeserializer()
 {
         return keySerde.deserializer();
     }
@@ -115,7 +115,7 @@ public StateSerdes<K, V>
      *
      * @return the key serializer
      */
-    public Serializer<K> keySerializer()
+    public ISerializer<K> keySerializer()
 {
         return keySerde.serializer();
     }
@@ -125,7 +125,7 @@ public StateSerdes<K, V>
      *
      * @return the value deserializer
      */
-    public Deserializer<V> valueDeserializer()
+    public IDeserializer<V> valueDeserializer()
 {
         return valueSerde.deserializer();
     }
@@ -135,7 +135,7 @@ public StateSerdes<K, V>
      *
      * @return the value serializer
      */
-    public Serializer<V> valueSerializer()
+    public ISerializer<V> valueSerializer()
 {
         return valueSerde.serializer();
     }

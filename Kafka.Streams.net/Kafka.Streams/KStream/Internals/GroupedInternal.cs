@@ -22,25 +22,26 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public GroupedInternal<K, V> : Grouped<K, V> {
+    public class GroupedInternal<K, V> : Grouped<K, V>
+    {
 
-    public GroupedInternal( Grouped<K, V> grouped)
-{
-        base(grouped);
-    }
+        public GroupedInternal(Grouped<K, V> grouped)
+            : base(grouped)
+        {
+        }
 
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
 
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
 
-    public string name()
-{
-        return name;
+        public string name()
+        {
+            return name;
+        }
     }
-}

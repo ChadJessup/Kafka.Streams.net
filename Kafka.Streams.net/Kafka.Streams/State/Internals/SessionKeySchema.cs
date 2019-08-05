@@ -87,7 +87,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private static K extractKey(byte[] binaryKey,
-                                        Deserializer<K> deserializer,
+                                        IDeserializer<K> deserializer,
                                         string topic)
         {
             return deserializer.deserialize(topic, extractKeyBytes(binaryKey));
@@ -119,7 +119,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public static Windowed<K> from(byte[] binaryKey,
-                                           Deserializer<K> keyDeserializer,
+                                           IDeserializer<K> keyDeserializer,
                                            string topic)
         {
             K key = extractKey(binaryKey, keyDeserializer, topic);
@@ -135,7 +135,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public static Windowed<K> from(Windowed<Bytes> keyBytes,
-                                           Deserializer<K> keyDeserializer,
+                                           IDeserializer<K> keyDeserializer,
                                            string topic)
         {
             K key = keyDeserializer.deserialize(topic, keyBytes.key()());
@@ -143,11 +143,11 @@ namespace Kafka.Streams.State.Internals
         }
 
         public static byte[] toBinary(Windowed<K> sessionKey,
-                                          Serializer<K> serializer,
+                                          ISerializer<K> serializer,
                                           string topic)
         {
             byte[] bytes = serializer.serialize(topic, sessionKey.key());
-            return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[);
+            return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[];
         }
 
         public static Bytes toBinary(Windowed<Bytes> sessionKey)

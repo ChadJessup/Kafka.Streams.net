@@ -24,7 +24,7 @@ using Kafka.Common.TopicPartition;
  *
  * When calling {@link org.apache.kafka.streams.KafkaStreams#setGlobalStateRestoreListener(StateRestoreListener)}
  * the passed instance is expected to be stateless since the {@code StateRestoreListener} is shared
- * across all {@link org.apache.kafka.streams.processor.internals.StreamThread} instances.
+ * across all {@link org.apache.kafka.streams.processor.Internals.StreamThread} instances.
  *
  * Users desiring stateful operations will need to provide synchronization internally in
  * the {@code StateRestorerListener} implementation.

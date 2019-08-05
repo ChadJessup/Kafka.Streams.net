@@ -21,7 +21,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.Time;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.StreamsMetrics;
-using Kafka.Streams.kstream.Windowed;
+using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.StateSerdes;
 

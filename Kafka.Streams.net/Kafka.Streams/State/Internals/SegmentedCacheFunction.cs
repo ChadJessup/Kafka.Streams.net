@@ -18,7 +18,7 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.internals.SegmentedBytesStore.KeySchema;
+using Kafka.Streams.State.Internals.SegmentedBytesStore.KeySchema;
 
 
 

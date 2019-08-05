@@ -16,24 +16,22 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
+    [System.Obsolete]
+    public class SerializedInternal<K, V> : ISerialized<K, V>
+    {
+        public SerializedInternal(ISerialized<K, V> serialized)
+            : base(serialized)
+        {
+        }
 
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
 
-
-
-[System.Obsolete]
-public SerializedInternal<K, V> : org.apache.kafka.streams.kstream.Serialized<K, V> {
-    public SerializedInternal( org.apache.kafka.streams.kstream.Serialized<K, V> serialized)
-{
-        base(serialized);
-    }
-
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
-
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
     }
 }

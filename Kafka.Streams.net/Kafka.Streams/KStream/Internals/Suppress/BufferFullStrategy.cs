@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.suppress;
+namespace Kafka.Streams.KStream.Internals.Suppress;
 
 public enum BufferFullStrategy
 {

@@ -48,29 +48,29 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
     }
 
 
-    Serializer<V> getValueSerializer()
+    ISerializer<V> getValueSerializer()
 {
-         Serializer<V> valueSerializer = valueSerde == null ? null : valueSerde.serializer();
+         ISerializer<V> valueSerializer = valueSerde == null ? null : valueSerde.serializer();
         return unsafeCastChangedToValueSerializer(valueSerializer);
     }
 
 
-    private Serializer<V> unsafeCastChangedToValueSerializer( Serializer<V> valueSerializer)
+    private ISerializer<V> unsafeCastChangedToValueSerializer( ISerializer<V> valueSerializer)
 {
-        return (Serializer<V>) new ChangedSerializer<>(valueSerializer);
+        return (ISerializer<V>) new ChangedSerializer<>(valueSerializer);
     }
 
 
-    Deserializer<V> getValueDeserializer()
+    IDeserializer<V> getValueDeserializer()
 {
-         Deserializer<V> valueDeserializer = valueSerde == null ? null : valueSerde.deserializer();
+         IDeserializer<V> valueDeserializer = valueSerde == null ? null : valueSerde.deserializer();
         return unsafeCastChangedToValueDeserializer(valueDeserializer);
     }
 
 
-    private Deserializer<V> unsafeCastChangedToValueDeserializer( Deserializer<V> valueDeserializer)
+    private IDeserializer<V> unsafeCastChangedToValueDeserializer( IDeserializer<V> valueDeserializer)
 {
-        return (Deserializer<V>) new ChangedDeserializer<>(valueDeserializer);
+        return (IDeserializer<V>) new ChangedDeserializer<>(valueDeserializer);
     }
 
 
@@ -82,8 +82,8 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
 
     public void writeToTopology( InternalTopologyBuilder topologyBuilder)
 {
-         Serializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
-         Deserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
+         ISerializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
+         IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
 
 
         topologyBuilder.AddInternalTopic(repartitionTopic);
@@ -182,5 +182,4 @@ public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K,
             );
         }
     }
-}
 }

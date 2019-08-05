@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state;
+namespace Kafka.Streams.State;
 
 using Kafka.Streams.KafkaStreams;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.internals.StateStoreProvider;
+using Kafka.Streams.State.Internals.StateStoreProvider;
 
 /**
  * Used to enable querying of custom {@link IStateStore} types via the {@link KafkaStreams} API.

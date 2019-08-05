@@ -11,7 +11,7 @@ namespace Kafka.Streams.State.Internals
 
         public override V get(K key)
         {
-            return getValueOrNull(inner[key));
+            return getValueOrNull(inner[key]);
         }
 
         public override KeyValueIterator<K, V> range(K from,

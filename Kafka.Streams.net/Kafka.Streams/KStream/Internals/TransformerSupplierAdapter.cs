@@ -25,45 +25,47 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> {
+    public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>
+    {
 
-    private TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
+        private TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
 
-    public TransformerSupplierAdapter( TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier)
-{
-        this.transformerSupplier = transformerSupplier;
-    }
+        public TransformerSupplierAdapter(TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier)
+        {
+            this.transformerSupplier = transformerSupplier;
+        }
 
-    
-    public Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> get()
-{
-        return new Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>()
-{
 
-            private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier[];
+        public Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> get()
+        {
+            //        return new Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>()
+            //        {
 
-            
-            public void init( IProcessorContext context)
-{
-                transformer.init(context);
-            }
+            //        private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier[];
 
-            
-            public Iterable<KeyValue<KOut, VOut>> transform( KIn key,  VIn value)
-{
-                 KeyValue<KOut, VOut> pair = transformer.transform(key, value);
-                if (pair != null)
-{
-                    return Collections.singletonList(pair);
-                }
-                return Collections.emptyList();
-            }
 
-            
-            public void close()
-{
-                transformer.close();
-            }
-        };
+            //    public void init(IProcessorContext context)
+            //    {
+            //        transformer.init(context);
+            //    }
+
+
+            //    public Iterable<KeyValue<KOut, VOut>> transform(KIn key, VIn value)
+            //    {
+            //        KeyValue<KOut, VOut> pair = transformer.transform(key, value);
+            //        if (pair != null)
+            //        {
+            //            return Collections.singletonList(pair);
+            //        }
+            //        return Collections.emptyList();
+            //    }
+
+
+            //    public void close()
+            //    {
+            //        transformer.close();
+            //    }
+            //};
+        }
     }
 }

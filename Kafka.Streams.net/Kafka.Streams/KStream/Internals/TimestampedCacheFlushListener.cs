@@ -14,25 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.streams.kstream.internals;
 using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-    public TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
+    public class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
     {
         private InternalProcessorContext context;
         private ProcessorNode myNode;

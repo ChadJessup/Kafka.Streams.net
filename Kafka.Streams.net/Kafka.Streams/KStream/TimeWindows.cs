@@ -221,7 +221,7 @@ public class TimeWindows : Windows<TimeWindow> {
      * @throws ArgumentException if {@code duration} is smaller than the window size
      *
      * @deprecated since 2.1. Use {@link Materialized#retention} or directly configure the retention in a store supplier
-     *             and use {@link Materialized#as(WindowBytesStoreSupplier)}.
+     *             and use {@link Materialized#As(WindowBytesStoreSupplier)}.
      */
 
     [System.Obsolete]

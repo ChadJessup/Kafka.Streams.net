@@ -288,7 +288,7 @@ namespace Kafka.Streams.State.Internals
                         // in this case, the changelog value is just the serialized record value
                         ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
                         long time = timeAndValue.getLong();
-                        byte[] changelogValue = new byte[record.value().Length - 8);
+                        byte[] changelogValue = new byte[record.value().Length - 8];
                         timeAndValue[changelogValue];
 
                         Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(changelogValue));
@@ -319,7 +319,7 @@ namespace Kafka.Streams.State.Internals
                         // in this case, the changelog value is a serialized ContextualRecord
                         ByteBuffer timeAndValue = ByteBuffer.wrap(record.value());
                         long time = timeAndValue.getLong();
-                        byte[] changelogValue = new byte[record.value().Length - 8);
+                        byte[] changelogValue = new byte[record.value().Length - 8];
                         timeAndValue[changelogValue];
 
                         ContextualRecord contextualRecord = ContextualRecord.deserialize(ByteBuffer.wrap(changelogValue));
@@ -367,7 +367,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public override void evictWhile(Supplier<Boolean> predicate,
-                               Consumer<Eviction<K, V>> callback)
+                               IConsumer<Eviction<K, V>> callback)
         {
             Iterator < Map.Entry < BufferKey, BufferValue >> delegate = sortedMap.entrySet().iterator();
             int evictions = 0;

@@ -24,14 +24,14 @@ using Kafka.Streams.State.ValueAndTimestamp;
 
 
 
-class ValueAndTimestampDeserializer<V> : Deserializer<ValueAndTimestamp<V>>
+class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
 {
     private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
 
-    public Deserializer<V> valueDeserializer;
-    private Deserializer<long> timestampDeserializer;
+    public IDeserializer<V> valueDeserializer;
+    private IDeserializer<long> timestampDeserializer;
 
-    ValueAndTimestampDeserializer(Deserializer<V> valueDeserializer)
+    ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
 {
         Objects.requireNonNull(valueDeserializer);
         this.valueDeserializer = valueDeserializer;

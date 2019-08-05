@@ -14,75 +14,78 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.suppress;
-
-
-
-
-
-
-
-public FinalResultsSuppressionBuilder<K : Windowed> : Suppressed<K>, NamedSuppressed<K> {
-    private  string name;
-    private  StrictBufferConfig bufferConfig;
-
-    public FinalResultsSuppressionBuilder( string name,  Suppressed.StrictBufferConfig bufferConfig)
+namespace Kafka.Streams.KStream.Internals.Suppress
 {
-        this.name = name;
-        this.bufferConfig = bufferConfig;
-    }
 
-    public SuppressedInternal<K> buildFinalResultsSuppression( TimeSpan gracePeriod)
-{
-        return new SuppressedInternal<>(
-            name,
-            gracePeriod,
-            bufferConfig,
-            TimeDefinitions.WindowEndTimeDefinition.instance(),
-            true
-        );
-    }
 
-    
-    public Suppressed<K> withName( string name)
-{
-        return new FinalResultsSuppressionBuilder<>(name, bufferConfig);
-    }
 
-    
-    public bool Equals( object o)
-{
-        if (this == o)
-{
-            return true;
+
+
+
+    public class FinalResultsSuppressionBuilder<K> : Suppressed<K>, NamedSuppressed<K>
+        where K : Windowed<K>
+    {
+        private string name;
+        private StrictBufferConfig bufferConfig;
+
+        public FinalResultsSuppressionBuilder(string name, Suppressed.StrictBufferConfig bufferConfig)
+        {
+            this.name = name;
+            this.bufferConfig = bufferConfig;
         }
-        if (o == null || getClass() != o.getClass())
-{
-            return false;
+
+        public SuppressedInternal<K> buildFinalResultsSuppression(TimeSpan gracePeriod)
+        {
+            return new SuppressedInternal<>(
+                name,
+                gracePeriod,
+                bufferConfig,
+                TimeDefinitions.WindowEndTimeDefinition.instance(),
+                true
+            );
         }
-         FinalResultsSuppressionBuilder<?> that = (FinalResultsSuppressionBuilder<?>) o;
-        return Objects.Equals(name, that.name) &&
-            Objects.Equals(bufferConfig, that.bufferConfig);
-    }
 
-    
-    public string name()
-{
-        return name;
-    }
 
-    
-    public int hashCode()
-{
-        return Objects.hash(name, bufferConfig);
-    }
+        public Suppressed<K> withName(string name)
+        {
+            return new FinalResultsSuppressionBuilder<>(name, bufferConfig);
+        }
 
-    
-    public string ToString()
-{
-        return "FinalResultsSuppressionBuilder{" +
-            "name='" + name + '\'' +
-            ", bufferConfig=" + bufferConfig +
-            '}';
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+            FinalResultsSuppressionBuilder <?> that = (FinalResultsSuppressionBuilder <?>) o;
+            return Objects.Equals(name, that.name) &&
+                Objects.Equals(bufferConfig, that.bufferConfig);
+        }
+
+
+        public string name()
+        {
+            return name;
+        }
+
+
+        public int hashCode()
+        {
+            return Objects.hash(name, bufferConfig);
+        }
+
+
+        public string ToString()
+        {
+            return "FinalResultsSuppressionBuilder{" +
+                "name='" + name + '\'' +
+                ", bufferConfig=" + bufferConfig +
+                '}';
+        }
     }
 }

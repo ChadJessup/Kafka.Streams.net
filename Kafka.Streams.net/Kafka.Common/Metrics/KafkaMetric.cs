@@ -40,7 +40,7 @@ namespace Kakfa.Common.Metrics
         /**
          * See {@link Metric#value()} for the details on why this is deprecated.
          */
-        [Obsolete)
+        [Obsolete]
         public double value()
 {
             return measurableValue(time.milliseconds());

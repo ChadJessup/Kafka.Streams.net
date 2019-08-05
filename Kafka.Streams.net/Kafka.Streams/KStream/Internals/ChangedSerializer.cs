@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -24,23 +26,23 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public ChangedSerializer<T> : Serializer<Change<T>> {
+public class ChangedSerializer<T> : ISerializer<Change<T>> {
 
     private static  int NEWFLAG_SIZE = 1;
 
-    private Serializer<T> inner;
+    private ISerializer<T> inner;
 
-    public ChangedSerializer( Serializer<T> inner)
+    public ChangedSerializer( ISerializer<T> inner)
 {
         this.inner = inner;
     }
 
-    public Serializer<T> inner()
+    public ISerializer<T> inner()
 {
         return inner;
     }
 
-    public void setInner( Serializer<T> inner)
+    public void setInner( ISerializer<T> inner)
 {
         this.inner = inner;
     }
@@ -49,7 +51,7 @@ public ChangedSerializer<T> : Serializer<Change<T>> {
      * @throws StreamsException if both old and new values of data are null, or if
      * both values are not null
      */
-    
+
     public byte[] serialize( string topic,  Headers headers,  Change<T> data)
 {
          byte[] serializedKey;
@@ -82,13 +84,13 @@ public ChangedSerializer<T> : Serializer<Change<T>> {
         return buf.array();
     }
 
-    
+
     public byte[] serialize( string topic,  Change<T> data)
 {
         return serialize(topic, null, data);
     }
 
-    
+
     public void close()
 {
         inner.close();

@@ -1,4 +1,4 @@
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Processor.Internals
             forward(
                 key,
                 value,
-                To.child(((List<ProcessorNode>)currentNode().children())[childIndex).name()));
+                To.child(((List<ProcessorNode>)currentNode().children())[childIndex].name()));
         }
 
 
@@ -277,7 +277,7 @@ namespace Kafka.Streams.Processor.Internals
 
             public V get(K key)
             {
-                return wrapped()[key);
+                return wrapped()[key];
             }
 
 

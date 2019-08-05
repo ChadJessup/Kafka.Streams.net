@@ -1,4 +1,4 @@
-using Kafka.streams.kstream;
+using Kafka.Streams.kstream;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using System;
@@ -14,7 +14,7 @@ namespace Kafka.Streams.KStream
      * @param value type
      * @see KStream#print(Printed)
      */
-    public Printed<K, V> : INamedOperation<Printed<K, V>>
+    public class Printed<K, V> : INamedOperation<Printed<K, V>>
     {
         protected Stream outputStream;
         protected string label;

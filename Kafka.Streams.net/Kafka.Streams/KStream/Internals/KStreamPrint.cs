@@ -23,37 +23,40 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public KStreamPrint<K, V> : ProcessorSupplier<K, V> {
+    public class KStreamPrint<K, V> : ProcessorSupplier<K, V>
+    {
 
-    private  ForeachAction<K, V> action;
-    
-    public KStreamPrint( ForeachAction<K, V> action)
-{
-        this.action = action;
-    }
+        private ForeachAction<K, V> action;
 
-    
-    public Processor<K, V> get()
-{
-        return new KStreamPrintProcessor();
-    }
-
-    private KStreamPrintProcessor : AbstractProcessor<K, V> {
-
-        
-        public void process( K key,  V value)
-{
-            action.apply(key, value);
+        public KStreamPrint(ForeachAction<K, V> action)
+        {
+            this.action = action;
         }
 
-        
-        public void close()
-{
-            if (action is PrintForeachAction)
-{
-                ((PrintForeachAction) action).close();
+
+        public Processor<K, V> get()
+        {
+            return new KStreamPrintProcessor();
+        }
+
+        private class KStreamPrintProcessor : AbstractProcessor<K, V>
+        {
+
+
+            public void process(K key, V value)
+            {
+                action.apply(key, value);
+            }
+
+
+            public void close()
+            {
+                if (action is PrintForeachAction)
+                {
+                    ((PrintForeachAction)action).close();
+                }
             }
         }
-    }
 
+    }
 }

@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.kstream.Windowed;
+using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.QueryableStoreType;
 using Kafka.Streams.State.ReadOnlySessionStore;
@@ -27,7 +27,7 @@ using Kafka.Streams.State.ReadOnlySessionStore;
 
 /**
  * Wrapper over the underlying {@link ReadOnlySessionStore}s found in a {@link
- * org.apache.kafka.streams.processor.internals.ProcessorTopology}
+ * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
  */
 public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {

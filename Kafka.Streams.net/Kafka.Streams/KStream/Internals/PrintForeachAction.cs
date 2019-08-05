@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public PrintForeachAction<K, V> : ForeachAction<K, V> {
+public class PrintForeachAction<K, V> : ForeachAction<K, V> {
 
     private  string label;
     private  PrintWriter printWriter;
@@ -50,7 +50,7 @@ public PrintForeachAction<K, V> : ForeachAction<K, V> {
         this.label = label;
     }
 
-    
+
     public void apply( K key,  V value)
 {
          string data = string.Format("[%s]: %s", label, mapper.apply(key, value));

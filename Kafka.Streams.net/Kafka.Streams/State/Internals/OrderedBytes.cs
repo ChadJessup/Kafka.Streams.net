@@ -47,7 +47,7 @@ class OrderedBytes
         rangeEnd.Add(maxSuffix);
         rangeEnd.flip();
 
-        byte[] res = new byte[rangeEnd.remaining());
+        byte[] res = new byte[rangeEnd.remaining()];
         ByteBuffer.wrap(res).Add(rangeEnd);
         return Bytes.wrap(res);
     }

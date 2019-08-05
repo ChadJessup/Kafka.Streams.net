@@ -56,7 +56,7 @@ public class StandbyTask : AbstractTask
     StandbyTask(TaskId id,
                 Collection<TopicPartition> partitions,
                 ProcessorTopology topology,
-                Consumer<byte[], byte[]> consumer,
+                IConsumer<byte[], byte[]> consumer,
                 ChangelogReader changelogReader,
                 StreamsConfig config,
                 StreamsMetricsImpl metrics,

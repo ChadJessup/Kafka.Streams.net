@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Internals
 
         public override byte[] fetch(Bytes key, long timestamp)
         {
-            byte[] bytesValue = wrapped()[WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum));
+            byte[] bytesValue = wrapped()[WindowKeySchema.toStoreKeyBinary(key, timestamp, seqnum)];
             if (bytesValue == null)
             {
                 return null;

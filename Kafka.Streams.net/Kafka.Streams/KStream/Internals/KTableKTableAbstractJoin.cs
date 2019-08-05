@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-abstract KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
+abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
 
     private  KTableImpl<K, ?, V1> table1;
     private  KTableImpl<K, ?, V2> table2;
@@ -41,7 +41,7 @@ abstract KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1,
         this.joiner = joiner;
     }
 
-    
+
     public  void enableSendingOldValues()
 {
         table1.enableSendingOldValues();

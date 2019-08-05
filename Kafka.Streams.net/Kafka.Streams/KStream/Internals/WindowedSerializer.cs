@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public interface WindowedSerializer<T> : Serializer<Windowed<T>> {
+public interface WindowedSerializer<T> : ISerializer<Windowed<T>> {
 
     byte[] serializeBaseKey(string topic, Windowed<T> data);
 }

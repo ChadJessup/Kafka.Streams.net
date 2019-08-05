@@ -142,7 +142,7 @@ public interface KTable<K, V> {
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      *
      * @param predicate     a filter {@link Predicate} that is applied to each record
@@ -181,7 +181,7 @@ public interface KTable<K, V> {
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      *
      * @param predicate     a filter {@link Predicate} that is applied to each record
@@ -267,7 +267,7 @@ public interface KTable<K, V> {
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * @param predicate a filter {@link Predicate} that is applied to each record
      * @param materialized  a {@link Materialized} that describes how the {@link IStateStore} for the resulting {@code KTable}
@@ -305,7 +305,7 @@ public interface KTable<K, V> {
      * }</pre>
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * @param predicate a filter {@link Predicate} that is applied to each record
      * @param named     a {@link Named} config used to name the processor in the topology
@@ -359,7 +359,7 @@ public interface KTable<K, V> {
      * The example below counts the number of token of the value string.
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
-     * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.as("countTokenValue"));
+     * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.As("countTokenValue"));
      * }</pre>
      * <p>
      * This operation preserves data co-location with respect to the key.
@@ -424,7 +424,7 @@ public interface KTable<K, V> {
      * <pre>{@code
      * KTable<string, string> inputTable = builder.table("topic");
      * KTable<string, int> outputTable =
-     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length, Named.as("countTokenValueAndKey"));
+     *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length, Named.As("countTokenValueAndKey"));
      * }</pre>
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -471,7 +471,7 @@ public interface KTable<K, V> {
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * This operation preserves data co-location with respect to the key.
      * Thus, <em>no</em> internal data redistribution is required if a key based operator (like a join) is applied to
@@ -518,7 +518,7 @@ public interface KTable<K, V> {
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * This operation preserves data co-location with respect to the key.
      * Thus, <em>no</em> internal data redistribution is required if a key based operator (like a join) is applied to
@@ -567,7 +567,7 @@ public interface KTable<K, V> {
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
      * This operation preserves data co-location with respect to the key.
@@ -615,7 +615,7 @@ public interface KTable<K, V> {
      * {@link KafkaStreams#store(string, QueryableStoreType) KafkaStreams#store(...)}:
      * For non-local keys, a custom RPC mechanism must be implemented using {@link KafkaStreams#allMetadata()} to
      * query the value of the key on a parallel running instance of your Kafka Streams application.
-     * The store name to query with is specified by {@link Materialized#as(string)} or {@link Materialized#as(KeyValueBytesStoreSupplier)}.
+     * The store name to query with is specified by {@link Materialized#As(string)} or {@link Materialized#As(KeyValueBytesStoreSupplier)}.
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
      * This operation preserves data co-location with respect to the key.
@@ -915,7 +915,7 @@ public interface KTable<K, V> {
      *
      * KTable outputTable = inputTable.transformValues(
      *     new ValueTransformerWithKeySupplier() { [] },
-     *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>as("outputTable")
+     *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>As("outputTable")
      *                                 .withKeySerde(Serdes.string())
      *                                 .withValueSerde(Serdes.string()),
      *     "myValueTransformState");
@@ -1000,7 +1000,7 @@ public interface KTable<K, V> {
      *
      * KTable outputTable = inputTable.transformValues(
      *     new ValueTransformerWithKeySupplier() { [] },
-     *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>as("outputTable")
+     *     Materialized.<string, string, KeyValueStore<Bytes, byte[]>>As("outputTable")
      *                                 .withKeySerde(Serdes.string())
      *                                 .withValueSerde(Serdes.string()),
      *     "myValueTransformState");
@@ -1141,7 +1141,7 @@ public interface KTable<K, V> {
      * Because a new key is selected, an internal repartitioning topic will be created in Kafka.
      * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
      * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},  "&lt;name&gt;" is
-     * either provided via {@link org.apache.kafka.streams.kstream.Grouped#as(string)} or an internally generated name.
+     * either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally generated name.
      *
      * <p>
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.

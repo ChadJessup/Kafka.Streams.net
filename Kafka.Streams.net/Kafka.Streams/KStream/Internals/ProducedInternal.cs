@@ -22,31 +22,33 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public ProducedInternal<K, V> : Produced<K, V> {
+    public class ProducedInternal<K, V> : Produced<K, V>
+    {
 
-    public ProducedInternal( Produced<K, V> produced)
-{
-        base(produced);
+        public ProducedInternal(Produced<K, V> produced)
+            : base(produced)
+        {
+        }
+
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
+
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
+
+        public StreamPartitioner<K, V> streamPartitioner()
+        {
+            return partitioner;
+        }
+
+        public string name()
+        {
+            return processorName;
+        }
+
     }
-
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
-
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
-
-    public StreamPartitioner<K, V> streamPartitioner()
-{
-        return partitioner;
-    }
-
-    public string name()
-{
-        return processorName;
-    }
-
 }

@@ -122,21 +122,21 @@ namespace Kafka.Common.Metrics
                 this.metricsScheduler = new ScheduledThreadPoolExecutor(1);
                 // Creating a daemon thread to not block shutdown
                 //    this.metricsScheduler.setThreadFactory(new ThreadFactory()
-{
+                {
 
-                //        public Thread newThread(Runnable runnable)
-{
-                //        return KafkaThread.daemon("SensorExpiryThread", runnable);
-                //    }
-                //});
+                    //        public Thread newThread(Runnable runnable)
+                    {
+                        //        return KafkaThread.daemon("SensorExpiryThread", runnable);
+                        //    }
+                        //});
 
-                //this.metricsScheduler.scheduleAtFixedRate(new ExpireSensorTask(), 30, 30, TimeUnit.SECONDS);
-            }
+                        //this.metricsScheduler.scheduleAtFixedRate(new ExpireSensorTask(), 30, 30, TimeUnit.SECONDS);
+                    }
             else
-            {
-                this.metricsScheduler = null;
-            }
-        }
+                    {
+                        this.metricsScheduler = null;
+                    }
+                }
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -245,7 +245,7 @@ namespace Kafka.Common.Metrics
          * @param tags  key/value attributes of the metric
          */
         public MetricName metricName(string name, string group, Dictionary<string, string> tags)
-{
+        {
             return metricName(name, group, "", tags);
         }
 
@@ -293,56 +293,56 @@ namespace Kafka.Common.Metrics
                     MetricName metricName = metrics.metricName(template.name, template.group, template.description, tags);
                     //string mBeanName = JmxReporter.getMBeanName(domain, metricName);
                     //if (!beansAndAttributes.ContainsKey(mBeanName))
-{
-                    //    beansAndAttributes.Add(mBeanName, new TreeMap<string, string>());
-                    //}
-                    //Dictionary<string, string> attrAndDesc = beansAndAttributes["mBeanName"];
-                    //if (!attrAndDesc.ContainsKey(template.name()))
-                    //{
-                    //    attrAndDesc.Add(template.name(), template.description());
-                    //}
-                    //else
-                    //{
-                    //    throw new System.ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name() + "' is defined twice.");
-                    //}
+                    {
+                        //    beansAndAttributes.Add(mBeanName, new TreeMap<string, string>());
+                        //}
+                        //Dictionary<string, string> attrAndDesc = beansAndAttributes["mBeanName"];
+                        //if (!attrAndDesc.ContainsKey(template.name()))
+                        //{
+                        //    attrAndDesc.Add(template.name(), template.description());
+                        //}
+                        //else
+                        //{
+                        //    throw new System.ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name() + "' is defined twice.");
+                        //}
+                    }
                 }
-            }
 
-            StringBuilder b = new StringBuilder();
-            //b.Append("<table=\"data-table\"><tbody>\n");
+                StringBuilder b = new StringBuilder();
+                //b.Append("<table=\"data-table\"><tbody>\n");
 
-            //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes.entrySet())
-{
-            //    b.Append("<tr>\n");
-            //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
-            //    b.Append(e.Key);
-            //    b.Append("</td>");
-            //    b.Append("</tr>\n");
+                //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes.entrySet())
+                {
+                    //    b.Append("<tr>\n");
+                    //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
+                    //    b.Append(e.Key);
+                    //    b.Append("</td>");
+                    //    b.Append("</tr>\n");
 
-            //    b.Append("<tr>\n");
-            //    b.Append("<th style=\"width: 90px\"></th>\n");
-            //    b.Append("<th>Attribute name</th>\n");
-            //    b.Append("<th>Description</th>\n");
-            //    b.Append("</tr>\n");
+                    //    b.Append("<tr>\n");
+                    //    b.Append("<th style=\"width: 90px\"></th>\n");
+                    //    b.Append("<th>Attribute name</th>\n");
+                    //    b.Append("<th>Description</th>\n");
+                    //    b.Append("</tr>\n");
 
-            //    foreach (Entry<string, string> e2 in e.Value.entrySet())
-{
-            //        b.Append("<tr>\n");
-            //        b.Append("<td></td>");
-            //        b.Append("<td>");
-            //        b.Append(e2.Key);
-            //        b.Append("</td>");
-            //        b.Append("<td>");
-            //        b.Append(e2.Value);
-            //        b.Append("</td>");
-            //        b.Append("</tr>\n");
-            //    }
+                    //    foreach (Entry<string, string> e2 in e.Value.entrySet())
+                    {
+                        //        b.Append("<tr>\n");
+                        //        b.Append("<td></td>");
+                        //        b.Append("<td>");
+                        //        b.Append(e2.Key);
+                        //        b.Append("</td>");
+                        //        b.Append("<td>");
+                        //        b.Append(e2.Value);
+                        //        b.Append("</td>");
+                        //        b.Append("</tr>\n");
+                        //    }
 
-            //}
-            //b.Append("</tbody></table>");
+                        //}
+                        //b.Append("</tbody></table>");
 
-            return b.ToString();
-        }
+                        return b.ToString();
+                    }
 
         public MetricConfig config { get; }
 
@@ -363,7 +363,7 @@ namespace Kafka.Common.Metrics
          * @return The sensor
          */
         public Sensor sensor(string name)
-{
+        {
             return this.sensor(name, RecordingLevel.INFO);
         }
 
@@ -486,7 +486,7 @@ namespace Kafka.Common.Metrics
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, List<Sensor> parents)
-{
+        {
             return this.sensor(name, config, inactiveSensorExpirationTimeSeconds, RecordingLevel.INFO, parents);
         }
 
@@ -499,7 +499,7 @@ namespace Kafka.Common.Metrics
         {
             Sensor sensor = sensors[name];
             if (sensor != null)
-{
+            {
                 List<Sensor> childSensors = null;
                 lock (sensor)
                 {
@@ -546,8 +546,8 @@ namespace Kafka.Common.Metrics
          * @param measurable The measurable that will be measured by this metric
          */
         public void addMetric(MetricName metricName, IMeasurable measurable)
-{
-           .AddMetric(metricName, null, measurable);
+        {
+            addMetric(metricName, null, measurable);
         }
 
         /**
@@ -563,7 +563,7 @@ namespace Kafka.Common.Metrics
          */
         public void addMetric(MetricName metricName, MetricConfig config, IMeasurable measurable)
         {
-           .AddMetric(metricName, config, (IMetricValueProvider)measurable);
+            addMetric(metricName, config, (IMetricValueProvider)measurable);
         }
 
         /**
@@ -596,7 +596,7 @@ namespace Kafka.Common.Metrics
          */
         public void addMetric(MetricName metricName, IMetricValueProvider metricValueProvider)
         {
-           .AddMetric(metricName, null, metricValueProvider);
+            addMetric(metricName, null, metricValueProvider);
         }
 
         /**
@@ -696,12 +696,12 @@ namespace Kafka.Common.Metrics
         }
 
         public MetricName metricInstance(MetricNameTemplate template, string[] keyValue)
-{
+        {
             return metricInstance(template, getTags(keyValue));
         }
 
         public MetricName metricInstance(MetricNameTemplate template, Dictionary<string, string> tags)
-{
+        {
             // check to make sure that the runtime defined tags contain all the template tags.
             HashSet<string> runtimeTagKeys = new HashSet<string>(tags.Keys);
             runtimeTagKeys.UnionWith(config.tags.Keys);
@@ -709,7 +709,7 @@ namespace Kafka.Common.Metrics
             HashSet<string> templateTagKeys = template.tags;
 
             if (!runtimeTagKeys.Equals(templateTagKeys))
-{
+            {
                 throw new System.ArgumentException("For '" + template.name + "', runtime-defined metric tags do not match the tags in the template. "
                         + "Runtime = " + runtimeTagKeys.ToString() + " Template = " + templateTagKeys.ToString());
             }
@@ -721,16 +721,17 @@ namespace Kafka.Common.Metrics
          * Close this metrics repository.
          */
         public void close()
-{
+        {
             if (this.metricsScheduler != null)
             {
-//                this.metricsScheduler.shutdown();
+                //                this.metricsScheduler.shutdown();
                 try
-{
+                {
 
                     //this.metricsScheduler.awaitTermination(30, TimeUnit.SECONDS);
-                } catch (ThreadInterruptedException ex)
-{
+                }
+                catch (ThreadInterruptedException ex)
+                {
                     // ignore and continue shutdown
                     Thread.CurrentThread.Interrupt();
                 }
@@ -741,7 +742,8 @@ namespace Kafka.Common.Metrics
                 try
                 {
                     reporter.close();
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     log.LogError("Error when closing " + reporter.GetType().Name, e);
                 }

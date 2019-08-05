@@ -2,7 +2,7 @@
 
 namespace Kafka.Streams.App
 {
-    public Program
+    public class Program
     {
         static void Main()
         {

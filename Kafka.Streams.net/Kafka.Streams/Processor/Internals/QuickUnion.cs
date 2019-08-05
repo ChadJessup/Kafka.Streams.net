@@ -14,68 +14,70 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-
-
-public QuickUnion<T> {
-
-    private HashMap<T, T> ids = new HashMap<>();
-
-    public void add(T id)
+namespace Kafka.Streams.Processor.Internals
 {
-        ids.Add(id, id);
-    }
 
-    public bool exists(T id)
-{
-        return ids.ContainsKey(id);
-    }
 
-    /**
-     * @throws NoSuchElementException if the parent of this node is null
-     */
-    public T root(T id)
-{
-        T current = id;
-        T parent = ids[current];
 
-        if (parent == null)
-{
-            throw new NoSuchElementException("id: " + id.ToString());
+    public class QuickUnion<T>
+    {
+
+        private HashMap<T, T> ids = new HashMap<>();
+
+        public void add(T id)
+        {
+            ids.Add(id, id);
         }
 
-        while (!parent.Equals(current))
-{
-            // do the path splitting
-            T grandparent = ids[parent];
-            ids.Add(current, grandparent);
-
-            current = parent;
-            parent = grandparent;
+        public bool exists(T id)
+        {
+            return ids.ContainsKey(id);
         }
-        return current;
-    }
 
-    
-    void unite(T id1, T[] idList)
-{
-        foreach (T id2 in idList)
-{
-            unitePair(id1, id2);
+        /**
+         * @throws NoSuchElementException if the parent of this node is null
+         */
+        public T root(T id)
+        {
+            T current = id;
+            T parent = ids[current];
+
+            if (parent == null)
+            {
+                throw new NoSuchElementException("id: " + id.ToString());
+            }
+
+            while (!parent.Equals(current))
+            {
+                // do the path splitting
+                T grandparent = ids[parent];
+                ids.Add(current, grandparent);
+
+                current = parent;
+                parent = grandparent;
+            }
+            return current;
         }
-    }
 
-    private void unitePair(T id1, T id2)
-{
-        T root1 = root(id1);
-        T root2 = root(id2);
 
-        if (!root1.Equals(root2))
-{
-            ids.Add(root1, root2);
+        void unite(T id1, T[] idList)
+        {
+            foreach (T id2 in idList)
+            {
+                unitePair(id1, id2);
+            }
         }
-    }
 
+        private void unitePair(T id1, T id2)
+        {
+            T root1 = root(id1);
+            T root2 = root(id2);
+
+            if (!root1.Equals(root2))
+            {
+                ids.Add(root1, root2);
+            }
+        }
+
+    }
 }

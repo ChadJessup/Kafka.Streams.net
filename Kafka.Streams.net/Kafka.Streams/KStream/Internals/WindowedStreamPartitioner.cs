@@ -16,40 +16,34 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
+    public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V>
+    {
 
+        private WindowedSerializer<K> serializer;
 
+        public WindowedStreamPartitioner(WindowedSerializer<K> serializer)
+        {
+            this.serializer = serializer;
+        }
 
+        /**
+         * WindowedStreamPartitioner determines the partition number for a record with the given windowed key and value
+         * and the current number of partitions. The partition number id determined by the original key of the windowed key
+         * using the same logic as DefaultPartitioner so that the topic is partitioned by the original key.
+         *
+         * @param topic the topic name this record is sent to
+         * @param windowedKey the key of the record
+         * @param value the value of the record
+         * @param numPartitions the total number of partitions
+         * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
+         */
 
+        public int partition(string topic, Windowed<K> windowedKey, V value, int numPartitions)
+        {
+            byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
 
-
-
-
-public WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V> {
-
-    private  WindowedSerializer<K> serializer;
-
-    public WindowedStreamPartitioner( WindowedSerializer<K> serializer)
-{
-        this.serializer = serializer;
-    }
-
-    /**
-     * WindowedStreamPartitioner determines the partition number for a record with the given windowed key and value
-     * and the current number of partitions. The partition number id determined by the original key of the windowed key
-     * using the same logic as DefaultPartitioner so that the topic is partitioned by the original key.
-     *
-     * @param topic the topic name this record is sent to
-     * @param windowedKey the key of the record
-     * @param value the value of the record
-     * @param numPartitions the total number of partitions
-     * @return an integer between 0 and {@code numPartitions-1}, or {@code null} if the default partitioning logic should be used
-     */
-    
-    public int partition( string topic,  Windowed<K> windowedKey,  V value,  int numPartitions)
-{
-         byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
-
-        // hash the keyBytes to choose a partition
-        return toPositive(Utils.murmur2(keyBytes)) % numPartitions;
+            // hash the keyBytes to choose a partition
+            return toPositive(Utils.murmur2(keyBytes)) % numPartitions;
+        }
     }
 }

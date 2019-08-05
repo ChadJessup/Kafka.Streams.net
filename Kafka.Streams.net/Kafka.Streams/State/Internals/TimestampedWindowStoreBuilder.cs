@@ -14,193 +14,179 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.kstream.Windowed;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.KeyValueIterator;
-using Kafka.Streams.State.TimestampedBytesStore;
-using Kafka.Streams.State.TimestampedWindowStore;
-using Kafka.Streams.State.ValueAndTimestamp;
-using Kafka.Streams.State.WindowBytesStoreSupplier;
-using Kafka.Streams.State.WindowStore;
-using Kafka.Streams.State.WindowStoreIterator;
-
-
-
-public TimestampedWindowStoreBuilder<K, V>
-    : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedWindowStore<K, V>>
+namespace Kafka.Streams.State.Internals
 {
+    public class TimestampedWindowStoreBuilder<K, V>
+        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedWindowStore<K, V>>
+    {
 
-    private WindowBytesStoreSupplier storeSupplier;
+        private WindowBytesStoreSupplier storeSupplier;
 
-    public TimestampedWindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
-                                         ISerde<K> keySerde,
-                                         ISerde<V> valueSerde,
-                                         ITime time)
-{
-        base(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time);
-        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
-        this.storeSupplier = storeSupplier;
-    }
+        public TimestampedWindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
+                                             ISerde<K> keySerde,
+                                             ISerde<V> valueSerde,
+                                             ITime time)
+            : base(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time)
+        {
+            storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
+            this.storeSupplier = storeSupplier;
+        }
 
-    public override TimestampedWindowStore<K, V> build()
-{
-        WindowStore<Bytes, byte[]> store = storeSupplier[];
-        if (!(store is TimestampedBytesStore))
-{
-            if (store.persistent())
-{
-                store = new WindowToTimestampedWindowByteStoreAdapter(store);
-            } else
-{
-                store = new InMemoryTimestampedWindowStoreMarker(store);
+        public override TimestampedWindowStore<K, V> build()
+        {
+            WindowStore<Bytes, byte[]> store = storeSupplier[];
+            if (!(store is TimestampedBytesStore))
+            {
+                if (store.persistent())
+                {
+                    store = new WindowToTimestampedWindowByteStoreAdapter(store);
+                }
+                else
+                {
+                    store = new InMemoryTimestampedWindowStoreMarker(store);
+                }
             }
+            return new MeteredTimestampedWindowStore<>(
+                maybeWrapCaching(maybeWrapLogging(store)),
+                storeSupplier.windowSize(),
+                storeSupplier.metricsScope(),
+                time,
+                keySerde,
+                valueSerde);
         }
-        return new MeteredTimestampedWindowStore<>(
-            maybeWrapCaching(maybeWrapLogging(store)),
-            storeSupplier.windowSize(),
-            storeSupplier.metricsScope(),
-            time,
-            keySerde,
-            valueSerde);
-    }
 
-    private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
-{
-        if (!enableCaching)
-{
-            return inner;
+        private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
+        {
+            if (!enableCaching)
+            {
+                return inner;
+            }
+            return new CachingWindowStore(
+                inner,
+                storeSupplier.windowSize(),
+                storeSupplier.segmentIntervalMs());
         }
-        return new CachingWindowStore(
-            inner,
-            storeSupplier.windowSize(),
-            storeSupplier.segmentIntervalMs());
-    }
 
-    private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
-{
-        if (!enableLogging)
-{
-            return inner;
+        private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
+        {
+            if (!enableLogging)
+            {
+                return inner;
+            }
+            return new ChangeLoggingTimestampedWindowBytesStore(inner, storeSupplier.retainDuplicates());
         }
-        return new ChangeLoggingTimestampedWindowBytesStore(inner, storeSupplier.retainDuplicates());
-    }
 
-    public long retentionPeriod()
-{
-        return storeSupplier.retentionPeriod();
-    }
+        public long retentionPeriod()
+        {
+            return storeSupplier.retentionPeriod();
+        }
 
 
-    private static InMemoryTimestampedWindowStoreMarker
+        private static class InMemoryTimestampedWindowStoreMarker
         : WindowStore<Bytes, byte[]>, TimestampedBytesStore
-{
+        {
 
-        private WindowStore<Bytes, byte[]> wrapped;
+            private WindowStore<Bytes, byte[]> wrapped;
 
-        private InMemoryTimestampedWindowStoreMarker(WindowStore<Bytes, byte[]> wrapped)
-{
-            if (wrapped.persistent())
-{
-                throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
+            private InMemoryTimestampedWindowStoreMarker(WindowStore<Bytes, byte[]> wrapped)
+            {
+                if (wrapped.persistent())
+                {
+                    throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
+                }
+                this.wrapped = wrapped;
             }
-            this.wrapped = wrapped;
-        }
 
-        
-        public void init(IProcessorContext context,
-                         IStateStore root)
-{
-            wrapped.init(context, root);
-        }
 
-        
-        public void put(Bytes key,
-                        byte[] value)
-{
-            wrapped.Add(key, value);
-        }
+            public void init(IProcessorContext context,
+                             IStateStore root)
+            {
+                wrapped.init(context, root);
+            }
 
-        
-        public void put(Bytes key,
-                        byte[] value,
-                        long windowStartTimestamp)
-{
-            wrapped.Add(key, value, windowStartTimestamp);
-        }
 
-        
-        public byte[] fetch(Bytes key,
-                            long time)
-{
-            return wrapped.fetch(key, time);
-        }
+            public void put(Bytes key,
+                            byte[] value)
+            {
+                wrapped.Add(key, value);
+            }
 
-        
-        
-        public WindowStoreIterator<byte[]> fetch(Bytes key,
-                                                 long timeFrom,
-                                                 long timeTo)
-{
-            return wrapped.fetch(key, timeFrom, timeTo);
-        }
 
-        
-        
-        public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
-                                                               Bytes to,
-                                                               long timeFrom,
-                                                               long timeTo)
-{
-            return wrapped.fetch(from, to, timeFrom, timeTo);
-        }
+            public void put(Bytes key,
+                            byte[] value,
+                            long windowStartTimestamp)
+            {
+                wrapped.Add(key, value, windowStartTimestamp);
+            }
 
-        
-        
-        public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
-                                                                  long timeTo)
-{
-            return wrapped.fetchAll(timeFrom, timeTo);
-        }
 
-        
-        public KeyValueIterator<Windowed<Bytes>, byte[]> all()
-{
-            return wrapped.all();
-        }
+            public byte[] fetch(Bytes key,
+                                long time)
+            {
+                return wrapped.fetch(key, time);
+            }
 
-        
-        public void flush()
-{
-            wrapped.flush();
-        }
 
-        
-        public void close()
-{
-            wrapped.close();
-        }
-        
-        public bool isOpen()
-{
-            return wrapped.isOpen();
-        }
 
-        
-        public string name()
-{
-            return wrapped.name();
-        }
+            public WindowStoreIterator<byte[]> fetch(Bytes key,
+                                                     long timeFrom,
+                                                     long timeTo)
+            {
+                return wrapped.fetch(key, timeFrom, timeTo);
+            }
 
-        
-        public bool persistent()
-{
-            return false;
+
+
+            public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+                                                                   Bytes to,
+                                                                   long timeFrom,
+                                                                   long timeTo)
+            {
+                return wrapped.fetch(from, to, timeFrom, timeTo);
+            }
+
+
+
+            public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+                                                                      long timeTo)
+            {
+                return wrapped.fetchAll(timeFrom, timeTo);
+            }
+
+
+            public KeyValueIterator<Windowed<Bytes>, byte[]> all()
+            {
+                return wrapped.all();
+            }
+
+
+            public void flush()
+            {
+                wrapped.flush();
+            }
+
+
+            public void close()
+            {
+                wrapped.close();
+            }
+
+            public bool isOpen()
+            {
+                return wrapped.isOpen();
+            }
+
+
+            public string name()
+            {
+                return wrapped.name();
+            }
+
+
+            public bool persistent()
+            {
+                return false;
+            }
         }
     }
 }

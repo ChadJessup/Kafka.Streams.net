@@ -20,46 +20,48 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-/**
- * A session window covers a closed time interval with its start and end timestamp both being an inclusive boundary.
- * <p>
- * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
- *
- * @see TimeWindow
- * @see UnlimitedWindow
- * @see org.apache.kafka.streams.kstream.SessionWindows
- * @see org.apache.kafka.streams.processor.TimestampExtractor
- */
-public  SessionWindow : Window
-{
-
-
     /**
-     * Create a new window for the given start time and end time (both inclusive).
+     * A session window covers a closed time interval with its start and end timestamp both being an inclusive boundary.
+     * <p>
+     * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
      *
-     * @param startMs the start timestamp of the window
-     * @param endMs   the end timestamp of the window
-     * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
+     * @see TimeWindow
+     * @see UnlimitedWindow
+     * @see org.apache.kafka.streams.kstream.SessionWindows
+     * @see org.apache.kafka.streams.processor.TimestampExtractor
      */
-    public SessionWindow( long startMs,  long endMs){
-        base(startMs, endMs);
-    }
+    public class SessionWindow : Window
+    {
 
-    /**
-     * Check if the given window overlaps with this window.
-     *
-     * @param other another window
-     * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
-     * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
-     */
-    public bool overlap( Window other){
-        if (getClass() != other.getClass())
-{
-            throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
-                + other.getClass() + ".");
+
+        /**
+         * Create a new window for the given start time and end time (both inclusive).
+         *
+         * @param startMs the start timestamp of the window
+         * @param endMs   the end timestamp of the window
+         * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
+         */
+        public SessionWindow(long startMs, long endMs)
+            : base(startMs, endMs)
+        {
         }
-         SessionWindow otherWindow = (SessionWindow) other;
-        return !(otherWindow.endMs < startMs || endMs < otherWindow.startMs);
-    }
 
-}
+        /**
+         * Check if the given window overlaps with this window.
+         *
+         * @param other another window
+         * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
+         * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
+         */
+        public bool overlap(Window other)
+        {
+            if (getClass() != other.getClass())
+            {
+                throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
+                    + other.getClass() + ".");
+            }
+            SessionWindow otherWindow = (SessionWindow)other;
+            return !(otherWindow.endMs < startMs || endMs < otherWindow.startMs);
+        }
+
+    }

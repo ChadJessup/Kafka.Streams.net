@@ -1,5 +1,5 @@
 using Kafka.Common.Utils;
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Interfaces;
@@ -108,7 +108,7 @@ namespace Kafka.Streams.State.Internals
 
             Dictionary<string, object> configs = context.appConfigs();
             Class<RocksDBConfigSetter> configSetterClass =
-                (Class<RocksDBConfigSetter>)configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG);
+                (Class<RocksDBConfigSetter>)configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
 
             if (configSetterClass != null)
             {
@@ -147,7 +147,7 @@ namespace Kafka.Streams.State.Internals
             try
             {
                 db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
-                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0));
+                dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0]);
             }
             catch (RocksDBException e)
             {
@@ -238,7 +238,7 @@ namespace Kafka.Streams.State.Internals
             validateStoreOpen();
             try
             {
-                return dbAccessor[key());
+                return dbAccessor[key()];
             }
             catch (RocksDBException e)
             {

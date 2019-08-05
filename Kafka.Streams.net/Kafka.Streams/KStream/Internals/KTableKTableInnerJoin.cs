@@ -165,7 +165,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 
             if (value1 != null)
 {
-                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1));
+                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1)];
                  V2 value2 = getValueOrNull(valueAndTimestamp2);
 
                 if (value2 != null)

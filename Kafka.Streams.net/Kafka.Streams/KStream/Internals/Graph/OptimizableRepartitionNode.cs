@@ -26,103 +26,102 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
+    public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V>
+    {
 
-    OptimizableRepartitionNode( string nodeName,
-                                string sourceName,
-                                ProcessorParameters processorParameters,
-                                ISerde<K> keySerde,
-                                ISerde<V> valueSerde,
-                                string sinkName,
-                                string repartitionTopic)
-{
+        OptimizableRepartitionNode(string nodeName,
+                                    string sourceName,
+                                    ProcessorParameters processorParameters,
+                                    ISerde<K> keySerde,
+                                    ISerde<V> valueSerde,
+                                    string sinkName,
+                                    string repartitionTopic)
+            : base(
+                nodeName,
+                sourceName,
+                processorParameters,
+                keySerde,
+                valueSerde,
+                sinkName,
+                repartitionTopic)
+        {
 
-        base(
-            nodeName,
-            sourceName,
-            processorParameters,
-            keySerde,
-            valueSerde,
-            sinkName,
-            repartitionTopic
-        );
+        }
 
-    }
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
 
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
 
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
-
-    public string repartitionTopic()
-{
-        return repartitionTopic;
-    }
-
-    
-    Serializer<V> getValueSerializer()
-{
-        return valueSerde != null ? valueSerde.serializer() : null;
-    }
-
-    
-    Deserializer<V> getValueDeserializer()
-{
-        return  valueSerde != null ? valueSerde.deserializer() : null;
-    }
-
-    
-    public string ToString()
-{
-        return "OptimizableRepartitionNode{ " + base.ToString() + " }";
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-         Serializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
-         Deserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
-
-        topologyBuilder.AddInternalTopic(repartitionTopic);
-
-        topologyBuilder.AddProcessor(
-            processorParameters.processorName(),
-            processorParameters.processorSupplier(),
-            parentNodeNames()
-        );
-
-        topologyBuilder.AddSink(
-            sinkName,
-            repartitionTopic,
-            keySerializer,
-            getValueSerializer(),
-            null,
-            processorParameters.processorName()
-        );
-
-        topologyBuilder.AddSource(
-            null,
-            sourceName,
-            new FailOnInvalidTimestamp(),
-            keyDeserializer,
-            getValueDeserializer(),
-            repartitionTopic
-        );
-
-    }
-
-    public staticOptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
-{
-        return new OptimizableRepartitionNodeBuilder<>();
-    }
+        public string repartitionTopic()
+        {
+            return repartitionTopic;
+        }
 
 
-    public static  OptimizableRepartitionNodeBuilder<K, V> {
+        ISerializer<V> getValueSerializer()
+        {
+            return valueSerde != null ? valueSerde.serializer() : null;
+        }
+
+
+        IDeserializer<V> getValueDeserializer()
+        {
+            return valueSerde != null ? valueSerde.deserializer() : null;
+        }
+
+
+        public string ToString()
+        {
+            return "OptimizableRepartitionNode{ " + base.ToString() + " }";
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            ISerializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
+            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
+
+            topologyBuilder.AddInternalTopic(repartitionTopic);
+
+            topologyBuilder.AddProcessor(
+                processorParameters.processorName(),
+                processorParameters.processorSupplier(),
+                parentNodeNames()
+            );
+
+            topologyBuilder.AddSink(
+                sinkName,
+                repartitionTopic,
+                keySerializer,
+                getValueSerializer(),
+                null,
+                processorParameters.processorName()
+            );
+
+            topologyBuilder.AddSource(
+                null,
+                sourceName,
+                new FailOnInvalidTimestamp(),
+                keyDeserializer,
+                getValueDeserializer(),
+                repartitionTopic
+            );
+
+        }
+
+        public staticOptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
+        {
+            return new OptimizableRepartitionNodeBuilder<>();
+        }
+
+
+        public static OptimizableRepartitionNodeBuilder<K, V> {
 
         private string nodeName;
         private ProcessorParameters processorParameters;
@@ -133,54 +132,54 @@ public OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V> {
         private string repartitionTopic;
 
         private OptimizableRepartitionNodeBuilder()
-{
+        {
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withProcessorParameters( ProcessorParameters processorParameters)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withProcessorParameters(ProcessorParameters processorParameters)
+        {
             this.processorParameters = processorParameters;
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withKeySerde( ISerde<K> keySerde)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withKeySerde(ISerde<K> keySerde)
+        {
             this.keySerde = keySerde;
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withValueSerde( ISerde<V> valueSerde)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withValueSerde(ISerde<V> valueSerde)
+        {
             this.valueSerde = valueSerde;
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withSinkName( string sinkName)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withSinkName(string sinkName)
+        {
             this.sinkName = sinkName;
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withSourceName( string sourceName)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withSourceName(string sourceName)
+        {
             this.sourceName = sourceName;
             return this;
         }
 
-        public OptimizableRepartitionNodeBuilder<K, V> withRepartitionTopic( string repartitionTopic)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withRepartitionTopic(string repartitionTopic)
+        {
             this.repartitionTopic = repartitionTopic;
             return this;
         }
 
 
-        public OptimizableRepartitionNodeBuilder<K, V> withNodeName( string nodeName)
-{
+        public OptimizableRepartitionNodeBuilder<K, V> withNodeName(string nodeName)
+        {
             this.nodeName = nodeName;
             return this;
         }
 
         public OptimizableRepartitionNode<K, V> build()
-{
+        {
 
             return new OptimizableRepartitionNode<>(
                 nodeName,

@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public Change<T> {
+public class Change<T> {
 
     public  T newValue;
     public  T oldValue;
@@ -31,13 +31,13 @@ public Change<T> {
         this.oldValue = oldValue;
     }
 
-    
+
     public string ToString()
 {
         return "(" + newValue + "<-" + oldValue + ")";
     }
 
-    
+
     public bool Equals( object o)
 {
         if (this == o)
@@ -53,7 +53,7 @@ public Change<T> {
                 Objects.Equals(oldValue, change.oldValue);
     }
 
-    
+
     public int hashCode()
 {
         return Objects.hash(newValue, oldValue);

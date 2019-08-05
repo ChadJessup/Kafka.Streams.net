@@ -14,175 +14,162 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
 
-using Kafka.Common.header.Headers;
-using Kafka.Common.serialization.Serde;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/**
- * {@code IProcessorContext} implementation that will throw on any forward call.
- */
-public ForwardingDisabledProcessorContext : IProcessorContext
+namespace Kafka.Streams.Processor.Internals
 {
+    /**
+     * {@code IProcessorContext} implementation that will throw on any forward call.
+     */
+    public class ForwardingDisabledProcessorContext : IProcessorContext
+    {
+        private IProcessorContext @delegate;
 
-    private IProcessorContext delegate;
+        public ForwardingDisabledProcessorContext(IProcessorContext @delegate)
+        {
+            this.@delegate = @delegate = @delegate ?? throw new System.ArgumentNullException("@delegate", nameof(@delegate));
+        }
 
-    public ForwardingDisabledProcessorContext(IProcessorContext delegate)
-{
-        this.delegate = delegate = delegate ?? throw new System.ArgumentNullException("delegate", nameof(delegate));
-    }
 
-    
-    public string applicationId()
-{
-        return delegate.applicationId();
-    }
+        public string applicationId()
+        {
+            return @delegate.applicationId();
+        }
 
-    
-    public TaskId taskId()
-{
-        return delegate.taskId();
-    }
 
-    
-    public ISerde<?> keySerde()
-{
-        return delegate.keySerde();
-    }
+        public TaskId taskId()
+        {
+            return @delegate.taskId();
+        }
 
-    
-    public ISerde<?> valueSerde()
-{
-        return delegate.valueSerde();
-    }
 
-    
-    public File stateDir()
-{
-        return delegate.stateDir();
-    }
+        public ISerde<?> keySerde()
+        {
+            return @delegate.keySerde();
+        }
 
-    
-    public StreamsMetrics metrics()
-{
-        return delegate.metrics();
-    }
 
-    
-    public void register(IStateStore store,
-                         StateRestoreCallback stateRestoreCallback)
-{
-        delegate.register(store, stateRestoreCallback);
-    }
+        public ISerde<?> valueSerde()
+        {
+            return @delegate.valueSerde();
+        }
 
-    
-    public IStateStore getStateStore(string name)
-{
-        return delegate.getStateStore(name);
-    }
 
-    
-    [System.Obsolete]
-    public ICancellable schedule(long intervalMs,
-                                PunctuationType type,
-                                Punctuator callback)
-{
-        return delegate.schedule(intervalMs, type, callback);
-    }
+        public File stateDir()
+        {
+            return @delegate.stateDir();
+        }
 
-    
-    public ICancellable schedule(TimeSpan interval,
-                                PunctuationType type,
-                                Punctuator callback){
-        return delegate.schedule(interval, type, callback);
-    }
 
-    
-    public void forward(K key, V value)
-{
-        throw new StreamsException("IProcessorContext#forward() not supported.");
-    }
+        public IStreamsMetrics metrics()
+        {
+            return @delegate.metrics();
+        }
 
-    
-    public void forward(K key, V value, To to)
-{
-        throw new StreamsException("IProcessorContext#forward() not supported.");
-    }
 
-    
-    [System.Obsolete]
-    public void forward(K key, V value, int childIndex)
-{
-        throw new StreamsException("IProcessorContext#forward() not supported.");
-    }
+        public void register(IStateStore store,
+                             StateRestoreCallback stateRestoreCallback)
+        {
+            @delegate.register(store, stateRestoreCallback);
+        }
 
-    
-    [System.Obsolete]
-    public void forward(K key, V value, string childName)
-{
-        throw new StreamsException("IProcessorContext#forward() not supported.");
-    }
 
-    
-    public void commit()
-{
-        delegate.commit();
-    }
+        public IStateStore getStateStore(string name)
+        {
+            return @delegate.getStateStore(name);
+        }
 
-    
-    public string topic()
-{
-        return delegate.topic();
-    }
 
-    
-    public int partition()
-{
-        return delegate.partition();
-    }
+        [System.Obsolete]
+        public ICancellable schedule(long intervalMs,
+                                    PunctuationType type,
+                                    Punctuator callback)
+        {
+            return @delegate.schedule(intervalMs, type, callback);
+        }
 
-    
-    public long offset()
-{
-        return delegate.offset();
-    }
 
-    
-    public Headers headers()
-{
-        return delegate.headers();
-    }
+        public ICancellable schedule(TimeSpan interval,
+                                    PunctuationType type,
+                                    Punctuator callback)
+        {
+            return @delegate.schedule(interval, type, callback);
+        }
 
-    
-    public long timestamp()
-{
-        return delegate.timestamp();
-    }
 
-    
-    public Dictionary<string, object> appConfigs()
-{
-        return delegate.appConfigs();
-    }
+        public void forward(K key, V value)
+        {
+            throw new StreamsException("IProcessorContext#forward() not supported.");
+        }
 
-    
-    public Dictionary<string, object> appConfigsWithPrefix(string prefix)
-{
-        return delegate.appConfigsWithPrefix(prefix);
+
+        public void forward(K key, V value, To to)
+        {
+            throw new StreamsException("IProcessorContext#forward() not supported.");
+        }
+
+
+        [System.Obsolete]
+        public void forward(K key, V value, int childIndex)
+        {
+            throw new StreamsException("IProcessorContext#forward() not supported.");
+        }
+
+
+        [System.Obsolete]
+        public void forward(K key, V value, string childName)
+        {
+            throw new StreamsException("IProcessorContext#forward() not supported.");
+        }
+
+
+        public void commit()
+        {
+            @delegate.commit();
+        }
+
+
+        public string topic()
+        {
+            return @delegate.topic();
+        }
+
+
+        public int partition()
+        {
+            return @delegate.partition();
+        }
+
+
+        public long offset()
+        {
+            return @delegate.offset();
+        }
+
+
+        public Headers headers()
+        {
+            return @delegate.headers();
+        }
+
+
+        public long timestamp()
+        {
+            return @delegate.timestamp();
+        }
+
+
+        public Dictionary<string, object> appConfigs()
+        {
+            return @delegate.appConfigs();
+        }
+
+
+        public Dictionary<string, object> appConfigsWithPrefix(string prefix)
+        {
+            return @delegate.appConfigsWithPrefix(prefix);
+        }
     }
 }

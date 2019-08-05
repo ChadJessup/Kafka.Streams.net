@@ -884,7 +884,7 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return this;
     }
 
-    public override Options setLogger(Logger logger)
+    public override Options setLogger(ILogger logger)
 {
         dbOptions.setLogger(logger);
         return this;

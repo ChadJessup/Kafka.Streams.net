@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.ProcessorStateException;
-using Kafka.Streams.Processor.internals.InternalProcessorContext;
+using Kafka.Streams.Processor.Internals.InternalProcessorContext;
 
 
 
@@ -70,7 +70,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override S getSegmentForTimestamp(long timestamp)
 {
-        return segments[segmentId(timestamp));
+        return segments[segmentId(timestamp)];
     }
 
     public override S getOrCreateSegmentIfLive(long segmentId,

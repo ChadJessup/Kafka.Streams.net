@@ -117,7 +117,7 @@ namespace Kafka.Streams
     {
 
 
-        private static Logger log = new LoggerFactory().CreateLogger < StreamsConfig);
+        private static ILogger log = new LoggerFactory().CreateLogger < StreamsConfig);
 
         private static ConfigDef CONFIG;
 
@@ -855,7 +855,7 @@ namespace Kafka.Streams
             Map<string, object> configUpdates =
                CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
-            bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG));
+            bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG]);
             if (eosEnabled && !originals().ContainsKey(COMMIT_INTERVAL_MS_CONFIG))
             {
                 log.LogDebug("Using {} default value of {} as exactly once is enabled.",
@@ -878,7 +878,7 @@ namespace Kafka.Streams
             consumerProps.putAll(clientProvidedProps);
 
             // bootstrap.servers should be from StreamsConfig
-            consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG));
+            consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG];
 
             return consumerProps;
         }
@@ -936,9 +936,9 @@ namespace Kafka.Streams
 
                     if (CONSUMER_DEFAULT_OVERRIDES.ContainsKey(config))
                     {
-                        if (!clientProvidedProps[config).Equals(CONSUMER_DEFAULT_OVERRIDES[config)))
+                        if (!clientProvidedProps[config].Equals(CONSUMER_DEFAULT_OVERRIDES[config]))
                         {
-                            log.LogWarning(string.Format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps[config), CONSUMER_DEFAULT_OVERRIDES[config)));
+                            log.LogWarning(string.Format(nonConfigurableConfigMessage, "consumer", config, "", clientProvidedProps[config], CONSUMER_DEFAULT_OVERRIDES[config]));
                             clientProvidedProps.Remove(config);
                         }
                     }
@@ -946,19 +946,19 @@ namespace Kafka.Streams
                     {
                         if (CONSUMER_EOS_OVERRIDES.ContainsKey(config))
                         {
-                            if (!clientProvidedProps[config).Equals(CONSUMER_EOS_OVERRIDES[config)))
+                            if (!clientProvidedProps[config].Equals(CONSUMER_EOS_OVERRIDES[config]))
                             {
                                 log.LogWarning(string.Format(nonConfigurableConfigMessage,
-                                        "consumer", config, eosMessage, clientProvidedProps[config), CONSUMER_EOS_OVERRIDES[config))];
+                                        "consumer", config, eosMessage, clientProvidedProps[config], CONSUMER_EOS_OVERRIDES[config])];
                                 clientProvidedProps.Remove(config);
                             }
                         }
                         else if (PRODUCER_EOS_OVERRIDES.ContainsKey(config))
                         {
-                            if (!clientProvidedProps[config).Equals(PRODUCER_EOS_OVERRIDES[config)))
+                            if (!clientProvidedProps[config].Equals(PRODUCER_EOS_OVERRIDES[config]))
                             {
                                 log.LogWarning(string.Format(nonConfigurableConfigMessage,
-                                        "producer", config, eosMessage, clientProvidedProps[config), PRODUCER_EOS_OVERRIDES[config))];
+                                        "producer", config, eosMessage, clientProvidedProps[config], PRODUCER_EOS_OVERRIDES[config])];
                                 clientProvidedProps.Remove(config);
                             }
                         }
@@ -1019,7 +1019,7 @@ namespace Kafka.Streams
             //.Add group id, client id with stream client id prefix, and group instance id
             consumerProps.Add(ConsumerConfig.GROUP_ID_CONFIG, groupId);
             consumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
-            string groupInstanceId = (string)consumerProps[ConsumerConfig.GROUP_INSTANCE_ID_CONFIG);
+            string groupInstanceId = (string)consumerProps[ConsumerConfig.GROUP_INSTANCE_ID_CONFIG];
             // Suffix each thread consumer with thread.id to enforce uniqueness of group.instance.id.
             if (groupInstanceId != null)
             {
@@ -1046,8 +1046,8 @@ namespace Kafka.Streams
             if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
                 producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
             {
-                int segmentSize = int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)).ToString());
-                int batchSize = int.Parse(producerProps[ProducerConfig.BATCH_SIZE_CONFIG).ToString());
+                int segmentSize = int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)].ToString());
+                int batchSize = int.Parse(producerProps[ProducerConfig.BATCH_SIZE_CONFIG].ToString());
 
                 if (segmentSize < batchSize)
                 {
@@ -1151,7 +1151,7 @@ namespace Kafka.Streams
             props.putAll(getClientCustomProps());
             props.putAll(clientProvidedProps);
 
-            props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG));
+            props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG]);
             //.Add client id with stream client id prefix
             props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
 
@@ -1290,7 +1290,7 @@ namespace Kafka.Streams
             {
                 if (originals.ContainsKey(configName))
                 {
-                    parsed.Add(configName, originals[configName));
+                    parsed.Add(configName, originals[configName]);
                 }
             }
 

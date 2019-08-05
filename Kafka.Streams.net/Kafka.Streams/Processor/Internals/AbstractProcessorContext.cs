@@ -31,7 +31,7 @@ using Kafka.Common.serialization.Serde;
 
 
 
-public abstract AbstractProcessorContext : InternalProcessorContext
+public abstract class AbstractProcessorContext : InternalProcessorContext
 {
 
 
@@ -53,7 +53,7 @@ public abstract AbstractProcessorContext : InternalProcessorContext
                                     StreamsMetricsImpl metrics,
                                     StateManager stateManager,
                                     ThreadCache cache)
-{
+    {
         this.taskId = taskId;
         this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
         this.config = config;
@@ -64,48 +64,48 @@ public abstract AbstractProcessorContext : InternalProcessorContext
         this.cache = cache;
     }
 
-    
+
     public string applicationId()
-{
+    {
         return applicationId;
     }
 
-    
+
     public TaskId taskId()
-{
+    {
         return taskId;
     }
 
-    
+
     public ISerde<?> keySerde()
-{
+    {
         return keySerde;
     }
 
-    
+
     public ISerde<?> valueSerde()
-{
+    {
         return valueSerde;
     }
 
-    
+
     public File stateDir()
-{
+    {
         return stateManager.baseDir();
     }
 
-    
+
     public StreamsMetricsImpl metrics()
-{
+    {
         return metrics;
     }
 
-    
+
     public void register(IStateStore store,
                          StateRestoreCallback stateRestoreCallback)
-{
+    {
         if (initialized)
-{
+        {
             throw new InvalidOperationException("Can only create state stores during initialization.");
         }
         store = store ?? throw new System.ArgumentNullException("store must not be null", nameof(store));
@@ -115,18 +115,18 @@ public abstract AbstractProcessorContext : InternalProcessorContext
     /**
      * @throws InvalidOperationException if the task's record is null
      */
-    
+
     public string topic()
-{
+    {
         if (recordContext == null)
-{
+        {
             throw new InvalidOperationException("This should not happen as topic() should only be called while a record is processed");
         }
 
         string topic = recordContext.topic();
 
         if (topic.Equals(NONEXIST_TOPIC))
-{
+        {
             return null;
         }
 
@@ -136,11 +136,11 @@ public abstract AbstractProcessorContext : InternalProcessorContext
     /**
      * @throws InvalidOperationException if partition is null
      */
-    
+
     public int partition()
-{
+    {
         if (recordContext == null)
-{
+        {
             throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
         }
         return recordContext.partition();
@@ -149,21 +149,21 @@ public abstract AbstractProcessorContext : InternalProcessorContext
     /**
      * @throws InvalidOperationException if offset is null
      */
-    
+
     public long offset()
-{
+    {
         if (recordContext == null)
-{
+        {
             throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
         }
         return recordContext.offset();
     }
 
-    
+
     public Headers headers()
-{
+    {
         if (recordContext == null)
-{
+        {
             throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
         }
         return recordContext.headers();
@@ -172,70 +172,70 @@ public abstract AbstractProcessorContext : InternalProcessorContext
     /**
      * @throws InvalidOperationException if timestamp is null
      */
-    
+
     public long timestamp()
-{
+    {
         if (recordContext == null)
-{
+        {
             throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
         }
         return recordContext.timestamp();
     }
 
-    
+
     public Dictionary<string, object> appConfigs()
-{
+    {
         Dictionary<string, object> combined = new HashMap<>();
         combined.putAll(config.originals());
         combined.putAll(config.values());
         return combined;
     }
 
-    
+
     public Dictionary<string, object> appConfigsWithPrefix(string prefix)
-{
+    {
         return config.originalsWithPrefix(prefix);
     }
 
-    
+
     public void setRecordContext(ProcessorRecordContext recordContext)
-{
+    {
         this.recordContext = recordContext;
     }
 
-    
+
     public ProcessorRecordContext recordContext()
-{
+    {
         return recordContext;
     }
 
-    
+
     public void setCurrentNode(ProcessorNode currentNode)
-{
+    {
         this.currentNode = currentNode;
     }
 
-    
+
     public ProcessorNode currentNode()
-{
+    {
         return currentNode;
     }
 
-    
+
     public ThreadCache getCache()
-{
+    {
         return cache;
     }
 
-    
+
     public void initialize()
-{
+    {
         initialized = true;
     }
 
-    
+
     public void uninitialize()
-{
+    {
         initialized = false;
     }
 }

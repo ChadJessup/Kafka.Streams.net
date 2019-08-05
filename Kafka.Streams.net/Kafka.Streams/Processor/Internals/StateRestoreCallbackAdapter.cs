@@ -15,47 +15,42 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor.Internals;
-
-
-
-
-
-
-
-
-
-
-public StateRestoreCallbackAdapter
+namespace Kafka.Streams.Processor.Internals
 {
+    public class StateRestoreCallbackAdapter
+    {
 
-    private StateRestoreCallbackAdapter() {}
+        private StateRestoreCallbackAdapter() { }
 
-    public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
-{
-        restoreCallback = restoreCallback ?? throw new System.ArgumentNullException("stateRestoreCallback must not be null", nameof(restoreCallback));
-        if (restoreCallback is RecordBatchingStateRestoreCallback)
-{
-            return (RecordBatchingStateRestoreCallback) restoreCallback;
-        } else if (restoreCallback is BatchingStateRestoreCallback)
-{
-            return records -> {
-                List<KeyValue<byte[], byte[]>> keyValues = new List<>();
-                foreach (ConsumerRecord<byte[], byte[]> record in records)
-{
-                    keyValues.Add(new KeyValue<>(record.key(), record.value()));
-                }
-                ((BatchingStateRestoreCallback) restoreCallback).restoreAll(keyValues);
-            };
-        } else
-{
+        public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
+        {
+            restoreCallback = restoreCallback ?? throw new System.ArgumentNullException("stateRestoreCallback must not be null", nameof(restoreCallback));
+            if (restoreCallback is RecordBatchingStateRestoreCallback)
+            {
+                return (RecordBatchingStateRestoreCallback)restoreCallback;
+            }
+            else if (restoreCallback is BatchingStateRestoreCallback)
+            {
+                return records-> {
+                    List<KeyValue<byte[], byte[]>> keyValues = new List<>();
+                    foreach (ConsumerRecord<byte[], byte[]> record in records)
+                    {
+                        keyValues.Add(new KeyValue<>(record.key(), record.value()));
+                    }
+                   ((BatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);
+                };
+            }
+            else
+            {
 
-            return records -> {
-                foreach (ConsumerRecord<byte[], byte[]> record in records)
-{
-                    restoreCallback.restore(record.key(), record.value());
-                }
-            };
+                //return records =>
+                //{
+                //    foreach (ConsumerRecord<byte[], byte[]> record in records)
+                //    {
+                //        restoreCallback.restore(record.key(), record.value());
+                //    }
+                //};
+            }
         }
     }
 }

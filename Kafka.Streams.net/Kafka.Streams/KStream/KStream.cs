@@ -2216,7 +2216,7 @@ public interface KStream<K, V> {
      * depends on the newly selected key.
      * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
      * {@link StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-     * &lt;name&gt; is either provided via {@link org.apache.kafka.streams.kstream.Grouped#as(string)} or an internally
+     * &lt;name&gt; is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an internally
      * generated name, and "-repartition" is a fixed suffix.
      * <p>
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.
@@ -2306,7 +2306,7 @@ public interface KStream<K, V> {
      * operator depends on the newly selected key.
      * This topic will be named "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
      * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-     * "&lt;name&gt;" is either provided via {@link org.apache.kafka.streams.kstream.Grouped#as(string)} or an
+     * "&lt;name&gt;" is either provided via {@link org.apache.kafka.streams.kstream.Grouped#As(string)} or an
      * internally generated name.
      * <p>
      * You can retrieve all generated internal topic names via {@link Topology#describe()}.

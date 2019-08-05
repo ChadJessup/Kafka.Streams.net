@@ -23,8 +23,8 @@ namespace Kafka.Streams.Processor.Internals
 {
 
 
-    public ProcessorTopology
-{
+    public class ProcessorTopology
+    {
 
 
         private List<ProcessorNode> processorNodes;
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processor.Internals
                                  List<IStateStore> globalStateStores,
                                  Dictionary<string, string> storeToChangelogTopic,
                                  HashSet<string> repartitionTopics)
-{
+        {
             this.processorNodes = Collections.unmodifiableList(processorNodes);
             this.sourcesByTopic = Collections.unmodifiableMap(sourcesByTopic);
             this.sinksByTopic = Collections.unmodifiableMap(sinksByTopic);
@@ -53,32 +53,32 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         public HashSet<string> sourceTopics()
-{
+        {
             return sourcesByTopic.keySet();
         }
 
         public SourceNode source(string topic)
-{
+        {
             return sourcesByTopic[topic];
         }
 
         public HashSet<SourceNode> sources()
-{
+        {
             return new HashSet<>(sourcesByTopic.values());
         }
 
         public HashSet<string> sinkTopics()
-{
+        {
             return sinksByTopic.keySet();
         }
 
         public SinkNode sink(string topic)
-{
+        {
             return sinksByTopic[topic];
         }
 
         public List<ProcessorNode> processors()
-{
+        {
             return processorNodes;
         }
 
@@ -92,7 +92,7 @@ namespace Kafka.Streams.Processor.Internals
             foreach (IStateStore store in stateStores())
             {
                 if (store.persistent())
-{
+                {
                     return true;
                 }
             }
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Processor.Internals
 
             StringBuilder sb = new StringBuilder(indent + "\tchildren:\t[");
             foreach (var child in children)
-{
+            {
                 sb.Append(child.name);
                 sb.Append(", ");
             }
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Processor.Internals
          */
 
         public override string ToString()
-{
+        {
             return ToString("");
         }
 
@@ -159,7 +159,7 @@ namespace Kafka.Streams.Processor.Internals
 
             // start from sources
             foreach (var source in sourcesByTopic.values())
-{
+            {
                 sb.Append(source.ToString(indent + "\t")).Append(childrenToString(indent + "\t", source.children()));
             }
 
@@ -168,11 +168,11 @@ namespace Kafka.Streams.Processor.Internals
 
         // for testing only
         public HashSet<string> processorConnectedStateStores(string processorName)
-{
+        {
             foreach (ProcessorNode <?, ?> node in processorNodes)
 {
                 if (node.name().Equals(processorName))
-{
+                {
                     return node.stateStores;
                 }
             }

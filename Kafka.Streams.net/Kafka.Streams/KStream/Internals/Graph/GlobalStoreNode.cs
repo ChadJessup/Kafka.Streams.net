@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -25,59 +29,59 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public GlobalStoreNode : StateStoreNode
-{
+    public class GlobalStoreNode : StateStoreNode
+    {
 
 
 
-    private  string sourceName;
-    private  string topic;
-    private  ConsumedInternal consumed;
-    private  string processorName;
-    private  ProcessorSupplier stateUpdateSupplier;
+        private string sourceName;
+        private string topic;
+        private ConsumedInternal consumed;
+        private string processorName;
+        private ProcessorSupplier stateUpdateSupplier;
 
 
-    public GlobalStoreNode( StoreBuilder<IKeyValueStore> storeBuilder,
-                            string sourceName,
-                            string topic,
-                            ConsumedInternal consumed,
-                            string processorName,
-                            ProcessorSupplier stateUpdateSupplier)
-{
+        public GlobalStoreNode(StoreBuilder<IKeyValueStore> storeBuilder,
+                                string sourceName,
+                                string topic,
+                                ConsumedInternal consumed,
+                                string processorName,
+                                ProcessorSupplier stateUpdateSupplier)
+            : base(storeBuilder)
+        {
 
-        base(storeBuilder);
-        this.sourceName = sourceName;
-        this.topic = topic;
-        this.consumed = consumed;
-        this.processorName = processorName;
-        this.stateUpdateSupplier = stateUpdateSupplier;
+            this.sourceName = sourceName;
+            this.topic = topic;
+            this.consumed = consumed;
+            this.processorName = processorName;
+            this.stateUpdateSupplier = stateUpdateSupplier;
+        }
+
+
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            storeBuilder.withLoggingDisabled();
+            topologyBuilder.AddGlobalStore(storeBuilder,
+                                           sourceName,
+                                           consumed.timestampExtractor(),
+                                           consumed.keyDeserializer(),
+                                           consumed.valueDeserializer(),
+                                           topic,
+                                           processorName,
+                                           stateUpdateSupplier);
+
+        }
+
+
+
+        public string ToString()
+        {
+            return "GlobalStoreNode{" +
+                   "sourceName='" + sourceName + '\'' +
+                   ", topic='" + topic + '\'' +
+                   ", processorName='" + processorName + '\'' +
+                   "} ";
+        }
     }
-
-
-    
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-        storeBuilder.withLoggingDisabled();
-        topologyBuilder.AddGlobalStore(storeBuilder,
-                                       sourceName,
-                                       consumed.timestampExtractor(),
-                                       consumed.keyDeserializer(),
-                                       consumed.valueDeserializer(),
-                                       topic,
-                                       processorName,
-                                       stateUpdateSupplier);
-
-    }
-
-
-    
-    public string ToString()
-{
-        return "GlobalStoreNode{" +
-               "sourceName='" + sourceName + '\'' +
-               ", topic='" + topic + '\'' +
-               ", processorName='" + processorName + '\'' +
-               "} ";
-    }
-}

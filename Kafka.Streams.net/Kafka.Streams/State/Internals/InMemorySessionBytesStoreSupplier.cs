@@ -14,48 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.SessionBytesStoreSupplier;
-using Kafka.Streams.State.ISessionStore;
-
-public InMemorySessionBytesStoreSupplier : SessionBytesStoreSupplier
+namespace Kafka.Streams.State.Internals
 {
-    private string name;
-    private long retentionPeriod;
+    public class InMemorySessionBytesStoreSupplier : SessionBytesStoreSupplier
+    {
+        private string name;
+        private long retentionPeriod;
 
-    public InMemorySessionBytesStoreSupplier(string name,
-                                             long retentionPeriod)
-{
-        this.name = name;
-        this.retentionPeriod = retentionPeriod;
-    }
+        public InMemorySessionBytesStoreSupplier(string name,
+                                                 long retentionPeriod)
+        {
+            this.name = name;
+            this.retentionPeriod = retentionPeriod;
+        }
 
-    public override string name()
-{
-        return name;
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    public override ISessionStore<Bytes, byte[]> get()
-{
-        return new InMemorySessionStore(name, retentionPeriod, metricsScope());
-    }
+        public override ISessionStore<Bytes, byte[]> get()
+        {
+            return new InMemorySessionStore(name, retentionPeriod, metricsScope());
+        }
 
-    public override string metricsScope()
-{
-        return "in-memory-session-state";
-    }
+        public override string metricsScope()
+        {
+            return "in-memory-session-state";
+        }
 
-    // In-memory store is not *really* segmented, so just say it is 1 (for ordering consistency with caching enabled)
-    public override long segmentIntervalMs()
-{
-        return 1;
-    }
+        // In-memory store is not *really* segmented, so just say it is 1 (for ordering consistency with caching enabled)
+        public override long segmentIntervalMs()
+        {
+            return 1;
+        }
 
-    public override long retentionPeriod()
-{
-        return retentionPeriod;
+        public override long retentionPeriod()
+        {
+            return retentionPeriod;
+        }
     }
 }
-

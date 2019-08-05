@@ -32,7 +32,7 @@ class RecordDeserializer
 
     private SourceNode sourceNode;
     private DeserializationExceptionHandler deserializationExceptionHandler;
-    private Logger log;
+    private ILogger log;
     private Sensor skippedRecordSensor;
 
     RecordDeserializer(SourceNode sourceNode,

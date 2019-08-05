@@ -20,8 +20,8 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.internals.InternalProcessorContext;
-using Kafka.Streams.Processor.internals.ProcessorRecordContext;
+using Kafka.Streams.Processor.Internals.InternalProcessorContext;
+using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 using Kafka.Streams.State.KeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using Microsoft.Extensions.Logging;
@@ -237,7 +237,7 @@ public class CachingKeyValueStore
         }
         if (entry == null)
 {
-            byte[] rawValue = wrapped()[key);
+            byte[] rawValue = wrapped()[key];
             if (rawValue == null)
 {
                 return null;

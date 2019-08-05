@@ -2,8 +2,7 @@
 
 namespace Kafka.Streams
 {
-    public KafkaStreams
-   
-{
+    public class KafkaStreams
+    {
     }
 }

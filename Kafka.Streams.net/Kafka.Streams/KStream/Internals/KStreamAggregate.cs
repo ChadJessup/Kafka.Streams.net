@@ -1,4 +1,4 @@
-using Kafka.streams.state;
+using Kafka.Streams.State;
 using Kafka.Streams.KStream.Internals;
 using Microsoft.Extensions.Logging;
 
@@ -96,40 +96,41 @@ namespace Kafka.Streams.KStream.Internals
 
     public KTableValueGetterSupplier<K, T> view()
     {
-        return new KTableValueGetterSupplier<K, T>()
-        {
+        //    return new KTableValueGetterSupplier<K, T>()
+        //    {
 
-            public KTableValueGetter<K, T> get()
-        {
-            return new KStreamAggregateValueGetter();
-        }
-
-
-        public string[] storeNames()
-        {
-            return new string[] { storeName };
-        }
-    };
-}
+        //        public KTableValueGetter<K, T> get()
+        //    {
+        //        return new KStreamAggregateValueGetter();
+        //    }
 
 
-private class KStreamAggregateValueGetter : KTableValueGetter<K, T> {
+        //    public string[] storeNames()
+        //    {
+        //        return new string[] { storeName };
+        //    }
+        //};
+    }
+
+
+    private class KStreamAggregateValueGetter : KTableValueGetter<K, T>
+    {
         private TimestampedKeyValueStore<K, T> store;
 
 
 
-public void init(IProcessorContext context)
-{
-    store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
-}
+        public void init(IProcessorContext context)
+        {
+            store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+        }
 
 
-public ValueAndTimestamp<T> get(K key)
-{
-    return store[key];
-}
+        public ValueAndTimestamp<T> get(K key)
+        {
+            return store[key];
+        }
 
 
-public void close() { }
+        public void close() { }
     }
 }

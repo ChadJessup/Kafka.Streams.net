@@ -22,7 +22,7 @@ namespace Kafka.Streams.Processor.Internals;
 /**
  * Static topic name extractor
  */
-public StaticTopicNameExtractor<K, V> : TopicNameExtractor<K, V> {
+public class StaticTopicNameExtractor<K, V> : TopicNameExtractor<K, V> {
 
     public string topicName;
 
@@ -36,7 +36,7 @@ public StaticTopicNameExtractor<K, V> : TopicNameExtractor<K, V> {
         return topicName;
     }
 
-    
+
     public string ToString()
 {
         return "StaticTopicNameExtractor(" + topicName + ")";

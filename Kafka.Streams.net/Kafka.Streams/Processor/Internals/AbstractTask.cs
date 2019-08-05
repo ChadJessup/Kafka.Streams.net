@@ -48,10 +48,10 @@ public abstract class AbstractTask : Task
     ProcessorTopology topology;
     ProcessorStateManager stateMgr;
     HashSet<TopicPartition> partitions;
-    Consumer<byte[], byte[]> consumer;
+    IConsumer<byte[], byte[]> consumer;
     string logPrefix;
     bool eosEnabled;
-    Logger log;
+    ILogger log;
     LogContext logContext;
     StateDirectory stateDirectory;
 
@@ -67,7 +67,7 @@ public abstract class AbstractTask : Task
     AbstractTask(TaskId id,
                  Collection<TopicPartition> partitions,
                  ProcessorTopology topology,
-                 Consumer<byte[], byte[]> consumer,
+                 IConsumer<byte[], byte[]> consumer,
                  ChangelogReader changelogReader,
                  bool isStandby,
                  StateDirectory stateDirectory,

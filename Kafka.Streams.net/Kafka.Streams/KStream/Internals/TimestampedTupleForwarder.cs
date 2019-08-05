@@ -1,4 +1,4 @@
-using Kafka.streams.kstream.internals;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Internals;
 
@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream.Internals
      * @param the type of the key
      * @param the type of the value
      */
-    public TimestampedTupleForwarder<K, V>
+    public class TimestampedTupleForwarder<K, V>
     {
         private IProcessorContext context;
         private bool sendOldValues;

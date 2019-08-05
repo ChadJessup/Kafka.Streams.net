@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         public override byte[] fetchSession(Bytes key, long startTime, long endTime)
         {
-            return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime));
+            return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime)];
         }
 
         public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)

@@ -15,59 +15,53 @@
  * limitations under the License.
  */
 
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
+    public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode
+    {
+        protected ISerde<K> keySerde;
+        protected ISerde<V> valueSerde;
+        protected string sinkName;
+        protected string sourceName;
+        protected string repartitionTopic;
+        protected ProcessorParameters processorParameters;
 
 
+        BaseRepartitionNode(string nodeName,
+                             string sourceName,
+                             ProcessorParameters processorParameters,
+                             ISerde<K> keySerde,
+                             ISerde<V> valueSerde,
+                             string sinkName,
+                             string repartitionTopic)
+            : base(nodeName)
+        {
+            this.keySerde = keySerde;
+            this.valueSerde = valueSerde;
+            this.sinkName = sinkName;
+            this.sourceName = sourceName;
+            this.repartitionTopic = repartitionTopic;
+            this.processorParameters = processorParameters;
+        }
+
+        abstract ISerializer<V> getValueSerializer();
+
+        abstract IDeserializer<V> getValueDeserializer();
 
 
-
-
-public abstract BaseRepartitionNode<K, V> : StreamsGraphNode
-{
-
-
-    protected  ISerde<K> keySerde;
-    protected  ISerde<V> valueSerde;
-    protected  string sinkName;
-    protected  string sourceName;
-    protected  string repartitionTopic;
-    protected  ProcessorParameters processorParameters;
-
-
-    BaseRepartitionNode( string nodeName,
-                         string sourceName,
-                         ProcessorParameters processorParameters,
-                         ISerde<K> keySerde,
-                         ISerde<V> valueSerde,
-                         string sinkName,
-                         string repartitionTopic)
-{
-
-        base(nodeName);
-
-        this.keySerde = keySerde;
-        this.valueSerde = valueSerde;
-        this.sinkName = sinkName;
-        this.sourceName = sourceName;
-        this.repartitionTopic = repartitionTopic;
-        this.processorParameters = processorParameters;
-    }
-
-    abstract Serializer<V> getValueSerializer();
-
-    abstract Deserializer<V> getValueDeserializer();
-
-    
-    public string ToString()
-{
-        return "BaseRepartitionNode{" +
-               "keySerde=" + keySerde +
-               ", valueSerde=" + valueSerde +
-               ", sinkName='" + sinkName + '\'' +
-               ", sourceName='" + sourceName + '\'' +
-               ", repartitionTopic='" + repartitionTopic + '\'' +
-               ", processorParameters=" + processorParameters +
-               "} " + base.ToString();
+        public string ToString()
+        {
+            return "BaseRepartitionNode{" +
+                   "keySerde=" + keySerde +
+                   ", valueSerde=" + valueSerde +
+                   ", sinkName='" + sinkName + '\'' +
+                   ", sourceName='" + sourceName + '\'' +
+                   ", repartitionTopic='" + repartitionTopic + '\'' +
+                   ", processorParameters=" + processorParameters +
+                   "} " + base.ToString();
+        }
     }
 }

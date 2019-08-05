@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -27,66 +30,67 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V> {
+    public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V>
+    {
 
-    private  string[] storeNames;
-    private  StoreBuilder<IStateStore> storeBuilder;
-
-
-    /**
-     * Create a node representing a stateful processor, where the named store has already been registered.
-     */
-    public StatefulProcessorNode( string nodeName,
-                                  ProcessorParameters<K, V> processorParameters,
-                                  string[] storeNames)
-{
-        base(nodeName, processorParameters);
-
-        this.storeNames = storeNames;
-        this.storeBuilder = null;
-    }
+        private string[] storeNames;
+        private StoreBuilder<IStateStore> storeBuilder;
 
 
-    /**
-     * Create a node representing a stateful processor,
-     * where the store needs to be built and registered as part of building this node.
-     */
-    public StatefulProcessorNode( string nodeName,
-                                  ProcessorParameters<K, V> processorParameters,
-                                  StoreBuilder<IStateStore> materializedKTableStoreBuilder)
-{
-        base(nodeName, processorParameters);
+        /**
+         * Create a node representing a stateful processor, where the named store has already been registered.
+         */
+        public StatefulProcessorNode(string nodeName,
+                                      ProcessorParameters<K, V> processorParameters,
+                                      string[] storeNames)
+            : base(nodeName, processorParameters)
+        {
 
-        this.storeNames = null;
-        this.storeBuilder = materializedKTableStoreBuilder;
-    }
-
-    
-    public string ToString()
-{
-        return "StatefulProcessorNode{" +
-            "storeNames=" + Arrays.ToString(storeNames) +
-            ", storeBuilder=" + storeBuilder +
-            "} " + base.ToString();
-    }
-
-    
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-
-         string processorName = processorParameters().processorName();
-         ProcessorSupplier processorSupplier = processorParameters().processorSupplier();
-
-        topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
-
-        if (storeNames != null && storeNames.Length > 0)
-{
-            topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+            this.storeNames = storeNames;
+            this.storeBuilder = null;
         }
 
-        if (storeBuilder != null)
-{
-            topologyBuilder.AddStateStore(storeBuilder, processorName);
+
+        /**
+         * Create a node representing a stateful processor,
+         * where the store needs to be built and registered as part of building this node.
+         */
+        public StatefulProcessorNode(string nodeName,
+                                      ProcessorParameters<K, V> processorParameters,
+                                      StoreBuilder<IStateStore> materializedKTableStoreBuilder)
+            : base(nodeName, processorParameters)
+        {
+
+            this.storeNames = null;
+            this.storeBuilder = materializedKTableStoreBuilder;
+        }
+
+
+        public string ToString()
+        {
+            return "StatefulProcessorNode{" +
+                "storeNames=" + Arrays.ToString(storeNames) +
+                ", storeBuilder=" + storeBuilder +
+                "} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+
+            string processorName = processorParameters().processorName();
+            ProcessorSupplier processorSupplier = processorParameters().processorSupplier();
+
+            topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
+
+            if (storeNames != null && storeNames.Length > 0)
+            {
+                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+            }
+
+            if (storeBuilder != null)
+            {
+                topologyBuilder.AddStateStore(storeBuilder, processorName);
+            }
         }
     }
-}

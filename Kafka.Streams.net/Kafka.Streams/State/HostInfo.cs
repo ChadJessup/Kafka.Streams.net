@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.state;
+namespace Kafka.Streams.State;
 
 using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.KafkaStreams;
 using Kafka.Streams.Processor.StreamPartitioner;
-using Kafka.Streams.Processor.internals.StreamsPartitionAssignor;
+using Kafka.Streams.Processor.Internals.StreamsPartitionAssignor;
 
 /**
  * Represents a user defined endpoint in a {@link org.apache.kafka.streams.KafkaStreams} application.

@@ -24,59 +24,60 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public ConsumedInternal<K, V> : Consumed<K, V> {
+    public class ConsumedInternal<K, V> : Consumed<K, V>
+    {
 
-    public ConsumedInternal( Consumed<K, V> consumed)
-{
-        base(consumed);
+        public ConsumedInternal(Consumed<K, V> consumed)
+            : base(consumed)
+        {
+        }
+
+
+        public ConsumedInternal(ISerde<K> keySerde,
+                                 ISerde<V> valSerde,
+                                 TimestampExtractor timestampExtractor,
+                                 Topology.AutoOffsetReset offsetReset)
+        {
+            this(Consumed.with(keySerde, valSerde, timestampExtractor, offsetReset));
+        }
+
+        public ConsumedInternal()
+        {
+            this(Consumed.< K, V > with(null, null));
+        }
+
+        public ISerde<K> keySerde()
+        {
+            return keySerde;
+        }
+
+        public IDeserializer<K> keyDeserializer()
+        {
+            return keySerde == null ? null : keySerde.deserializer();
+        }
+
+        public ISerde<V> valueSerde()
+        {
+            return valueSerde;
+        }
+
+        public IDeserializer<V> valueDeserializer()
+        {
+            return valueSerde == null ? null : valueSerde.deserializer();
+        }
+
+        public TimestampExtractor timestampExtractor()
+        {
+            return timestampExtractor;
+        }
+
+        public Topology.AutoOffsetReset offsetResetPolicy()
+        {
+            return resetPolicy;
+        }
+
+        public string name()
+        {
+            return processorName;
+        }
     }
-
-
-    public ConsumedInternal( ISerde<K> keySerde,
-                             ISerde<V> valSerde,
-                             TimestampExtractor timestampExtractor,
-                             Topology.AutoOffsetReset offsetReset)
-{
-        this(Consumed.with(keySerde, valSerde, timestampExtractor, offsetReset));
-    }
-
-    public ConsumedInternal()
-{
-        this(Consumed.<K, V>with(null, null));
-    }
-
-    public ISerde<K> keySerde()
-{
-        return keySerde;
-    }
-
-    public Deserializer<K> keyDeserializer()
-{
-        return keySerde == null ? null : keySerde.deserializer();
-    }
-
-    public ISerde<V> valueSerde()
-{
-        return valueSerde;
-    }
-
-    public Deserializer<V> valueDeserializer()
-{
-        return valueSerde == null ? null : valueSerde.deserializer();
-    }
-
-    public TimestampExtractor timestampExtractor()
-{
-        return timestampExtractor;
-    }
-
-    public Topology.AutoOffsetReset offsetResetPolicy()
-{
-        return resetPolicy;
-    }
-
-    public string name()
-{
-        return processorName;
-    }
-}

@@ -52,8 +52,8 @@ namespace Kafka.Streams.Processor.Internals
             V value,
             Headers headers,
             long timestamp,
-            Serializer<K> keySerializer,
-            Serializer<V> valueSerializer,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
             StreamPartitioner<K, V> partitioner)
         { }
 
@@ -86,163 +86,162 @@ namespace Kafka.Streams.Processor.Internals
                 new LogContext(string.Format("stream-thread [%s] ", Thread.currentThread().getName())],
                 0,
                 metrics))
-{
+    {
     }
 
 
-IStateManager getStateMgr()
-{
-    return stateManager;
-}
+    IStateManager getStateMgr()
+    {
+        return stateManager;
+    }
 
 
-public RecordCollector recordCollector()
-{
-    return NO_OP_COLLECTOR;
-}
+    public RecordCollector recordCollector()
+    {
+        return NO_OP_COLLECTOR;
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public IStateStore getStateStore(string name)
-{
-    throw new InvalidOperationException("this should not happen: getStateStore() not supported in standby tasks.");
-}
+    public IStateStore getStateStore(string name)
+    {
+        throw new InvalidOperationException("this should not happen: getStateStore() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public string topic()
-{
-    throw new InvalidOperationException("this should not happen: topic() not supported in standby tasks.");
-}
+    public string topic()
+    {
+        throw new InvalidOperationException("this should not happen: topic() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public int partition()
-{
-    throw new InvalidOperationException("this should not happen: partition() not supported in standby tasks.");
-}
+    public int partition()
+    {
+        throw new InvalidOperationException("this should not happen: partition() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public long offset()
-{
-    throw new InvalidOperationException("this should not happen: offset() not supported in standby tasks.");
-}
+    public long offset()
+    {
+        throw new InvalidOperationException("this should not happen: offset() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public long timestamp()
-{
-    throw new InvalidOperationException("this should not happen: timestamp() not supported in standby tasks.");
-}
+    public long timestamp()
+    {
+        throw new InvalidOperationException("this should not happen: timestamp() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public void forward(K key, V value)
-{
-    throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-}
+    public void forward(K key, V value)
+    {
+        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public void forward(K key, V value, To to)
-{
-    throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-}
+    public void forward(K key, V value, To to)
+    {
+        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-[System.Obsolete]
-public void forward(K key, V value, int childIndex)
-{
-    throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-}
+    [System.Obsolete]
+    public void forward(K key, V value, int childIndex)
+    {
+        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-[Obsolete]
-public void forward(K key, V value, string childName)
-{
-    throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
-}
+    [Obsolete]
+    public void forward(K key, V value, string childName)
+    {
+        throw new InvalidOperationException("this should not happen: forward() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public void commit()
-{
-    throw new InvalidOperationException("this should not happen: commit() not supported in standby tasks.");
-}
+    public void commit()
+    {
+        throw new InvalidOperationException("this should not happen: commit() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-[System.Obsolete]
-public ICancellable schedule(long interval, PunctuationType type, Punctuator callback)
-{
-    throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
-}
+    [System.Obsolete]
+    public ICancellable schedule(long interval, PunctuationType type, Punctuator callback)
+    {
+        throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
-{
-    throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
-}
+    public ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
+    {
+        throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public ProcessorRecordContext recordContext()
-{
-    throw new InvalidOperationException("this should not happen: recordContext not supported in standby tasks.");
-}
+    public ProcessorRecordContext recordContext()
+    {
+        throw new InvalidOperationException("this should not happen: recordContext not supported in standby tasks.");
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public void setRecordContext(ProcessorRecordContext recordContext)
-{
-    throw new InvalidOperationException("this should not happen: setRecordContext not supported in standby tasks.");
-}
+    public void setRecordContext(ProcessorRecordContext recordContext)
+    {
+        throw new InvalidOperationException("this should not happen: setRecordContext not supported in standby tasks.");
+    }
 
 
-public void setCurrentNode(ProcessorNode currentNode)
-{
-    // no-op. can't throw as this is called on commit when the StateStores get flushed.
-}
+    public void setCurrentNode(ProcessorNode currentNode)
+    {
+        // no-op. can't throw as this is called on commit when the StateStores get flushed.
+    }
 
-/**
- * @throws InvalidOperationException on every invocation
- */
+    /**
+     * @throws InvalidOperationException on every invocation
+     */
 
-public ProcessorNode currentNode()
-{
-    throw new InvalidOperationException("this should not happen: currentNode not supported in standby tasks.");
-}
-}
+    public ProcessorNode currentNode()
+    {
+        throw new InvalidOperationException("this should not happen: currentNode not supported in standby tasks.");
+    }
 }

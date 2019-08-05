@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processor.Internals
                            StateDirectory stateDirectory,
                            ChangelogReader storeChangelogReader,
                            ITime time,
-                           Logger log)
+                           ILogger log)
             : base(
                 builder,
                 config,
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        StandbyTask createTask(Consumer<byte[], byte[]> consumer,
+        StandbyTask createTask(IConsumer<byte[], byte[]> consumer,
                                TaskId taskId,
                                HashSet<TopicPartition> partitions)
         {

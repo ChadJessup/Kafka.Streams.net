@@ -14,37 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.KeyValueBytesStoreSupplier;
-using Kafka.Streams.State.KeyValueStore;
-
-public RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
+namespace Kafka.Streams.State.Internals
 {
 
-    private string name;
-    private bool returnTimestampedStore;
+    public class RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
+    {
 
-    public RocksDbKeyValueBytesStoreSupplier(string name,
-                                             bool returnTimestampedStore)
-{
-        this.name = name;
-        this.returnTimestampedStore = returnTimestampedStore;
-    }
+        private string name;
+        private bool returnTimestampedStore;
 
-    public override string name()
-{
-        return name;
-    }
+        public RocksDbKeyValueBytesStoreSupplier(string name,
+                                                 bool returnTimestampedStore)
+        {
+            this.name = name;
+            this.returnTimestampedStore = returnTimestampedStore;
+        }
 
-    public override IKeyValueStore<Bytes, byte[]> get()
-{
-        return returnTimestampedStore ? new RocksDBTimestampedStore(name) : new RocksDBStore(name);
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    public override string metricsScope()
-{
-        return "rocksdb-state";
+        public override IKeyValueStore<Bytes, byte[]> get()
+        {
+            return returnTimestampedStore ? new RocksDBTimestampedStore(name) : new RocksDBStore(name);
+        }
+
+        public override string metricsScope()
+        {
+            return "rocksdb-state";
+        }
     }
 }

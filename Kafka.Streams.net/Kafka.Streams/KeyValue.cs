@@ -7,7 +7,7 @@ namespace Kafka.Streams
      * @param Key type
      * @param Value type
      */
-    public KeyValue<K, V>
+    public class KeyValue<K, V>
     {
         /** The key of the key-value pair. */
         public K key;

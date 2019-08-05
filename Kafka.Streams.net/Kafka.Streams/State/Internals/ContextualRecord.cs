@@ -16,13 +16,13 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-using Kafka.Streams.Processor.internals.ProcessorRecordContext;
+using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 
 
 
 
 
-public ContextualRecord
+public class ContextualRecord
 {
     private byte[] value;
     private ProcessorRecordContext recordContext;

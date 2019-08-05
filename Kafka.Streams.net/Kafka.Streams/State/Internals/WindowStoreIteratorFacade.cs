@@ -1,4 +1,4 @@
-﻿using Kafka.streams.state;
+﻿using Kafka.Streams.State;
 
 namespace Kafka.Streams.State.Internals
 {

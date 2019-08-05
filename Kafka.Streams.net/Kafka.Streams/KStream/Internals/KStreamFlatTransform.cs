@@ -26,53 +26,54 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn> {
+    public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn>
+    {
 
-    private  TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
+        private TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
 
-    public KStreamFlatTransform( TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
-{
-        this.transformerSupplier = transformerSupplier;
-    }
+        public KStreamFlatTransform(TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
+        {
+            this.transformerSupplier = transformerSupplier;
+        }
 
-    
-    public Processor<KIn, VIn> get()
-{
-        return new KStreamFlatTransformProcessor<>(transformerSupplier());
-    }
 
-    public static KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
+        public Processor<KIn, VIn> get()
+        {
+            return new KStreamFlatTransformProcessor<>(transformerSupplier());
+        }
 
-        private  Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
+        public static KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
 
-        public KStreamFlatTransformProcessor( Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
-{
+        private Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
+
+        public KStreamFlatTransformProcessor(Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
+        {
             this.transformer = transformer;
         }
 
-        
-        public void init( IProcessorContext context)
-{
+
+        public void init(IProcessorContext context)
+        {
             base.init(context);
             transformer.init(context);
         }
 
-        
-        public void process( KIn key,  VIn value)
-{
-             Iterable<KeyValue<KOut, VOut>> pairs = transformer.transform(key, value);
+
+        public void process(KIn key, VIn value)
+        {
+            Iterable<KeyValue<KOut, VOut>> pairs = transformer.transform(key, value);
             if (pairs != null)
-{
-                foreach ( KeyValue<KOut, VOut> pair in pairs)
-{
+            {
+                foreach (KeyValue<KOut, VOut> pair in pairs)
+                {
                     context().forward(pair.key, pair.value);
                 }
             }
         }
 
-        
+
         public void close()
-{
+        {
             transformer.close();
         }
     }

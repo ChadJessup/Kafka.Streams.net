@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 return null;
             }
-            Deserializer<T> innerDeserializer = innerSerde().deserializer();
+            IDeserializer<T> innerDeserializer = innerSerde().deserializer();
 
             T oldValue =
                serialChange.oldValue == null ? null : innerDeserializer.deserialize(topic, serialChange.oldValue);

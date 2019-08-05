@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.header.Headers;
-using Kafka.Streams.Processor.internals.ProcessorRecordContext;
+using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 
 
 

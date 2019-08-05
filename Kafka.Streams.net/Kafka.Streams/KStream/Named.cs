@@ -5,12 +5,11 @@ using System.Text;
 
 namespace Kafka.Streams.KStream
 {
-    public Named : Interfaces.INamedOperation<Named>
-   
-{
+    public class Named : INamedOperation<Named>
+    {
         public Named WithName(string name)
-       
-{
+
+        {
             throw new NotImplementedException();
         }
     }

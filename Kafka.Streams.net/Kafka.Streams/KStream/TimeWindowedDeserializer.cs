@@ -38,7 +38,7 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
     private  long windowSize;
     private bool isChangelogTopic;
 
-    private Deserializer<T> inner;
+    private IDeserializer<T> inner;
 
     // Default constructor needed by Kafka
     public TimeWindowedDeserializer()
@@ -47,12 +47,12 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
     }
 
     // TODO: fix this part as last bits of KAFKA-4468
-    public TimeWindowedDeserializer( Deserializer<T> inner)
+    public TimeWindowedDeserializer( IDeserializer<T> inner)
 {
         this(inner, long.MaxValue);
     }
 
-    public TimeWindowedDeserializer( Deserializer<T> inner,  long windowSize)
+    public TimeWindowedDeserializer( IDeserializer<T> inner,  long windowSize)
 {
         this.inner = inner;
         this.windowSize = windowSize;
@@ -71,7 +71,7 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
         if (inner == null)
 {
              string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-             string value = (string) configs[propertyName);
+             string value = (string) configs[propertyName];
             try
 {
 
@@ -119,7 +119,7 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
     }
 
     // Only for testing
-    Deserializer<T> innerDeserializer()
+    IDeserializer<T> innerDeserializer()
 {
         return inner;
     }

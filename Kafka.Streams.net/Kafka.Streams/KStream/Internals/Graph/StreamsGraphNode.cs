@@ -26,145 +26,145 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
 
-public abstract StreamsGraphNode
-{
+    public abstract class StreamsGraphNode
+    {
 
 
-    private  Collection<StreamsGraphNode> childNodes = new HashSet<>();
-    private  Collection<StreamsGraphNode> parentNodes = new HashSet<>();
-    private  string nodeName;
-    private bool keyChangingOperation;
-    private bool valueChangingOperation;
-    private bool mergeNode;
-    private int buildPriority;
-    private bool hasWrittenToTopology = false;
+        private Collection<StreamsGraphNode> childNodes = new HashSet<>();
+        private Collection<StreamsGraphNode> parentNodes = new HashSet<>();
+        private string nodeName;
+        private bool keyChangingOperation;
+        private bool valueChangingOperation;
+        private bool mergeNode;
+        private int buildPriority;
+        private bool hasWrittenToTopology = false;
 
-    public StreamsGraphNode( string nodeName)
-{
-        this.nodeName = nodeName;
-    }
-
-    public Collection<StreamsGraphNode> parentNodes()
-{
-        return parentNodes;
-    }
-
-    string[] parentNodeNames()
-{
-         string[] parentNames = new string[parentNodes.size());
-        int index = 0;
-        foreach ( StreamsGraphNode parentNode in parentNodes)
-{
-            parentNames[index++] = parentNode.nodeName();
+        public StreamsGraphNode(string nodeName)
+        {
+            this.nodeName = nodeName;
         }
-        return parentNames;
-    }
 
-    public bool allParentsWrittenToTopology()
-{
-        foreach ( StreamsGraphNode parentNode in parentNodes)
-{
-            if (!parentNode.hasWrittenToTopology())
-{
-                return false;
+        public Collection<StreamsGraphNode> parentNodes()
+        {
+            return parentNodes;
+        }
+
+        string[] parentNodeNames()
+        {
+            string[] parentNames = new string[parentNodes.size()];
+            int index = 0;
+            foreach (StreamsGraphNode parentNode in parentNodes)
+            {
+                parentNames[index++] = parentNode.nodeName();
             }
+            return parentNames;
         }
-        return true;
-    }
 
-    public Collection<StreamsGraphNode> children()
-{
-        return new HashSet<>(childNodes);
-    }
-
-    public void clearChildren()
-{
-        foreach ( StreamsGraphNode childNode in childNodes)
-{
-            childNode.parentNodes.Remove(this);
+        public bool allParentsWrittenToTopology()
+        {
+            foreach (StreamsGraphNode parentNode in parentNodes)
+            {
+                if (!parentNode.hasWrittenToTopology())
+                {
+                    return false;
+                }
+            }
+            return true;
         }
-        childNodes.clear();
-    }
 
-    public bool removeChild( StreamsGraphNode child)
-{
-        return childNodes.Remove(child) && child.parentNodes.Remove(this);
-    }
+        public Collection<StreamsGraphNode> children()
+        {
+            return new HashSet<>(childNodes);
+        }
 
-    public void addChild( StreamsGraphNode childNode)
-{
-        this.childNodes.Add(childNode);
-        childNode.parentNodes.Add(this);
-    }
+        public void clearChildren()
+        {
+            foreach (StreamsGraphNode childNode in childNodes)
+            {
+                childNode.parentNodes.Remove(this);
+            }
+            childNodes.clear();
+        }
 
-    public string nodeName()
-{
-        return nodeName;
-    }
+        public bool removeChild(StreamsGraphNode child)
+        {
+            return childNodes.Remove(child) && child.parentNodes.Remove(this);
+        }
 
-    public bool isKeyChangingOperation()
-{
-        return keyChangingOperation;
-    }
+        public void addChild(StreamsGraphNode childNode)
+        {
+            this.childNodes.Add(childNode);
+            childNode.parentNodes.Add(this);
+        }
 
-    public bool isValueChangingOperation()
-{
-        return valueChangingOperation;
-    }
+        public string nodeName()
+        {
+            return nodeName;
+        }
 
-    public bool isMergeNode()
-{
-        return mergeNode;
-    }
+        public bool isKeyChangingOperation()
+        {
+            return keyChangingOperation;
+        }
 
-    public void setMergeNode( bool mergeNode)
-{
-        this.mergeNode = mergeNode;
-    }
+        public bool isValueChangingOperation()
+        {
+            return valueChangingOperation;
+        }
 
-    public void setValueChangingOperation( bool valueChangingOperation)
-{
-        this.valueChangingOperation = valueChangingOperation;
-    }
+        public bool isMergeNode()
+        {
+            return mergeNode;
+        }
 
-    public void keyChangingOperation( bool keyChangingOperation)
-{
-        this.keyChangingOperation = keyChangingOperation;
-    }
+        public void setMergeNode(bool mergeNode)
+        {
+            this.mergeNode = mergeNode;
+        }
 
-    public void setBuildPriority( int buildPriority)
-{
-        this.buildPriority = buildPriority;
-    }
+        public void setValueChangingOperation(bool valueChangingOperation)
+        {
+            this.valueChangingOperation = valueChangingOperation;
+        }
 
-    public int buildPriority()
-{
-        return this.buildPriority;
-    }
+        public void keyChangingOperation(bool keyChangingOperation)
+        {
+            this.keyChangingOperation = keyChangingOperation;
+        }
 
-    public abstract void writeToTopology( InternalTopologyBuilder topologyBuilder);
+        public void setBuildPriority(int buildPriority)
+        {
+            this.buildPriority = buildPriority;
+        }
 
-    public bool hasWrittenToTopology()
-{
-        return hasWrittenToTopology;
-    }
+        public int buildPriority()
+        {
+            return this.buildPriority;
+        }
 
-    public void setHasWrittenToTopology( bool hasWrittenToTopology)
-{
-        this.hasWrittenToTopology = hasWrittenToTopology;
-    }
+        public abstract void writeToTopology(InternalTopologyBuilder topologyBuilder);
 
-    
-    public string ToString()
-{
-         string[] parentNames = parentNodeNames();
-        return "StreamsGraphNode{" +
-               "nodeName='" + nodeName + '\'' +
-               ", buildPriority=" + buildPriority +
-               ", hasWrittenToTopology=" + hasWrittenToTopology +
-               ", keyChangingOperation=" + keyChangingOperation +
-               ", valueChangingOperation=" + valueChangingOperation +
-               ", mergeNode=" + mergeNode +
-               ", parentNodes=" + Arrays.ToString(parentNames) + '}';
+        public bool hasWrittenToTopology()
+        {
+            return hasWrittenToTopology;
+        }
+
+        public void setHasWrittenToTopology(bool hasWrittenToTopology)
+        {
+            this.hasWrittenToTopology = hasWrittenToTopology;
+        }
+
+
+        public string ToString()
+        {
+            string[] parentNames = parentNodeNames();
+            return "StreamsGraphNode{" +
+                   "nodeName='" + nodeName + '\'' +
+                   ", buildPriority=" + buildPriority +
+                   ", hasWrittenToTopology=" + hasWrittenToTopology +
+                   ", keyChangingOperation=" + keyChangingOperation +
+                   ", valueChangingOperation=" + valueChangingOperation +
+                   ", mergeNode=" + mergeNode +
+                   ", parentNodes=" + Arrays.ToString(parentNames) + '}';
+        }
     }
-}

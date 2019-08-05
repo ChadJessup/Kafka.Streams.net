@@ -24,7 +24,7 @@ using Kafka.Streams.State.KeyValueStore;
 
 
 
-public KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
+public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
 {
 
     private KeyValueBytesStoreSupplier storeSupplier;
@@ -33,14 +33,14 @@ public KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K,
                                 ISerde<K> keySerde,
                                 ISerde<V> valueSerde,
                                 ITime time)
-{
-        base(storeSupplier.name(), keySerde, valueSerde, time);
+        : base(storeSupplier.name(), keySerde, valueSerde, time)
+    {
         storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
         this.storeSupplier = storeSupplier;
     }
 
     public override IKeyValueStore<K, V> build()
-{
+    {
         return new MeteredKeyValueStore<>(
             maybeWrapCaching(maybeWrapLogging(storeSupplier())],
             storeSupplier.metricsScope(),
@@ -50,18 +50,18 @@ public KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K,
     }
 
     private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
-{
+    {
         if (!enableCaching)
-{
+        {
             return inner;
         }
         return new CachingKeyValueStore(inner);
     }
 
     private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
-{
+    {
         if (!enableLogging)
-{
+        {
             return inner;
         }
         return new ChangeLoggingKeyValueBytesStore(inner);

@@ -14,80 +14,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.streams.kstream.internals.suppress;
-
-
-
-
-
-public EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig> : Suppressed.EagerBufferConfig
+namespace Kafka.Streams.KStream.Internals.Suppress
 {
+    public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig>, Suppressed.EagerBufferConfig
+    {
 
 
-    private  long maxRecords;
-    private  long maxBytes;
+        private long maxRecords;
+        private long maxBytes;
 
-    public EagerBufferConfigImpl( long maxRecords,  long maxBytes)
-{
-        this.maxRecords = maxRecords;
-        this.maxBytes = maxBytes;
-    }
-
-    
-    public Suppressed.EagerBufferConfig withMaxRecords( long recordLimit)
-{
-        return new EagerBufferConfigImpl(recordLimit, maxBytes);
-    }
-
-    
-    public Suppressed.EagerBufferConfig withMaxBytes( long byteLimit)
-{
-        return new EagerBufferConfigImpl(maxRecords, byteLimit);
-    }
-
-    
-    public long maxRecords()
-{
-        return maxRecords;
-    }
-
-    
-    public long maxBytes()
-{
-        return maxBytes;
-    }
-
-    
-    public BufferFullStrategy bufferFullStrategy()
-{
-        return BufferFullStrategy.EMIT;
-    }
-
-    
-    public bool Equals( object o)
-{
-        if (this == o)
-{
-            return true;
+        public EagerBufferConfigImpl(long maxRecords, long maxBytes)
+        {
+            this.maxRecords = maxRecords;
+            this.maxBytes = maxBytes;
         }
-        if (o == null || getClass() != o.getClass())
-{
-            return false;
+
+
+        public Suppressed.EagerBufferConfig withMaxRecords(long recordLimit)
+        {
+            return new EagerBufferConfigImpl(recordLimit, maxBytes);
         }
-         EagerBufferConfigImpl that = (EagerBufferConfigImpl) o;
-        return maxRecords == that.maxRecords &&
-            maxBytes == that.maxBytes;
-    }
 
-    
-    public int hashCode()
-{
-        return Objects.hash(maxRecords, maxBytes);
-    }
 
-    
-    public string ToString()
-{
-        return "EagerBufferConfigImpl{maxRecords=" + maxRecords + ", maxBytes=" + maxBytes + '}';
+        public Suppressed.EagerBufferConfig withMaxBytes(long byteLimit)
+        {
+            return new EagerBufferConfigImpl(maxRecords, byteLimit);
+        }
+
+
+        public long maxRecords()
+        {
+            return maxRecords;
+        }
+
+
+        public long maxBytes()
+        {
+            return maxBytes;
+        }
+
+
+        public BufferFullStrategy bufferFullStrategy()
+        {
+            return BufferFullStrategy.EMIT;
+        }
+
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+            EagerBufferConfigImpl that = (EagerBufferConfigImpl)o;
+            return maxRecords == that.maxRecords &&
+                maxBytes == that.maxBytes;
+        }
+
+
+        public int hashCode()
+        {
+            return Objects.hash(maxRecords, maxBytes);
+        }
+
+
+        public string ToString()
+        {
+            return "EagerBufferConfigImpl{maxRecords=" + maxRecords + ", maxBytes=" + maxBytes + '}';
+        }
     }
 }
