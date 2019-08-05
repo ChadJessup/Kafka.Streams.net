@@ -1,5 +1,5 @@
 using Confluent.Kafka;
-using Kafka.streams;
+using Kafka.Streams;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State.Internals;
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processor.Internals
         private HashSet<string> globalStoreNames = new HashSet<string>();
         private FixedOrderMap<string, Optional<IStateStore>> globalStores = new FixedOrderMap<>();
         private StateRestoreListener stateRestoreListener;
-        private InternalProcessorContext globalProcessorContext;
+        private IInternalProcessorContext globalProcessorContext;
         private int retries;
         private long retryBackoffMs;
         private TimeSpan pollTime;
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Processor.Internals
             pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
         }
 
-        public void setGlobalProcessorContext(InternalProcessorContext globalProcessorContext)
+        public void setGlobalProcessorContext(IInternalProcessorContext globalProcessorContext)
         {
             this.globalProcessorContext = globalProcessorContext;
         }
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
         public void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
-                                                         InternalProcessorContext processorContext)
+                                                         IInternalProcessorContext processorContext)
         {
             StateManagerUtil.reinitializeStateStoresForPartitions(
                 log,
@@ -347,7 +347,7 @@ namespace Kafka.Streams.Processor.Internals
         public void flush()
         {
             log.LogDebug("Flushing all global globalStores registered in the state manager");
-            foreach (Map.Entry<string, Optional<IStateStore>> entry in globalStores.entrySet())
+            foreach (KeyValuePair<string, Optional<IStateStore>> entry in globalStores.entrySet())
             {
                 if (entry.Value.isPresent())
                 {
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
 
                 StringBuilder closeFailed = new StringBuilder();
-                foreach (Map.Entry<string, Optional<IStateStore>> entry in globalStores.entrySet())
+                foreach (KeyValuePair<string, Optional<IStateStore>> entry in globalStores.entrySet())
                 {
                     if (entry.Value.isPresent())
                     {
@@ -432,7 +432,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<TopicPartition, long> filteredOffsets = new Dictionary<TopicPartition, long>();
 
             // Skip non persistent store
-            foreach (Map.Entry<TopicPartition, long> topicPartitionOffset in checkpointFileCache.entrySet())
+            foreach (KeyValuePair<TopicPartition, long> topicPartitionOffset in checkpointFileCache.entrySet())
             {
                 string topic = topicPartitionOffset.Key.topic();
                 if (!globalNonPersistentStoresTopics.contains(topic))

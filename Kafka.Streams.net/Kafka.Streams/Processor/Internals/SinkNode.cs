@@ -29,7 +29,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
     private TopicNameExtractor<K, V> topicExtractor;
     private StreamPartitioner<K, V> partitioner;
 
-    private InternalProcessorContext context;
+    private IInternalProcessorContext context;
 
     SinkNode(string name,
              TopicNameExtractor<K, V> topicExtractor,
@@ -56,7 +56,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
 
 
 
-    public void init(InternalProcessorContext context)
+    public void init(IInternalProcessorContext context)
 {
         base.init(context);
         this.context = context;
@@ -64,18 +64,18 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
         // if serializers are null, get the default ones from the context
         if (keySerializer == null)
 {
-            keySerializer = (ISerializer<K>) context.keySerde().serializer();
+            keySerializer = (ISerializer<K>) context.keySerde().Serializer();
         }
         if (valSerializer == null)
 {
-            valSerializer = (ISerializer<V>) context.valueSerde().serializer();
+            valSerializer = (ISerializer<V>) context.valueSerde().Serializer();
         }
 
         // if value serializers are for {@code Change} values, set the inner serializer when necessary
         if (valSerializer is ChangedSerializer &&
                 ((ChangedSerializer) valSerializer).inner() == null)
 {
-            ((ChangedSerializer) valSerializer).setInner(context.valueSerde().serializer());
+            ((ChangedSerializer) valSerializer).setInner(context.valueSerde().Serializer());
         }
     }
 

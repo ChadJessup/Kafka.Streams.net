@@ -59,7 +59,7 @@ public abstract class AbstractTask : Task
     bool taskClosed;
     bool commitNeeded;
 
-    InternalProcessorContext processorContext;
+    IInternalProcessorContext processorContext;
 
     /**
      * @throws ProcessorStateException if the state manager cannot be created

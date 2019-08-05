@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public int compareTo(object other)
+        public int CompareTo(object other)
         {
             long otherTimestamp = ((Stamped <object>) other).timestamp;
 

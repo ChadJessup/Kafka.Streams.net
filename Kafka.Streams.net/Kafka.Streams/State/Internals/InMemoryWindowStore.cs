@@ -1,16 +1,17 @@
 using Kafka.Common.Utils;
+using Kafka.Streams.Processor.Internals;
+using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State.Internals
 {
     public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
     {
-
-        private static ILogger LOG = new LoggerFactory().CreateLogger < InMemoryWindowStore);
+        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryWindowStore>();
         private static int SEQNUM_SIZE = 4;
 
         private string name;
         private string metricScope;
-        private InternalProcessorContext context;
+        private IInternalProcessorContext context;
         private Sensor expiredRecordSensor;
         private int seqnum = 0;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
@@ -44,7 +45,7 @@ namespace Kafka.Streams.State.Internals
 
         public override void init(IProcessorContext context, IStateStore root)
         {
-            this.context = (InternalProcessorContext)context;
+            this.context = (IInternalProcessorContext)context;
 
             StreamsMetricsImpl metrics = this.context.metrics();
             string taskName = context.taskId().ToString();
@@ -165,7 +166,7 @@ namespace Kafka.Streams.State.Internals
 
             removeExpiredSegments();
 
-            if (from.compareTo(to) > 0)
+            if (from.CompareTo(to) > 0)
             {
                 LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -278,7 +279,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private WrappedInMemoryWindowStoreIterator registerNewWindowStoreIterator(Bytes key,
-                                                                                  Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+                                                                                  IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
         {
             Bytes keyFrom = retainDuplicates ? wrapForDups(key, 0) : key;
             Bytes keyTo = retainDuplicates ? wrapForDups(key, int.MaxValue) : key;
@@ -292,7 +293,7 @@ namespace Kafka.Streams.State.Internals
 
         private WrappedWindowedKeyValueIterator registerNewWindowedKeyValueIterator(Bytes keyFrom,
                                                                                     Bytes keyTo,
-                                                                                    Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
+                                                                                    IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator)
         {
             Bytes from = (retainDuplicates && keyFrom != null) ? wrapForDups(keyFrom, 0) : keyFrom;
             Bytes to = (retainDuplicates && keyTo != null) ? wrapForDups(keyTo, int.MaxValue) : keyTo;
@@ -317,8 +318,8 @@ namespace Kafka.Streams.State.Internals
         private static abstract class InMemoryWindowStoreIteratorWrapper
         {
 
-            private Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
-            private Iterator<Map.Entry<Bytes, byte[]>> recordIterator;
+            private IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
+            private IEnumerator<KeyValuePair<Bytes, byte[]>> recordIterator;
             private KeyValue<Bytes, byte[]> next;
             private long currentTime;
 
@@ -330,7 +331,7 @@ namespace Kafka.Streams.State.Internals
 
             InMemoryWindowStoreIteratorWrapper(Bytes keyFrom,
                                                Bytes keyTo,
-                                               Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                               IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                                ClosingCallback callback,
                                                bool retainDuplicates)
             {
@@ -367,7 +368,7 @@ namespace Kafka.Streams.State.Internals
                 }
 
                 Bytes key = getKey(next.key);
-                if (key.compareTo(getKey(keyFrom)) >= 0 && key.compareTo(getKey(keyTo)) <= 0)
+                if (key.CompareTo(getKey(keyFrom)) >= 0 && key.CompareTo(getKey(keyTo)) <= 0)
                 {
                     return true;
                 }
@@ -397,20 +398,20 @@ namespace Kafka.Streams.State.Internals
                         return null;
                     }
                 }
-                Map.Entry<Bytes, byte[]> nextRecord = recordIterator.next();
+                KeyValuePair<Bytes, byte[]> nextRecord = recordIterator.next();
                 return new KeyValue<>(nextRecord.Key, nextRecord.Value);
             }
 
             // Resets recordIterator to point to the next segment and returns null if there are no more segments
             // Note it may not actually point to anything if no keys in range exist in the next segment
-            Iterator<Map.Entry<Bytes, byte[]>> setRecordIterator()
+            IEnumerator<KeyValuePair<Bytes, byte[]>> setRecordIterator()
             {
                 if (!segmentIterator.hasNext())
                 {
                     return null;
                 }
 
-                Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.next();
+                KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>> currentSegment = segmentIterator.next();
                 currentTime = currentSegment.Key;
 
                 if (allKeys)
@@ -434,7 +435,7 @@ namespace Kafka.Streams.State.Internals
 
             WrappedInMemoryWindowStoreIterator(Bytes keyFrom,
                                                Bytes keyTo,
-                                               Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                               IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                                ClosingCallback callback,
                                                bool retainDuplicates)
             {
@@ -477,7 +478,7 @@ namespace Kafka.Streams.State.Internals
 
             WrappedWindowedKeyValueIterator(Bytes keyFrom,
                                             Bytes keyTo,
-                                            Iterator<Map.Entry<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+                                            IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
                                             ClosingCallback callback,
                                             bool retainDuplicates,
                                             long windowSize)

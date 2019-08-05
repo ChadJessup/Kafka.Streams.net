@@ -22,15 +22,15 @@ using Kafka.Streams.KeyValue;
 
 
 /**
- * Iterator interface of {@link KeyValue} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}
+ * IEnumerator interface of {@link KeyValue} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}
  * and {@link WindowStore#fetch(object, Instant, Instant)}
  *
  * Users must call its {@code close} method explicitly upon completeness to release resources,
- * or use try-with-resources statement (available since JDK7) for this {@link Closeable}.
+ * or use try-with-resources statement (available since JDK7) for this {@link IDisposable}.
  *
  * @param Type of values
  */
-public interface WindowStoreIterator<V> : KeyValueIterator<long, V>, Closeable
+public interface WindowStoreIterator<V> : KeyValueIterator<long, V>, IDisposable
 {
 
     

@@ -18,6 +18,7 @@ using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using static Kafka.Streams.Errors.Interfaces.IDeserializationExceptionHandler;
 
 namespace Kafka.Streams.Errors

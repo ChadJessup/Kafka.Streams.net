@@ -80,3 +80,4 @@ namespace Kafka.Streams.Errors
         }
 
     }
+}

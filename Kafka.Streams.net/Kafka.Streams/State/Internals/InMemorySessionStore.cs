@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         public override void init(IProcessorContext context, IStateStore root)
         {
-            StreamsMetricsImpl metrics = ((InternalProcessorContext)context).metrics();
+            StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics();
             string taskName = context.taskId().ToString();
             expiredRecordSensor = metrics.storeLevelSensor(
                 taskName,
@@ -179,7 +179,7 @@ namespace Kafka.Streams.State.Internals
 
             removeExpiredSegments();
 
-            if (keyFrom.compareTo(keyTo) > 0)
+            if (keyFrom.CompareTo(keyTo) > 0)
             {
                 LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -261,7 +261,7 @@ namespace Kafka.Streams.State.Internals
         private InMemorySessionStoreIterator registerNewIterator(Bytes keyFrom,
                                                                  Bytes keyTo,
                                                                  long latestSessionStartTime,
-                                                                 Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator)
+                                                                 IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator)
         {
             InMemorySessionStoreIterator iterator = new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it->openIterators.Remove(it));
             openIterators.Add(iterator);
@@ -276,9 +276,9 @@ namespace Kafka.Streams.State.Internals
         private static class InMemorySessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
         {
 
-            private Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator;
-            private Iterator<Entry<Bytes, ConcurrentNavigableMap<long, byte[]>>> keyIterator;
-            private Iterator<Entry<long, byte[]>> recordIterator;
+            private IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator;
+            private IEnumerator<Entry<Bytes, ConcurrentNavigableMap<long, byte[]>>> keyIterator;
+            private IEnumerator<Entry<long, byte[]>> recordIterator;
 
             private KeyValue<Windowed<Bytes>, byte[]> next;
             private Bytes currentKey;
@@ -293,7 +293,7 @@ namespace Kafka.Streams.State.Internals
             InMemorySessionStoreIterator(Bytes keyFrom,
                                          Bytes keyTo,
                                          long latestSessionStartTime,
-                                         Iterator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator,
+                                         IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator,
                                          ClosingCallback callback)
             {
                 this.keyFrom = keyFrom;
@@ -373,7 +373,7 @@ namespace Kafka.Streams.State.Internals
                     return null;
                 }
 
-                Map.Entry<long, byte[]> nextRecord = recordIterator.next();
+                KeyValuePair<long, byte[]> nextRecord = recordIterator.next();
                 SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, currentEndTime);
                 Windowed<Bytes> windowedKey = new Windowed<>(currentKey, sessionWindow);
 

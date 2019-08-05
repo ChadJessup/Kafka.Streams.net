@@ -15,171 +15,98 @@
  * limitations under the License.
  */
 
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Internals;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K, V>
-{
-    private GroupedTableOperationRepartitionNode( string nodeName,
-                                                  ISerde<K> keySerde,
-                                                  ISerde<V> valueSerde,
-                                                  string sinkName,
-                                                  string sourceName,
-                                                  string repartitionTopic,
-                                                  ProcessorParameters processorParameters)
-{
-
-        base(
-            nodeName,
-            sourceName,
-            processorParameters,
-            keySerde,
-            valueSerde,
-            sinkName,
-            repartitionTopic
-        );
-    }
-
-
-    ISerializer<V> getValueSerializer()
-{
-         ISerializer<V> valueSerializer = valueSerde == null ? null : valueSerde.serializer();
-        return unsafeCastChangedToValueSerializer(valueSerializer);
-    }
-
-
-    private ISerializer<V> unsafeCastChangedToValueSerializer( ISerializer<V> valueSerializer)
-{
-        return (ISerializer<V>) new ChangedSerializer<>(valueSerializer);
-    }
-
-
-    IDeserializer<V> getValueDeserializer()
-{
-         IDeserializer<V> valueDeserializer = valueSerde == null ? null : valueSerde.deserializer();
-        return unsafeCastChangedToValueDeserializer(valueDeserializer);
-    }
-
-
-    private IDeserializer<V> unsafeCastChangedToValueDeserializer( IDeserializer<V> valueDeserializer)
-{
-        return (IDeserializer<V>) new ChangedDeserializer<>(valueDeserializer);
-    }
-
-
-    public string ToString()
-{
-        return "GroupedTableOperationRepartitionNode{} " + base.ToString();
-    }
-
-
-    public void writeToTopology( InternalTopologyBuilder topologyBuilder)
-{
-         ISerializer<K> keySerializer = keySerde != null ? keySerde.serializer() : null;
-         IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.deserializer() : null;
-
-
-        topologyBuilder.AddInternalTopic(repartitionTopic);
-
-        topologyBuilder.AddSink(
-            sinkName,
-            repartitionTopic,
-            keySerializer,
-            getValueSerializer(),
-            null,
-            parentNodeNames()
-        );
-
-        topologyBuilder.AddSource(
-            null,
-            sourceName,
-            new FailOnInvalidTimestamp(),
-            keyDeserializer,
-            getValueDeserializer(),
-            repartitionTopic
-        );
-
-    }
-
-    public static GroupedTableOperationRepartitionNodeBuilder<K1, V1> groupedTableOperationNodeBuilder()
-{
-        return new GroupedTableOperationRepartitionNodeBuilder<>();
-    }
-
-    public static  GroupedTableOperationRepartitionNodeBuilder<K, V> {
-
-        private ISerde<K> keySerde;
-        private ISerde<V> valueSerde;
-        private string sinkName;
-        private string nodeName;
-        private string sourceName;
-        private string repartitionTopic;
-        private ProcessorParameters processorParameters;
-
-        private GroupedTableOperationRepartitionNodeBuilder()
-{
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withKeySerde( ISerde<K> keySerde)
-{
-            this.keySerde = keySerde;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withValueSerde( ISerde<V> valueSerde)
-{
-            this.valueSerde = valueSerde;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withSinkName( string sinkName)
-{
-            this.sinkName = sinkName;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withNodeName( string nodeName)
-{
-            this.nodeName = nodeName;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withSourceName( string sourceName)
-{
-            this.sourceName = sourceName;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withRepartitionTopic( string repartitionTopic)
-{
-            this.repartitionTopic = repartitionTopic;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNodeBuilder<K, V> withProcessorParameters( ProcessorParameters processorParameters)
-{
-            this.processorParameters = processorParameters;
-            return this;
-        }
-
-        public GroupedTableOperationRepartitionNode<K, V> build()
-{
-            return new GroupedTableOperationRepartitionNode<>(
+    public class GroupedTableOperationRepartitionNode<K, V> : BaseRepartitionNode<K, V>
+    {
+        private GroupedTableOperationRepartitionNode(
+            string nodeName,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            string sinkName,
+            string sourceName,
+            string repartitionTopic,
+            ProcessorParameters processorParameters)
+            : base(
                 nodeName,
+                sourceName,
+                processorParameters,
                 keySerde,
                 valueSerde,
                 sinkName,
-                sourceName,
+                repartitionTopic)
+        {
+        }
+
+
+        ISerializer<V> getValueSerializer()
+        {
+            ISerializer<V> valueSerializer = valueSerde?.Serializer();
+            return unsafeCastChangedToValueSerializer(valueSerializer);
+        }
+
+
+        private ISerializer<V> unsafeCastChangedToValueSerializer(ISerializer<V> valueSerializer)
+        {
+            return (ISerializer<V>)new ChangedSerializer<V>(valueSerializer);
+        }
+
+
+        IDeserializer<V> getValueDeserializer()
+        {
+            IDeserializer<V> valueDeserializer = valueSerde?.Deserializer();
+            return unsafeCastChangedToValueDeserializer(valueDeserializer);
+        }
+
+
+        private IDeserializer<V> unsafeCastChangedToValueDeserializer(IDeserializer<V> valueDeserializer)
+        {
+            return (IDeserializer<V>)new ChangedDeserializer<V>(valueDeserializer);
+        }
+
+
+        public string ToString()
+        {
+            return "GroupedTableOperationRepartitionNode{} " + base.ToString();
+        }
+
+
+        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            ISerializer<K> keySerializer = keySerde != null ? keySerde.Serializer() : null;
+            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.Deserializer() : null;
+
+
+            topologyBuilder.AddInternalTopic(repartitionTopic);
+
+            topologyBuilder.AddSink(
+                sinkName,
                 repartitionTopic,
-                processorParameters
+                keySerializer,
+                getValueSerializer(),
+                null,
+                parentNodeNames()
             );
+
+            topologyBuilder.AddSource(
+                null,
+                sourceName,
+                new FailOnInvalidTimestamp(),
+                keyDeserializer,
+                getValueDeserializer(),
+                repartitionTopic
+            );
+
+        }
+
+        public static GroupedTableOperationRepartitionNodeBuilder<K1, V1> groupedTableOperationNodeBuilder<K1, V1>()
+        {
+            return new GroupedTableOperationRepartitionNodeBuilder<K1, V1>();
         }
     }
 }

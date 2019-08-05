@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -39,9 +41,5 @@ namespace Kafka.Streams.KStream.Internals
         {
             return valueSerde;
         }
-
-        public string name()
-        {
-            return name;
-        }
     }
+}

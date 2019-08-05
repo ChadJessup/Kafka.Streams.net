@@ -10,7 +10,7 @@ namespace Kafka.Streams.State.Internals
      * An in-memory LRU cache store similar to {@link MemoryLRUCache} but byte-based, not
      * record based
      */
-    public partial class ThreadCache
+    public class ThreadCache
     {
         private ILogger log;
         private long maxCacheSizeBytes;

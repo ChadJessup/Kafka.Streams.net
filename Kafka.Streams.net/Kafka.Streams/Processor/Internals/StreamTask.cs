@@ -480,7 +480,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
-        foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
+        foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
         {
             TopicPartition partition = entry.Key;
             long offset = entry.Value + 1;
@@ -522,7 +522,7 @@ namespace Kafka.Streams.Processor.Internals
         protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
         {
             Dictionary<TopicPartition, long> checkpointableOffsets = recordCollector.offsets();
-            foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
+            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
             {
                 checkpointableOffsets.putIfAbsent(entry.Key, entry.Value);
             }
@@ -549,7 +549,7 @@ namespace Kafka.Streams.Processor.Internals
         Dictionary<TopicPartition, long> purgableOffsets()
         {
             Dictionary<TopicPartition, long> purgableConsumedOffsets = new HashMap<>();
-            foreach (Map.Entry<TopicPartition, long> entry in consumedOffsets.entrySet())
+            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
             {
                 TopicPartition tp = entry.Key;
                 if (topology.isRepartitionTopic(tp.topic()))
@@ -835,7 +835,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param partition the partition
          * @param records   the records
          */
-        public void addRecords(TopicPartition partition, Iterable<ConsumeResult<byte[], byte[]>> records)
+        public void addRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
         {
             int newQueueSize = partitionGroup.AddRawRecords(partition, records);
 

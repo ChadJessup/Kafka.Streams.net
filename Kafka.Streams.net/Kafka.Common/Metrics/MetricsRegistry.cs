@@ -122,21 +122,21 @@ namespace Kafka.Common.Metrics
                 this.metricsScheduler = new ScheduledThreadPoolExecutor(1);
                 // Creating a daemon thread to not block shutdown
                 //    this.metricsScheduler.setThreadFactory(new ThreadFactory()
-                {
+                //{
 
-                    //        public Thread newThread(Runnable runnable)
-                    {
-                        //        return KafkaThread.daemon("SensorExpiryThread", runnable);
-                        //    }
-                        //});
+                //        public Thread newThread(Runnable runnable)
+                //  {
+                //        return KafkaThread.daemon("SensorExpiryThread", runnable);
+                //    }
+                //});
 
-                        //this.metricsScheduler.scheduleAtFixedRate(new ExpireSensorTask(), 30, 30, TimeUnit.SECONDS);
-                    }
+                //this.metricsScheduler.scheduleAtFixedRate(new ExpireSensorTask(), 30, 30, TimeUnit.SECONDS);
+            }
             else
-                    {
-                        this.metricsScheduler = null;
-                    }
-                }
+            {
+                this.metricsScheduler = null;
+            }
+        }
 
         private bool disposedValue = false; // To detect redundant calls
 
@@ -312,37 +312,41 @@ namespace Kafka.Common.Metrics
                 //b.Append("<table=\"data-table\"><tbody>\n");
 
                 //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes.entrySet())
-                {
-                    //    b.Append("<tr>\n");
-                    //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
-                    //    b.Append(e.Key);
-                    //    b.Append("</td>");
-                    //    b.Append("</tr>\n");
+                //{
+                //    //    b.Append("<tr>\n");
+                //    //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
+                //    //    b.Append(e.Key);
+                //    //    b.Append("</td>");
+                //    //    b.Append("</tr>\n");
 
-                    //    b.Append("<tr>\n");
-                    //    b.Append("<th style=\"width: 90px\"></th>\n");
-                    //    b.Append("<th>Attribute name</th>\n");
-                    //    b.Append("<th>Description</th>\n");
-                    //    b.Append("</tr>\n");
+                //    //    b.Append("<tr>\n");
+                //    //    b.Append("<th style=\"width: 90px\"></th>\n");
+                //    //    b.Append("<th>Attribute name</th>\n");
+                //    //    b.Append("<th>Description</th>\n");
+                //    //    b.Append("</tr>\n");
 
-                    //    foreach (Entry<string, string> e2 in e.Value.entrySet())
-                    {
-                        //        b.Append("<tr>\n");
-                        //        b.Append("<td></td>");
-                        //        b.Append("<td>");
-                        //        b.Append(e2.Key);
-                        //        b.Append("</td>");
-                        //        b.Append("<td>");
-                        //        b.Append(e2.Value);
-                        //        b.Append("</td>");
-                        //        b.Append("</tr>\n");
-                        //    }
+                //    //    foreach (Entry<string, string> e2 in e.Value.entrySet())
+                //    {
+                //        //        b.Append("<tr>\n");
+                //        //        b.Append("<td></td>");
+                //        //        b.Append("<td>");
+                //        //        b.Append(e2.Key);
+                //        //        b.Append("</td>");
+                //        //        b.Append("<td>");
+                //        //        b.Append(e2.Value);
+                //        //        b.Append("</td>");
+                //        //        b.Append("</tr>\n");
+                //        //    }
 
-                        //}
-                        //b.Append("</tbody></table>");
+                //        //}
+                //        //b.Append("</tbody></table>");
 
-                        return b.ToString();
-                    }
+                //        return b.ToString();
+                //    }
+            }
+
+            return "";
+        }
 
         public MetricConfig config { get; }
 

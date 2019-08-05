@@ -107,7 +107,7 @@ public class StateSerdes<K, V>
      */
     public IDeserializer<K> keyDeserializer()
 {
-        return keySerde.deserializer();
+        return keySerde.Deserializer();
     }
 
     /**
@@ -117,7 +117,7 @@ public class StateSerdes<K, V>
      */
     public ISerializer<K> keySerializer()
 {
-        return keySerde.serializer();
+        return keySerde.Serializer();
     }
 
     /**
@@ -127,7 +127,7 @@ public class StateSerdes<K, V>
      */
     public IDeserializer<V> valueDeserializer()
 {
-        return valueSerde.deserializer();
+        return valueSerde.Deserializer();
     }
 
     /**
@@ -137,7 +137,7 @@ public class StateSerdes<K, V>
      */
     public ISerializer<V> valueSerializer()
 {
-        return valueSerde.serializer();
+        return valueSerde.Serializer();
     }
 
     /**
@@ -158,7 +158,7 @@ public class StateSerdes<K, V>
      */
     public K keyFrom(byte[] rawKey)
 {
-        return keySerde.deserializer().deserialize(topic, rawKey);
+        return keySerde.Deserializer().Deserialize(topic, rawKey);
     }
 
     /**
@@ -169,7 +169,7 @@ public class StateSerdes<K, V>
      */
     public V valueFrom(byte[] rawValue)
 {
-        return valueSerde.deserializer().deserialize(topic, rawValue);
+        return valueSerde.Deserializer().Deserialize(topic, rawValue);
     }
 
     /**
@@ -182,7 +182,7 @@ public class StateSerdes<K, V>
 {
         try
 {
-            return keySerde.serializer().serialize(topic, key);
+            return keySerde.Serializer().Serialize(topic, key);
         } catch (ClassCastException e)
 {
             string keyClass = key == null ? "unknown because key is null" : key.GetType().getName();
@@ -206,7 +206,7 @@ public class StateSerdes<K, V>
 {
         try
 {
-            return valueSerde.serializer().serialize(topic, value);
+            return valueSerde.Serializer().Serialize(topic, value);
         } catch (ClassCastException e)
 {
             string valueClass;

@@ -41,19 +41,19 @@ namespace Kafka.Streams.State.Internals.Metrics
         }
 
         public static Sensor createBufferSizeSensor(IStateStore store,
-                                                    InternalProcessorContext context)
+                                                    IInternalProcessorContext context)
         {
             return getBufferSizeOrCountSensor(store, context, "size");
         }
 
         public static Sensor createBufferCountSensor(IStateStore store,
-                                                     InternalProcessorContext context)
+                                                     IInternalProcessorContext context)
         {
             return getBufferSizeOrCountSensor(store, context, "count");
         }
 
         private static Sensor getBufferSizeOrCountSensor(IStateStore store,
-                                                         InternalProcessorContext context,
+                                                         IInternalProcessorContext context,
                                                          string property)
         {
             StreamsMetricsImpl metrics = context.metrics();

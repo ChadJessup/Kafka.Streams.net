@@ -75,7 +75,7 @@ public class TimeWindowedDeserializer<T> : IDeserializer<Windowed<T>> {
             try
 {
 
-                inner = Serde.cast(Utils.newInstance(value, Serde)).deserializer();
+                inner = Serde.cast(Utils.newInstance(value, Serde)).Deserializer();
                 inner.configure(configs, isKey);
             } catch ( ClassNotFoundException e)
 {

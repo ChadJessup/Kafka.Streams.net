@@ -39,7 +39,7 @@ class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegme
         Utils.delete(dbDir);
     }
 
-    public override int compareTo(TimestampedSegment segment)
+    public override int CompareTo(TimestampedSegment segment)
 {
         return long.compare(id, segment.id);
     }

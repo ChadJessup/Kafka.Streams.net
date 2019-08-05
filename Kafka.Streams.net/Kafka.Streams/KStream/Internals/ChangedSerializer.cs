@@ -15,84 +15,75 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.KStream.Internals
 {
+    public class ChangedSerializer<T> : ISerializer<Change<T>>
+    {
 
+        private static int NEWFLAG_SIZE = 1;
 
+        private ISerializer<T> inner;
 
-
-
-
-
-
-public class ChangedSerializer<T> : ISerializer<Change<T>> {
-
-    private static  int NEWFLAG_SIZE = 1;
-
-    private ISerializer<T> inner;
-
-    public ChangedSerializer( ISerializer<T> inner)
-{
-        this.inner = inner;
-    }
-
-    public ISerializer<T> inner()
-{
-        return inner;
-    }
-
-    public void setInner( ISerializer<T> inner)
-{
-        this.inner = inner;
-    }
-
-    /**
-     * @throws StreamsException if both old and new values of data are null, or if
-     * both values are not null
-     */
-
-    public byte[] serialize( string topic,  Headers headers,  Change<T> data)
-{
-         byte[] serializedKey;
-
-        // only one of the old / new values would be not null
-        if (data.newValue != null)
-{
-            if (data.oldValue != null)
-{
-                throw new StreamsException("Both old and new values are not null (" + data.oldValue
-                    + " : " + data.newValue + ") in ChangeSerializer, which is not allowed.");
-            }
-
-            serializedKey = inner.serialize(topic, headers, data.newValue);
-        } else
-{
-
-            if (data.oldValue == null)
-{
-                throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
-            }
-
-            serializedKey = inner.serialize(topic, headers, data.oldValue);
+        public ChangedSerializer(ISerializer<T> inner)
+        {
+            this.inner = inner;
         }
 
-         ByteBuffer buf = ByteBuffer.allocate(serializedKey.Length + NEWFLAG_SIZE);
-        buf.Add(serializedKey);
-        buf.Add((byte) (data.newValue != null ? 1 : 0));
+        public void setInner(ISerializer<T> inner)
+        {
+            this.inner = inner;
+        }
 
-        return buf.array();
-    }
+        /**
+         * @throws StreamsException if both old and new values of data are null, or if
+         * both values are not null
+         */
+
+        public byte[] serialize(string topic, Headers headers, Change<T> data)
+        {
+            byte[] serializedKey;
+
+            // only one of the old / new values would be not null
+            if (data.newValue != null)
+            {
+                if (data.oldValue != null)
+                {
+                    throw new StreamsException("Both old and new values are not null (" + data.oldValue
+                        + " : " + data.newValue + ") in ChangeSerializer, which is not allowed.");
+                }
+
+                serializedKey = inner.Serialize(topic, headers, data.newValue);
+            }
+            else
+            {
+
+                if (data.oldValue == null)
+                {
+                    throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
+                }
+
+                serializedKey = inner.Serialize(topic, headers, data.oldValue);
+            }
+
+            ByteBuffer buf = ByteBuffer.allocate(serializedKey.Length + NEWFLAG_SIZE);
+            buf.add(serializedKey);
+            buf.add((byte)(data.newValue != null ? 1 : 0));
+
+            return buf.array();
+        }
 
 
-    public byte[] serialize( string topic,  Change<T> data)
-{
-        return serialize(topic, null, data);
-    }
+        public byte[] serialize(string topic, Change<T> data)
+        {
+            return serialize(topic, null, data);
+        }
 
 
-    public void close()
-{
-        inner.close();
+        public void close()
+        {
+            inner.close();
+        }
     }
 }

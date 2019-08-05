@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
+using Confluent.Kafka;
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -60,8 +62,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            ISerializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().serializer();
-            ISerializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().serializer();
+            ISerializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().Serializer();
+            ISerializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().Serializer();
             StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
             string[] parentNames = parentNodeNames();
 
@@ -77,5 +79,5 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, partitioner, parentNames);
             }
         }
-
     }
+}

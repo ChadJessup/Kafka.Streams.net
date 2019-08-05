@@ -55,17 +55,17 @@ namespace Kafka.Common.Metrics.Stats
                 double pct = percentile.percentile;
                 //ms.Add(new NamedMeasurable(percentile.name, new IMeasurable()
                 //{
-                //    public double measure(MetricConfig config, long now)
-{
-                //        return value(config, now, pct / 100.0);
-                //    }
+                //    //public double measure(MetricConfig config, long now)
+                //    //{
+                //    //    return value(config, now, pct / 100.0);
+                //    //}
                 //}));
             }
 
             return ms;
         }
 
-        public double value(MetricConfig config, long now, double quantile)
+        double value(MetricConfig config, long now, double quantile)
         {
             purgeObsoleteSamples(config, now);
             float count = 0.0f;

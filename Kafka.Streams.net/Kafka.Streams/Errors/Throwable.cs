@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.Errors
 {
-    public class Throwable
+    public class Throwable : Exception
     {
     }
 }

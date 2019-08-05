@@ -57,7 +57,7 @@ public class RecordQueue
                 SourceNode source,
                 TimestampExtractor timestampExtractor,
                 DeserializationExceptionHandler deserializationExceptionHandler,
-                InternalProcessorContext processorContext,
+                IInternalProcessorContext processorContext,
                 LogContext logContext)
 {
         this.source = source;
@@ -101,7 +101,7 @@ public class RecordQueue
      * @param rawRecords the raw records
      * @return the size of this queue
      */
-    int.AddRawRecords(Iterable<ConsumeResult<byte[], byte[]>> rawRecords)
+    int.AddRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
 {
         foreach (ConsumeResult<byte[], byte[]> rawRecord in rawRecords)
 {
@@ -184,7 +184,7 @@ public class RecordQueue
         while (headRecord == null && !fifoQueue.isEmpty())
 {
             ConsumeResult<byte[], byte[]> raw = fifoQueue.pollFirst();
-            ConsumeResult<object, object> deserialized = recordDeserializer.deserialize(processorContext, raw);
+            ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize(processorContext, raw);
 
             if (deserialized == null)
 {

@@ -124,7 +124,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
     public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
 {
 
-        if (from.compareTo(to) > 0)
+        if (from.CompareTo(to) > 0)
 {
             LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                 + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -162,9 +162,9 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 
     private static class InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
 {
-        private Iterator<Map.Entry<Bytes, byte[]>> iter;
+        private IEnumerator<KeyValuePair<Bytes, byte[]>> iter;
 
-        private InMemoryKeyValueIterator(Iterator<Map.Entry<Bytes, byte[]>> iter)
+        private InMemoryKeyValueIterator(IEnumerator<KeyValuePair<Bytes, byte[]>> iter)
 {
             this.iter = iter;
         }
@@ -178,7 +178,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 
         public KeyValue<Bytes, byte[]> next()
 {
-            Map.Entry<Bytes, byte[]> entry = iter.next();
+            KeyValuePair<Bytes, byte[]> entry = iter.next();
             return new KeyValue<>(entry.Key, entry.Value);
         }
 

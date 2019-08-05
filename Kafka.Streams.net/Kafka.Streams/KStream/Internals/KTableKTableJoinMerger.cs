@@ -28,126 +28,87 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V> {
+    public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V>
+    {
 
-    private  KTableProcessorSupplier<K, ?, V> parent1;
-    private  KTableProcessorSupplier<K, ?, V> parent2;
-    private  string queryableName;
-    private bool sendOldValues = false;
+        private KTableProcessorSupplier<K, ?, V> parent1;
+        private KTableProcessorSupplier<K, ?, V> parent2;
+        private string queryableName;
+        private bool sendOldValues = false;
 
-    KTableKTableJoinMerger( KTableProcessorSupplier<K, ?, V> parent1,
-                            KTableProcessorSupplier<K, ?, V> parent2,
-                            string queryableName)
-{
-        this.parent1 = parent1;
-        this.parent2 = parent2;
-        this.queryableName = queryableName;
-    }
-
-    public string getQueryableName()
-{
-        return queryableName;
-    }
-
-
-    public Processor<K, Change<V>> get()
-{
-        return new KTableKTableJoinMergeProcessor();
-    }
-
-
-    public KTableValueGetterSupplier<K, V> view()
-{
-        // if the result KTable is materialized, use the materialized store to return getter value;
-        // otherwise rely on the parent getter and apply join on-the-fly
-        if (queryableName != null)
-{
-            return new KTableMaterializedValueGetterSupplier<>(queryableName);
-        } else
-{
-
-            return new KTableValueGetterSupplier<K, V>()
-{
-
-                public KTableValueGetter<K, V> get()
-{
-                    return parent1.view()[];
-                }
-
-
-                public string[] storeNames()
-{
-                     string[] storeNames1 = parent1.view().storeNames();
-                     string[] storeNames2 = parent2.view().storeNames();
-                     HashSet<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
-                    Collections.AddAll(stores, storeNames1);
-                    Collections.AddAll(stores, storeNames2);
-                    return stores.toArray(new string[stores.size()]);
-                }
-            };
+        KTableKTableJoinMerger(KTableProcessorSupplier<K, ?, V> parent1,
+                                KTableProcessorSupplier<K, ?, V> parent2,
+                                string queryableName)
+        {
+            this.parent1 = parent1;
+            this.parent2 = parent2;
+            this.queryableName = queryableName;
         }
-    }
+
+        public string getQueryableName()
+        {
+            return queryableName;
+        }
 
 
-    public void enableSendingOldValues()
-{
-        parent1.enableSendingOldValues();
-        parent2.enableSendingOldValues();
-        sendOldValues = true;
-    }
-
-    public static KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
-                                                          KTableProcessorSupplier<K, ?, V> parent2)
-{
-        return of(parent1, parent2, null);
-    }
-
-    public static KTableKTableJoinMerger<K, V> of( KTableProcessorSupplier<K, ?, V> parent1,
-                                                          KTableProcessorSupplier<K, ?, V> parent2,
-                                                          string queryableName)
-{
-        return new KTableKTableJoinMerger<>(parent1, parent2, queryableName);
-    }
-
-    private class KTableKTableJoinMergeProcessor : AbstractProcessor<K, Change<V>> {
-        private TimestampedKeyValueStore<K, V> store;
-        private TimestampedTupleForwarder<K, V> tupleForwarder;
+        public Processor<K, Change<V>> get()
+        {
+            return new KTableKTableJoinMergeProcessor();
+        }
 
 
-
-        public void init( IProcessorContext context)
-{
-            base.init(context);
+        public KTableValueGetterSupplier<K, V> view()
+        {
+            // if the result KTable is materialized, use the materialized store to return getter value;
+            // otherwise rely on the parent getter and apply join on-the-fly
             if (queryableName != null)
-{
-                store = (TimestampedKeyValueStore<K, V>) context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<>(
-                    store,
-                    context,
-                    new TimestampedCacheFlushListener<>(context),
-                    sendOldValues);
+            {
+                return new KTableMaterializedValueGetterSupplier<>(queryableName);
+            }
+            else
+            {
+
+                //    return new KTableValueGetterSupplier<K, V>()
+                //    {
+
+                //    public KTableValueGetter<K, V> get()
+                //    {
+                //        return parent1.view()[];
+                //    }
+
+
+                //    public string[] storeNames()
+                //    {
+                //        string[] storeNames1 = parent1.view().storeNames();
+                //        string[] storeNames2 = parent2.view().storeNames();
+                //        HashSet<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
+                //        Collections.AddAll(stores, storeNames1);
+                //        Collections.AddAll(stores, storeNames2);
+                //        return stores.toArray(new string[stores.size()]);
+                //    }
+                //};
             }
         }
 
 
-        public void process( K key,  Change<V> value)
-{
-            if (queryableName != null)
-{
-                store.Add(key, ValueAndTimestamp.make(value.newValue, context().timestamp()));
-                tupleForwarder.maybeForward(key, value.newValue, sendOldValues ? value.oldValue : null);
-            } else
-{
+        public void enableSendingOldValues()
+        {
+            parent1.enableSendingOldValues();
+            parent2.enableSendingOldValues();
+            sendOldValues = true;
+        }
 
-                if (sendOldValues)
-{
-                    context().forward(key, value);
-                } else
-{
+        public static KTableKTableJoinMerger<K, V> of(KTableProcessorSupplier<K, ?, V> parent1,
+                                                              KTableProcessorSupplier<K, ?, V> parent2)
+        {
+            return of(parent1, parent2, null);
+        }
 
-                    context().forward(key, new Change<>(value.newValue, null));
-                }
-            }
+        public static KTableKTableJoinMerger<K, V> of(KTableProcessorSupplier<K, object, V> parent1,
+                                                              KTableProcessorSupplier<K, object, V> parent2,
+                                                              string queryableName)
+        {
+            return new KTableKTableJoinMerger<K, V>(parent1, parent2, queryableName);
         }
     }
 }

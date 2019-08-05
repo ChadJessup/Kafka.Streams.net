@@ -57,8 +57,8 @@ namespace Kafka.Streams.State.Internals
             {
                 return null;
             }
-            byte[] rawValue = valueSerializer.serialize(topic, data);
-            byte[] rawTimestamp = timestampSerializer.serialize(topic, timestamp);
+            byte[] rawValue = valueSerializer.Serialize(topic, data);
+            byte[] rawTimestamp = timestampSerializer.Serialize(topic, timestamp);
             return ByteBuffer
                 .allocate(rawTimestamp.Length + rawValue.Length)
                 .Add(rawTimestamp)

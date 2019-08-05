@@ -43,11 +43,5 @@ namespace Kafka.Streams.KStream.Internals
         {
             return otherValueSerde;
         }
-
-        // TODO Remove annotation when base.name() is removed
-
-        public string name()
-        {
-            return name;
-        }
     }
+}

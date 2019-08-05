@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -25,13 +28,13 @@ namespace Kafka.Streams.Processor.Internals
     {
         ILogger log;
         private string taskTypeName;
-        private Dictionary<TaskId, T> created = new HashMap<>();
-        private Dictionary<TaskId, T> suspended = new HashMap<>();
-        private HashSet<TaskId> previousActiveTasks = new HashSet<>();
+        private Dictionary<TaskId, T> created = new Dictionary<TaskId, T>();
+        private Dictionary<TaskId, T> suspended = new Dictionary<TaskId, T>();
+        private HashSet<TaskId> previousActiveTasks = new HashSet<TaskId>();
 
         // IQ may access this map.
-        Dictionary<TaskId, T> running = new ConcurrentHashMap<>();
-        private Dictionary<TopicPartition, T> runningByPartition = new HashMap<>();
+        ConcurrentDictionary<TaskId, T> running = new ConcurrentDictionary<TaskId, T>();
+        private Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
 
         AssignedTasks(LogContext logContext,
                       string taskTypeName)
@@ -56,9 +59,9 @@ namespace Kafka.Streams.Processor.Internals
             {
                 log.LogDebug("Initializing {}s {}", taskTypeName, created.keySet());
             }
-            for (Iterator<Map.Entry<TaskId, T>> it = created.entrySet().iterator(); it.hasNext();)
+            for (IEnumerator<KeyValuePair<TaskId, T>> it = created.entrySet().iterator(); it.hasNext();)
             {
-                Map.Entry<TaskId, T> entry = it.next();
+                KeyValuePair<TaskId, T> entry = it.next();
                 try
                 {
 
@@ -132,7 +135,7 @@ namespace Kafka.Streams.Processor.Internals
         private RuntimeException suspendTasks(Collection<T> tasks)
         {
             AtomicReference<RuntimeException> firstException = new AtomicReference<>(null);
-            for (Iterator<T> it = tasks.iterator(); it.hasNext();)
+            for (IEnumerator<T> it = tasks.iterator(); it.hasNext();)
             {
                 T task = it.next();
                 try
@@ -331,7 +334,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             int committed = 0;
             RuntimeException firstException = null;
-            for (Iterator<T> it = running().iterator(); it.hasNext();)
+            for (IEnumerator<T> it = running().iterator(); it.hasNext();)
             {
                 T task = it.next();
                 try
@@ -378,7 +381,7 @@ namespace Kafka.Streams.Processor.Internals
 
         void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
         {
-            Iterator<T> standByTaskIterator = suspended.values().iterator();
+            IEnumerator<T> standByTaskIterator = suspended.values().iterator();
             while (standByTaskIterator.hasNext())
             {
                 T suspendedTask = standByTaskIterator.next();

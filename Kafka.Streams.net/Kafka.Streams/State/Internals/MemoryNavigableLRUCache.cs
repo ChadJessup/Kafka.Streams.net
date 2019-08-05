@@ -14,98 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
+using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
-
-
-
-
-
-
-
-public class MemoryNavigableLRUCache : MemoryLRUCache
+namespace Kafka.Streams.State.Internals
 {
 
-    private static ILogger LOG= new LoggerFactory().CreateLogger<MemoryNavigableLRUCache);
+    public class MemoryNavigableLRUCache : MemoryLRUCache
+    {
 
-    public MemoryNavigableLRUCache(string name, int maxCacheSize)
-{
-        base(name, maxCacheSize);
-    }
+        private static ILogger LOG = new LoggerFactory().CreateLogger<MemoryNavigableLRUCache>();
 
-    public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
-{
-
-        if (from.compareTo(to) > 0)
-{
-            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
-                + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
-                "Note that the built-in numerical serdes do not follow this for negative numbers");
-            return KeyValueIterators.emptyIterator();
+        public MemoryNavigableLRUCache(string name, int maxCacheSize)
+            : base(name, maxCacheSize)
+        {
         }
 
-        TreeMap<Bytes, byte[]> treeMap = toTreeMap();
-        return new DelegatingPeekingKeyValueIterator<>(name(),
-            new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet()
-                .subSet(from, true, to, true).iterator(), treeMap));
-    }
+        public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+        {
 
-    public override  KeyValueIterator<Bytes, byte[]> all()
-{
-        TreeMap<Bytes, byte[]> treeMap = toTreeMap();
-        return new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet().iterator(), treeMap);
-    }
+            if (from.CompareTo(to) > 0)
+            {
+                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
+                    "Note that the built-in numerical serdes do not follow this for negative numbers");
+                return KeyValueIterators.emptyIterator();
+            }
 
-    private synchronized TreeMap<Bytes, byte[]> toTreeMap()
-{
-        return new TreeMap<>(this.map);
-    }
-
-
-    private static CacheIterator : KeyValueIterator<Bytes, byte[]>
-{
-        private Iterator<Bytes> keys;
-        private Dictionary<Bytes, byte[]> entries;
-        private Bytes lastKey;
-
-        private CacheIterator(Iterator<Bytes> keys, Dictionary<Bytes, byte[]> entries)
-{
-            this.keys = keys;
-            this.entries = entries;
+            TreeMap<Bytes, byte[]> treeMap = toTreeMap();
+            return new DelegatingPeekingKeyValueIterator<>(name(),
+                new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet()
+                    .subSet(from, true, to, true).iterator(), treeMap));
         }
 
-
-        public bool hasNext()
-{
-            return keys.hasNext();
+        public override KeyValueIterator<Bytes, byte[]> all()
+        {
+            TreeMap<Bytes, byte[]> treeMap = toTreeMap();
+            return new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet().iterator(), treeMap);
         }
 
-
-        public KeyValue<Bytes, byte[]> next()
-{
-            lastKey = keys.next();
-            return new KeyValue<>(lastKey, entries[lastKey]);
-        }
-
-
-        public void Remove()
-{
-            // do nothing
-        }
-
-
-        public void close()
-{
-            // do nothing
-        }
-
-
-        public Bytes peekNextKey()
-{
-            throw new InvalidOperationException("peekNextKey not supported");
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private TreeMap<Bytes, byte[]> toTreeMap()
+        {
+            return new TreeMap<>(this.map);
         }
     }
 }

@@ -76,7 +76,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
         RuntimeException exception = null;
 
         log.LogTrace("Closing all restoring stream tasks {}", restoring.keySet());
-        Iterator<StreamTask> restoringTaskIterator = restoring.values().iterator();
+        IEnumerator<StreamTask> restoringTaskIterator = restoring.values().iterator();
         while (restoringTaskIterator.hasNext())
 {
             StreamTask task = restoringTaskIterator.next();
@@ -114,9 +114,9 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
         }
         log.LogTrace("Stream task changelog partitions that have completed restoring so far: {}", restored);
         restoredPartitions.AddAll(restored);
-        for (Iterator<Map.Entry<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
+        for (IEnumerator<KeyValuePair<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
 {
-            Map.Entry<TaskId, StreamTask> entry = it.next();
+            KeyValuePair<TaskId, StreamTask> entry = it.next();
             StreamTask task = entry.Value;
             if (restoredPartitions.containsAll(task.changelogPartitions()))
 {
@@ -166,7 +166,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
         int committed = 0;
         RuntimeException firstException = null;
 
-        for (Iterator<StreamTask> it = running().iterator(); it.hasNext(); )
+        for (IEnumerator<StreamTask> it = running().iterator(); it.hasNext(); )
 {
             StreamTask task = it.next();
             try
@@ -231,7 +231,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 {
         int processed = 0;
 
-        Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
+        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.entrySet().iterator();
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;
@@ -269,7 +269,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
     int punctuate()
 {
         int punctuated = 0;
-        Iterator<Map.Entry<TaskId, StreamTask>> it = running.entrySet().iterator();
+        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.entrySet().iterator();
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;

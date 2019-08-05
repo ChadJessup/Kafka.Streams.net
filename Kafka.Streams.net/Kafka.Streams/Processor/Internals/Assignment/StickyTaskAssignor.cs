@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Processor.Internals.assignment;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals.Assignment
@@ -22,7 +23,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
     public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId>
     {
 
-        private static ILogger log = new LoggerFactory().CreateLogger < StickyTaskAssignor);
+        private static ILogger log = new LoggerFactory().CreateLogger<StickyTaskAssignor>();
         private Dictionary<ID, ClientState> clients;
         private HashSet<TaskId> taskIds;
         private Dictionary<TaskId, ID> previousActiveTaskAssignment = new HashMap<>();
@@ -74,7 +75,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
             // first try and re-assign existing active tasks to clients that previously had
             // the same active task
-            foreach (Map.Entry<TaskId, ID> entry in previousActiveTaskAssignment.entrySet())
+            foreach (KeyValuePair<TaskId, ID> entry in previousActiveTaskAssignment.entrySet())
             {
                 TaskId taskId = entry.Key;
                 if (taskIds.contains(taskId))
@@ -87,12 +88,12 @@ namespace Kafka.Streams.Processor.Internals.Assignment
                 }
             }
 
-            HashSet<TaskId> unassigned = new HashSet<>(taskIds);
+            HashSet<TaskId> unassigned = new HashSet<TaskId>(taskIds);
             unassigned.removeAll(assigned);
 
             // try and assign any remaining unassigned tasks to clients that previously
             // have seen the task.
-            for (Iterator<TaskId> iterator = unassigned.iterator(); iterator.hasNext();)
+            for (IEnumerator<TaskId> iterator = unassigned.iterator(); iterator.hasNext();)
             {
                 TaskId taskId = iterator.next();
                 HashSet<ID> clientIds = previousStandbyTaskAssignment[taskId];
@@ -138,7 +139,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         private HashSet<ID> findClientsWithoutAssignedTask(TaskId taskId)
         {
             HashSet<ID> clientIds = new HashSet<>();
-            foreach (Map.Entry<ID, ClientState> client in clients.entrySet())
+            foreach (KeyValuePair<ID, ClientState> client in clients.entrySet())
             {
                 if (!client.Value.hasAssignedTask(taskId))
                 {
@@ -260,7 +261,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         private void mapPreviousTaskAssignment(Dictionary<ID, ClientState> clients)
         {
-            foreach (Map.Entry<ID, ClientState> clientState in clients.entrySet())
+            foreach (KeyValuePair<ID, ClientState> clientState in clients.entrySet())
             {
                 foreach (TaskId activeTask in clientState.Value.previousActiveTasks())
                 {
@@ -328,7 +329,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         Pair pair(TaskId task1, TaskId task2)
         {
-            if (task1.compareTo(task2) < 0)
+            if (task1.CompareTo(task2) < 0)
             {
                 return new Pair(task1, task2);
             }

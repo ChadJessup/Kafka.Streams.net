@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -82,3 +83,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
             }
         }
     }
+}

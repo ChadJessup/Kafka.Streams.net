@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-public interface WindowedSerializer<T> : ISerializer<Windowed<T>> {
-
-    byte[] serializeBaseKey(string topic, Windowed<T> data);
+    public interface WindowedSerializer<T> : ISerializer<Windowed<T>>
+    {
+        byte[] serializeBaseKey(string topic, Windowed<T> data);
+    }
 }

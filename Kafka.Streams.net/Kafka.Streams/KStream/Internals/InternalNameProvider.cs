@@ -18,10 +18,11 @@ namespace Kafka.Streams.KStream.Internals
 {
 
 
-public interface InternalNameProvider
-{
+    public interface InternalNameProvider
+    {
 
-    string newProcessorName( string prefix);
+        string newProcessorName(string prefix);
 
-    string newStoreName( string prefix);
+        string newStoreName(string prefix);
+    }
 }

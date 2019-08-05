@@ -1,8 +1,15 @@
 using Confluent.Kafka;
+using Kafka.Common.Metrics;
 using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processor.Internals.metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -72,7 +79,8 @@ namespace Kafka.Streams.Processor.Internals
         public enum State : ThreadStateTransitionValidator
         {
 
-            CREATED(1, 5), STARTING(2, 5), PARTITIONS_REVOKED(3, 5), PARTITIONS_ASSIGNED(2, 4, 5), RUNNING(2, 5), PENDING_SHUTDOWN(6), DEAD;
+            //            CREATED(1, 5), STARTING(2, 5), PARTITIONS_REVOKED(3, 5), PARTITIONS_ASSIGNED(2, 4, 5), RUNNING(2, 5), PENDING_SHUTDOWN(6), DEAD;
+        }
 
         private HashSet<int> validTransitions = new HashSet<>();
 
@@ -113,8 +121,8 @@ namespace Kafka.Streams.Processor.Internals
     {
         State oldState;
 
-        synchronized(stateLock)
-{
+        lock (stateLock)
+        {
             oldState = state;
 
             if (state == State.PENDING_SHUTDOWN && newState != State.DEAD)
@@ -180,8 +188,8 @@ namespace Kafka.Streams.Processor.Internals
 
     public bool isRunning()
     {
-        synchronized(stateLock)
-{
+        lock (stateLock)
+        {
             return state.isRunning();
         }
     }
@@ -321,7 +329,7 @@ namespace Kafka.Streams.Processor.Internals
         }
     }
 
-    static abstract class AbstractTaskCreator<T>
+    public abstract class AbstractTaskCreator<T>
         where T : Task
     {
         string applicationId;
@@ -334,7 +342,7 @@ namespace Kafka.Streams.Processor.Internals
         ILogger log;
 
 
-        AbstractTaskCreator(InternalTopologyBuilder builder,
+        public AbstractTaskCreator(InternalTopologyBuilder builder,
                             StreamsConfig config,
                             StreamsMetricsImpl streamsMetrics,
                             StateDirectory stateDirectory,
@@ -352,21 +360,12 @@ namespace Kafka.Streams.Processor.Internals
             this.log = log;
         }
 
-        public InternalTopologyBuilder builder()
-        {
-            return builder;
-        }
-
-        public StateDirectory stateDirectory()
-        {
-            return stateDirectory;
-        }
 
         Collection<T> createTasks(IConsumer<byte[], byte[]> consumer,
                                   Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
-            List<T> createdTasks = new List<>();
-            foreach (Map.Entry<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated.entrySet())
+            List<T> createdTasks = new List<T>();
+            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated)
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
@@ -378,6 +377,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
 
             }
+
             return createdTasks;
         }
 
@@ -526,7 +526,7 @@ namespace Kafka.Streams.Processor.Internals
 
             string logPrefix = string.Format("stream-thread [%s] ", threadClientId);
             LogContext logContext = new LogContext(logPrefix);
-            ILogger log = logContext.logger(StreamThread);
+            ILogger log = logContext.logger<StreamThread>();
 
             log.LogInformation("Creating restore consumer client");
             Dictionary<string, object> restoreConsumerConfigs = config.getRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
@@ -611,23 +611,24 @@ namespace Kafka.Streams.Processor.Internals
                 .updateThreadMetadata(getSharedAdminClientId(clientId));
         }
 
-        public StreamThread(ITime time,
-                            StreamsConfig config,
-                            IProducer<byte[], byte[]> producer,
-                            IConsumer<byte[], byte[]> restoreConsumer,
-                            IConsumer<byte[], byte[]> consumer,
-                            string originalReset,
-                            TaskManager taskManager,
-                            StreamsMetricsImpl streamsMetrics,
-                            InternalTopologyBuilder builder,
-                            string threadClientId,
-                            LogContext logContext,
-                            AtomicInteger assignmentErrorCode)
+        public StreamThread(
+            ITime time,
+            StreamsConfig config,
+            IProducer<byte[], byte[]> producer,
+            IConsumer<byte[], byte[]> restoreConsumer,
+            IConsumer<byte[], byte[]> consumer,
+            string originalReset,
+            TaskManager taskManager,
+            StreamsMetricsImpl streamsMetrics,
+            InternalTopologyBuilder builder,
+            string threadClientId,
+            LogContext logContext,
+            AtomicInteger assignmentErrorCode)
             : base(threadClientId)
         {
 
             this.stateLock = new object();
-            this.standbyRecords = new HashMap<>();
+            this.standbyRecords = new Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>>();
 
             this.streamsMetrics = streamsMetrics;
             this.commitSensor = ThreadMetrics.commitSensor(streamsMetrics);
@@ -1084,11 +1085,8 @@ namespace Kafka.Streams.Processor.Internals
 
             if (now - lastCommitMs > commitTimeMs)
             {
-                if (log.isTraceEnabled())
-                {
-                    log.LogTrace("Committing all active tasks {} and standby tasks {} since {}ms has elapsed (commit interval is {}ms)",
-                        taskManager.activeTaskIds(), taskManager.standbyTaskIds(), now - lastCommitMs, commitTimeMs);
-                }
+                log.LogTrace("Committing all active tasks {} and standby tasks {} since {}ms has elapsed (commit interval is {}ms)",
+                    taskManager.activeTaskIds(), taskManager.standbyTaskIds(), now - lastCommitMs, commitTimeMs);
 
                 committed += taskManager.commitAll();
                 if (committed > 0)
@@ -1099,11 +1097,8 @@ namespace Kafka.Streams.Processor.Internals
                     // try to purge the committed records for repartition topics if possible
                     taskManager.maybePurgeCommitedRecords();
 
-                    if (log.isDebugEnabled())
-                    {
-                        log.LogDebug("Committed all active tasks {} and standby tasks {} in {}ms",
-                            taskManager.activeTaskIds(), taskManager.standbyTaskIds(), intervalCommitLatency);
-                    }
+                    log.LogDebug("Committed all active tasks {} and standby tasks {} in {}ms",
+                        taskManager.activeTaskIds(), taskManager.standbyTaskIds(), intervalCommitLatency);
                 }
 
                 lastCommitMs = now;
@@ -1164,11 +1159,9 @@ namespace Kafka.Streams.Processor.Internals
 
                         standbyRecords = remainingStandbyRecords;
 
-                        if (log.isDebugEnabled())
-                        {
-                            log.LogDebug("Updated standby tasks {} in {}ms", taskManager.standbyTaskIds(), time.milliseconds() - now);
-                        }
+                        log.LogDebug("Updated standby tasks {} in {}ms", taskManager.standbyTaskIds(), time.milliseconds() - now);
                     }
+
                     processStandbyRecords = false;
                 }
 
@@ -1344,13 +1337,13 @@ namespace Kafka.Streams.Processor.Internals
         {
             HashSet<string> producerClientIds = new HashSet<>();
             HashSet<TaskMetadata> activeTasksMetadata = new HashSet<>();
-            foreach (Map.Entry<TaskId, StreamTask> task in activeTasks.entrySet())
+            foreach (KeyValuePair<TaskId, StreamTask> task in activeTasks.entrySet())
             {
                 activeTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
                 producerClientIds.Add(getTaskProducerClientId(getName(), task.Key));
             }
             HashSet<TaskMetadata> standbyTasksMetadata = new HashSet<>();
-            foreach (Map.Entry<TaskId, StandbyTask> task in standbyTasks.entrySet())
+            foreach (KeyValuePair<TaskId, StandbyTask> task in standbyTasks.entrySet())
             {
                 standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
             }
@@ -1448,11 +1441,6 @@ namespace Kafka.Streams.Processor.Internals
         TaskManager taskManager()
         {
             return taskManager;
-        }
-
-        Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> standbyRecords()
-        {
-            return standbyRecords;
         }
 
         int currentNumIterations()

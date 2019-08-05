@@ -1,3 +1,7 @@
+using Kafka.Streams.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+
 namespace Kafka.Streams
 {
 
@@ -115,9 +119,7 @@ namespace Kafka.Streams
      */
     public class StreamsConfig : AbstractConfig
     {
-
-
-        private static ILogger log = new LoggerFactory().CreateLogger < StreamsConfig);
+        private static ILogger log = new LoggerFactory().CreateLogger<StreamsConfig>();
 
         private static ConfigDef CONFIG;
 
@@ -1008,7 +1010,7 @@ namespace Kafka.Streams
 
             // Get main consumer override configs
             Dictionary<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
-            for (Map.Entry<string, object> entry: mainConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: mainConsumerProps.entrySet())
             {
                 consumerProps.Add(entry.Key, entry.Value);
             }
@@ -1082,7 +1084,7 @@ namespace Kafka.Streams
 
             // Get restore consumer override configs
             Dictionary<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
-            for (Map.Entry<string, object> entry: restoreConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: restoreConsumerProps.entrySet())
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
             }
@@ -1116,7 +1118,7 @@ namespace Kafka.Streams
 
             // Get global consumer override configs
             Dictionary<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
-            for (Map.Entry<string, object> entry: globalConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: globalConsumerProps.entrySet())
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
             }
@@ -1220,7 +1222,7 @@ namespace Kafka.Streams
             try
             {
 
-                ISerde <object> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, Serde);
+                ISerde<object> serde = getConfiguredInstance(DEFAULT_KEY_SERDE_CLASS_CONFIG, ISerde);
                 serde.configure(originals(), true);
                 return serde;
             }

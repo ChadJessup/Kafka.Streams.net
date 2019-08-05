@@ -40,7 +40,7 @@ interface StateManager : Checkpointable
     void flush();
 
     void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
-                                              InternalProcessorContext processorContext);
+                                              IInternalProcessorContext processorContext);
 
     void close(bool clean);
 

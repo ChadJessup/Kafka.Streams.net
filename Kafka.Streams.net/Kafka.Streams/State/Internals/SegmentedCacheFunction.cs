@@ -16,11 +16,10 @@
  */
 
 namespace Kafka.Streams.State.Internals;
-
+using Kafka.Common.Utils;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.State.Internals.SegmentedBytesStore.KeySchema;
-
-
+using static Kafka.Streams.State.Internals.SegmentedBytesStore;
 
 class SegmentedCacheFunction : CacheFunction
 {

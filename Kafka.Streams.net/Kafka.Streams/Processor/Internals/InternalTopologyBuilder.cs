@@ -398,12 +398,13 @@ namespace Kafka.Streams.Processor.Internals
             return this;
         }
 
-        public void addSource(Topology.AutoOffsetReset offsetReset,
-                                    string name,
-                                    TimestampExtractor timestampExtractor,
-                                    Deserializer keyDeserializer,
-                                    Deserializer valDeserializer,
-                                    string[] topics)
+        public void addSource<K, V>(
+            Topology.AutoOffsetReset offsetReset,
+            string name,
+            TimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer,
+            string[] topics)
         {
             if (topics.Length == 0)
             {
@@ -750,7 +751,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             StateStoreFactory stateStoreFactory = stateFactories[stateStoreName];
-            Iterator<string> iter = stateStoreFactory.users().iterator();
+            IEnumerator<string> iter = stateStoreFactory.users().iterator();
             if (iter.hasNext())
             {
                 string user = iter.next();
@@ -962,7 +963,7 @@ namespace Kafka.Streams.Processor.Internals
         private HashSet<string> globalNodeGroups()
         {
             HashSet<string> globalGroups = new HashSet<>();
-            foreach (Map.Entry<int, HashSet<string>> nodeGroup in nodeGroups().entrySet())
+            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in nodeGroups().entrySet())
             {
                 HashSet<string> nodes = nodeGroup.Value;
                 foreach (string node in nodes)
@@ -1168,7 +1169,7 @@ namespace Kafka.Streams.Processor.Internals
                 nodeGroups = makeNodeGroups();
             }
 
-            foreach (Map.Entry<int, HashSet<string>> entry in nodeGroups.entrySet())
+            foreach (KeyValuePair<int, HashSet<string>> entry in nodeGroups.entrySet())
             {
                 HashSet<string> sinkTopics = new HashSet<>();
                 HashSet<string> sourceTopics = new HashSet<>();
@@ -1256,7 +1257,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             if (subscriptionUpdates.hasUpdates())
             {
-                foreach (Map.Entry<string, Pattern> stringPatternEntry in nodeToSourcePatterns.entrySet())
+                foreach (KeyValuePair<string, Pattern> stringPatternEntry in nodeToSourcePatterns.entrySet())
                 {
                     SourceNodeFactory sourceNode =
                         (SourceNodeFactory)nodeFactories[stringPatternEntry.Key];
@@ -1273,7 +1274,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             if (subscriptionUpdates.hasUpdates())
             {
-                foreach (Map.Entry<string, HashSet<Pattern>> storePattern in stateStoreNameToSourceRegex.entrySet())
+                foreach (KeyValuePair<string, HashSet<Pattern>> storePattern in stateStoreNameToSourceRegex.entrySet())
                 {
                     HashSet<string> updatedTopicsForStateStore = new HashSet<>();
                     foreach (string subscriptionUpdateTopic in subscriptionUpdates.getUpdates())
@@ -1364,7 +1365,7 @@ namespace Kafka.Streams.Processor.Internals
         public Dictionary<string, List<string>> stateStoreNameToSourceTopics()
         {
             Dictionary<string, List<string>> results = new HashMap<>();
-            foreach (Map.Entry<string, HashSet<string>> entry in stateStoreNameToSourceTopics.entrySet())
+            foreach (KeyValuePair<string, HashSet<string>> entry in stateStoreNameToSourceTopics.entrySet())
             {
                 results.Add(entry.Key, maybeDecorateInternalSourceTopics(entry.Value));
             }
@@ -1471,7 +1472,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             TopologyDescription description = new TopologyDescription();
 
-            foreach (Map.Entry<int, HashSet<string>> nodeGroup in makeNodeGroups().entrySet())
+            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in makeNodeGroups().entrySet())
             {
 
                 HashSet<string> allNodesOfGroups = nodeGroup.Value;
@@ -1495,7 +1496,7 @@ namespace Kafka.Streams.Processor.Internals
                                          HashSet<string> nodes,
                                          int id)
         {
-            Iterator<string> it = nodes.iterator();
+            IEnumerator<string> it = nodes.iterator();
             while (it.hasNext())
             {
                 string node = it.next();
@@ -1554,7 +1555,7 @@ namespace Kafka.Streams.Processor.Internals
                 else
                 {
 
-                    return node1.name().compareTo(node2.name());
+                    return node1.name().CompareTo(node2.name());
                 }
             }
         }
@@ -1971,7 +1972,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             // visible for testing
-            Iterator<TopologyDescription.Node> nodesInOrder()
+            IEnumerator<TopologyDescription.Node> nodesInOrder()
             {
                 return nodes.iterator();
             }

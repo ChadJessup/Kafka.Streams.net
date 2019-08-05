@@ -78,14 +78,13 @@ namespace Kafka.Streams.KStream
          * @param                value type
          * @return a new instance of {@link Consumed}
          */
-        public static Consumed<K, V> With(ISerde<K> keySerde,
-                                          ISerde<V> valueSerde,
-                                          ITimestampExtractor timestampExtractor,
-                                          Topology.AutoOffsetReset resetPolicy)
-
+        public static Consumed<K, V> with(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            ITimestampExtractor timestampExtractor,
+            Topology.AutoOffsetReset resetPolicy)
         {
             return new Consumed<K, V>(keySerde, valueSerde, timestampExtractor, resetPolicy, null);
-
         }
 
         /**
@@ -97,8 +96,9 @@ namespace Kafka.Streams.KStream
          * @param        value type
          * @return a new instance of {@link Consumed}
          */
-        public static Consumed<K, V> With(ISerde<K> keySerde,
-                                          ISerde<V> valueSerde)
+        public static Consumed<K, V> with(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
 
         {
             return new Consumed<K, V>(keySerde, valueSerde, null, Topology.AutoOffsetReset.UNKNOWN, null);
@@ -112,7 +112,7 @@ namespace Kafka.Streams.KStream
          * @param                value type
          * @return a new instance of {@link Consumed}
          */
-        public static Consumed<K, V> With(ITimestampExtractor timestampExtractor)
+        public static Consumed<K, V> with(ITimestampExtractor timestampExtractor)
 
         {
             return new Consumed<K, V>(null, null, timestampExtractor, Topology.AutoOffsetReset.UNKNOWN, null);
@@ -126,7 +126,7 @@ namespace Kafka.Streams.KStream
          * @param         value type
          * @return a new instance of {@link Consumed}
          */
-        public static Consumed<K, V> With(Topology.AutoOffsetReset resetPolicy)
+        public static Consumed<K, V> with(Topology.AutoOffsetReset resetPolicy)
 
         {
             return new Consumed<K, V>(null, null, null, resetPolicy, null);

@@ -3,6 +3,7 @@ using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -313,8 +314,8 @@ namespace Kafka.Streams.State.Internals
                 this.storeName = storeName;
             }
 
-
-            public synchronized bool hasNext()
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public bool hasNext()
             {
                 if (!open)
                 {
@@ -323,8 +324,8 @@ namespace Kafka.Streams.State.Internals
                 return base.hasNext();
             }
 
-
-            public synchronized KeyValue<Bytes, byte[]> next()
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public KeyValue<Bytes, byte[]> next()
             {
                 return base.next();
             }
@@ -389,8 +390,8 @@ namespace Kafka.Streams.State.Internals
                 throw new InvalidOperationException("RocksDB iterator does not support Remove()");
             }
 
-
-            public synchronized void close()
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public void close()
             {
                 openIterators.Remove(this);
                 iterNoTimestamp.close();

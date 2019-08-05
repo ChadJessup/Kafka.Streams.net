@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -85,7 +88,7 @@ namespace Kafka.Streams.KStream.Internals
         private TimestampedWindowStore<K, Agg> windowStore;
         private TimestampedTupleForwarder<Windowed<K>, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
-        private InternalProcessorContext internalProcessorContext;
+        private IInternalProcessorContext internalProcessorContext;
         private Sensor lateRecordDropSensor;
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
@@ -95,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
         public void init(IProcessorContext context)
         {
             base.init(context);
-            internalProcessorContext = (InternalProcessorContext)context;
+            internalProcessorContext = (IInternalProcessorContext)context;
 
             metrics = internalProcessorContext.metrics();
 
@@ -130,7 +133,7 @@ namespace Kafka.Streams.KStream.Internals
             Dictionary<long, W> matchedWindows = windows.windowsFor(timestamp);
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
-            foreach (Map.Entry<long, W> entry in matchedWindows.entrySet())
+            foreach (var entry in matchedWindows.entrySet())
             {
                 long windowStart = entry.Key;
                 long windowEnd = entry.Value.end();

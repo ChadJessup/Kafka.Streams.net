@@ -57,11 +57,11 @@ namespace Kafka.Streams.State.Internals
             return Objects.hash(time, key);
         }
 
-        public override int compareTo(BufferKey o)
+        public override int CompareTo(BufferKey o)
         {
             // ordering of keys within a time uses GetHashCode().
             int timeComparison = long.compare(time, o.time);
-            return timeComparison == 0 ? key.compareTo(o.key) : timeComparison;
+            return timeComparison == 0 ? key.CompareTo(o.key) : timeComparison;
         }
 
         public override string ToString()

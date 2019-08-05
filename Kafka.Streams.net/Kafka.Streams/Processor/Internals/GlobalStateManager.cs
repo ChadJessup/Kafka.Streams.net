@@ -24,7 +24,7 @@ public interface GlobalStateManager : StateManager
 {
 
 
-    void setGlobalProcessorContext(InternalProcessorContext processorContext);
+    void setGlobalProcessorContext(IInternalProcessorContext processorContext);
 
     /**
      * @throws InvalidOperationException If store gets registered after initialized is already finished

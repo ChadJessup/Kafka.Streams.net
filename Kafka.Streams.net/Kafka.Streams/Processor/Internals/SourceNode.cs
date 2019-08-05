@@ -49,17 +49,17 @@ namespace Kafka.Streams.Processor.Internals
 
         K deserializeKey(string topic, Headers headers, byte[] data)
         {
-            return keyDeserializer.deserialize(topic, headers, data);
+            return keyDeserializer.Deserialize(topic, headers, data);
         }
 
         V deserializeValue(string topic, Headers headers, byte[] data)
         {
-            return valDeserializer.deserialize(topic, headers, data);
+            return valDeserializer.Deserialize(topic, headers, data);
         }
 
 
 
-        public void init(InternalProcessorContext context)
+        public void init(IInternalProcessorContext context)
         {
             base.init(context);
             this.context = context;
@@ -67,18 +67,18 @@ namespace Kafka.Streams.Processor.Internals
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                this.keyDeserializer = (IDeserializer<K>)context.keySerde().deserializer();
+                this.keyDeserializer = (IDeserializer<K>)context.keySerde().Deserializer();
             }
             if (this.valDeserializer == null)
             {
-                this.valDeserializer = (IDeserializer<V>)context.valueSerde().deserializer();
+                this.valDeserializer = (IDeserializer<V>)context.valueSerde().Deserializer();
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
             if (this.valDeserializer is ChangedDeserializer &&
                     ((ChangedDeserializer)this.valDeserializer).inner() == null)
             {
-                ((ChangedDeserializer)this.valDeserializer).setInner(context.valueSerde().deserializer());
+                ((ChangedDeserializer)this.valDeserializer).setInner(context.valueSerde().Deserializer());
             }
         }
 

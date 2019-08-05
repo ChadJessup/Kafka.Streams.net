@@ -17,7 +17,9 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -51,14 +53,15 @@ namespace Kafka.Streams.KStream.Internals
             this.streamsGraphNode = stream.streamsGraphNode;
         }
 
-        AbstractStream(string name,
-                        ISerde<K> keySerde,
-                        ISerde<V> valSerde,
-                        HashSet<string> sourceNodes,
-                        StreamsGraphNode streamsGraphNode,
-                        InternalStreamsBuilder builder)
+        AbstractStream(
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valSerde,
+            HashSet<string> sourceNodes,
+            StreamsGraphNode streamsGraphNode,
+            InternalStreamsBuilder builder)
         {
-            if (sourceNodes == null || sourceNodes.isEmpty())
+            if (sourceNodes == null || !sourceNodes.Any())
             {
                 throw new System.ArgumentException("parameter <sourceNodes> must not be null or empty");
             }
@@ -80,7 +83,7 @@ namespace Kafka.Streams.KStream.Internals
 
         HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
         {
-            HashSet<string> allSourceNodes = new HashSet<>();
+            HashSet<string> allSourceNodes = new HashSet<string>();
             allSourceNodes.AddAll(sourceNodes);
             allSourceNodes.AddAll(other.sourceNodes);
 
@@ -89,18 +92,18 @@ namespace Kafka.Streams.KStream.Internals
             return allSourceNodes;
         }
 
-        static ValueJoiner<T2, T1, R> reverseJoiner(ValueJoiner<T1, T2, R> joiner)
+        static ValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(ValueJoiner<T1, T2, R> joiner)
         {
-            return (value2, value1)->joiner.apply(value1, value2);
+            return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
-        static ValueMapperWithKey<K, V, VR> withKey(ValueMapper<V, VR> valueMapper)
+        static ValueMapperWithKey<K, V, VR> withKey<VR>(ValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
-            return (readOnlyKey, value)->valueMapper.apply(value);
+            return default; // (readOnlyKey, value)->valueMapper.apply(value);
         }
 
-        static ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier(
+        static ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
              ValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));

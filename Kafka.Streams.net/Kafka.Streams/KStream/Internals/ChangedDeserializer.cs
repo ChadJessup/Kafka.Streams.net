@@ -50,12 +50,12 @@ namespace Kafka.Streams.KStream.Internals
 
             if (ByteBuffer.wrap(data)[data.Length - NEWFLAG_SIZE] != 0)
             {
-                return new Change<>(inner.deserialize(topic, headers, bytes), null);
+                return new Change<>(inner.Deserialize(topic, headers, bytes), null);
             }
             else
             {
 
-                return new Change<>(null, inner.deserialize(topic, headers, bytes));
+                return new Change<>(null, inner.Deserialize(topic, headers, bytes));
             }
         }
 

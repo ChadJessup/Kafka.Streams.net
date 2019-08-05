@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Internals;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -28,10 +32,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
     public abstract class StreamsGraphNode
     {
-
-
-        private Collection<StreamsGraphNode> childNodes = new HashSet<>();
-        private Collection<StreamsGraphNode> parentNodes = new HashSet<>();
+        private Collection<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
+        private Collection<StreamsGraphNode> parentNodes = new HashSet<StreamsGraphNode>();
         private string nodeName;
         private bool keyChangingOperation;
         private bool valueChangingOperation;
@@ -168,3 +170,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    ", parentNodes=" + Arrays.ToString(parentNames) + '}';
         }
     }
+}

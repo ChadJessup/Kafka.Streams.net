@@ -20,32 +20,34 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R> {
+    abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R>
+    {
 
-    private  KTableImpl<K, ?, V1> table1;
-    private  KTableImpl<K, ?, V2> table2;
-     KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
-     KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
-     ValueJoiner<V1, V2, R> joiner;
+        private KTableImpl<K, object, V1> table1;
+        private KTableImpl<K, object, V2> table2;
+        KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
+        KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
+        ValueJoiner<V1, V2, R> joiner;
 
-    bool sendOldValues = false;
+        bool sendOldValues = false;
 
-    KTableKTableAbstractJoin( KTableImpl<K, ?, V1> table1,
-                              KTableImpl<K, ?, V2> table2,
-                              ValueJoiner<V1, V2, R> joiner)
-{
-        this.table1 = table1;
-        this.table2 = table2;
-        this.valueGetterSupplier1 = table1.valueGetterSupplier();
-        this.valueGetterSupplier2 = table2.valueGetterSupplier();
-        this.joiner = joiner;
-    }
+        KTableKTableAbstractJoin(KTableImpl<K, object, V1> table1,
+                                  KTableImpl<K, object, V2> table2,
+                                  ValueJoiner<V1, V2, R> joiner)
+        {
+            this.table1 = table1;
+            this.table2 = table2;
+            this.valueGetterSupplier1 = table1.valueGetterSupplier();
+            this.valueGetterSupplier2 = table2.valueGetterSupplier();
+            this.joiner = joiner;
+        }
 
 
-    public  void enableSendingOldValues()
-{
-        table1.enableSendingOldValues();
-        table2.enableSendingOldValues();
-        sendOldValues = true;
+        public void enableSendingOldValues()
+        {
+            table1.enableSendingOldValues();
+            table2.enableSendingOldValues();
+            sendOldValues = true;
+        }
     }
 }

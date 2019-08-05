@@ -36,7 +36,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
 
 
     private ProcessorTopology topology;
-    private InternalProcessorContext processorContext;
+    private IInternalProcessorContext processorContext;
     private Dictionary<TopicPartition, long> offsets = new HashMap<>();
     private Dictionary<string, RecordDeserializer> deserializers = new HashMap<>();
     private GlobalStateManager stateMgr;
@@ -44,7 +44,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
     private LogContext logContext;
 
     public GlobalStateUpdateTask(ProcessorTopology topology,
-                                 InternalProcessorContext processorContext,
+                                 IInternalProcessorContext processorContext,
                                  GlobalStateManager stateMgr,
                                  DeserializationExceptionHandler deserializationExceptionHandler,
                                  LogContext logContext)
@@ -89,7 +89,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
     public void update(ConsumeResult<byte[], byte[]> record)
 {
         RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
-        ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.deserialize(processorContext, record);
+        ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize(processorContext, record);
 
         if (deserialized != null)
 {

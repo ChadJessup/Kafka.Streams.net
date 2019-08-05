@@ -69,7 +69,7 @@ namespace Kafka.Streams.State.Internals
 
         static BufferValue deserialize(ByteBuffer buffer)
         {
-            ProcessorRecordContext context = ProcessorRecordContext.deserialize(buffer);
+            ProcessorRecordContext context = ProcessorRecordContext.Deserialize(buffer);
 
             byte[] priorValue = extractValue(buffer);
 
@@ -118,7 +118,7 @@ namespace Kafka.Streams.State.Internals
             int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.Length;
             int sizeOfNewValue = newValue == null ? 0 : newValue.Length;
 
-            byte[] serializedContext = recordContext.serialize();
+            byte[] serializedContext = recordContext.Serialize();
 
             ByteBuffer buffer = ByteBuffer.allocate(
                 serializedContext.Length

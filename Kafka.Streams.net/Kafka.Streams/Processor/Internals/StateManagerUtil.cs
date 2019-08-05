@@ -56,7 +56,7 @@ class StateManagerUtil
                                                             FixedOrderMap<string, Optional<IStateStore>> stateStores,
                                                             Dictionary<string, string> storeToChangelogTopic,
                                                             Collection<TopicPartition> partitions,
-                                                            InternalProcessorContext processorContext,
+                                                            IInternalProcessorContext processorContext,
                                                             OffsetCheckpoint checkpointFile,
                                                             Dictionary<TopicPartition, long> checkpointFileCache)
 {
@@ -139,7 +139,7 @@ class StateManagerUtil
     private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
 {
         Dictionary<string, string> reversedMap = new HashMap<>();
-        foreach (Map.Entry<string, string> entry in origin.entrySet())
+        foreach (KeyValuePair<string, string> entry in origin.entrySet())
 {
             reversedMap.Add(entry.Value, entry.Key);
         }

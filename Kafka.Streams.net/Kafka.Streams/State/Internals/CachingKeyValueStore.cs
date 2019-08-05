@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         private void initInternal(IProcessorContext context)
         {
-            this.context = (InternalProcessorContext)context;
+            this.context = (IInternalProcessorContext)context;
 
             this.cache = this.context.getCache();
             this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name());
@@ -63,13 +63,13 @@ namespace Kafka.Streams.State.Internals
             //{
             //    foreach (DirtyEntry entry in entries)
             //    {
-            //        putAndMaybeForward(entry, (InternalProcessorContext)context);
+            //        putAndMaybeForward(entry, (IInternalProcessorContext)context);
             //    }
             //});
         }
 
         private void putAndMaybeForward(DirtyEntry entry,
-                                        InternalProcessorContext context)
+                                        IInternalProcessorContext context)
         {
             if (flushListener != null)
             {
@@ -267,7 +267,7 @@ namespace Kafka.Streams.State.Internals
         public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
         {
-            if (from.compareTo(to) > 0)
+            if (from.CompareTo(to) > 0)
             {
                 LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -277,7 +277,7 @@ namespace Kafka.Streams.State.Internals
 
             validateStoreOpen();
             KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
-            ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
+            MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }
 
@@ -286,7 +286,7 @@ namespace Kafka.Streams.State.Internals
             validateStoreOpen();
             KeyValueIterator<Bytes, byte[]> storeIterator =
                 new DelegatingPeekingKeyValueIterator<>(this.name(), wrapped().all());
-            ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
+            MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }
 

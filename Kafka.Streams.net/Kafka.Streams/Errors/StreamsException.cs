@@ -10,16 +10,17 @@ namespace Kafka.Streams.Errors
     {
         public StreamsException(Error error)
             : base(error)
-    {
-    }
+        {
+        }
 
-    public StreamsException(ErrorCode code)
-        : base(code)
-    {
-    }
+        public StreamsException(ErrorCode code)
+            : base(code)
+        {
+        }
 
-    public StreamsException(Error error, Exception innerException)
-        : base(error, innerException)
-    {
+        public StreamsException(Error error, Exception innerException)
+            : base(error, innerException)
+        {
+        }
     }
 }

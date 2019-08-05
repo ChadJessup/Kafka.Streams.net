@@ -272,7 +272,7 @@ namespace Kafka.Streams.State.Internals
             from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
             to = to ?? throw new System.ArgumentNullException("to cannot be null", nameof(to));
 
-            if (from.compareTo(to) > 0)
+            if (from.CompareTo(to) > 0)
             {
                 log.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -419,7 +419,7 @@ namespace Kafka.Streams.State.Internals
         private void closeOpenIterators()
         {
             HashSet<KeyValueIterator<Bytes, byte[]>> iterators;
-            synchronized(openIterators)
+            lock(openIterators)
     {
                 iterators = new HashSet<>(openIterators);
             }

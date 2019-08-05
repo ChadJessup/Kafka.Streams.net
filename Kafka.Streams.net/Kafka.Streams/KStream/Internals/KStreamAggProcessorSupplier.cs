@@ -20,10 +20,11 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public interface KStreamAggProcessorSupplier<K, RK, V, T> : ProcessorSupplier<K, V> {
+    public interface KStreamAggProcessorSupplier<K, RK, V, T> : ProcessorSupplier<K, V>
+    {
 
-    KTableValueGetterSupplier<RK, T> view();
+        KTableValueGetterSupplier<RK, T> view();
 
-    void enableSendingOldValues();
+        void enableSendingOldValues();
+    }
 }
-

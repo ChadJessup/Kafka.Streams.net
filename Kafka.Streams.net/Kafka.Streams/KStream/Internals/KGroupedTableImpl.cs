@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
@@ -114,30 +116,30 @@ namespace Kafka.Streams.KStream.Internals
                                     builder);
         }
 
-        private GroupedTableOperationRepartitionNode<K, V> createRepartitionNode(string sinkName,
-                                                                                  string sourceName,
-                                                                                  string topic)
+        private GroupedTableOperationRepartitionNode<K, V> createRepartitionNode(
+            string sinkName,
+            string sourceName,
+            string topic)
         {
-
-            return GroupedTableOperationRepartitionNode.< K, V > groupedTableOperationNodeBuilder()
-                 .withRepartitionTopic(topic)
-                 .withSinkName(sinkName)
-                 .withSourceName(sourceName)
-                 .withKeySerde(keySerde)
-                 .withValueSerde(valSerde)
-                 .withNodeName(sourceName).build();
+            //return GroupedTableOperationRepartitionNode.< K, V > groupedTableOperationNodeBuilder()
+            //     .withRepartitionTopic(topic)
+            //     .withSinkName(sinkName)
+            //     .withSourceName(sourceName)
+            //     .withKeySerde(keySerde)
+            //     .withValueSerde(valSerde)
+            //     .withNodeName(sourceName).build();
         }
 
 
-        public KTable<K, V> reduce(Reducer<V>.Adder,
+        public KTable<K, V> reduce(Reducer<V> adder,
                                     Reducer<V> subtractor,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            Objects.requireNonNull.Adder, .Adder can't be null");
+            Objects.requireNonNull(adder, "adder can't be null");
             subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
+               new MaterializedInternal<K, V>(materialized, builder, AGGREGATE_NAME);
 
             if (materializedInternal.keySerde() == null)
             {
@@ -155,10 +157,10 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> reduce(Reducer<V>.Adder,
+        public KTable<K, V> reduce(Reducer<V> adder,
                                     Reducer<V> subtractor)
         {
-            return reduce.Adder, subtractor, Materialized.with(keySerde, valSerde));
+            return reduce(adder, subtractor, Materialized.with(keySerde, valSerde));
         }
 
 
@@ -191,13 +193,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> aggregate(Initializer<VR> initializer,
-                                             Aggregator<K, V, VR>.Adder,
+        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+                                             Aggregator<K, V, VR> adder,
                                              Aggregator<K, V, VR> subtractor,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
-            Objects.requireNonNull.Adder, .Adder can't be null");
+            //Objects.requireNonNull(adder, "adder can't be null");
             subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
@@ -225,3 +227,4 @@ namespace Kafka.Streams.KStream.Internals
         }
 
     }
+}

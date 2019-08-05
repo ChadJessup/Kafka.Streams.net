@@ -19,35 +19,37 @@ namespace Kafka.Streams.KStream
 
 
 
-/**
- * The {@code Aggregator} interface for aggregating values of the given key.
- * This is a generalization of {@link Reducer} and allows to have different types for input value and aggregation
- * result.
- * {@code Aggregator} is used in combination with {@link Initializer} that provides an initial aggregation value.
- * <p>
- * {@code Aggregator} can be used to implement aggregation functions like count.
-
- * @param key type
- * @param input value type
- * @param aggregate value type
- * @see Initializer
- * @see KGroupedStream#aggregate(Initializer, Aggregator)
- * @see KGroupedStream#aggregate(Initializer, Aggregator, Materialized)
- * @see TimeWindowedKStream#aggregate(Initializer, Aggregator)
- * @see TimeWindowedKStream#aggregate(Initializer, Aggregator, Materialized)
- * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger)
- * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
- * @see Reducer
- */
-public interface Aggregator<K, V, VA> {
-
     /**
-     * Compute a new aggregate from the key and value of a record and the current aggregate of the same key.
-     *
-     * @param key       the key of the record
-     * @param value     the value of the record
-     * @param aggregate the current aggregate value
-     * @return the new aggregate value
+     * The {@code Aggregator} interface for aggregating values of the given key.
+     * This is a generalization of {@link Reducer} and allows to have different types for input value and aggregation
+     * result.
+     * {@code Aggregator} is used in combination with {@link Initializer} that provides an initial aggregation value.
+     * <p>
+     * {@code Aggregator} can be used to implement aggregation functions like count.
+
+     * @param key type
+     * @param input value type
+     * @param aggregate value type
+     * @see Initializer
+     * @see KGroupedStream#aggregate(Initializer, Aggregator)
+     * @see KGroupedStream#aggregate(Initializer, Aggregator, Materialized)
+     * @see TimeWindowedKStream#aggregate(Initializer, Aggregator)
+     * @see TimeWindowedKStream#aggregate(Initializer, Aggregator, Materialized)
+     * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger)
+     * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
+     * @see Reducer
      */
-    VA apply( K key,  V value,  VA aggregate);
+    public interface Aggregator<K, V, VA>
+    {
+
+        /**
+         * Compute a new aggregate from the key and value of a record and the current aggregate of the same key.
+         *
+         * @param key       the key of the record
+         * @param value     the value of the record
+         * @param aggregate the current aggregate value
+         * @return the new aggregate value
+         */
+        VA apply(K key, V value, VA aggregate);
+    }
 }

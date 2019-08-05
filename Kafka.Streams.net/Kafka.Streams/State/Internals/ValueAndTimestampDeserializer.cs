@@ -53,8 +53,8 @@ class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
             return null;
         }
 
-        long timestamp = timestampDeserializer.deserialize(topic, rawTimestamp(valueAndTimestamp));
-        V value = valueDeserializer.deserialize(topic, rawValue(valueAndTimestamp));
+        long timestamp = timestampDeserializer.Deserialize(topic, rawTimestamp(valueAndTimestamp));
+        V value = valueDeserializer.Deserialize(topic, rawValue(valueAndTimestamp));
         return ValueAndTimestamp.make(value, timestamp);
     }
 
@@ -84,7 +84,7 @@ class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
 
     static long timestamp(byte[] rawValueAndTimestamp)
 {
-        return LONG_DESERIALIZER.deserialize(null, rawTimestamp(rawValueAndTimestamp));
+        return LONG_DESERIALIZER.Deserialize(null, rawTimestamp(rawValueAndTimestamp));
     }
 
 }

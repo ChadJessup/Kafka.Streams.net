@@ -115,7 +115,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             private string storeName;
 
             private TimeOrderedKeyValueBuffer<K, V> buffer;
-            private InternalProcessorContext internalProcessorContext;
+            private IInternalProcessorContext internalProcessorContext;
             private Sensor suppressionEmitSensor;
             private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
@@ -135,7 +135,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
             public void init(IProcessorContext context)
             {
-                internalProcessorContext = (InternalProcessorContext)context;
+                internalProcessorContext = (IInternalProcessorContext)context;
                 suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);
 
                 buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));

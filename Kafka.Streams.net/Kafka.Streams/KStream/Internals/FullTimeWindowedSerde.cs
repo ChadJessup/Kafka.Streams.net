@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-class FullTimeWindowedSerde<T> : Serdes.WrapperSerde<Windowed<T>> {
-    FullTimeWindowedSerde( ISerde<T> inner,  long windowSize)
-{
-        base(
-            new TimeWindowedSerializer<>(inner.serializer()),
-            new TimeWindowedDeserializer<>(inner.deserializer(), windowSize)
-        );
+    class FullTimeWindowedSerde<T> : WrapperSerde<Windowed<T>>
+    {
+        FullTimeWindowedSerde(ISerde<T> inner, long windowSize)
+            : base(
+                new TimeWindowedSerializer<>(inner.Serializer()),
+                new TimeWindowedDeserializer<>(inner.Deserializer(), windowSize))
+        {
+        }
     }
 }

@@ -1,8 +1,10 @@
+using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg> {
+    public class KStreamSessionWindowAggregate<K, V, Agg> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+    {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamSessionWindowAggregate>();
 
         private string storeName;
@@ -48,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals
         private ISessionStore<K, Agg> store;
         private SessionTupleForwarder<K, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
-        private InternalProcessorContext internalProcessorContext;
+        private IInternalProcessorContext internalProcessorContext;
         private Sensor lateRecordDropSensor;
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
@@ -58,7 +60,7 @@ namespace Kafka.Streams.KStream.Internals
         public void init(IProcessorContext context)
         {
             base.init(context);
-            internalProcessorContext = (InternalProcessorContext)context;
+            internalProcessorContext = (IInternalProcessorContext)context;
             metrics = (StreamsMetricsImpl)context.metrics();
             lateRecordDropSensor = Sensors.lateRecordDropSensor(internalProcessorContext);
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
@@ -91,14 +93,14 @@ namespace Kafka.Streams.KStream.Internals
             SessionWindow mergedWindow = newSessionWindow;
             Agg agg = initializer.apply();
 
-            try (
+            using (
                  KeyValueIterator<Windowed<K>, Agg> iterator = store.findSessions(
                     key,
                     timestamp - windows.inactivityGap(),
                     timestamp + windows.inactivityGap()
                 )
             )
-{
+            {
                 while (iterator.hasNext())
                 {
                     KeyValue<Windowed<K>, Agg> next = iterator.next();
@@ -131,8 +133,9 @@ namespace Kafka.Streams.KStream.Internals
                     observedStreamTime
                 );
                 lateRecordDropSensor.record();
-            } else
-{
+            }
+            else
+            {
 
                 if (!mergedWindow.Equals(newSessionWindow))
                 {
@@ -148,56 +151,57 @@ namespace Kafka.Streams.KStream.Internals
                 store.Add(sessionKey, agg);
                 tupleForwarder.maybeForward(sessionKey, agg, null);
             }
-            }
+        }
     }
 
-        private SessionWindow mergeSessionWindow(SessionWindow one, SessionWindow two)
-        {
-            long start = one.start() < two.start() ? one.start() : two.start();
-            long end = one.end() > two.end() ? one.end() : two.end();
-            return new SessionWindow(start, end);
-        }
+    private SessionWindow mergeSessionWindow(SessionWindow one, SessionWindow two)
+    {
+        long start = one.start() < two.start() ? one.start() : two.start();
+        long end = one.end() > two.end() ? one.end() : two.end();
+        return new SessionWindow(start, end);
+    }
 
 
-        public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+    public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+    {
+        return new KTableValueGetterSupplier<Windowed<K>, Agg>()
         {
-            return new KTableValueGetterSupplier<Windowed<K>, Agg>()
-            {
 
             public KTableValueGetter<Windowed<K>, Agg> get()
-            {
-                return new KTableSessionWindowValueGetter();
-            }
+        {
+            return new KTableSessionWindowValueGetter();
+        }
 
 
-            public string[] storeNames()
-            {
-                return new string[] { storeName };
-            }
-        };
+        public string[] storeNames()
+        {
+            return new string[] { storeName };
+        }
+    };
+}
+
+private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg>
+{
+    private ISessionStore<K, Agg> store;
+
+
+
+    public void init(IProcessorContext context)
+    {
+        store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
     }
 
-    private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg> {
-        private ISessionStore<K, Agg> store;
 
-
-
-        public void init(IProcessorContext context)
-        {
-            store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
-        }
-
-
-        public ValueAndTimestamp<Agg> get(Windowed<K> key)
-        {
-            return ValueAndTimestamp.make(
-                store.fetchSession(key.key(), key.window().start(), key.window().end()),
-                key.window().end());
-        }
-
-
-        public void close()
-        {
-        }
+    public ValueAndTimestamp<Agg> get(Windowed<K> key)
+    {
+        return ValueAndTimestamp.make(
+            store.fetchSession(key.key(), key.window().start(), key.window().end()),
+            key.window().end());
     }
+
+
+    public void close()
+    {
+    }
+}
 }

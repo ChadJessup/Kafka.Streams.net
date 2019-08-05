@@ -159,7 +159,7 @@ public class StoreChangelogReader : ChangelogReader
             return;
         }
 
-        Iterator<TopicPartition> iter = initializable.iterator();
+        IEnumerator<TopicPartition> iter = initializable.iterator();
         while (iter.hasNext())
 {
             TopicPartition topicPartition = iter.next();
@@ -300,7 +300,7 @@ public class StoreChangelogReader : ChangelogReader
     public Dictionary<TopicPartition, long> restoredOffsets()
 {
         Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
-        foreach (Map.Entry<TopicPartition, StateRestorer> entry in stateRestorers.entrySet())
+        foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers.entrySet())
 {
             StateRestorer restorer = entry.Value;
             if (restorer.isPersistent())

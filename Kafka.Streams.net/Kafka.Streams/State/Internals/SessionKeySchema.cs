@@ -67,8 +67,8 @@ namespace Kafka.Streams.State.Internals
             //            {
             //                Bytes bytes = iterator.peekNextKey();
             //                Windowed<Bytes> windowedKey = SessionKeySchema.from(bytes);
-            //                if ((binaryKeyFrom == null || windowedKey.key().compareTo(binaryKeyFrom) >= 0)
-            //                    && (binaryKeyTo == null || windowedKey.key().compareTo(binaryKeyTo) <= 0)
+            //                if ((binaryKeyFrom == null || windowedKey.key().CompareTo(binaryKeyFrom) >= 0)
+            //                    && (binaryKeyTo == null || windowedKey.key().CompareTo(binaryKeyTo) <= 0)
             //                    && windowedKey.window().end() >= from
             //                    && windowedKey.window().start() <= to)
             //                {
@@ -92,7 +92,7 @@ namespace Kafka.Streams.State.Internals
                                         IDeserializer<K> deserializer,
                                         string topic)
         {
-            return deserializer.deserialize(topic, extractKeyBytes(binaryKey));
+            return deserializer.Deserialize(topic, extractKeyBytes(binaryKey));
         }
 
         static byte[] extractKeyBytes(byte[] binaryKey)
@@ -140,7 +140,7 @@ namespace Kafka.Streams.State.Internals
                                            IDeserializer<K> keyDeserializer,
                                            string topic)
         {
-            K key = keyDeserializer.deserialize(topic, keyBytes.key()());
+            K key = keyDeserializer.Deserialize(topic, keyBytes.key()());
             return new Windowed<>(key, keyBytes.window());
         }
 
@@ -148,7 +148,7 @@ namespace Kafka.Streams.State.Internals
                                           ISerializer<K> serializer,
                                           string topic)
         {
-            byte[] bytes = serializer.serialize(topic, sessionKey.key());
+            byte[] bytes = serializer.Serialize(topic, sessionKey.key());
             return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[];
         }
 

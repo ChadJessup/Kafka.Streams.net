@@ -26,12 +26,12 @@ namespace Kafka.Streams.KStream.Internals
 
 
 class SessionCacheFlushListener<K, V> : CacheFlushListener<Windowed<K>, V> {
-    private  InternalProcessorContext context;
+    private  IInternalProcessorContext context;
     private  ProcessorNode myNode;
 
     SessionCacheFlushListener( IProcessorContext context)
 {
-        this.context = (InternalProcessorContext) context;
+        this.context = (IInternalProcessorContext) context;
         myNode = this.context.currentNode();
     }
 

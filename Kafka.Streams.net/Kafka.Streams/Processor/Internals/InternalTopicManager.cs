@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processor.Internals
                 StreamsConfig.REPLICATION_FACTOR_CONFIG, replicationFactor,
                 StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, windowChangeLogAdditionalRetention);
 
-            foreach (Map.Entry<string, object> entry in streamsConfig.originalsWithPrefix(StreamsConfig.TOPIC_PREFIX).entrySet())
+            foreach (KeyValuePair<string, object> entry in streamsConfig.originalsWithPrefix(StreamsConfig.TOPIC_PREFIX).entrySet())
             {
                 if (entry.Value != null)
                 {
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Processor.Internals
 
                     CreateTopicsResult createTopicsResult = adminClient.createTopics(newTopics);
 
-                    foreach (Map.Entry<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.values().entrySet())
+                    foreach (KeyValuePair<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.values().entrySet())
                     {
                         string topicName = createTopicResult.Key;
                         try
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.values();
 
             Dictionary<string, int> existedTopicPartition = new HashMap<>();
-            foreach (Map.Entry<string, KafkaFuture<TopicDescription>> topicFuture in futures.entrySet())
+            foreach (KeyValuePair<string, KafkaFuture<TopicDescription>> topicFuture in futures.entrySet())
             {
                 string topicName = topicFuture.Key;
                 try
@@ -241,7 +241,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, int> existedTopicPartition = getNumPartitions(topicsToValidate);
 
             HashSet<string> topicsToCreate = new HashSet<>();
-            foreach (Map.Entry<string, InternalTopicConfig> entry in topicsMap.entrySet())
+            foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap.entrySet())
             {
                 string topicName = entry.Key;
                 int numberOfPartitions = entry.Value.numberOfPartitions();

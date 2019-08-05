@@ -37,7 +37,7 @@ public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
 
     public int partition(string topic, K key, V value, int numPartitions)
 {
-        byte[] keyBytes = keySerializer.serialize(topic, key);
+        byte[] keyBytes = keySerializer.Serialize(topic, key);
         return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
     }
 }

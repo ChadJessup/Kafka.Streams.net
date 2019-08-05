@@ -31,7 +31,7 @@ using Kafka.Common.serialization.Serde;
 
 
 
-public abstract class AbstractProcessorContext : InternalProcessorContext
+public abstract class AbstractProcessorContext : IInternalProcessorContext
 {
 
 

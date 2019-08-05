@@ -16,6 +16,7 @@
  */
 
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 
@@ -85,3 +86,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    "} ";
         }
     }
+}

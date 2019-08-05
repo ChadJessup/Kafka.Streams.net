@@ -29,9 +29,9 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : ProcessorSupplier<KIn, VIn>
     {
 
-        private TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier;
+        private TransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformerSupplier;
 
-        public KStreamFlatTransform(TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformerSupplier)
+        public KStreamFlatTransform(TransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformerSupplier)
         {
             this.transformerSupplier = transformerSupplier;
         }
@@ -44,9 +44,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public static KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut> : AbstractProcessor<KIn, VIn> {
 
-        private Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer;
+        private Transformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformer;
 
-        public KStreamFlatTransformProcessor(Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> transformer)
+        public KStreamFlatTransformProcessor(Transformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformer)
         {
             this.transformer = transformer;
         }
@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void process(KIn key, VIn value)
         {
-            Iterable<KeyValue<KOut, VOut>> pairs = transformer.transform(key, value);
+            IEnumerable<KeyValue<KOut, VOut>> pairs = transformer.transform(key, value);
             if (pairs != null)
             {
                 foreach (KeyValue<KOut, VOut> pair in pairs)

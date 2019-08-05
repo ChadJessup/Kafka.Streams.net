@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream
                 try
                 {
 
-                    inner = Utils.newInstance(value, Serde).serializer();
+                    inner = Utils.newInstance(value, Serde).Serializer();
                     inner.configure(configs, isKey);
                 }
                 catch (ClassNotFoundException e)
@@ -87,7 +87,7 @@ namespace Kafka.Streams.KStream
         {
             WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
-            return inner.serialize(topic, data.key());
+            return inner.Serialize(topic, data.key());
         }
 
         // Only for testing

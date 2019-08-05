@@ -28,9 +28,9 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamFlatTransformValues<KIn, VIn, VOut> : ProcessorSupplier<KIn, VIn>
     {
 
-        private ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerSupplier;
+        private ValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerSupplier;
 
-        public KStreamFlatTransformValues(ValueTransformerWithKeySupplier<KIn, VIn, Iterable<VOut>> valueTransformerWithKeySupplier)
+        public KStreamFlatTransformValues(ValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerWithKeySupplier)
         {
             this.valueTransformerSupplier = valueTransformerWithKeySupplier;
         }
@@ -44,10 +44,10 @@ namespace Kafka.Streams.KStream.Internals
         public static class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : Processor<KIn, VIn>
         {
 
-            private ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer;
+            private ValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer;
             private IProcessorContext context;
 
-            KStreamFlatTransformValuesProcessor(ValueTransformerWithKey<KIn, VIn, Iterable<VOut>> valueTransformer)
+            KStreamFlatTransformValuesProcessor(ValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer)
             {
                 this.valueTransformer = valueTransformer;
             }
@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
 
             public void process(KIn key, VIn value)
             {
-                Iterable<VOut> transformedValues = valueTransformer.transform(key, value);
+                IEnumerable<VOut> transformedValues = valueTransformer.transform(key, value);
                 if (transformedValues != null)
                 {
                     foreach (VOut transformedValue in transformedValues)
@@ -78,5 +78,5 @@ namespace Kafka.Streams.KStream.Internals
                 valueTransformer.close();
             }
         }
-
     }
+}

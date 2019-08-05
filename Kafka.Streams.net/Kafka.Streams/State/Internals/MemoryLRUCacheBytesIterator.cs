@@ -1,13 +1,14 @@
 ﻿using Kafka.Common.Utils;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    static class MemoryLRUCacheBytesIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    public class MemoryLRUCacheBytesIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
-        private Iterator<Map.Entry<Bytes, LRUNode>> underlying;
+        private IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying;
         private KeyValue<Bytes, LRUCacheEntry> nextEntry;
 
-        MemoryLRUCacheBytesIterator(Iterator<Map.Entry<Bytes, LRUNode>> underlying)
+        MemoryLRUCacheBytesIterator(IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying)
         {
             this.underlying = underlying;
         }
@@ -61,7 +62,7 @@ namespace Kafka.Streams.State.Internals
 
         private void internalNext()
         {
-            Map.Entry<Bytes, LRUNode> mapEntry = underlying.next();
+            KeyValuePair<Bytes, LRUNode> mapEntry = underlying.next();
             Bytes cacheKey = mapEntry.Key;
             LRUCacheEntry entry = mapEntry.Value.entry();
             if (entry == null)

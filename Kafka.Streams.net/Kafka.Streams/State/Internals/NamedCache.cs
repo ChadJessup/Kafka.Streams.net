@@ -313,12 +313,12 @@ namespace Kafka.Streams.State.Internals
             return cache.size();
         }
 
-        synchronized Iterator<Map.Entry<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
+        synchronized IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
     {
             return cache.subMap(from, true, to, true).entrySet().iterator();
         }
 
-        synchronized Iterator<Map.Entry<Bytes, LRUNode>> allIterator()
+        synchronized IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
     {
             return cache.entrySet().iterator();
         }

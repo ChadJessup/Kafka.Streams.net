@@ -3,6 +3,7 @@ using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
+using Kafka.Common.Utils;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -17,7 +18,7 @@ namespace Kafka.Streams.State.Internals
         private SegmentedCacheFunction cacheFunction;
         private string cacheName;
         private ThreadCache cache;
-        private InternalProcessorContext context;
+        private IInternalProcessorContext context;
         private CacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
 
@@ -38,7 +39,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        private void initInternal(InternalProcessorContext context)
+        private void initInternal(IInternalProcessorContext context)
         {
             this.context = context;
 
@@ -53,7 +54,7 @@ namespace Kafka.Streams.State.Internals
             });
         }
 
-        private void putAndMaybeForward(DirtyEntry entry, InternalProcessorContext context)
+        private void putAndMaybeForward(DirtyEntry entry, IInternalProcessorContext context)
         {
             Bytes binaryKey = cacheFunction.key(entry.key());
             Windowed<Bytes> bytesKey = SessionKeySchema.from(binaryKey);
@@ -155,7 +156,7 @@ namespace Kafka.Streams.State.Internals
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
-            if (keyFrom.compareTo(keyTo) > 0)
+            if (keyFrom.CompareTo(keyTo) > 0)
             {
                 LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
                     + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
@@ -167,7 +168,7 @@ namespace Kafka.Streams.State.Internals
 
             Bytes cacheKeyFrom = cacheFunction.cacheKey(keySchema.lowerRange(keyFrom, earliestSessionEndTime));
             Bytes cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime));
-            ThreadCache.MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
+            MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
 
             KeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(
                 keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime
@@ -246,7 +247,7 @@ namespace Kafka.Streams.State.Internals
         private Bytes cacheKeyFrom;
         private Bytes cacheKeyTo;
 
-        private ThreadCache.MemoryLRUCacheBytesIterator current;
+        private MemoryLRUCacheBytesIterator current;
 
         private CacheIteratorWrapper(Bytes key,
                                      long earliestSessionEndTime,

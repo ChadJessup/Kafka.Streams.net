@@ -99,3 +99,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    "} " + base.ToString();
         }
     }
+}

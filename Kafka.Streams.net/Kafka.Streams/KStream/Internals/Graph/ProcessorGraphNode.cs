@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Internals;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -61,3 +63,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
             topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), parentNodeNames());
         }
     }
+}

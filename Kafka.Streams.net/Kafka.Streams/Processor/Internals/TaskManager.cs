@@ -125,7 +125,7 @@ public class TaskManager
         Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new HashMap<>();
         // collect newly assigned tasks and reopen re-assigned tasks
         log.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
-        foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks.entrySet())
+        foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks.entrySet())
 {
             TaskId taskId = entry.Key;
             HashSet<TopicPartition> partitions = entry.Value;
@@ -177,7 +177,7 @@ public class TaskManager
         log.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
         Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new HashMap<>();
         // collect newly assigned standby tasks and reopen re-assigned standby tasks
-        foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks.entrySet())
+        foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks.entrySet())
 {
             TaskId taskId = entry.Key;
             HashSet<TopicPartition> partitions = entry.Value;
@@ -413,7 +413,7 @@ public class TaskManager
         }
 
         restoreConsumer.assign(checkpointedOffsets.keySet());
-        foreach (Map.Entry<TopicPartition, long> entry in checkpointedOffsets.entrySet())
+        foreach (KeyValuePair<TopicPartition, long> entry in checkpointedOffsets.entrySet())
 {
             TopicPartition partition = entry.Key;
             long offset = entry.Value;
@@ -525,7 +525,7 @@ public class TaskManager
             }
 
             Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new HashMap<>();
-            foreach (Map.Entry<TopicPartition, long> entry in active.recordsToDelete().entrySet())
+            foreach (KeyValuePair<TopicPartition, long> entry in active.recordsToDelete().entrySet())
 {
                 recordsToDelete.Add(entry.Key, RecordsToDelete.beforeOffset(entry.Value));
             }

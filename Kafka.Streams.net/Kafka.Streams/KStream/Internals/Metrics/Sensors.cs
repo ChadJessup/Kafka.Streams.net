@@ -38,7 +38,7 @@ public class Sensors
 
     private Sensors() {}
 
-    public static Sensor lateRecordDropSensor( InternalProcessorContext context)
+    public static Sensor lateRecordDropSensor( IInternalProcessorContext context)
 {
          StreamsMetricsImpl metrics = context.metrics();
          Sensor sensor = metrics.nodeLevelSensor(
@@ -56,7 +56,7 @@ public class Sensors
         return sensor;
     }
 
-    public static Sensor recordLatenessSensor( InternalProcessorContext context)
+    public static Sensor recordLatenessSensor( IInternalProcessorContext context)
 {
          StreamsMetricsImpl metrics = context.metrics();
 
@@ -88,7 +88,7 @@ public class Sensors
         return sensor;
     }
 
-    public static Sensor suppressionEmitSensor( InternalProcessorContext context)
+    public static Sensor suppressionEmitSensor( IInternalProcessorContext context)
 {
          StreamsMetricsImpl metrics = context.metrics();
 

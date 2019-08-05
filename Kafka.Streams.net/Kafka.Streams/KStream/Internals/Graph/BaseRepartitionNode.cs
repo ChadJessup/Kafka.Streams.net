@@ -27,10 +27,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         protected string sinkName;
         protected string sourceName;
         protected string repartitionTopic;
-        protected ProcessorParameters processorParameters;
+        protected ProcessorParameters<K, V> processorParameters;
 
 
-        BaseRepartitionNode(string nodeName,
+        public BaseRepartitionNode(string nodeName,
                              string sourceName,
                              ProcessorParameters processorParameters,
                              ISerde<K> keySerde,

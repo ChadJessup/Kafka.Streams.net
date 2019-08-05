@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
             //            private static long serialVersionUID = 1L;
 
 
-            //            protected bool removeEldestEntry(Map.Entry<Bytes, byte[]> eldest)
+            //            protected bool removeEldestEntry(KeyValuePair<Bytes, byte[]> eldest)
             //{
             //                bool evict = base.size() > maxCacheSize;
             //                if (evict && !restoring && listener != null)

@@ -25,12 +25,12 @@ using Kafka.Streams.State.KeyValueIterator;
 class CompositeKeyValueIterator<K, V, StoreType> : KeyValueIterator<K, V>
 {
 
-    private Iterator<StoreType> storeIterator;
+    private IEnumerator<StoreType> storeIterator;
     private NextIteratorFunction<K, V, StoreType> nextIteratorFunction;
 
     private KeyValueIterator<K, V> current;
 
-    CompositeKeyValueIterator(Iterator<StoreType> underlying,
+    CompositeKeyValueIterator(IEnumerator<StoreType> underlying,
                               NextIteratorFunction<K, V, StoreType> nextIteratorFunction)
 {
         this.storeIterator = underlying;

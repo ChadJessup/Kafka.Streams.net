@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -39,10 +41,11 @@ namespace Kafka.Streams.KStream.Internals
         {
             string[] storeNames1 = valueGetterSupplier1.storeNames();
             string[] storeNames2 = valueGetterSupplier2.storeNames();
-            HashSet<string> stores = new HashSet<>(storeNames1.Length + storeNames2.Length);
+            HashSet<string> stores = new HashSet<string>(storeNames1.Length + storeNames2.Length);
             Collections.AddAll(stores, storeNames1);
             Collections.AddAll(stores, storeNames2);
             return stores.toArray(new string[stores.size()]);
         }
 
     }
+}

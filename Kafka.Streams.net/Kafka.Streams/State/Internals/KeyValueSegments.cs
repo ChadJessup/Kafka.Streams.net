@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-using Kafka.Streams.Processor.Internals.InternalProcessorContext;
+using Kafka.Streams.Processor.Internals.IInternalProcessorContext;
 
 /**
  * Manages the {@link KeyValueSegment}s that are used by the {@link RocksDBSegmentedBytesStore}
@@ -32,7 +32,7 @@ class KeyValueSegments : AbstractSegments<KeyValueSegment>
     }
 
     public override KeyValueSegment getOrCreateSegment(long segmentId,
-                                              InternalProcessorContext context)
+                                              IInternalProcessorContext context)
 {
         if (segments.ContainsKey(segmentId))
 {

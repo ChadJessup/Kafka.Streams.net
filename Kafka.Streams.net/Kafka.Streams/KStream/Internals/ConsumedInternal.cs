@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -32,18 +36,18 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
-
-        public ConsumedInternal(ISerde<K> keySerde,
-                                 ISerde<V> valSerde,
-                                 TimestampExtractor timestampExtractor,
-                                 Topology.AutoOffsetReset offsetReset)
+        public ConsumedInternal(
+            ISerde<K> keySerde,
+            ISerde<V> valSerde,
+            TimestampExtractor timestampExtractor,
+            Topology.AutoOffsetReset offsetReset)
         {
             this(Consumed.with(keySerde, valSerde, timestampExtractor, offsetReset));
         }
 
         public ConsumedInternal()
+            : this(with(null, null))
         {
-            this(Consumed.< K, V > with(null, null));
         }
 
         public ISerde<K> keySerde()
@@ -53,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IDeserializer<K> keyDeserializer()
         {
-            return keySerde == null ? null : keySerde.deserializer();
+            return keySerde == null ? null : keySerde.Deserializer();
         }
 
         public ISerde<V> valueSerde()
@@ -63,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IDeserializer<V> valueDeserializer()
         {
-            return valueSerde == null ? null : valueSerde.deserializer();
+            return valueSerde == null ? null : valueSerde.Deserializer();
         }
 
         public TimestampExtractor timestampExtractor()
@@ -81,3 +85,4 @@ namespace Kafka.Streams.KStream.Internals
             return processorName;
         }
     }
+}

@@ -24,8 +24,8 @@ namespace Kafka.Streams.State.Internals
         public ValueAndTimestampSerde(ISerde<V> valueSerde)
         {
             Objects.requireNonNull(valueSerde);
-            valueAndTimestampSerializer = new ValueAndTimestampSerializer<>(valueSerde.serializer());
-            valueAndTimestampDeserializer = new ValueAndTimestampDeserializer<>(valueSerde.deserializer());
+            valueAndTimestampSerializer = new ValueAndTimestampSerializer<>(valueSerde.Serializer());
+            valueAndTimestampDeserializer = new ValueAndTimestampDeserializer<>(valueSerde.Deserializer());
         }
 
         public override void configure(Dictionary<string, object> configs,
@@ -41,12 +41,12 @@ namespace Kafka.Streams.State.Internals
             valueAndTimestampDeserializer.close();
         }
 
-        public override ISerializer<ValueAndTimestamp<V>> serializer()
+        public override ISerializer<ValueAndTimestamp<V>> Serializer()
         {
             return valueAndTimestampSerializer;
         }
 
-        public override IDeserializer<ValueAndTimestamp<V>> deserializer()
+        public override IDeserializer<ValueAndTimestamp<V>> Deserializer()
         {
             return valueAndTimestampDeserializer;
         }

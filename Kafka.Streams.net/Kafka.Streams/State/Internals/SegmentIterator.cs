@@ -32,13 +32,13 @@ class SegmentIterator<S : Segment> : KeyValueIterator<Bytes, byte[]>
 
     private Bytes from;
     private Bytes to;
-    protected Iterator<S> segments;
+    protected IEnumerator<S> segments;
     protected HasNextCondition hasNextCondition;
 
     private S currentSegment;
     KeyValueIterator<Bytes, byte[]> currentIterator;
 
-    SegmentIterator(Iterator<S> segments,
+    SegmentIterator(IEnumerator<S> segments,
                     HasNextCondition hasNextCondition,
                     Bytes from,
                     Bytes to)

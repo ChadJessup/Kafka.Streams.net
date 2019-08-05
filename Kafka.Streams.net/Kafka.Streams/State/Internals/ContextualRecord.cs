@@ -50,7 +50,7 @@ public class ContextualRecord
 
     ByteBuffer serialize(int end.Adding)
 {
-        byte[] serializedContext = recordContext.serialize();
+        byte[] serializedContext = recordContext.Serialize();
 
         int sizeOfContext = serializedContext.Length;
         int sizeOfValueLength = int.BYTES;
@@ -72,7 +72,7 @@ public class ContextualRecord
 
     static ContextualRecord deserialize(ByteBuffer buffer)
 {
-        ProcessorRecordContext context = ProcessorRecordContext.deserialize(buffer);
+        ProcessorRecordContext context = ProcessorRecordContext.Deserialize(buffer);
 
         int valueLength = buffer.getInt();
         if (valueLength == -1)

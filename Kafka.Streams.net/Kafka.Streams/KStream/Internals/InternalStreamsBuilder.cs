@@ -54,7 +54,7 @@ namespace Kafka.Streams.KStream.Internals
             this.internalTopologyBuilder = internalTopologyBuilder;
         }
 
-        public KStream<K, V> stream(Collection<string> topics,
+        public KStream<K, V> stream<K, V>(Collection<string> topics,
                                             ConsumedInternal<K, V> consumed)
         {
 
@@ -207,7 +207,7 @@ namespace Kafka.Streams.KStream.Internals
                             stateUpdateSupplier);
         }
 
-        void addGraphNode(StreamsGraphNode parent,
+        public void addGraphNode(StreamsGraphNode parent,
                            StreamsGraphNode child)
         {
             parent = parent ?? throw new System.ArgumentNullException("parent node can't be null", nameof(parent));
@@ -325,11 +325,11 @@ namespace Kafka.Streams.KStream.Internals
         private void maybeOptimizeRepartitionOperations()
         {
             maybeUpdateKeyChangingRepartitionNodeMap();
-            Iterator<Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>> entryIterator = keyChangingOperationsToOptimizableRepartitionNodes.entrySet().iterator();
+            IEnumerator<Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>> entryIterator = keyChangingOperationsToOptimizableRepartitionNodes.entrySet().iterator();
 
             while (entryIterator.hasNext())
             {
-                Map.Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> entry = entryIterator.next();
+                KeyValuePair<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> entry = entryIterator.next();
 
                 StreamsGraphNode keyChangingNode = entry.Key;
 
@@ -412,7 +412,7 @@ namespace Kafka.Streams.KStream.Internals
                 }
             }
 
-            foreach (Map.Entry<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers.entrySet())
+            foreach (KeyValuePair<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers.entrySet())
             {
                 StreamsGraphNode mergeKey = entry.Key;
                 Collection<StreamsGraphNode> keyChangingParents = entry.Value;
@@ -512,9 +512,5 @@ namespace Kafka.Streams.KStream.Internals
             }
             return foundParentNode;
         }
-
-        public StreamsGraphNode root()
-        {
-            return root;
-        }
     }
+}

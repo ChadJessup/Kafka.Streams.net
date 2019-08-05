@@ -14,31 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State;
+using System;
+using System.Collections.Generic;
 
-using Kafka.Streams.KeyValue;
-
-
-
-
-/**
- * Iterator interface of {@link KeyValue}.
- *
- * Users must call its {@code close} method explicitly upon completeness to release resources,
- * or use try-with-resources statement (available since JDK7) for this {@link Closeable}.
- *
- * @param Type of keys
- * @param Type of values
- */
-public interface KeyValueIterator<K, V> : Iterator<KeyValue<K, V>>, Closeable
+namespace Kafka.Streams.State
 {
-
-    
-    void close();
-
     /**
-     * Peek at the next key without advancing the iterator
-     * @return the key of the next value that would be returned from the next call to next
+     * IEnumerator interface of {@link KeyValue}.
+     *
+     * Users must call its {@code close} method explicitly upon completeness to release resources,
+     * or use try-with-resources statement (available since JDK7) for this {@link IDisposable}.
+     *
+     * @param Type of keys
+     * @param Type of values
      */
-    K peekNextKey();
+    public interface KeyValueIterator<K, V> : IEnumerator<KeyValue<K, V>>, IDisposable
+    {
+        void close();
+
+        /**
+         * Peek at the next key without advancing the iterator
+         * @return the key of the next value that would be returned from the next call to next
+         */
+        K peekNextKey();
+    }
 }

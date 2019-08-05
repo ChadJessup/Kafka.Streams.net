@@ -78,8 +78,8 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
         //                Bytes bytes = iterator.peekNextKey();
         //                Bytes keyBytes = Bytes.wrap(WindowKeySchema.extractStoreKeyBytes(bytes()));
         //                long time = WindowKeySchema.extractStoreTimestamp(bytes());
-        //                if ((binaryKeyFrom == null || keyBytes.compareTo(binaryKeyFrom) >= 0)
-        //                    && (binaryKeyTo == null || keyBytes.compareTo(binaryKeyTo) <= 0)
+        //                if ((binaryKeyFrom == null || keyBytes.CompareTo(binaryKeyFrom) >= 0)
+        //                    && (binaryKeyTo == null || keyBytes.CompareTo(binaryKeyTo) <= 0)
         //                    && time >= from
         //                    && time <= to)
         //                {
@@ -122,7 +122,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                       ISerializer<K> serializer,
                                       string topic)
     {
-        byte[] bytes = serializer.serialize(topic, timeKey.key());
+        byte[] bytes = serializer.Serialize(topic, timeKey.key());
         ByteBuffer buf = ByteBuffer.allocate(bytes.Length + TIMESTAMP_SIZE);
         buf.Add(bytes);
         buf.putLong(timeKey.window().start());
@@ -137,7 +137,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
     {
         byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE];
         System.arraycopy(binaryKey, 0, bytes, 0, bytes.Length);
-        K key = deserializer.deserialize(topic, bytes);
+        K key = deserializer.Deserialize(topic, bytes);
         Window window = extractWindow(binaryKey, windowSize);
         return new Windowed<>(key, window);
     }
@@ -227,7 +227,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                                IDeserializer<K> deserializer,
                                                string topic)
     {
-        K key = deserializer.deserialize(topic, extractStoreKeyBytes(binaryKey));
+        K key = deserializer.Deserialize(topic, extractStoreKeyBytes(binaryKey));
         Window window = extractStoreWindow(binaryKey, windowSize);
         return new Windowed<>(key, window);
     }
@@ -236,7 +236,7 @@ public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
                                                IDeserializer<K> deserializer,
                                                string topic)
     {
-        K key = deserializer.deserialize(topic, windowedKey.key()());
+        K key = deserializer.Deserialize(topic, windowedKey.key()());
         return new Windowed<>(key, windowedKey.window());
     }
 

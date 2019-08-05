@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>
+    public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : TransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>>
     {
 
         private TransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
@@ -36,9 +36,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>> get()
+        public Transformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> get()
         {
-            //        return new Transformer<KIn, VIn, Iterable<KeyValue<KOut, VOut>>>()
+            //        return new Transformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>>()
             //        {
 
             //        private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier[];
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals
             //    }
 
 
-            //    public Iterable<KeyValue<KOut, VOut>> transform(KIn key, VIn value)
+            //    public IEnumerable<KeyValue<KOut, VOut>> transform(KIn key, VIn value)
             //    {
             //        KeyValue<KOut, VOut> pair = transformer.transform(key, value);
             //        if (pair != null)

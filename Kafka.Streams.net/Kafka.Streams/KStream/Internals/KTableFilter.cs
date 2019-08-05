@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-    class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V>
+    public class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V>
     {
-        private KTableImpl<K, ?, V> parent;
+        private KTableImpl<K, object, V> parent;
         private Predicate<K, V> predicate;
         private bool filterNot;
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableFilter(KTableImpl<K, ?, V> parent,
+        KTableFilter(KTableImpl<K, object, V> parent,
                       Predicate<K, V> predicate,
                       bool filterNot,
                       string queryableName)
@@ -85,109 +79,63 @@ namespace Kafka.Streams.KStream.Internals
             return newValueAndTimestamp;
         }
 
-
-        private KTableFilterProcessor : AbstractProcessor<K, Change<V>> {
-        private TimestampedKeyValueStore<K, V> store;
-        private TimestampedTupleForwarder<K, V> tupleForwarder;
-
-
-
-        public void init(IProcessorContext context)
+        public KTableValueGetterSupplier<K, V> view<K, V>()
         {
-            base.init(context);
+            // if the KTable is materialized, use the materialized store to return getter value;
+            // otherwise rely on the parent getter and apply filter on-the-fly
             if (queryableName != null)
             {
-                store = (TimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<>(
-                    store,
-                    context,
-                    new TimestampedCacheFlushListener<>(context),
-                    sendOldValues);
-            }
-        }
-
-
-        public void process(K key, Change<V> change)
-        {
-            V newValue = computeValue(key, change.newValue);
-            V oldValue = sendOldValues ? computeValue(key, change.oldValue) : null;
-
-            if (sendOldValues && oldValue == null && newValue == null)
-            {
-                return; // unnecessary to forward here.
-            }
-
-            if (queryableName != null)
-            {
-                store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
-                tupleForwarder.maybeForward(key, newValue, oldValue);
+                return new KTableMaterializedValueGetterSupplier<>(queryableName);
             }
             else
             {
 
-                context().forward(key, new Change<>(newValue, oldValue));
+                //            return new KTableValueGetterSupplier<K, V>()
+                //{
+                //                 KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
+
+                //            public KTableValueGetter<K, V> get()
+                //            {
+                //                return new KTableFilterValueGetter(parentValueGetterSupplier());
+                //            }
+
+
+                //            public string[] storeNames()
+                //            {
+                //                return parentValueGetterSupplier.storeNames();
+                //            }
+                //        };
+            }
+        }
+
+
+        private class KTableFilterValueGetter<K, V> : KTableValueGetter<K, V>
+        {
+            private KTableValueGetter<K, V> parentGetter;
+
+            KTableFilterValueGetter(KTableValueGetter<K, V> parentGetter)
+            {
+                this.parentGetter = parentGetter;
+            }
+
+
+
+            public void init(IProcessorContext context)
+            {
+                parentGetter.init(context);
+            }
+
+
+            public ValueAndTimestamp<V> get(K key)
+            {
+                return computeValue(key, parentGetter[key]);
+            }
+
+
+            public void close()
+            {
+                parentGetter.close();
             }
         }
     }
-
-
-    public KTableValueGetterSupplier<K, V> view()
-    {
-        // if the KTable is materialized, use the materialized store to return getter value;
-        // otherwise rely on the parent getter and apply filter on-the-fly
-        if (queryableName != null)
-        {
-            return new KTableMaterializedValueGetterSupplier<>(queryableName);
-        }
-        else
-        {
-
-            //            return new KTableValueGetterSupplier<K, V>()
-            //{
-            //                 KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
-
-            //            public KTableValueGetter<K, V> get()
-            //            {
-            //                return new KTableFilterValueGetter(parentValueGetterSupplier());
-            //            }
-
-
-            //            public string[] storeNames()
-            //            {
-            //                return parentValueGetterSupplier.storeNames();
-            //            }
-            //        };
-        }
-    }
-
-
-    private class KTableFilterValueGetter : KTableValueGetter<K, V>
-    {
-        private KTableValueGetter<K, V> parentGetter;
-
-        KTableFilterValueGetter(KTableValueGetter<K, V> parentGetter)
-        {
-            this.parentGetter = parentGetter;
-        }
-
-
-
-        public void init(IProcessorContext context)
-        {
-            parentGetter.init(context);
-        }
-
-
-        public ValueAndTimestamp<V> get(K key)
-        {
-            return computeValue(key, parentGetter[key]);
-        }
-
-
-        public void close()
-        {
-            parentGetter.close();
-        }
-    }
 }
-

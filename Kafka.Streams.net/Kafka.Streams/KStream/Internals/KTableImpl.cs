@@ -1,3 +1,4 @@
+using Kafka.Streams.KStream.Internals.Graph;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
@@ -87,8 +88,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else
-{
+            }
+            else
+            {
                 keySerde = this.keySerde;
                 valueSerde = this.valSerde;
                 queryableStoreName = null;
@@ -210,8 +212,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else
-{
+            }
+            else
+            {
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -378,8 +381,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
-            } else
-{
+            }
+            else
+            {
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -464,10 +468,11 @@ namespace Kafka.Streams.KStream.Internals
             string name;
             if (suppressed is NamedSuppressed)
             {
-                string givenName = ((NamedSuppressed <object>) suppressed).name();
+                string givenName = ((NamedSuppressed<object>)suppressed).name();
                 name = givenName != null ? givenName : builder.newProcessorName(SUPPRESS_NAME);
-            } else
-{
+            }
+            else
+            {
                 throw new System.ArgumentException("Custom sues of Suppressed are not supported.");
             }
 
@@ -511,17 +516,19 @@ namespace Kafka.Streams.KStream.Internals
                 LOG.LogInformation("Using grace period of [{}] as the suppress duration for node [{}].",
                          Duration.ofMillis(grace), name);
 
-                FinalResultsSuppressionBuilder <object> builder = (FinalResultsSuppressionBuilder <object>) suppress;
+                FinalResultsSuppressionBuilder<object> builder = (FinalResultsSuppressionBuilder<object>)suppress;
 
-                SuppressedInternal <object> finalResultsSuppression =
+                SuppressedInternal<object> finalResultsSuppression =
                    builder.buildFinalResultsSuppression(Duration.ofMillis(grace));
 
                 return (SuppressedInternal<K>)finalResultsSuppression;
-            } else if (suppress is SuppressedInternal)
+            }
+            else if (suppress is SuppressedInternal)
             {
                 return (SuppressedInternal<K>)suppress;
-            } else
-{
+            }
+            else
+            {
                 throw new System.ArgumentException("Custom sues of Suppressed are not allowed.");
             }
         }
@@ -661,13 +668,18 @@ namespace Kafka.Streams.KStream.Internals
             KTableKTableAbstractJoin<K, VR, V, VO> joinThis;
             KTableKTableAbstractJoin<K, VR, VO, V> joinOther;
 
-            if (!leftOuter) { // inner
+            if (!leftOuter)
+            { // inner
                 joinThis = new KTableKTableInnerJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
                 joinOther = new KTableKTableInnerJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
-            } else if (!rightOuter) { // left
+            }
+            else if (!rightOuter)
+            { // left
                 joinThis = new KTableKTableLeftJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
                 joinOther = new KTableKTableRightJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
-            } else { // outer
+            }
+            else
+            { // outer
                 joinThis = new KTableKTableOuterJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
                 joinOther = new KTableKTableOuterJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
             }
@@ -689,8 +701,9 @@ namespace Kafka.Streams.KStream.Internals
                 valueSerde = materializedInternal.valueSerde();
                 queryableStoreName = materializedInternal.storeName();
                 storeBuilder = new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize();
-            } else
-{
+            }
+            else
+            {
                 keySerde = this.keySerde;
                 valueSerde = null;
                 queryableStoreName = null;
@@ -779,11 +792,13 @@ namespace Kafka.Streams.KStream.Internals
                 // whenever a source ktable is required for getter, it should be materialized
                 source.materialize();
                 return new KTableSourceValueGetterSupplier<>(source.queryableName());
-            } else if (processorSupplier is KStreamAggProcessorSupplier)
+            }
+            else if (processorSupplier is KStreamAggProcessorSupplier)
             {
-                return ((KStreamAggProcessorSupplier <?, K, S, V >) processorSupplier).view();
-            } else
-{
+                return ((KStreamAggProcessorSupplier<object, K, S, V>)processorSupplier).view();
+            }
+            else
+            {
                 return ((KTableProcessorSupplier<K, S, V>)processorSupplier).view();
             }
         }
@@ -795,13 +810,15 @@ namespace Kafka.Streams.KStream.Internals
             {
                 if (processorSupplier is KTableSource)
                 {
-                    KTableSource < K, object> source = (KTableSource<K, V>)processorSupplier;
+                    KTableSource<K, object> source = (KTableSource<K, V>)processorSupplier;
                     source.enableSendingOldValues();
-                } else if (processorSupplier is KStreamAggProcessorSupplier)
+                }
+                else if (processorSupplier is KStreamAggProcessorSupplier)
                 {
-                    ((KStreamAggProcessorSupplier <?, K, S, V >) processorSupplier).enableSendingOldValues();
-                } else
-{
+                    ((KStreamAggProcessorSupplier<object, K, S, V>)processorSupplier).enableSendingOldValues();
+                }
+                else
+                {
                     ((KTableProcessorSupplier<K, S, V>)processorSupplier).enableSendingOldValues();
                 }
                 sendOldValues = true;
@@ -818,7 +835,7 @@ namespace Kafka.Streams.KStream.Internals
          * For now, I'm just explicitly lying about the parameterized type.
          */
 
-        private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType(ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
+        private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType<VR>(ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
         {
             return (ProcessorParameters<K, VR>)kObjectProcessorParameters;
         }

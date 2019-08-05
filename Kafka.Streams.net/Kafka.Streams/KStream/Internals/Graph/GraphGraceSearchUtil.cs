@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processor;
 using System;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -111,3 +113,4 @@ namespace Kafka.Streams.KStream.Internals.Graph
             }
         }
     }
+}

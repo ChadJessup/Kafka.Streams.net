@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Internals;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
 
@@ -59,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public Collection<string> getTopicNames()
         {
-            return new List<>(topicNames);
+            return new List<string>(topicNames);
         }
 
         public Pattern topicPattern()
@@ -117,5 +121,5 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             }
         }
-
     }
+}

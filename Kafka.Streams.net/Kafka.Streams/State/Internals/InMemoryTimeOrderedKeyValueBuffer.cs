@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 using Kafka.Common.Metrics;
+using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -28,10 +30,10 @@ namespace Kafka.Streams.State.Internals
         private static RecordHeaders V_2_CHANGELOG_HEADERS =
             new RecordHeaders(new Header[] { new RecordHeader("v", new byte[] { (byte)2 }) });
 
-        private Dictionary<Bytes, BufferKey> index = new HashMap<>();
+        private Dictionary<Bytes, BufferKey> index = new Dictionary<Bytes, BufferKey>();
         private TreeMap<BufferKey, BufferValue> sortedMap = new TreeMap<>();
 
-        private HashSet<Bytes> dirtyKeys = new HashSet<>();
+        private HashSet<Bytes> dirtyKeys = new HashSet<Bytes>();
         private string storeName;
         private bool loggingEnabled;
 
@@ -158,7 +160,7 @@ namespace Kafka.Streams.State.Internals
 
         public override void init(IProcessorContext context, IStateStore root)
         {
-            InternalProcessorContext internalProcessorContext = (InternalProcessorContext)context;
+            IInternalProcessorContext internalProcessorContext = (IInternalProcessorContext)context;
 
             bufferSizeSensor = Sensors.createBufferSizeSensor(this, internalProcessorContext);
             bufferCountSensor = Sensors.createBufferCountSensor(this, internalProcessorContext);
@@ -220,7 +222,7 @@ namespace Kafka.Streams.State.Internals
         {
 
             int sizeOfBufferTime = long.BYTES;
-            ByteBuffer buffer = value.serialize(sizeOfBufferTime);
+            ByteBuffer buffer = value.Serialize(sizeOfBufferTime);
             buffer.putLong(bufferKey.time());
 
             collector.send(
@@ -322,7 +324,7 @@ namespace Kafka.Streams.State.Internals
                         byte[] changelogValue = new byte[record.value().Length - 8];
                         timeAndValue[changelogValue];
 
-                        ContextualRecord contextualRecord = ContextualRecord.deserialize(ByteBuffer.wrap(changelogValue));
+                        ContextualRecord contextualRecord = ContextualRecord.Deserialize(ByteBuffer.wrap(changelogValue));
                         Change<byte[]> change = requireNonNull(FullChangeSerde.decomposeLegacyFormattedArrayIntoChangeArrays(contextualRecord.value()));
 
                         cleanPut(
@@ -343,7 +345,7 @@ namespace Kafka.Streams.State.Internals
                         // in this case, the changelog value is a serialized BufferValue
 
                         ByteBuffer valueAndTime = ByteBuffer.wrap(record.value());
-                        BufferValue bufferValue = BufferValue.deserialize(valueAndTime);
+                        BufferValue bufferValue = BufferValue.Deserialize(valueAndTime);
                         long time = valueAndTime.getLong();
                         cleanPut(time, key, bufferValue);
                     }
@@ -369,12 +371,12 @@ namespace Kafka.Streams.State.Internals
         public override void evictWhile(Supplier<Boolean> predicate,
                                IConsumer<Eviction<K, V>> callback)
         {
-            Iterator < Map.Entry < BufferKey, BufferValue >> delegate = sortedMap.entrySet().iterator();
+            IEnumerator < KeyValuePair < BufferKey, BufferValue >> delegate = sortedMap.entrySet().iterator();
             int evictions = 0;
 
             if (predicate())
             {
-                Map.Entry<BufferKey, BufferValue> next = null;
+                KeyValuePair<BufferKey, BufferValue> next = null;
                 if (delegate.hasNext())
                 {
                     next = delegate.next();
@@ -390,7 +392,7 @@ namespace Kafka.Streams.State.Internals
                                 next.Key.time() + "]"
                         );
                     }
-                    K key = keySerde.deserializer().deserialize(changelogTopic, next.Key.key()());
+                    K key = keySerde.Deserializer().Deserialize(changelogTopic, next.Key.key()());
                     BufferValue bufferValue = next.Value;
                     Change<V> value = valueSerde.deserializeParts(
                         changelogTopic,
@@ -428,12 +430,12 @@ namespace Kafka.Streams.State.Internals
 
         public override Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key)
         {
-            Bytes serializedKey = Bytes.wrap(keySerde.serializer().serialize(changelogTopic, key));
+            Bytes serializedKey = Bytes.wrap(keySerde.Serializer().Serialize(changelogTopic, key));
             if (index.ContainsKey(serializedKey))
             {
                 byte[] serializedValue = internalPriorValueForBuffered(serializedKey);
 
-                V deserializedValue = valueSerde.innerSerde().deserializer().deserialize(
+                V deserializedValue = valueSerde.innerSerde().Deserializer().Deserialize(
                     changelogTopic,
                     serializedValue
                 );
@@ -471,7 +473,7 @@ namespace Kafka.Streams.State.Internals
             requireNonNull(value, "value cannot be null");
             requireNonNull(recordContext, "recordContext cannot be null");
 
-            Bytes serializedKey = Bytes.wrap(keySerde.serializer().serialize(changelogTopic, key));
+            Bytes serializedKey = Bytes.wrap(keySerde.Serializer().Serialize(changelogTopic, key));
             Change<byte[]> serialChange = valueSerde.serializeParts(changelogTopic, value);
 
             BufferValue buffered = getBuffered(serializedKey);
@@ -479,7 +481,7 @@ namespace Kafka.Streams.State.Internals
             if (buffered == null)
             {
                 V priorValue = value.oldValue;
-                serializedPriorValue = valueSerde.innerSerde().serializer().serialize(changelogTopic, priorValue);
+                serializedPriorValue = valueSerde.innerSerde().Serializer().Serialize(changelogTopic, priorValue);
             }
             else
             {

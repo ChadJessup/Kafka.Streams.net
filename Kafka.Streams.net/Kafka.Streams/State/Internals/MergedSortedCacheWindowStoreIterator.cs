@@ -65,6 +65,6 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
         byte[] binaryKey = bytesFromCacheKey(cacheKey);
 
         long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
-        return cacheTimestamp.compareTo(storeKey);
+        return cacheTimestamp.CompareTo(storeKey);
     }
 }

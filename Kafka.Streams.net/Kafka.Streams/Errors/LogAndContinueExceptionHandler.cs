@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using static Kafka.Streams.Errors.Interfaces.IDeserializationExceptionHandler;
 
 namespace Kafka.Streams.Errors
 {
@@ -30,31 +34,32 @@ namespace Kafka.Streams.Errors
 
 
 
-/**
- * Deserialization handler that logs a deserialization exception and then
- * signals the processing pipeline to continue processing more records.
- */
-public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler
+    /**
+     * Deserialization handler that logs a deserialization exception and then
+     * signals the processing pipeline to continue processing more records.
+     */
+    public class LogAndContinueExceptionHandler : IDeserializationExceptionHandler
     {
-    private static ILogger log = new LoggerFactory().CreateLogger<LogAndContinueExceptionHandler>();
+        private static ILogger log = new LoggerFactory().CreateLogger<LogAndContinueExceptionHandler>();
 
 
-    public DeserializationHandlerResponse handle( IProcessorContext context,
-                                                  ConsumeResult<byte[], byte[]> record,
-                                                  Exception exception)
-{
+        public DeserializationHandlerResponse handle(IProcessorContext context,
+                                                      ConsumeResult<byte[], byte[]> record,
+                                                      Exception exception)
+        {
 
-        log.LogWarning("Exception caught during Deserialization, " +
-                 "taskId: {}, topic: {}, partition: {}, offset: {}",
-                 context.taskId(), record.topic(), record.partition(), record.offset(),
-                 exception);
+            log.LogWarning("Exception caught during Deserialization, " +
+                     "taskId: {}, topic: {}, partition: {}, offset: {}",
+                     context.taskId(), record.topic(), record.partition(), record.offset(),
+                     exception);
 
-        return DeserializationHandlerResponse.CONTINUE;
-    }
+            return DeserializationHandlerResponse.CONTINUE;
+        }
 
 
-    public void configure( Dictionary<string, object> configs)
-{
-        // ignore
+        public void configure(Dictionary<string, object> configs)
+        {
+            // ignore
+        }
     }
 }

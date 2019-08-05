@@ -150,8 +150,8 @@ namespace Kafka.Streams.Processor.Internals
                                 ISerializer<V> valueSerializer)
         {
             checkForException();
-            byte[] keyBytes = keySerializer.serialize(topic, headers, key);
-            byte[] valBytes = valueSerializer.serialize(topic, headers, value);
+            byte[] keyBytes = keySerializer.Serialize(topic, headers, key);
+            byte[] valBytes = valueSerializer.Serialize(topic, headers, value);
 
             ProducerRecord<byte[], byte[]> serializedRecord = new ProducerRecord<>(topic, partition, timestamp, keyBytes, valBytes, headers);
 

@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-    class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1>
+    public class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1>
     {
-        private KTableImpl<K, ?, V> parent;
+        private KTableImpl<K, object, V> parent;
         private ValueMapperWithKey<K, V, V1> mapper;
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableMapValues(KTableImpl<K, ?, V> parent,
+        KTableMapValues(KTableImpl<K, object, V> parent,
                          ValueMapperWithKey<K, V, V1> mapper,
                          string queryableName)
         {
@@ -55,129 +48,61 @@ namespace Kafka.Streams.KStream.Internals
             // otherwise rely on the parent getter and apply map-values on-the-fly
             if (queryableName != null)
             {
-                return new KTableMaterializedValueGetterSupplier<>(queryableName);
+                return new KTableMaterializedValueGetterSupplier<K, V1>(queryableName);
             }
             else
             {
 
-                return new KTableValueGetterSupplier<K, V1>()
-{
-                 KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
+                //                return new KTableValueGetterSupplier<K, V1>()
+                //{
+                //                 KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
 
-                public KTableValueGetter<K, V1> get()
+                //                public KTableValueGetter<K, V1> get()
+                //                {
+                //                    return new KTableMapValuesValueGetter(parentValueGetterSupplier());
+                //                }
+
+
+                //                public string[] storeNames()
+                //                {
+                //                    return parentValueGetterSupplier.storeNames();
+                //                }
+                //            };
+            }
+
+
+
+            public void enableSendingOldValues()
+            {
+                parent.enableSendingOldValues();
+                sendOldValues = true;
+            }
+
+            private V1 computeValue(K key, V value)
+            {
+                V1 newValue = null;
+
+                if (value != null)
                 {
-                    return new KTableMapValuesValueGetter(parentValueGetterSupplier());
+                    newValue = mapper.apply(key, value);
                 }
 
+                return newValue;
+            }
 
-                public string[] storeNames()
+            private ValueAndTimestamp<V1> computeValueAndTimestamp(K key, ValueAndTimestamp<V> valueAndTimestamp)
+            {
+                V1 newValue = null;
+                long timestamp = 0;
+
+                if (valueAndTimestamp != null)
                 {
-                    return parentValueGetterSupplier.storeNames();
+                    newValue = mapper.apply(key, valueAndTimestamp.value());
+                    timestamp = valueAndTimestamp.timestamp();
                 }
-            };
-        }
 
-
-
-        public void enableSendingOldValues()
-        {
-            parent.enableSendingOldValues();
-            sendOldValues = true;
-        }
-
-        private V1 computeValue(K key, V value)
-        {
-            V1 newValue = null;
-
-            if (value != null)
-            {
-                newValue = mapper.apply(key, value);
-            }
-
-            return newValue;
-        }
-
-        private ValueAndTimestamp<V1> computeValueAndTimestamp(K key, ValueAndTimestamp<V> valueAndTimestamp)
-        {
-            V1 newValue = null;
-            long timestamp = 0;
-
-            if (valueAndTimestamp != null)
-            {
-                newValue = mapper.apply(key, valueAndTimestamp.value());
-                timestamp = valueAndTimestamp.timestamp();
-            }
-
-            return ValueAndTimestamp.make(newValue, timestamp);
-        }
-
-
-        private class KTableMapValuesProcessor : AbstractProcessor<K, Change<V>>
-        {
-            private TimestampedKeyValueStore<K, V1> store;
-            private TimestampedTupleForwarder<K, V1> tupleForwarder;
-
-
-
-            public void init(IProcessorContext context)
-            {
-                base.init(context);
-                if (queryableName != null)
-                {
-                    store = (TimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
-                    tupleForwarder = new TimestampedTupleForwarder<>(
-                        store,
-                        context,
-                        new TimestampedCacheFlushListener<K, V1>(context),
-                        sendOldValues);
-                }
-            }
-
-
-            public void process(K key, Change<V> change)
-            {
-                V1 newValue = computeValue(key, change.newValue);
-                V1 oldValue = sendOldValues ? computeValue(key, change.oldValue) : null;
-
-                if (queryableName != null)
-                {
-                    store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
-                    tupleForwarder.maybeForward(key, newValue, oldValue);
-                }
-                else
-                {
-
-                    context().forward(key, new Change<>(newValue, oldValue));
-                }
-            }
-        }
-
-
-        private class KTableMapValuesValueGetter : KTableValueGetter<K, V1>
-        {
-            private KTableValueGetter<K, V> parentGetter;
-
-            KTableMapValuesValueGetter(KTableValueGetter<K, V> parentGetter)
-            {
-                this.parentGetter = parentGetter;
-            }
-
-
-            public void init(IProcessorContext context)
-            {
-                parentGetter.init(context);
-            }
-
-
-            public ValueAndTimestamp<V1> get(K key)
-            {
-                return computeValueAndTimestamp(key, parentGetter[key]);
-            }
-
-
-            public void close()
-            {
-                parentGetter.close();
+                return ValueAndTimestamp.make(newValue, timestamp);
             }
         }
     }
+}

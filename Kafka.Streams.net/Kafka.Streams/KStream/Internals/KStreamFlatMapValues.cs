@@ -25,9 +25,9 @@ namespace Kafka.Streams.KStream.Internals
 
 class KStreamFlatMapValues<K, V, V1> : ProcessorSupplier<K, V> {
 
-    private  ValueMapperWithKey<K, V, Iterable<V1>> mapper;
+    private  ValueMapperWithKey<K, V, IEnumerable<V1>> mapper;
 
-    KStreamFlatMapValues( ValueMapperWithKey<K, V, Iterable<V1>> mapper)
+    KStreamFlatMapValues( ValueMapperWithKey<K, V, IEnumerable<V1>> mapper)
 {
         this.mapper = mapper;
     }
@@ -42,7 +42,7 @@ class KStreamFlatMapValues<K, V, V1> : ProcessorSupplier<K, V> {
         
         public void process( K key,  V value)
 {
-             Iterable<V1> newValues = mapper.apply(key, value);
+             IEnumerable<V1> newValues = mapper.apply(key, value);
             foreach ( V1 v in newValues)
 {
                 context().forward(key, v);

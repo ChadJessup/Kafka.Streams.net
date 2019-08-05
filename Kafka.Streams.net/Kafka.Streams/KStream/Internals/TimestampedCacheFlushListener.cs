@@ -22,12 +22,12 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
     {
-        private InternalProcessorContext context;
+        private IInternalProcessorContext context;
         private ProcessorNode myNode;
 
         TimestampedCacheFlushListener(IProcessorContext context)
         {
-            this.context = (InternalProcessorContext)context;
+            this.context = (IInternalProcessorContext)context;
             myNode = this.context.currentNode();
         }
 

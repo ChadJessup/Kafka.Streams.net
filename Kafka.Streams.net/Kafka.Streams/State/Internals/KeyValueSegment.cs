@@ -39,7 +39,7 @@ class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
         Utils.delete(dbDir);
     }
 
-    public override int compareTo(KeyValueSegment segment)
+    public override int CompareTo(KeyValueSegment segment)
 {
         return long.compare(id, segment.id);
     }

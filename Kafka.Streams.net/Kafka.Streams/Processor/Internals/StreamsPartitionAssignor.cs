@@ -87,7 +87,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public int compareTo(AssignedPartition that)
+        public int CompareTo(AssignedPartition that)
         {
             return PARTITION_COMPARATOR.compare(this.partition, that.partition);
         }
@@ -100,13 +100,13 @@ namespace Kafka.Streams.Processor.Internals
                 return false;
             }
             AssignedPartition other = (AssignedPartition)o;
-            return compareTo(other) == 0;
+            return CompareTo(other) == 0;
         }
 
 
         public int GetHashCode()
         {
-            // Only partition is important for compareTo, Equals and GetHashCode().
+            // Only partition is important for CompareTo, Equals and GetHashCode().
             return partition.GetHashCode();
         }
     }
@@ -168,7 +168,7 @@ namespace Kafka.Streams.Processor.Internals
 
         protected static IComparator<TopicPartition> PARTITION_COMPARATOR = (p1, p2) =>
         {
-            int result = p1.topic().compareTo(p2.topic());
+            int result = p1.topic().CompareTo(p2.topic());
 
             if (result != 0)
             {
@@ -393,7 +393,7 @@ namespace Kafka.Streams.Processor.Internals
 
             supportedVersions.clear();
             int futureMetadataVersion = UNKNOWN;
-            foreach (Map.Entry<string, Subscription> entry in subscriptions.entrySet())
+            foreach (KeyValuePair<string, Subscription> entry in subscriptions.entrySet())
             {
                 string consumerId = entry.Key;
                 Subscription subscription = entry.Value;
@@ -557,7 +557,7 @@ namespace Kafka.Streams.Processor.Internals
             // augment the metadata with the newly computed number of partitions for all the
             // repartition source topics
             Dictionary<TopicPartition, PartitionInfo> allRepartitionTopicPartitions = new HashMap<>();
-            foreach (Map.Entry<string, InternalTopicConfig> entry in repartitionTopicMetadata.entrySet())
+            foreach (KeyValuePair<string, InternalTopicConfig> entry in repartitionTopicMetadata.entrySet())
             {
                 string topic = entry.Key;
                 int numPartitions = entry.Value.numberOfPartitions();
@@ -579,7 +579,7 @@ namespace Kafka.Streams.Processor.Internals
             // get the tasks as partition groups from the partition grouper
             HashSet<string> allSourceTopics = new HashSet<>();
             Dictionary<int, HashSet<string>> sourceTopicsByGroup = new HashMap<>();
-            foreach (Map.Entry<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
+            foreach (KeyValuePair<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
             {
                 allSourceTopics.AddAll(entry.Value.sourceTopics);
                 sourceTopicsByGroup.Add(entry.Key, entry.Value.sourceTopics);
@@ -590,7 +590,7 @@ namespace Kafka.Streams.Processor.Internals
             // check if all partitions are assigned, and there are no duplicates of partitions in multiple tasks
             HashSet<TopicPartition> allAssignedPartitions = new HashSet<>();
             Dictionary<int, HashSet<TaskId>> tasksByTopicGroup = new HashMap<>();
-            foreach (Map.Entry<TaskId, HashSet<TopicPartition>> entry in partitionsForTask.entrySet())
+            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in partitionsForTask.entrySet())
             {
                 HashSet<TopicPartition> partitions = entry.Value;
                 foreach (TopicPartition partition in partitions)
@@ -632,7 +632,7 @@ namespace Kafka.Streams.Processor.Internals
 
             //.Add tasks to state change log topic subscribers
             Dictionary<string, InternalTopicConfig> changelogTopicMetadata = new HashMap<>();
-            foreach (Map.Entry<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
+            foreach (KeyValuePair<int, InternalTopologyBuilder.TopicsInfo> entry in topicGroups.entrySet())
             {
                 int topicGroupId = entry.Key;
                 Dictionary<string, InternalTopicConfig> stateChangelogTopics = entry.Value.stateChangelogTopics;
@@ -670,7 +670,7 @@ namespace Kafka.Streams.Processor.Internals
 
             // assign tasks to clients
             Dictionary<UUID, ClientState> states = new HashMap<>();
-            foreach (Map.Entry<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
+            foreach (KeyValuePair<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
             {
                 states.Add(entry.Key, entry.Value.state);
             }
@@ -689,7 +689,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState = new HashMap<>();
             if (minReceivedMetadataVersion >= 2)
             {
-                foreach (Map.Entry<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
+                foreach (KeyValuePair<UUID, ClientMetadata> entry in clientMetadataMap.entrySet())
                 {
                     HostInfo hostInfo = entry.Value.hostInfo;
 
@@ -731,7 +731,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, Assignment> assignment = new HashMap<>();
 
             // within the client, distribute tasks to its owned consumers
-            foreach (Map.Entry<UUID, ClientMetadata> entry in clientsMetadata.entrySet())
+            foreach (KeyValuePair<UUID, ClientMetadata> entry in clientsMetadata.entrySet())
             {
                 HashSet<string> consumers = entry.Value.consumers;
                 ClientState state = entry.Value.state;
@@ -1130,7 +1130,7 @@ namespace Kafka.Streams.Processor.Internals
                 // then set the number of partitions to be the maximum of the number of partitions.
                 if (numPartitions == UNKNOWN)
                 {
-                    for (Map.Entry<string, InternalTopicConfig> entry: allRepartitionTopicsNumPartitions.entrySet())
+                    for (KeyValuePair<string, InternalTopicConfig> entry: allRepartitionTopicsNumPartitions.entrySet())
                     {
                         if (copartitionGroup.contains(entry.Key))
                         {
@@ -1143,7 +1143,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                 }
                 // enforce co-partitioning restrictions to repartition topics by updating their number of partitions
-                foreach (Map.Entry<string, InternalTopicConfig> entry in allRepartitionTopicsNumPartitions.entrySet())
+                foreach (KeyValuePair<string, InternalTopicConfig> entry in allRepartitionTopicsNumPartitions.entrySet())
                 {
                     if (copartitionGroup.contains(entry.Key))
                     {

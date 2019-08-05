@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public interface KTableProcessorSupplier<K, V, T> : ProcessorSupplier<K, Change<V>>
+    {
+        KTableValueGetterSupplier<K, T> view();
 
-
-
-
-public interface KTableProcessorSupplier<K, V, T> : ProcessorSupplier<K, Change<V>> {
-
-    KTableValueGetterSupplier<K, T> view();
-
-    void enableSendingOldValues();
+        void enableSendingOldValues();
+    }
 }

@@ -126,7 +126,7 @@ namespace Kafka.Streams.Processor
         }
 
 
-        public int compareTo(TaskId other)
+        public int CompareTo(TaskId other)
         {
             int compare = int.compare(this.topicGroupId, other.topicGroupId);
             return compare != 0 ? compare : int.compare(this.partition, other.partition);

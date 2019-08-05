@@ -58,6 +58,6 @@ class MergedSortedCacheKeyValueBytesStoreIterator : AbstractMergedSortedCacheSto
 
     public override int compare(Bytes cacheKey, Bytes storeKey)
 {
-        return cacheKey.compareTo(storeKey);
+        return cacheKey.CompareTo(storeKey);
     }
 }

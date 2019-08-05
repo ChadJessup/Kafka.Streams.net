@@ -414,8 +414,8 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
      * KStream<string, int> outputStream = inputStream.flatMap(
-     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, int>>> {
-     *         Iterable<KeyValue<string, int>> apply(byte[] key, string value)
+     *     new KeyValueMapper<byte[], string, IEnumerable<KeyValue<string, int>>> {
+     *         IEnumerable<KeyValue<string, int>> apply(byte[] key, string value)
 {
      *             string[] tokens = value.split(" ");
      *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
@@ -429,7 +429,7 @@ public interface KStream<K, V> {
      *         }
      *     });
      * }</pre>
-     * The provided {@link KeyValueMapper} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link KeyValueMapper} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Flat-mapping records might result in an internal data redistribution if a key based operator (like an aggregation
@@ -452,7 +452,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper);
+    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper);
 
     /**
      * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -467,8 +467,8 @@ public interface KStream<K, V> {
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
      * KStream<string, int> outputStream = inputStream.flatMap(
-     *     new KeyValueMapper<byte[], string, Iterable<KeyValue<string, int>>> {
-     *         Iterable<KeyValue<string, int>> apply(byte[] key, string value)
+     *     new KeyValueMapper<byte[], string, IEnumerable<KeyValue<string, int>>> {
+     *         IEnumerable<KeyValue<string, int>> apply(byte[] key, string value)
 {
      *             string[] tokens = value.split(" ");
      *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
@@ -482,7 +482,7 @@ public interface KStream<K, V> {
      *         }
      *     });
      * }</pre>
-     * The provided {@link KeyValueMapper} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link KeyValueMapper} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Flat-mapping records might result in an internal data redistribution if a key based operator (like an aggregation
@@ -506,7 +506,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, Iterable<KeyValue<KR, VR>>> mapper,
+    KStream<KR, VR> flatMap( IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper,
                                       Named named);
 
     /**
@@ -522,14 +522,14 @@ public interface KStream<K, V> {
      * The example below splits input records {@code <null:string>} containing sentences as values into their words.
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
-     * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, Iterable<string>> {
-     *     Iterable<string> apply(string value)
+     * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, IEnumerable<string>> {
+     *     IEnumerable<string> apply(string value)
 {
      *         return Arrays.asList(value.split(" "));
      *     }
      * });
      * }</pre>
-     * The provided {@link ValueMapper} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link ValueMapper} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Splitting a record into multiple records with the same key preserves data co-location with respect to the key.
@@ -551,7 +551,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper);
+    KStream<K, VR> flatMapValues( ValueMapper<V, IEnumerable<VR>> mapper);
 
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -566,14 +566,14 @@ public interface KStream<K, V> {
      * The example below splits input records {@code <null:string>} containing sentences as values into their words.
      * <pre>{@code
      * KStream<byte[], string> inputStream = builder.stream("topic");
-     * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, Iterable<string>> {
-     *     Iterable<string> apply(string value)
+     * KStream<byte[], string> outputStream = inputStream.flatMapValues(new ValueMapper<string, IEnumerable<string>> {
+     *     IEnumerable<string> apply(string value)
 {
      *         return Arrays.asList(value.split(" "));
      *     }
      * });
      * }</pre>
-     * The provided {@link ValueMapper} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link ValueMapper} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Splitting a record into multiple records with the same key preserves data co-location with respect to the key.
@@ -596,7 +596,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<K, VR> flatMapValues( ValueMapper<V, Iterable<VR>> mapper,
+    KStream<K, VR> flatMapValues( ValueMapper<V, IEnumerable<VR>> mapper,
                                        Named named);
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -612,8 +612,8 @@ public interface KStream<K, V> {
      * into their words.
      * <pre>{@code
      * KStream<int, string> inputStream = builder.stream("topic");
-     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, Iterable<string>> {
-     *     Iterable<int, string> apply(int readOnlyKey, string value)
+     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, IEnumerable<string>> {
+     *     IEnumerable<int, string> apply(int readOnlyKey, string value)
 {
      *         if(readOnlyKey == 1)
 {
@@ -626,7 +626,7 @@ public interface KStream<K, V> {
      *     }
      * });
      * }</pre>
-     * The provided {@link ValueMapperWithKey} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link ValueMapperWithKey} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -649,7 +649,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper);
+    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, IEnumerable<VR>> mapper);
 
     /**
      * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -665,8 +665,8 @@ public interface KStream<K, V> {
      * into their words.
      * <pre>{@code
      * KStream<int, string> inputStream = builder.stream("topic");
-     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, Iterable<string>> {
-     *     Iterable<int, string> apply(int readOnlyKey, string value)
+     * KStream<int, string> outputStream = inputStream.flatMapValues(new ValueMapper<int, string, IEnumerable<string>> {
+     *     IEnumerable<int, string> apply(int readOnlyKey, string value)
 {
      *         if(readOnlyKey == 1)
 {
@@ -679,7 +679,7 @@ public interface KStream<K, V> {
      *     }
      * });
      * }</pre>
-     * The provided {@link ValueMapperWithKey} must return an {@link Iterable} (e.g., any {@link java.util.Collection} type)
+     * The provided {@link ValueMapperWithKey} must return an {@link IEnumerable} (e.g., any {@link java.util.Collection} type)
      * and the return value must not be {@code null}.
      * <p>
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -703,7 +703,7 @@ public interface KStream<K, V> {
      * @see #flatTransformValues(ValueTransformerSupplier, string...)
      * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
      */
-    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, Iterable<VR>> mapper,
+    KStream<K, VR> flatMapValues( ValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
                                        Named named);
     /**
      * Print the records of this KStream using the options provided by {@link Printed}
@@ -1124,10 +1124,10 @@ public interface KStream<K, V> {
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
      * punctuate()}, a schedule must be registered.
-     * The {@link Transformer} must return an {@link java.lang.Iterable} type (e.g., any {@link java.util.Collection}
+     * The {@link Transformer} must return an {@link java.lang.IEnumerable} type (e.g., any {@link java.util.Collection}
      * type) in {@link Transformer#transform(object, object) transform()}.
      * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
-     * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
+     * which is equal to returning an empty {@link java.lang.IEnumerable IEnumerable}, i.e., no records are emitted.
      * <pre>{@code
      * new TransformerSupplier()
 {
@@ -1146,7 +1146,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<KeyValue> transform(K key, V value)
+     *             IEnumerable<KeyValue> transform(K key, V value)
 {
      *                 // can access this.state
      *                 List<KeyValue> result = new List<>();
@@ -1193,7 +1193,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
+    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
                                             string[] stateStoreNames);
 
     /**
@@ -1223,10 +1223,10 @@ public interface KStream<K, V> {
      * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)
      * punctuate()}, a schedule must be registered.
-     * The {@link Transformer} must return an {@link java.lang.Iterable} type (e.g., any {@link java.util.Collection}
+     * The {@link Transformer} must return an {@link java.lang.IEnumerable} type (e.g., any {@link java.util.Collection}
      * type) in {@link Transformer#transform(object, object) transform()}.
      * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
-     * which is equal to returning an empty {@link java.lang.Iterable Iterable}, i.e., no records are emitted.
+     * which is equal to returning an empty {@link java.lang.IEnumerable IEnumerable}, i.e., no records are emitted.
      * <pre>{@code
      * new TransformerSupplier()
 {
@@ -1245,7 +1245,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<KeyValue> transform(K key, V value)
+     *             IEnumerable<KeyValue> transform(K key, V value)
 {
      *                 // can access this.state
      *                 List<KeyValue> result = new List<>();
@@ -1293,7 +1293,7 @@ public interface KStream<K, V> {
      * @see #transformValues(ValueTransformerWithKeySupplier, string...)
      * @see #process(ProcessorSupplier, string...)
      */
-    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, Iterable<KeyValue<K1, V1>>> transformerSupplier,
+    KStream<K1, V1> flatTransform( TransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
                                             Named named,
                                             string[] stateStoreNames);
 
@@ -1658,11 +1658,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformer} must return an {@link java.lang.Iterable} type (e.g., any
+     * The {@link ValueTransformer} must return an {@link java.lang.IEnumerable} type (e.g., any
      * {@link java.util.Collection} type) in {@link ValueTransformer#transform(object)
      * transform()}.
      * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
-     * {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
+     * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
      * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
@@ -1684,7 +1684,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(V value)
+     *             IEnumerable<NewValueType> transform(V value)
 {
      *                 // can access this.state
      *                 List<NewValueType> result = new List<>();
@@ -1723,7 +1723,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
                                              string[] stateStoreNames);
 
     /**
@@ -1751,11 +1751,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformer}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformer} must return an {@link java.lang.Iterable} type (e.g., any
+     * The {@link ValueTransformer} must return an {@link java.lang.IEnumerable} type (e.g., any
      * {@link java.util.Collection} type) in {@link ValueTransformer#transform(object)
      * transform()}.
      * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
-     * {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
+     * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
      * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
@@ -1777,7 +1777,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(V value)
+     *             IEnumerable<NewValueType> transform(V value)
 {
      *                 // can access this.state
      *                 List<NewValueType> result = new List<>();
@@ -1817,7 +1817,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
                                              Named named,
                                              string[] stateStoreNames);
 
@@ -1846,11 +1846,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformerWithKey} must return an {@link java.lang.Iterable} type (e.g., any
+     * The {@link ValueTransformerWithKey} must return an {@link java.lang.IEnumerable} type (e.g., any
      * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(object, object)
      * transform()}.
      * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
-     * is an empty {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
+     * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
      * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
@@ -1872,7 +1872,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(K readOnlyKey, V value)
+     *             IEnumerable<NewValueType> transform(K readOnlyKey, V value)
 {
      *                 // can access this.state and use read-only key
      *                 List<NewValueType> result = new List<>();
@@ -1912,7 +1912,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                              string[] stateStoreNames);
 
     /**
@@ -1940,11 +1940,11 @@ public interface KStream<K, V> {
      * Within the {@link ValueTransformerWithKey}, the state store is obtained via the {@link IProcessorContext}.
      * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
      * a schedule must be registered.
-     * The {@link ValueTransformerWithKey} must return an {@link java.lang.Iterable} type (e.g., any
+     * The {@link ValueTransformerWithKey} must return an {@link java.lang.IEnumerable} type (e.g., any
      * {@link java.util.Collection} type) in {@link ValueTransformerWithKey#transform(object, object)
      * transform()}.
      * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
-     * is an empty {@link java.lang.Iterable Iterable} or {@code null}, no records are emitted.
+     * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
      * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
      * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
      * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
@@ -1966,7 +1966,7 @@ public interface KStream<K, V> {
      *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
      *             }
      *
-     *             Iterable<NewValueType> transform(K readOnlyKey, V value)
+     *             IEnumerable<NewValueType> transform(K readOnlyKey, V value)
 {
      *                 // can access this.state and use read-only key
      *                 List<NewValueType> result = new List<>();
@@ -2007,7 +2007,7 @@ public interface KStream<K, V> {
      * @see #transform(TransformerSupplier, string...)
      * @see #flatTransform(TransformerSupplier, string...)
      */
-    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, Iterable<VR>> valueTransformerSupplier,
+    KStream<K, VR> flatTransformValues( ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                              Named named,
                                              string[] stateStoreNames);
 
