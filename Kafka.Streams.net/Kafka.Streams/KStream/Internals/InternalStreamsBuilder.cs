@@ -15,12 +15,15 @@
  * limitations under the License.
  */
 using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
@@ -428,9 +431,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private OptimizableRepartitionNode createRepartitionNode(string repartitionTopicName,
-                                                                  Serde keySerde,
-                                                                  Serde valueSerde)
+        private OptimizableRepartitionNode<K, V> createRepartitionNode<K, V>(string repartitionTopicName,
+                                                                  ISerde<K> keySerde,
+                                                                  ISerde<V> valueSerde)
         {
 
             OptimizableRepartitionNode.OptimizableRepartitionNodeBuilder repartitionNodeBuilder = OptimizableRepartitionNode.optimizableRepartitionNodeBuilder();
@@ -467,12 +470,12 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private GroupedInternal getRepartitionSerdes(Collection<OptimizableRepartitionNode> repartitionNodes)
+        private GroupedInternal getRepartitionSerdes<K, V>(Collection<OptimizableRepartitionNode<K, V>> repartitionNodes)
         {
-            Serde keySerde = null;
-            Serde valueSerde = null;
+            ISerde<K> keySerde = null;
+            ISerde<V> valueSerde = null;
 
-            foreach (OptimizableRepartitionNode repartitionNode in repartitionNodes)
+            foreach (var repartitionNode in repartitionNodes)
             {
                 if (keySerde == null && repartitionNode.keySerde() != null)
                 {
@@ -496,10 +499,11 @@ namespace Kafka.Streams.KStream.Internals
         private StreamsGraphNode findParentNodeMatching(StreamsGraphNode startSeekingNode,
                                                          Predicate<StreamsGraphNode> parentNodePredicate)
         {
-            if (parentNodePredicate.test(startSeekingNode))
+            if (parentNodePredicate(startSeekingNode))
             {
                 return startSeekingNode;
             }
+
             StreamsGraphNode foundParentNode = null;
 
             foreach (StreamsGraphNode parentNode in startSeekingNode.parentNodes())

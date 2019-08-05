@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,16 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Interfaces;
-
 namespace Kafka.Streams.KStream.Internals
 {
-    public class JoinedInternal<K, V, VO> : Joined<K, V, VO>
+    public class Properties
     {
-        public JoinedInternal(Joined<K, V, VO> joined)
-            : base(joined)
-        {
-        }
-
     }
 }
