@@ -26,7 +26,7 @@ using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.Internals.ProcessorStateManager;
 using Kafka.Streams.Processor.Internals.metrics.StreamsMetricsImpl;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.ISessionStore;
 using Kafka.Streams.State.StateSerdes;
 
@@ -112,7 +112,7 @@ public class MeteredSessionStore<K, V>
 {
             return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
                 (key, newValue, oldValue, timestamp) -> listener.apply(
-                    SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.topic()),
+                    SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.Topic),
                     newValue != null ? serdes.valueFrom(newValue) : null,
                     oldValue != null ? serdes.valueFrom(oldValue) : null,
                     timestamp
@@ -178,7 +178,7 @@ public class MeteredSessionStore<K, V>
         }
     }
 
-    public override KeyValueIterator<Windowed<K>, V> fetch(K key)
+    public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
 {
         key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         return new MeteredWindowedKeyValueIterator<>(
@@ -189,7 +189,7 @@ public class MeteredSessionStore<K, V>
             time);
     }
 
-    public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+    public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                   K to)
 {
         from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
@@ -202,7 +202,7 @@ public class MeteredSessionStore<K, V>
             time);
     }
 
-    public override KeyValueIterator<Windowed<K>, V> findSessions(K key,
+    public override IKeyValueIterator<Windowed<K>, V> findSessions(K key,
                                                          long earliestSessionEndTime,
                                                          long latestSessionStartTime)
 {
@@ -219,7 +219,7 @@ public class MeteredSessionStore<K, V>
             time);
     }
 
-    public override KeyValueIterator<Windowed<K>, V> findSessions(K keyFrom,
+    public override IKeyValueIterator<Windowed<K>, V> findSessions(K keyFrom,
                                                          K keyTo,
                                                          long earliestSessionEndTime,
                                                          long latestSessionStartTime)

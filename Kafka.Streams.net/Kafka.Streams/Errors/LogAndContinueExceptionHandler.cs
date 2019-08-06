@@ -24,16 +24,6 @@ using static Kafka.Streams.Errors.Interfaces.IDeserializationExceptionHandler;
 
 namespace Kafka.Streams.Errors
 {
-
-
-
-
-
-
-
-
-
-
     /**
      * Deserialization handler that logs a deserialization exception and then
      * signals the processing pipeline to continue processing more records.
@@ -43,14 +33,14 @@ namespace Kafka.Streams.Errors
         private static ILogger log = new LoggerFactory().CreateLogger<LogAndContinueExceptionHandler>();
 
 
-        public DeserializationHandlerResponse handle(IProcessorContext context,
-                                                      ConsumeResult<byte[], byte[]> record,
-                                                      Exception exception)
+        public DeserializationHandlerResponse handle(
+            IProcessorContext<byte[], byte[]> context,
+            ConsumeResult<byte[], byte[]> record,
+            Exception exception)
         {
-
             log.LogWarning("Exception caught during Deserialization, " +
                      "taskId: {}, topic: {}, partition: {}, offset: {}",
-                     context.taskId(), record.topic(), record.partition(), record.offset(),
+                     context.taskId(), record.Topic., record.partition(), record.offset(),
                      exception);
 
             return DeserializationHandlerResponse.CONTINUE;

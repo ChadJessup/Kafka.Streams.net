@@ -66,10 +66,10 @@ namespace Kafka.Streams.KStream.Internals
 
         public bool overlap(Window other)
         {
-            if (getClass() != other.getClass())
+            if (GetType() != other.GetType())
             {
                 throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
-                    + other.getClass() + ".");
+                    + other.GetType() + ".");
             }
             TimeWindow otherWindow = (TimeWindow)other;
             return startMs < otherWindow.endMs && otherWindow.startMs < endMs;

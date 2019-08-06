@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    public class KTableAggregate<K, V, T> : KTableProcessorSupplier<K, V, T>
+    public class KTableAggregate<K, V, T> : IKTableProcessorSupplier<K, V, T>
     {
 
         private string storeName;

@@ -66,7 +66,7 @@ class StateManagerUtil
         foreach (TopicPartition topicPartition in partitions)
 {
             checkpointFileCache.Remove(topicPartition);
-            storesToBeReinitialized.Add(changelogTopicToStore[topicPartition.topic()]);
+            storesToBeReinitialized.Add(changelogTopicToStore[topicPartition.Topic]);
         }
 
         if (!eosEnabled)

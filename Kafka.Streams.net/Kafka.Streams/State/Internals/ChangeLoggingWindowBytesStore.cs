@@ -22,9 +22,9 @@ using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.Internals.ProcessorStateManager;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.StateSerdes;
-using Kafka.Streams.State.WindowStore;
+using Kafka.Streams.State.IWindowStore;
 using Kafka.Streams.State.WindowStoreIterator;
 
 /**
@@ -32,8 +32,8 @@ using Kafka.Streams.State.WindowStoreIterator;
  * updates to a changelog
  */
 class ChangeLoggingWindowBytesStore
-    : WrappedStateStore<WindowStore<Bytes, byte[]>, byte[], byte[]>
-    : WindowStore<Bytes, byte[]>
+    : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
+    : IWindowStore<Bytes, byte[]>
 {
 
     private bool retainDuplicates;
@@ -42,7 +42,7 @@ class ChangeLoggingWindowBytesStore
 
     StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-    ChangeLoggingWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
+    ChangeLoggingWindowBytesStore(IWindowStore<Bytes, byte[]> bytesStore,
                                   bool retainDuplicates)
 {
         base(bytesStore);
@@ -76,7 +76,7 @@ class ChangeLoggingWindowBytesStore
     }
 
     
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes keyFrom,
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes keyFrom,
                                                            Bytes keyTo,
                                                            long from,
                                                            long to)
@@ -84,13 +84,13 @@ class ChangeLoggingWindowBytesStore
         return wrapped().fetch(keyFrom, keyTo, from, to);
     }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> all()
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
 {
         return wrapped().all();
     }
 
     
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {
         return wrapped().fetchAll(timeFrom, timeTo);

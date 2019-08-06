@@ -25,9 +25,9 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-        public string topic()
+        public string Topic
         {
-            return value.topic();
+            return value.Topic;
         }
 
         public int partition()

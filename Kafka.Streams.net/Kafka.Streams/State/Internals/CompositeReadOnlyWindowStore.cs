@@ -98,8 +98,8 @@ namespace Kafka.Streams.State.Internals
 
 
         public override WindowStoreIterator<V> fetch(K key,
-                                            Instant from,
-                                            Instant to)
+                                            DateTime from,
+                                            DateTime to)
         {
             return fetch(
                 key,
@@ -108,7 +108,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
                                                       long timeFrom,
                                                       long timeTo)
@@ -124,10 +124,10 @@ namespace Kafka.Streams.State.Internals
                     nextIteratorFunction));
         }
 
-        public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
-                                                      Instant fromTime,
-                                                      Instant toTime)
+                                                      DateTime fromTime,
+                                                      DateTime toTime)
         {
             return fetch(
                 from,
@@ -136,7 +136,7 @@ namespace Kafka.Streams.State.Internals
                 ApiUtils.validateMillisecondInstant(toTime, prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
         }
 
-        public override KeyValueIterator<Windowed<K>, V> all()
+        public override IKeyValueIterator<Windowed<K>, V> all()
         {
             NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
                 ReadOnlyWindowStore::all;
@@ -149,7 +149,7 @@ namespace Kafka.Streams.State.Internals
 
 
         [System.Obsolete]
-        public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+        public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
         {
             NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
@@ -162,8 +162,8 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
-                                                         Instant to)
+        public override IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from,
+                                                         DateTime to)
         {
             return fetchAll(
                 ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),

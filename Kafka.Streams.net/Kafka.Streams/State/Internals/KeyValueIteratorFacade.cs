@@ -16,11 +16,11 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-    public class KeyValueIteratorFacade<K, V> : KeyValueIterator<K, V>
+    public class KeyValueIteratorFacade<K, V> : IKeyValueIterator<K, V>
     {
-        private KeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
+        private IKeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
 
-        public KeyValueIteratorFacade(KeyValueIterator<K, ValueAndTimestamp<V>> iterator)
+        public KeyValueIteratorFacade(IKeyValueIterator<K, ValueAndTimestamp<V>> iterator)
         {
             innerIterator = iterator;
         }

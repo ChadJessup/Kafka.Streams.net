@@ -170,7 +170,7 @@ namespace Kafka.Streams.Processor.Internals
                 //            {
                 //                return;
                 //            }
-                //            TopicPartition tp = new TopicPartition(metadata.topic(), metadata.partition());
+                //            TopicPartition tp = new TopicPartition(metadata.Topic, metadata.partition());
                 //            offsets.Add(tp, metadata.offset());
                 //        }
                 //        else

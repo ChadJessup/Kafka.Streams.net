@@ -389,7 +389,7 @@ namespace Kafka.Streams.Processor.Internals
     static class TaskCreator : AbstractTaskCreator<StreamTask>
     {
         private ThreadCache cache;
-        private KafkaClientSupplier clientSupplier;
+        private IKafkaClientSupplier clientSupplier;
         private string threadClientId;
         private IProducer<byte[], byte[]> threadProducer;
         private Sensor createTaskSensor;
@@ -401,7 +401,7 @@ namespace Kafka.Streams.Processor.Internals
                     ChangelogReader storeChangelogReader,
                     ThreadCache cache,
                     ITime time,
-                    KafkaClientSupplier clientSupplier,
+                    IKafkaClientSupplier clientSupplier,
                     IProducer<byte[], byte[]> threadProducer,
                     string threadClientId,
                     ILogger log)
@@ -510,7 +510,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public static StreamThread create(InternalTopologyBuilder builder,
                                           StreamsConfig config,
-                                          KafkaClientSupplier clientSupplier,
+                                          IKafkaClientSupplier clientSupplier,
                                           Admin adminClient,
                                           UUID processId,
                                           string clientId,
@@ -974,11 +974,11 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (TopicPartition partition in partitions)
             {
-                if (builder.earliestResetTopicsPattern().matcher(partition.topic()).matches())
+                if (builder.earliestResetTopicsPattern().matcher(partition.Topic).matches())
                 {
                .AddToResetList(partition, seekToBeginning, "Setting topic '{}' to consume from {} offset", "earliest", loggedTopics);
                 }
-                else if (builder.latestResetTopicsPattern().matcher(partition.topic()).matches())
+                else if (builder.latestResetTopicsPattern().matcher(partition.Topic).matches())
                 {
                .AddToResetList(partition, seekToEnd, "Setting topic '{}' to consume from {} offset", "latest", loggedTopics);
                 }
@@ -990,7 +990,7 @@ namespace Kafka.Streams.Processor.Internals
                         string errorMessage = "No valid committed offset found for input topic %s (partition %s) and no valid reset policy configured." +
                             " You need to set configuration parameter \"auto.offset.reset\" or specify a topic specific reset " +
                             "policy via StreamsBuilder#stream(..., Consumed.with(Topology.AutoOffsetReset)) or StreamsBuilder#table(..., Consumed.with(Topology.AutoOffsetReset))";
-                        throw new StreamsException(string.Format(errorMessage, partition.topic(), partition.partition()), e);
+                        throw new StreamsException(string.Format(errorMessage, partition.Topic, partition.partition()), e);
                     }
 
                     if (originalReset.Equals("earliest"))
@@ -1016,7 +1016,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private void addToResetList(TopicPartition partition, HashSet<TopicPartition> partitions, string logMessage, string resetPolicy, HashSet<string> loggedTopics)
         {
-            string topic = partition.topic();
+            string topic = partition.Topic;
             if (loggedTopics.Add(topic))
             {
                 log.LogInformation(logMessage, topic, resetPolicy);

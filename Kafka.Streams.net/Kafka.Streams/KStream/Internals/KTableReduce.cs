@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public class KTableReduce<K, V> : KTableProcessorSupplier<K, V, V> {
+public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
 
     private  string storeName;
     private  Reducer<V>.AddReducer;

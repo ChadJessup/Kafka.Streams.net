@@ -125,7 +125,7 @@ namespace Kafka.Streams.KStream.Internals
                                     this);
         }
 
-        public GlobalKTable<K, V> globalTable(string topic,
+        public IGlobalKTable<K, V> globalTable(string topic,
                                                       ConsumedInternal<K, V> consumed,
                                                       MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -245,7 +245,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 throw new InvalidOperationException(
                     "Nodes should not have a null parent node.  Name: " + node.nodeName() + " Type: "
-                    + node.getClass().getSimpleName());
+                    + node.GetType().getSimpleName());
             }
 
             if (node.isKeyChangingOperation())

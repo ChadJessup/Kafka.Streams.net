@@ -274,7 +274,7 @@ namespace Kafka.Streams.Processor.Internals
             List<TopicPartition> topicPartitions = new List<TopicPartition>();
             foreach (PartitionInfo partition in partitionInfos)
             {
-                topicPartitions.Add(new TopicPartition(partition.topic(), partition.partition()));
+                topicPartitions.Add(new TopicPartition(partition.Topic, partition.partition()));
             }
             return topicPartitions;
         }
@@ -434,7 +434,7 @@ namespace Kafka.Streams.Processor.Internals
             // Skip non persistent store
             foreach (KeyValuePair<TopicPartition, long> topicPartitionOffset in checkpointFileCache.entrySet())
             {
-                string topic = topicPartitionOffset.Key.topic();
+                string topic = topicPartitionOffset.Key.Topic;
                 if (!globalNonPersistentStoresTopics.contains(topic))
                 {
                     filteredOffsets.Add(topicPartitionOffset.Key, topicPartitionOffset.Value);

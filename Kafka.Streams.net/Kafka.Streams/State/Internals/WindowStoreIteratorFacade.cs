@@ -4,9 +4,9 @@ namespace Kafka.Streams.State.Internals
 {
     public class WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
     {
-        KeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
+        IKeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
 
-        WindowStoreIteratorFacade(KeyValueIterator<long, ValueAndTimestamp<V>> iterator)
+        WindowStoreIteratorFacade(IKeyValueIterator<long, ValueAndTimestamp<V>> iterator)
         {
             innerIterator = iterator;
         }

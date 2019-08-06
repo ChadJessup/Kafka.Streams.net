@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-    public class RocksDbWindowBytesStoreSupplier : WindowBytesStoreSupplier
+    public class RocksDbWindowBytesStoreSupplier : IWindowBytesStoreSupplier
     {
         private string name;
         private long retentionPeriod;
@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.Internals
             return name;
         }
 
-        public override WindowStore<Bytes, byte[]> get()
+        public override IWindowStore<Bytes, byte[]> get()
         {
             if (!returnTimestampedStore)
             {

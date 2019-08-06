@@ -78,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    value, context().topic(), context().partition(), context().offset()
+                    value, context().Topic, context().partition(), context().offset()
                 );
                 skippedRecordsSensor.record();
                 return;
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals
             Agg agg = initializer.apply();
 
             using (
-                 KeyValueIterator<Windowed<K>, Agg> iterator = store.findSessions(
+                 IKeyValueIterator<Windowed<K>, Agg> iterator = store.findSessions(
                     key,
                     timestamp - windows.inactivityGap(),
                     timestamp + windows.inactivityGap()
@@ -123,7 +123,7 @@ namespace Kafka.Streams.KStream.Internals
                         "expiration=[{}] " +
                         "streamTime=[{}]",
                     key,
-                    context().topic(),
+                    context().Topic,
                     context().partition(),
                     context().offset(),
                     timestamp,

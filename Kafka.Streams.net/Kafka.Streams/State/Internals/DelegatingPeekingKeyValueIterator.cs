@@ -22,15 +22,15 @@ namespace Kafka.Streams.State.Internals
     /**
      * Optimized {@link KeyValueIterator} used when the same element could be peeked multiple times.
      */
-    public class DelegatingPeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>, PeekingKeyValueIterator<K, V>
+    public class DelegatingPeekingKeyValueIterator<K, V> : IKeyValueIterator<K, V>, PeekingKeyValueIterator<K, V>
     {
-        private KeyValueIterator<K, V> underlying;
+        private IKeyValueIterator<K, V> underlying;
         private string storeName;
         private KeyValue<K, V> next;
 
         private volatile bool open = true;
 
-        public DelegatingPeekingKeyValueIterator(string storeName, KeyValueIterator<K, V> underlying)
+        public DelegatingPeekingKeyValueIterator(string storeName, IKeyValueIterator<K, V> underlying)
         {
             this.storeName = storeName;
             this.underlying = underlying;

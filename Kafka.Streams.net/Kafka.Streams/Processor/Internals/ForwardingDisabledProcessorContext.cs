@@ -131,9 +131,9 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public string topic()
+        public string Topic
         {
-            return @delegate.topic();
+            return @delegate.Topic;
         }
 
 

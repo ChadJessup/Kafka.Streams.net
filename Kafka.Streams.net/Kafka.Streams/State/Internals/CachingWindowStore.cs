@@ -25,8 +25,8 @@ namespace Kafka.Streams.State.Internals
 {
 
     class CachingWindowStore
-        : WrappedStateStore<WindowStore<Bytes, byte[]>, byte[], byte[]>
-    , WindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
+        : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
+    , IWindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<CachingWindowStore>();
 
@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
 
         private SegmentedCacheFunction cacheFunction;
 
-        CachingWindowStore(WindowStore<Bytes, byte[]> underlying,
+        CachingWindowStore(IWindowStore<Bytes, byte[]> underlying,
                            long windowSize,
                            long segmentInterval)
         {
@@ -158,7 +158,7 @@ namespace Kafka.Streams.State.Internals
                     context.offset(),
                     context.timestamp(),
                     context.partition(),
-                    context.topic());
+                    context.Topic);
             cache.Add(name, cacheFunction.cacheKey(keyBytes), entry);
 
             maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(keyBytes), maxObservedTimestamp);
@@ -216,7 +216,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
                                                                long timeTo)
@@ -233,7 +233,7 @@ namespace Kafka.Streams.State.Internals
             // if store is open outside as well.
             validateStoreOpen();
 
-            KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator =
+            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator =
                 wrapped().fetch(from, to, timeFrom, timeTo);
             if (cache == null)
             {
@@ -260,12 +260,12 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                                   long timeTo)
         {
             validateStoreOpen();
 
-            KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo);
+            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo);
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
@@ -280,11 +280,11 @@ namespace Kafka.Streams.State.Internals
             );
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> all()
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
         {
             validateStoreOpen();
 
-            KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().all();
+            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().all();
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
             return new MergedSortedCacheWindowStoreKeyValueIterator(

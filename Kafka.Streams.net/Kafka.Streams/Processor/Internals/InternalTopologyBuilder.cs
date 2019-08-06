@@ -1876,7 +1876,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public string topic()
+            public string Topic
             {
                 if (topicNameExtractor is StaticTopicNameExtractor)
                 {
@@ -1914,7 +1914,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 if (topicNameExtractor is StaticTopicNameExtractor)
                 {
-                    return "Sink: " + name + " (topic: " + topic() + ")\n      <-- " + nodeNames(predecessors);
+                    return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
                 }
                 return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
                     + nodeNames(predecessors);

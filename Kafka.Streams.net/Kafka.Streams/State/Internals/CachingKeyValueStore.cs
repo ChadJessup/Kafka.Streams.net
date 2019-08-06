@@ -146,7 +146,7 @@ namespace Kafka.Streams.State.Internals
                     context.offset(),
                     context.timestamp(),
                     context.partition(),
-                    context.topic()));
+                    context.Topic));
         }
 
         public override byte[] putIfAbsent(Bytes key,
@@ -264,7 +264,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
         {
             if (from.CompareTo(to) > 0)
@@ -276,15 +276,15 @@ namespace Kafka.Streams.State.Internals
             }
 
             validateStoreOpen();
-            KeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
+            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
             MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }
 
-        public override KeyValueIterator<Bytes, byte[]> all()
+        public override IKeyValueIterator<Bytes, byte[]> all()
         {
             validateStoreOpen();
-            KeyValueIterator<Bytes, byte[]> storeIterator =
+            IKeyValueIterator<Bytes, byte[]> storeIterator =
                 new DelegatingPeekingKeyValueIterator<>(this.name(), wrapped().all());
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);

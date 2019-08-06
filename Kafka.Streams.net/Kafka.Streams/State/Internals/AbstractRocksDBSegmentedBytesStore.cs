@@ -50,7 +50,7 @@ namespace Kafka.Streams.State.Internals
             this.segments = segments;
         }
 
-        public override KeyValueIterator<Bytes, byte[]> fetch(Bytes key,
+        public override IKeyValueIterator<Bytes, byte[]> fetch(Bytes key,
                                                      long from,
                                                      long to)
         {
@@ -66,7 +66,7 @@ namespace Kafka.Streams.State.Internals
                 binaryTo);
         }
 
-        public override KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom,
+        public override IKeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom,
                                                      Bytes keyTo,
                                                      long from,
                                                      long to)
@@ -91,7 +91,7 @@ namespace Kafka.Streams.State.Internals
                 binaryTo);
         }
 
-        public override KeyValueIterator<Bytes, byte[]> all()
+        public override IKeyValueIterator<Bytes, byte[]> all()
         {
             List<S> searchSpace = segments.allSegments();
 
@@ -102,7 +102,7 @@ namespace Kafka.Streams.State.Internals
                 null);
         }
 
-        public override KeyValueIterator<Bytes, byte[]> fetchAll(long timeFrom,
+        public override IKeyValueIterator<Bytes, byte[]> fetchAll(long timeFrom,
                                                         long timeTo)
         {
             List<S> searchSpace = segments.segments(timeFrom, timeTo);

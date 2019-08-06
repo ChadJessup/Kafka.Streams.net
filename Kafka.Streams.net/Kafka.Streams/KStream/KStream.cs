@@ -3152,7 +3152,7 @@ public interface KStream<K, V> {
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> join( IGlobalKTable<GK, GV> globalKTable,
                                       IKeyValueMapper<K, V, GK> keyValueMapper,
                                       ValueJoiner<V, GV, RV> joiner);
 
@@ -3186,7 +3186,7 @@ public interface KStream<K, V> {
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, RV> join( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> join( IGlobalKTable<GK, GV> globalKTable,
                                       IKeyValueMapper<K, V, GK> keyValueMapper,
                                       ValueJoiner<V, GV, RV> joiner,
                                       Named named);
@@ -3223,7 +3223,7 @@ public interface KStream<K, V> {
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> leftJoin( IGlobalKTable<GK, GV> globalKTable,
                                           IKeyValueMapper<K, V, GK> keyValueMapper,
                                           ValueJoiner<V, GV, RV> valueJoiner);
 
@@ -3261,7 +3261,7 @@ public interface KStream<K, V> {
      * {@link ValueJoiner}, one output for each input {@code KStream} record
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, RV> leftJoin( GlobalKTable<GK, GV> globalKTable,
+    KStream<K, RV> leftJoin( IGlobalKTable<GK, GV> globalKTable,
                                           IKeyValueMapper<K, V, GK> keyValueMapper,
                                           ValueJoiner<V, GV, RV> valueJoiner,
                                           Named named);

@@ -19,12 +19,12 @@ using Kafka.Streams.Interfaces;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, WindowStore<K, V>>
+    public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IWindowStore<K, V>>
     {
 
-        private WindowBytesStoreSupplier storeSupplier;
+        private IWindowBytesStoreSupplier storeSupplier;
 
-        public WindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
+        public WindowStoreBuilder(IWindowBytesStoreSupplier storeSupplier,
                                   ISerde<K> keySerde,
                                   ISerde<V> valueSerde,
                                   ITime time)
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
             this.storeSupplier = storeSupplier;
         }
 
-        public override WindowStore<K, V> build()
+        public override IWindowStore<K, V> build()
         {
             return new MeteredWindowStore<>(
                 maybeWrapCaching(maybeWrapLogging(storeSupplier())],
@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
                 valueSerde);
         }
 
-        private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
+        private IWindowStore<Bytes, byte[]> maybeWrapCaching(IWindowStore<Bytes, byte[]> inner)
         {
             if (!enableCaching)
             {
@@ -56,7 +56,7 @@ namespace Kafka.Streams.State.Internals
                 storeSupplier.segmentIntervalMs());
         }
 
-        private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
+        private IWindowStore<Bytes, byte[]> maybeWrapLogging(IWindowStore<Bytes, byte[]> inner)
         {
             if (!enableLogging)
             {

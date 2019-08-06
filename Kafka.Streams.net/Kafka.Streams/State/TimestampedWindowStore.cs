@@ -31,4 +31,4 @@ using Kafka.Streams.KStream.Windowed;
  * @param Type of keys
  * @param Type of values
  */
-public interface TimestampedWindowStore<K, V> : WindowStore<K, ValueAndTimestamp<V>> { }
+public interface TimestampedWindowStore<K, V> : IWindowStore<K, ValueAndTimestamp<V>> { }

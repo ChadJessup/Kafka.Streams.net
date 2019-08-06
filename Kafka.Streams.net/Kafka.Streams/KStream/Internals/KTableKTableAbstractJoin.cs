@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    abstract class KTableKTableAbstractJoin<K, R, V1, V2> : KTableProcessorSupplier<K, V1, R>
+    abstract class KTableKTableAbstractJoin<K, R, V1, V2> : IKTableProcessorSupplier<K, V1, R>
     {
 
         private KTableImpl<K, object, V1> table1;

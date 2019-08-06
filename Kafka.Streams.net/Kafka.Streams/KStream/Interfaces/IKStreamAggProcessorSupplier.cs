@@ -14,25 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor;
 
-
-using Kafka.Streams.KeyValue;
-
-
-
-/**
- * IEnumerator interface of {@link KeyValue} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}
- * and {@link WindowStore#fetch(object, Instant, Instant)}
- *
- * Users must call its {@code close} method explicitly upon completeness to release resources,
- * or use try-with-resources statement (available since JDK7) for this {@link IDisposable}.
- *
- * @param Type of values
- */
-public interface WindowStoreIterator<V> : KeyValueIterator<long, V>, IDisposable
+namespace Kafka.Streams.KStream.Interfaces
 {
+    public interface IKStreamAggProcessorSupplier<K, RK, V, T> : ProcessorSupplier<K, V>
+    {
+        KTableValueGetterSupplier<RK, T> view();
 
-    
-    void close();
+        void enableSendingOldValues();
+    }
 }

@@ -8,6 +8,9 @@ namespace Kafka.Streams.Errors
      */
     public class StreamsException : KafkaException
     {
+        private string message = "";
+        private Exception exception = null;
+
         public StreamsException(Error error)
             : base(error)
         {
@@ -16,6 +19,24 @@ namespace Kafka.Streams.Errors
         public StreamsException(ErrorCode code)
             : base(code)
         {
+        }
+
+        public StreamsException(Exception exception)
+            : base(ErrorCode.Unknown)
+        {
+            this.exception = exception;
+        }
+
+        public StreamsException(string message)
+            : base(ErrorCode.Unknown)
+        {
+            this.message = message;
+        }
+
+        public StreamsException(string message, Exception exception)
+            : base(ErrorCode.Unknown)
+        {
+            this.message = message;
         }
 
         public StreamsException(Error error, Exception innerException)

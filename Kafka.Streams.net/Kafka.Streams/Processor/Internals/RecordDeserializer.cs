@@ -60,7 +60,7 @@ class RecordDeserializer
 {
 
             return new ConsumeResult<>(
-                rawRecord.topic(),
+                rawRecord.Topic,
                 rawRecord.partition(),
                 rawRecord.offset(),
                 rawRecord.timestamp(),
@@ -68,8 +68,8 @@ class RecordDeserializer
                 rawRecord.checksum(),
                 rawRecord.serializedKeySize(),
                 rawRecord.serializedValueSize(),
-                sourceNode.deserializeKey(rawRecord.topic(), rawRecord.headers(), rawRecord.key()),
-                sourceNode.deserializeValue(rawRecord.topic(), rawRecord.headers(), rawRecord.value()), rawRecord.headers());
+                sourceNode.deserializeKey(rawRecord.Topic, rawRecord.headers(), rawRecord.key()),
+                sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers());
         } catch (Exception deserializationException)
 {
             DeserializationExceptionHandler.DeserializationHandlerResponse response;
@@ -98,7 +98,7 @@ class RecordDeserializer
 
                 log.LogWarning(
                     "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
-                    rawRecord.topic(),
+                    rawRecord.Topic,
                     rawRecord.partition(),
                     rawRecord.offset(),
                     deserializationException

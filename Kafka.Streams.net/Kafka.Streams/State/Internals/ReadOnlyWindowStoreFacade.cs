@@ -43,15 +43,15 @@ namespace Kafka.Streams.State.Internals
         }
 
         public override WindowStoreIterator<V> fetch(K key,
-                                            Instant from,
-                                            Instant to)
+                                            DateTime from,
+                                            DateTime to)
         {
             return new WindowStoreIteratorFacade<>(inner.fetch(key, from, to));
         }
 
 
 
-        public KeyValueIterator<Windowed<K>, V> fetch(K from,
+        public IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
                                                       long timeFrom,
                                                       long timeTo)
@@ -59,30 +59,30 @@ namespace Kafka.Streams.State.Internals
             return new KeyValueIteratorFacade<>(inner.fetch(from, to, timeFrom, timeTo));
         }
 
-        public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
-                                                      Instant fromTime,
-                                                      Instant toTime)
+                                                      DateTime fromTime,
+                                                      DateTime toTime)
         {
             return new KeyValueIteratorFacade<>(inner.fetch(from, to, fromTime, toTime));
         }
 
-        public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+        public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
         {
             return new KeyValueIteratorFacade<>(inner.fetchAll(timeFrom, timeTo));
         }
 
-        public override KeyValueIterator<Windowed<K>, V> fetchAll(Instant from,
-                                                         Instant to)
+        public override IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from,
+                                                         DateTime to)
         {
-            KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.fetchAll(from, to);
+            IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.fetchAll(from, to);
             return new KeyValueIteratorFacade<>(innerIterator);
         }
 
-        public override KeyValueIterator<Windowed<K>, V> all()
+        public override IKeyValueIterator<Windowed<K>, V> all()
         {
-            KeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.all();
+            IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator = inner.all();
             return new KeyValueIteratorFacade<>(innerIterator);
         }
     }

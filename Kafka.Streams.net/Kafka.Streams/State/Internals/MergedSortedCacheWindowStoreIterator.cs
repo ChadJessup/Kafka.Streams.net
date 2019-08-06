@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.WindowStoreIterator;
 
 
@@ -32,7 +32,7 @@ class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreItera
 
 
     MergedSortedCacheWindowStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                         KeyValueIterator<long, byte[]> storeIterator)
+                                         IKeyValueIterator<long, byte[]> storeIterator)
 {
         base(cacheIterator, storeIterator);
     }

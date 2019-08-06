@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
     class ChangeLoggingTimestampedWindowBytesStore : ChangeLoggingWindowBytesStore
     {
 
-        ChangeLoggingTimestampedWindowBytesStore(WindowStore<Bytes, byte[]> bytesStore,
+        ChangeLoggingTimestampedWindowBytesStore(IWindowStore<Bytes, byte[]> bytesStore,
                                                  bool retainDuplicates)
             : base(bytesStore, retainDuplicates)
         {

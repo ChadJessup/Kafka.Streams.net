@@ -455,7 +455,7 @@ namespace Kafka.Common.Metrics
             Sensor s = getSensor(name);
             if (s == null)
             {
-                s = new Sensor(this, name, parents, config == null ? this.config : config, time, inactiveSensorExpirationTimeSeconds, recordingLevel);
+                s = new Sensor(this, name, parents, config ?? this.config, time, inactiveSensorExpirationTimeSeconds, recordingLevel);
                 this.sensors.TryAdd(name, s);
                 if (parents != null)
                 {

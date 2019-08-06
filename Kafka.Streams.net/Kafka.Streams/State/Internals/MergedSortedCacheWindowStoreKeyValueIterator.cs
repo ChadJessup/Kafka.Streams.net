@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.StateSerdes;
 
 class MergedSortedCacheWindowStoreKeyValueIterator
@@ -33,7 +33,7 @@ class MergedSortedCacheWindowStoreKeyValueIterator
 
     MergedSortedCacheWindowStoreKeyValueIterator(
         PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator,
-        KeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator,
+        IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator,
         StateSerdes<Bytes, byte[]> serdes,
         long windowSize,
         SegmentedCacheFunction cacheFunction
@@ -61,7 +61,7 @@ class MergedSortedCacheWindowStoreKeyValueIterator
     Windowed<Bytes> deserializeCacheKey(Bytes cacheKey)
 {
         byte[] binaryKey = cacheFunction.key(cacheKey)[];
-        return WindowKeySchema.fromStoreKey(binaryKey, windowSize, serdes.keyDeserializer(), serdes.topic());
+        return WindowKeySchema.fromStoreKey(binaryKey, windowSize, serdes.keyDeserializer(), serdes.Topic);
     }
 
     

@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Interfaces
          * @return iterator of sessions with the matching key and aggregated values
          * @throws NullPointerException If null is used for key.
          */
-        KeyValueIterator<Windowed<K>, AGG> findSessions(K key, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<Windowed<K>, AGG> findSessions(K key, long earliestSessionEndTime, long latestSessionStartTime);
 
         /**
          * Fetch any sessions in the given range of keys and the sessions end is &ge; earliestSessionEndTime and the sessions
@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.Interfaces
          * @return iterator of sessions with the matching keys and aggregated values
          * @throws NullPointerException If null is used for any key.
          */
-        KeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom, K keyTo, long earliestSessionEndTime, long latestSessionStartTime);
+        IKeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom, K keyTo, long earliestSessionEndTime, long latestSessionStartTime);
 
         /**
          * Get the value of key from a single session.

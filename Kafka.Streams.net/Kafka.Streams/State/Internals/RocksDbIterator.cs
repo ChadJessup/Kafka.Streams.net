@@ -20,15 +20,15 @@ using Kafka.Common.Utils.AbstractIterator;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using System.Runtime.CompilerServices;
 
-class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIterator<Bytes, byte[]>
+class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : IKeyValueIterator<Bytes, byte[]>
 {
 
     private string storeName;
     private RocksIterator iter;
-    private HashSet<KeyValueIterator<Bytes, byte[]>> openIterators;
+    private HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
 
     private volatile bool open = true;
 
@@ -36,7 +36,7 @@ class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : KeyValueIter
 
     RocksDbIterator(string storeName,
                     RocksIterator iter,
-                    HashSet<KeyValueIterator<Bytes, byte[]>> openIterators)
+                    HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators)
 {
         this.storeName = storeName;
         this.iter = iter;

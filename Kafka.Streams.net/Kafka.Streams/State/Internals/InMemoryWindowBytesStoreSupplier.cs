@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-    public class InMemoryWindowBytesStoreSupplier : WindowBytesStoreSupplier
+    public class InMemoryWindowBytesStoreSupplier : IWindowBytesStoreSupplier
     {
         private string name;
         private long retentionPeriod;
@@ -39,7 +39,7 @@ namespace Kafka.Streams.State.Internals
             return name;
         }
 
-        public override WindowStore<Bytes, byte[]> get()
+        public override IWindowStore<Bytes, byte[]> get()
         {
             return new InMemoryWindowStore(name,
                                            retentionPeriod,

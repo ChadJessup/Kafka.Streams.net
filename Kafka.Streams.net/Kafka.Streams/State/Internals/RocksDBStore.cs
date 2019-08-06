@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
 
         string name;
         private string parentDir;
-        HashSet<KeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<KeyValueIterator<Bytes, byte[]>>());
+        HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<IKeyValueIterator<Bytes, byte[]>>());
 
         FileInfo dbDir;
         RocksDb db;
@@ -266,7 +266,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                                   Bytes to)
         {
             from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
@@ -282,17 +282,17 @@ namespace Kafka.Streams.State.Internals
 
             validateStoreOpen();
 
-            KeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to);
+            IKeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to);
             openIterators.Add(rocksDBRangeIterator);
 
             return rocksDBRangeIterator;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override KeyValueIterator<Bytes, byte[]> all()
+        public override IKeyValueIterator<Bytes, byte[]> all()
         {
             validateStoreOpen();
-            KeyValueIterator<Bytes, byte[]> rocksDbIterator = dbAccessor.all();
+            IKeyValueIterator<Bytes, byte[]> rocksDbIterator = dbAccessor.all();
             openIterators.Add(rocksDbIterator);
             return rocksDbIterator;
         }
@@ -418,7 +418,7 @@ namespace Kafka.Streams.State.Internals
 
         private void closeOpenIterators()
         {
-            HashSet<KeyValueIterator<Bytes, byte[]>> iterators;
+            HashSet<IKeyValueIterator<Bytes, byte[]>> iterators;
             lock(openIterators)
     {
                 iterators = new HashSet<>(openIterators);
@@ -426,7 +426,7 @@ namespace Kafka.Streams.State.Internals
             if (iterators.size() != 0)
             {
                 log.LogWarning("Closing {} open iterators for store {}", iterators.size(), name);
-                foreach (KeyValueIterator<Bytes, byte[]> iterator in iterators)
+                foreach (IKeyValueIterator<Bytes, byte[]> iterator in iterators)
                 {
                     iterator.close();
                 }
@@ -497,7 +497,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public KeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
         {
             return new RocksDBRangeIterator(
@@ -509,7 +509,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public KeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> all()
         {
             RocksIterator innerIterWithTimestamp = db.newIterator(columnFamily);
             innerIterWithTimestamp.seekToFirst();

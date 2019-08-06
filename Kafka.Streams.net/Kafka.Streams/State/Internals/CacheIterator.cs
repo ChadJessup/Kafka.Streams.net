@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class CacheIterator : KeyValueIterator<Bytes, byte[]>
+    public class CacheIterator : IKeyValueIterator<Bytes, byte[]>
     {
         private IEnumerator<Bytes> keys;
         private Dictionary<Bytes, byte[]> entries;

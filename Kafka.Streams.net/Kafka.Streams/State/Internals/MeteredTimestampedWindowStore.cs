@@ -24,7 +24,7 @@ using Kafka.Streams.Processor.Internals.ProcessorStateManager;
 using Kafka.Streams.State.StateSerdes;
 using Kafka.Streams.State.TimestampedWindowStore;
 using Kafka.Streams.State.ValueAndTimestamp;
-using Kafka.Streams.State.WindowStore;
+using Kafka.Streams.State.IWindowStore;
 
 /**
  * A Metered {@link MeteredTimestampedWindowStore} wrapper that is used for recording operation metrics, and hence its
@@ -39,7 +39,7 @@ class MeteredTimestampedWindowStore<K, V>
     : TimestampedWindowStore<K, V>
 {
 
-    MeteredTimestampedWindowStore(WindowStore<Bytes, byte[]> inner,
+    MeteredTimestampedWindowStore(IWindowStore<Bytes, byte[]> inner,
                                   long windowSizeMs,
                                   string metricScope,
                                   ITime time,

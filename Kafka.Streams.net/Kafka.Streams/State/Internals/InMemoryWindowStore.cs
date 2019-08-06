@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class InMemoryWindowStore : WindowStore<Bytes, byte[]>
+    public class InMemoryWindowStore : IWindowStore<Bytes, byte[]>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryWindowStore>();
         private static int SEQNUM_SIZE = 4;
@@ -156,7 +156,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
                                                                long timeTo)
@@ -187,7 +187,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
         {
             removeExpiredSegments();
 
@@ -203,7 +203,7 @@ namespace Kafka.Streams.State.Internals
                 null, null, segmentMap.subMap(minTime, true, timeTo, true).entrySet().iterator());
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> all()
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
         {
             removeExpiredSegments();
 
@@ -471,7 +471,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private static class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, KeyValueIterator<Windowed<Bytes>, byte[]>
+        private static class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<Windowed<Bytes>, byte[]>
         {
 
             private long windowSize;

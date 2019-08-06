@@ -25,7 +25,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.Internals
 {
     public class MeteredWindowStore<K, V>
-        : WrappedStateStore<WindowStore<Bytes, byte[]>, Windowed<K>, V>, WindowStore<K, V>
+        : WrappedStateStore<IWindowStore<Bytes, byte[]>, Windowed<K>, V>, IWindowStore<K, V>
     {
 
         private long windowSizeMs;
@@ -41,7 +41,7 @@ namespace Kafka.Streams.State.Internals
         private IProcessorContext context;
         private string taskName;
 
-        MeteredWindowStore(WindowStore<Bytes, byte[]> inner,
+        MeteredWindowStore(IWindowStore<Bytes, byte[]> inner,
                            long windowSizeMs,
                            string metricScope,
                            ITime time,
@@ -102,12 +102,12 @@ namespace Kafka.Streams.State.Internals
         public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                         bool sendOldValues)
         {
-            WindowStore<Bytes, byte[]> wrapped = wrapped();
+            IWindowStore<Bytes, byte[]> wrapped = wrapped();
             if (wrapped is CachedStateStore)
             {
                 return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
                    (key, newValue, oldValue, timestamp)->listener.apply(
-                       WindowKeySchema.fromStoreKey(key, windowSizeMs, serdes.keyDeserializer(), serdes.topic()),
+                       WindowKeySchema.fromStoreKey(key, windowSizeMs, serdes.keyDeserializer(), serdes.Topic),
                        newValue != null ? serdes.valueFrom(newValue) : null,
                        oldValue != null ? serdes.valueFrom(oldValue) : null,
                        timestamp
@@ -175,7 +175,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<K>, V> fetch(K from,
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                       K to,
                                                       long timeFrom,
                                                       long timeTo)
@@ -189,7 +189,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+        public override IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
         {
             return new MeteredWindowedKeyValueIterator<>(
@@ -200,7 +200,7 @@ namespace Kafka.Streams.State.Internals
                 time);
         }
 
-        public override KeyValueIterator<Windowed<K>, V> all()
+        public override IKeyValueIterator<Windowed<K>, V> all()
         {
             return new MeteredWindowedKeyValueIterator<>(wrapped().all(), fetchTime, metrics, serdes, time);
         }

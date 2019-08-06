@@ -22,7 +22,7 @@ using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.Processor.Internals.ProcessorStateManager;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.ISessionStore;
 using Kafka.Streams.State.StateSerdes;
 
@@ -55,12 +55,12 @@ class ChangeLoggingSessionBytesStore
     }
 
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
 {
         return wrapped().findSessions(key, earliestSessionEndTime, latestSessionStartTime);
     }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
 {
         return wrapped().findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
     }
@@ -83,12 +83,12 @@ class ChangeLoggingSessionBytesStore
         return wrapped().fetchSession(key, startTime, endTime);
     }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 {
         return wrapped().fetch(key);
     }
 
-    public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 {
         return wrapped().fetch(from, to);
     }

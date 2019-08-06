@@ -19,7 +19,7 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableFilter<K, V> : KTableProcessorSupplier<K, V, V>
+    public class KTableFilter<K, V> : IKTableProcessorSupplier<K, V, V>
     {
         private KTableImpl<K, object, V> parent;
         private Predicate<K, V> predicate;

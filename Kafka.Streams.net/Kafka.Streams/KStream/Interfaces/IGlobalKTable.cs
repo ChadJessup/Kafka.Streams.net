@@ -14,16 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream
+namespace Kafka.Streams.KStream.Interfaces
 {
-
-
-
-
-
-
-
-
     /**
      * {@code GlobalKTable} is an abstraction of a <i>changelog stream</i> from a primary-keyed table.
      * Each record in this changelog stream is an update on the primary-keyed table with the record key as the primary key.
@@ -68,7 +60,7 @@ namespace Kafka.Streams.KStream
      * @see KStream#leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
 
-    public interface GlobalKTable<K, V>
+    public interface IGlobalKTable<K, V>
     {
         /**
          * Get the name of the local state store that can be used to query this {@code GlobalKTable}.

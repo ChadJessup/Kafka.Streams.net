@@ -16,10 +16,10 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 interface NextIteratorFunction<K, V, StoreType>
 {
 
-    KeyValueIterator<K, V> apply(StoreType store);
+    IKeyValueIterator<K, V> apply(StoreType store);
 }

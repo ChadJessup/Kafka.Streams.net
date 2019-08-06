@@ -20,9 +20,9 @@ namespace Kafka.Streams.State.Internals
         : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedWindowStore<K, V>>
     {
 
-        private WindowBytesStoreSupplier storeSupplier;
+        private IWindowBytesStoreSupplier storeSupplier;
 
-        public TimestampedWindowStoreBuilder(WindowBytesStoreSupplier storeSupplier,
+        public TimestampedWindowStoreBuilder(IWindowBytesStoreSupplier storeSupplier,
                                              ISerde<K> keySerde,
                                              ISerde<V> valueSerde,
                                              ITime time)
@@ -34,7 +34,7 @@ namespace Kafka.Streams.State.Internals
 
         public override TimestampedWindowStore<K, V> build()
         {
-            WindowStore<Bytes, byte[]> store = storeSupplier[];
+            IWindowStore<Bytes, byte[]> store = storeSupplier[];
             if (!(store is TimestampedBytesStore))
             {
                 if (store.persistent())
@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
                 valueSerde);
         }
 
-        private WindowStore<Bytes, byte[]> maybeWrapCaching(WindowStore<Bytes, byte[]> inner)
+        private IWindowStore<Bytes, byte[]> maybeWrapCaching(IWindowStore<Bytes, byte[]> inner)
         {
             if (!enableCaching)
             {
@@ -67,7 +67,7 @@ namespace Kafka.Streams.State.Internals
                 storeSupplier.segmentIntervalMs());
         }
 
-        private WindowStore<Bytes, byte[]> maybeWrapLogging(WindowStore<Bytes, byte[]> inner)
+        private IWindowStore<Bytes, byte[]> maybeWrapLogging(IWindowStore<Bytes, byte[]> inner)
         {
             if (!enableLogging)
             {
@@ -83,12 +83,12 @@ namespace Kafka.Streams.State.Internals
 
 
         private static class InMemoryTimestampedWindowStoreMarker
-        : WindowStore<Bytes, byte[]>, TimestampedBytesStore
+        : IWindowStore<Bytes, byte[]>, TimestampedBytesStore
         {
 
-            private WindowStore<Bytes, byte[]> wrapped;
+            private IWindowStore<Bytes, byte[]> wrapped;
 
-            private InMemoryTimestampedWindowStoreMarker(WindowStore<Bytes, byte[]> wrapped)
+            private InMemoryTimestampedWindowStoreMarker(IWindowStore<Bytes, byte[]> wrapped)
             {
                 if (wrapped.persistent())
                 {
@@ -137,7 +137,7 @@ namespace Kafka.Streams.State.Internals
 
 
 
-            public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+            public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                    Bytes to,
                                                                    long timeFrom,
                                                                    long timeTo)
@@ -147,14 +147,14 @@ namespace Kafka.Streams.State.Internals
 
 
 
-            public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+            public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                                       long timeTo)
             {
                 return wrapped.fetchAll(timeFrom, timeTo);
             }
 
 
-            public KeyValueIterator<Windowed<Bytes>, byte[]> all()
+            public IKeyValueIterator<Windowed<Bytes>, byte[]> all()
             {
                 return wrapped.all();
             }

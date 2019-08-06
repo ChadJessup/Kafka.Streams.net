@@ -17,9 +17,9 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
-public interface PeekingKeyValueIterator<K, V> : KeyValueIterator<K, V>
+public interface PeekingKeyValueIterator<K, V> : IKeyValueIterator<K, V>
 {
 
     KeyValue<K, V> peekNext();

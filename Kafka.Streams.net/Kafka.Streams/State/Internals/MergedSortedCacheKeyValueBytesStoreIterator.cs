@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 /**
  * Merges two iterators. Assumes each of them is sorted by key
@@ -29,7 +29,7 @@ class MergedSortedCacheKeyValueBytesStoreIterator : AbstractMergedSortedCacheSto
 
 
     MergedSortedCacheKeyValueBytesStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                                KeyValueIterator<Bytes, byte[]> storeIterator)
+                                                IKeyValueIterator<Bytes, byte[]> storeIterator)
 {
         base(cacheIterator, storeIterator);
     }

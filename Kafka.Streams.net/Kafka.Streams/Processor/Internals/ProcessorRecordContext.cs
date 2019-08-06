@@ -64,7 +64,7 @@ public class ProcessorRecordContext : RecordContext
     }
 
 
-    public string topic()
+    public string Topic
 {
         return topic;
     }

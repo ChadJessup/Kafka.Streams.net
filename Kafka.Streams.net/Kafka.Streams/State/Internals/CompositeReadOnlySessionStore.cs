@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.QueryableStoreType;
 using Kafka.Streams.State.ReadOnlySessionStore;
 
@@ -44,7 +44,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
         this.storeName = storeName;
     }
 
-    public override KeyValueIterator<Windowed<K>, V> fetch(K key)
+    public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
 {
         key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
         List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
@@ -52,7 +52,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
             try
 {
-                KeyValueIterator<Windowed<K>, V> result = store.fetch(key);
+                IKeyValueIterator<Windowed<K>, V> result = store.fetch(key);
                 if (!result.hasNext())
 {
                     result.close();
@@ -71,7 +71,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
         return KeyValueIterators.emptyIterator();
     }
 
-    public override KeyValueIterator<Windowed<K>, V> fetch(K from, K to)
+    public override IKeyValueIterator<Windowed<K>, V> fetch(K from, K to)
 {
         from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
         to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));

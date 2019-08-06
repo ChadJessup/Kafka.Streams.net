@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 
 
@@ -39,7 +39,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to);
+    IKeyValueIterator<Bytes, byte[]> fetch(Bytes key, long from, long to);
 
     /**
      * Fetch all records from the segmented store in the provided key range and time range
@@ -50,7 +50,7 @@ public interface SegmentedBytesStore : IStateStore
      * @param to        latest time to match
      * @return  an iterator over key-value pairs
      */
-    KeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to);
+    IKeyValueIterator<Bytes, byte[]> fetch(Bytes keyFrom, Bytes keyTo, long from, long to);
     
     /**
      * Gets all the key-value pairs in the existing windows.
@@ -58,7 +58,7 @@ public interface SegmentedBytesStore : IStateStore
      * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
      * @throws InvalidStateStoreException if the store is not initialized
      */
-    KeyValueIterator<Bytes, byte[]> all();
+    IKeyValueIterator<Bytes, byte[]> all();
     
     /**
      * Gets all the key-value pairs that belong to the windows within in the given time range.
@@ -69,7 +69,7 @@ public interface SegmentedBytesStore : IStateStore
      * @throws InvalidStateStoreException if the store is not initialized
      * @throws NullPointerException if null is used for any key
      */
-    KeyValueIterator<Bytes, byte[]> fetchAll(long from, long to);
+    IKeyValueIterator<Bytes, byte[]> fetchAll(long from, long to);
 
     /**
      * Remove the record with the provided key. The key

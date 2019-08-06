@@ -22,20 +22,20 @@ using Kafka.Common.Utils.Time;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.StreamsMetrics;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.StateSerdes;
 
-class MeteredWindowedKeyValueIterator<K, V> : KeyValueIterator<Windowed<K>, V>
+class MeteredWindowedKeyValueIterator<K, V> : IKeyValueIterator<Windowed<K>, V>
 {
 
-    private KeyValueIterator<Windowed<Bytes>, byte[]> iter;
+    private IKeyValueIterator<Windowed<Bytes>, byte[]> iter;
     private Sensor sensor;
     private StreamsMetrics metrics;
     private StateSerdes<K, V> serdes;
     private long startNs;
     private ITime time;
 
-    MeteredWindowedKeyValueIterator(KeyValueIterator<Windowed<Bytes>, byte[]> iter,
+    MeteredWindowedKeyValueIterator(IKeyValueIterator<Windowed<Bytes>, byte[]> iter,
                                     Sensor sensor,
                                     StreamsMetrics metrics,
                                     StateSerdes<K, V> serdes,

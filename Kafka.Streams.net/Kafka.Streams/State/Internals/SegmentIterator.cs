@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 
 
@@ -27,7 +27,7 @@ using Kafka.Streams.State.KeyValueIterator;
 /**
  * Iterate over multiple KeyValueSegments
  */
-class SegmentIterator<S : Segment> : KeyValueIterator<Bytes, byte[]>
+class SegmentIterator<S : Segment> : IKeyValueIterator<Bytes, byte[]>
 {
 
     private Bytes from;
@@ -36,7 +36,7 @@ class SegmentIterator<S : Segment> : KeyValueIterator<Bytes, byte[]>
     protected HasNextCondition hasNextCondition;
 
     private S currentSegment;
-    KeyValueIterator<Bytes, byte[]> currentIterator;
+    IKeyValueIterator<Bytes, byte[]> currentIterator;
 
     SegmentIterator(IEnumerator<S> segments,
                     HasNextCondition hasNextCondition,

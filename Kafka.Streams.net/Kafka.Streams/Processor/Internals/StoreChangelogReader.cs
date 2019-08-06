@@ -372,7 +372,7 @@ public class StoreChangelogReader : ChangelogReader
 
     private bool hasPartition(TopicPartition topicPartition)
 {
-        List<PartitionInfo> partitions = partitionInfo[topicPartition.topic()];
+        List<PartitionInfo> partitions = partitionInfo[topicPartition.Topic];
 
         if (partitions == null)
 {

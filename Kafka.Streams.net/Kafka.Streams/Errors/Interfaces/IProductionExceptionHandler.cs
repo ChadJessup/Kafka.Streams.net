@@ -18,14 +18,6 @@ namespace Kafka.Streams.Errors.Interfaces
          */
         ProductionExceptionHandlerResponse handle(DeliveryReport<byte[], byte[]> record, Exception exception);
 
-        public enum ProductionExceptionHandlerResponse
-        {
-            /* continue processing */
-            CONTINUE,//        CONTINUE(0, "CONTINUE"),
-                     /* fail processing */
-            FAIL, //IProductionExceptionHandler(1, "FAIL");
-        }
-
         /**
          * an english description of the api--this is for debugging and can change
          */
@@ -35,5 +27,13 @@ namespace Kafka.Streams.Errors.Interfaces
          * the permanent and immutable id of an API--this can't change ever
          */
         int id { get; }
+    }
+
+    public enum ProductionExceptionHandlerResponse
+    {
+        /* continue processing */
+        CONTINUE,//        CONTINUE(0, "CONTINUE"),
+                 /* fail processing */
+        FAIL, //IProductionExceptionHandler(1, "FAIL");
     }
 }

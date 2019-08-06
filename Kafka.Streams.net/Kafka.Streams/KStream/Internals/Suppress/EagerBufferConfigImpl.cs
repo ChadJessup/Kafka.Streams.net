@@ -66,7 +66,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream
+namespace Kafka.Streams.KStream.Interfaces
 {
-
-
-
     /**
      * The {@code Aggregator} interface for aggregating values of the given key.
      * This is a generalization of {@link Reducer} and allows to have different types for input value and aggregation
@@ -39,9 +36,8 @@ namespace Kafka.Streams.KStream
      * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
      * @see Reducer
      */
-    public interface Aggregator<K, V, VA>
+    public interface IAggregator<K, V, VA>
     {
-
         /**
          * Compute a new aggregate from the key and value of a record and the current aggregate of the same key.
          *

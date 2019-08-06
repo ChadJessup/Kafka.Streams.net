@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -23,6 +23,6 @@ namespace Kafka.Streams.State.Internals
 
     public interface HasNextCondition
     {
-        bool hasNext(KeyValueIterator<Bytes, object> iterator);
+        bool hasNext(IKeyValueIterator<Bytes, object> iterator);
     }
 }

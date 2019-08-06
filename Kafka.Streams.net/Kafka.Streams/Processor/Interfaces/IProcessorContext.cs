@@ -149,7 +149,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the topic name
          */
-        string topic();
+        string Topic;
 
         /**
          * Returns the partition id of the current input record; could be -1 if it is not

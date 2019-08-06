@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
         {
 
             if (from.CompareTo(to) > 0)
@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.Internals
                     .subSet(from, true, to, true).iterator(), treeMap));
         }
 
-        public override KeyValueIterator<Bytes, byte[]> all()
+        public override IKeyValueIterator<Bytes, byte[]> all()
         {
             TreeMap<Bytes, byte[]> treeMap = toTreeMap();
             return new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet().iterator(), treeMap);

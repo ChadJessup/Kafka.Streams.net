@@ -20,7 +20,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.KStream.Window;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 /**
  * Merges two iterators. Assumes each of them is sorted by key
@@ -32,7 +32,7 @@ class MergedSortedCacheSessionStoreIterator : AbstractMergedSortedCacheStoreIter
     private SegmentedCacheFunction cacheFunction;
 
     MergedSortedCacheSessionStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                          KeyValueIterator<Windowed<Bytes>, byte[]> storeIterator,
+                                          IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator,
                                           SegmentedCacheFunction cacheFunction)
 {
         base(cacheIterator, storeIterator);

@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
-    class KTableTransformValues<K, V, V1> : KTableProcessorSupplier<K, V, V1>
+    class KTableTransformValues<K, V, V1> : IKTableProcessorSupplier<K, V, V1>
     {
         private KTableImpl<K, object, V> parent;
         private ValueTransformerWithKeySupplier<K, V, V1> transformerSupplier;

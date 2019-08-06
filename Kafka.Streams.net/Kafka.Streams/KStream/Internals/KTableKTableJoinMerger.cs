@@ -28,16 +28,16 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    public class KTableKTableJoinMerger<K, V> : KTableProcessorSupplier<K, V, V>
+    public class KTableKTableJoinMerger<K, V> : IKTableProcessorSupplier<K, V, V>
     {
 
-        private KTableProcessorSupplier<K, ?, V> parent1;
-        private KTableProcessorSupplier<K, ?, V> parent2;
+        private IKTableProcessorSupplier<K, ?, V> parent1;
+        private IKTableProcessorSupplier<K, ?, V> parent2;
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableKTableJoinMerger(KTableProcessorSupplier<K, ?, V> parent1,
-                                KTableProcessorSupplier<K, ?, V> parent2,
+        KTableKTableJoinMerger(IKTableProcessorSupplier<K, ?, V> parent1,
+                                IKTableProcessorSupplier<K, ?, V> parent2,
                                 string queryableName)
         {
             this.parent1 = parent1;
@@ -98,14 +98,14 @@ namespace Kafka.Streams.KStream.Internals
             sendOldValues = true;
         }
 
-        public static KTableKTableJoinMerger<K, V> of(KTableProcessorSupplier<K, ?, V> parent1,
-                                                              KTableProcessorSupplier<K, ?, V> parent2)
+        public static KTableKTableJoinMerger<K, V> of(IKTableProcessorSupplier<K, ?, V> parent1,
+                                                              IKTableProcessorSupplier<K, ?, V> parent2)
         {
             return of(parent1, parent2, null);
         }
 
-        public static KTableKTableJoinMerger<K, V> of(KTableProcessorSupplier<K, object, V> parent1,
-                                                              KTableProcessorSupplier<K, object, V> parent2,
+        public static KTableKTableJoinMerger<K, V> of(IKTableProcessorSupplier<K, object, V> parent1,
+                                                              IKTableProcessorSupplier<K, object, V> parent2,
                                                               string queryableName)
         {
             return new KTableKTableJoinMerger<K, V>(parent1, parent2, queryableName);

@@ -14,31 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using System;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-    public class MaterializedInternal<K, V, S : IStateStore> : Materialized<K, V, S>
+    public class MaterializedInternal<K, V, S> : Materialized<K, V, S>
+        where S : IStateStore
     {
-
         private bool queriable;
+        private string _storeName;
 
         public MaterializedInternal(Materialized<K, V, S> materialized)
+            : this(materialized, null, null)
         {
-            this(materialized, null, null);
         }
 
-        public MaterializedInternal(Materialized<K, V, S> materialized,
-                                     InternalNameProvider nameProvider,
-                                     string generatedStorePrefix)
+        public MaterializedInternal(
+            Materialized<K, V, S> materialized,
+            InternalNameProvider nameProvider,
+            string generatedStorePrefix)
             : base(materialized)
         {
 
@@ -47,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
             queriable = storeName() != null;
             if (!queriable && nameProvider != null)
             {
-                storeName = nameProvider.newStoreName(generatedStorePrefix);
+                _storeName = nameProvider.newStoreName(generatedStorePrefix);
             }
         }
 
@@ -56,34 +52,16 @@ namespace Kafka.Streams.KStream.Internals
             return queriable ? storeName() : null;
         }
 
-        public string storeName()
+        public override string storeName()
         {
             if (storeSupplier != null)
             {
                 return storeSupplier.name();
             }
-            return storeName;
+
+            return _storeName;
         }
 
-        public StoreSupplier<S> storeSupplier()
-        {
-            return storeSupplier;
-        }
-
-        public ISerde<K> keySerde()
-        {
-            return keySerde;
-        }
-
-        public ISerde<V> valueSerde()
-        {
-            return valueSerde;
-        }
-
-        public bool loggingEnabled()
-        {
-            return loggingEnabled;
-        }
 
         Dictionary<string, string> logConfig()
         {
@@ -100,3 +78,4 @@ namespace Kafka.Streams.KStream.Internals
             return retention;
         }
     }
+}

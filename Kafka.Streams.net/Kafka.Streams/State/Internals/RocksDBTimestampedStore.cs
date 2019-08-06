@@ -194,7 +194,7 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public KeyValueIterator<Bytes, byte[]> range(Bytes from,
+            public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                          Bytes to)
             {
                 return new RocksDBDualCFRangeIterator(
@@ -206,7 +206,7 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public KeyValueIterator<Bytes, byte[]> all()
+            public IKeyValueIterator<Bytes, byte[]> all()
             {
                 RocksIterator innerIterWithTimestamp = db.newIterator(newColumnFamily);
                 innerIterWithTimestamp.seekToFirst();
@@ -287,7 +287,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private class RocksDBDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
-        : KeyValueIterator<Bytes, byte[]>
+        : IKeyValueIterator<Bytes, byte[]>
         {
 
             // RocksDB's JNI interface does not expose getters/setters that allow the

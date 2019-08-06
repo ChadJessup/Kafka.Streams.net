@@ -40,7 +40,7 @@ namespace Kafka.Streams.Errors
 
             log.LogError("Exception caught during Deserialization, " +
                       "taskId: {}, topic: {}, partition: {}, offset: {}",
-                      context.taskId(), record.topic(), record.partition(), record.offset(),
+                      context.taskId(), record.Topic, record.partition(), record.offset(),
                       exception);
 
             return DeserializationHandlerResponse.FAIL;

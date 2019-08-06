@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals
 
     public class RocksDBWindowStore
         : WrappedStateStore<SegmentedBytesStore, object, object>
-    : WindowStore<Bytes, byte[]>
+    : IWindowStore<Bytes, byte[]>
     {
 
         private bool retainDuplicates;
@@ -68,30 +68,30 @@ namespace Kafka.Streams.State.Internals
 
         public override WindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo);
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(key, timeFrom, timeTo);
             return new WindowStoreIteratorWrapper(bytesIterator, windowSize).valuesIterator();
         }
 
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
                                                                long timeTo)
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo);
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(from, to, timeFrom, timeTo);
             return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> all()
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().all();
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().all();
             return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
         }
 
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo);
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetchAll(timeFrom, timeTo);
             return new WindowStoreIteratorWrapper(bytesIterator, windowSize).keyValueIterator();
         }
 

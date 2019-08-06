@@ -21,7 +21,7 @@ using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.KeyValueBytesStoreSupplier;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 using System.Collections.Generic;
 
@@ -117,13 +117,13 @@ public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Byte
         return convertToTimestampedFormat(store[key]);
     }
 
-    public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
+    public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                  Bytes to)
 {
         return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.range(from, to));
     }
 
-    public override KeyValueIterator<Bytes, byte[]> all()
+    public override IKeyValueIterator<Bytes, byte[]> all()
 {
         return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
     }

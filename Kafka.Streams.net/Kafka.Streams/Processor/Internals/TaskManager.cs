@@ -452,7 +452,7 @@ public class TaskManager
             HashSet<string> assignedTopics = new HashSet<>();
             foreach (TopicPartition topicPartition in partitions)
 {
-                assignedTopics.Add(topicPartition.topic());
+                assignedTopics.Add(topicPartition.Topic);
             }
 
             Collection<string> existingTopics = builder().subscriptionUpdates().getUpdates();

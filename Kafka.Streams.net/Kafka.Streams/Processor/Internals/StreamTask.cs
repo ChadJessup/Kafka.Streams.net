@@ -174,7 +174,7 @@ namespace Kafka.Streams.Processor.Internals
         DeserializationExceptionHandler defaultDeserializationExceptionHandler = config.defaultDeserializationExceptionHandler();
         foreach (TopicPartition partition in partitions)
         {
-            SourceNode source = topology.source(partition.topic());
+            SourceNode source = topology.source(partition.Topic);
             TimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
             RecordQueue queue = new RecordQueue(
                 partition,
@@ -365,7 +365,7 @@ namespace Kafka.Streams.Processor.Internals
                     "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                 id(),
                 processorContext.currentNode().name(),
-                record.topic(),
+                record.Topic,
                 record.partition(),
                 record.offset(),
                 stackTrace
@@ -441,7 +441,7 @@ namespace Kafka.Streams.Processor.Internals
                 record.timestamp,
                 record.offset(),
                 record.partition(),
-                record.topic(),
+                record.Topic,
                 record.headers()));
         processorContext.setCurrentNode(currNode);
     }
@@ -552,7 +552,7 @@ namespace Kafka.Streams.Processor.Internals
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
             {
                 TopicPartition tp = entry.Key;
-                if (topology.isRepartitionTopic(tp.topic()))
+                if (topology.isRepartitionTopic(tp.Topic))
                 {
                     purgableConsumedOffsets.Add(tp, entry.Value + 1);
                 }

@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
     class KeyValueIterators
     {
 
-        private static class EmptyKeyValueIterator<K, V> : KeyValueIterator<K, V>
+        private static class EmptyKeyValueIterator<K, V> : IKeyValueIterator<K, V>
         {
 
 
@@ -57,14 +57,14 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        private static KeyValueIterator EMPTY_ITERATOR = new EmptyKeyValueIterator();
+        private static IKeyValueIterator EMPTY_ITERATOR = new EmptyKeyValueIterator();
         private static WindowStoreIterator EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
 
 
-        static KeyValueIterator<K, V> emptyIterator()
+        static IKeyValueIterator<K, V> emptyIterator()
         {
-            return (KeyValueIterator<K, V>)EMPTY_ITERATOR;
+            return (IKeyValueIterator<K, V>)EMPTY_ITERATOR;
         }
 
 

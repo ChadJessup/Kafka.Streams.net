@@ -92,7 +92,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K>
         {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
+        if (o == null || GetType() != o.GetType())
         {
             return false;
         }

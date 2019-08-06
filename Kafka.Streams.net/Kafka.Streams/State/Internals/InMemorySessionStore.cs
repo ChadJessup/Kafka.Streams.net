@@ -154,7 +154,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
@@ -169,7 +169,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
                                                                       Bytes keyTo,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
@@ -193,7 +193,7 @@ namespace Kafka.Streams.State.Internals
                                        endTimeMap.tailMap(earliestSessionEndTime, true).entrySet().iterator());
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
         {
 
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
@@ -203,7 +203,7 @@ namespace Kafka.Streams.State.Internals
             return registerNewIterator(key, key, long.MaxValue, endTimeMap.entrySet().iterator());
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
         {
 
             from = from ?? throw new System.ArgumentNullException("from key cannot be null", nameof(from));
@@ -273,7 +273,7 @@ namespace Kafka.Streams.State.Internals
             void deregisterIterator(InMemorySessionStoreIterator iterator);
         }
 
-        private static class InMemorySessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+        private static class InMemorySessionStoreIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
         {
 
             private IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator;

@@ -19,10 +19,6 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
     /**
      * Class used to represent a {@link ProcessorSupplier} and the name
      * used to register it with the {@link org.apache.kafka.streams.processor.Internals.InternalTopologyBuilder}
@@ -32,33 +28,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class ProcessorParameters<K, V>
     {
-
         private ProcessorSupplier<K, V> processorSupplier;
         private string processorName;
 
         public ProcessorParameters(ProcessorSupplier<K, V> processorSupplier,
                                     string processorName)
         {
-
             this.processorSupplier = processorSupplier;
             this.processorName = processorName;
         }
 
-        public ProcessorSupplier<K, V> processorSupplier()
-        {
-            return processorSupplier;
-        }
-
-        public string processorName()
-        {
-            return processorName;
-        }
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "ProcessorParameters{" +
-                "processor=" + processorSupplier().getClass() +
+                "processor=" + processorSupplier.GetType() +
                 ", processor name='" + processorName + '\'' +
                 '}';
         }

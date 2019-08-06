@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
      * <p>
      * Given the input, it can output at most two records (one mapped from old value and one mapped from new value).
      */
-    public class KTableRepartitionMap<K, V, K1, V1> : KTableProcessorSupplier<K, V, KeyValue<K1, V1>>
+    public class KTableRepartitionMap<K, V, K1, V1> : IKTableProcessorSupplier<K, V, KeyValue<K1, V1>>
     {
 
         private KTableImpl<K, object, V> parent;

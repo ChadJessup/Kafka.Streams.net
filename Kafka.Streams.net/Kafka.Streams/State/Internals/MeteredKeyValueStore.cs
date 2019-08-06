@@ -212,7 +212,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override KeyValueIterator<K, V> range(K from,
+        public override IKeyValueIterator<K, V> range(K from,
                                             K to)
         {
             return new MeteredKeyValueIterator(
@@ -220,7 +220,7 @@ namespace Kafka.Streams.State.Internals
                 rangeTime);
         }
 
-        public override KeyValueIterator<K, V> all()
+        public override IKeyValueIterator<K, V> all()
         {
             return new MeteredKeyValueIterator(wrapped().all(), allTime);
         }
@@ -293,14 +293,14 @@ namespace Kafka.Streams.State.Internals
             return byteEntries;
         }
 
-        private class MeteredKeyValueIterator : KeyValueIterator<K, V>
+        private class MeteredKeyValueIterator : IKeyValueIterator<K, V>
         {
 
-            private KeyValueIterator<Bytes, byte[]> iter;
+            private IKeyValueIterator<Bytes, byte[]> iter;
             private Sensor sensor;
             private long startNs;
 
-            private MeteredKeyValueIterator(KeyValueIterator<Bytes, byte[]> iter,
+            private MeteredKeyValueIterator(IKeyValueIterator<Bytes, byte[]> iter,
                                             Sensor sensor)
             {
                 this.iter = iter;

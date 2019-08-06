@@ -213,7 +213,7 @@ public class RecordQueue
 {
                 log.LogWarning(
                         "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
-                        deserialized.topic(), deserialized.partition(), deserialized.offset(), timestamp, timestampExtractor.GetType().getCanonicalName()
+                        deserialized.Topic, deserialized.partition(), deserialized.offset(), timestamp, timestampExtractor.GetType().getCanonicalName()
                 );
 
                 skipRecordsSensor.record();

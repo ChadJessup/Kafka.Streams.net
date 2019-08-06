@@ -27,11 +27,11 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime
@@ -39,12 +39,12 @@ namespace Kafka.Streams.State.Internals
             return new WrappedSessionStoreIterator(bytesIterator);
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
                                                                       Bytes keyTo,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
-            KeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
                 keyFrom,
                 keyTo,
                 earliestSessionEndTime,
@@ -58,12 +58,12 @@ namespace Kafka.Streams.State.Internals
             return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime)];
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
         {
             return findSessions(key, 0, long.MaxValue);
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
         {
             return findSessions(from, to, 0, long.MaxValue);
         }

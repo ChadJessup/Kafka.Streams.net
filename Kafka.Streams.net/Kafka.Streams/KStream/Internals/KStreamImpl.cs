@@ -949,7 +949,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<KG, VG, VR>(GlobalKTable<KG, VG> globalTable,
+        public KStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
                                                  IKeyValueMapper<K, V, KG> keyMapper,
                                                  ValueJoiner<V, VG, VR> joiner)
         {
@@ -957,7 +957,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<KG, VG, VR>(GlobalKTable<KG, VG> globalTable,
+        public KStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
                                                  IKeyValueMapper<K, V, KG> keyMapper,
                                                  ValueJoiner<V, VG, VR> joiner,
                                                  Named named)
@@ -967,7 +967,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public KStream<K, VR> leftJoin<KG, VG, VR>(
-            GlobalKTable<KG, VG> globalTable,
+            IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
             ValueJoiner<V, VG, VR> joiner)
         {
@@ -976,7 +976,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public KStream<K, VR> leftJoin<KG, VG, VR>(
-            GlobalKTable<KG, VG> globalTable,
+            IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
             ValueJoiner<V, VG, VR> joiner,
             Named named)
@@ -986,7 +986,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         private KStream<K, VR> globalTableJoin<KG, VG, VR>(
-            GlobalKTable<KG, VG> globalTable,
+            IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
             ValueJoiner<V, VG, VR> joiner,
             bool leftJoin,
@@ -1104,7 +1104,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         //
-        private static StoreBuilder<WindowStore<K, V>> joinWindowStoreBuilder(
+        private static StoreBuilder<IWindowStore<K, V>> joinWindowStoreBuilder(
             string joinName,
             JoinWindows windows,
             ISerde<K> keySerde,
@@ -1165,9 +1165,9 @@ namespace Kafka.Streams.KStream.Internals
                 StreamsGraphNode otherStreamsGraphNode = ((AbstractStream)other).streamsGraphNode;
 
 
-                StoreBuilder<WindowStore<K1, V1>> thisWindowStore =
+                StoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
                    joinWindowStoreBuilder(joinThisName, windows, joined.keySerde(), joined.valueSerde());
-                StoreBuilder<WindowStore<K1, V2>> otherWindowStore =
+                StoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
                    joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde(), joined.otherValueSerde());
 
                 KStreamJoinWindow<K1, V1> thisWindowedStream = new KStreamJoinWindow<>(thisWindowStore.name());

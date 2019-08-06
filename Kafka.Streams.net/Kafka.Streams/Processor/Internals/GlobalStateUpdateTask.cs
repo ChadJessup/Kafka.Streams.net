@@ -88,7 +88,7 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
 
     public void update(ConsumeResult<byte[], byte[]> record)
 {
-        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.topic()];
+        RecordDeserializer sourceNodeAndDeserializer = deserializers[record.Topic];
         ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize(processorContext, record);
 
         if (deserialized != null)
@@ -97,14 +97,14 @@ public class GlobalStateUpdateTask : GlobalStateMaintainer
                 new ProcessorRecordContext(deserialized.timestamp(),
                     deserialized.offset(),
                     deserialized.partition(),
-                    deserialized.topic(),
+                    deserialized.Topic,
                     deserialized.headers());
             processorContext.setRecordContext(recordContext);
             processorContext.setCurrentNode(sourceNodeAndDeserializer.sourceNode());
             sourceNodeAndDeserializer.sourceNode().process(deserialized.key(), deserialized.value());
         }
 
-        offsets.Add(new TopicPartition(record.topic(), record.partition()), record.offset() + 1);
+        offsets.Add(new TopicPartition(record.Topic, record.partition()), record.offset() + 1);
     }
 
     public void flushState()

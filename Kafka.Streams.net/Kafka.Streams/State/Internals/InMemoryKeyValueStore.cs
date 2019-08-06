@@ -23,7 +23,7 @@ using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.KeyValueStore;
 
 
@@ -121,7 +121,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         return map.Remove(key);
     }
 
-    public override KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+    public override IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
 {
 
         if (from.CompareTo(to) > 0)
@@ -137,7 +137,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
             new InMemoryKeyValueIterator(map.subMap(from, true, to, true).entrySet().iterator()));
     }
 
-    public override KeyValueIterator<Bytes, byte[]> all()
+    public override IKeyValueIterator<Bytes, byte[]> all()
 {
         return new DelegatingPeekingKeyValueIterator<>(
             name,
@@ -160,7 +160,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         open = false;
     }
 
-    private static class InMemoryKeyValueIterator : KeyValueIterator<Bytes, byte[]>
+    private static class InMemoryKeyValueIterator : IKeyValueIterator<Bytes, byte[]>
 {
         private IEnumerator<KeyValuePair<Bytes, byte[]>> iter;
 

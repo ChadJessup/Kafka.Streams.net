@@ -54,7 +54,7 @@ public interface IReadOnlyKeyValueStore<K, V>
      * @throws NullPointerException If null is used for from or to.
      * @throws InvalidStateStoreException if the store is not initialized
      */
-    KeyValueIterator<K, V> range(K from, K to);
+    IKeyValueIterator<K, V> range(K from, K to);
 
     /**
      * Return an iterator over all keys in this store. This iterator must be closed after use.
@@ -63,7 +63,7 @@ public interface IReadOnlyKeyValueStore<K, V>
      * @return An iterator of all key/value pairs in the store.
      * @throws InvalidStateStoreException if the store is not initialized
      */
-    KeyValueIterator<K, V> all();
+    IKeyValueIterator<K, V> all();
 
     /**
      * Return an approximate count of key-value mappings in this store.

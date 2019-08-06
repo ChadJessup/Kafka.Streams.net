@@ -14,13 +14,13 @@ namespace Kafka.Streams.State.Internals
             return getValueOrNull(inner[key]);
         }
 
-        public override KeyValueIterator<K, V> range(K from,
+        public override IKeyValueIterator<K, V> range(K from,
                                             K to)
         {
             return new KeyValueIteratorFacade<>(inner.range(from, to));
         }
 
-        public override KeyValueIterator<K, V> all()
+        public override IKeyValueIterator<K, V> all()
         {
             return new KeyValueIteratorFacade<>(inner.all());
         }

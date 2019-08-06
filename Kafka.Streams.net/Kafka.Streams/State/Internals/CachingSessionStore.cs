@@ -114,7 +114,7 @@ namespace Kafka.Streams.State.Internals
                     context.offset(),
                     context.timestamp(),
                     context.partition(),
-                    context.topic());
+                    context.Topic);
             cache.Add(cacheName, cacheFunction.cacheKey(binaryKey), entry);
 
             maxObservedTimestamp = Math.Max(keySchema.segmentTimestamp(binaryKey), maxObservedTimestamp);
@@ -126,7 +126,7 @@ namespace Kafka.Streams.State.Internals
             put(sessionKey, null);
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
@@ -139,7 +139,7 @@ namespace Kafka.Streams.State.Internals
                             cacheFunction.cacheKey(keySchema.upperRangeFixedSize(key, latestSessionStartTime))
                 );
 
-            KeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(key,
+            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(key,
                                                                                                    earliestSessionEndTime,
                                                                                                    latestSessionStartTime);
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(key,
@@ -151,7 +151,7 @@ namespace Kafka.Streams.State.Internals
             return new MergedSortedCacheSessionStoreIterator(filteredCacheIterator, storeIterator, cacheFunction);
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom,
                                                                       Bytes keyTo,
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
@@ -170,7 +170,7 @@ namespace Kafka.Streams.State.Internals
             Bytes cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime));
             MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
 
-            KeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(
+            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(
                 keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime
             );
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(keyFrom,
@@ -206,13 +206,13 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             return findSessions(key, 0, long.MaxValue);
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to)
         {
             from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));

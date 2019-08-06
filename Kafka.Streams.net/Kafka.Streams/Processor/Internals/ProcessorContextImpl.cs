@@ -63,9 +63,9 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     return new TimestampedWindowStoreReadOnlyDecorator((TimestampedWindowStore)global);
                 }
-                else if (global is WindowStore)
+                else if (global is IWindowStore)
                 {
-                    return new WindowStoreReadOnlyDecorator((WindowStore)global);
+                    return new WindowStoreReadOnlyDecorator((IWindowStore)global);
                 }
                 else if (global is ISessionStore)
                 {
@@ -99,9 +99,9 @@ namespace Kafka.Streams.Processor.Internals
             {
                 return new TimestampedWindowStoreReadWriteDecorator((TimestampedWindowStore)store);
             }
-            else if (store is WindowStore)
+            else if (store is IWindowStore)
             {
-                return new WindowStoreReadWriteDecorator((WindowStore)store);
+                return new WindowStoreReadWriteDecorator((IWindowStore)store);
             }
             else if (store is ISessionStore)
             {
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Processor.Internals
                         toInternal.timestamp(),
                         recordContext.offset(),
                         recordContext.partition(),
-                        recordContext.topic(),
+                        recordContext.Topic,
                         recordContext.headers());
                 }
 
@@ -281,14 +281,14 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<K, V> range(K from,
+            public IKeyValueIterator<K, V> range(K from,
                                                 K to)
             {
                 return wrapped().range(from, to);
             }
 
 
-            public KeyValueIterator<K, V> all()
+            public IKeyValueIterator<K, V> all()
             {
                 return wrapped().all();
             }
@@ -338,11 +338,11 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         private static class WindowStoreReadOnlyDecorator<K, V>
-                : StateStoreReadOnlyDecorator<WindowStore<K, V>, K, V>
-                , WindowStore<K, V>
+                : StateStoreReadOnlyDecorator<IWindowStore<K, V>, K, V>
+                , IWindowStore<K, V>
         {
 
-            private WindowStoreReadOnlyDecorator(WindowStore<K, V> inner)
+            private WindowStoreReadOnlyDecorator(IWindowStore<K, V> inner)
         : base(inner)
             {
             }
@@ -371,7 +371,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
             [System.Obsolete]
-            public WindowStoreIterator<V> fetch(K key,
+            public IWindowStoreIterator<V> fetch(K key,
                                                 long timeFrom,
                                                 long timeTo)
             {
@@ -380,7 +380,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
             [System.Obsolete]
-            public KeyValueIterator<Windowed<K>, V> fetch(K from,
+            public IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                           K to,
                                                           long timeFrom,
                                                           long timeTo)
@@ -389,14 +389,14 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, V> all()
+            public IKeyValueIterator<Windowed<K>, V> all()
             {
                 return wrapped().all();
             }
 
 
             [System.Obsolete]
-            public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+            public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                              long timeTo)
             {
                 return wrapped().fetchAll(timeFrom, timeTo);
@@ -425,7 +425,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> findSessions(K key,
+            public IKeyValueIterator<Windowed<K>, AGG> findSessions(K key,
                                                                    long earliestSessionEndTime,
                                                                    long latestSessionStartTime)
             {
@@ -433,7 +433,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom,
+            public IKeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom,
                                                                    K keyTo,
                                                                    long earliestSessionEndTime,
                                                                    long latestSessionStartTime)
@@ -461,13 +461,13 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> fetch(K key)
+            public IKeyValueIterator<Windowed<K>, AGG> fetch(K key)
             {
                 return wrapped().fetch(key);
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> fetch(K from,
+            public IKeyValueIterator<Windowed<K>, AGG> fetch(K from,
                                                             K to)
             {
                 return wrapped().fetch(from, to);
@@ -517,14 +517,14 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<K, V> range(K from,
+            public IKeyValueIterator<K, V> range(K from,
                                                 K to)
             {
                 return wrapped().range(from, to);
             }
 
 
-            public KeyValueIterator<K, V> all()
+            public IKeyValueIterator<K, V> all()
             {
                 return wrapped().all();
             }
@@ -574,11 +574,11 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         static class WindowStoreReadWriteDecorator<K, V>
-            : StateStoreReadWriteDecorator<WindowStore<K, V>, K, V>
-            , WindowStore<K, V>
+            : StateStoreReadWriteDecorator<IWindowStore<K, V>, K, V>
+            , IWindowStore<K, V>
         {
 
-            WindowStoreReadWriteDecorator(WindowStore<K, V> inner)
+            WindowStoreReadWriteDecorator(IWindowStore<K, V> inner)
         : base(inner)
             {
             }
@@ -607,7 +607,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
 
-            public WindowStoreIterator<V> fetch(K key,
+            public IWindowStoreIterator<V> fetch(K key,
                                                 long timeFrom,
                                                 long timeTo)
             {
@@ -616,7 +616,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
 
-            public KeyValueIterator<Windowed<K>, V> fetch(K from,
+            public IKeyValueIterator<Windowed<K>, V> fetch(K from,
                                                           K to,
                                                           long timeFrom,
                                                           long timeTo)
@@ -626,14 +626,14 @@ namespace Kafka.Streams.Processor.Internals
 
 
 
-            public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
+            public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                              long timeTo)
             {
                 return wrapped().fetchAll(timeFrom, timeTo);
             }
 
 
-            public KeyValueIterator<Windowed<K>, V> all()
+            public IKeyValueIterator<Windowed<K>, V> all()
             {
                 return wrapped().all();
             }
@@ -661,7 +661,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> findSessions(K key,
+            public IKeyValueIterator<Windowed<K>, AGG> findSessions(K key,
                                                                    long earliestSessionEndTime,
                                                                    long latestSessionStartTime)
             {
@@ -669,7 +669,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom,
+            public IKeyValueIterator<Windowed<K>, AGG> findSessions(K keyFrom,
                                                                    K keyTo,
                                                                    long earliestSessionEndTime,
                                                                    long latestSessionStartTime)
@@ -699,13 +699,13 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> fetch(K key)
+            public IKeyValueIterator<Windowed<K>, AGG> fetch(K key)
             {
                 return wrapped().fetch(key);
             }
 
 
-            public KeyValueIterator<Windowed<K>, AGG> fetch(K from,
+            public IKeyValueIterator<Windowed<K>, AGG> fetch(K from,
                                                             K to)
             {
                 return wrapped().fetch(from, to);

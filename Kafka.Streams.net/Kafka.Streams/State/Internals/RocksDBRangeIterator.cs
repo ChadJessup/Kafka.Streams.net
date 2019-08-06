@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 
 
@@ -34,7 +34,7 @@ class RocksDBRangeIterator : RocksDbIterator
 
     RocksDBRangeIterator(string storeName,
                          RocksIterator iter,
-                         HashSet<KeyValueIterator<Bytes, byte[]>> openIterators,
+                         HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators,
                          Bytes from,
                          Bytes to)
 {

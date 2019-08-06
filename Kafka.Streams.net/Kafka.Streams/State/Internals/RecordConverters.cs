@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Internals
                 .Add(rawValue)
                 .array();
         return new ConsumeResult<>(
-            record.topic(),
+            record.Topic,
             record.partition(),
             record.offset(),
             timestamp,

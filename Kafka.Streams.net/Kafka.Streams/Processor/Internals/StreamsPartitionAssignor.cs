@@ -168,7 +168,7 @@ namespace Kafka.Streams.Processor.Internals
 
         protected static IComparator<TopicPartition> PARTITION_COMPARATOR = (p1, p2) =>
         {
-            int result = p1.topic().CompareTo(p2.topic());
+            int result = p1.Topic.CompareTo(p2.Topic);
 
             if (result != 0)
             {
@@ -612,7 +612,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     foreach (PartitionInfo partitionInfo in partitionInfoList)
                     {
-                        TopicPartition partition = new TopicPartition(partitionInfo.topic(), partitionInfo.partition());
+                        TopicPartition partition = new TopicPartition(partitionInfo.Topic, partitionInfo.partition());
                         if (!allAssignedPartitions.contains(partition))
                         {
                             log.LogWarning("Partition {} is not assigned to any tasks: {}"
@@ -1010,7 +1010,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     topicToPartitionInfo.Add(
                         topicPartition,
-                        new PartitionInfo(topicPartition.topic(), topicPartition.partition(), null, new Node[0], new Node[0]));
+                        new PartitionInfo(topicPartition.Topic, topicPartition.partition(), null, new Node[0], new Node[0]));
                 }
             }
         }

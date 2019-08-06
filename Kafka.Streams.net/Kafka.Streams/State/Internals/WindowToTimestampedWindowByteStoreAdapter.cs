@@ -16,11 +16,11 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-    public class WindowToTimestampedWindowByteStoreAdapter : WindowStore<Bytes, byte[]>
+    public class WindowToTimestampedWindowByteStoreAdapter : IWindowStore<Bytes, byte[]>
     {
-        WindowStore<Bytes, byte[]> store;
+        IWindowStore<Bytes, byte[]> store;
 
-        WindowToTimestampedWindowByteStoreAdapter(WindowStore<Bytes, byte[]> store)
+        WindowToTimestampedWindowByteStoreAdapter(IWindowStore<Bytes, byte[]> store)
         {
             if (!store.persistent())
             {
@@ -58,15 +58,15 @@ namespace Kafka.Streams.State.Internals
         }
 
         public override WindowStoreIterator<byte[]> fetch(Bytes key,
-                                                 Instant from,
-                                                 Instant to)
+                                                 DateTime from,
+                                                 DateTime to)
         {
             return new WindowToTimestampedWindowIteratorAdapter(store.fetch(key, from, to));
         }
 
 
 
-        public KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
                                                                long timeTo)
@@ -74,29 +74,29 @@ namespace Kafka.Streams.State.Internals
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetch(from, to, timeFrom, timeTo));
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
-                                                               Instant fromTime,
-                                                               Instant toTime)
+                                                               DateTime fromTime,
+                                                               DateTime toTime)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetch(from, to, fromTime, toTime));
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> all()
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
         }
 
 
 
-        public KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                                   long timeTo)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetchAll(timeFrom, timeTo));
         }
 
-        public override KeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(Instant from,
-                                                                  Instant to)
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(DateTime from,
+                                                                  DateTime to)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetchAll(from, to));
         }
@@ -138,7 +138,7 @@ namespace Kafka.Streams.State.Internals
         : WindowStoreIterator<byte[]>
         {
 
-            WindowToTimestampedWindowIteratorAdapter(KeyValueIterator<long, byte[]> innerIterator)
+            WindowToTimestampedWindowIteratorAdapter(IKeyValueIterator<long, byte[]> innerIterator)
             {
                 base(innerIterator);
             }

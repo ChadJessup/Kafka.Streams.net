@@ -14,10 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
 {
@@ -50,10 +54,10 @@ namespace Kafka.Streams.KStream
         protected ISerde<K> keySerde;
         protected bool loggingEnabled = true;
         protected bool cachingEnabled = true;
-        protected Dictionary<string, string> topicConfig = new HashMap<>();
+        protected Dictionary<string, string> topicConfig = new Dictionary<string, string>();
         protected TimeSpan retention;
 
-        private Materialized(StoreSupplier<S> storeSupplier)
+        private Materialized(IStoreSupplier<S> storeSupplier)
         {
             this.storeSupplier = storeSupplier;
         }
@@ -90,10 +94,9 @@ namespace Kafka.Streams.KStream
          * @return a new {@link Materialized} instance with the given storeName
          */
         public static Materialized<K, V, S> As(string storeName)
-            where S : IStateStore
         {
             Named.validate(storeName);
-            return new Materialized<>(storeName);
+            return new Materialized<K, V, S>(storeName);
         }
 
         /**
@@ -108,10 +111,10 @@ namespace Kafka.Streams.KStream
          * @param      value type of the store
          * @return a new {@link Materialized} instance with the given supplier
          */
-        public static Materialized<K, V, WindowStore<Bytes, byte[]>> As(WindowBytesStoreSupplier supplier)
+        public static Materialized<K, V, IWindowStore<Bytes, byte[]>> As(IWindowBytesStoreSupplier supplier)
         {
             supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
-            return new Materialized<K, V>(supplier);
+            return new Materialized<K, V, IWindowStore<Bytes, byte[]>>(supplier);
         }
 
         /**

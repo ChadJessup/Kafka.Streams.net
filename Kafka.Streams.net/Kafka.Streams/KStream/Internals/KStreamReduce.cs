@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().topic(), context().partition(), context().offset()
+                    key, value, context().Topic, context().partition(), context().offset()
                 );
                 skippedRecordsSensor.record();
                 return;

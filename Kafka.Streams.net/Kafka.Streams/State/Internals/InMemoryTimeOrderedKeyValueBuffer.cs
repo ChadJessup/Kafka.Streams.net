@@ -299,7 +299,7 @@ namespace Kafka.Streams.State.Internals
                             record.timestamp(),
                             record.offset(),
                             record.partition(),
-                            record.topic(),
+                            record.Topic,
                             record.headers()
                         );
 

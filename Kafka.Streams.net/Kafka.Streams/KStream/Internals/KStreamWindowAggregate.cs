@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
 
     public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
     {
-        private ILogger log = new LoggerFactory().CreateLogger < getClass());
+        private ILogger log = new LoggerFactory().CreateLogger < GetType());
 
         private string storeName;
         private Windows<W> windows;
@@ -119,7 +119,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 log.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    value, context().topic(), context().partition(), context().offset()
+                    value, context().Topic, context().partition(), context().offset()
                 );
                 skippedRecordsSensor.record();
                 return;
@@ -180,7 +180,7 @@ namespace Kafka.Streams.KStream.Internals
                             "expiration=[{}] " +
                             "streamTime=[{}]",
                         key,
-                        context().topic(),
+                        context().Topic,
                         context().partition(),
                         context().offset(),
                         context().timestamp(),

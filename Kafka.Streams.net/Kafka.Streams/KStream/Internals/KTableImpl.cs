@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
             }
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FILTER_NAME);
 
-            KTableProcessorSupplier<K, V, V> processorSupplier =
+            IKTableProcessorSupplier<K, V, V> processorSupplier =
                new KTableFilter<>(this, predicate, filterNot, queryableStoreName);
 
             ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType(
@@ -223,7 +223,7 @@ namespace Kafka.Streams.KStream.Internals
 
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, MAPVALUES_NAME);
 
-            KTableProcessorSupplier<K, V, VR> processorSupplier = new KTableMapValues<>(this, mapper, queryableStoreName);
+            IKTableProcessorSupplier<K, V, VR> processorSupplier = new KTableMapValues<>(this, mapper, queryableStoreName);
 
             // leaving in calls to ITB until building topology with graph
 
@@ -392,7 +392,7 @@ namespace Kafka.Streams.KStream.Internals
 
             string name = namedInternal.orElseGenerateWithPrefix(builder, TRANSFORMVALUES_NAME);
 
-            KTableProcessorSupplier<K, V, VR> processorSupplier = new KTableTransformValues<>(
+            IKTableProcessorSupplier<K, V, VR> processorSupplier = new KTableTransformValues<>(
                this,
                transformerSupplier,
                queryableStoreName);
@@ -765,7 +765,7 @@ namespace Kafka.Streams.KStream.Internals
             GroupedInternal<K1, V1> groupedInternal = new GroupedInternal<>(grouped);
             string selectName = new NamedInternal(groupedInternal.name()).orElseGenerateWithPrefix(builder, SELECT_NAME);
 
-            KTableProcessorSupplier<K, V, KeyValue<K1, V1>> selectSupplier = new KTableRepartitionMap<>(this, selector);
+            IKTableProcessorSupplier<K, V, KeyValue<K1, V1>> selectSupplier = new KTableRepartitionMap<>(this, selector);
             ProcessorParameters<K, Change<V>> processorParameters = new ProcessorParameters<>(selectSupplier, selectName);
 
             // select the aggregate key and values (old and new), it would require parent to send old values
@@ -799,7 +799,7 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-                return ((KTableProcessorSupplier<K, S, V>)processorSupplier).view();
+                return ((IKTableProcessorSupplier<K, S, V>)processorSupplier).view();
             }
         }
 
@@ -819,7 +819,7 @@ namespace Kafka.Streams.KStream.Internals
                 }
                 else
                 {
-                    ((KTableProcessorSupplier<K, S, V>)processorSupplier).enableSendingOldValues();
+                    ((IKTableProcessorSupplier<K, S, V>)processorSupplier).enableSendingOldValues();
                 }
                 sendOldValues = true;
             }

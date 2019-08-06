@@ -27,7 +27,7 @@ using Kafka.Common.serialization.ByteArrayDeserializer;
 using Kafka.Common.serialization.ByteArraySerializer;
 
 
-public class DefaultKafkaClientSupplier : KafkaClientSupplier
+public class DefaultKafkaClientSupplier : IKafkaClientSupplier
 {
 
 

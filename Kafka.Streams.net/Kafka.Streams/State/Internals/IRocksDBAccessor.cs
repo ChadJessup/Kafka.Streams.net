@@ -23,10 +23,10 @@ namespace Kafka.Streams.State.Internals
          */
         byte[] getOnly(byte[] key);
 
-        KeyValueIterator<Bytes, byte[]> range(Bytes from,
+        IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                               Bytes to);
 
-        KeyValueIterator<Bytes, byte[]> all();
+        IKeyValueIterator<Bytes, byte[]> all();
 
         long approximateNumEntries();
 

@@ -97,13 +97,13 @@ namespace Kafka.Streams.State.Internals
             return wrapped()[key];
         }
 
-        public override KeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
         {
             return wrapped().range(from, to);
         }
 
-        public override KeyValueIterator<Bytes, byte[]> all()
+        public override IKeyValueIterator<Bytes, byte[]> all()
         {
             return wrapped().all();
         }

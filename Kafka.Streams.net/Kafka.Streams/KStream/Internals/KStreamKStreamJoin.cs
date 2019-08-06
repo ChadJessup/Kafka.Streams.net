@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private KStreamKStreamJoinProcessor : AbstractProcessor<K, V1> {
 
-        private WindowStore<K, V2> otherWindow;
+        private IWindowStore<K, V2> otherWindow;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
@@ -75,7 +75,7 @@ namespace Kafka.Streams.KStream.Internals
             metrics = (StreamsMetricsImpl)context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
-            otherWindow = (WindowStore<K, V2>)context.getStateStore(otherWindowName);
+            otherWindow = (IWindowStore<K, V2>)context.getStateStore(otherWindowName);
         }
 
 
@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().topic(), context().partition(), context().offset()
+                    key, value, context().Topic, context().partition(), context().offset()
                 );
                 skippedRecordsSensor.record();
                 return;

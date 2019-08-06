@@ -145,7 +145,7 @@ public class StateSerdes<K, V>
      *
      * @return the topic
      */
-    public string topic()
+    public string Topic
 {
         return topic;
     }

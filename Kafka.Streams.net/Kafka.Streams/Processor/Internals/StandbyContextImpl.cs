@@ -114,9 +114,9 @@ namespace Kafka.Streams.Processor.Internals
      * @throws InvalidOperationException on every invocation
      */
 
-    public string topic()
+    public string Topic
     {
-        throw new InvalidOperationException("this should not happen: topic() not supported in standby tasks.");
+        throw new InvalidOperationException("this should not happen: Topic not supported in standby tasks.");
     }
 
     /**

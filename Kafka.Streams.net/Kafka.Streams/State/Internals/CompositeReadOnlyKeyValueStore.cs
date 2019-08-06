@@ -50,7 +50,7 @@ namespace Kafka.Streams.State.Internals
             return default;
         }
 
-        public override KeyValueIterator<K, V> range(K from, K to)
+        public override IKeyValueIterator<K, V> range(K from, K to)
         {
             //NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
             //{
@@ -72,7 +72,7 @@ namespace Kafka.Streams.State.Internals
             return new DelegatingPeekingKeyValueIterator<>(storeName, new CompositeKeyValueIterator<>(stores.iterator(), nextIteratorFunction));
         }
 
-        public override KeyValueIterator<K, V> all()
+        public override IKeyValueIterator<K, V> all()
         {
             //NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
             //{

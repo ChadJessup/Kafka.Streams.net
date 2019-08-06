@@ -19,14 +19,14 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
-class WrappedSessionStoreIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+class WrappedSessionStoreIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
 {
 
-    private KeyValueIterator<Bytes, byte[]> bytesIterator;
+    private IKeyValueIterator<Bytes, byte[]> bytesIterator;
 
-    WrappedSessionStoreIterator(KeyValueIterator<Bytes, byte[]> bytesIterator)
+    WrappedSessionStoreIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator)
 {
         this.bytesIterator = bytesIterator;
     }

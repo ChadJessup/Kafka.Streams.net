@@ -17,18 +17,18 @@
 namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 
 
 
 
-class CompositeKeyValueIterator<K, V, StoreType> : KeyValueIterator<K, V>
+class CompositeKeyValueIterator<K, V, StoreType> : IKeyValueIterator<K, V>
 {
 
     private IEnumerator<StoreType> storeIterator;
     private NextIteratorFunction<K, V, StoreType> nextIteratorFunction;
 
-    private KeyValueIterator<K, V> current;
+    private IKeyValueIterator<K, V> current;
 
     CompositeKeyValueIterator(IEnumerator<StoreType> underlying,
                               NextIteratorFunction<K, V, StoreType> nextIteratorFunction)

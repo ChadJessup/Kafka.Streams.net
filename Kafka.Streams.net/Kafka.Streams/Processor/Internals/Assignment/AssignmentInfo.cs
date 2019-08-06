@@ -194,7 +194,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         out.writeInt(partitions.size());
             foreach (TopicPartition partition in partitions)
             {
-            out.writeUTF(partition.topic());
+            out.writeUTF(partition.Topic);
             out.writeInt(partition.partition());
             }
         }

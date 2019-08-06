@@ -41,7 +41,7 @@ public interface RecordContext
      * @return  The topic the record was received on;
      *          could be null if it is not available
      */
-    string topic();
+    string Topic;
 
     /**
      * @return  The partition the record was received on;

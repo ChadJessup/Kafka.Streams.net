@@ -167,7 +167,7 @@ public interface TopologyDescription
          * Could be {@code null} if the topic name can only be dynamically determined based on {@link TopicNameExtractor}
          * @return a topic name
          */
-        string topic();
+        string Topic;
 
         /**
          * The {@link TopicNameExtractor} that this sink node uses to dynamically extract the topic name to write to.

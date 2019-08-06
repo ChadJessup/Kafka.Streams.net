@@ -19,7 +19,7 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapValues<K, V, V1> : KTableProcessorSupplier<K, V, V1>
+    public class KTableMapValues<K, V, V1> : IKTableProcessorSupplier<K, V, V1>
     {
         private KTableImpl<K, object, V> parent;
         private ValueMapperWithKey<K, V, V1> mapper;

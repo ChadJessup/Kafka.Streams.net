@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
-    public class GlobalKTableImpl<K, V> : GlobalKTable<K, V>
+    public class GlobalKTableImpl<K, V> : IGlobalKTable<K, V>
     {
 
         private KTableValueGetterSupplier<K, V> valueGetterSupplier;

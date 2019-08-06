@@ -1,4 +1,9 @@
+using Confluent.Kafka;
+using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.State.Internals;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -16,8 +21,8 @@ namespace Kafka.Streams.KStream.Internals
                             bool repartitionRequired,
                             StreamsGraphNode streamsGraphNode,
                             InternalStreamsBuilder builder)
+            : base(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder)
         {
-            base(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder);
             this.aggregateBuilder = new GroupedStreamAggregateBuilder<>(
                 builder,
                 groupedInternal,
@@ -42,26 +47,27 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-               new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
+               new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, builder, REDUCE_NAME);
 
             if (materializedInternal.keySerde() == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
+
             if (materializedInternal.valueSerde() == null)
             {
                 materializedInternal.withValueSerde(valSerde);
             }
 
             return doAggregate(
-                new KStreamReduce<>(materializedInternal.storeName(), reducer),
+                new KStreamReduce<K, V>(materializedInternal.storeName(), reducer),
                 REDUCE_NAME,
                 materializedInternal
             );
         }
 
 
-        public KTable<K, VR> aggregate(Initializer<VR> initializer,
+        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -85,7 +91,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> aggregate(Initializer<VR> initializer,
+        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
@@ -94,7 +100,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public KTable<K, long> count()
         {
-            return doCount(Materialized.with(keySerde, Serdes.long()));
+            return doCount(Materialized.with(keySerde, Serializers.Int64));
         }
 
 
@@ -104,7 +110,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // TODO: Remove this when we do a topology-incompatible release
             // we used to burn a topology name here, so we have to keep doing it for compatibility
-            if (new MaterializedInternal<>(materialized).storeName() == null)
+            if (new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized).storeName() == null)
             {
                 builder.newStoreName(AGGREGATE_NAME);
             }
@@ -115,7 +121,7 @@ namespace Kafka.Streams.KStream.Internals
         private KTable<K, long> doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
+               new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
             if (materializedInternal.keySerde() == null)
             {
@@ -133,10 +139,11 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public TimeWindowedKStream<K, V> windowedBy(Windows<W> windows)
+        public TimeWindowedKStream<K, V> windowedBy<W>(Windows<W> windows)
+            where W : Window
         {
 
-            return new TimeWindowedKStreamImpl<>(
+            return new TimeWindowedKStreamImpl<K, V, W>(
                 windows,
                 builder,
                 sourceNodes,

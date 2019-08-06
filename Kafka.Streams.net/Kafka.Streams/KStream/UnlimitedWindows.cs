@@ -91,7 +91,7 @@ namespace Kafka.Streams.KStream
          * @return a new unlimited window that starts at {@code start}
          * @throws ArgumentException if the start time is negative or can't be represented as {@code long milliseconds}
          */
-        public UnlimitedWindows startOn(Instant start)
+        public UnlimitedWindows startOn(DateTime start)
         {
             string msgPrefix = prepareMillisCheckFailMsgPrefix(start, "start");
             return startOn(ApiUtils.validateMillisecondInstant(start, msgPrefix));
@@ -165,7 +165,7 @@ namespace Kafka.Streams.KStream
             {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
+            if (o == null || GetType() != o.GetType())
             {
                 return false;
             }

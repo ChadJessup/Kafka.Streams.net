@@ -14,6 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Common.Utils;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.State;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -52,14 +59,15 @@ namespace Kafka.Streams.KStream.Internals
         private Windows<W> windows;
         private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
-        TimeWindowedKStreamImpl(Windows<W> windows,
-                                 InternalStreamsBuilder builder,
-                                 HashSet<string> sourceNodes,
-                                 string name,
-                                 ISerde<K> keySerde,
-                                 ISerde<V> valSerde,
-                                 GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
-                                 StreamsGraphNode streamsGraphNode)
+        public TimeWindowedKStreamImpl(
+            Windows<W> windows,
+            InternalStreamsBuilder builder,
+            HashSet<string> sourceNodes,
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valSerde,
+            GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
+            StreamsGraphNode streamsGraphNode)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
             this.windows = windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
@@ -69,17 +77,17 @@ namespace Kafka.Streams.KStream.Internals
 
         public KTable<Windowed<K>, long> count()
         {
-            return doCount(Materialized.with(keySerde, Serdes.long()));
+            return doCount(Materialized.with(keySerde, Serializers.Int64));
         }
 
 
-        public KTable<Windowed<K>, long> count(Materialized<K, long, WindowStore<Bytes, byte[]>> materialized)
+        public KTable<Windowed<K>, long> count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
         {
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
             // TODO: Remove this when we do a topology-incompatible release
             // we used to burn a topology name here, so we have to keep doing it for compatibility
-            if (new MaterializedInternal<>(materialized).storeName() == null)
+            if (new MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>>(materialized).storeName() == null)
             {
                 builder.newStoreName(AGGREGATE_NAME);
             }
@@ -87,10 +95,10 @@ namespace Kafka.Streams.KStream.Internals
             return doCount(materialized);
         }
 
-        private KTable<Windowed<K>, long> doCount(Materialized<K, long, WindowStore<Bytes, byte[]>> materialized)
+        private KTable<Windowed<K>, long> doCount(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
         {
-            MaterializedInternal<K, long, WindowStore<Bytes, byte[]>> materializedInternal =
-               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
+            MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>> materializedInternal =
+               new MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
             if (materializedInternal.keySerde() == null)
             {
@@ -120,12 +128,12 @@ namespace Kafka.Streams.KStream.Internals
 
         public KTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
                                                        Aggregator<K, V, VR> aggregator,
-                                                       Materialized<K, VR, WindowStore<Bytes, byte[]>> materialized)
+                                                       Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
             initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
             aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
-            MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materializedInternal =
+            MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
             if (materializedInternal.keySerde() == null)
             {
@@ -147,12 +155,12 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<Windowed<K>, V> reduce(Reducer<V> reducer, Materialized<K, V, WindowStore<Bytes, byte[]>> materialized)
+        public KTable<Windowed<K>, V> reduce(Reducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
-            MaterializedInternal<K, V, WindowStore<Bytes, byte[]>> materializedInternal =
+            MaterializedInternal<K, V, IWindowStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
 
             if (materializedInternal.keySerde() == null)
@@ -174,9 +182,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private StoreBuilder<TimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, WindowStore<Bytes, byte[]>> materialized)
+        private StoreBuilder<TimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
-            WindowBytesStoreSupplier supplier = (WindowBytesStoreSupplier)materialized.storeSupplier();
+            IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier();
             if (supplier == null)
             {
                 if (materialized.retention() != null)

@@ -99,7 +99,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 {
                 LOG.LogWarning(
                     "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    change, context().topic(), context().partition(), context().offset()
+                    change, context().Topic, context().partition(), context().offset()
                 );
                 skippedRecordsSensor.record();
                 return;

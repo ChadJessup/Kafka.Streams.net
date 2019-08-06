@@ -7,8 +7,8 @@ namespace Kafka.Streams.State.Interfaces
     {
         void destroy();//;
 
-        KeyValueIterator<Bytes, byte[]> all();
+        IKeyValueIterator<Bytes, byte[]> all();
 
-        KeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to);
+        IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to);
     }
 }

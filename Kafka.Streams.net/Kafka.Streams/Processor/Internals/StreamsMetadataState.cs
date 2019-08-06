@@ -229,7 +229,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             foreach (TopicPartition topicPartition in partitionForHost)
             {
-                if (topicNames.contains(topicPartition.topic()))
+                if (topicNames.contains(topicPartition.Topic))
                 {
                     return true;
                 }
@@ -326,7 +326,7 @@ namespace Kafka.Streams.Processor.Internals
                     if (partitions.size() > maxPartitions)
                     {
                         maxPartitions = partitions.size();
-                        topicWithMostPartitions = partitions[0].topic();
+                        topicWithMostPartitions = partitions[0].Topic;
                     }
                 }
             }

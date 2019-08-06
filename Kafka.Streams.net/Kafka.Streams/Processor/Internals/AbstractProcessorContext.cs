@@ -116,14 +116,14 @@ public abstract class AbstractProcessorContext : IInternalProcessorContext
      * @throws InvalidOperationException if the task's record is null
      */
 
-    public string topic()
+    public string Topic
     {
         if (recordContext == null)
         {
-            throw new InvalidOperationException("This should not happen as topic() should only be called while a record is processed");
+            throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
         }
 
-        string topic = recordContext.topic();
+        string topic = recordContext.Topic;
 
         if (topic.Equals(NONEXIST_TOPIC))
         {

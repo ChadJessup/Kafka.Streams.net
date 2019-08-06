@@ -132,14 +132,14 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public KeyValueIterator<Bytes, byte[]> range(Bytes from,
+            public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                          Bytes to)
             {
                 return wrapped.range(from, to);
             }
 
 
-            public KeyValueIterator<Bytes, byte[]> all()
+            public IKeyValueIterator<Bytes, byte[]> all()
             {
                 return wrapped.all();
             }

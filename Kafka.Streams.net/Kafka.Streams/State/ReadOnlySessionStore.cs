@@ -41,7 +41,7 @@ public interface ReadOnlySessionStore<K, AGG>
      * @throws   NullPointerException If null is used for key.
      *
      */
-    KeyValueIterator<Windowed<K>, AGG> fetch(K key);
+    IKeyValueIterator<Windowed<K>, AGG> fetch(K key);
 
     /**
      * Retrieve all aggregated sessions for the given range of keys.
@@ -55,5 +55,5 @@ public interface ReadOnlySessionStore<K, AGG>
      * @return   KeyValueIterator containing all sessions for the provided key.
      * @throws   NullPointerException If null is used for any of the keys.
      */
-    KeyValueIterator<Windowed<K>, AGG> fetch(K from, K to);
+    IKeyValueIterator<Windowed<K>, AGG> fetch(K from, K to);
 }

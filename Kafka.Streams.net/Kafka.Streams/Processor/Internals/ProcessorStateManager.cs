@@ -76,7 +76,7 @@ public class ProcessorStateManager : StateManager
         partitionForTopic = new HashMap<>();
         foreach (TopicPartition source in sources)
 {
-            partitionForTopic.Add(source.topic(), source);
+            partitionForTopic.Add(source.Topic, source);
         }
         offsetLimits = new HashMap<>();
         standbyRestoredOffsets = new HashMap<>();
@@ -222,11 +222,11 @@ public class ProcessorStateManager : StateManager
                              long lastOffset)
 {
         // restore states from changelog records
-        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.topic()]);
+        RecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.Topic]);
 
         if (!restoreRecords.isEmpty())
 {
-            RecordConverter converter = recordConverters[storePartition.topic()];
+            RecordConverter converter = recordConverters[storePartition.Topic];
             List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(restoreRecords.size());
             foreach (ConsumeResult<byte[], byte[]> record in restoreRecords)
 {

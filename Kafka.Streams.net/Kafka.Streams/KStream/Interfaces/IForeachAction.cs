@@ -14,28 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Collections.Generic;
-
-namespace Kafka.Streams.State
+namespace Kafka.Streams.KStream.Interfaces
 {
     /**
-     * IEnumerator interface of {@link KeyValue}.
+     * The {@code ForeachAction} interface for performing an action on a {@link org.apache.kafka.streams.KeyValue key-value
+     * pair}.
+     * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
+     * record of a stream.
+     * If stateful processing is required, consider using
+     * {@link KStream#process(org.apache.kafka.streams.processor.ProcessorSupplier, string...) KStream#process(...)}.
      *
-     * Users must call its {@code close} method explicitly upon completeness to release resources,
-     * or use try-with-resources statement (available since JDK7) for this {@link IDisposable}.
-     *
-     * @param Type of keys
-     * @param Type of values
+     * @param key type
+     * @param value type
+     * @see KStream#foreach(ForeachAction)
      */
-    public interface KeyValueIterator<K, V> : IEnumerator<KeyValue<K, V>>, IDisposable
+    public interface IForeachAction<K, V>
     {
-        void close();
-
         /**
-         * Peek at the next key without advancing the iterator
-         * @return the key of the next value that would be returned from the next call to next
+         * Perform an action for each record of a stream.
+         *
+         * @param key   the key of the record
+         * @param value the value of the record
          */
-        K peekNextKey();
+        void apply(K key, V value);
     }
 }

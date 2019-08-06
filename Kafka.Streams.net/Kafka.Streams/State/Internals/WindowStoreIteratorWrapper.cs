@@ -19,16 +19,16 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.KeyValueIterator;
+using Kafka.Streams.State.IKeyValueIterator;
 using Kafka.Streams.State.WindowStoreIterator;
 
 class WindowStoreIteratorWrapper
 {
 
-    private KeyValueIterator<Bytes, byte[]> bytesIterator;
+    private IKeyValueIterator<Bytes, byte[]> bytesIterator;
     private long windowSize;
 
-    WindowStoreIteratorWrapper(KeyValueIterator<Bytes, byte[]> bytesIterator,
+    WindowStoreIteratorWrapper(IKeyValueIterator<Bytes, byte[]> bytesIterator,
                                long windowSize)
 {
         this.bytesIterator = bytesIterator;
@@ -40,17 +40,17 @@ class WindowStoreIteratorWrapper
         return new WrappedWindowStoreIterator(bytesIterator);
     }
 
-    public KeyValueIterator<Windowed<Bytes>, byte[]> keyValueIterator()
+    public IKeyValueIterator<Windowed<Bytes>, byte[]> keyValueIterator()
 {
         return new WrappedKeyValueIterator(bytesIterator, windowSize);
     }
 
     private static WrappedWindowStoreIterator : WindowStoreIterator<byte[]>
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator;
+        IKeyValueIterator<Bytes, byte[]> bytesIterator;
 
         WrappedWindowStoreIterator(
-            KeyValueIterator<Bytes, byte[]> bytesIterator)
+            IKeyValueIterator<Bytes, byte[]> bytesIterator)
 {
             this.bytesIterator = bytesIterator;
         }
@@ -88,12 +88,12 @@ class WindowStoreIteratorWrapper
         }
     }
 
-    private static class WrappedKeyValueIterator : KeyValueIterator<Windowed<Bytes>, byte[]>
+    private static class WrappedKeyValueIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
 {
-        KeyValueIterator<Bytes, byte[]> bytesIterator;
+        IKeyValueIterator<Bytes, byte[]> bytesIterator;
         long windowSize;
 
-        WrappedKeyValueIterator(KeyValueIterator<Bytes, byte[]> bytesIterator,
+        WrappedKeyValueIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator,
                                 long windowSize)
 {
             this.bytesIterator = bytesIterator;
