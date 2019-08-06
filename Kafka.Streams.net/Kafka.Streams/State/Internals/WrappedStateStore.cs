@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Internals
 
         public static bool isTimestamped(IStateStore stateStore)
         {
-            if (stateStore is TimestampedBytesStore)
+            if (stateStore is ITimestampedBytesStore)
             {
                 return true;
             }

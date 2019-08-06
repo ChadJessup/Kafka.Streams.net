@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 
 namespace Kafka.Streams.KStream
@@ -25,9 +26,8 @@ namespace Kafka.Streams.KStream
      *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
      *  if the no-arg constructor is called and hence it is not passed during initialization.
      */
-    public class TimeWindowedSerializer<T> : WindowedSerializer<T>
+    public class TimeWindowedSerializer<T> : IWindowedSerializer<T>
     {
-
         private ISerializer<T> inner;
 
         // Default constructor needed by Kafka

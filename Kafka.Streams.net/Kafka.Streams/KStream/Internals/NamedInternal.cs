@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
          *
          * @param internal  the internal name.
          */
-        NamedInternal(Named @internal)
+        public NamedInternal(Named @internal)
             : base(@internal)
         {
         }

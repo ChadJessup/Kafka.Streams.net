@@ -35,11 +35,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
     {
 
 
-        private TopicNameExtractor<K, V> topicNameExtractor;
+        private ITopicNameExtractor<K, V> topicNameExtractor;
         private ProducedInternal<K, V> producedInternal;
 
         public StreamSinkNode(string nodeName,
-                               TopicNameExtractor<K, V> topicNameExtractor,
+                               ITopicNameExtractor<K, V> topicNameExtractor,
                                ProducedInternal<K, V> producedInternal)
             : base(nodeName)
         {
@@ -67,10 +67,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
             StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
             string[] parentNames = parentNodeNames();
 
-            if (partitioner == null && keySerializer is WindowedSerializer)
+            if (partitioner == null && keySerializer is IWindowedSerializer)
             {
 
-                StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>)new WindowedStreamPartitioner<object, V>((WindowedSerializer)keySerializer);
+                StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>)new WindowedStreamPartitioner<object, V>((IWindowedSerializer)keySerializer);
                 topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
             }
             else

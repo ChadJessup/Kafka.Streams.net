@@ -18,7 +18,7 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public interface IKTableProcessorSupplier<K, V, T> : ProcessorSupplier<K, Change<V>>
+    public interface IKTableProcessorSupplier<K, V, T> : IProcessorSupplier<K, Change<V>>
     {
         KTableValueGetterSupplier<K, T> view();
 

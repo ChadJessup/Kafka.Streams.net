@@ -7,8 +7,7 @@ namespace Kafka.Streams.Interfaces
      * The extracted timestamp is defined as milliseconds.
      */
     public interface ITimestampExtractor
-   
-{
+    {
         /**
          * Extracts a timestamp from a record. The timestamp must be positive to be considered a valid timestamp.
          * Returning a negative timestamp will cause the record not to be processed but rather silently skipped.
@@ -31,7 +30,6 @@ namespace Kafka.Streams.Interfaces
          * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
          * @return the timestamp of the record
          */
-
         long Extract(ConsumeResult<object, object> record, long partitionTime);
     }
 }

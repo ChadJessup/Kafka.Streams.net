@@ -14,7 +14,6 @@ namespace Kafka.Streams.State.Interfaces
      */
     public interface ISessionBytesStoreSupplier : IStoreSupplier<ISessionStore<Bytes, byte[]>>
     {
-
         /**
          * The size of a segment, in milliseconds. Used when caching is enabled to segment the cache
          * and reduce the amount of data that needs to be scanned when performing range queries.

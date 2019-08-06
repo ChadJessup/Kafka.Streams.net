@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,12 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Confluent.Kafka;
+using System;
 
-namespace Kafka.Streams.KStream.Internals
+namespace Kafka.Common
 {
-    public interface WindowedSerializer<T> : ISerializer<Windowed<T>>
+    public static class Objects
     {
-        byte[] serializeBaseKey(string topic, Windowed<T> data);
+        public static int hash<T>(T newValue, T oldValue)
+        {
+            return (newValue, oldValue).GetHashCode();
+        }
+
+        public static T requireNonNull<T>(T obj, string message)
+        {
+            if (obj == null)
+            {
+                throw new ArgumentNullException(message, nameof(obj));
+            }
+
+            return obj;
+        }
     }
 }

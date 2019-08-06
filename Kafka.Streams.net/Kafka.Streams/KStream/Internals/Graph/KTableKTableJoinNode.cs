@@ -16,33 +16,21 @@
  */
 
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Too much specific information to generalize so the KTable-KTable join requires a specific node.
      */
-    public partial class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Change<V1>, Change<V2>, Change<VR>>
+    public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Change<V1>, Change<V2>, Change<VR>>
     {
-
         private ISerde<K> keySerde;
         private ISerde<VR> valueSerde;
         private string[] joinThisStoreNames;
         private string[] joinOtherStoreNames;
-        private StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+        private readonly IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
 
         KTableKTableJoinNode(
             string nodeName,
@@ -55,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             ISerde<VR> valueSerde,
             string[] joinThisStoreNames,
             string[] joinOtherStoreNames,
-            StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+            IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
             : base(nodeName,
                 null,
                 joinThisProcessorParameters,
@@ -64,7 +52,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 thisJoinSide,
                 otherJoinSide)
         {
-
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
             this.joinThisStoreNames = joinThisStoreNames;
@@ -72,29 +59,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.storeBuilder = storeBuilder;
         }
 
-        public ISerde<K> keySerde()
-        {
-            return keySerde;
-        }
-
-        public ISerde<VR> valueSerde()
-        {
-            return valueSerde;
-        }
-
-        public string[] joinThisStoreNames()
-        {
-            return joinThisStoreNames;
-        }
-
-        public string[] joinOtherStoreNames()
-        {
-            return joinOtherStoreNames;
-        }
-
         public string queryableStoreName()
         {
-            return ((KTableKTableJoinMerger)mergeProcessorParameters().processorSupplier()).getQueryableName();
+            return ((KTableKTableJoinMerger<K, V1>)mergeProcessorParameters().processorSupplier).getQueryableName();
         }
 
         /**
@@ -102,29 +69,28 @@ namespace Kafka.Streams.KStream.Internals.Graph
          */
         public KTableKTableJoinMerger<K, VR> joinMerger()
         {
-            return (KTableKTableJoinMerger<K, VR>)mergeProcessorParameters().processorSupplier();
+            return (KTableKTableJoinMerger<K, VR>)mergeProcessorParameters().processorSupplier;
         }
 
-
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            string thisProcessorName = thisProcessorParameters().processorName();
-            string otherProcessorName = otherProcessorParameters().processorName();
-            string mergeProcessorName = mergeProcessorParameters().processorName();
+            string thisProcessorName = thisProcessorParameters().processorName;
+            string otherProcessorName = otherProcessorParameters().processorName;
+            string mergeProcessorName = mergeProcessorParameters().processorName;
 
-            topologyBuilder.AddProcessor(
+            topologyBuilder.addProcessor(
                 thisProcessorName,
-                thisProcessorParameters().processorSupplier(),
-                thisJoinSideNodeName());
+                thisProcessorParameters().processorSupplier,
+                thisJoinSideNodeName);
 
-            topologyBuilder.AddProcessor(
+            topologyBuilder.addProcessor(
                 otherProcessorName,
-                otherProcessorParameters().processorSupplier(),
-                otherJoinSideNodeName());
+                otherProcessorParameters().processorSupplier,
+                otherJoinSideNodeName);
 
-            topologyBuilder.AddProcessor(
+            topologyBuilder.addProcessor(
                 mergeProcessorName,
-                mergeProcessorParameters().processorSupplier(),
+                mergeProcessorParameters().processorSupplier,
                 thisProcessorName,
                 otherProcessorName);
 
@@ -133,7 +99,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeBuilder != null)
             {
-                topologyBuilder.AddStateStore(storeBuilder, mergeProcessorName);
+                topologyBuilder.addStateStore(storeBuilder, mergeProcessorName);
             }
         }
 

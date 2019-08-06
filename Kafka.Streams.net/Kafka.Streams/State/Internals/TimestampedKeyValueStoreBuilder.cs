@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.Internals
         public override TimestampedKeyValueStore<K, V> build()
         {
             IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
-            if (!(store is TimestampedBytesStore))
+            if (!(store is ITimestampedBytesStore))
             {
                 if (store.persistent())
                 {
@@ -78,7 +78,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private static class InMemoryTimestampedKeyValueStoreMarker
-        : IKeyValueStore<Bytes, byte[]>, TimestampedBytesStore
+        : IKeyValueStore<Bytes, byte[]>, ITimestampedBytesStore
         {
 
             IKeyValueStore<Bytes, byte[]> wrapped;

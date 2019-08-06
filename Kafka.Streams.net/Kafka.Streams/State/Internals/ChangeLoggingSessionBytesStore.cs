@@ -14,82 +14,79 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
-using Kafka.Common.serialization.Serdes;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.Processor.Internals.ProcessorStateManager;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.ISessionStore;
-using Kafka.Streams.State.StateSerdes;
-
-/**
- * Simple wrapper around a {@link ISessionStore} to support writing
- * updates to a changelog
- */
-class ChangeLoggingSessionBytesStore
-    : WrappedStateStore<ISessionStore<Bytes, byte[]>, byte[], byte[]>
-    : ISessionStore<Bytes, byte[]>
+namespace Kafka.Streams.State.Internals
 {
+    /**
+     * Simple wrapper around a {@link ISessionStore} to support writing
+     * updates to a changelog
+     */
+    public class ChangeLoggingSessionBytesStore
+        : WrappedStateStore<ISessionStore<Bytes, byte[]>, byte[], byte[]>,
+        ISessionStore<Bytes, byte[]>
+    {
+        private StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-    private StoreChangeLogger<Bytes, byte[]> changeLogger;
+        public ChangeLoggingSessionBytesStore(ISessionStore<Bytes, byte[]> bytesStore)
+            : base(bytesStore)
+        {
+        }
 
-    ChangeLoggingSessionBytesStore(ISessionStore<Bytes, byte[]> bytesStore)
-{
-        base(bytesStore);
-    }
+        public override void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
+        {
+            base.init(context, root);
+            string topic = ProcessorStateManager.storeChangelogTopic(
+                    context.applicationId(),
+                    name());
 
-    public override void init(IProcessorContext context, IStateStore root)
-{
-        base.init(context, root);
-        string topic = ProcessorStateManager.storeChangelogTopic(
-                context.applicationId(),
-                name());
-        changeLogger = new StoreChangeLogger<>(
-                name(),
-                context,
-                new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
-    }
+            changeLogger = new StoreChangeLogger<>(
+                    name(),
+                    context,
+                    new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
+        }
 
 
-    public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
-{
-        return wrapped().findSessions(key, earliestSessionEndTime, latestSessionStartTime);
-    }
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
+        {
+            return wrapped().findSessions(key, earliestSessionEndTime, latestSessionStartTime);
+        }
 
-    public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
-{
-        return wrapped().findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
-    }
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
+        {
+            return wrapped().findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
+        }
 
-    public override void Remove(Windowed<Bytes> sessionKey)
-{
-        wrapped().Remove(sessionKey);
-        changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), null);
-    }
+        public override void Remove(Windowed<Bytes> sessionKey)
+        {
+            wrapped().Remove(sessionKey);
+            changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), null);
+        }
 
-    public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
-{
-        wrapped().Add(sessionKey, aggregate);
-        changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), aggregate);
+        public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
+        {
+            wrapped().Add(sessionKey, aggregate);
+            changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), aggregate);
 
-    }
+        }
 
-    public override byte[] fetchSession(Bytes key, long startTime, long endTime)
-{
-        return wrapped().fetchSession(key, startTime, endTime);
-    }
+        public override byte[] fetchSession(Bytes key, long startTime, long endTime)
+        {
+            return wrapped().fetchSession(key, startTime, endTime);
+        }
 
-    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
-{
-        return wrapped().fetch(key);
-    }
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
+        {
+            return wrapped().fetch(key);
+        }
 
-    public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
-{
-        return wrapped().fetch(from, to);
+        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
+        {
+            return wrapped().fetch(from, to);
+        }
     }
 }

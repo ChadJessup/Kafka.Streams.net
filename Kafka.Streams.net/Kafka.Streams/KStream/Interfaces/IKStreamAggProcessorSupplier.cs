@@ -19,7 +19,7 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
-    public interface IKStreamAggProcessorSupplier<K, RK, V, T> : ProcessorSupplier<K, V>
+    public interface IKStreamAggProcessorSupplier<K, RK, V, T> : IProcessorSupplier<K, V>
     {
         KTableValueGetterSupplier<RK, T> view();
 

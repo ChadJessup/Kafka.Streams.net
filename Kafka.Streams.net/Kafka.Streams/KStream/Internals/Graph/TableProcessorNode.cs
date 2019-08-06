@@ -33,19 +33,19 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
 
         private ProcessorParameters<K, V> processorParameters;
-        private StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
+        private IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
         private string[] storeNames;
 
         public TableProcessorNode(string nodeName,
                                    ProcessorParameters<K, V> processorParameters,
-                                   StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
+                                   IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
         {
             this(nodeName, processorParameters, storeBuilder, null);
         }
 
         public TableProcessorNode(string nodeName,
                                    ProcessorParameters<K, V> processorParameters,
-                                   StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
+                                   IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
                                    string[] storeNames)
             : base(nodeName)
         {
@@ -79,7 +79,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
             if (storeBuilder != null)
             {
-                topologyBuilder.AddStateStore(storeBuilder, processorName);
+                topologyBuilder.addStateStore(storeBuilder, processorName);
             }
         }
     }

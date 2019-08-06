@@ -10,7 +10,7 @@ namespace Kafka.Streams.State.Internals
     /**
      * A persistent key-(value-timestamp) store based on RocksDB.
      */
-    public class RocksDBTimestampedStore : RocksDBStore, TimestampedBytesStore
+    public class RocksDBTimestampedStore : RocksDBStore, ITimestampedBytesStore
     {
         private static ILogger log = new LoggerFactory().CreateLogger<RocksDBTimestampedStore>();
 

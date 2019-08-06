@@ -16,13 +16,8 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
     public class Change<T>
     {
-
         public T newValue;
         public T oldValue;
 
@@ -32,30 +27,29 @@ namespace Kafka.Streams.KStream.Internals
             this.oldValue = oldValue;
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "(" + newValue + "<-" + oldValue + ")";
         }
 
-
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
+
             Change<object> change = (Change<object>)o;
-            return Objects.Equals(newValue, change.newValue) &&
-                    Objects.Equals(oldValue, change.oldValue);
+            return object.Equals(newValue, change.newValue)
+                && object.Equals(oldValue, change.oldValue);
         }
 
-
-        public int hashCode()
+        public override int GetHashCode()
         {
             return Objects.hash(newValue, oldValue);
         }

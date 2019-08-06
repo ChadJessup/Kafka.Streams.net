@@ -22,8 +22,8 @@ namespace Kafka.Streams.KStream.Internals
     {
         FullTimeWindowedSerde(ISerde<T> inner, long windowSize)
             : base(
-                new TimeWindowedSerializer<>(inner.Serializer()),
-                new TimeWindowedDeserializer<>(inner.Deserializer(), windowSize))
+                new TimeWindowedSerializer<T>(inner.Serializer()),
+                new TimeWindowedDeserializer<T>(inner.Deserializer(), windowSize))
         {
         }
     }

@@ -20,17 +20,8 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
     public class ConsumedInternal<K, V> : Consumed<K, V>
     {
-
         public ConsumedInternal(Consumed<K, V> consumed)
             : base(consumed)
         {
@@ -41,38 +32,23 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<V> valSerde,
             TimestampExtractor timestampExtractor,
             Topology.AutoOffsetReset offsetReset)
-        {
-            this(Consumed.with(keySerde, valSerde, timestampExtractor, offsetReset));
-        }
-
-        public ConsumedInternal()
-            : this(with(null, null))
+            : this(Consumed<K, V>.with(keySerde, valSerde, timestampExtractor, offsetReset))
         {
         }
 
-        public ISerde<K> keySerde()
+    public ConsumedInternal()
+        : this(with(null, null))
         {
-            return keySerde;
         }
 
         public IDeserializer<K> keyDeserializer()
         {
-            return keySerde == null ? null : keySerde.Deserializer();
-        }
-
-        public ISerde<V> valueSerde()
-        {
-            return valueSerde;
+            return keySerde?.Deserializer();
         }
 
         public IDeserializer<V> valueDeserializer()
         {
-            return valueSerde == null ? null : valueSerde.Deserializer();
-        }
-
-        public TimestampExtractor timestampExtractor()
-        {
-            return timestampExtractor;
+            return valueSerde?.Deserializer();
         }
 
         public Topology.AutoOffsetReset offsetResetPolicy()

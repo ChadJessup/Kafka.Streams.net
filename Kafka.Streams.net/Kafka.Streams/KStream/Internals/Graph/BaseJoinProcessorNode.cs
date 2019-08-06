@@ -17,37 +17,29 @@
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
     /**
      * Utility base containing the common fields between
      * a Stream-Stream join and a Table-Table join
      */
-    abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
+    public abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
     {
-
-
         private ProcessorParameters<K, V1> joinThisProcessorParameters;
         private ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private ProcessorParameters<K, VR> joinMergeProcessorParameters;
         private ValueJoiner<V1, V2, VR> valueJoiner;
-        private string thisJoinSideNodeName;
-        private string otherJoinSideNodeName;
+        public string thisJoinSideNodeName { get; }
+        public string otherJoinSideNodeName { get; }
 
-
-        BaseJoinProcessorNode(string nodeName,
-                               ValueJoiner<V1, V2, VR> valueJoiner,
-                               ProcessorParameters<K, V1> joinThisProcessorParameters,
-                               ProcessorParameters<K, V2> joinOtherProcessorParameters,
-                               ProcessorParameters<K, VR> joinMergeProcessorParameters,
-                               string thisJoinSideNodeName,
-                               string otherJoinSideNodeName)
+        public BaseJoinProcessorNode(
+            string nodeName,
+            ValueJoiner<V1, V2, VR> valueJoiner,
+            ProcessorParameters<K, V1> joinThisProcessorParameters,
+            ProcessorParameters<K, V2> joinOtherProcessorParameters,
+            ProcessorParameters<K, VR> joinMergeProcessorParameters,
+            string thisJoinSideNodeName,
+            string otherJoinSideNodeName)
             : base(nodeName)
         {
-
-
             this.valueJoiner = valueJoiner;
             this.joinThisProcessorParameters = joinThisProcessorParameters;
             this.joinOtherProcessorParameters = joinOtherProcessorParameters;
@@ -56,38 +48,22 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.otherJoinSideNodeName = otherJoinSideNodeName;
         }
 
-        ProcessorParameters<K, V1> thisProcessorParameters()
+        protected ProcessorParameters<K, V1> thisProcessorParameters()
         {
             return joinThisProcessorParameters;
         }
 
-        ProcessorParameters<K, V2> otherProcessorParameters()
+        protected ProcessorParameters<K, V2> otherProcessorParameters()
         {
             return joinOtherProcessorParameters;
         }
 
-        ProcessorParameters<K, VR> mergeProcessorParameters()
+        protected ProcessorParameters<K, VR> mergeProcessorParameters()
         {
             return joinMergeProcessorParameters;
         }
 
-        ValueJoiner<V1, V2, VR> valueJoiner()
-        {
-            return valueJoiner;
-        }
-
-        string thisJoinSideNodeName()
-        {
-            return thisJoinSideNodeName;
-        }
-
-        string otherJoinSideNodeName()
-        {
-            return otherJoinSideNodeName;
-        }
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "BaseJoinProcessorNode{" +
                    "joinThisProcessorParameters=" + joinThisProcessorParameters +

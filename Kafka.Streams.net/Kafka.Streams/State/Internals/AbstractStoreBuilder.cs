@@ -18,7 +18,7 @@ using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.State.Internals
 {
-    public abstract class AbstractStoreBuilder<K, V, T> : StoreBuilder<T>
+    public abstract class AbstractStoreBuilder<K, V, T> : IStoreBuilder<T>
         where T : IStateStore
     {
         private Dictionary<string, string> logConfig = new HashMap<>();
@@ -42,19 +42,19 @@ namespace Kafka.Streams.State.Internals
             this.time = time;
         }
 
-        public override StoreBuilder<T> withCachingEnabled()
+        public override IStoreBuilder<T> withCachingEnabled()
         {
             enableCaching = true;
             return this;
         }
 
-        public override StoreBuilder<T> withCachingDisabled()
+        public override IStoreBuilder<T> withCachingDisabled()
         {
             enableCaching = false;
             return this;
         }
 
-        public override StoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
+        public override IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
         {
             config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
             enableLogging = true;
@@ -62,7 +62,7 @@ namespace Kafka.Streams.State.Internals
             return this;
         }
 
-        public override StoreBuilder<T> withLoggingDisabled()
+        public override IStoreBuilder<T> withLoggingDisabled()
         {
             enableLogging = false;
             logConfig.clear();

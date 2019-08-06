@@ -16,9 +16,9 @@
  */
 namespace Kafka.Streams.State.Internals;
 
-using Kafka.Streams.State.TimestampedBytesStore;
+using Kafka.Streams.State.ITimestampedBytesStore;
 
-class RocksDBTimestampedWindowStore : RocksDBWindowStore : TimestampedBytesStore
+class RocksDBTimestampedWindowStore : RocksDBWindowStore : ITimestampedBytesStore
 {
 
     RocksDBTimestampedWindowStore(SegmentedBytesStore bytesStore,

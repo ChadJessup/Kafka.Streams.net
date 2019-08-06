@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableSource<K, V> : ProcessorSupplier<K, V>
+    public class KTableSource<K, V> : IProcessorSupplier<K, V>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KTableSource<K, V>>();
 

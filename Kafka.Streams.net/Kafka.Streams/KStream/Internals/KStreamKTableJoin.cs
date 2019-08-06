@@ -18,7 +18,7 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KStreamKTableJoin<K, R, V1, V2> : ProcessorSupplier<K, V1>
+    class KStreamKTableJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
     {
 
         //    private IKeyValueMapper<K, V1, K> keyValueMapper = new IKeyValueMapper<K, V1, K>()

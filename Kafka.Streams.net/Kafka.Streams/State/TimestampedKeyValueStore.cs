@@ -14,12 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
 
-/**
- * A key-(value/timestamp) store that supports put/get/delete and range queries.
- *
- * @param The key type
- * @param The value type
- */
-public interface TimestampedKeyValueStore<K, V> : IKeyValueStore<K, ValueAndTimestamp<V>> { }
+namespace Kafka.Streams.State
+{
+
+    /**
+     * A key-(value/timestamp) store that supports put/get/delete and range queries.
+     *
+     * @param The key type
+     * @param The value type
+     */
+    public interface TimestampedKeyValueStore<K, V> : IKeyValueStore<K, ValueAndTimestamp<V>>
+    {
+    }
+}

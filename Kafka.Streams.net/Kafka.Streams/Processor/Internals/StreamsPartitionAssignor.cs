@@ -185,7 +185,7 @@ namespace Kafka.Streams.Processor.Internals
         private int numStandbyReplicas;
 
         private TaskManager taskManager;
-        private PartitionGrouper partitionGrouper;
+        private IPartitionGrouper partitionGrouper;
         private AtomicInteger assignmentErrorCode;
 
         protected int usedSubscriptionMetadataVersion = SubscriptionInfo.LATEST_SUPPORTED_VERSION;

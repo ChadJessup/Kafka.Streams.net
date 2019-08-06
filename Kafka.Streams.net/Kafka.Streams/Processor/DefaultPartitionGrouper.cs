@@ -38,7 +38,7 @@ using Microsoft.Extensions.Logging;
  * number of partitions. Copartitioning is ensured by having the same number of partitions on
  * joined topics, and by using the serialization and Producer's default partitioner.
  */
-public class DefaultPartitionGrouper : PartitionGrouper
+public class DefaultPartitionGrouper : IPartitionGrouper
 {
 
 

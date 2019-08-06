@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Collections.Generic;
+
 namespace Kafka.Streams.Processor.Internals
 {
-
-
-
     public class QuickUnion<T>
     {
-
-        private HashMap<T, T> ids = new HashMap<>();
+        private Dictionary<T, T> ids = new Dictionary<T, T>();
 
         public void add(T id)
         {
@@ -44,7 +42,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (parent == null)
             {
-                throw new NoSuchElementException("id: " + id.ToString());
+                throw new KeyNotFoundException("id: " + id.ToString());
             }
 
             while (!parent.Equals(current))
@@ -78,6 +76,5 @@ namespace Kafka.Streams.Processor.Internals
                 ids.Add(root1, root2);
             }
         }
-
     }
 }

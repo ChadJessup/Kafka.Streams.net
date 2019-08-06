@@ -18,7 +18,7 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : ProcessorSupplier<K1, V1>
+    class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : IProcessorSupplier<K1, V1>
     {
 
         private KTableValueGetterSupplier<K2, V2> valueGetterSupplier;

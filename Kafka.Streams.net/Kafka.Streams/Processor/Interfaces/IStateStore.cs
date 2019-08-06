@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void init(IProcessorContext context, IStateStore root);
+        void init<K, V>(IProcessorContext<K, V> context, IStateStore root);
 
         /**
          * Flush any cached data

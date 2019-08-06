@@ -26,13 +26,13 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
 
     private ISerializer<K> keySerializer;
     private ISerializer<V> valSerializer;
-    private TopicNameExtractor<K, V> topicExtractor;
+    private ITopicNameExtractor<K, V> topicExtractor;
     private StreamPartitioner<K, V> partitioner;
 
     private IInternalProcessorContext context;
 
     SinkNode(string name,
-             TopicNameExtractor<K, V> topicExtractor,
+             ITopicNameExtractor<K, V> topicExtractor,
              ISerializer<K> keySerializer,
              ISerializer<V> valSerializer,
              StreamPartitioner<K, V> partitioner)

@@ -492,13 +492,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void to(TopicNameExtractor<K, V> topicExtractor)
+        public void to(ITopicNameExtractor<K, V> topicExtractor)
         {
             to(topicExtractor, Produced.with(keySerde, valSerde, null));
         }
 
 
-        public void to(TopicNameExtractor<K, V> topicExtractor, Produced<K, V> produced)
+        public void to(ITopicNameExtractor<K, V> topicExtractor, Produced<K, V> produced)
         {
             topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor can't be null", nameof(topicExtractor));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
@@ -514,7 +514,7 @@ namespace Kafka.Streams.KStream.Internals
             to(topicExtractor, producedInternal);
         }
 
-        private void to(TopicNameExtractor<K, V> topicExtractor, ProducedInternal<K, V> produced)
+        private void to(ITopicNameExtractor<K, V> topicExtractor, ProducedInternal<K, V> produced)
         {
             string name = new NamedInternal(produced.name()).orElseGenerateWithPrefix(builder, SINK_NAME);
             StreamSinkNode<K, V> sinkNode = new StreamSinkNode<>(
@@ -689,7 +689,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void process(ProcessorSupplier<K, V> processorSupplier,
+        public void process(IProcessorSupplier<K, V> processorSupplier,
                              string[] stateStoreNames)
         {
             //processorSupplier = processorSupplier ?? throw new System.ArgumentNullException("ProcessSupplier cant' be null", nameof(processorSupplier));
@@ -698,7 +698,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void process(ProcessorSupplier<K, V> processorSupplier,
+        public void process(IProcessorSupplier<K, V> processorSupplier,
                              Named named,
                              string[] stateStoreNames)
         {
@@ -1000,7 +1000,7 @@ namespace Kafka.Streams.KStream.Internals
             KTableValueGetterSupplier<KG, VG> valueGetterSupplier = ((GlobalKTableImpl<KG, VG>)globalTable).valueGetterSupplier();
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, LEFTJOIN_NAME);
 
-            ProcessorSupplier<K, V> processorSupplier = new KStreamGlobalKTableJoin<K, V>(
+            IProcessorSupplier<K, V> processorSupplier = new KStreamGlobalKTableJoin<K, V>(
                valueGetterSupplier,
                joiner,
                keyMapper,
@@ -1036,7 +1036,7 @@ namespace Kafka.Streams.KStream.Internals
             NamedInternal renamed = new NamedInternal(joinedInternal.name());
 
             string name = renamed.orElseGenerateWithPrefix(builder, leftJoin ? LEFTJOIN_NAME : JOIN_NAME);
-            ProcessorSupplier<K, V> processorSupplier = new KStreamKTableJoin<>(
+            IProcessorSupplier<K, V> processorSupplier = new KStreamKTableJoin<>(
                ((KTableImpl<K, object, VO>) other).valueGetterSupplier(),
                joiner,
                leftJoin
@@ -1104,7 +1104,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         //
-        private static StoreBuilder<IWindowStore<K, V>> joinWindowStoreBuilder(
+        private static IStoreBuilder<IWindowStore<K, V>> joinWindowStoreBuilder(
             string joinName,
             JoinWindows windows,
             ISerde<K> keySerde,
@@ -1165,9 +1165,9 @@ namespace Kafka.Streams.KStream.Internals
                 StreamsGraphNode otherStreamsGraphNode = ((AbstractStream)other).streamsGraphNode;
 
 
-                StoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
+                IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
                    joinWindowStoreBuilder(joinThisName, windows, joined.keySerde(), joined.valueSerde());
-                StoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
+                IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
                    joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde(), joined.otherValueSerde());
 
                 KStreamJoinWindow<K1, V1> thisWindowedStream = new KStreamJoinWindow<>(thisWindowStore.name());

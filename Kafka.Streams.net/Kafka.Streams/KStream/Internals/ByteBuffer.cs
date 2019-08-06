@@ -39,5 +39,30 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
+
+        internal void putInt(int oldSize)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void Add(byte[] oldValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static ByteBuffer wrap(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal int getInt()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal void get(byte[] oldBytes)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

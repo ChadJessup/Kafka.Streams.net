@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             private string[] joinThisStoreNames;
             private string[] joinOtherStoreNames;
             private string queryableStoreName;
-            private StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+            private IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
 
             public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withNodeName(string nodeName)
             {
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 return this;
             }
 
-            public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder(StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+            public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder(IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
             {
                 this.storeBuilder = storeBuilder;
                 return this;

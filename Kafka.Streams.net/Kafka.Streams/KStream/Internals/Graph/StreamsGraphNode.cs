@@ -21,19 +21,10 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-
     public abstract class StreamsGraphNode
     {
-        private Collection<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
-        private Collection<StreamsGraphNode> parentNodes = new HashSet<StreamsGraphNode>();
+        private HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
+        private HashSet<StreamsGraphNode> parentNodes = new HashSet<StreamsGraphNode>();
         private string nodeName;
         private bool keyChangingOperation;
         private bool valueChangingOperation;
@@ -46,18 +37,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.nodeName = nodeName;
         }
 
-        public Collection<StreamsGraphNode> parentNodes()
-        {
-            return parentNodes;
-        }
-
         string[] parentNodeNames()
         {
-            string[] parentNames = new string[parentNodes.size()];
+            string[] parentNames = new string[parentNodes.Count];
             int index = 0;
             foreach (StreamsGraphNode parentNode in parentNodes)
             {
-                parentNames[index++] = parentNode.nodeName();
+                parentNames[index++] = parentNode.nodeName;
             }
             return parentNames;
         }
@@ -66,7 +52,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             foreach (StreamsGraphNode parentNode in parentNodes)
             {
-                if (!parentNode.hasWrittenToTopology())
+                if (!parentNode.hasWrittenToTopology)
                 {
                     return false;
                 }
@@ -74,9 +60,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             return true;
         }
 
-        public Collection<StreamsGraphNode> children()
+        public HashSet<StreamsGraphNode> children()
         {
-            return new HashSet<>(childNodes);
+            return new HashSet<StreamsGraphNode>(childNodes);
         }
 
         public void clearChildren()
@@ -85,7 +71,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
             {
                 childNode.parentNodes.Remove(this);
             }
-            childNodes.clear();
+
+            childNodes.Clear();
         }
 
         public bool removeChild(StreamsGraphNode child)
@@ -97,11 +84,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             this.childNodes.Add(childNode);
             childNode.parentNodes.Add(this);
-        }
-
-        public string nodeName()
-        {
-            return nodeName;
         }
 
         public bool isKeyChangingOperation()
@@ -129,27 +111,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.valueChangingOperation = valueChangingOperation;
         }
 
-        public void keyChangingOperation(bool keyChangingOperation)
-        {
-            this.keyChangingOperation = keyChangingOperation;
-        }
-
         public void setBuildPriority(int buildPriority)
         {
             this.buildPriority = buildPriority;
         }
 
-        public int buildPriority()
-        {
-            return this.buildPriority;
-        }
-
         public abstract void writeToTopology(InternalTopologyBuilder topologyBuilder);
-
-        public bool hasWrittenToTopology()
-        {
-            return hasWrittenToTopology;
-        }
 
         public void setHasWrittenToTopology(bool hasWrittenToTopology)
         {
@@ -157,7 +124,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             string[] parentNames = parentNodeNames();
             return "StreamsGraphNode{" +

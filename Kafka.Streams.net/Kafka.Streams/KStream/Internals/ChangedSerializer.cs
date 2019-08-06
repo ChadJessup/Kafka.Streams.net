@@ -21,7 +21,6 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class ChangedSerializer<T> : ISerializer<Change<T>>
     {
-
         private static int NEWFLAG_SIZE = 1;
 
         private ISerializer<T> inner;
@@ -40,8 +39,7 @@ namespace Kafka.Streams.KStream.Internals
          * @throws StreamsException if both old and new values of data are null, or if
          * both values are not null
          */
-
-        public byte[] serialize(string topic, Headers headers, Change<T> data)
+        public byte[] Serialize(Change<T> data, SerializationContext context)
         {
             byte[] serializedKey;
 
@@ -54,7 +52,7 @@ namespace Kafka.Streams.KStream.Internals
                         + " : " + data.newValue + ") in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(topic, headers, data.newValue);
+                serializedKey = inner.Serialize(data.newValue, context);
             }
             else
             {
@@ -64,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
                     throw new StreamsException("Both old and new values are null in ChangeSerializer, which is not allowed.");
                 }
 
-                serializedKey = inner.Serialize(topic, headers, data.oldValue);
+                serializedKey = inner.Serialize(data.oldValue, context);
             }
 
             ByteBuffer buf = ByteBuffer.allocate(serializedKey.Length + NEWFLAG_SIZE);
@@ -72,18 +70,6 @@ namespace Kafka.Streams.KStream.Internals
             buf.add((byte)(data.newValue != null ? 1 : 0));
 
             return buf.array();
-        }
-
-
-        public byte[] serialize(string topic, Change<T> data)
-        {
-            return serialize(topic, null, data);
-        }
-
-
-        public void close()
-        {
-            inner.close();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.Internals
 
         private int partition;
 
-        public static class Builder<K, V> : StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>>
+        public static class Builder<K, V> : IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>>
         {
 
             private string storeName;
@@ -74,7 +74,7 @@ namespace Kafka.Streams.State.Internals
              * It's currently a no-op.
              */
 
-            public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingEnabled()
+            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingEnabled()
             {
                 return this;
             }
@@ -87,19 +87,19 @@ namespace Kafka.Streams.State.Internals
              * It's currently a no-op.
              */
 
-            public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingDisabled()
+            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingDisabled()
             {
                 return this;
             }
 
 
-            public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingEnabled(Dictionary<string, string> config)
+            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingEnabled(Dictionary<string, string> config)
             {
                 throw new InvalidOperationException();
             }
 
 
-            public StoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingDisabled()
+            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingDisabled()
             {
                 loggingEnabled = false;
                 return this;

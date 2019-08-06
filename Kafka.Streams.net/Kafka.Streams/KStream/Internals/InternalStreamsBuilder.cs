@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
@@ -66,16 +67,16 @@ namespace Kafka.Streams.KStream.Internals
 
             addGraphNode(root, streamSourceNode);
 
-            return new KStreamImpl<>(name,
-                                     consumed.keySerde(),
-                                     consumed.valueSerde(),
-                                     Collections.singleton(name),
-                                     false,
-                                     streamSourceNode,
-                                     this);
+            return new KStreamImpl<K, V>(name,
+                                         consumed.keySerde,
+                                         consumed.valueSerde,
+                                         Collections.singleton(name),
+                                         false,
+                                         streamSourceNode,
+                                         this);
         }
 
-        public KStream<K, V> stream(Pattern topicPattern,
+        public KStream<K, V> stream<K, V>(Pattern topicPattern,
                                             ConsumedInternal<K, V> consumed)
         {
             string name = newProcessorName(KStreamImpl.SOURCE_NAME);
@@ -83,9 +84,9 @@ namespace Kafka.Streams.KStream.Internals
 
             addGraphNode(root, streamPatternSourceNode);
 
-            return new KStreamImpl<>(name,
-                                     consumed.keySerde(),
-                                     consumed.valueSerde(),
+            return new KStreamImpl<K, V>(name,
+                                     consumed.keySerde,
+                                     consumed.valueSerde,
                                      Collections.singleton(name),
                                      false,
                                      streamPatternSourceNode,
@@ -105,13 +106,13 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
             TableSourceNode<K, V> tableSourceNode = TableSourceNode.< K, V> tableSourceNodeBuilder()
-                .withTopic(topic)
-                .withSourceName(sourceName)
-                .withNodeName(tableSourceName)
-                .withConsumedInternal(consumed)
-                .withMaterializedInternal(materialized)
-                .withProcessorParameters(processorParameters)
-                .build();
+                 .withTopic(topic)
+                 .withSourceName(sourceName)
+                 .withNodeName(tableSourceName)
+                 .withConsumedInternal(consumed)
+                 .withMaterializedInternal(materialized)
+                 .withProcessorParameters(processorParameters)
+                 .build();
 
             addGraphNode(root, tableSourceNode);
 
@@ -168,18 +169,18 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void addStateStore(StoreBuilder builder)
+        public void addStateStore(IStoreBuilder builder)
         {
             addGraphNode(root, new StateStoreNode(builder));
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void addGlobalStore(StoreBuilder<IKeyValueStore> storeBuilder,
+        public void addGlobalStore(IStoreBuilder<IKeyValueStore> storeBuilder,
                                                  string sourceName,
                                                  string topic,
                                                  ConsumedInternal consumed,
                                                  string processorName,
-                                                 ProcessorSupplier stateUpdateSupplier)
+                                                 IProcessorSupplier stateUpdateSupplier)
         {
 
             StreamsGraphNode globalStoreNode = new GlobalStoreNode(storeBuilder,
@@ -193,10 +194,10 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void addGlobalStore(StoreBuilder<IKeyValueStore> storeBuilder,
+        public void addGlobalStore(IStoreBuilder<IKeyValueStore> storeBuilder,
                                                  string topic,
                                                  ConsumedInternal consumed,
-                                                 ProcessorSupplier stateUpdateSupplier)
+                                                 IProcessorSupplier stateUpdateSupplier)
         {
             // explicitly disable logging for global stores
             storeBuilder.withLoggingDisabled();

@@ -16,6 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -31,13 +32,13 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-                return new FullChangeSerde<>(serde);
+                return new FullChangeSerde<T>(serde);
             }
         }
 
         private FullChangeSerde(ISerde<T> inner)
         {
-            this.inner = requireNonNull(inner);
+            this.inner = inner ?? throw new ArgumentNullException("can't be null", nameof(inner));
         }
 
         public ISerde<T> innerSerde()
@@ -51,12 +52,14 @@ namespace Kafka.Streams.KStream.Internals
             {
                 return null;
             }
-            ISerializer<T> innerSerializer = innerSerde().Serializer();
-            byte[] oldBytes = data.oldValue == null ? null : innerSerializer.Serialize(topic, data.oldValue);
-            byte[] newBytes = data.newValue == null ? null : innerSerializer.Serialize(topic, data.newValue);
-            return new Change<>(newBytes, oldBytes);
-        }
 
+            ISerializer<T> innerSerializer = innerSerde().Serializer();
+
+            var oldBytes = data.oldValue == null ? null : innerSerializer.Serialize(data.oldValue, new SerializationContext(MessageComponentType.Key, topic));
+            var newBytes = data.newValue == null ? null : innerSerializer.Serialize(data.newValue, new SerializationContext(MessageComponentType.Key, topic));
+
+            return new Change<byte[]>(newBytes, oldBytes);
+        }
 
         public Change<T> deserializeParts(string topic, Change<byte[]> serialChange)
         {
@@ -64,14 +67,13 @@ namespace Kafka.Streams.KStream.Internals
             {
                 return null;
             }
+
             IDeserializer<T> innerDeserializer = innerSerde().Deserializer();
 
-            T oldValue =
-               serialChange.oldValue == null ? null : innerDeserializer.Deserialize(topic, serialChange.oldValue);
-            T newValue =
-               serialChange.newValue == null ? null : innerDeserializer.Deserialize(topic, serialChange.newValue);
+            var oldValue = innerDeserializer.Deserialize(serialChange.oldValue, isNull: serialChange.oldValue == null, new SerializationContext(MessageComponentType.Key, topic));
+            var newValue = innerDeserializer.Deserialize(serialChange.newValue, isNull: serialChange.newValue == null, new SerializationContext(MessageComponentType.Key, topic));
 
-            return new Change<>(newValue, oldValue);
+            return new Change<T>(newValue, oldValue);
         }
 
         /**
@@ -88,10 +90,10 @@ namespace Kafka.Streams.KStream.Internals
             int oldSize = serialChange.oldValue == null ? -1 : serialChange.oldValue.Length;
             int newSize = serialChange.newValue == null ? -1 : serialChange.newValue.Length;
 
-            ByteBuffer buffer = ByteBuffer.allocate(int.BYTES * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
-
+            ByteBuffer buffer = ByteBuffer.allocate(sizeof(int) * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
 
             buffer.putInt(oldSize);
+
             if (serialChange.oldValue != null)
             {
                 buffer.Add(serialChange.oldValue);
@@ -118,21 +120,23 @@ namespace Kafka.Streams.KStream.Internals
             ByteBuffer buffer = ByteBuffer.wrap(data);
 
             int oldSize = buffer.getInt();
-            byte[] oldBytes = oldSize == -1 ? null : new byte[oldSize];
+            byte[] oldBytes = oldSize == -1
+                ? null
+                : new byte[oldSize];
+
             if (oldBytes != null)
             {
-                buffer[oldBytes];
+                buffer.get(oldBytes);
             }
 
             int newSize = buffer.getInt();
             byte[] newBytes = newSize == -1 ? null : new byte[newSize];
             if (newBytes != null)
             {
-                buffer[newBytes];
+                buffer.get(newBytes);
             }
 
-            return new Change<>(newBytes, oldBytes);
+            return new Change<byte[]>(newBytes, oldBytes);
         }
-
     }
 }

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
+private static class GlobalStoreComparator : Comparator<TopologyDescription.GlobalStore>, Serializable
+{
 
-using Kafka.Common.annotation.InterfaceStability;
 
-/**
- * An interface that allows to dynamically determine the name of the Kafka topic to send at the sink node of the topology.
- */
-
-public interface TopicNameExtractor<K, V> {
-
-    /**
-     * Extracts the topic name to send to. The topic name must already exist, since the Kafka Streams library will not
-     * try to automatically create the topic with the extracted name.
-     *
-     * @param key           the record key
-     * @param value         the record value
-     * @param recordContext current context metadata of the record
-     * @return              the topic name this record should be sent to
-     */
-    string extract(K key, V value, RecordContext recordContext);
+    public int compare(TopologyDescription.GlobalStore globalStore1,
+                       TopologyDescription.GlobalStore globalStore2)
+    {
+        if (globalStore1.Equals(globalStore2))
+        {
+            return 0;
+        }
+        return globalStore1.id() - globalStore2.id();
+    }
 }

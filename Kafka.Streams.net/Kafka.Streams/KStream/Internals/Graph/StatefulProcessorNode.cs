@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     {
 
         private string[] storeNames;
-        private StoreBuilder<IStateStore> storeBuilder;
+        private IStoreBuilder<IStateStore> storeBuilder;
 
 
         /**
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
          */
         public StatefulProcessorNode(string nodeName,
                                       ProcessorParameters<K, V> processorParameters,
-                                      StoreBuilder<IStateStore> materializedKTableStoreBuilder)
+                                      IStoreBuilder<IStateStore> materializedKTableStoreBuilder)
             : base(nodeName, processorParameters)
         {
 
@@ -81,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
 
             string processorName = processorParameters().processorName();
-            ProcessorSupplier processorSupplier = processorParameters().processorSupplier();
+            IProcessorSupplier processorSupplier = processorParameters().processorSupplier();
 
             topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
 
@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeBuilder != null)
             {
-                topologyBuilder.AddStateStore(storeBuilder, processorName);
+                topologyBuilder.addStateStore(storeBuilder, processorName);
             }
         }
     }

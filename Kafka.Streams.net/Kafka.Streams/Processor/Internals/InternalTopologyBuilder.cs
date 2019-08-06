@@ -15,10 +15,13 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Common.serialization.Deserializer;
-using Kafka.Common.serialization.Serializer;
-using Kafka.Common.Utils.Utils;
+using Kafka.Common;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -26,18 +29,18 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class InternalTopologyBuilder
     {
-        private static ILogger log = new LoggerFactory().CreateLogger < InternalTopologyBuilder);
+        private static ILogger log = new LoggerFactory().CreateLogger<InternalTopologyBuilder>();
         private static Pattern EMPTY_ZERO_LENGTH_PATTERN = Pattern.compile("");
         private static string[] NO_PREDECESSORS = { };
 
         // node factories in a topological order
-        private Dictionary<string, NodeFactory> nodeFactories = new LinkedHashMap<>();
+        private Dictionary<string, NodeFactory> nodeFactories = new Dictionary<string, NodeFactory>();
 
         // state factories
-        private Dictionary<string, StateStoreFactory> stateFactories = new HashMap<>();
+        private Dictionary<string, StateStoreFactory> stateFactories = new Dictionary<string, StateStoreFactory>();
 
         // built global state stores
-        private Dictionary<string, StoreBuilder> globalStateBuilders = new LinkedHashMap<>();
+        private Dictionary<string, IStoreBuilder> globalStateBuilders = new LinkedHashMap<>();
 
         // built global state stores
         private Dictionary<string, IStateStore> globalStateStores = new LinkedHashMap<>();
@@ -46,47 +49,47 @@ namespace Kafka.Streams.Processor.Internals
         private HashSet<string> sourceTopicNames = new HashSet<>();
 
         // all internal topics auto-created by the topology builder and used in source / sink processors
-        private HashSet<string> internalTopicNames = new HashSet<>();
+        private HashSet<string> internalTopicNames = new HashSet<string>();
 
         // groups of source processors that need to be copartitioned
-        private List<Set<string>> copartitionSourceGroups = new List<>();
+        private List<HashSet<string>> copartitionSourceGroups = new List<HashSet<string>>();
 
         // map from source processor names to subscribed topics (without application-id prefix for internal topics)
-        private Dictionary<string, List<string>> nodeToSourceTopics = new HashMap<>();
+        private Dictionary<string, List<string>> nodeToSourceTopics = new Dictionary<string, List<string>>();
 
         // map from source processor names to regex subscription patterns
-        private Dictionary<string, Pattern> nodeToSourcePatterns = new LinkedHashMap<>();
+        private Dictionary<string, Pattern> nodeToSourcePatterns = new Dictionary<string, Pattern>();
 
         // map from sink processor names to subscribed topic (without application-id prefix for internal topics)
-        private Dictionary<string, string> nodeToSinkTopic = new HashMap<>();
+        private Dictionary<string, string> nodeToSinkTopic = new Dictionary<string, string>();
 
         // map from topics to their matched regex patterns, this is to ensure one topic is passed through on source node
         // even if it can be matched by multiple regex patterns
-        private Dictionary<string, Pattern> topicToPatterns = new HashMap<>();
+        private Dictionary<string, Pattern> topicToPatterns = new Dictionary<string, Pattern>();
 
         // map from state store names to all the topics subscribed from source processors that
         // are connected to these state stores
-        private Dictionary<string, HashSet<string>> stateStoreNameToSourceTopics = new HashMap<>();
+        private Dictionary<string, HashSet<string>> stateStoreNameToSourceTopics = new Dictionary<string, HashSet<string>>();
 
         // map from state store names to all the regex subscribed topics from source processors that
         // are connected to these state stores
-        private Dictionary<string, HashSet<Pattern>> stateStoreNameToSourceRegex = new HashMap<>();
+        private Dictionary<string, HashSet<Pattern>> stateStoreNameToSourceRegex = new Dictionary<string, HashSet<Pattern>>();
 
         // map from state store names to this state store's corresponding changelog topic if possible
-        private Dictionary<string, string> storeToChangelogTopic = new HashMap<>();
+        private Dictionary<string, string> storeToChangelogTopic = new Dictionary<string, string>();
 
         // all global topics
-        private HashSet<string> globalTopics = new HashSet<>();
+        private HashSet<string> globalTopics = new HashSet<string>();
 
-        private HashSet<string> earliestResetTopics = new HashSet<>();
+        private HashSet<string> earliestResetTopics = new HashSet<string>();
 
-        private HashSet<string> latestResetTopics = new HashSet<>();
+        private HashSet<string> latestResetTopics = new HashSet<string>();
 
-        private HashSet<Pattern> earliestResetPatterns = new HashSet<>();
+        private HashSet<Pattern> earliestResetPatterns = new HashSet<Pattern>();
 
-        private HashSet<Pattern> latestResetPatterns = new HashSet<>();
+        private HashSet<Pattern> latestResetPatterns = new HashSet<Pattern>();
 
-        private QuickUnion<string> nodeGrouper = new QuickUnion<>();
+        private QuickUnion<string> nodeGrouper = new QuickUnion<string>();
 
         private SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
 
@@ -95,267 +98,6 @@ namespace Kafka.Streams.Processor.Internals
         private Pattern topicPattern = null;
 
         private Dictionary<int, HashSet<string>> nodeGroups = null;
-
-        public static class StateStoreFactory
-        {
-
-            private StoreBuilder builder;
-            private HashSet<string> users = new HashSet<>();
-
-            private StateStoreFactory(StoreBuilder<object> builder)
-            {
-                this.builder = builder;
-            }
-
-            public IStateStore build()
-            {
-                return builder.build();
-            }
-
-            long retentionPeriod()
-            {
-                if (builder is WindowStoreBuilder)
-                {
-                    return ((WindowStoreBuilder)builder).retentionPeriod();
-                }
-                else if (builder is TimestampedWindowStoreBuilder)
-                {
-                    return ((TimestampedWindowStoreBuilder)builder).retentionPeriod();
-                }
-                else if (builder is SessionStoreBuilder)
-                {
-                    return ((SessionStoreBuilder)builder).retentionPeriod();
-                }
-                else
-                {
-
-                    throw new InvalidOperationException("retentionPeriod is not supported when not a window store");
-                }
-            }
-
-            private HashSet<string> users()
-            {
-                return users;
-            }
-
-            public bool loggingEnabled()
-            {
-                return builder.loggingEnabled();
-            }
-
-            private string name()
-            {
-                return builder.name();
-            }
-
-            private bool isWindowStore()
-            {
-                return builder is WindowStoreBuilder
-                    || builder is TimestampedWindowStoreBuilder
-                    || builder is SessionStoreBuilder;
-            }
-
-            // Apparently Java strips the generics from this method because we're using the raw type for builder,
-            // even though this method doesn't use builder's (missing) type parameter. Our usage seems obviously
-            // correct, though, hence the suppression.
-
-            private Dictionary<string, string> logConfig()
-            {
-                return builder.logConfig();
-            }
-        }
-
-        private static abstract class NodeFactory
-        {
-
-            string name;
-            string[] predecessors;
-
-            NodeFactory(string name,
-                        string[] predecessors)
-            {
-                this.name = name;
-                this.predecessors = predecessors;
-            }
-
-            public abstract ProcessorNode build();
-
-            abstract AbstractNode describe();
-        }
-
-        private static class ProcessorNodeFactory : NodeFactory
-        {
-
-            private ProcessorSupplier<?, object> supplier;
-            private HashSet<string> stateStoreNames = new HashSet<>();
-
-            ProcessorNodeFactory(string name,
-                                 string[] predecessors,
-                                 ProcessorSupplier<?, object> supplier)
-            {
-                base(name, predecessors.clone());
-                this.supplier = supplier;
-            }
-
-            public void addStateStore(string stateStoreName)
-            {
-                stateStoreNames.Add(stateStoreName);
-            }
-
-
-            public ProcessorNode build()
-            {
-                return new ProcessorNode<>(name, supplier(), stateStoreNames);
-            }
-
-
-            Processor describe()
-            {
-                return new Processor(name, new HashSet<>(stateStoreNames));
-            }
-        }
-
-        private class SourceNodeFactory : NodeFactory
-        {
-
-            private List<string> topics;
-            private Pattern pattern;
-            private IDeserializer<object> keyDeserializer;
-            private IDeserializer<object> valDeserializer;
-            private TimestampExtractor timestampExtractor;
-
-            private SourceNodeFactory(string name,
-                                      string[] topics,
-                                      Pattern pattern,
-                                      TimestampExtractor timestampExtractor,
-                                      IDeserializer<object> keyDeserializer,
-                                      IDeserializer<object> valDeserializer)
-                : base(name, NO_PREDECESSORS)
-            {
-                this.topics = topics != null ? Arrays.asList(topics) : new List<>();
-                this.pattern = pattern;
-                this.keyDeserializer = keyDeserializer;
-                this.valDeserializer = valDeserializer;
-                this.timestampExtractor = timestampExtractor;
-            }
-
-            List<string> getTopics(Collection<string> subscribedTopics)
-            {
-                // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
-                // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
-                // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
-                if (subscribedTopics.isEmpty())
-                {
-                    return Collections.singletonList(string.valueOf(pattern));
-                }
-
-                List<string> matchedTopics = new List<>();
-                foreach (string update in subscribedTopics)
-                {
-                    if (pattern == topicToPatterns[update])
-                    {
-                        matchedTopics.Add(update);
-                    }
-                    else if (topicToPatterns.ContainsKey(update) && isMatch(update))
-                    {
-                        // the same topic cannot be matched to more than one pattern
-                        // TODO: we should lift this requirement in the future
-                        throw new TopologyException("Topic " + update +
-                            " is already matched for another regex pattern " + topicToPatterns[update] +
-                            " and hence cannot be matched to this regex pattern " + pattern + " any more.");
-                    }
-                    else if (isMatch(update))
-                    {
-                        topicToPatterns.Add(update, pattern);
-                        matchedTopics.Add(update);
-                    }
-                }
-                return matchedTopics;
-            }
-
-
-            public ProcessorNode build()
-            {
-                List<string> sourceTopics = nodeToSourceTopics[name];
-
-                // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
-                // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
-                // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
-                if (sourceTopics == null)
-                {
-                    return new SourceNode<>(name, Collections.singletonList(string.valueOf(pattern)), timestampExtractor, keyDeserializer, valDeserializer);
-                }
-                else
-                {
-
-                    return new SourceNode<>(name, maybeDecorateInternalSourceTopics(sourceTopics), timestampExtractor, keyDeserializer, valDeserializer);
-                }
-            }
-
-            private bool isMatch(string topic)
-            {
-                return pattern.matcher(topic).matches();
-            }
-
-
-            Source describe()
-            {
-                return new Source(name, topics.size() == 0 ? null : new HashSet<>(topics), pattern);
-            }
-        }
-
-        private class SinkNodeFactory<K, V> : NodeFactory
-        {
-
-            private ISerializer<K> keySerializer;
-            private ISerializer<V> valSerializer;
-            private StreamPartitioner<K, V> partitioner;
-            private TopicNameExtractor<K, V> topicExtractor;
-
-            private SinkNodeFactory(string name,
-                                    string[] predecessors,
-                                    TopicNameExtractor<K, V> topicExtractor,
-                                    ISerializer<K> keySerializer,
-                                    ISerializer<V> valSerializer,
-                                    StreamPartitioner<K, V> partitioner)
-                : base(name, predecessors.clone())
-            {
-                this.topicExtractor = topicExtractor;
-                this.keySerializer = keySerializer;
-                this.valSerializer = valSerializer;
-                this.partitioner = partitioner;
-            }
-
-
-            public ProcessorNode build()
-            {
-                if (topicExtractor is StaticTopicNameExtractor)
-                {
-                    string topic = ((StaticTopicNameExtractor)topicExtractor).topicName;
-                    if (internalTopicNames.contains(topic))
-                    {
-                        // prefix the internal topic name with the application id
-                        return new SinkNode<>(name, new StaticTopicNameExtractor<>(decorateTopic(topic)), keySerializer, valSerializer, partitioner);
-                    }
-                    else
-                    {
-
-                        return new SinkNode<>(name, topicExtractor, keySerializer, valSerializer, partitioner);
-                    }
-                }
-                else
-                {
-
-                    return new SinkNode<>(name, topicExtractor, keySerializer, valSerializer, partitioner);
-                }
-            }
-
-
-            Sink describe()
-            {
-                return new Sink(name, topicExtractor);
-            }
-        }
 
         // public for testing only
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -383,14 +125,14 @@ namespace Kafka.Streams.Processor.Internals
                     storeFactory.builder.withCachingDisabled();
                 }
 
-                foreach (StoreBuilder storeBuilder in globalStateBuilders.values())
+                foreach (var storeBuilder in globalStateBuilders.values())
                 {
                     storeBuilder.withCachingDisabled();
                 }
             }
 
             // build global state stores
-            foreach (StoreBuilder storeBuilder in globalStateBuilders.values())
+            foreach (var storeBuilder in globalStateBuilders.values())
             {
                 globalStateStores.Add(storeBuilder.name(), storeBuilder.build());
             }
@@ -401,7 +143,7 @@ namespace Kafka.Streams.Processor.Internals
         public void addSource<K, V>(
             Topology.AutoOffsetReset offsetReset,
             string name,
-            TimestampExtractor timestampExtractor,
+            ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer,
             string[] topics)
@@ -430,12 +172,13 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addSource(Topology.AutoOffsetReset offsetReset,
-                                    string name,
-                                    TimestampExtractor timestampExtractor,
-                                    Deserializer keyDeserializer,
-                                    Deserializer valDeserializer,
-                                    Pattern topicPattern)
+        public void addSource<K, V>(
+            Topology.AutoOffsetReset offsetReset,
+            string name,
+            ITimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer,
+            Pattern topicPattern)
         {
             topicPattern = topicPattern ?? throw new System.ArgumentNullException("topicPattern can't be null", nameof(topicPattern));
             name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
@@ -477,12 +220,13 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addSink(string name,
-                                         string topic,
-                                         ISerializer<K> keySerializer,
-                                         ISerializer<V> valSerializer,
-                                         StreamPartitioner<K, V> partitioner,
-                                         string[] predecessorNames)
+        public void addSink<K, V>(
+            string name,
+            string topic,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valSerializer,
+            StreamPartitioner<K, V> partitioner,
+            string[] predecessorNames)
         {
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
@@ -497,12 +241,13 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addSink(string name,
-                                         TopicNameExtractor<K, V> topicExtractor,
-                                         ISerializer<K> keySerializer,
-                                         ISerializer<V> valSerializer,
-                                         StreamPartitioner<K, V> partitioner,
-                                         string[] predecessorNames)
+        public void addSink<K, V>(
+            string name,
+            ITopicNameExtractor<K, V> topicExtractor,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valSerializer,
+            StreamPartitioner<K, V> partitioner,
+            string[] predecessorNames)
         {
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor must not be null", nameof(topicExtractor));
@@ -518,15 +263,18 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (string predecessor in predecessorNames)
             {
-                predecessor = predecessor ?? throw new System.ArgumentNullException("predecessor name can't be null", nameof(predecessor));
+                Objects.requireNonNull(predecessor, "predecessor name can't be null");
+
                 if (predecessor.Equals(name))
                 {
                     throw new TopologyException("Processor " + name + " cannot be a predecessor of itself.");
                 }
+
                 if (!nodeFactories.ContainsKey(predecessor))
                 {
                     throw new TopologyException("Predecessor processor " + predecessor + " is not.Added yet.");
                 }
+
                 if (nodeToSinkTopic.ContainsKey(predecessor))
                 {
                     throw new TopologyException("Sink " + predecessor + " cannot be used a parent.");
@@ -534,14 +282,15 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             nodeFactories.Add(name, new SinkNodeFactory<>(name, predecessorNames, topicExtractor, keySerializer, valSerializer, partitioner));
-            nodeGrouper.Add(name);
+            nodeGrouper.add(name);
             nodeGrouper.unite(name, predecessorNames);
             nodeGroups = null;
         }
 
-        public void addProcessor(string name,
-                                       ProcessorSupplier supplier,
-                                       string[] predecessorNames)
+        public void addProcessor(
+            string name,
+            IProcessorSupplier supplier,
+            string[] predecessorNames)
         {
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             supplier = supplier ?? throw new System.ArgumentNullException("supplier must not be null", nameof(supplier));
@@ -574,13 +323,13 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addStateStore(StoreBuilder<object> storeBuilder,
+        public void addStateStore(IStoreBuilder<object> storeBuilder,
                                         string[] processorNames)
         {
             addStateStore(storeBuilder, false, processorNames);
         }
 
-        public void addStateStore(StoreBuilder<object> storeBuilder,
+        public void addStateStore(IStoreBuilder<object> storeBuilder,
                                         bool allowOverride,
                                         string[] processorNames)
         {
@@ -603,14 +352,14 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void addGlobalStore(StoreBuilder storeBuilder,
+        public void addGlobalStore(IStoreBuilder storeBuilder,
                                          string sourceName,
                                          TimestampExtractor timestampExtractor,
                                          Deserializer keyDeserializer,
                                          Deserializer valueDeserializer,
                                          string topic,
                                          string processorName,
-                                         ProcessorSupplier stateUpdateSupplier)
+                                         IProcessorSupplier stateUpdateSupplier)
         {
             storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("store builder must not be null", nameof(storeBuilder));
             validateGlobalStoreArguments(sourceName,
@@ -636,10 +385,10 @@ namespace Kafka.Streams.Processor.Internals
                 keyDeserializer,
                 valueDeserializer));
             nodeToSourceTopics.Add(sourceName, Arrays.asList(topics));
-            nodeGrouper.Add(sourceName);
-            nodeFactory.AddStateStore(storeBuilder.name());
+            nodeGrouper.add(sourceName);
+            nodeFactory.addStateStore(storeBuilder.name());
             nodeFactories.Add(processorName, nodeFactory);
-            nodeGrouper.Add(processorName);
+            nodeGrouper.add(processorName);
             nodeGrouper.unite(processorName, predecessors);
             globalStateBuilders.Add(storeBuilder.name(), storeBuilder);
             connectSourceStoreAndTopic(storeBuilder.name(), topic);
@@ -703,7 +452,7 @@ namespace Kafka.Streams.Processor.Internals
         private void validateGlobalStoreArguments(string sourceName,
                                                   string topic,
                                                   string processorName,
-                                                  ProcessorSupplier stateUpdateSupplier,
+                                                  IProcessorSupplier stateUpdateSupplier,
                                                   string storeName,
                                                   bool loggingEnabled)
         {
@@ -763,7 +512,7 @@ namespace Kafka.Streams.Processor.Internals
             if (nodeFactory is ProcessorNodeFactory)
             {
                 ProcessorNodeFactory processorNodeFactory = (ProcessorNodeFactory)nodeFactory;
-                processorNodeFactory.AddStateStore(stateStoreName);
+                processorNodeFactory.addStateStore(stateStoreName);
                 connectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
             }
             else
@@ -860,11 +609,12 @@ namespace Kafka.Streams.Processor.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Dictionary<int, HashSet<string>> nodeGroups()
         {
-            if (nodeGroups == null)
+            if (_nodeGroups == null)
             {
-                nodeGroups = makeNodeGroups();
+                _nodeGroups = makeNodeGroups();
             }
-            return nodeGroups;
+
+            return _nodeGroups;
         }
 
         private Dictionary<int, HashSet<string>> makeNodeGroups()
@@ -932,9 +682,9 @@ namespace Kafka.Streams.Processor.Internals
 
                 // when topicGroupId is null, we build the full topology minus the global groups
                 HashSet<string> globalNodeGroups = globalNodeGroups();
-                Collection<Set<string>> values = nodeGroups().values();
+                Collection<HashSet<string>> values = nodeGroups().values();
                 nodeGroup = new HashSet<>();
-                foreach (Set<string> value in values)
+                foreach (HashSet<string> value in values)
                 {
                     nodeGroup.AddAll(value);
                 }
@@ -977,7 +727,7 @@ namespace Kafka.Streams.Processor.Internals
             return globalGroups;
         }
 
-        private ProcessorTopology build(Set<string> nodeGroup)
+        private ProcessorTopology build(HashSet<string> nodeGroup)
         {
             applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
@@ -1330,7 +1080,7 @@ namespace Kafka.Streams.Processor.Internals
             return resetTopicsPattern(latestResetTopics, latestResetPatterns);
         }
 
-        private Pattern resetTopicsPattern(Set<string> resetTopics,
+        private Pattern resetTopicsPattern(HashSet<string> resetTopics,
                                            HashSet<Pattern> resetPatterns)
         {
             List<string> topics = maybeDecorateInternalSourceTopics(resetTopics);
@@ -1373,10 +1123,10 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Collection<Set<string>> copartitionGroups()
+        public Collection<HashSet<string>> copartitionGroups()
         {
-            List<Set<string>> list = new List<>(copartitionSourceGroups.size());
-            foreach (Set<string> nodeNames in copartitionSourceGroups)
+            List<HashSet<string>> list = new List<>(copartitionSourceGroups.size());
+            foreach (HashSet<string> nodeNames in copartitionSourceGroups)
             {
                 HashSet<string> copartitionGroup = new HashSet<>();
                 foreach (string node in nodeNames)
@@ -1519,7 +1269,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private bool nodeGroupContainsGlobalSourceNode(Set<string> allNodesOfGroups)
+        private bool nodeGroupContainsGlobalSourceNode(HashSet<string> allNodesOfGroups)
         {
             foreach (string node in allNodesOfGroups)
             {
@@ -1603,7 +1353,7 @@ namespace Kafka.Streams.Processor.Internals
                     new HashSet<>(nodesByName.values())));
         }
 
-        public static class GlobalStore : TopologyDescription.GlobalStore
+        public static class GlobalStore : TopologyDescription.IGlobalStore
         {
 
             private Source source;
@@ -1672,615 +1422,112 @@ namespace Kafka.Streams.Processor.Internals
                 return Objects.hash(source, processor);
             }
         }
+    }
 
-        public abstract static class AbstractNode : TopologyDescription.Node
+
+    public ITopicNameExtractor topicNameExtractor()
+    {
+        if (topicNameExtractor is StaticTopicNameExtractor)
+        {
+            return null;
+        }
+        else
         {
 
-            string name;
-            HashSet<TopologyDescription.Node> predecessors = new TreeSet<>(NODE_COMPARATOR);
-            HashSet<TopologyDescription.Node> successors = new TreeSet<>(NODE_COMPARATOR);
-
-            // size of the sub-topology rooted at this node, including the node itself
-            int size;
-
-            AbstractNode(string name)
-            {
-                name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-                this.name = name;
-                this.size = 1;
-            }
-
-
-            public string name()
-            {
-                return name;
-            }
-
-
-            public HashSet<TopologyDescription.Node> predecessors()
-            {
-                return Collections.unmodifiableSet(predecessors);
-            }
-
-
-            public HashSet<TopologyDescription.Node> successors()
-            {
-                return Collections.unmodifiableSet(successors);
-            }
-
-            public void addPredecessor(TopologyDescription.Node predecessor)
-            {
-                predecessors.Add(predecessor);
-            }
-
-            public void addSuccessor(TopologyDescription.Node successor)
-            {
-                successors.Add(successor);
-            }
+            return topicNameExtractor;
         }
+    }
 
-        public static class Source : AbstractNode, TopologyDescription.Source
+
+    public void addSuccessor(TopologyDescription.Node successor)
+    {
+        throw new InvalidOperationException("Sinks don't have successors.");
+    }
+
+
+    public string ToString()
+    {
+        if (topicNameExtractor is StaticTopicNameExtractor)
         {
-
-            private HashSet<string> topics;
-            private Pattern topicPattern;
-
-            public Source(string name,
-                          HashSet<string> topics,
-                          Pattern pattern)
-                : base(name)
-            {
-                if (topics == null && pattern == null)
-                {
-                    throw new System.ArgumentException("Either topics or pattern must be not-null, but both are null.");
-                }
-                if (topics != null && pattern != null)
-                {
-                    throw new System.ArgumentException("Either topics or pattern must be null, but both are not null.");
-                }
-
-                this.topics = topics;
-                this.topicPattern = pattern;
-            }
-
-            [System.Obsolete]
-
-            public string topics()
-            {
-                return topics.ToString();
-            }
-
-
-            public HashSet<string> topicSet()
-            {
-                return topics;
-            }
-
-
-            public Pattern topicPattern()
-            {
-                return topicPattern;
-            }
-
-
-            public void addPredecessor(TopologyDescription.Node predecessor)
-            {
-                throw new InvalidOperationException("Sources don't have predecessors.");
-            }
-
-
-            public string ToString()
-            {
-                string topicsString = topics == null ? topicPattern.ToString() : topics.ToString();
-
-                return "Source: " + name + " (topics: " + topicsString + ")\n      --> " + nodeNames(successors);
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Source source = (Source)o;
-                // omit successor to avoid infinite loops
-                return name.Equals(source.name)
-                    && Objects.Equals(topics, source.topics)
-                    && (topicPattern == null ? source.topicPattern == null :
-                        topicPattern.pattern().Equals(source.topicPattern.pattern()));
-            }
-
-
-            public int GetHashCode()
-            {
-                // omit successor as it might change and alter the hash code
-                return Objects.hash(name, topics, topicPattern);
-            }
+            return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
         }
+        return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
+            + nodeNames(predecessors);
+    }
 
-        public static class Processor : AbstractNode, TopologyDescription.Processor
+
+    public bool Equals(object o)
+    {
+        if (this == o)
         {
-
-            private HashSet<string> stores;
-
-            public Processor(string name,
-                             HashSet<string> stores)
-            {
-                base(name);
-                this.stores = stores;
-            }
-
-
-            public HashSet<string> stores()
-            {
-                return Collections.unmodifiableSet(stores);
-            }
-
-
-            public string ToString()
-            {
-                return "Processor: " + name + " (stores: " + stores + ")\n      --> "
-                    + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Processor processor = (Processor)o;
-                // omit successor to avoid infinite loops
-                return name.Equals(processor.name)
-                    && stores.Equals(processor.stores)
-                    && predecessors.Equals(processor.predecessors);
-            }
-
-
-            public int GetHashCode()
-            {
-                // omit successor as it might change and alter the hash code
-                return Objects.hash(name, stores);
-            }
+            return true;
         }
-
-        public static class Sink : AbstractNode, TopologyDescription.Sink
+        if (o == null || GetType() != o.GetType())
         {
-
-            private TopicNameExtractor topicNameExtractor;
-
-            public Sink(string name,
-                        TopicNameExtractor topicNameExtractor)
-                : base(name)
-            {
-                this.topicNameExtractor = topicNameExtractor;
-            }
-
-            public Sink(string name,
-                        string topic)
-                : base(name)
-            {
-                this.topicNameExtractor = new StaticTopicNameExtractor(topic);
-            }
-
-
-            public string Topic
-            {
-                if (topicNameExtractor is StaticTopicNameExtractor)
-                {
-                    return ((StaticTopicNameExtractor)topicNameExtractor).topicName;
-                }
-                else
-                {
-
-                    return null;
-                }
-            }
-
-
-            public TopicNameExtractor topicNameExtractor()
-            {
-                if (topicNameExtractor is StaticTopicNameExtractor)
-                {
-                    return null;
-                }
-                else
-                {
-
-                    return topicNameExtractor;
-                }
-            }
-
-
-            public void addSuccessor(TopologyDescription.Node successor)
-            {
-                throw new InvalidOperationException("Sinks don't have successors.");
-            }
-
-
-            public string ToString()
-            {
-                if (topicNameExtractor is StaticTopicNameExtractor)
-                {
-                    return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
-                }
-                return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
-                    + nodeNames(predecessors);
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Sink sink = (Sink)o;
-                return name.Equals(sink.name)
-                    && topicNameExtractor.Equals(sink.topicNameExtractor)
-                    && predecessors.Equals(sink.predecessors);
-            }
-
-
-            public int GetHashCode()
-            {
-                // omit predecessors as it might change and alter the hash code
-                return Objects.hash(name, topicNameExtractor);
-            }
+            return false;
         }
 
-        public static class Subtopology : TopologyDescription.Subtopology
+        Sink sink = (Sink)o;
+        return name.Equals(sink.name)
+            && topicNameExtractor.Equals(sink.topicNameExtractor)
+            && predecessors.Equals(sink.predecessors);
+    }
+
+
+    public int GetHashCode()
+    {
+        // omit predecessors as it might change and alter the hash code
+        return Objects.hash(name, topicNameExtractor);
+    }
+}
+
+private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
+
+private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
+
+private static string nodeNames(HashSet<TopologyDescription.Node> nodes)
+{
+    StringBuilder sb = new StringBuilder();
+    if (!nodes.isEmpty())
+    {
+        foreach (TopologyDescription.Node n in nodes)
         {
-
-            private int id;
-            private HashSet<TopologyDescription.Node> nodes;
-
-            public Subtopology(int id, HashSet<TopologyDescription.Node> nodes)
-            {
-                this.id = id;
-                this.nodes = new TreeSet<>(NODE_COMPARATOR);
-                this.nodes.AddAll(nodes);
-            }
-
-
-            public int id()
-            {
-                return id;
-            }
-
-
-            public HashSet<TopologyDescription.Node> nodes()
-            {
-                return Collections.unmodifiableSet(nodes);
-            }
-
-            // visible for testing
-            IEnumerator<TopologyDescription.Node> nodesInOrder()
-            {
-                return nodes.iterator();
-            }
-
-
-            public string ToString()
-            {
-                return "Sub-topology: " + id + "\n" + nodesAsString() + "\n";
-            }
-
-            private string nodesAsString()
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (TopologyDescription.Node node in nodes)
-                {
-                    sb.Append("    ");
-                    sb.Append(node);
-                    sb.Append('\n');
-                }
-                return sb.ToString();
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Subtopology that = (Subtopology)o;
-                return id == that.id
-                    && nodes.Equals(that.nodes);
-            }
-
-
-            public int GetHashCode()
-            {
-                return Objects.hash(id, nodes);
-            }
+            sb.Append(n.name());
+            sb.Append(", ");
         }
+        sb.deleteCharAt(sb.Length - 1);
+        sb.deleteCharAt(sb.Length - 1);
+    }
+    else
+    {
 
-        public static class TopicsInfo
-        {
+        return "none";
+    }
+    return sb.ToString();
+}
 
-            HashSet<string> sinkTopics;
-            HashSet<string> sourceTopics;
-            public Dictionary<string, InternalTopicConfig> stateChangelogTopics;
-            public Dictionary<string, InternalTopicConfig> repartitionSourceTopics;
-
-            TopicsInfo(Set<string> sinkTopics,
-                       HashSet<string> sourceTopics,
-                       Dictionary<string, InternalTopicConfig> repartitionSourceTopics,
-                       Dictionary<string, InternalTopicConfig> stateChangelogTopics)
-            {
-                this.sinkTopics = sinkTopics;
-                this.sourceTopics = sourceTopics;
-                this.stateChangelogTopics = stateChangelogTopics;
-                this.repartitionSourceTopics = repartitionSourceTopics;
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (o is TopicsInfo)
-                {
-                    TopicsInfo other = (TopicsInfo)o;
-                    return other.sourceTopics.Equals(sourceTopics) && other.stateChangelogTopics.Equals(stateChangelogTopics);
-                }
-                else
-                {
-
-                    return false;
-                }
-            }
+void updateSubscribedTopics(HashSet<string> topics,
+                            string logPrefix)
+{
+    SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
+    log.LogDebug("{}found {} topics possibly matching regex", logPrefix, topics);
+    // update the topic groups with the returned subscription set for regex pattern subscriptions
+    subscriptionUpdates.updateTopics(topics);
+    updateSubscriptions(subscriptionUpdates, logPrefix);
+}
 
 
-            public int GetHashCode()
-            {
-                long n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
-                return (int)(n % 0xFFFFFFFFL);
-            }
+// following functions are for test only
+[MethodImpl(MethodImplOptions.Synchronized)]
+public HashSet<string> getSourceTopicNames()
+{
+    return sourceTopicNames;
+}
 
-
-            public string ToString()
-            {
-                return "TopicsInfo{" +
-                    "sinkTopics=" + sinkTopics +
-                    ", sourceTopics=" + sourceTopics +
-                    ", repartitionSourceTopics=" + repartitionSourceTopics +
-                    ", stateChangelogTopics=" + stateChangelogTopics +
-                    '}';
-            }
-        }
-
-        private static class GlobalStoreComparator : Comparator<TopologyDescription.GlobalStore>, Serializable
-        {
-
-
-            public int compare(TopologyDescription.GlobalStore globalStore1,
-                               TopologyDescription.GlobalStore globalStore2)
-            {
-                if (globalStore1.Equals(globalStore2))
-                {
-                    return 0;
-                }
-                return globalStore1.id() - globalStore2.id();
-            }
-        }
-
-        private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
-
-        private static class SubtopologyComparator : Comparator<TopologyDescription.Subtopology>, Serializable
-        {
-
-
-            public int compare(TopologyDescription.Subtopology subtopology1,
-                               TopologyDescription.Subtopology subtopology2)
-            {
-                if (subtopology1.Equals(subtopology2))
-                {
-                    return 0;
-                }
-                return subtopology1.id() - subtopology2.id();
-            }
-        }
-
-        private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
-
-        public static class TopologyDescription : TopologyDescription
-        {
-
-            private TreeSet<TopologyDescription.Subtopology> subtopologies = new TreeSet<>(SUBTOPOLOGY_COMPARATOR);
-            private TreeSet<TopologyDescription.GlobalStore> globalStores = new TreeSet<>(GLOBALSTORE_COMPARATOR);
-
-            public void addSubtopology(TopologyDescription.Subtopology subtopology)
-            {
-                subtopologies.Add(subtopology);
-            }
-
-            public void addGlobalStore(TopologyDescription.GlobalStore globalStore)
-            {
-                globalStores.Add(globalStore);
-            }
-
-
-            public HashSet<TopologyDescription.Subtopology> subtopologies()
-            {
-                return Collections.unmodifiableSet(subtopologies);
-            }
-
-
-            public HashSet<TopologyDescription.GlobalStore> globalStores()
-            {
-                return Collections.unmodifiableSet(globalStores);
-            }
-
-
-            public string ToString()
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.Append("Topologies:\n ");
-                TopologyDescription.Subtopology[] sortedSubtopologies =
-                    subtopologies.descendingSet().toArray(new Subtopology[0]);
-                TopologyDescription.GlobalStore[] sortedGlobalStores =
-                    globalStores.descendingSet().toArray(new GlobalStore[0]);
-                int expectedId = 0;
-                int subtopologiesIndex = sortedSubtopologies.Length - 1;
-                int globalStoresIndex = sortedGlobalStores.Length - 1;
-                while (subtopologiesIndex != -1 && globalStoresIndex != -1)
-                {
-                    sb.Append("  ");
-                    TopologyDescription.Subtopology subtopology = sortedSubtopologies[subtopologiesIndex];
-                    TopologyDescription.GlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
-                    if (subtopology.id() == expectedId)
-                    {
-                        sb.Append(subtopology);
-                        subtopologiesIndex--;
-                    }
-                    else
-                    {
-
-                        sb.Append(globalStore);
-                        globalStoresIndex--;
-                    }
-                    expectedId++;
-                }
-                while (subtopologiesIndex != -1)
-                {
-                    TopologyDescription.Subtopology subtopology = sortedSubtopologies[subtopologiesIndex];
-                    sb.Append("  ");
-                    sb.Append(subtopology);
-                    subtopologiesIndex--;
-                }
-                while (globalStoresIndex != -1)
-                {
-                    TopologyDescription.GlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
-                    sb.Append("  ");
-                    sb.Append(globalStore);
-                    globalStoresIndex--;
-                }
-                return sb.ToString();
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                TopologyDescription that = (TopologyDescription)o;
-                return subtopologies.Equals(that.subtopologies)
-                    && globalStores.Equals(that.globalStores);
-            }
-
-
-            public int GetHashCode()
-            {
-                return Objects.hash(subtopologies, globalStores);
-            }
-
-        }
-
-        private static string nodeNames(Set<TopologyDescription.Node> nodes)
-        {
-            StringBuilder sb = new StringBuilder();
-            if (!nodes.isEmpty())
-            {
-                foreach (TopologyDescription.Node n in nodes)
-                {
-                    sb.Append(n.name());
-                    sb.Append(", ");
-                }
-                sb.deleteCharAt(sb.Length - 1);
-                sb.deleteCharAt(sb.Length - 1);
-            }
-            else
-            {
-
-                return "none";
-            }
-            return sb.ToString();
-        }
-
-        /**
-         * Used to capture subscribed topic via Patterns discovered during the
-         * partition assignment process.
-         */
-        public static class SubscriptionUpdates
-        {
-
-
-            private HashSet<string> updatedTopicSubscriptions = new HashSet<>();
-
-            private void updateTopics(Collection<string> topicNames)
-            {
-                updatedTopicSubscriptions.clear();
-                updatedTopicSubscriptions.AddAll(topicNames);
-            }
-
-            public Collection<string> getUpdates()
-            {
-                return Collections.unmodifiableSet(updatedTopicSubscriptions);
-            }
-
-            bool hasUpdates()
-            {
-                return !updatedTopicSubscriptions.isEmpty();
-            }
-
-
-            public string ToString()
-            {
-                return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", updatedTopicSubscriptions);
-            }
-        }
-
-        void updateSubscribedTopics(Set<string> topics,
-                                    string logPrefix)
-        {
-            SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
-            log.LogDebug("{}found {} topics possibly matching regex", logPrefix, topics);
-            // update the topic groups with the returned subscription set for regex pattern subscriptions
-            subscriptionUpdates.updateTopics(topics);
-            updateSubscriptions(subscriptionUpdates, logPrefix);
-        }
-
-
-        // following functions are for test only
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public HashSet<string> getSourceTopicNames()
-        {
-            return sourceTopicNames;
-        }
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public Dictionary<string, StateStoreFactory> getStateStores()
-        {
-            return stateFactories;
-        }
+[MethodImpl(MethodImplOptions.Synchronized)]
+public Dictionary<string, StateStoreFactory> getStateStores()
+{
+    return stateFactories;
+}
     }
 }

@@ -182,7 +182,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private StoreBuilder<TimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
+        private IStoreBuilder<TimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
             IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier();
             if (supplier == null)
@@ -235,7 +235,7 @@ namespace Kafka.Streams.KStream.Internals
                         true);
                 }
             }
-            StoreBuilder<TimestampedWindowStore<K, VR>> builder = Stores.timestampedWindowStoreBuilder(
+            IStoreBuilder<TimestampedWindowStore<K, VR>> builder = Stores.timestampedWindowStoreBuilder(
                supplier,
                materialized.keySerde(),
                materialized.valueSerde()

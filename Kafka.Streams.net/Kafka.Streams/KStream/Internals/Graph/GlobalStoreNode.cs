@@ -39,15 +39,15 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private string topic;
         private ConsumedInternal consumed;
         private string processorName;
-        private ProcessorSupplier stateUpdateSupplier;
+        private IProcessorSupplier stateUpdateSupplier;
 
 
-        public GlobalStoreNode(StoreBuilder<IKeyValueStore> storeBuilder,
+        public GlobalStoreNode(IStoreBuilder<IKeyValueStore> storeBuilder,
                                 string sourceName,
                                 string topic,
                                 ConsumedInternal consumed,
                                 string processorName,
-                                ProcessorSupplier stateUpdateSupplier)
+                                IProcessorSupplier stateUpdateSupplier)
             : base(storeBuilder)
         {
 

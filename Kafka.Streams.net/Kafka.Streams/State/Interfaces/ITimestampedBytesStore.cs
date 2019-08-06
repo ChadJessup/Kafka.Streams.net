@@ -1,9 +1,11 @@
 
-namespace Kafka.Streams.State
+using Kafka.Streams.KStream.Internals;
+
+namespace Kafka.Streams.State.Interfaces
 {
-    public interface TimestampedBytesStore
+    public interface ITimestampedBytesStore
     {
-        static byte[] convertToTimestampedFormat(byte[] plainValue)
+        byte[] convertToTimestampedFormat(byte[] plainValue)
         {
             if (plainValue == null)
             {

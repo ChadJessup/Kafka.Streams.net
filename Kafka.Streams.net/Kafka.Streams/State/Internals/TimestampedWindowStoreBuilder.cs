@@ -35,7 +35,7 @@ namespace Kafka.Streams.State.Internals
         public override TimestampedWindowStore<K, V> build()
         {
             IWindowStore<Bytes, byte[]> store = storeSupplier[];
-            if (!(store is TimestampedBytesStore))
+            if (!(store is ITimestampedBytesStore))
             {
                 if (store.persistent())
                 {
@@ -83,7 +83,7 @@ namespace Kafka.Streams.State.Internals
 
 
         private static class InMemoryTimestampedWindowStoreMarker
-        : IWindowStore<Bytes, byte[]>, TimestampedBytesStore
+        : IWindowStore<Bytes, byte[]>, ITimestampedBytesStore
         {
 
             private IWindowStore<Bytes, byte[]> wrapped;

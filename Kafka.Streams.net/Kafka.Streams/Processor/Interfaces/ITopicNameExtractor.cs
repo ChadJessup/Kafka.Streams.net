@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,10 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-namespace Kafka.Streams.KStream.Internals.Graph
+namespace Kafka.Streams.Processor.Interfaces
 {
-    internal class Pattern
+    /**
+     * An interface that allows to dynamically determine the name of the Kafka topic to send at the sink node of the topology.
+     */
+    public interface ITopicNameExtractor<K, V>
     {
+        /**
+         * Extracts the topic name to send to. The topic name must already exist, since the Kafka Streams library will not
+         * try to automatically create the topic with the extracted name.
+         *
+         * @param key           the record key
+         * @param value         the record value
+         * @param recordContext current context metadata of the record
+         * @return              the topic name this record should be sent to
+         */
+        string extract(K key, V value, RecordContext recordContext);
     }
 }

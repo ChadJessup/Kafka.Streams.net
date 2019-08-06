@@ -14,69 +14,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
 
-
-using Kafka.Common.annotation.InterfaceStability;
-
-/**
- * Retrieves embedded metadata timestamps from Kafka messages.
- * If a record has a negative (invalid) timestamp value, an error handler method is called.
- * <p>
- * Embedded metadata timestamp was introduced in "KIP-32: Add timestamps to Kafka message" for the new
- * 0.10+ Kafka message format.
- * <p>
- * Here, "embedded metadata" refers to the fact that compatible Kafka producer clients automatically and
- * transparently embed such timestamps into message metadata they send to Kafka, which can then be retrieved
- * via this timestamp extractor.
- * <p>
- * If the embedded metadata timestamp represents <i>CreateTime</i> (cf. Kafka broker setting
- * {@code message.timestamp.type} and Kafka topic setting {@code log.message.timestamp.type}),
- * this extractor effectively provides <i>event-time</i> semantics.
- * If <i>LogAppendTime</i> is used as broker/topic setting to define the embedded metadata timestamps,
- * using this extractor effectively provides <i>ingestion-time</i> semantics.
- * <p>
- * If you need <i>processing-time</i> semantics, use {@link WallclockTimestampExtractor}.
- *
- * @see FailOnInvalidTimestamp
- * @see LogAndSkipOnInvalidTimestamp
- * @see UsePreviousTimeOnInvalidTimestamp
- * @see WallclockTimestampExtractor
- */
-
-abstract class ExtractRecordMetadataTimestamp : TimestampExtractor
+namespace Kafka.Streams.Processor
 {
-
-
     /**
-     * Extracts the embedded metadata timestamp from the given {@link ConsumeResult}.
+     * Retrieves embedded metadata timestamps from Kafka messages.
+     * If a record has a negative (invalid) timestamp value, an error handler method is called.
+     * <p>
+     * Embedded metadata timestamp was introduced in "KIP-32: Add timestamps to Kafka message" for the new
+     * 0.10+ Kafka message format.
+     * <p>
+     * Here, "embedded metadata" refers to the fact that compatible Kafka producer clients automatically and
+     * transparently embed such timestamps into message metadata they send to Kafka, which can then be retrieved
+     * via this timestamp extractor.
+     * <p>
+     * If the embedded metadata timestamp represents <i>CreateTime</i> (cf. Kafka broker setting
+     * {@code message.timestamp.type} and Kafka topic setting {@code log.message.timestamp.type}),
+     * this extractor effectively provides <i>event-time</i> semantics.
+     * If <i>LogAppendTime</i> is used as broker/topic setting to define the embedded metadata timestamps,
+     * using this extractor effectively provides <i>ingestion-time</i> semantics.
+     * <p>
+     * If you need <i>processing-time</i> semantics, use {@link WallclockTimestampExtractor}.
      *
-     * @param record a data record
-     * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
-     * @return the embedded metadata timestamp of the given {@link ConsumeResult}
+     * @see FailOnInvalidTimestamp
+     * @see LogAndSkipOnInvalidTimestamp
+     * @see UsePreviousTimeOnInvalidTimestamp
+     * @see WallclockTimestampExtractor
      */
+    public abstract class ExtractRecordMetadataTimestamp : ITimestampExtractor
+    {
+        /**
+         * Extracts the embedded metadata timestamp from the given {@link ConsumeResult}.
+         *
+         * @param record a data record
+         * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
+         * @return the embedded metadata timestamp of the given {@link ConsumeResult}
+         */
 
-    public long extract(ConsumeResult<object, object> record, long partitionTime)
-{
-        long timestamp = record.timestamp();
+        public long Extract(ConsumeResult<object, object> record, long partitionTime)
+        {
+            long timestamp = record.Timestamp.UnixTimestampMs;
 
-        if (timestamp < 0)
-{
-            return onInvalidTimestamp(record, timestamp, partitionTime);
+            if (timestamp < 0)
+            {
+                return onInvalidTimestamp(record, timestamp, partitionTime);
+            }
+
+            return timestamp;
         }
 
-        return timestamp;
+        /**
+         * Called if no valid timestamp is embedded in the record meta data.
+         *
+         * @param record a data record
+         * @param recordTimestamp the timestamp extractor from the record
+         * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
+         * @return a new timestamp for the record (if negative, record will not be processed but dropped silently)
+         */
+        public abstract long onInvalidTimestamp(ConsumeResult<object, object> record,
+                                                long recordTimestamp,
+                                                long partitionTime);
     }
-
-    /**
-     * Called if no valid timestamp is embedded in the record meta data.
-     *
-     * @param record a data record
-     * @param recordTimestamp the timestamp extractor from the record
-     * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
-     * @return a new timestamp for the record (if negative, record will not be processed but dropped silently)
-     */
-    public abstract long onInvalidTimestamp(ConsumeResult<object, object> record,
-                                            long recordTimestamp,
-                                            long partitionTime);
 }

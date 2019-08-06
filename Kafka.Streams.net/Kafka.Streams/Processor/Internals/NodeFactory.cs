@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
 
+namespace Kafka.Streams.Processor.Internals
+{
+    public abstract class NodeFactory<K, V>
+    {
+        public string name { get; }
+        public string[] predecessors { get; }
 
+        public NodeFactory(
+            string name,
+            string[] predecessors)
+        {
+            this.name = name;
+            this.predecessors = predecessors;
+        }
 
-/**
- * A processor supplier that can create one or more {@link Processor} instances.
- *
- * It is used in {@link Topology} for.Adding new processor operators, whose generated
- * topology can then be replicated (and thus creating one or more {@link Processor} instances)
- * and distributed to multiple stream threads.
- *
- * @param the type of keys
- * @param the type of values
- */
-public interface ProcessorSupplier<K, V> {
+        public abstract ProcessorNode<K, V> build();
 
-    /**
-     * Return a new {@link Processor} instance.
-     *
-     * @return  a new {@link Processor} instance
-     */
-    Processor<K, V> get();
+        public abstract AbstractNode<K, V> describe();
+    }
 }

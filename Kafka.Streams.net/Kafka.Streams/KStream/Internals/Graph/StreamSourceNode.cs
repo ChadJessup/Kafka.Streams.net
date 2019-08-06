@@ -21,24 +21,11 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-
-
     public class StreamSourceNode<K, V> : StreamsGraphNode
     {
-
-
         private Collection<string> topicNames;
         private Pattern topicPattern;
         private ConsumedInternal<K, V> consumedInternal;
-
 
         public StreamSourceNode(string nodeName,
                                  Collection<string> topicNames,
@@ -61,33 +48,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.consumedInternal = consumedInternal;
         }
 
-        public Collection<string> getTopicNames()
+        public List<string> getTopicNames()
         {
             return new List<string>(topicNames);
         }
 
-        public Pattern topicPattern()
-        {
-            return topicPattern;
-        }
-
-        public ConsumedInternal<K, V> consumedInternal()
-        {
-            return consumedInternal;
-        }
-
-        public ISerde<K> keySerde()
-        {
-            return consumedInternal.keySerde();
-        }
-
-        public ISerde<V> valueSerde()
-        {
-            return consumedInternal.valueSerde();
-        }
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "StreamSourceNode{" +
                    "topicNames=" + topicNames +
@@ -97,13 +63,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
 
             if (topicPattern != null)
             {
-                topologyBuilder.AddSource(consumedInternal.offsetResetPolicy(),
-                                          nodeName(),
+                topologyBuilder.addSource(consumedInternal.offsetResetPolicy(),
+                                          nodeName,
                                           consumedInternal.timestampExtractor(),
                                           consumedInternal.keyDeserializer(),
                                           consumedInternal.valueDeserializer(),

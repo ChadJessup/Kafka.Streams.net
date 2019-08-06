@@ -31,19 +31,18 @@ namespace Kafka.Streams.KStream
      */
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
     {
-
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
+        public ISerde<K> keySerde { get; }
+        public ISerde<V> valueSerde { get; }
         protected ITimestampExtractor timestampExtractor;
         protected Topology.AutoOffsetReset resetPolicy;
         protected string processorName;
 
-        private Consumed(ISerde<K> keySerde,
-                         ISerde<V> valueSerde,
-                         ITimestampExtractor timestampExtractor,
-                         Topology.AutoOffsetReset resetPolicy,
-                         string processorName)
-
+        private Consumed(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            ITimestampExtractor timestampExtractor,
+            Topology.AutoOffsetReset resetPolicy,
+            string processorName)
         {
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
@@ -61,9 +60,7 @@ namespace Kafka.Streams.KStream
                  consumed.valueSerde,
                  consumed.timestampExtractor,
                  consumed.resetPolicy,
-                 consumed.processorName
-            )
-
+                 consumed.processorName)
         {
         }
 
@@ -99,7 +96,6 @@ namespace Kafka.Streams.KStream
         public static Consumed<K, V> with(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
-
         {
             return new Consumed<K, V>(keySerde, valueSerde, null, Topology.AutoOffsetReset.UNKNOWN, null);
         }
@@ -113,7 +109,6 @@ namespace Kafka.Streams.KStream
          * @return a new instance of {@link Consumed}
          */
         public static Consumed<K, V> with(ITimestampExtractor timestampExtractor)
-
         {
             return new Consumed<K, V>(null, null, timestampExtractor, Topology.AutoOffsetReset.UNKNOWN, null);
         }
@@ -127,7 +122,6 @@ namespace Kafka.Streams.KStream
          * @return a new instance of {@link Consumed}
          */
         public static Consumed<K, V> with(Topology.AutoOffsetReset resetPolicy)
-
         {
             return new Consumed<K, V>(null, null, null, resetPolicy, null);
         }
@@ -141,7 +135,6 @@ namespace Kafka.Streams.KStream
          * @return a new instance of {@link Consumed}
          */
         public static Consumed<K, V> As(string processorName)
-
         {
             return new Consumed<K, V>(null, null, null, Topology.AutoOffsetReset.UNKNOWN, processorName);
         }
@@ -209,21 +202,21 @@ namespace Kafka.Streams.KStream
         public override bool Equals(object o)
         {
             if (this == o)
-
             {
                 return true;
             }
-            if (o == null || this.GetType() != o.GetType())
 
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }
 
             var consumed = (Consumed<K, V>)o;
-            return object.Equals(keySerde, consumed.keySerde) &&
-                   object.Equals(valueSerde, consumed.valueSerde) &&
-                   object.Equals(timestampExtractor, consumed.timestampExtractor) &&
-                   resetPolicy == consumed.resetPolicy;
+
+            return object.Equals(keySerde, consumed.keySerde)
+                && object.Equals(valueSerde, consumed.valueSerde)
+                && object.Equals(timestampExtractor, consumed.timestampExtractor)
+                && resetPolicy == consumed.resetPolicy;
         }
 
         public override int GetHashCode()
@@ -231,5 +224,4 @@ namespace Kafka.Streams.KStream
             return (keySerde, valueSerde, timestampExtractor, resetPolicy).GetHashCode();
         }
     }
-
 }
