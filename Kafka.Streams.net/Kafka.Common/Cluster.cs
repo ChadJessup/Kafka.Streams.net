@@ -174,7 +174,7 @@ namespace Kafka.Common
             return new Cluster(
                 clusterResource.clusterId(),
                 this.nodes,
-                combinedPartitions.values(),
+                combinedPartitions.Values,
                 new Dictionary<TopicPartition, PartitionInfo>(this.unauthorizedTopics),
                 new Dictionary<TopicPartition, PartitionInfo>(this.invalidTopics),
                 new Dictionary<TopicPartition, PartitionInfo>(this.internalTopics), this.controller);
@@ -287,7 +287,7 @@ namespace Kafka.Common
         public override string ToString()
         {
             return "Cluster(id = " + clusterResource.clusterId() + ", nodes = " + this.nodes +
-                ", partitions = " + this.partitionsByTopicPartition.values() + ", controller = " + controller + ")";
+                ", partitions = " + this.partitionsByTopicPartition.Values + ", controller = " + controller + ")";
         }
 
         public override bool Equals(object o)

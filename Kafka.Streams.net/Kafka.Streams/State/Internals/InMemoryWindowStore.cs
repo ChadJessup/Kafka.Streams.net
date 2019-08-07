@@ -152,7 +152,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             return registerNewWindowStoreIterator(
-                key, segmentMap.subMap(minTime, true, timeTo, true).entrySet().iterator());
+                key, segmentMap.subMap(minTime, true, timeTo, true).iterator());
         }
 
         [System.Obsolete]
@@ -183,7 +183,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             return registerNewWindowedKeyValueIterator(
-                from, to, segmentMap.subMap(minTime, true, timeTo, true).entrySet().iterator());
+                from, to, segmentMap.subMap(minTime, true, timeTo, true).iterator());
         }
 
         [System.Obsolete]
@@ -200,7 +200,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             return registerNewWindowedKeyValueIterator(
-                null, null, segmentMap.subMap(minTime, true, timeTo, true).entrySet().iterator());
+                null, null, segmentMap.subMap(minTime, true, timeTo, true).iterator());
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
@@ -210,7 +210,7 @@ namespace Kafka.Streams.State.Internals
             long minTime = observedStreamTime - retentionPeriod;
 
             return registerNewWindowedKeyValueIterator(
-                null, null, segmentMap.tailMap(minTime, false).entrySet().iterator());
+                null, null, segmentMap.tailMap(minTime, false).iterator());
         }
 
         public override bool persistent()
@@ -416,11 +416,11 @@ namespace Kafka.Streams.State.Internals
 
                 if (allKeys)
                 {
-                    return currentSegment.Value.entrySet().iterator();
+                    return currentSegment.Value.iterator();
                 }
                 else
                 {
-                    return currentSegment.Value.subMap(keyFrom, true, keyTo, true).entrySet().iterator();
+                    return currentSegment.Value.subMap(keyFrom, true, keyTo, true).iterator();
                 }
             }
 

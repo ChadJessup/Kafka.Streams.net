@@ -15,8 +15,11 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
+using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
 {
@@ -39,9 +42,7 @@ namespace Kafka.Streams.KStream
             this.inner = inner;
         }
 
-
-
-        public void configure(Map<string, object> configs, bool isKey)
+        public void configure(Dictionary<string, object> configs, bool isKey)
         {
             if (inner == null)
             {
@@ -49,17 +50,16 @@ namespace Kafka.Streams.KStream
                 string value = (string)configs[propertyName];
                 try
                 {
-
-                    inner = Utils.newInstance(value, Serde).Serializer();
-                    inner.configure(configs, isKey);
+//                    inner = Utils.newInstance(value, ISerde).Serializer();
+//                    inner.Configure(configs, isKey);
                 }
-                catch (ClassNotFoundException e)
+                catch (System.TypeAccessException e)
                 {
-                    throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
+                    //throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
+                    throw new Exception($"{propertyName}, {value}, Serde {value} could not be found.");
                 }
             }
         }
-
 
         public byte[] serialize(string topic, Windowed<T> data)
         {
@@ -94,6 +94,11 @@ namespace Kafka.Streams.KStream
         ISerializer<T> innerSerializer()
         {
             return inner;
+        }
+
+        public byte[] Serialize(Windowed<T> data, SerializationContext context)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

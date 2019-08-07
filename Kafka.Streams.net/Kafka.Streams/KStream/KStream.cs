@@ -2883,7 +2883,7 @@ public interface KStream<K, V> {
      * @see #leftJoin(KTable, ValueJoiner)
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, VR> join( KTable<K, VT> table,
+    KStream<K, VR> join( IKTable<K, VT> table,
                                   ValueJoiner<V, VT, VR> joiner);
 
     /**
@@ -2960,7 +2960,7 @@ public interface KStream<K, V> {
      * @see #leftJoin(KTable, ValueJoiner, Joined)
      * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, VR> join( KTable<K, VT> table,
+    KStream<K, VR> join( IKTable<K, VT> table,
                                   ValueJoiner<V, VT, VR> joiner,
                                   Joined<K, V, VT> joined);
 
@@ -3039,7 +3039,7 @@ public interface KStream<K, V> {
      * @see #join(KTable, ValueJoiner)
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, VR> leftJoin( KTable<K, VT> table,
+    KStream<K, VR> leftJoin( IKTable<K, VT> table,
                                       ValueJoiner<V, VT, VR> joiner);
 
     /**
@@ -3119,7 +3119,7 @@ public interface KStream<K, V> {
      * @see #join(KTable, ValueJoiner, Joined)
      * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
      */
-    KStream<K, VR> leftJoin( KTable<K, VT> table,
+    KStream<K, VR> leftJoin( IKTable<K, VT> table,
                                       ValueJoiner<V, VT, VR> joiner,
                                       Joined<K, V, VT> joined);
 

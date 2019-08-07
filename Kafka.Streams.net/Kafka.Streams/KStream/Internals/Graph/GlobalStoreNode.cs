@@ -18,23 +18,11 @@
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-    public class GlobalStoreNode : StateStoreNode
+    public class GlobalStoreNode<K, V> : StateStoreNode
     {
-
-
-
         private string sourceName;
         private string topic;
         private ConsumedInternal consumed;

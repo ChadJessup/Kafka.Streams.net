@@ -11,7 +11,6 @@ namespace Kafka.Streams.Processor.Interfaces
      */
     public interface IProcessorContext<K, V>
     {
-
         /**
          * Returns the application id
          *
@@ -52,7 +51,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return StreamsMetrics
          */
-        IStreamsMetrics metrics();
+        IStreamsMetrics metrics { get; }
 
         /**
          * Registers and possibly restores the specified storage engine.
@@ -149,7 +148,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the topic name
          */
-        string Topic;
+        string Topic { get; }
 
         /**
          * Returns the partition id of the current input record; could be -1 if it is not

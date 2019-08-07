@@ -196,7 +196,7 @@ namespace Kafka.Streams.State.Internals
         public long size()
         {
             long size = 0;
-            foreach (NamedCache cache in caches.values())
+            foreach (NamedCache cache in caches.Values)
             {
                 size += cache.size();
                 if (isOverflowing(size))
@@ -215,7 +215,7 @@ namespace Kafka.Streams.State.Internals
         long sizeBytes()
         {
             long sizeInBytes = 0;
-            foreach (NamedCache namedCache in caches.values())
+            foreach (NamedCache namedCache in caches.Values)
             {
                 sizeInBytes += namedCache.sizeInBytes();
                 if (isOverflowing(sizeInBytes))

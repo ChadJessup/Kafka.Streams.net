@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -311,7 +312,7 @@ namespace Kafka.Common.Metrics
                 StringBuilder b = new StringBuilder();
                 //b.Append("<table=\"data-table\"><tbody>\n");
 
-                //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes.entrySet())
+                //foreach (Entry<string, Dictionary<string, string>> e in beansAndAttributes)
                 //{
                 //    //    b.Append("<tr>\n");
                 //    //    b.Append("<td colspan=3=\"mbeanName\" style=\"background-color:#ccc; font-weight: bold;\">");
@@ -325,7 +326,7 @@ namespace Kafka.Common.Metrics
                 //    //    b.Append("<th>Description</th>\n");
                 //    //    b.Append("</tr>\n");
 
-                //    //    foreach (Entry<string, string> e2 in e.Value.entrySet())
+                //    //    foreach (Entry<string, string> e2 in e.Value)
                 //    {
                 //        //        b.Append("<tr>\n");
                 //        //        b.Append("<td></td>");
@@ -380,7 +381,7 @@ namespace Kafka.Common.Metrics
          */
         public Sensor sensor(string name, RecordingLevel recordingLevel)
         {
-            return sensor(name, null, recordingLevel, new List<Sensor>());
+            return sensor(name, null, recordingLevel);
         }
 
         /**
@@ -390,7 +391,7 @@ namespace Kafka.Common.Metrics
          * @param parents The parent sensors
          * @return The sensor that is created
          */
-        public Sensor sensor(string name, List<Sensor> parents)
+        public Sensor sensor(string name, params Sensor[] parents)
         {
             return this.sensor(name, RecordingLevel.INFO, parents);
         }
@@ -403,7 +404,7 @@ namespace Kafka.Common.Metrics
          * @param recordingLevel The recording level.
          * @return The sensor that is created
          */
-        public Sensor sensor(string name, RecordingLevel recordingLevel, List<Sensor> parents)
+        public Sensor sensor(string name, RecordingLevel recordingLevel, params Sensor[] parents)
         {
             return sensor(name, null, recordingLevel, parents);
         }
@@ -417,7 +418,7 @@ namespace Kafka.Common.Metrics
          * @return The sensor that is created
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Sensor sensor(string name, MetricConfig config, List<Sensor> parents)
+        public Sensor sensor(string name, MetricConfig config, params Sensor[] parents)
         {
             return this.sensor(name, config, RecordingLevel.INFO, parents);
         }
@@ -433,7 +434,7 @@ namespace Kafka.Common.Metrics
          * @return The sensor that is created
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Sensor sensor(string name, MetricConfig config, RecordingLevel recordingLevel, List<Sensor> parents)
+        public Sensor sensor(string name, MetricConfig config, RecordingLevel recordingLevel, params Sensor[] parents)
         {
             return sensor(name, config, long.MaxValue, recordingLevel, parents);
         }
@@ -450,12 +451,12 @@ namespace Kafka.Common.Metrics
          * @return The sensor that is created
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, RecordingLevel recordingLevel, List<Sensor> parents)
+        public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, RecordingLevel recordingLevel, params Sensor[] parents)
         {
             Sensor s = getSensor(name);
             if (s == null)
             {
-                s = new Sensor(this, name, parents, config ?? this.config, time, inactiveSensorExpirationTimeSeconds, recordingLevel);
+                s = new Sensor(this, name, parents.ToList(), config ?? this.config, time, inactiveSensorExpirationTimeSeconds, recordingLevel);
                 this.sensors.TryAdd(name, s);
                 if (parents != null)
                 {
@@ -489,7 +490,7 @@ namespace Kafka.Common.Metrics
          * @return The sensor that is created
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, List<Sensor> parents)
+        public Sensor sensor(string name, MetricConfig config, long inactiveSensorExpirationTimeSeconds, params Sensor[] parents)
         {
             return this.sensor(name, config, inactiveSensorExpirationTimeSeconds, RecordingLevel.INFO, parents);
         }

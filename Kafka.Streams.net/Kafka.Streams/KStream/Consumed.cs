@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
@@ -31,8 +32,8 @@ namespace Kafka.Streams.KStream
      */
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
     {
-        public ISerde<K> keySerde { get; }
-        public ISerde<V> valueSerde { get; }
+        public ISerde<K> keySerde { get; private set; }
+        public ISerde<V> valueSerde { get; private set; }
         protected ITimestampExtractor timestampExtractor;
         protected Topology.AutoOffsetReset resetPolicy;
         protected string processorName;
@@ -193,7 +194,7 @@ namespace Kafka.Streams.KStream
          * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
          * @return this
          */
-        public Consumed<K, V> WithName(string processorName)
+        public Consumed<K, V> withName(string processorName)
         {
             this.processorName = processorName;
             return this;

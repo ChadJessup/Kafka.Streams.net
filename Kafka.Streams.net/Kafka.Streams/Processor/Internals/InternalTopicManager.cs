@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processor.Internals
                 StreamsConfig.REPLICATION_FACTOR_CONFIG, replicationFactor,
                 StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, windowChangeLogAdditionalRetention);
 
-            foreach (KeyValuePair<string, object> entry in streamsConfig.originalsWithPrefix(StreamsConfig.TOPIC_PREFIX).entrySet())
+            foreach (KeyValuePair<string, object> entry in streamsConfig.originalsWithPrefix(StreamsConfig.TOPIC_PREFIX))
             {
                 if (entry.Value != null)
                 {
@@ -89,7 +89,7 @@ namespace Kafka.Streams.Processor.Internals
             // have existed with the expected number of partitions, or some create topic returns fatal errors.
 
             int remainingRetries = retries;
-            HashSet<string> topicsNotReady = new HashSet<>(topics.keySet());
+            HashSet<string> topicsNotReady = new HashSet<>(topics.Keys);
 
             while (!topicsNotReady.isEmpty() && remainingRetries >= 0)
             {
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Processor.Internals
 
                     CreateTopicsResult createTopicsResult = adminClient.createTopics(newTopics);
 
-                    foreach (KeyValuePair<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.values().entrySet())
+                    foreach (KeyValuePair<string, KafkaFuture<Void>> createTopicResult in createTopicsResult.Values)
                     {
                         string topicName = createTopicResult.Key;
                         try
@@ -188,10 +188,10 @@ namespace Kafka.Streams.Processor.Internals
             log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
 
             DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(topics);
-            Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.values();
+            Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.Values;
 
             Dictionary<string, int> existedTopicPartition = new HashMap<>();
-            foreach (KeyValuePair<string, KafkaFuture<TopicDescription>> topicFuture in futures.entrySet())
+            foreach (KeyValuePair<string, KafkaFuture<TopicDescription>> topicFuture in futures)
             {
                 string topicName = topicFuture.Key;
                 try
@@ -241,7 +241,7 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, int> existedTopicPartition = getNumPartitions(topicsToValidate);
 
             HashSet<string> topicsToCreate = new HashSet<>();
-            foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap.entrySet())
+            foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap)
             {
                 string topicName = entry.Key;
                 int numberOfPartitions = entry.Value.numberOfPartitions();

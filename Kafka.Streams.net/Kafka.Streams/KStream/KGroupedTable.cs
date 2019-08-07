@@ -84,7 +84,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized);
+    IKTable<K, long> count( Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized);
 
     /**
      * Count number of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper) mapped} to
@@ -112,7 +112,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
      * represent the latest (rolling) count (i.e., number of records) for each key
      */
-    KTable<K, long> count();
+    IKTable<K, long> count();
 
     /**
      * Combine the value of records of the original {@link KTable} that got {@link KTable#groupBy(KeyValueMapper)
@@ -184,7 +184,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    KTable<K, V> reduce( Reducer<V>.Adder,
+    IKTable<K, V> reduce( Reducer<V>.Adder,
                          Reducer<V> subtractor,
                          Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
     /**
@@ -242,7 +242,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    KTable<K, V> reduce( Reducer<V>.Adder,
+    IKTable<K, V> reduce( Reducer<V>.Adder,
                          Reducer<V> subtractor);
 
     /**
@@ -326,7 +326,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    KTable<K, VR> aggregate( Initializer<VR> initializer,
+    IKTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<K, V, VR>.Adder,
                                   Aggregator<K, V, VR> subtractor,
                                   Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -399,7 +399,7 @@ public interface KGroupedTable<K, V> {
      * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
      * latest (rolling) aggregate for each key
      */
-    KTable<K, VR> aggregate( Initializer<VR> initializer,
+    IKTable<K, VR> aggregate( Initializer<VR> initializer,
                                   Aggregator<K, V, VR>.Adder,
                                   Aggregator<K, V, VR> subtractor);
 

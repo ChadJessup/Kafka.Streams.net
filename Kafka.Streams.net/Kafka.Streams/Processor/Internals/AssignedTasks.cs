@@ -57,9 +57,9 @@ namespace Kafka.Streams.Processor.Internals
         {
             if (!created.isEmpty())
             {
-                log.LogDebug("Initializing {}s {}", taskTypeName, created.keySet());
+                log.LogDebug("Initializing {}s {}", taskTypeName, created.Keys);
             }
-            for (IEnumerator<KeyValuePair<TaskId, T>> it = created.entrySet().iterator(); it.hasNext();)
+            for (IEnumerator<KeyValuePair<TaskId, T>> it = created.iterator(); it.hasNext();)
             {
                 KeyValuePair<TaskId, T> entry = it.next();
                 try
@@ -92,18 +92,18 @@ namespace Kafka.Streams.Processor.Internals
 
         Collection<T> running()
         {
-            return running.values();
+            return running.Values;
         }
 
         RuntimeException suspend()
         {
             AtomicReference<RuntimeException> firstException = new AtomicReference<>(null);
             log.LogTrace("Suspending running {} {}", taskTypeName, runningTaskIds());
-            firstException.compareAndSet(null, suspendTasks(running.values()));
-            log.LogTrace("Close created {} {}", taskTypeName, created.keySet());
-            firstException.compareAndSet(null, closeNonRunningTasks(created.values()));
+            firstException.compareAndSet(null, suspendTasks(running.Values));
+            log.LogTrace("Close created {} {}", taskTypeName, created.Keys);
+            firstException.compareAndSet(null, closeNonRunningTasks(created.Values));
             previousActiveTasks.clear();
-            previousActiveTasks.AddAll(running.keySet());
+            previousActiveTasks.AddAll(running.Keys);
             running.clear();
             created.clear();
             runningByPartition.clear();
@@ -259,7 +259,7 @@ namespace Kafka.Streams.Processor.Internals
 
         HashSet<TaskId> runningTaskIds()
         {
-            return running.keySet();
+            return running.Keys;
         }
 
         Dictionary<TaskId, T> runningTaskMap()
@@ -276,9 +276,9 @@ namespace Kafka.Streams.Processor.Internals
         public string ToString(string indent)
         {
             StringBuilder builder = new StringBuilder();
-            describe(builder, running.values(), indent, "Running:");
-            describe(builder, suspended.values(), indent, "Suspended:");
-            describe(builder, created.values(), indent, "New:");
+            describe(builder, running.Values, indent, "Running:");
+            describe(builder, suspended.Values, indent, "Suspended:");
+            describe(builder, created.Values, indent, "New:");
             return builder.ToString();
         }
 
@@ -298,18 +298,18 @@ namespace Kafka.Streams.Processor.Internals
         List<T> allTasks()
         {
             List<T> tasks = new List<T>();
-            tasks.AddAll(running.values());
-            tasks.AddAll(suspended.values());
-            tasks.AddAll(created.values());
+            tasks.AddAll(running.Values);
+            tasks.AddAll(suspended.Values);
+            tasks.AddAll(created.Values);
             return tasks;
         }
 
         HashSet<TaskId> allAssignedTaskIds()
         {
             HashSet<TaskId> taskIds = new HashSet<>();
-            taskIds.AddAll(running.keySet());
-            taskIds.AddAll(suspended.keySet());
-            taskIds.AddAll(created.keySet());
+            taskIds.AddAll(running.Keys);
+            taskIds.AddAll(suspended.Keys);
+            taskIds.AddAll(created.Keys);
             return taskIds;
         }
 
@@ -381,7 +381,7 @@ namespace Kafka.Streams.Processor.Internals
 
         void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
         {
-            IEnumerator<T> standByTaskIterator = suspended.values().iterator();
+            IEnumerator<T> standByTaskIterator = suspended.Values.iterator();
             while (standByTaskIterator.hasNext())
             {
                 T suspendedTask = standByTaskIterator.next();

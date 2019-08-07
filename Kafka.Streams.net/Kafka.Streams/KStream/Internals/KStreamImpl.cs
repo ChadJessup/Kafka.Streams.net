@@ -881,7 +881,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<VO, VR>(KTable<K, VO> other,
+        public KStream<K, VR> join<VO, VR>(IKTable<K, VO> other,
                                              ValueJoiner<V, VO, VR> joiner)
         {
             return join(other, joiner, Joined.with(null, null, null));
@@ -889,7 +889,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public KStream<K, VR> join<VO, VR>(
-            KTable<K, VO> other,
+            IKTable<K, VO> other,
             ValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined)
         {
@@ -916,14 +916,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> leftJoin<VO, VR>(KTable<K, VO> other, ValueJoiner<V, VO, VR> joiner)
+        public KStream<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other, ValueJoiner<V, VO, VR> joiner)
         {
             return leftJoin(other, joiner, Joined.with(null, null, null));
         }
 
 
         public KStream<K, VR> leftJoin<VO, VR>(
-            KTable<K, VO> other,
+            IKTable<K, VO> other,
             ValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined)
         {
@@ -1022,7 +1022,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         private KStream<K, VR> doStreamTableJoin<VR, VO>(
-            KTable<K, VO> other,
+            IKTable<K, VO> other,
             ValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined,
             bool leftJoin)

@@ -40,13 +40,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<Windowed<K>, long> count()
+        public IKTable<Windowed<K>, long> count()
         {
             return doCount(Materialized.with(keySerde, Serdes.long()));
         }
 
 
-        public KTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
+        public IKTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
         {
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
@@ -60,7 +60,7 @@ namespace Kafka.Streams.KStream.Internals
             return doCount(materialized);
         }
 
-        private KTable<Windowed<K>, long> doCount(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
+        private IKTable<Windowed<K>, long> doCount(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
         {
             MaterializedInternal<K, long, ISessionStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
@@ -88,13 +88,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<Windowed<K>, V> reduce(Reducer<V> reducer)
+        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer)
         {
             return reduce(reducer, Materialized.with(keySerde, valSerde));
         }
 
 
-        public KTable<Windowed<K>, V> reduce(Reducer<V> reducer,
+        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer,
                                               Materialized<K, V, ISessionStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
@@ -127,7 +127,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<Windowed<K>, T> aggregate(
+        public IKTable<Windowed<K>, T> aggregate(
             Initializer<T> initializer,
             Aggregator<K, V, T> aggregator,
             Merger<K, T> sessionMerger)
@@ -136,7 +136,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<Windowed<K>, VR> aggregate(
+        public IKTable<Windowed<K>, VR> aggregate(
             Initializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
             Merger<K, VR> sessionMerger,

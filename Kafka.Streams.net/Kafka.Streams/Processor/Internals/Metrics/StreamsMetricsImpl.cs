@@ -57,7 +57,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
         public Sensor threadLevelSensor(
             string sensorName,
             RecordingLevel recordingLevel,
-            List<Sensor> parents)
+            params Sensor[] parents)
         {
 
             lock (threadLevelSensors)
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string taskName,
             string sensorName,
             RecordingLevel recordingLevel,
-            List<Sensor> parents)
+            params Sensor[] parents)
         {
             string key = taskSensorPrefix(taskName);
             lock (taskLevelSensors)
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string processorNodeName,
             string sensorName,
             RecordingLevel recordingLevel,
-            List<Sensor> parents)
+            params Sensor[] parents)
         {
             string key = nodeSensorPrefix(taskName, processorNodeName);
             lock (nodeLevelSensors)
@@ -212,7 +212,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string cacheName,
             string sensorName,
             RecordingLevel recordingLevel,
-            List<Sensor> parents)
+            params Sensor[] parents)
         {
             string key = cacheSensorPrefix(taskName, cacheName);
             lock (cacheLevelSensors)
@@ -259,7 +259,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             string storeName,
             string sensorName,
             RecordingLevel recordingLevel,
-            List<Sensor> parents)
+            params Sensor[] parents)
         {
             string key = storeSensorPrefix(taskName, storeName);
             lock (storeLevelSensors)
@@ -305,7 +305,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             return metrics.sensor(name, recordingLevel);
         }
 
-        public Sensor AddSensor(string name, RecordingLevel recordingLevel, List<Sensor> parents)
+        public Sensor AddSensor(string name, RecordingLevel recordingLevel, params Sensor[] parents)
         {
             return metrics.sensor(name, recordingLevel, parents);
         }
@@ -320,7 +320,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             sensor.record(value);
         }
 
-        public Dictionary<string, string> tagMap(string[] tags)
+        public Dictionary<string, string> tagMap(params string[] tags)
         {
             var tagMap = new Dictionary<string, string>();
             tagMap.Add("client-id", threadName);
@@ -378,7 +378,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
            addInvocationRateAndCount(parent, group, allTagMap, operationName);
 
             //.Add the operation metrics with.Additional tags
-            Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, new List<Sensor> { parent });
+            Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, parent);
            addAvgMaxLatency(sensor, group, tagMap, operationName);
            addInvocationRateAndCount(sensor, group, tagMap, operationName);
 
@@ -403,12 +403,12 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             Dictionary<string, string> tagMap = constructTags(scopeName, entityName, tags);
             Dictionary<string, string> allTagMap = constructTags(scopeName, "all", tags);
 
-            // first.Add the global operation metrics if not yet, with the global tags only
+            // first add the global operation metrics if not yet, with the global tags only
             Sensor parent = metrics.sensor(externalParentSensorName(operationName), recordingLevel);
             addInvocationRateAndCount(parent, group, allTagMap, operationName);
 
-            //.Add the operation metrics with.Additional tags
-            Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, new List<Sensor> { parent });
+            // Add the operation metrics with.Additional tags
+            Sensor sensor = metrics.sensor(externalChildSensorName(operationName, entityName), recordingLevel, parent);
             addInvocationRateAndCount(sensor, group, tagMap, operationName);
 
             parentSensors.Add(sensor, parent);

@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream.Internals
                                      this);
         }
 
-        public KTable<K, V> table(string topic,
+        public IKTable<K, V> table(string topic,
                                           ConsumedInternal<K, V> consumed,
                                           MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -329,7 +329,7 @@ namespace Kafka.Streams.KStream.Internals
         private void maybeOptimizeRepartitionOperations()
         {
             maybeUpdateKeyChangingRepartitionNodeMap();
-            IEnumerator<Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>> entryIterator = keyChangingOperationsToOptimizableRepartitionNodes.entrySet().iterator();
+            IEnumerator<Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>> entryIterator = keyChangingOperationsToOptimizableRepartitionNodes.iterator();
 
             while (entryIterator.hasNext())
             {
@@ -405,7 +405,7 @@ namespace Kafka.Streams.KStream.Internals
             foreach (StreamsGraphNode mergeNode in mergeNodes)
             {
                 mergeNodesToKeyChangers.Add(mergeNode, new HashSet<>());
-                Collection<StreamsGraphNode> keys = keyChangingOperationsToOptimizableRepartitionNodes.keySet();
+                Collection<StreamsGraphNode> keys = keyChangingOperationsToOptimizableRepartitionNodes.Keys;
                 foreach (StreamsGraphNode key in keys)
                 {
                     StreamsGraphNode maybeParentKey = findParentNodeMatching(mergeNode, node->node.parentNodes().contains(key));
@@ -416,7 +416,7 @@ namespace Kafka.Streams.KStream.Internals
                 }
             }
 
-            foreach (KeyValuePair<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers.entrySet())
+            foreach (KeyValuePair<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers)
             {
                 StreamsGraphNode mergeKey = entry.Key;
                 Collection<StreamsGraphNode> keyChangingParents = entry.Value;

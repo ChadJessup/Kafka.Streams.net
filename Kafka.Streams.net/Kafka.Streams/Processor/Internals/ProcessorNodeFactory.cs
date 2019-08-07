@@ -16,19 +16,20 @@
  */
 using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals
 {
     public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>
     {
         private IProcessorSupplier<K, V> supplier;
-        private HashSet<string> stateStoreNames = new HashSet<string>();
+        protected HashSet<string> stateStoreNames { get; } = new HashSet<string>();
 
         public ProcessorNodeFactory(
             string name,
             string[] predecessors,
             IProcessorSupplier<K, V> supplier)
-            : base(name, predecessors.clone())
+            : base(name, predecessors.Select(p => p).ToArray())
         {
             this.supplier = supplier;
         }
@@ -38,13 +39,12 @@ namespace Kafka.Streams.Processor.Internals
             stateStoreNames.Add(stateStoreName);
         }
 
-
         public override ProcessorNode<K, V> build()
         {
             return new ProcessorNode<K, V>(name, supplier, stateStoreNames);
         }
 
-        IProcessor describe()
+        public override IProcessor describe()
         {
             return new IProcessor(name, new HashSet<string>(stateStoreNames));
         }

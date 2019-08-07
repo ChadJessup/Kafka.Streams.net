@@ -13,7 +13,6 @@ namespace Kafka.Streams.Interfaces
      */
     public interface ISerde<T> : IDisposable
     {
-
         /**
          * Configure this, which will configure the underlying serializer and deserializer.
          *
@@ -29,8 +28,8 @@ namespace Kafka.Streams.Interfaces
          */
         void Close();
 
-        ISerializer<T> Serializer();
+        ISerializer<T> Serializer { get; }
 
-        IDeserializer<T> Deserializer();
+        IDeserializer<T> Deserializer { get; }
     }
 }

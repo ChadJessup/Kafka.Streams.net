@@ -76,7 +76,7 @@
 //{
 ////            foreach (KafkaMetric metric in metrics)
 ////               .AddAttribute(metric);
-////            foreach (KafkaMbean mbean in mbeans.values())
+////            foreach (KafkaMbean mbean in mbeans.Values)
 ////                reregister(mbean);
 ////        }
 ////    }
@@ -152,7 +152,7 @@
 ////        mBeanName.Append(prefix);
 ////        mBeanName.Append(":type=");
 ////        mBeanName.Append(metricName.group());
-////        foreach (KeyValuePair<string, string> entry in metricName.tags().entrySet())
+////        foreach (KeyValuePair<string, string> entry in metricName.tags())
 //{
 ////            if (entry.Key.Length <= 0 || entry.Value.Length <= 0)
 ////                continue;
@@ -168,7 +168,7 @@
 //{
 ////        synchronized (LOCK)
 //{
-////            foreach (KafkaMbean mbean in this.mbeans.values())
+////            foreach (KafkaMbean mbean in this.mbeans.Values)
 ////                unregister(mbean);
 ////        }
 ////    }
@@ -257,7 +257,7 @@
 //{
 ////            MBeanAttributeInfo[] attrs = new MBeanAttributeInfo[metrics.size());
 ////            int i = 0;
-////            foreach (KeyValuePair<string, KafkaMetric> entry in this.metrics.entrySet())
+////            foreach (KeyValuePair<string, KafkaMetric> entry in this.metrics)
 //{
 ////                string attribute = entry.Key;
 ////                KafkaMetric metric = entry.Value;

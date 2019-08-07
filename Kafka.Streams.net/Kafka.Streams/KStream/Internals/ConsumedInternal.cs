@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
         public ConsumedInternal(
             ISerde<K> keySerde,
             ISerde<V> valSerde,
-            TimestampExtractor timestampExtractor,
+            ITimestampExtractor timestampExtractor,
             Topology.AutoOffsetReset offsetReset)
             : this(Consumed<K, V>.with(keySerde, valSerde, timestampExtractor, offsetReset))
         {

@@ -206,7 +206,7 @@ public class ProcessorStateManager : StateManager
         updateCheckpointFileCache(emptyMap());
         Dictionary<TopicPartition, long> partitionsAndOffsets = new HashMap<>();
 
-        foreach (KeyValuePair<string, StateRestoreCallback> entry in restoreCallbacks.entrySet())
+        foreach (KeyValuePair<string, StateRestoreCallback> entry in restoreCallbacks)
 {
             string topicName = entry.Key;
             int partition = getPartition(topicName);
@@ -274,7 +274,7 @@ public class ProcessorStateManager : StateManager
         if (!registeredStores.isEmpty())
 {
             log.LogDebug("Flushing all stores registered in the state manager");
-            foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores.entrySet())
+            foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores)
 {
                 if (entry.Value.isPresent())
 {
@@ -320,7 +320,7 @@ public class ProcessorStateManager : StateManager
         if (!registeredStores.isEmpty())
 {
             log.LogDebug("Closing its state manager and all the registered state stores");
-            foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores.entrySet())
+            foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores)
 {
                 if (entry.Value.isPresent())
 {
@@ -461,7 +461,7 @@ public class ProcessorStateManager : StateManager
 
     void ensureStoresRegistered()
 {
-        foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores.entrySet())
+        foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores)
 {
             if (!entry.Value.isPresent())
 {
@@ -477,7 +477,7 @@ public class ProcessorStateManager : StateManager
         // it's only valid to record checkpoints for registered stores that are both persistent and change-logged
 
         HashSet<TopicPartition> result = new HashSet<>(storeToChangelogTopic.size());
-        foreach (KeyValuePair<string, string> storeToChangelog in storeToChangelogTopic.entrySet())
+        foreach (KeyValuePair<string, string> storeToChangelog in storeToChangelogTopic)
 {
             string storeName = storeToChangelog.Key;
             if (registeredStores.ContainsKey(storeName)
@@ -499,7 +499,7 @@ public class ProcessorStateManager : StateManager
 
         Dictionary<TopicPartition, long> result = new HashMap<>(checkpointableOffsets.size());
 
-        foreach (KeyValuePair<TopicPartition, long> topicToCheckpointableOffset in checkpointableOffsets.entrySet())
+        foreach (KeyValuePair<TopicPartition, long> topicToCheckpointableOffset in checkpointableOffsets)
 {
             TopicPartition topic = topicToCheckpointableOffset.Key;
             if (validCheckpointableTopics.contains(topic))

@@ -8,9 +8,8 @@ namespace Kafka.Streams.Processor
      * @param the type of keys
      * @param the type of values
      */
-    public interface Processor<K, V>
+    public interface IProcessor<K, V>
     {
-
         /**
          * Initialize this processor with the given context. The framework ensures this is called once per processor when the topology
          * that contains it is initialized. When the framework is done with the processor, {@link #close()} will be called on it; the
@@ -22,7 +21,7 @@ namespace Kafka.Streams.Processor
          *
          * @param context the context; may not be null
          */
-        void init(IProcessorContext context);
+        void init(IProcessorContext<K, V> context);
 
         /**
          * Process the record with the given key and value.

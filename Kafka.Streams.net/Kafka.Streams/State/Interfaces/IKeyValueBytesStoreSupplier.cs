@@ -14,25 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
+
+namespace Kafka.Streams.State
 {
     /**
-     * A processor supplier that can create one or more {@link Processor} instances.
+     * A store supplier that can be used to create one or more {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} instances of type &lt;Byte, byte[]&gt;.
      *
-     * It is used in {@link Topology} for.Adding new processor operators, whose generated
-     * topology can then be replicated (and thus creating one or more {@link Processor} instances)
-     * and distributed to multiple stream threads.
+     * For any stores implementing the {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} interface, null value bytes are considered as "not exist". This means:
      *
-     * @param the type of keys
-     * @param the type of values
+     * 1. Null value bytes in put operations should be treated as delete.
+     * 2. If the key does not exist, get operations should return null value bytes.
      */
-    public interface IProcessorSupplier<K, V>
+    public interface IKeyValueBytesStoreSupplier : IStoreSupplier<IKeyValueStore<Bytes, byte[]>>
     {
-        /**
-         * Return a new {@link Processor} instance.
-         *
-         * @return  a new {@link Processor} instance
-         */
-        IProcessor<K, V> get();
+
     }
 }

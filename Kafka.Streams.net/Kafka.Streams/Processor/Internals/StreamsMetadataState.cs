@@ -39,7 +39,7 @@ namespace Kafka.Streams.Processor.Internals
         public StreamsMetadataState(InternalTopologyBuilder builder, HostInfo thisHost)
         {
             this.builder = builder;
-            this.globalStores = builder.globalStateStores().keySet();
+            this.globalStores = builder.globalStateStores().Keys;
             this.thisHost = thisHost;
         }
 
@@ -245,12 +245,12 @@ namespace Kafka.Streams.Processor.Internals
                 return;
             }
             Dictionary<string, List<string>> stores = builder.stateStoreNameToSourceTopics();
-            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in currentState.entrySet())
+            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in currentState)
             {
                 HostInfo key = entry.Key;
                 HashSet<TopicPartition> partitionsForHost = new HashSet<>(entry.Value);
                 HashSet<string> storesOnHost = new HashSet<>();
-                foreach (KeyValuePair<string, List<string>> storeTopicEntry in stores.entrySet())
+                foreach (KeyValuePair<string, List<string>> storeTopicEntry in stores)
                 {
                     List<string> topicsForStore = storeTopicEntry.Value;
                     if (hasPartitionsForAnyTopics(topicsForStore, partitionsForHost))

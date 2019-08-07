@@ -11,7 +11,7 @@ namespace Kafka.Common.Metrics
     {
         public void run()
         {
-//            foreach (KeyValuePair<string, Sensor> sensorEntry in sensors.entrySet())
+//            foreach (KeyValuePair<string, Sensor> sensorEntry in sensors)
             {
                 // removeSensor also locks the sensor object. This is fine because synchronized is reentrant
                 // There is however a minor race condition here. Assume we have a parent sensor P and child sensor C.

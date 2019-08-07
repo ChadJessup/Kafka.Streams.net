@@ -480,7 +480,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
-        foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
+        foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
         {
             TopicPartition partition = entry.Key;
             long offset = entry.Value + 1;
@@ -522,7 +522,7 @@ namespace Kafka.Streams.Processor.Internals
         protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
         {
             Dictionary<TopicPartition, long> checkpointableOffsets = recordCollector.offsets();
-            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
+            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 checkpointableOffsets.putIfAbsent(entry.Key, entry.Value);
             }
@@ -549,7 +549,7 @@ namespace Kafka.Streams.Processor.Internals
         Dictionary<TopicPartition, long> purgableOffsets()
         {
             Dictionary<TopicPartition, long> purgableConsumedOffsets = new HashMap<>();
-            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets.entrySet())
+            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 TopicPartition tp = entry.Key;
                 if (topology.isRepartitionTopic(tp.Topic))

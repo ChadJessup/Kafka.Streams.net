@@ -300,7 +300,7 @@ public class StoreChangelogReader : ChangelogReader
     public Dictionary<TopicPartition, long> restoredOffsets()
 {
         Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
-        foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers.entrySet())
+        foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers)
 {
             StateRestorer restorer = entry.Value;
             if (restorer.isPersistent())

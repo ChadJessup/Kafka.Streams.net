@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream.Internals
             this.userProvidedRepartitionTopicName = groupedInternal.name();
         }
 
-        private KTable<K, T> doAggregate(ProcessorSupplier<K, Change<V>> aggregateSupplier,
+        private IKTable<K, T> doAggregate(ProcessorSupplier<K, Change<V>> aggregateSupplier,
                                               string functionName,
                                               MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -131,7 +131,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> reduce(Reducer<V> adder,
+        public IKTable<K, V> reduce(Reducer<V> adder,
                                     Reducer<V> subtractor,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -157,14 +157,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> reduce(Reducer<V> adder,
+        public IKTable<K, V> reduce(Reducer<V> adder,
                                     Reducer<V> subtractor)
         {
             return reduce(adder, subtractor, Materialized.with(keySerde, valSerde));
         }
 
 
-        public KTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
@@ -187,13 +187,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, long> count()
+        public IKTable<K, long> count()
         {
             return count(Materialized.with(keySerde, Serdes.long()));
         }
 
 
-        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+        public IKTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
                                              Aggregator<K, V, VR> adder,
                                              Aggregator<K, V, VR> subtractor,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -219,7 +219,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, T> aggregate(Initializer<T> initializer,
+        public IKTable<K, T> aggregate(Initializer<T> initializer,
                                            Aggregator<K, V, T>.Adder,
                                            Aggregator<K, V, T> subtractor)
         {

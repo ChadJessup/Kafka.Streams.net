@@ -132,7 +132,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
             segmentId(timeFrom), true,
             segmentId(timeTo), true
         );
-        foreach (S segment in segmentsInRange.values())
+        foreach (S segment in segmentsInRange.Values)
         {
             if (segment.isOpen())
             {
@@ -145,7 +145,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     public override List<S> allSegments()
     {
         List<S> result = new List<>();
-        foreach (S segment in segments.values())
+        foreach (S segment in segments.Values)
         {
             if (segment.isOpen())
             {
@@ -157,7 +157,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override void flush()
     {
-        foreach (S segment in segments.values())
+        foreach (S segment in segments.Values)
         {
             segment.flush();
         }
@@ -165,7 +165,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     public override void close()
     {
-        foreach (S segment in segments.values())
+        foreach (S segment in segments.Values)
         {
             segment.close();
         }
@@ -175,7 +175,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     private void cleanupEarlierThan(long minLiveSegment)
     {
         IEnumerator<KeyValuePair<long, S>> toRemove =
-            segments.headMap(minLiveSegment, false).entrySet().iterator();
+            segments.headMap(minLiveSegment, false).iterator();
 
         while (toRemove.hasNext())
         {

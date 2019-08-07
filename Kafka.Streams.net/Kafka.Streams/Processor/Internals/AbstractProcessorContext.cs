@@ -187,7 +187,7 @@ public abstract class AbstractProcessorContext : IInternalProcessorContext
     {
         Dictionary<string, object> combined = new HashMap<>();
         combined.putAll(config.originals());
-        combined.putAll(config.values());
+        combined.putAll(config.Values);
         return combined;
     }
 

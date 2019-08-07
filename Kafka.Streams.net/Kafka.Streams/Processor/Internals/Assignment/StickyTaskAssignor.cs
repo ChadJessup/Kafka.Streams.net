@@ -69,13 +69,13 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         private void assignActive()
         {
-            int totalCapacity = sumCapacity(clients.values());
+            int totalCapacity = sumCapacity(clients.Values);
             int tasksPerThread = taskIds.size() / totalCapacity;
             HashSet<TaskId> assigned = new HashSet<>();
 
             // first try and re-assign existing active tasks to clients that previously had
             // the same active task
-            foreach (KeyValuePair<TaskId, ID> entry in previousActiveTaskAssignment.entrySet())
+            foreach (KeyValuePair<TaskId, ID> entry in previousActiveTaskAssignment)
             {
                 TaskId taskId = entry.Key;
                 if (taskIds.contains(taskId))
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
             foreach (TaskId taskId in sortedTasks)
             {
-                allocateTaskWithClientCandidates(taskId, clients.keySet(), true);
+                allocateTaskWithClientCandidates(taskId, clients.Keys, true);
             }
         }
 
@@ -139,7 +139,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         private HashSet<ID> findClientsWithoutAssignedTask(TaskId taskId)
         {
             HashSet<ID> clientIds = new HashSet<>();
-            foreach (KeyValuePair<ID, ClientState> client in clients.entrySet())
+            foreach (KeyValuePair<ID, ClientState> client in clients)
             {
                 if (!client.Value.hasAssignedTask(taskId))
                 {
@@ -186,7 +186,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         private bool hasClientsWithMoreAvailableCapacity(ClientState client)
         {
-            foreach (ClientState clientState in clients.values())
+            foreach (ClientState clientState in clients.Values)
             {
                 if (clientState.hasMoreAvailableCapacityThan(client))
                 {
@@ -261,7 +261,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         private void mapPreviousTaskAssignment(Dictionary<ID, ClientState> clients)
         {
-            foreach (KeyValuePair<ID, ClientState> clientState in clients.entrySet())
+            foreach (KeyValuePair<ID, ClientState> clientState in clients)
             {
                 foreach (TaskId activeTask in clientState.Value.previousActiveTasks())
                 {

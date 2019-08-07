@@ -14,17 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream.Internals
 {
-    internal class WrapperSerde<T>
+    public class WrapperSerde<T> : Serde<T>
     {
-        private TimeWindowedSerializer<T> timeWindowedSerializer;
-        private TimeWindowedDeserializer<T> timeWindowedDeserializer;
+        public ISerializer<T> serializer { get; private set; }
+        public IDeserializer<T> deserializer { get; private set; }
 
-        public WrapperSerde(TimeWindowedSerializer<T> timeWindowedSerializer, TimeWindowedDeserializer<T> timeWindowedDeserializer)
+        public WrapperSerde(
+            ISerializer<T> serializer,
+            IDeserializer<T> deserializer)
         {
-            this.timeWindowedSerializer = timeWindowedSerializer;
-            this.timeWindowedDeserializer = timeWindowedDeserializer;
+            this.serializer = serializer;
+            this.deserializer = deserializer;
+        }
+
+        public void configure(
+            Dictionary<string, object> configs,
+            bool isKey)
+        {
+            //serializer.configure(configs, isKey);
+            //deserializer.configure(configs, isKey);
+        }
+
+        public void close()
+        {
+            //serializer.close();
+            //deserializer.close();
         }
     }
 }

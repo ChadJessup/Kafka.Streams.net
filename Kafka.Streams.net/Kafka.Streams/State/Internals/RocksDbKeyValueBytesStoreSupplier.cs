@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals
 {
 
-    public class RocksDbKeyValueBytesStoreSupplier : KeyValueBytesStoreSupplier
+    public class RocksDbKeyValueBytesStoreSupplier : IKeyValueBytesStoreSupplier
     {
 
         private string name;

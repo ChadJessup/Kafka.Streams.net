@@ -14,6 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream
 {
     /**
@@ -22,29 +27,29 @@ namespace Kafka.Streams.KStream
      * @param key type
      * @param value type
      */
-    public class Produced<K, V> : NamedOperation<Produced<K, V>>
+    public class Produced<K, V> : INamedOperation<Produced<K, V>>
     {
-
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
+        protected ISerde<K> _keySerde
+        protected ISerde<V> _valueSerde;
         protected StreamPartitioner<K, V> partitioner;
         protected string processorName;
 
-        private Produced(ISerde<K> keySerde,
-                          ISerde<V> valueSerde,
-                          StreamPartitioner<K, V> partitioner,
-                          string processorName)
+        private Produced(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            StreamPartitioner<K, V> partitioner,
+            string processorName)
         {
-            this.keySerde = keySerde;
-            this.valueSerde = valueSerde;
+            this._keySerde = keySerde;
+            this._valueSerde = valueSerde;
             this.partitioner = partitioner;
             this.processorName = processorName;
         }
 
         protected Produced(Produced<K, V> produced)
         {
-            this.keySerde = produced.keySerde;
-            this.valueSerde = produced.valueSerde;
+            this._keySerde = produced._keySerde;
+            this._valueSerde = produced._valueSerde;
             this.partitioner = produced.partitioner;
             this.processorName = produced.processorName;
         }
@@ -59,10 +64,15 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public staticProduced<K, V> with(ISerde<K> keySerde,
-                                                  ISerde<V> valueSerde)
+        public static Produced<K, V> with(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
         {
-            return new Produced<>(keySerde, valueSerde, null, null);
+            return new Produced<K, V>(
+                keySerde,
+                valueSerde,
+                null,
+                null);
         }
 
         /**
@@ -79,11 +89,16 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public staticProduced<K, V> with(ISerde<K> keySerde,
-                                                  ISerde<V> valueSerde,
-                                                  StreamPartitioner<K, V> partitioner)
+        public static Produced<K, V> with(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            StreamPartitioner<K, V> partitioner)
         {
-            return new Produced<>(keySerde, valueSerde, partitioner, null);
+            return new Produced<K, V>(
+                keySerde,
+                valueSerde,
+                partitioner,
+                null);
         }
 
         /**
@@ -96,7 +111,11 @@ namespace Kafka.Streams.KStream
          */
         public static Produced<K, V> As(string processorName)
         {
-            return new Produced<K, V>(null, null, null, processorName);
+            return new Produced<K, V>(
+                null,
+                null,
+                null,
+                processorName);
         }
 
         /**
@@ -108,9 +127,11 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> keySerde(ISerde<K> keySerde)
+        public static Produced<K, V> keySerde(
+            ISerde<K> keySerde)
         {
-            return new Produced<>(keySerde, null, null, null);
+            return new Produced<K, V>(
+                keySerde, null, null, null);
         }
 
         /**
@@ -124,7 +145,11 @@ namespace Kafka.Streams.KStream
          */
         public static Produced<K, V> valueSerde(ISerde<V> valueSerde)
         {
-            return new Produced<>(null, valueSerde, null, null);
+            return new Produced<K, V>(
+                null,
+                valueSerde,
+                null,
+                null);
         }
 
         /**
@@ -138,9 +163,9 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public staticProduced<K, V> streamPartitioner(StreamPartitioner<K, V> partitioner)
+        public static Produced<K, V> streamPartitioner(StreamPartitioner<K, V> partitioner)
         {
-            return new Produced<>(null, null, partitioner, null);
+            return new Produced<K, V>(null, null, partitioner, null);
         }
 
         /**
@@ -163,7 +188,8 @@ namespace Kafka.Streams.KStream
          */
         public Produced<K, V> withValueSerde(ISerde<V> valueSerde)
         {
-            this.valueSerde = valueSerde;
+            this._valueSerde = valueSerde;
+
             return this;
         }
 
@@ -174,31 +200,33 @@ namespace Kafka.Streams.KStream
          */
         public Produced<K, V> withKeySerde(ISerde<K> keySerde)
         {
-            this.keySerde = keySerde;
+            this._keySerde = keySerde;
             return this;
         }
 
 
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
-            Produced <?, object> produced = (Produced <?, object>) o;
-            return Objects.Equals(keySerde, produced.keySerde) &&
-                   Objects.Equals(valueSerde, produced.valueSerde) &&
-                   Objects.Equals(partitioner, produced.partitioner);
+
+            var produced = (Produced<object, object>)o;
+            return Objects.Equals(_keySerde, produced._keySerde)
+                && Objects.Equals(_valueSerde, produced._valueSerde)
+                && Objects.Equals(partitioner, produced.partitioner);
         }
 
 
-        public int hashCode()
+        public override int GetHashCode()
         {
-            return Objects.hash(keySerde, valueSerde, partitioner);
+            return (_keySerde, _valueSerde, partitioner).GetHashCode();
         }
 
 
@@ -208,3 +236,4 @@ namespace Kafka.Streams.KStream
             return this;
         }
     }
+}

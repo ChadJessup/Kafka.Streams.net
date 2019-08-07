@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public HashSet<string> sourceTopics()
         {
-            return sourcesByTopic.keySet();
+            return sourcesByTopic.Keys;
         }
 
         public SourceNode source(string topic)
@@ -64,12 +64,12 @@ namespace Kafka.Streams.Processor.Internals
 
         public HashSet<SourceNode> sources()
         {
-            return new HashSet<>(sourcesByTopic.values());
+            return new HashSet<>(sourcesByTopic.Values);
         }
 
         public HashSet<string> sinkTopics()
         {
-            return sinksByTopic.keySet();
+            return sinksByTopic.Keys;
         }
 
         public SinkNode sink(string topic)
@@ -158,7 +158,7 @@ namespace Kafka.Streams.Processor.Internals
             StringBuilder sb = new StringBuilder(indent + "ProcessorTopology:\n");
 
             // start from sources
-            foreach (var source in sourcesByTopic.values())
+            foreach (var source in sourcesByTopic.Values)
             {
                 sb.Append(source.ToString(indent + "\t")).Append(childrenToString(indent + "\t", source.children()));
             }

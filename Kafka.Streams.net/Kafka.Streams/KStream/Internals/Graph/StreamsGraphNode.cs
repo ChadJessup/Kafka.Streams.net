@@ -17,7 +17,6 @@
 
 using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -122,7 +121,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             this.hasWrittenToTopology = hasWrittenToTopology;
         }
-
 
         public override string ToString()
         {

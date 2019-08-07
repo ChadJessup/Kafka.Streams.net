@@ -54,7 +54,7 @@ public class DefaultPartitionGrouper : IPartitionGrouper
 {
         Dictionary<TaskId, HashSet<TopicPartition>> groups = new HashMap<>();
 
-        foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups.entrySet())
+        foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups)
 {
             int topicGroupId = entry.Key;
             HashSet<string> topicGroup = entry.Value;

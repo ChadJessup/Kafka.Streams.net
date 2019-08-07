@@ -96,6 +96,7 @@ namespace Kafka.Streams.KStream
         public static Materialized<K, V, S> As(string storeName)
         {
             Named.validate(storeName);
+
             return new Materialized<K, V, S>(storeName);
         }
 
@@ -130,141 +131,142 @@ namespace Kafka.Streams.KStream
          * @return a new {@link Materialized} instance with the given sup
          * plier
          */
-        public static Materialized<K, V, ISessionStore<Bytes, byte[]>> As(SessionBytesStoreSupplier supplier)
-{
-        supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
-        return new Materialized<>(supplier);
-    }
-
-    /**
-     * Materialize a {@link KeyValueStore} using the provided {@link KeyValueBytesStoreSupplier}.
-     *
-     * @param supplier the {@link KeyValueBytesStoreSupplier} used to materialize the store
-     * @param      key type of the store
-     * @param      value type of the store
-     * @return a new {@link Materialized} instance with the given supplier
-     */
-    public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As(KeyValueBytesStoreSupplier supplier)
-    {
-        supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
-        return new Materialized<>(supplier);
-    }
-
-    /**
-     * Materialize a {@link IStateStore} with the provided key and value {@link Serde}s.
-     * An internal name will be used for the store.
-     *
-     * @param keySerde      the key {@link Serde} to use. If the {@link Serde} is null, then the default key
-     *                      serde from configs will be used
-     * @param valueSerde    the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-     *                      serde from configs will be used
-     * @param           key type
-     * @param           value type
-     * @param           store type
-     * @return a new {@link Materialized} instance with the given key and value serdes
-     */
-    public static Materialized<K, V, S> with(
-        ISerde<K> keySerde,
-        ISerde<V> valueSerde)
-    {
-        return new Materialized<K, V, S>((string)null).withKeySerde(keySerde).withValueSerde(valueSerde);
-    }
-
-    /**
-     * Set the valueSerde the materialized {@link IStateStore} will use.
-     *
-     * @param valueSerde the value {@link Serde} to use. If the {@link Serde} is null, then the default value
-     *                   serde from configs will be used. If the serialized bytes is null for put operations,
-     *                   it is treated as delete operation
-     * @return itself
-     */
-    public Materialized<K, V, S> withValueSerde(ISerde<V> valueSerde)
-    {
-        this.valueSerde = valueSerde;
-        return this;
-    }
-
-    /**
-     * Set the keySerde the materialize {@link IStateStore} will use.
-     * @param keySerde  the key {@link Serde} to use. If the {@link Serde} is null, then the default key
-     *                  serde from configs will be used
-     * @return itself
-     */
-    public Materialized<K, V, S> withKeySerde(ISerde<K> keySerde)
-    {
-        this.keySerde = keySerde;
-        return this;
-    }
-
-    /**
-     * Indicates that a changelog should be created for the store. The changelog will be created
-     * with the provided configs.
-     * <p>
-     * Note: Any unrecognized configs will be ignored.
-     * @param config    any configs that should be applied to the changelog
-     * @return itself
-     */
-    public Materialized<K, V, S> withLoggingEnabled(Map<string, string> config)
-    {
-        loggingEnabled = true;
-        this.topicConfig = config;
-        return this;
-    }
-
-    /**
-     * Disable change logging for the materialized {@link IStateStore}.
-     * @return itself
-     */
-    public Materialized<K, V, S> withLoggingDisabled()
-    {
-        loggingEnabled = false;
-        this.topicConfig.clear();
-        return this;
-    }
-
-    /**
-     * Enable caching for the materialized {@link IStateStore}.
-     * @return itself
-     */
-    public Materialized<K, V, S> withCachingEnabled()
-    {
-        cachingEnabled = true;
-        return this;
-    }
-
-    /**
-     * Disable caching for the materialized {@link IStateStore}.
-     * @return itself
-     */
-    public Materialized<K, V, S> withCachingDisabled()
-    {
-        cachingEnabled = false;
-        return this;
-    }
-
-    /**
-     * Configure retention period for window and session stores. Ignored for key/value stores.
-     *
-     * Overridden by pre-configured store suppliers
-     * ({@link Materialized#As(SessionBytesStoreSupplier)} or {@link Materialized#As(WindowBytesStoreSupplier)}).
-     *
-     * Note that the retention period must be at least long enough to contain the windowed data's entire life cycle,
-     * from window-start through window-end, and for the entire grace period.
-     *
-     * @param retention the retention time
-     * @return itself
-     * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
-     */
-    public Materialized<K, V, S> withRetention(TimeSpan retention)
-    {
-        string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
-        long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
-
-        if (retenationMs < 0)
+        public static Materialized<K, V, ISessionStore<Bytes, byte[]>> As(ISessionBytesStoreSupplier supplier)
         {
-            throw new System.ArgumentException("Retention must not be negative.");
+            supplier = supplier ?? throw new ArgumentNullException("supplier can't be null", nameof(supplier));
+
+            return new Materialized<K, V, ISessionStore<Bytes, byte[]>>(supplier);
         }
-        this.retention = retention;
-        return this;
+
+        /**
+         * Materialize a {@link KeyValueStore} using the provided {@link KeyValueBytesStoreSupplier}.
+         *
+         * @param supplier the {@link KeyValueBytesStoreSupplier} used to materialize the store
+         * @param      key type of the store
+         * @param      value type of the store
+         * @return a new {@link Materialized} instance with the given supplier
+         */
+        public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As(IKeyValueBytesStoreSupplier supplier)
+        {
+            supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
+            return new Materialized<>(supplier);
+        }
+
+        /**
+         * Materialize a {@link IStateStore} with the provided key and value {@link Serde}s.
+         * An internal name will be used for the store.
+         *
+         * @param keySerde      the key {@link Serde} to use. If the {@link Serde} is null, then the default key
+         *                      serde from configs will be used
+         * @param valueSerde    the value {@link Serde} to use. If the {@link Serde} is null, then the default value
+         *                      serde from configs will be used
+         * @param           key type
+         * @param           value type
+         * @param           store type
+         * @return a new {@link Materialized} instance with the given key and value serdes
+         */
+        public static Materialized<K, V, S> with(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            return new Materialized<K, V, S>((string)null).withKeySerde(keySerde).withValueSerde(valueSerde);
+        }
+
+        /**
+         * Set the valueSerde the materialized {@link IStateStore} will use.
+         *
+         * @param valueSerde the value {@link Serde} to use. If the {@link Serde} is null, then the default value
+         *                   serde from configs will be used. If the serialized bytes is null for put operations,
+         *                   it is treated as delete operation
+         * @return itself
+         */
+        public Materialized<K, V, S> withValueSerde(ISerde<V> valueSerde)
+        {
+            this.valueSerde = valueSerde;
+            return this;
+        }
+
+        /**
+         * Set the keySerde the materialize {@link IStateStore} will use.
+         * @param keySerde  the key {@link Serde} to use. If the {@link Serde} is null, then the default key
+         *                  serde from configs will be used
+         * @return itself
+         */
+        public Materialized<K, V, S> withKeySerde(ISerde<K> keySerde)
+        {
+            this.keySerde = keySerde;
+            return this;
+        }
+
+        /**
+         * Indicates that a changelog should be created for the store. The changelog will be created
+         * with the provided configs.
+         * <p>
+         * Note: Any unrecognized configs will be ignored.
+         * @param config    any configs that should be applied to the changelog
+         * @return itself
+         */
+        public Materialized<K, V, S> withLoggingEnabled(Map<string, string> config)
+        {
+            loggingEnabled = true;
+            this.topicConfig = config;
+            return this;
+        }
+
+        /**
+         * Disable change logging for the materialized {@link IStateStore}.
+         * @return itself
+         */
+        public Materialized<K, V, S> withLoggingDisabled()
+        {
+            loggingEnabled = false;
+            this.topicConfig.clear();
+            return this;
+        }
+
+        /**
+         * Enable caching for the materialized {@link IStateStore}.
+         * @return itself
+         */
+        public Materialized<K, V, S> withCachingEnabled()
+        {
+            cachingEnabled = true;
+            return this;
+        }
+
+        /**
+         * Disable caching for the materialized {@link IStateStore}.
+         * @return itself
+         */
+        public Materialized<K, V, S> withCachingDisabled()
+        {
+            cachingEnabled = false;
+            return this;
+        }
+
+        /**
+         * Configure retention period for window and session stores. Ignored for key/value stores.
+         *
+         * Overridden by pre-configured store suppliers
+         * ({@link Materialized#As(SessionBytesStoreSupplier)} or {@link Materialized#As(WindowBytesStoreSupplier)}).
+         *
+         * Note that the retention period must be at least long enough to contain the windowed data's entire life cycle,
+         * from window-start through window-end, and for the entire grace period.
+         *
+         * @param retention the retention time
+         * @return itself
+         * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
+         */
+        public Materialized<K, V, S> withRetention(TimeSpan retention)
+        {
+            string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
+            long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
+
+            if (retenationMs < 0)
+            {
+                throw new System.ArgumentException("Retention must not be negative.");
+            }
+            this.retention = retention;
+            return this;
+        }
     }
-}

@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public class Change<T>

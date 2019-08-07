@@ -1,49 +1,11 @@
+using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Configuration for a {@link KafkaStreams} instance.
      * Can also be used to configure the Kafka Streams internal {@link KafkaConsumer}, {@link KafkaProducer} and {@link Admin}.
@@ -117,17 +79,17 @@ namespace Kafka.Streams
      * @see ConsumerConfig
      * @see ProducerConfig
      */
-    public class StreamsConfig : AbstractConfig
+    public class StreamsConfig : ClientConfig //AbstractConfig
     {
         private static ILogger log = new LoggerFactory().CreateLogger<StreamsConfig>();
 
-        private static ConfigDef CONFIG;
+        //private static ConfigDef CONFIG;
 
-        private bool eosEnabled;
-        private static long DEFAULT_COMMIT_INTERVAL_MS = 30000L;
-        private static long EOS_DEFAULT_COMMIT_INTERVAL_MS = 100L;
+        //private bool eosEnabled;
+        //private static long DEFAULT_COMMIT_INTERVAL_MS = 30000L;
+        //private static long EOS_DEFAULT_COMMIT_INTERVAL_MS = 100L;
 
-        public static int DUMMY_THREAD_INDEX = 1;
+        //public static int DUMMY_THREAD_INDEX = 1;
 
         /**
          * Prefix used to provide default topic configs to be applied when creating internal topics.
@@ -138,6 +100,16 @@ namespace Kafka.Streams
         //       this can be lifted once kafka.log.LogConfig is completely deprecated by org.apache.kafka.common.config.TopicConfig
 
         public static string TOPIC_PREFIX = "topic.";
+
+        public string getString(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public long getLong(string key)
+        {
+            throw new NotImplementedException();
+        }
 
         /**
          * Prefix used to isolate {@link KafkaConsumer consumer} configs from other client configs.
@@ -1010,7 +982,7 @@ namespace Kafka.Streams
 
             // Get main consumer override configs
             Dictionary<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
-            for (KeyValuePair<string, object> entry: mainConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: mainConsumerProps)
             {
                 consumerProps.Add(entry.Key, entry.Value);
             }
@@ -1084,7 +1056,7 @@ namespace Kafka.Streams
 
             // Get restore consumer override configs
             Dictionary<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
-            for (KeyValuePair<string, object> entry: restoreConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: restoreConsumerProps)
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
             }
@@ -1118,7 +1090,7 @@ namespace Kafka.Streams
 
             // Get global consumer override configs
             Dictionary<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
-            for (KeyValuePair<string, object> entry: globalConsumerProps.entrySet())
+            for (KeyValuePair<string, object> entry: globalConsumerProps)
             {
                 baseConsumerProps.Add(entry.Key, entry.Value);
             }
@@ -1199,13 +1171,13 @@ namespace Kafka.Streams
         private Dictionary<string, object> getClientCustomProps()
         {
             Dictionary<string, object> props = originals();
-            props.keySet().removeAll(CONFIG.names());
-            props.keySet().removeAll(ConsumerConfig.configNames());
-            props.keySet().removeAll(ProducerConfig.configNames());
-            props.keySet().removeAll(AdminClientConfig.configNames());
-            props.keySet().removeAll(originalsWithPrefix(CONSUMER_PREFIX, false).keySet());
-            props.keySet().removeAll(originalsWithPrefix(PRODUCER_PREFIX, false).keySet());
-            props.keySet().removeAll(originalsWithPrefix(ADMIN_CLIENT_PREFIX, false).keySet());
+            props.Keys.removeAll(CONFIG.names());
+            props.Keys.removeAll(ConsumerConfig.configNames());
+            props.Keys.removeAll(ProducerConfig.configNames());
+            props.Keys.removeAll(AdminClientConfig.configNames());
+            props.Keys.removeAll(originalsWithPrefix(CONSUMER_PREFIX, false).Keys);
+            props.Keys.removeAll(originalsWithPrefix(PRODUCER_PREFIX, false).Keys);
+            props.Keys.removeAll(originalsWithPrefix(ADMIN_CLIENT_PREFIX, false).Keys);
             return props;
         }
 
@@ -1246,7 +1218,7 @@ namespace Kafka.Streams
             try
             {
 
-                ISerde <object> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde);
+                ISerde<object> serde = getConfiguredInstance(DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serde);
                 serde.configure(originals(), false);
                 return serde;
             }

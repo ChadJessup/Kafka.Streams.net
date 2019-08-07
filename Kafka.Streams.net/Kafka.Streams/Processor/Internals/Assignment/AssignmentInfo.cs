@@ -158,7 +158,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         // encode standby tasks
         out.writeInt(standbyTasks.size());
-            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in standbyTasks.entrySet())
+            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in standbyTasks)
             {
                 TaskId id = entry.Key;
                 id.writeTo(out);
@@ -179,7 +179,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         {
         // encode partitions by host
         out.writeInt(partitionsByHost.size());
-            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in partitionsByHost.entrySet())
+            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in partitionsByHost)
             {
                 HostInfo hostInfo = entry.Key;
             out.writeUTF(hostInfo.host());

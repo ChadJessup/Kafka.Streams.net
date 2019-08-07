@@ -139,7 +139,7 @@ class StateManagerUtil
     private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
 {
         Dictionary<string, string> reversedMap = new HashMap<>();
-        foreach (KeyValuePair<string, string> entry in origin.entrySet())
+        foreach (KeyValuePair<string, string> entry in origin)
 {
             reversedMap.Add(entry.Value, entry.Key);
         }

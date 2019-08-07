@@ -371,7 +371,7 @@ namespace Kafka.Streams.State.Internals
         public override void evictWhile(Supplier<Boolean> predicate,
                                IConsumer<Eviction<K, V>> callback)
         {
-            IEnumerator < KeyValuePair < BufferKey, BufferValue >> delegate = sortedMap.entrySet().iterator();
+            IEnumerator < KeyValuePair < BufferKey, BufferValue >> delegate = sortedMap.iterator();
             int evictions = 0;
 
             if (predicate())

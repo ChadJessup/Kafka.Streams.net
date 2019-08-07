@@ -165,7 +165,7 @@ namespace Kafka.Streams.State.Internals
             return registerNewIterator(key,
                                        key,
                                        latestSessionStartTime,
-                                       endTimeMap.tailMap(earliestSessionEndTime, true).entrySet().iterator());
+                                       endTimeMap.tailMap(earliestSessionEndTime, true).iterator());
         }
 
         [System.Obsolete]
@@ -190,7 +190,7 @@ namespace Kafka.Streams.State.Internals
             return registerNewIterator(keyFrom,
                                        keyTo,
                                        latestSessionStartTime,
-                                       endTimeMap.tailMap(earliestSessionEndTime, true).entrySet().iterator());
+                                       endTimeMap.tailMap(earliestSessionEndTime, true).iterator());
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
@@ -200,7 +200,7 @@ namespace Kafka.Streams.State.Internals
 
             removeExpiredSegments();
 
-            return registerNewIterator(key, key, long.MaxValue, endTimeMap.entrySet().iterator());
+            return registerNewIterator(key, key, long.MaxValue, endTimeMap.iterator());
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
@@ -212,7 +212,7 @@ namespace Kafka.Streams.State.Internals
             removeExpiredSegments();
 
 
-            return registerNewIterator(from, to, long.MaxValue, endTimeMap.entrySet().iterator());
+            return registerNewIterator(from, to, long.MaxValue, endTimeMap.iterator());
         }
 
         public override bool persistent()
@@ -389,7 +389,7 @@ namespace Kafka.Streams.State.Internals
                 {
                     Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>> nextEndTimeEntry = endTimeIterator.next();
                     currentEndTime = nextEndTimeEntry.Key;
-                    keyIterator = nextEndTimeEntry.Value.subMap(keyFrom, true, keyTo, true).entrySet().iterator();
+                    keyIterator = nextEndTimeEntry.Value.subMap(keyFrom, true, keyTo, true).iterator();
 
                     if (setInnerIterators())
                     {
@@ -410,11 +410,11 @@ namespace Kafka.Streams.State.Internals
 
                     if (latestSessionStartTime == long.MaxValue)
                     {
-                        recordIterator = nextKeyEntry.Value.entrySet().iterator();
+                        recordIterator = nextKeyEntry.Value.iterator();
                     }
                     else
                     {
-                        recordIterator = nextKeyEntry.Value.headMap(latestSessionStartTime, true).entrySet().iterator();
+                        recordIterator = nextKeyEntry.Value.headMap(latestSessionStartTime, true).iterator();
                     }
 
                     if (recordIterator.hasNext())

@@ -1,7 +1,10 @@
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Errors;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
@@ -12,8 +15,8 @@ namespace Kafka.Streams.Processor.Internals
         private List<ProcessorNode<K, V>> children;
         private Dictionary<string, ProcessorNode<K, V>> childByName;
 
-        private NodeMetrics nodeMetrics;
-        private Processor<K, V> processor;
+        private NodeMetrics<K, V> nodeMetrics;
+        private IProcessor<K, V> processor;
         private string name;
         private ITime time;
 
@@ -27,7 +30,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public ProcessorNode(
             string name,
-            Processor<K, V> processor,
+            IProcessor<K, V> processor,
             HashSet<string> stateStores)
         {
             this.name = name;
@@ -49,12 +52,11 @@ namespace Kafka.Streams.Processor.Internals
             childByName.Add(child.name, child);
         }
 
-        public void init(IInternalProcessorContext context)
+        public void init(IInternalProcessorContext<K, V> context)
         {
             try
             {
-
-                nodeMetrics = new NodeMetrics(context.metrics(), name, context);
+                nodeMetrics = new NodeMetrics<K, V>(context.metrics, name, context);
                 long startNs = time.nanoseconds();
                 if (processor != null)
                 {
@@ -117,7 +119,7 @@ namespace Kafka.Streams.Processor.Internals
         public string ToString(string indent)
         {
             StringBuilder sb = new StringBuilder(indent + name + ":\n");
-            if (stateStores != null && !stateStores.isEmpty())
+            if (stateStores != null && stateStores.Any())
             {
                 sb.Append(indent).Append("\tstates:\t\t[");
                 foreach (string store in stateStores)
@@ -130,11 +132,6 @@ namespace Kafka.Streams.Processor.Internals
                 sb.Append("]\n");
             }
             return sb.ToString();
-        }
-
-        Sensor sourceNodeForwardSensor()
-        {
-            return nodeMetrics.sourceNodeForwardSensor;
         }
     }
 }

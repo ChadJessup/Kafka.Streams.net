@@ -223,7 +223,7 @@ namespace Kafka.Streams.State.Internals
             try
             {
                 Dictionary<S, WriteBatch> writeBatchMap = getWriteBatches(records);
-                foreach (var entry in writeBatchMap.entrySet())
+                foreach (var entry in writeBatchMap)
                 {
                     S segment = entry.Key;
                     WriteBatch batch = entry.Value;

@@ -134,14 +134,14 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
 
         return new DelegatingPeekingKeyValueIterator<>(
             name,
-            new InMemoryKeyValueIterator(map.subMap(from, true, to, true).entrySet().iterator()));
+            new InMemoryKeyValueIterator(map.subMap(from, true, to, true).iterator()));
     }
 
     public override IKeyValueIterator<Bytes, byte[]> all()
 {
         return new DelegatingPeekingKeyValueIterator<>(
             name,
-            new InMemoryKeyValueIterator(map.entrySet().iterator()));
+            new InMemoryKeyValueIterator(map.iterator()));
     }
 
     public override long approximateNumEntries()

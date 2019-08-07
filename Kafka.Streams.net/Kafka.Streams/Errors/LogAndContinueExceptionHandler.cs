@@ -33,17 +33,17 @@ namespace Kafka.Streams.Errors
         private static ILogger log = new LoggerFactory().CreateLogger<LogAndContinueExceptionHandler>();
 
 
-        public DeserializationHandlerResponse handle(
+        public DeserializationHandlerResponses handle(
             IProcessorContext<byte[], byte[]> context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception)
         {
             log.LogWarning("Exception caught during Deserialization, " +
                      "taskId: {}, topic: {}, partition: {}, offset: {}",
-                     context.taskId(), record.Topic., record.partition(), record.offset(),
+                     context.taskId(), record.Topic, record.Partition, record.Offset,
                      exception);
 
-            return DeserializationHandlerResponse.CONTINUE;
+            return DeserializationHandlerResponses.CONTINUE;
         }
 
 

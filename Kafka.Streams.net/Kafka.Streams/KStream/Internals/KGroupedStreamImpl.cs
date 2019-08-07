@@ -34,13 +34,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> reduce(Reducer<V> reducer)
+        public IKTable<K, V> reduce(Reducer<V> reducer)
         {
             return reduce(reducer, Materialized.with(keySerde, valSerde));
         }
 
 
-        public KTable<K, V> reduce(Reducer<V> reducer,
+        public IKTable<K, V> reduce(Reducer<V> reducer,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+        public IKTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -91,20 +91,20 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+        public IKTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
         }
 
 
-        public KTable<K, long> count()
+        public IKTable<K, long> count()
         {
             return doCount(Materialized.with(keySerde, Serializers.Int64));
         }
 
 
-        public KTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
 
@@ -118,7 +118,7 @@ namespace Kafka.Streams.KStream.Internals
             return doCount(materialized);
         }
 
-        private KTable<K, long> doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
+        private IKTable<K, long> doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
@@ -171,7 +171,7 @@ namespace Kafka.Streams.KStream.Internals
             );
         }
 
-        private KTable<K, T> doAggregate(KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
+        private IKTable<K, T> doAggregate(KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
                                               string functionName,
                                               MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {

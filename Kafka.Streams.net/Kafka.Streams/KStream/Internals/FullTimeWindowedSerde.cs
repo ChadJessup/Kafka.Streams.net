@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     class FullTimeWindowedSerde<T> : WrapperSerde<Windowed<T>>
     {
-        FullTimeWindowedSerde(ISerde<T> inner, long windowSize)
+        public FullTimeWindowedSerde(ISerde<T> inner, long windowSize)
             : base(
                 new TimeWindowedSerializer<T>(inner.Serializer()),
                 new TimeWindowedDeserializer<T>(inner.Deserializer(), windowSize))

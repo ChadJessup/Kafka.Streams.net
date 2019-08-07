@@ -60,7 +60,7 @@ namespace Kafka.Streams.KStream
             return new Named(name);
         }
 
-        protected static void validate(string name)
+        public static void validate(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {

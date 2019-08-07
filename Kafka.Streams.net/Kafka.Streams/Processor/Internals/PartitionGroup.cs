@@ -174,7 +174,7 @@ public class PartitionGroup
 
     public HashSet<TopicPartition> partitions()
 {
-        return Collections.unmodifiableSet(partitionQueues.keySet());
+        return Collections.unmodifiableSet(partitionQueues.Keys);
     }
 
     /**
@@ -220,7 +220,7 @@ public class PartitionGroup
 {
         nonEmptyQueuesByTime.clear();
         streamTime = RecordQueue.UNKNOWN;
-        foreach (RecordQueue queue in partitionQueues.values())
+        foreach (RecordQueue queue in partitionQueues.Values)
 {
             queue.clear();
         }

@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Common.serialization.Serde;
 using Kafka.Common.Utils.Bytes;
 using Kafka.Common.Utils.Time;
-using Kafka.Streams.State.KeyValueBytesStoreSupplier;
+using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
 using Kafka.Streams.State.KeyValueStore;
 
 
@@ -27,9 +27,9 @@ using Kafka.Streams.State.KeyValueStore;
 public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
 {
 
-    private KeyValueBytesStoreSupplier storeSupplier;
+    private IKeyValueBytesStoreSupplier storeSupplier;
 
-    public KeyValueStoreBuilder(KeyValueBytesStoreSupplier storeSupplier,
+    public KeyValueStoreBuilder(IKeyValueBytesStoreSupplier storeSupplier,
                                 ISerde<K> keySerde,
                                 ISerde<V> valueSerde,
                                 ITime time)

@@ -55,7 +55,7 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
                     streamThread.state() + ", not RUNNING");
         }
         List<T> stores = new List<>();
-        foreach (Task streamTask in streamThread.tasks().values())
+        foreach (Task streamTask in streamThread.tasks().Values)
 {
             IStateStore store = streamTask.getStore(storeName);
             if (store != null && queryableStoreType.accepts(store))

@@ -226,8 +226,8 @@ namespace Kafka.Streams.Processor.Internals
             void initialize()
             {
                 Dictionary<TopicPartition, long> partitionOffsets = stateMaintainer.initialize();
-                globalConsumer.assign(partitionOffsets.keySet());
-                foreach (KeyValuePair<TopicPartition, long> entry in partitionOffsets.entrySet())
+                globalConsumer.assign(partitionOffsets.Keys);
+                foreach (KeyValuePair<TopicPartition, long> entry in partitionOffsets)
                 {
                     globalConsumer.seek(entry.Key, entry.Value);
                 }

@@ -1,10 +1,11 @@
 ﻿using Kafka.Common.Metrics;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class NodeMetrics
+    public class NodeMetrics<K, V>
     {
         private StreamsMetricsImpl metrics;
 
@@ -16,16 +17,16 @@ namespace Kafka.Streams.Processor.Internals
         private string taskName;
         private string processorNodeName;
 
-        private NodeMetrics(
+        public NodeMetrics(
             StreamsMetricsImpl metrics,
             string processorNodeName,
-            IProcessorContext context)
+            IProcessorContext<K, V> context)
         {
             this.metrics = metrics;
 
             string taskName = context.taskId().ToString();
-            Dictionary<string, string> tagMap = metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, processorNodeName);
-            Dictionary<string, string> allTagMap = metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, "all");
+            Dictionary<string, string> tagMap = metrics.tagMap("task-id", context.taskId().ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, processorNodeName);
+            Dictionary<string, string> allTagMap = metrics.tagMap("task-id", context.taskId().ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, "all");
 
             nodeProcessTimeSensor = createTaskAndNodeLatencyAndThroughputSensors(
                 "process",
@@ -89,12 +90,12 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<string, string> nodeTags)
         {
             Sensor parent = metrics.taskLevelSensor(taskName, operation, RecordingLevel.DEBUG);
-           .AddAvgMaxLatency(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
-           .AddInvocationRateAndCount(parent, PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
+            StreamsMetricsImpl.addAvgMaxLatency(parent, StreamsMetricsImpl.PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
+            StreamsMetricsImpl.addInvocationRateAndCount(parent, StreamsMetricsImpl.PROCESSOR_NODE_METRICS_GROUP, taskTags, operation);
 
             Sensor sensor = metrics.nodeLevelSensor(taskName, processorNodeName, operation, RecordingLevel.DEBUG, parent);
-           .AddAvgMaxLatency(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
-           .AddInvocationRateAndCount(sensor, PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
+            StreamsMetricsImpl.addAvgMaxLatency(sensor, StreamsMetricsImpl.PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
+            StreamsMetricsImpl.addInvocationRateAndCount(sensor, StreamsMetricsImpl.PROCESSOR_NODE_METRICS_GROUP, nodeTags, operation);
 
             return sensor;
         }

@@ -76,7 +76,7 @@ namespace Kafka.Streams.KStream.Internals
             this.userProvidedRepartitionTopicName = groupedInternal.name();
         }
 
-        KTable<KR, VR> build(string functionName,
+        IKTable<KR, VR> build(string functionName,
                                        StoreBuilder<IStateStore> storeBuilder,
                                        KStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
                                        string queryableStoreName,

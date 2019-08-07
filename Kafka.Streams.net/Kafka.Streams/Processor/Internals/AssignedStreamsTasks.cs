@@ -53,7 +53,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
     List<StreamTask> allTasks()
 {
         List<StreamTask> tasks = base.allTasks();
-        tasks.AddAll(restoring.values());
+        tasks.AddAll(restoring.Values);
         return tasks;
     }
 
@@ -61,7 +61,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
     HashSet<TaskId> allAssignedTaskIds()
 {
         HashSet<TaskId> taskIds = base.allAssignedTaskIds();
-        taskIds.AddAll(restoring.keySet());
+        taskIds.AddAll(restoring.Keys);
         return taskIds;
     }
 
@@ -75,8 +75,8 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 {
         RuntimeException exception = null;
 
-        log.LogTrace("Closing all restoring stream tasks {}", restoring.keySet());
-        IEnumerator<StreamTask> restoringTaskIterator = restoring.values().iterator();
+        log.LogTrace("Closing all restoring stream tasks {}", restoring.Keys);
+        IEnumerator<StreamTask> restoringTaskIterator = restoring.Values.iterator();
         while (restoringTaskIterator.hasNext())
 {
             StreamTask task = restoringTaskIterator.next();
@@ -114,7 +114,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
         }
         log.LogTrace("Stream task changelog partitions that have completed restoring so far: {}", restored);
         restoredPartitions.AddAll(restored);
-        for (IEnumerator<KeyValuePair<TaskId, StreamTask>> it = restoring.entrySet().iterator(); it.hasNext(); )
+        for (IEnumerator<KeyValuePair<TaskId, StreamTask>> it = restoring.iterator(); it.hasNext(); )
 {
             KeyValuePair<TaskId, StreamTask> entry = it.next();
             StreamTask task = entry.Value;
@@ -216,7 +216,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
     Dictionary<TopicPartition, long> recordsToDelete()
 {
         Dictionary<TopicPartition, long> recordsToDelete = new HashMap<>();
-        foreach (StreamTask task in running.values())
+        foreach (StreamTask task in running.Values)
 {
             recordsToDelete.putAll(task.purgableOffsets());
         }
@@ -231,7 +231,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 {
         int processed = 0;
 
-        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.entrySet().iterator();
+        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.iterator();
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;
@@ -269,7 +269,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
     int punctuate()
 {
         int punctuated = 0;
-        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.entrySet().iterator();
+        IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.iterator();
         while (it.hasNext())
 {
             StreamTask task = it.next().Value;
@@ -316,7 +316,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 {
         StringBuilder builder = new StringBuilder();
         builder.Append(base.ToString(indent));
-        describe(builder, restoring.values(), indent, "Restoring:");
+        describe(builder, restoring.Values, indent, "Restoring:");
         return builder.ToString();
     }
 
@@ -324,7 +324,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 
     Collection<StreamTask> restoringTasks()
 {
-        return Collections.unmodifiableCollection(restoring.values());
+        return Collections.unmodifiableCollection(restoring.Values);
     }
 
 }

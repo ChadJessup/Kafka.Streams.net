@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Internals
      * @param the source's (parent's) value type
      * @param the value type
      */
-    public class KTableImpl<K, S, V> : AbstractStream<K, V>, KTable<K, V>
+    public class KTableImpl<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KTableImpl>();
 
@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
             return queryableStoreName;
         }
 
-        private KTable<K, V> doFilter(Predicate<K, V> predicate,
+        private IKTable<K, V> doFilter(Predicate<K, V> predicate,
                                        Named named,
                                        MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                        bool filterNot)
@@ -124,21 +124,21 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> filter(Predicate<K, V> predicate)
+        public IKTable<K, V> filter(Predicate<K, V> predicate)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             return doFilter(predicate, NamedInternal.empty(), null, false);
         }
 
 
-        public KTable<K, V> filter(Predicate<K, V> predicate, Named named)
+        public IKTable<K, V> filter(Predicate<K, V> predicate, Named named)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             return doFilter(predicate, named, null, false);
         }
 
 
-        public KTable<K, V> filter(Predicate<K, V> predicate,
+        public IKTable<K, V> filter(Predicate<K, V> predicate,
                                     Named named,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -150,21 +150,21 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> filter(Predicate<K, V> predicate,
+        public IKTable<K, V> filter(Predicate<K, V> predicate,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return filter(predicate, NamedInternal.empty(), materialized);
         }
 
 
-        public KTable<K, V> filterNot(Predicate<K, V> predicate)
+        public IKTable<K, V> filterNot(Predicate<K, V> predicate)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             return doFilter(predicate, NamedInternal.empty(), null, true);
         }
 
 
-        public KTable<K, V> filterNot(Predicate<K, V> predicate,
+        public IKTable<K, V> filterNot(Predicate<K, V> predicate,
                                        Named named)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
@@ -172,14 +172,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> filterNot(Predicate<K, V> predicate,
+        public IKTable<K, V> filterNot(Predicate<K, V> predicate,
                                        Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return filterNot(predicate, NamedInternal.empty(), materialized);
         }
 
 
-        public KTable<K, V> filterNot(Predicate<K, V> predicate,
+        public IKTable<K, V> filterNot(Predicate<K, V> predicate,
                                        Named named,
                                        Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -190,7 +190,7 @@ namespace Kafka.Streams.KStream.Internals
             return doFilter(predicate, renamed, materializedInternal, true);
         }
 
-        private KTable<K, VR> doMapValues(ValueMapperWithKey<K, V, VR> mapper,
+        private IKTable<K, VR> doMapValues(ValueMapperWithKey<K, V, VR> mapper,
                                                 Named named,
                                                 MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
@@ -254,14 +254,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapper<V, VR> mapper)
+        public IKTable<K, VR> mapValues(ValueMapper<V, VR> mapper)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             return doMapValues(withKey(mapper), NamedInternal.empty(), null);
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
                                              Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
@@ -269,14 +269,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper)
+        public IKTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             return doMapValues(mapper, NamedInternal.empty(), null);
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
                                              Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
@@ -284,14 +284,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return mapValues(mapper, NamedInternal.empty(), materialized);
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapper<V, VR> mapper,
                                              Named named,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -304,14 +304,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return mapValues(mapper, NamedInternal.empty(), materialized);
         }
 
 
-        public KTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
+        public IKTable<K, VR> mapValues(ValueMapperWithKey<K, V, VR> mapper,
                                              Named named,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -324,14 +324,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    string[] stateStoreNames)
         {
             return doTransformValues(transformerSupplier, null, NamedInternal.empty(), stateStoreNames);
         }
 
 
-        public KTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Named named,
                                                    string[] stateStoreNames)
         {
@@ -340,7 +340,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                    string[] stateStoreNames)
         {
@@ -348,7 +348,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                    Named named,
                                                    string[] stateStoreNames)
@@ -360,7 +360,7 @@ namespace Kafka.Streams.KStream.Internals
             return doTransformValues(transformerSupplier, materializedInternal, new NamedInternal(named), stateStoreNames);
         }
 
-        private KTable<K, VR> doTransformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        private IKTable<K, VR> doTransformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                       MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                                       NamedInternal namedInternal,
                                                       string[] stateStoreNames)
@@ -463,7 +463,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, V> suppress(Suppressed<K> suppressed)
+        public IKTable<K, V> suppress(Suppressed<K> suppressed)
         {
             string name;
             if (suppressed is NamedSuppressed)
@@ -533,14 +533,14 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public KTable<K, R> join(KTable<K, V1> other,
+        public IKTable<K, R> join(IKTable<K, V1> other,
                                           ValueJoiner<V, V1, R> joiner)
         {
             return doJoin(other, joiner, NamedInternal.empty(), null, false, false);
         }
 
 
-        public KTable<K, R> join(KTable<K, V1> other,
+        public IKTable<K, R> join(IKTable<K, V1> other,
                                           ValueJoiner<V, V1, R> joiner,
                                           Named named)
         {
@@ -548,7 +548,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> join(KTable<K, VO> other,
+        public IKTable<K, VR> join(IKTable<K, VO> other,
                                             ValueJoiner<V, VO, VR> joiner,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -556,7 +556,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> join(KTable<K, VO> other,
+        public IKTable<K, VR> join(IKTable<K, VO> other,
                                             ValueJoiner<V, VO, VR> joiner,
                                             Named named,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -569,14 +569,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, R> outerJoin(KTable<K, V1> other,
+        public IKTable<K, R> outerJoin(IKTable<K, V1> other,
                                                ValueJoiner<V, V1, R> joiner)
         {
             return outerJoin(other, joiner, NamedInternal.empty());
         }
 
 
-        public KTable<K, R> outerJoin(KTable<K, V1> other,
+        public IKTable<K, R> outerJoin(IKTable<K, V1> other,
                                                ValueJoiner<V, V1, R> joiner,
                                                Named named)
         {
@@ -584,7 +584,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> outerJoin(KTable<K, VO> other,
+        public IKTable<K, VR> outerJoin(IKTable<K, VO> other,
                                                  ValueJoiner<V, VO, VR> joiner,
                                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -592,7 +592,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> outerJoin(KTable<K, VO> other,
+        public IKTable<K, VR> outerJoin(IKTable<K, VO> other,
                                                  ValueJoiner<V, VO, VR> joiner,
                                                  Named named,
                                                  Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -605,14 +605,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, R> leftJoin(KTable<K, V1> other,
+        public IKTable<K, R> leftJoin(IKTable<K, V1> other,
                                               ValueJoiner<V, V1, R> joiner)
         {
             return leftJoin(other, joiner, NamedInternal.empty());
         }
 
 
-        public KTable<K, R> leftJoin(KTable<K, V1> other,
+        public IKTable<K, R> leftJoin(IKTable<K, V1> other,
                                               ValueJoiner<V, V1, R> joiner,
                                               Named named)
         {
@@ -620,7 +620,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> leftJoin(KTable<K, VO> other,
+        public IKTable<K, VR> leftJoin(IKTable<K, VO> other,
                                                 ValueJoiner<V, VO, VR> joiner,
                                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -628,7 +628,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTable<K, VR> leftJoin(KTable<K, VO> other,
+        public IKTable<K, VR> leftJoin(IKTable<K, VO> other,
                                                 ValueJoiner<V, VO, VR> joiner,
                                                 Named named,
                                                 Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -641,7 +641,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private KTable<K, VR> doJoin(KTable<K, VO> other,
+        private IKTable<K, VR> doJoin(IKTable<K, VO> other,
                                                ValueJoiner<V, VO, VR> joiner,
                                                Named joinName,
                                                MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,

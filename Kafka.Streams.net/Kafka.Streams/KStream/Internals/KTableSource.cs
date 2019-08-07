@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
             return queryableName;
         }
 
-        public Processor<K, V> get()
+        public IProcessor<K, V> get()
         {
             return new KTableSourceProcessor();
         }

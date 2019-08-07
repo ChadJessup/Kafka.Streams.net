@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
          * that represent the latest (rolling) count (i.e., number of records) for each key within a window
          */
-        KTable<Windowed<K>, long> count();
+        IKTable<Windowed<K>, long> count();
 
         /**
          * Count the number of records in this stream by the grouped key into {@link SessionWindows}.
@@ -84,7 +84,7 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys and {@link long} values
          * that represent the latest (rolling) count (i.e., number of records) for each key within a window
          */
-        KTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized);
+        IKTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized);
 
         /**
          * Aggregate the values of records in this stream by the grouped key and defined {@link SessionWindows}.
@@ -119,7 +119,7 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
-        KTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
+        IKTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
                                                 Aggregator<K, V, VR> aggregator,
                                                 Merger<K, VR> sessionMerger);
 
@@ -176,7 +176,7 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
-        KTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
+        IKTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
                                                 Aggregator<K, V, VR> aggregator,
                                                 Merger<K, VR> sessionMerger,
                                                 Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
@@ -207,7 +207,7 @@ namespace Kafka.Streams.KStream
      * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
      * the latest (rolling) aggregate for each key within a window
      */
-    KTable<Windowed<K>, V> reduce(Reducer<V> reducer);
+    IKTable<Windowed<K>, V> reduce(Reducer<V> reducer);
 
         /**
          * Combine values of this stream by the grouped key into {@link SessionWindows}.
@@ -270,7 +270,7 @@ namespace Kafka.Streams.KStream
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
-        KTable<Windowed<K>, V> reduce(
+        IKTable<Windowed<K>, V> reduce(
             Reducer<V> reducer,
             Materialized<K, V, ISessionStore<Bytes, byte[]>> materializedAs);
     }

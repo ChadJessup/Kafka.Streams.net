@@ -133,7 +133,7 @@ namespace Kafka.Streams.KStream.Internals
             Dictionary<long, W> matchedWindows = windows.windowsFor(timestamp);
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
-            foreach (var entry in matchedWindows.entrySet())
+            foreach (var entry in matchedWindows)
             {
                 long windowStart = entry.Key;
                 long windowEnd = entry.Value.end();

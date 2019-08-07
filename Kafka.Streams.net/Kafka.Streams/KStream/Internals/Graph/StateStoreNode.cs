@@ -14,39 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-    public class StateStoreNode : StreamsGraphNode
+    public class StateStoreNode<T> : StreamsGraphNode
+        where T : IStateStore
     {
+        protected IStoreBuilder<T> storeBuilder;
 
-
-        protected IStoreBuilder storeBuilder;
-
-        public StateStoreNode(IStoreBuilder storeBuilder)
+        public StateStoreNode(IStoreBuilder<T> storeBuilder)
             : base(storeBuilder.name())
         {
-
             this.storeBuilder = storeBuilder;
         }
 
-
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-
-            topologyBuilder.addStateStore(storeBuilder);
+            topologyBuilder.addStateStore<T>(storeBuilder);
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "StateStoreNode{" +
                    " name='" + storeBuilder.name() + '\'' +

@@ -1129,7 +1129,7 @@ namespace Kafka.Streams.Processor.Internals
                     {
                         Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> remainingStandbyRecords = new HashMap<>();
 
-                        foreach (var entry in standbyRecords.entrySet())
+                        foreach (var entry in standbyRecords)
                         {
                             TopicPartition partition = entry.Key;
                             List<ConsumeResult<byte[], byte[]>> remaining = entry.Value;
@@ -1337,13 +1337,13 @@ namespace Kafka.Streams.Processor.Internals
         {
             HashSet<string> producerClientIds = new HashSet<>();
             HashSet<TaskMetadata> activeTasksMetadata = new HashSet<>();
-            foreach (KeyValuePair<TaskId, StreamTask> task in activeTasks.entrySet())
+            foreach (KeyValuePair<TaskId, StreamTask> task in activeTasks)
             {
                 activeTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
                 producerClientIds.Add(getTaskProducerClientId(getName(), task.Key));
             }
             HashSet<TaskMetadata> standbyTasksMetadata = new HashSet<>();
-            foreach (KeyValuePair<TaskId, StandbyTask> task in standbyTasks.entrySet())
+            foreach (KeyValuePair<TaskId, StandbyTask> task in standbyTasks)
             {
                 standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions()));
             }
@@ -1405,7 +1405,7 @@ namespace Kafka.Streams.Processor.Internals
                 // When EOS is turned on, each task will have its own producer client
                 // and the producer object passed in here will be null. We would then iterate through
                 // all the active tasks and.Add their metrics to the output metrics map.
-                for (StreamTask task: taskManager.activeTasks().values())
+                for (StreamTask task: taskManager.activeTasks().Values)
                 {
                     Dictionary<MetricName, Metric> taskProducerMetrics = task.getProducer().metrics();
                     result.putAll(taskProducerMetrics);

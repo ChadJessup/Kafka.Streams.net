@@ -10,7 +10,7 @@ namespace Kafka.Streams.Processor
      * @param the type of keys
      * @param the type of values
      */
-    public abstract class AbstractProcessor<K, V> : Processor<K, V>
+    public abstract class AbstractProcessor<K, V> : IProcessor<K, V>
     {
         private IProcessorContext context;
 
