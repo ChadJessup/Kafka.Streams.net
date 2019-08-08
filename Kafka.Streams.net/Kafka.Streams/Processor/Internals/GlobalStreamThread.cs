@@ -69,7 +69,7 @@ namespace Kafka.Streams.Processor.Internals
          *     <li>State PENDING_SHUTDOWN may want to transit itself. In this case we will forbid the transition but will not treat as an error.</li>
          * </ul>
          */
-        public enum State : ThreadStateTransitionValidator
+        public enum State : IThreadStateTransitionValidator
         {
 
             CREATED(1, 2), RUNNING(2), PENDING_SHUTDOWN(3), DEAD;
@@ -87,7 +87,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public bool isValidTransition(ThreadStateTransitionValidator newState)
+        public bool isValidTransition(IThreadStateTransitionValidator newState)
         {
             State tmpState = (State)newState;
             return validTransitions.contains(tmpState.ordinal());
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Processor.Internals
         private object stateLock = new object();
         private StreamThread.StateListener stateListener = null;
         private string logPrefix;
-        private StateRestoreListener stateRestoreListener;
+        private IStateRestoreListener stateRestoreListener;
 
         /**
          * Set the {@link StreamThread.StateListener} to be notified when state changes. Note this API is internal to
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Processor.Internals
                                   Metrics metrics,
                                   ITime time,
                                   string threadClientId,
-                                  StateRestoreListener stateRestoreListener)
+                                  IStateRestoreListener stateRestoreListener)
             : base(threadClientId)
         {
             this.time = time;

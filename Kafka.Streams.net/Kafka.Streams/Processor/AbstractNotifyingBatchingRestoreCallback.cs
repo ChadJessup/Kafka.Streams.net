@@ -26,7 +26,7 @@ using Kafka.Common.TopicPartition;
  * Includes default no-op methods of the {@link StateRestoreListener} {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)},
  * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}, and {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}.
  */
-public abstract class AbstractNotifyingBatchingRestoreCallback : BatchingStateRestoreCallback, StateRestoreListener
+public abstract class AbstractNotifyingBatchingRestoreCallback : BatchingStateRestoreCallback, IStateRestoreListener
 {
 
 

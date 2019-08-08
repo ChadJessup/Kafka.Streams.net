@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream
 
 
 
-        public void configure(Map<string, object> configs, bool isKey)
+        public void configure(Dictionary<string, object> configs, bool isKey)
         {
             if (inner == null)
             {

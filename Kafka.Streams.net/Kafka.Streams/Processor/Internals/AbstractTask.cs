@@ -65,7 +65,7 @@ public abstract class AbstractTask : Task
      * @throws ProcessorStateException if the state manager cannot be created
      */
     AbstractTask(TaskId id,
-                 Collection<TopicPartition> partitions,
+                 List<TopicPartition> partitions,
                  ProcessorTopology topology,
                  IConsumer<byte[], byte[]> consumer,
                  ChangelogReader changelogReader,
@@ -270,7 +270,7 @@ public abstract class AbstractTask : Task
         }
     }
 
-    void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions)
+    void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
 {
         stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
     }
@@ -324,7 +324,7 @@ public abstract class AbstractTask : Task
         return !topology.stateStores().isEmpty();
     }
 
-    public Collection<TopicPartition> changelogPartitions()
+    public List<TopicPartition> changelogPartitions()
 {
         return stateMgr.changelogPartitions();
     }

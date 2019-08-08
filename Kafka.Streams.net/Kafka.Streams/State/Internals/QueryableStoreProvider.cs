@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals;
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.QueryableStoreType;
+using Kafka.Streams.State.IQueryableStoreType;
 
 
 
@@ -31,10 +31,10 @@ using Kafka.Streams.State.QueryableStoreType;
 public class QueryableStoreProvider
 {
 
-    private List<StateStoreProvider> storeProviders;
+    private List<IStateStoreProvider> storeProviders;
     private GlobalStateStoreProvider globalStoreProvider;
 
-    public QueryableStoreProvider(List<StateStoreProvider> storeProviders,
+    public QueryableStoreProvider(List<IStateStoreProvider> storeProviders,
                                   GlobalStateStoreProvider globalStateStoreProvider)
 {
         this.storeProviders = new List<>(storeProviders);
@@ -51,7 +51,7 @@ public class QueryableStoreProvider
      * @return A composite object that wraps the store instances.
      */
     public T getStore(string storeName,
-                          QueryableStoreType<T> queryableStoreType)
+                          IQueryableStoreType<T> queryableStoreType)
 {
         List<T> globalStore = globalStoreProvider.stores(storeName, queryableStoreType);
         if (!globalStore.isEmpty())
@@ -59,7 +59,7 @@ public class QueryableStoreProvider
             return queryableStoreType.create(new WrappingStoreProvider(singletonList(globalStoreProvider)), storeName);
         }
         List<T> allStores = new List<>();
-        foreach (StateStoreProvider storeProvider in storeProviders)
+        foreach (IStateStoreProvider storeProvider in storeProviders)
 {
             allStores.AddAll(storeProvider.stores(storeName, queryableStoreType));
         }

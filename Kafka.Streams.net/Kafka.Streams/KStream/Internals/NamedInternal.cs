@@ -28,26 +28,17 @@ namespace Kafka.Streams.KStream.Internals
          *
          * @param internal the internal name.
          */
-        NamedInternal(string @internal)
+        public NamedInternal(string @internal)
             : base(@internal)
         {
         }
-
-        /**
-         * @return a string name.
-         */
-        public string name()
-        {
-            return name;
-        }
-
 
         public NamedInternal withName(string name)
         {
             return new NamedInternal(name);
         }
 
-        string suffixWithOrElseGet(string suffix, string other)
+        public string suffixWithOrElseGet(string suffix, string other)
         {
             if (name != null)
             {
@@ -55,12 +46,11 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-
                 return other;
             }
         }
 
-        string suffixWithOrElseGet(string suffix, InternalNameProvider provider, string prefix)
+        public string suffixWithOrElseGet(string suffix, InternalNameProvider provider, string prefix)
         {
             // We actually do not need to generate processor names for operation if a name is specified.
             // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
@@ -81,7 +71,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        string orElseGenerateWithPrefix(InternalNameProvider provider, string prefix)
+        public string orElseGenerateWithPrefix(InternalNameProvider provider, string prefix)
         {
             // We actually do not need to generate processor names for operation if a name is specified.
             // But before returning, we still need to burn index for the operation to keep topology backward compatibility.
@@ -92,8 +82,8 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-
                 return provider.newProcessorName(prefix);
             }
         }
     }
+}

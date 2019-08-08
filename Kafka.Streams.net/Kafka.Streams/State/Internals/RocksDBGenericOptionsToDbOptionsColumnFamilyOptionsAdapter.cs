@@ -301,7 +301,7 @@ class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
         return this;
     }
 
-    public override Options setDbPaths(Collection<DbPath> dbPaths)
+    public override Options setDbPaths(List<DbPath> dbPaths)
 {
         dbOptions.setDbPaths(dbPaths);
         return this;

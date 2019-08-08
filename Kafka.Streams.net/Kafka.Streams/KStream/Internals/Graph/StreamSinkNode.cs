@@ -64,13 +64,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             ISerializer<K> keySerializer = producedInternal.keySerde() == null ? null : producedInternal.keySerde().Serializer();
             ISerializer<V> valSerializer = producedInternal.valueSerde() == null ? null : producedInternal.valueSerde().Serializer();
-            StreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
+            IStreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
             string[] parentNames = parentNodeNames();
 
             if (partitioner == null && keySerializer is IWindowedSerializer)
             {
 
-                StreamPartitioner<K, V> windowedPartitioner = (StreamPartitioner<K, V>)new WindowedStreamPartitioner<object, V>((IWindowedSerializer)keySerializer);
+                IStreamPartitioner<K, V> windowedPartitioner = (IStreamPartitioner<K, V>)new WindowedStreamPartitioner<object, V>((IWindowedSerializer)keySerializer);
                 topologyBuilder.AddSink(nodeName(), topicNameExtractor, keySerializer, valSerializer, windowedPartitioner, parentNames);
             }
             else

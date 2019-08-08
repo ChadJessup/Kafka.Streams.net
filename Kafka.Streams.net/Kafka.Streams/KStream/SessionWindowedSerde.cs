@@ -23,12 +23,16 @@ namespace Kafka.Streams.KStream
     {
         // Default constructor needed for reflection object creation
         public SessionWindowedSerde()
-            : base(new SessionWindowedSerializer<T>(), new SessionWindowedDeserializer<T>())
+            : base(
+                  new SessionWindowedSerializer<T>(),
+                  new SessionWindowedDeserializer<T>())
         {
         }
 
         public SessionWindowedSerde(ISerde<T> inner)
-            : base(new SessionWindowedSerializer<T>(inner.serializer()), new SessionWindowedDeserializer<T>(inner.Deserializer()))
+            : base(
+                  new SessionWindowedSerializer<T>(inner.Serializer),
+                  new SessionWindowedDeserializer<T>(inner.Deserializer))
         {
         }
     }

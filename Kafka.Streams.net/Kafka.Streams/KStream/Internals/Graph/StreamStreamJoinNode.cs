@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         private StreamStreamJoinNode(
             string nodeName,
-            ValueJoiner<V1, V2, VR> valueJoiner,
+            IValueJoiner<V1, V2, VR> valueJoiner,
             ProcessorParameters<K, V1> joinThisProcessorParameters,
             ProcessorParameters<K, V2> joinOtherProcessParameters,
             ProcessorParameters<K, VR> joinMergeProcessorParameters,

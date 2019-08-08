@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
             HashSet<string> stores = new HashSet<string>(storeNames1.Length + storeNames2.Length);
             Collections.AddAll(stores, storeNames1);
             Collections.AddAll(stores, storeNames2);
-            return stores.toArray(new string[stores.size()]);
+            return stores.ToArray(new string[stores.size()]);
         }
 
     }

@@ -26,13 +26,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private ProcessorParameters<K, V1> joinThisProcessorParameters;
         private ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private ProcessorParameters<K, VR> joinMergeProcessorParameters;
-        private ValueJoiner<V1, V2, VR> valueJoiner;
+        private IValueJoiner<V1, V2, VR> valueJoiner;
         public string thisJoinSideNodeName { get; }
         public string otherJoinSideNodeName { get; }
 
         public BaseJoinProcessorNode(
             string nodeName,
-            ValueJoiner<V1, V2, VR> valueJoiner,
+            IValueJoiner<V1, V2, VR> valueJoiner,
             ProcessorParameters<K, V1> joinThisProcessorParameters,
             ProcessorParameters<K, V2> joinOtherProcessorParameters,
             ProcessorParameters<K, VR> joinMergeProcessorParameters,

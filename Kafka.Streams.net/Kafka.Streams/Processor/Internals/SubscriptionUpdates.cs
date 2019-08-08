@@ -23,13 +23,13 @@ public class SubscriptionUpdates
         {
             private HashSet<string> updatedTopicSubscriptions = new HashSet<>();
 
-            private void updateTopics(Collection<string> topicNames)
+            private void updateTopics(List<string> topicNames)
             {
                 updatedTopicSubscriptions.clear();
                 updatedTopicSubscriptions.AddAll(topicNames);
             }
 
-            public Collection<string> getUpdates()
+            public List<string> getUpdates()
             {
                 return Collections.unmodifiableSet(updatedTopicSubscriptions);
             }

@@ -28,7 +28,7 @@ namespace Kafka.Streams.Processor.Internals
         private StateDirectory stateDirectory;
         private HashSet<string> globalStoreNames = new HashSet<string>();
         private FixedOrderMap<string, Optional<IStateStore>> globalStores = new FixedOrderMap<>();
-        private StateRestoreListener stateRestoreListener;
+        private IStateRestoreListener stateRestoreListener;
         private IInternalProcessorContext globalProcessorContext;
         private int retries;
         private long retryBackoffMs;
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processor.Internals
                                       ProcessorTopology topology,
                                       IConsumer<byte[], byte[]> globalConsumer,
                                       StateDirectory stateDirectory,
-                                      StateRestoreListener stateRestoreListener,
+                                      IStateRestoreListener stateRestoreListener,
                                       StreamsConfig config)
         {
             eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
+        public void reinitializeStateStoresForPartitions(List<TopicPartition> partitions,
                                                          IInternalProcessorContext processorContext)
         {
             StateManagerUtil.reinitializeStateStoresForPartitions(

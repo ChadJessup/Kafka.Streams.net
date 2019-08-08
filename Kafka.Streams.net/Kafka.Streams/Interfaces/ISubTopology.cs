@@ -12,17 +12,16 @@ namespace Kafka.Streams.Interfaces
      */
     public interface ISubtopology
     {
-
         /**
          * Internally assigned unique ID.
          * @return the ID of the sub-topology
          */
-        int id();
+        int id { get; }
 
         /**
          * All nodes of this sub-topology.
          * @return set of all nodes within the sub-topology
          */
-        HashSet<INode> nodes();
+        HashSet<INode> nodes { get; }
     }
 }

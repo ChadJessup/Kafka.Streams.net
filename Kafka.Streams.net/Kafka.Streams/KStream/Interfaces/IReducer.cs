@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream
      * @see SessionWindowedKStream#reduce(Reducer, Materialized)
      * @see Aggregator
      */
-    public interface Reducer<V>
+    public interface IReducer<V>
     {
         /**
          * Aggregate the two given values into a single one.

@@ -90,7 +90,7 @@ namespace Kafka.Streams.Processor.Internals
             return created.isEmpty() && suspended.isEmpty();
         }
 
-        Collection<T> running()
+        List<T> running()
         {
             return running.Values;
         }
@@ -110,7 +110,7 @@ namespace Kafka.Streams.Processor.Internals
             return firstException[];
         }
 
-        private RuntimeException closeNonRunningTasks(Collection<T> tasks)
+        private RuntimeException closeNonRunningTasks(List<T> tasks)
         {
             RuntimeException exception = null;
             foreach (T task in tasks)
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Processor.Internals
             return exception;
         }
 
-        private RuntimeException suspendTasks(Collection<T> tasks)
+        private RuntimeException suspendTasks(List<T> tasks)
         {
             AtomicReference<RuntimeException> firstException = new AtomicReference<>(null);
             for (IEnumerator<T> it = tasks.iterator(); it.hasNext();)
@@ -283,7 +283,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         void describe(StringBuilder builder,
-                      Collection<T> tasks,
+                      List<T> tasks,
                       string indent,
                       string name)
         {

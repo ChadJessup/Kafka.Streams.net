@@ -16,11 +16,10 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processor.Interfaces
 {
-    public interface ProducerSupplier
+    public interface IProducerSupplier
     {
-
         IProducer<byte[], byte[]> get();
     }
 }

@@ -12,19 +12,18 @@
      */
     public interface IGlobalStore
     {
-
         /**
          * The source node reading from a "global" topic.
          * @return the "global" source node
          */
-        ISource source();
+        ISource source { get; }
 
         /**
          * The processor node maintaining the global store.
          * @return the "global" processor node
          */
-        IProcessor processor();
+        IProcessor processor { get; }
 
-        int id();
+        int id { get; }
     }
 }

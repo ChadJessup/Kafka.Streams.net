@@ -68,7 +68,7 @@ public interface Task
     /**
      * @return any changelog partitions associated with this task
      */
-    Collection<TopicPartition> changelogPartitions();
+    List<TopicPartition> changelogPartitions();
 
     bool hasStateStores();
 

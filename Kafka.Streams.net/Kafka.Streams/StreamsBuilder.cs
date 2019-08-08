@@ -30,38 +30,39 @@ namespace Kafka.Streams
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    package org.apache.kafka.streams;
+    namepsace Kafka.Streams
+    {
 
-    import org.apache.kafka.common.utils.Bytes;
-    import org.apache.kafka.streams.errors.TopologyException;
-    import org.apache.kafka.streams.kstream.Consumed;
-    import org.apache.kafka.streams.kstream.GlobalKTable;
-    import org.apache.kafka.streams.kstream.KGroupedStream;
-    import org.apache.kafka.streams.kstream.KGroupedTable;
-    import org.apache.kafka.streams.kstream.KStream;
-    import org.apache.kafka.streams.kstream.KTable;
-    import org.apache.kafka.streams.kstream.Materialized;
-    import org.apache.kafka.streams.kstream.Transformer;
-    import org.apache.kafka.streams.kstream.ValueTransformer;
-    import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
-    import org.apache.kafka.streams.kstream.internals.InternalStreamsBuilder;
-    import org.apache.kafka.streams.kstream.internals.MaterializedInternal;
-    import org.apache.kafka.streams.processor.Processor;
-    import org.apache.kafka.streams.processor.ProcessorSupplier;
-    import org.apache.kafka.streams.processor.StateStore;
-    import org.apache.kafka.streams.processor.TimestampExtractor;
-    import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
-    import org.apache.kafka.streams.processor.internals.ProcessorNode;
-    import org.apache.kafka.streams.processor.internals.SourceNode;
-    import org.apache.kafka.streams.state.KeyValueStore;
-    import org.apache.kafka.streams.state.QueryableStoreType;
-    import org.apache.kafka.streams.state.StoreBuilder;
+        import org.apache.kafka.common.utils.Bytes;
+        import org.apache.kafka.streams.errors.TopologyException;
+        import org.apache.kafka.streams.kstream.Consumed;
+        import org.apache.kafka.streams.kstream.GlobalKTable;
+        import org.apache.kafka.streams.kstream.KGroupedStream;
+        import org.apache.kafka.streams.kstream.KGroupedTable;
+        import org.apache.kafka.streams.kstream.KStream;
+        import org.apache.kafka.streams.kstream.KTable;
+        import org.apache.kafka.streams.kstream.Materialized;
+        import org.apache.kafka.streams.kstream.Transformer;
+        import org.apache.kafka.streams.kstream.ValueTransformer;
+        import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
+        import org.apache.kafka.streams.kstream.internals.InternalStreamsBuilder;
+        import org.apache.kafka.streams.kstream.internals.MaterializedInternal;
+        import org.apache.kafka.streams.processor.Processor;
+        import org.apache.kafka.streams.processor.ProcessorSupplier;
+        import org.apache.kafka.streams.processor.StateStore;
+        import org.apache.kafka.streams.processor.TimestampExtractor;
+        import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
+        import org.apache.kafka.streams.processor.internals.ProcessorNode;
+        import org.apache.kafka.streams.processor.internals.SourceNode;
+        import org.apache.kafka.streams.state.KeyValueStore;
+        import org.apache.kafka.streams.state.QueryableStoreType;
+        import org.apache.kafka.streams.state.StoreBuilder;
 
-    import java.util.Collection;
-    import java.util.Collections;
-    import java.util.Objects;
-    import java.util.Properties;
-    import java.util.regex.Pattern;
+        import java.util.List;
+        import java.util.Collections;
+        import java.util.Objects;
+        import java.util.Properties;
+        import java.util.regex.Pattern;
 
     /**
      * {@code StreamsBuilder} provide the high-level Kafka Streams DSL to specify a Kafka Streams topology.
@@ -96,9 +97,9 @@ namespace Kafka.Streams
          * @return a {@link KStream} for the specified topic
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream<K, V>(string topic)
+        public IKStream<K, V> stream<K, V>(string topic)
         {
-            return stream(Collections.singleton(topic));
+            return stream(new List<string>() { topic }.AsReadOnly());
         }
 
         /**
@@ -115,8 +116,8 @@ namespace Kafka.Streams
          * @return a {@link KStream} for the specified topic
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream(final String topic,
-                                                        final Consumed<K, V> consumed)
+        public IKStream<K, V> stream(String topic,
+                                                        Consumed<K, V> consumed)
         {
             return stream(Collections.singleton(topic), consumed);
         }
@@ -136,9 +137,9 @@ namespace Kafka.Streams
          * @return a {@link KStream} for the specified topics
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream(final Collection<String> topics)
+        public IKStream<K, V> stream<K, V>(IReadOnlyList<string> topics)
         {
-            return stream(topics, Consumed.with(null, null, null, null));
+            return stream(topics, Consumed<K, V>.with(null, null, null, null));
         }
 
         /**
@@ -157,8 +158,8 @@ namespace Kafka.Streams
          * @return a {@link KStream} for the specified topics
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream(final Collection<String> topics,
-                                                        final Consumed<K, V> consumed)
+        public IKStream<K, V> stream(List<String> topics,
+                                                        Consumed<K, V> consumed)
         {
             Objects.requireNonNull(topics, "topics can't be null");
             Objects.requireNonNull(consumed, "consumed can't be null");
@@ -182,7 +183,7 @@ namespace Kafka.Streams
          * @return a {@link KStream} for topics matching the regex pattern.
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream(final Pattern topicPattern)
+        public IKStream<K, V> stream(Pattern topicPattern)
         {
             return stream(topicPattern, Consumed.with(null, null));
         }
@@ -204,12 +205,13 @@ namespace Kafka.Streams
          * @return a {@link KStream} for topics matching the regex pattern.
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KStream<K, V> stream(final Pattern topicPattern,
-                                                        final Consumed<K, V> consumed)
+        public IKStream<K, V> stream<K, V>(
+            Pattern topicPattern,
+            Consumed<K, V> consumed)
         {
             Objects.requireNonNull(topicPattern, "topicPattern can't be null");
             Objects.requireNonNull(consumed, "consumed can't be null");
-            return internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<>(consumed));
+            return internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
         }
 
         /**
@@ -250,18 +252,19 @@ namespace Kafka.Streams
          * @return a {@link KTable} for the specified topic
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IKTable<K, V> table(final String topic,
-                                                      final Consumed<K, V> consumed,
-                                                      final Materialized<K, V, KeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, V> table<K, V>(
+            string topic,
+            Consumed<K, V> consumed,
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             Objects.requireNonNull(topic, "topic can't be null");
             Objects.requireNonNull(consumed, "consumed can't be null");
             Objects.requireNonNull(materialized, "materialized can't be null");
-            final ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<>(consumed);
-            materialized.withKeySerde(consumedInternal.keySerde()).withValueSerde(consumedInternal.valueSerde());
+            ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
+            materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
 
-            final MaterializedInternal<K, V, KeyValueStore< Bytes, byte[]>> materializedInternal =
-                 new MaterializedInternal<>(materialized, internalStreamsBuilder, topic + "-");
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+                 new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
 
             return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
         }
@@ -285,9 +288,9 @@ namespace Kafka.Streams
          * @return a {@link KTable} for the specified topic
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IKTable<K, V> table(final String topic)
+        public IKTable<K, V> table<K, V>(string topic)
         {
-            return table(topic, new ConsumedInternal<>());
+            return table(topic, new ConsumedInternal<K, V>());
         }
 
         /**
@@ -457,12 +460,12 @@ namespace Kafka.Streams
             Objects.requireNonNull(topic, "topic can't be null");
             Objects.requireNonNull(consumed, "consumed can't be null");
             Objects.requireNonNull(materialized, "materialized can't be null");
-            ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<>(consumed);
+            ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
             // always use the serdes from consumed
-            materialized.withKeySerde(consumedInternal.keySerde()).withValueSerde(consumedInternal.valueSerde());
+            materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
 
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                 new MaterializedInternal<>(materialized, internalStreamsBuilder, topic + "-");
+                 new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
 
             return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
         }

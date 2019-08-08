@@ -15,76 +15,65 @@
  * limitations under the License.
  */
 using Kafka.Common;
+using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 
-public static class TopologyDescription : TopologyDescription
+public class TopologyDescription
 {
+    private SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
+    private SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
 
-    private TreeSet<TopologyDescription.Subtopology> subtopologies = new TreeSet<>(SUBTOPOLOGY_COMPARATOR);
-    private TreeSet<TopologyDescription.GlobalStore> globalStores = new TreeSet<>(GLOBALSTORE_COMPARATOR);
-
-    public void addSubtopology(TopologyDescription.Subtopology subtopology)
+    public void addSubtopology(ISubtopology subtopology)
     {
         subtopologies.Add(subtopology);
     }
 
-    public void addGlobalStore(TopologyDescription.GlobalStore globalStore)
+    public void addGlobalStore(IGlobalStore globalStore)
     {
         globalStores.Add(globalStore);
     }
 
-
-    public HashSet<TopologyDescription.Subtopology> subtopologies()
-    {
-        return Collections.unmodifiableSet(subtopologies);
-    }
-
-
-    public HashSet<TopologyDescription.GlobalStore> globalStores()
-    {
-        return Collections.unmodifiableSet(globalStores);
-    }
-
-
-    public string ToString()
+    public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
         sb.Append("Topologies:\n ");
-        TopologyDescription.Subtopology[] sortedSubtopologies =
-            subtopologies.descendingSet().toArray(new Subtopology[0]);
-        TopologyDescription.GlobalStore[] sortedGlobalStores =
-            globalStores.descendingSet().toArray(new GlobalStore[0]);
+        ISubtopology[] sortedSubtopologies =
+            subtopologies.OrderByDescending(t => t.id).ToArray();
+        IGlobalStore[] sortedGlobalStores =
+            globalStores.OrderByDescending(s => s.id).ToArray();
         int expectedId = 0;
         int subtopologiesIndex = sortedSubtopologies.Length - 1;
         int globalStoresIndex = sortedGlobalStores.Length - 1;
         while (subtopologiesIndex != -1 && globalStoresIndex != -1)
         {
             sb.Append("  ");
-            TopologyDescription.Subtopology subtopology = sortedSubtopologies[subtopologiesIndex];
-            TopologyDescription.GlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
-            if (subtopology.id() == expectedId)
+            ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
+            IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
+            if (subtopology.id == expectedId)
             {
                 sb.Append(subtopology);
                 subtopologiesIndex--;
             }
             else
             {
-
                 sb.Append(globalStore);
                 globalStoresIndex--;
             }
             expectedId++;
         }
+
         while (subtopologiesIndex != -1)
         {
-            TopologyDescription.Subtopology subtopology = sortedSubtopologies[subtopologiesIndex];
+            ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
             sb.Append("  ");
             sb.Append(subtopology);
             subtopologiesIndex--;
         }
         while (globalStoresIndex != -1)
         {
-            TopologyDescription.GlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
+            IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
             sb.Append("  ");
             sb.Append(globalStore);
             globalStoresIndex--;
@@ -92,8 +81,7 @@ public static class TopologyDescription : TopologyDescription
         return sb.ToString();
     }
 
-
-    public bool Equals(object o)
+    public override bool Equals(object o)
     {
         if (this == o)
         {
@@ -110,9 +98,9 @@ public static class TopologyDescription : TopologyDescription
     }
 
 
-    public int GetHashCode()
+    public override int GetHashCode()
     {
-        return Objects.hash(subtopologies, globalStores);
+        return (subtopologies, globalStores).GetHashCode();
     }
 
 }

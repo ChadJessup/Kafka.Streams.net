@@ -6,7 +6,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class StreamStreamJoinNodeBuilder<K, V1, V2, VR>
     {
         private string nodeName;
-        private ValueJoiner<V1, V2, VR> valueJoiner;
+        private IValueJoiner<V1, V2, VR> valueJoiner;
         private ProcessorParameters<K, V1> joinThisProcessorParameters;
         private ProcessorParameters<K, V2> joinOtherProcessorParameters;
         private ProcessorParameters<K, VR> joinMergeProcessorParameters;
@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder;
         private Joined<K, V1, V2> joined;
 
-        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withValueJoiner(ValueJoiner<V1, V2, VR> valueJoiner)
+        public StreamStreamJoinNodeBuilder<K, V1, V2, VR> withValueJoiner(IValueJoiner<V1, V2, VR> valueJoiner)
         {
             this.valueJoiner = valueJoiner;
             return this;

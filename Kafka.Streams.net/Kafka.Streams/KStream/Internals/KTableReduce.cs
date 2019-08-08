@@ -30,12 +30,12 @@ namespace Kafka.Streams.KStream.Internals
 public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
 
     private  string storeName;
-    private  Reducer<V>.AddReducer;
-    private  Reducer<V> removeReducer;
+    private  IReducer<V>.AddReducer;
+    private  IReducer<V> removeReducer;
 
     private bool sendOldValues = false;
 
-    KTableReduce( string storeName,  Reducer<V>.AddReducer,  Reducer<V> removeReducer)
+    KTableReduce( string storeName,  IReducer<V>.AddReducer,  IReducer<V> removeReducer)
 {
         this.storeName = storeName;
         this.AddReducer =.AddReducer;

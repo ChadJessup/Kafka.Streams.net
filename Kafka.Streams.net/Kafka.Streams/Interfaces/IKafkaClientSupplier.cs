@@ -20,9 +20,9 @@ using System.Collections.Generic;
 namespace Kafka.Streams.Interfaces
 {
     /**
-     * {@code KafkaClientSupplier} can be used to provide custom Kafka clients to a {@link KafkaStreams} instance.
+     * {@code IKafkaClientSupplier} can be used to provide custom Kafka clients to a {@link KafkaStreams} instance.
      *
-     * @see KafkaStreams#KafkaStreams(Topology, java.util.Properties, KafkaClientSupplier)
+     * @see KafkaStreams#KafkaStreams(Topology, java.util.Properties, IKafkaClientSupplier)
      */
     public interface IKafkaClientSupplier
     {

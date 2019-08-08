@@ -22,12 +22,12 @@ namespace Kafka.Streams.KStream.Internals
     {
 
         private KTableValueGetterSupplier<K2, V2> valueGetterSupplier;
-        private ValueJoiner<V1, V2, R> joiner;
+        private IValueJoiner<V1, V2, R> joiner;
         private IKeyValueMapper<K1, V1, K2> mapper;
         private bool leftJoin;
 
         KStreamGlobalKTableJoin(KTableValueGetterSupplier<K2, V2> valueGetterSupplier,
-                                 ValueJoiner<V1, V2, R> joiner,
+                                 IValueJoiner<V1, V2, R> joiner,
                                  IKeyValueMapper<K1, V1, K2> mapper,
                                  bool leftJoin)
         {

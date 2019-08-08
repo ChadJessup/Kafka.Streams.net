@@ -68,7 +68,7 @@ namespace Kafka.Streams.Processor.Internals
                                 long timestamp,
                                 ISerializer<K> keySerializer,
                                 ISerializer<V> valueSerializer,
-                                StreamPartitioner<K, V> partitioner)
+                                IStreamPartitioner<K, V> partitioner)
         {
             int partition = null;
 

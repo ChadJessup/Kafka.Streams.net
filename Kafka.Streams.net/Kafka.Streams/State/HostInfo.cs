@@ -18,7 +18,7 @@ namespace Kafka.Streams.State;
 
 using Kafka.Common.serialization.Serializer;
 using Kafka.Streams.KafkaStreams;
-using Kafka.Streams.Processor.StreamPartitioner;
+using Kafka.Streams.Processor.IStreamPartitioner;
 using Kafka.Streams.Processor.Internals.StreamsPartitionAssignor;
 
 /**

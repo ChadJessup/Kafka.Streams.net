@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processor.Internals
          * @return all the {@link StreamsMetadata}s in a {@link KafkaStreams} application
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Collection<StreamsMetadata> getAllMetadata()
+        public List<StreamsMetadata> getAllMetadata()
         {
             return allMetadata;
         }
@@ -79,7 +79,7 @@ namespace Kafka.Streams.Processor.Internals
          * @return A collection of {@link StreamsMetadata} that have the provided storeName
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Collection<StreamsMetadata> getAllMetadataForStore(string storeName)
+        public List<StreamsMetadata> getAllMetadataForStore(string storeName)
         {
             storeName = storeName ?? throw new System.ArgumentNullException("storeName cannot be null", nameof(storeName));
 
@@ -182,7 +182,7 @@ namespace Kafka.Streams.Processor.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public StreamsMetadata getMetadataWithKey(string storeName,
                                                                    K key,
-                                                                   StreamPartitioner<K, object> partitioner)
+                                                                   IStreamPartitioner<K, object> partitioner)
         {
             storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
             key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
@@ -270,7 +270,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private StreamsMetadata getStreamsMetadataForKey(string storeName,
                                                              K key,
-                                                             StreamPartitioner<K, object> partitioner,
+                                                             IStreamPartitioner<K, object> partitioner,
                                                              SourceTopicsInfo sourceTopicsInfo)
         {
 

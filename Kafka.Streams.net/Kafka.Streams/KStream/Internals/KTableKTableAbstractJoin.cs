@@ -27,13 +27,13 @@ namespace Kafka.Streams.KStream.Internals
         private KTableImpl<K, object, V2> table2;
         KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
         KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
-        ValueJoiner<V1, V2, R> joiner;
+        IValueJoiner<V1, V2, R> joiner;
 
         bool sendOldValues = false;
 
         KTableKTableAbstractJoin(KTableImpl<K, object, V1> table1,
                                   KTableImpl<K, object, V2> table2,
-                                  ValueJoiner<V1, V2, R> joiner)
+                                  IValueJoiner<V1, V2, R> joiner)
         {
             this.table1 = table1;
             this.table2 = table2;

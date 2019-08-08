@@ -16,10 +16,12 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
 using System;
 using System.Collections.Generic;
 
@@ -50,8 +52,8 @@ namespace Kafka.Streams.KStream
     {
         protected IStoreSupplier<S> storeSupplier;
         protected string storeName;
-        protected ISerde<V> valueSerde;
-        protected ISerde<K> keySerde;
+        public ISerde<V> valueSerde;
+        public ISerde<K> keySerde;
         protected bool loggingEnabled = true;
         protected bool cachingEnabled = true;
         protected Dictionary<string, string> topicConfig = new Dictionary<string, string>();
@@ -149,7 +151,7 @@ namespace Kafka.Streams.KStream
         public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As(IKeyValueBytesStoreSupplier supplier)
         {
             supplier = supplier ?? throw new System.ArgumentNullException("supplier can't be null", nameof(supplier));
-            return new Materialized<>(supplier);
+            return new Materialized<K, V, IKeyValueStore<Bytes, byte[]>>(supplier);
         }
 
         /**
@@ -206,7 +208,7 @@ namespace Kafka.Streams.KStream
          * @param config    any configs that should be applied to the changelog
          * @return itself
          */
-        public Materialized<K, V, S> withLoggingEnabled(Map<string, string> config)
+        public Materialized<K, V, S> withLoggingEnabled(Dictionary<string, string> config)
         {
             loggingEnabled = true;
             this.topicConfig = config;
@@ -220,7 +222,7 @@ namespace Kafka.Streams.KStream
         public Materialized<K, V, S> withLoggingDisabled()
         {
             loggingEnabled = false;
-            this.topicConfig.clear();
+            this.topicConfig.Clear();
             return this;
         }
 
@@ -259,14 +261,17 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> withRetention(TimeSpan retention)
         {
-            string msgPrefix = prepareMillisCheckFailMsgPrefix(retention, "retention");
+            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retention, "retention");
             long retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
 
             if (retenationMs < 0)
             {
                 throw new System.ArgumentException("Retention must not be negative.");
             }
+
             this.retention = retention;
+
             return this;
         }
     }
+}

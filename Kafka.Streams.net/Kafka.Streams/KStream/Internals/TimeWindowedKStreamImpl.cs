@@ -149,13 +149,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer)
+        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer)
         {
             return reduce(reducer, Materialized.with(keySerde, valSerde));
         }
 
 
-        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
+        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
@@ -258,7 +258,7 @@ namespace Kafka.Streams.KStream.Internals
             return builder;
         }
 
-        private Aggregator<K, V, V> aggregatorForReducer(Reducer<V> reducer)
+        private Aggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
             return (aggKey, value, aggregate)->aggregate == null ? value : reducer.apply(aggregate, value);
         }

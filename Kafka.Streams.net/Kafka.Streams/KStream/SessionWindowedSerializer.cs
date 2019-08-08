@@ -14,6 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.State.Internals;
+using System;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream
 {
 
@@ -34,9 +40,8 @@ namespace Kafka.Streams.KStream
      *  {@link StreamsConfig#DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS}
      *  if the no-arg constructor is called and hence it is not passed during initialization.
      */
-    public class SessionWindowedSerializer<T> : WindowedSerializer<T>
+    public class SessionWindowedSerializer<T> : IWindowedSerializer<T>
     {
-
         private ISerializer<T> inner;
 
         // Default constructor needed by Kafka
@@ -47,9 +52,7 @@ namespace Kafka.Streams.KStream
             this.inner = inner;
         }
 
-
-
-        public void configure(Map<string, object> configs, bool isKey)
+        public void configure(Dictionary<string, object> configs, bool isKey)
         {
             if (inner == null)
             {
@@ -57,13 +60,12 @@ namespace Kafka.Streams.KStream
                 string value = (string)configs[propertyName];
                 try
                 {
-
                     inner = Serde.cast(Utils.newInstance(value, Serde)).Serializer();
                     inner.configure(configs, isKey);
                 }
-                catch (ClassNotFoundException e)
+                catch (Exception e)
                 {
-                    throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
+                    throw new Exception(propertyName, value, "Serde " + value + " could not be found.");
                 }
             }
         }
@@ -71,12 +73,13 @@ namespace Kafka.Streams.KStream
 
         public byte[] serialize(string topic, Windowed<T> data)
         {
-            WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
+            WindowedSerdes.verifyInnerSerializerNotNull<T>(inner, this);
 
             if (data == null)
             {
                 return null;
             }
+
             // for either key or value, their schema is the same hence we will just use session key schema
             return SessionKeySchema.toBinary(data, inner, topic);
         }

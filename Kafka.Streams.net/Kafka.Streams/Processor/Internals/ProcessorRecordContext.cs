@@ -127,7 +127,7 @@ public class ProcessorRecordContext : RecordContext
         } else
 {
 
-            Header[] headers = this.headers.toArray();
+            Header[] headers = this.headers.ToArray();
             headerKeysBytes = new byte[headers.Length][];
             headerValuesBytes = new byte[headers.Length][];
 

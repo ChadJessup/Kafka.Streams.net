@@ -15,27 +15,29 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    private class SourceNodeFactory : NodeFactory
+    public class SourceNodeFactory<K, V> : NodeFactory<K, V>
     {
-
         private List<string> topics;
         private Pattern pattern;
-        private IDeserializer<object> keyDeserializer;
-        private IDeserializer<object> valDeserializer;
-        private TimestampExtractor timestampExtractor;
+        private IDeserializer<K> keyDeserializer;
+        private IDeserializer<V> valDeserializer;
+        private ITimestampExtractor timestampExtractor;
 
-        private SourceNodeFactory(string name,
-                                  string[] topics,
-                                  Pattern pattern,
-                                  TimestampExtractor timestampExtractor,
-                                  IDeserializer<object> keyDeserializer,
-                                  IDeserializer<object> valDeserializer)
+        public SourceNodeFactory(
+            string name,
+            string[] topics,
+            Pattern pattern,
+            ITimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer)
             : base(name, NO_PREDECESSORS)
         {
             this.topics = topics != null ? Arrays.asList(topics) : new List<>();
@@ -45,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
             this.timestampExtractor = timestampExtractor;
         }
 
-        List<string> getTopics(Collection<string> subscribedTopics)
+        List<string> getTopics(List<string> subscribedTopics)
         {
             // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
             // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
@@ -55,7 +57,7 @@ namespace Kafka.Streams.Processor.Internals
                 return Collections.singletonList(string.valueOf(pattern));
             }
 
-            List<string> matchedTopics = new List<>();
+            List<string> matchedTopics = new List<string>();
             foreach (string update in subscribedTopics)
             {
                 if (pattern == topicToPatterns[update])
@@ -79,8 +81,7 @@ namespace Kafka.Streams.Processor.Internals
             return matchedTopics;
         }
 
-
-        public ProcessorNode build()
+        public override ProcessorNode<K, V> build()
         {
             List<string> sourceTopics = nodeToSourceTopics[name];
 

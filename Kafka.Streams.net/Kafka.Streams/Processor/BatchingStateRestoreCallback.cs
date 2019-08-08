@@ -38,6 +38,6 @@ public interface BatchingStateRestoreCallback : StateRestoreCallback
      *
      * @param records the records to restore.
      */
-    void restoreAll(Collection<KeyValue<byte[], byte[]>> records);
+    void restoreAll(List<KeyValue<byte[], byte[]>> records);
 
 }

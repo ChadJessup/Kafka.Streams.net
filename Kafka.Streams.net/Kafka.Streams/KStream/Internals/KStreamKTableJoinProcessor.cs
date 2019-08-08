@@ -36,14 +36,14 @@ namespace Kafka.Streams.KStream.Internals
 
         private KTableValueGetter<K2, V2> valueGetter;
         private IKeyValueMapper<K1, V1, K2> keyMapper;
-        private ValueJoiner<V1, V2, R> joiner;
+        private IValueJoiner<V1, V2, R> joiner;
         private bool leftJoin;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
         KStreamKTableJoinProcessor(KTableValueGetter<K2, V2> valueGetter,
                                     IKeyValueMapper<K1, V1, K2> keyMapper,
-                                    ValueJoiner<V1, V2, R> joiner,
+                                    IValueJoiner<V1, V2, R> joiner,
                                     bool leftJoin)
         {
             this.valueGetter = valueGetter;

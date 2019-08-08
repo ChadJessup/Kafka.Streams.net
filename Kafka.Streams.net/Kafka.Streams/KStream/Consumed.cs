@@ -34,15 +34,15 @@ namespace Kafka.Streams.KStream
     {
         public ISerde<K> keySerde { get; private set; }
         public ISerde<V> valueSerde { get; private set; }
-        protected ITimestampExtractor timestampExtractor;
-        protected Topology.AutoOffsetReset resetPolicy;
+        public ITimestampExtractor timestampExtractor;
+        protected AutoOffsetReset resetPolicy;
         protected string processorName;
 
         private Consumed(
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ITimestampExtractor timestampExtractor,
-            Topology.AutoOffsetReset resetPolicy,
+            AutoOffsetReset resetPolicy,
             string processorName)
         {
             this.keySerde = keySerde;
@@ -80,7 +80,7 @@ namespace Kafka.Streams.KStream
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ITimestampExtractor timestampExtractor,
-            Topology.AutoOffsetReset resetPolicy)
+            AutoOffsetReset resetPolicy)
         {
             return new Consumed<K, V>(keySerde, valueSerde, timestampExtractor, resetPolicy, null);
         }
@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
-            return new Consumed<K, V>(keySerde, valueSerde, null, Topology.AutoOffsetReset.UNKNOWN, null);
+            return new Consumed<K, V>(keySerde, valueSerde, null, AutoOffsetReset.UNKNOWN, null);
         }
 
         /**
@@ -111,18 +111,18 @@ namespace Kafka.Streams.KStream
          */
         public static Consumed<K, V> with(ITimestampExtractor timestampExtractor)
         {
-            return new Consumed<K, V>(null, null, timestampExtractor, Topology.AutoOffsetReset.UNKNOWN, null);
+            return new Consumed<K, V>(null, null, timestampExtractor, AutoOffsetReset.UNKNOWN, null);
         }
 
         /**
-         * Create an instance of {@link Consumed} with a {@link org.apache.kafka.streams.Topology.AutoOffsetReset Topology.AutoOffsetReset}.
+         * Create an instance of {@link Consumed} with a {@link org.apache.kafka.streams.AutoOffsetReset AutoOffsetReset}.
          *
          * @param resetPolicy the offset reset policy to be used. If {@code null} the default reset policy from config will be used
          * @param         key type
          * @param         value type
          * @return a new instance of {@link Consumed}
          */
-        public static Consumed<K, V> with(Topology.AutoOffsetReset resetPolicy)
+        public static Consumed<K, V> with(AutoOffsetReset resetPolicy)
         {
             return new Consumed<K, V>(null, null, null, resetPolicy, null);
         }
@@ -137,7 +137,7 @@ namespace Kafka.Streams.KStream
          */
         public static Consumed<K, V> As(string processorName)
         {
-            return new Consumed<K, V>(null, null, null, Topology.AutoOffsetReset.UNKNOWN, processorName);
+            return new Consumed<K, V>(null, null, null, AutoOffsetReset.UNKNOWN, processorName);
         }
 
         /**
@@ -177,12 +177,12 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Configure the instance of {@link Consumed} with a {@link org.apache.kafka.streams.Topology.AutoOffsetReset Topology.AutoOffsetReset}.
+         * Configure the instance of {@link Consumed} with a {@link org.apache.kafka.streams.AutoOffsetReset AutoOffsetReset}.
          *
          * @param resetPolicy the offset reset policy to be used. If {@code null} the default reset policy from config will be used
          * @return this
          */
-        public Consumed<K, V> WithOffsetResetPolicy(Topology.AutoOffsetReset resetPolicy)
+        public Consumed<K, V> WithOffsetResetPolicy(AutoOffsetReset resetPolicy)
         {
             this.resetPolicy = resetPolicy;
             return this;

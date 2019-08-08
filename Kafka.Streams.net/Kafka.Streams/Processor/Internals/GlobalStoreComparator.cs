@@ -14,17 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-private static class GlobalStoreComparator : Comparator<TopologyDescription.GlobalStore>, Serializable
+
+using Kafka.Streams.Interfaces;
+using System;
+using System.Collections.Generic;
+
+[Serializable]
+public class GlobalStoreComparator : IComparer<IGlobalStore>
 {
-
-
-    public int compare(TopologyDescription.GlobalStore globalStore1,
-                       TopologyDescription.GlobalStore globalStore2)
+    public int compare(
+        IGlobalStore globalStore1,
+        IGlobalStore globalStore2)
     {
         if (globalStore1.Equals(globalStore2))
         {
             return 0;
         }
-        return globalStore1.id() - globalStore2.id();
+
+        return globalStore1.id - globalStore2.id;
+    }
+
+    public int Compare(IGlobalStore x, IGlobalStore y)
+    {
+        return compare(x, y);
     }
 }

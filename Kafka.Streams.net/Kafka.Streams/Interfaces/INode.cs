@@ -7,12 +7,12 @@ namespace Kafka.Streams.Interfaces
      */
     public interface INode
     {
-
         /**
          * The name of the node. Will never be {@code null}.
          * @return the name of the node
          */
         string name();
+
         /**
          * The predecessors of this node within a sub-topology.
          * Note, sources do not have any predecessors.

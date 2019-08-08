@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
 
         void flush();
 
-        void prepareBatchForRestore(Collection<KeyValue<byte[], byte[]>> records,
+        void prepareBatchForRestore(List<KeyValue<byte[], byte[]>> records,
                                     WriteBatch batch);
 
         void addToBatch(byte[] key,

@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
      * @param the key type
      * @param the value type
      */
-    public class KGroupedTableImpl<K, V> : AbstractStream<K, V>, KGroupedTable<K, V>
+    public class KGroupedTableImpl<K, V> : AbstractStream<K, V>, IKGroupedTable<K, V>
     {
 
         private static string AGGREGATE_NAME = "KTABLE-AGGREGATE-";
@@ -131,8 +131,8 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, V> reduce(Reducer<V> adder,
-                                    Reducer<V> subtractor,
+        public IKTable<K, V> reduce(IReducer<V> adder,
+                                    IReducer<V> subtractor,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             Objects.requireNonNull(adder, "adder can't be null");
@@ -157,8 +157,8 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, V> reduce(Reducer<V> adder,
-                                    Reducer<V> subtractor)
+        public IKTable<K, V> reduce(IReducer<V> adder,
+                                    IReducer<V> subtractor)
         {
             return reduce(adder, subtractor, Materialized.with(keySerde, valSerde));
         }

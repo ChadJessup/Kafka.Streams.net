@@ -27,12 +27,12 @@ namespace Kafka.Streams.State.Internals
     public class CompositeReadOnlyWindowStore<K, V> : ReadOnlyWindowStore<K, V>
     {
 
-        private QueryableStoreType<ReadOnlyWindowStore<K, V>> windowStoreType;
+        private IQueryableStoreType<ReadOnlyWindowStore<K, V>> windowStoreType;
         private string storeName;
-        private StateStoreProvider provider;
+        private IStateStoreProvider provider;
 
-        public CompositeReadOnlyWindowStore(StateStoreProvider provider,
-                                            QueryableStoreType<ReadOnlyWindowStore<K, V>> windowStoreType,
+        public CompositeReadOnlyWindowStore(IStateStoreProvider provider,
+                                            IQueryableStoreType<ReadOnlyWindowStore<K, V>> windowStoreType,
                                             string storeName)
         {
             this.provider = provider;

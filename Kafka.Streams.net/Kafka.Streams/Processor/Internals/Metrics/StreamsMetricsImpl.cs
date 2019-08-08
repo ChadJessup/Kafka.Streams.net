@@ -82,7 +82,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             return tagMap;
         }
 
-        public Dictionary<string, string> threadLevelTagMap(string[] tags)
+        public Dictionary<string, string> threadLevelTagMap(params string[] tags)
         {
             Dictionary<string, string> tagMap = threadLevelTagMap();
             if (tags != null)
@@ -428,7 +428,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
             return "external" + SENSOR_PREFIX_DELIMITER + threadName + SENSOR_NAME_DELIMITER + operationName;
         }
 
-        public static void addAvgAndMax(
+        public void addAvgAndMax(
             Sensor sensor,
             string group,
             Dictionary<string, string> tags,
@@ -474,7 +474,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                 new Max());
         }
 
-        public static void addInvocationRateAndCount(
+        public void addInvocationRateAndCount(
             Sensor sensor,
             string group,
             Dictionary<string, string> tags,
@@ -499,13 +499,13 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                 new Rate(TimeUnit.SECONDS, new WindowedCount()));
         }
 
-        public static void addInvocationRateAndCount(
+        public void addInvocationRateAndCount(
             Sensor sensor,
             string group,
             Dictionary<string, string> tags,
             string operation)
         {
-           addInvocationRateAndCount(
+            this.addInvocationRateAndCount(
                 sensor,
                 group,
                 tags,

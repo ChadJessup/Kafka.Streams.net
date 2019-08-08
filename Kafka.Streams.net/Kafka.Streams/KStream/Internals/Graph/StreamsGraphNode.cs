@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     {
         private HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
         private HashSet<StreamsGraphNode> parentNodes = new HashSet<StreamsGraphNode>();
-        private string nodeName;
+        protected string nodeName;
         private bool keyChangingOperation;
         private bool valueChangingOperation;
         private bool mergeNode;

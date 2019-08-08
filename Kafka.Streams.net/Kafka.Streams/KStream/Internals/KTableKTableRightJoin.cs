@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
 
         KTableKTableRightJoin(KTableImpl<K, ?, V1> table1,
                                KTableImpl<K, ?, V2> table2,
-                               ValueJoiner<V1, V2, R> joiner)
+                               IValueJoiner<V1, V2, R> joiner)
             : base(table1, table2, joiner)
         {
         }

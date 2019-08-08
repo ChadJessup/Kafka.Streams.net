@@ -44,7 +44,7 @@ public interface RecordCollector : AutoCloseable
                      long timestamp,
                      ISerializer<K> keySerializer,
                      ISerializer<V> valueSerializer,
-                     StreamPartitioner<K, V> partitioner);
+                     IStreamPartitioner<K, V> partitioner);
 
     /**
      * Initialize the collector with a producer.

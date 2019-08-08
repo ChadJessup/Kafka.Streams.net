@@ -218,7 +218,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         // Visible for testing
-        void restoreAllInternal(Collection<KeyValue<byte[], byte[]>> records)
+        void restoreAllInternal(List<KeyValue<byte[], byte[]>> records)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         // Visible for testing
-        Dictionary<S, WriteBatch> getWriteBatches(Collection<KeyValue<byte[], byte[]>> records)
+        Dictionary<S, WriteBatch> getWriteBatches(List<KeyValue<byte[], byte[]>> records)
         {
             // advance stream time to the max timestamp in the batch
             foreach (KeyValue<byte[], byte[]> record in records)
@@ -291,7 +291,7 @@ namespace Kafka.Streams.State.Internals
 
         private RocksDBSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
         {
-            public override void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
+            public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {
             restoreAllInternal(records);
         }

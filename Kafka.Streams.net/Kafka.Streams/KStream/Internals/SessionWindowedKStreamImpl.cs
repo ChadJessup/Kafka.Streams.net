@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private SessionWindows windows;
         private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
-        private Merger<K, long> countMerger = (aggKey, aggOne, aggTwo)->aggOne + aggTwo;
+        private IMerger<K, long> countMerger = (aggKey, aggOne, aggTwo)->aggOne + aggTwo;
 
         SessionWindowedKStreamImpl(SessionWindows windows,
                                     InternalStreamsBuilder builder,
@@ -88,13 +88,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer)
+        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer)
         {
             return reduce(reducer, Materialized.with(keySerde, valSerde));
         }
 
 
-        public IKTable<Windowed<K>, V> reduce(Reducer<V> reducer,
+        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer,
                                               Materialized<K, V, ISessionStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
@@ -130,7 +130,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKTable<Windowed<K>, T> aggregate(
             Initializer<T> initializer,
             Aggregator<K, V, T> aggregator,
-            Merger<K, T> sessionMerger)
+            IMerger<K, T> sessionMerger)
         {
             return aggregate(initializer, aggregator, sessionMerger, Materialized.with(keySerde, null));
         }
@@ -139,7 +139,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKTable<Windowed<K>, VR> aggregate(
             Initializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
-            Merger<K, VR> sessionMerger,
+            IMerger<K, VR> sessionMerger,
             Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
         {
             initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
@@ -216,12 +216,12 @@ namespace Kafka.Streams.KStream.Internals
             return builder;
         }
 
-        private Merger<K, V> mergerForAggregator(Aggregator<K, V, V> aggregator)
+        private IMerger<K, V> mergerForAggregator(Aggregator<K, V, V> aggregator)
         {
             return (aggKey, aggOne, aggTwo)->aggregator.apply(aggKey, aggTwo, aggOne);
         }
 
-        private Aggregator<K, V, V> aggregatorForReducer(Reducer<V> reducer)
+        private Aggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
             return (aggKey, value, aggregate)->aggregate == null ? value : reducer.apply(aggregate, value);
         }

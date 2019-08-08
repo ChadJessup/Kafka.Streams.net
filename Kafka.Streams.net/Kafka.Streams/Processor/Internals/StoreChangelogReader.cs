@@ -33,7 +33,7 @@ public class StoreChangelogReader : ChangelogReader
 
     private ILogger log;
     private IConsumer<byte[], byte[]> restoreConsumer;
-    private StateRestoreListener userStateRestoreListener;
+    private IStateRestoreListener userStateRestoreListener;
     private Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
     private Dictionary<string, List<PartitionInfo>> partitionInfo = new HashMap<>();
     private Dictionary<TopicPartition, StateRestorer> stateRestorers = new HashMap<>();
@@ -44,7 +44,7 @@ public class StoreChangelogReader : ChangelogReader
 
     public StoreChangelogReader(IConsumer<byte[], byte[]> restoreConsumer,
                                 TimeSpan pollTime,
-                                StateRestoreListener userStateRestoreListener,
+                                IStateRestoreListener userStateRestoreListener,
                                 LogContext logContext)
 {
         this.restoreConsumer = restoreConsumer;
@@ -67,7 +67,7 @@ public class StoreChangelogReader : ChangelogReader
         needsInitializing.Add(restorer.partition());
     }
 
-    public Collection<TopicPartition> restore(RestoringTasks active)
+    public List<TopicPartition> restore(RestoringTasks active)
 {
         if (!needsInitializing.isEmpty())
 {
@@ -279,7 +279,7 @@ public class StoreChangelogReader : ChangelogReader
                   endOffset);
     }
 
-    private Collection<TopicPartition> completed()
+    private List<TopicPartition> completed()
 {
         return completedRestorers;
     }

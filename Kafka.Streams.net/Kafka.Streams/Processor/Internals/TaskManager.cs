@@ -97,7 +97,7 @@ public class TaskManager
         this.adminClient = adminClient;
     }
 
-    void createTasks(Collection<TopicPartition> assignment)
+    void createTasks(List<TopicPartition> assignment)
 {
         if (consumer == null)
 {
@@ -116,7 +116,7 @@ public class TaskManager
         consumer.pause(assignment);
     }
 
-    private void addStreamTasks(Collection<TopicPartition> assignment)
+    private void addStreamTasks(List<TopicPartition> assignment)
 {
         if (assignedActiveTasks.isEmpty())
 {
@@ -378,7 +378,7 @@ public class TaskManager
         active.initializeNewTasks();
         standby.initializeNewTasks();
 
-        Collection<TopicPartition> restored = changelogReader.restore(active);
+        List<TopicPartition> restored = changelogReader.restore(active);
 
         active.updateRestored(restored);
 
@@ -405,7 +405,7 @@ public class TaskManager
 
     private void assignStandbyPartitions()
 {
-        Collection<StandbyTask> running = standby.running();
+        List<StandbyTask> running = standby.running();
         Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
         foreach (StandbyTask standbyTask in running)
 {
@@ -455,7 +455,7 @@ public class TaskManager
                 assignedTopics.Add(topicPartition.Topic);
             }
 
-            Collection<string> existingTopics = builder().subscriptionUpdates().getUpdates();
+            List<string> existingTopics = builder().subscriptionUpdates().getUpdates();
             if (!existingTopics.containsAll(assignedTopics))
 {
                 assignedTopics.AddAll(existingTopics);
@@ -468,7 +468,7 @@ public class TaskManager
 {
         if (builder().sourceTopicPattern() != null)
 {
-            Collection<string> existingTopics = builder().subscriptionUpdates().getUpdates();
+            List<string> existingTopics = builder().subscriptionUpdates().getUpdates();
             if (!existingTopics.Equals(topics))
 {
                 builder().updateSubscribedTopics(topics, logPrefix);

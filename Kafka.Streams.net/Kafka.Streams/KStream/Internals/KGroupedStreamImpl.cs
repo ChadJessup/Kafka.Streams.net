@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : KGroupedStream<K, V>
+    class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : IKGroupedStream<K, V>
     {
 
         static string REDUCE_NAME = "KSTREAM-REDUCE-";
@@ -34,13 +34,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, V> reduce(Reducer<V> reducer)
+        public IKTable<K, V> reduce(IReducer<V> reducer)
         {
             return reduce(reducer, Materialized.with(keySerde, valSerde));
         }
 
 
-        public IKTable<K, V> reduce(Reducer<V> reducer,
+        public IKTable<K, V> reduce(IReducer<V> reducer,
                                     Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));

@@ -250,7 +250,7 @@ namespace Kafka.Streams.State.Internals
             );
         }
 
-        private void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> batch)
+        private void restoreBatch(List<ConsumeResult<byte[], byte[]>> batch)
         {
             foreach (ConsumeResult<byte[], byte[]> record in batch)
             {

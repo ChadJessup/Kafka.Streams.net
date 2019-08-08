@@ -28,21 +28,21 @@ using Kafka.Common.TopicPartition;
 
 
 
-public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, StateRestoreListener
+public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, IStateRestoreListener
 {
 
 
     public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
     private RecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
-    private StateRestoreListener storeRestoreListener;
-    private StateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
+    private IStateRestoreListener storeRestoreListener;
+    private IStateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
 
     CompositeRestoreListener(StateRestoreCallback stateRestoreCallback)
 {
 
-        if (stateRestoreCallback is StateRestoreListener)
+        if (stateRestoreCallback is IStateRestoreListener)
 {
-            storeRestoreListener = (StateRestoreListener) stateRestoreCallback;
+            storeRestoreListener = (IStateRestoreListener) stateRestoreCallback;
         } else
 {
 
@@ -94,12 +94,12 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
     }
 
 
-    public void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> records)
+    public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
 {
         internalBatchingRestoreCallback.restoreBatch(records);
     }
 
-    void setUserRestoreListener(StateRestoreListener userRestoreListener)
+    void setUserRestoreListener(IStateRestoreListener userRestoreListener)
 {
         if (userRestoreListener != null)
 {
@@ -108,7 +108,7 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
     }
 
 
-    public void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
+    public void restoreAll(List<KeyValue<byte[], byte[]>> records)
 {
         throw new InvalidOperationException();
     }
@@ -125,7 +125,7 @@ public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, Stat
 {
 
 
-        public void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> records)
+        public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
 {
 
         }

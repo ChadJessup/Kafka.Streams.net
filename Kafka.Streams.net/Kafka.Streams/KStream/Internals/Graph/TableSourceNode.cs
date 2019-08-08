@@ -15,43 +15,32 @@
  * limitations under the License.
  */
 
+using Kafka.Common.Utils;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
+
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Used to represent either a KTable source or a GlobalKTable source. A bool flag is used to indicate if this represents a GlobalKTable a {@link
      * org.apache.kafka.streams.kstream.GlobalKTable}
      */
-    public class TableSourceNode<K, V> : StreamSourceNode<K, V>
+    public partial class TableSourceNode<K, V> : StreamSourceNode<K, V>
     {
-
         private MaterializedInternal<K, V, object> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
         private string sourceName;
         private bool isGlobalKTable;
         private bool shouldReuseSourceTopicForChangelog = false;
 
-        private TableSourceNode(string nodeName,
-                                 string sourceName,
-                                 string topic,
-                                 ConsumedInternal<K, V> consumedInternal,
-                                 MaterializedInternal<K, V, object> materializedInternal,
-                                 ProcessorParameters<K, V> processorParameters,
-                                 bool isGlobalKTable)
-
+        private TableSourceNode(
+            string nodeName,
+            string sourceName,
+            string topic,
+            ConsumedInternal<K, V> consumedInternal,
+            MaterializedInternal<K, V, object> materializedInternal,
+            ProcessorParameters<K, V> processorParameters,
+            bool isGlobalKTable)
             : base(nodeName,
                   Collections.singletonList(topic),
                   consumedInternal)
@@ -63,14 +52,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.materializedInternal = materializedInternal;
         }
 
-
         public void reuseSourceTopicForChangeLog(bool shouldReuseSourceTopicForChangelog)
         {
             this.shouldReuseSourceTopicForChangelog = shouldReuseSourceTopicForChangelog;
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "TableSourceNode{" +
                    "materializedInternal=" + materializedInternal +
@@ -80,9 +67,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    "} " + base.ToString();
         }
 
-        public staticTableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
+        public static TableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
         {
-            return new TableSourceNodeBuilder<>();
+            return new TableSourceNodeBuilder<K, V>();
         }
 
 
@@ -93,19 +80,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             // TODO: we assume source KTables can only be timestamped-key-value stores for now.
             // should be expanded for other types of stores as well.
-            StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder =
-               new TimestampedKeyValueStoreMaterializer<>((MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
+            IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder =
+               new TimestampedKeyValueStoreMaterializer<K, V>((MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
 
             if (isGlobalKTable)
             {
-                topologyBuilder.AddGlobalStore(storeBuilder,
-                                               sourceName,
-                                               consumedInternal().timestampExtractor(),
-                                               consumedInternal().keyDeserializer(),
-                                               consumedInternal().valueDeserializer(),
-                                               topicName,
-                                               processorParameters.processorName(),
-                                               processorParameters.processorSupplier());
+                topologyBuilder.AddGlobalStore(
+                    storeBuilder,
+                    sourceName,
+                    consumedInternal.timestampExtractor(),
+                    consumedInternal.keyDeserializer(),
+                    consumedInternal.valueDeserializer(),
+                    topicName,
+                    processorParameters.processorName(),
+                    processorParameters.processorSupplier());
             }
             else
             {
@@ -133,73 +121,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 }
             }
 
-        }
-
-        public static TableSourceNodeBuilder<K, V> {
-
-        private string nodeName;
-        private string sourceName;
-        private string topic;
-        private ConsumedInternal<K, V> consumedInternal;
-        private MaterializedInternal<K, V, object> materializedInternal;
-        private ProcessorParameters<K, V> processorParameters;
-        private bool isGlobalKTable = false;
-
-        private TableSourceNodeBuilder()
-        {
-        }
-
-        public TableSourceNodeBuilder<K, V> withSourceName(string sourceName)
-        {
-            this.sourceName = sourceName;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> withTopic(string topic)
-        {
-            this.topic = topic;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> withMaterializedInternal(MaterializedInternal<K, V, object> materializedInternal)
-        {
-            this.materializedInternal = materializedInternal;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> withConsumedInternal(ConsumedInternal<K, V> consumedInternal)
-        {
-            this.consumedInternal = consumedInternal;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> withProcessorParameters(ProcessorParameters<K, V> processorParameters)
-        {
-            this.processorParameters = processorParameters;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> withNodeName(string nodeName)
-        {
-            this.nodeName = nodeName;
-            return this;
-        }
-
-        public TableSourceNodeBuilder<K, V> isGlobalKTable(bool isGlobaKTable)
-        {
-            this.isGlobalKTable = isGlobaKTable;
-            return this;
-        }
-
-        public TableSourceNode<K, V> build()
-        {
-            return new TableSourceNode<>(nodeName,
-                                         sourceName,
-                                         topic,
-                                         consumedInternal,
-                                         materializedInternal,
-                                         processorParameters,
-                                         isGlobalKTable);
         }
     }
 }

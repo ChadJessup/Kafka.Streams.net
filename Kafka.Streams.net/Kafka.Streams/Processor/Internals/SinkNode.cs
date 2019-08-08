@@ -27,7 +27,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
     private ISerializer<K> keySerializer;
     private ISerializer<V> valSerializer;
     private ITopicNameExtractor<K, V> topicExtractor;
-    private StreamPartitioner<K, V> partitioner;
+    private IStreamPartitioner<K, V> partitioner;
 
     private IInternalProcessorContext context;
 
@@ -35,7 +35,7 @@ public class SinkNode<K, V> : ProcessorNode<K, V> {
              ITopicNameExtractor<K, V> topicExtractor,
              ISerializer<K> keySerializer,
              ISerializer<V> valSerializer,
-             StreamPartitioner<K, V> partitioner)
+             IStreamPartitioner<K, V> partitioner)
 {
         base(name);
 

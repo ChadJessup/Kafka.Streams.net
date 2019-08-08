@@ -43,10 +43,10 @@ namespace Kafka.Streams.KStream.Internals
         private long joinBeforeMs;
         private long joinAfterMs;
 
-        private ValueJoiner<V1, V2, R> joiner;
+        private IValueJoiner<V1, V2, R> joiner;
         private bool outer;
 
-        KStreamKStreamJoin(string otherWindowName, long joinBeforeMs, long joinAfterMs, ValueJoiner<V1, V2, R> joiner, bool outer)
+        KStreamKStreamJoin(string otherWindowName, long joinBeforeMs, long joinAfterMs, IValueJoiner<V1, V2, R> joiner, bool outer)
         {
             this.otherWindowName = otherWindowName;
             this.joinBeforeMs = joinBeforeMs;

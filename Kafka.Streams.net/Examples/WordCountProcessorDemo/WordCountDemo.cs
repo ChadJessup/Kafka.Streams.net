@@ -1,8 +1,10 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams;
 using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using System;
+using System.Globalization;
 
 namespace WordCountProcessorDemo
 {
@@ -27,10 +29,11 @@ namespace WordCountProcessorDemo
 
             StreamsBuilder builder = new StreamsBuilder();
 
-            KStream<string, string> source = builder.stream<string, string>("streams-plaintext-input");
+            IKStream<string, string> source = builder.stream<string, string>("streams-plaintext-input");
 
+            var locale = CultureInfo.InvariantCulture;
             IKTable<string, long> counts = source
-                .flatMapValues(value => Arrays.asList(value.toLowerCase(Locale.getDefault()).split(" ")))
+                .flatMapValues<long>(value => value.ToLowerCase(locale).Split(" "))
                 .groupBy((key, value) => value)
                 .count();
 

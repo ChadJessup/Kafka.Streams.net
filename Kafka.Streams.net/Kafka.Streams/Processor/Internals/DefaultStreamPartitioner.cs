@@ -21,7 +21,7 @@ using Kafka.Common.Cluster;
 using Kafka.Common.serialization.Serializer;
 
 
-public class DefaultStreamPartitioner<K, V> : StreamPartitioner<K, V> {
+public class DefaultStreamPartitioner<K, V> : IStreamPartitioner<K, V> {
 
     private Cluster cluster;
     private ISerializer<K> keySerializer;

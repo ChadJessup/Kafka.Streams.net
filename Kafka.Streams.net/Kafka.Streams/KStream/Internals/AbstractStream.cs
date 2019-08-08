@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
@@ -84,27 +85,27 @@ namespace Kafka.Streams.KStream.Internals
         HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
         {
             HashSet<string> allSourceNodes = new HashSet<string>();
-            allSourceNodes.AddAll(sourceNodes);
-            allSourceNodes.AddAll(other.sourceNodes);
+            allSourceNodes.UnionWith(sourceNodes);
+            allSourceNodes.UnionWith(other.sourceNodes);
 
             builder.internalTopologyBuilder.copartitionSources(allSourceNodes);
 
             return allSourceNodes;
         }
 
-        static ValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(ValueJoiner<T1, T2, R> joiner)
+        static IValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
         {
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
-        static ValueMapperWithKey<K, V, VR> withKey<VR>(ValueMapper<V, VR> valueMapper)
+        static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
             return default; // (readOnlyKey, value)->valueMapper.apply(value);
         }
 
         static ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
-             ValueTransformerSupplier<V, VR> valueTransformerSupplier)
+             IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
             //    return ()=> {

@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processor.Internals;
 
-/**
- * Basic interface for keeping track of the state of a thread.
- */
-public interface ThreadStateTransitionValidator
+namespace Kafka.Streams.Processor.Interfaces
 {
-
-    bool isValidTransition(ThreadStateTransitionValidator newState);
+    public interface IProcessorNodePunctuator
+    {
+        void punctuate<K, V>(ProcessorNode<K, V> node, long streamTime, PunctuationType type, Punctuator punctuator);
+    }
 }

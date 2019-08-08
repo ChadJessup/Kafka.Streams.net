@@ -106,7 +106,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
         return exception;
     }
 
-    void updateRestored(Collection<TopicPartition> restored)
+    void updateRestored(List<TopicPartition> restored)
 {
         if (restored.isEmpty())
 {
@@ -322,7 +322,7 @@ class AssignedStreamsTasks : AssignedTasks<StreamTask> : RestoringTasks
 
     // for testing only
 
-    Collection<StreamTask> restoringTasks()
+    List<StreamTask> restoringTasks()
 {
         return Collections.unmodifiableCollection(restoring.Values);
     }

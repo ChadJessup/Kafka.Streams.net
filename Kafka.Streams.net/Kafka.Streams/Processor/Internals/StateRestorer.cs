@@ -94,9 +94,9 @@ public class StateRestorer
         compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
     }
 
-    void restore(Collection<ConsumeResult<byte[], byte[]>> records)
+    void restore(List<ConsumeResult<byte[], byte[]>> records)
 {
-        Collection<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(records.size());
+        List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(records.size());
         foreach (ConsumeResult<byte[], byte[]> record in records)
 {
             convertedRecords.Add(recordConverter.convert(record));
@@ -109,7 +109,7 @@ public class StateRestorer
         return persistent;
     }
 
-    void setUserRestoreListener(StateRestoreListener userRestoreListener)
+    void setUserRestoreListener(IStateRestoreListener userRestoreListener)
 {
         this.compositeRestoreListener.setUserRestoreListener(userRestoreListener);
     }

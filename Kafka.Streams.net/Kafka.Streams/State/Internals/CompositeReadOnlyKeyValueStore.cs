@@ -13,13 +13,13 @@ namespace Kafka.Streams.State.Internals
     public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
     {
 
-        private StateStoreProvider storeProvider;
-        private QueryableStoreType<IReadOnlyKeyValueStore<K, V>> storeType;
+        private IStateStoreProvider storeProvider;
+        private IQueryableStoreType<IReadOnlyKeyValueStore<K, V>> storeType;
         private string storeName;
 
         public CompositeReadOnlyKeyValueStore(
-            StateStoreProvider storeProvider,
-            QueryableStoreType<IReadOnlyKeyValueStore<K, V>> storeType,
+            IStateStoreProvider storeProvider,
+            IQueryableStoreType<IReadOnlyKeyValueStore<K, V>> storeType,
             string storeName)
         {
             this.storeProvider = storeProvider;

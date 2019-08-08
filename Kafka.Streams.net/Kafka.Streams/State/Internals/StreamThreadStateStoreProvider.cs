@@ -20,7 +20,7 @@ using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.Processor.Internals.StreamThread;
 using Kafka.Streams.Processor.Internals.Task;
-using Kafka.Streams.State.QueryableStoreType;
+using Kafka.Streams.State.IQueryableStoreType;
 using Kafka.Streams.State.QueryableStoreTypes;
 using Kafka.Streams.State.TimestampedKeyValueStore;
 using Kafka.Streams.State.TimestampedWindowStore;
@@ -32,7 +32,7 @@ using Kafka.Streams.State.TimestampedWindowStore;
 /**
  * Wrapper over StreamThread that : StateStoreProvider
  */
-public class StreamThreadStateStoreProvider : StateStoreProvider
+public class StreamThreadStateStoreProvider : IStateStoreProvider
 {
 
     private StreamThread streamThread;
@@ -43,7 +43,7 @@ public class StreamThreadStateStoreProvider : StateStoreProvider
     }
 
 
-    public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
+    public override List<T> stores(string storeName, IQueryableStoreType<T> queryableStoreType)
 {
         if (streamThread.state() == StreamThread.State.DEAD)
 {

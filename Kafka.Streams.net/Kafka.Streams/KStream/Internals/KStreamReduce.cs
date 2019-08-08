@@ -14,11 +14,11 @@ namespace Kafka.Streams.KStream.Internals
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
 
         private string storeName;
-        private Reducer<V> reducer;
+        private IReducer<V> reducer;
 
         private bool sendOldValues = false;
 
-        KStreamReduce(string storeName, Reducer<V> reducer)
+        KStreamReduce(string storeName, IReducer<V> reducer)
         {
             this.storeName = storeName;
             this.reducer = reducer;

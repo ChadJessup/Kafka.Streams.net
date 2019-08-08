@@ -529,7 +529,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public void prepareBatchForRestore(Collection<KeyValue<byte[], byte[]>> records,
+        public void prepareBatchForRestore(List<KeyValue<byte[], byte[]>> records,
                                            WriteBatch batch)
         {
             foreach (KeyValue<byte[], byte[]> record in records)
@@ -586,7 +586,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
+        public void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {
             try (WriteBatch batch = new WriteBatch())
 {

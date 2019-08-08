@@ -31,11 +31,11 @@ namespace Kafka.Common
         private HashSet<string> unauthorizedTopics;
         private HashSet<string> invalidTopics;
         private HashSet<string> internalTopics;
-        private Node controller;
-        private Dictionary<TopicPartition, PartitionInfo> partitionsByTopicPartition;
-        private Dictionary<string, List<PartitionInfo>> partitionsByTopic;
-        private Dictionary<string, List<PartitionInfo>> availablePartitionsByTopic;
-        private Dictionary<int, List<PartitionInfo>> partitionsByNode;
+        private INode controller;
+        private Dictionary<TopicPartition, PartitionMetadata> partitionsByTopicPartition;
+        private Dictionary<string, List<PartitionMetadata>> partitionsByTopic;
+        private Dictionary<string, List<PartitionMetadata>> availablePartitionsByTopic;
+        private Dictionary<int, List<PartitionMetadata>> partitionsByNode;
         private Dictionary<int, Node> nodesById;
         private ClusterResource clusterResource;
 
@@ -45,8 +45,8 @@ namespace Kafka.Common
          * @param partitions Information about a subset of the topic-partitions this cluster hosts
          */
         public Cluster(string clusterId,
-                       Collection<Node> nodes,
-                       Collection<PartitionInfo> partitions,
+                       List<Node> nodes,
+                       List<PartitionMetadata> partitions,
                        HashSet<string> unauthorizedTopics,
                        HashSet<string> internalTopics)
             : this(clusterId, false, nodes, partitions, unauthorizedTopics, Collections.emptySet(), internalTopics, null)
@@ -59,8 +59,8 @@ namespace Kafka.Common
          * @param partitions Information about a subset of the topic-partitions this cluster hosts
          */
         public Cluster(string clusterId,
-                       Collection<Node> nodes,
-                       Collection<PartitionInfo> partitions,
+                       List<Node> nodes,
+                       List<PartitionMetadata> partitions,
                        HashSet<string> unauthorizedTopics,
                        HashSet<string> internalTopics,
                        Node controller)
@@ -74,8 +74,8 @@ namespace Kafka.Common
          * @param partitions Information about a subset of the topic-partitions this cluster hosts
          */
         public Cluster(string clusterId,
-                       Collection<Node> nodes,
-                       Collection<PartitionInfo> partitions,
+                       List<Node> nodes,
+                       List<PartitionMetadata> partitions,
                        HashSet<string> unauthorizedTopics,
                        HashSet<string> invalidTopics,
                        HashSet<string> internalTopics,
@@ -86,8 +86,8 @@ namespace Kafka.Common
 
         private Cluster(string clusterId,
                         bool isBootstrapConfigured,
-                        Collection<Node> nodes,
-                        Collection<PartitionInfo> partitions,
+                        List<Node> nodes,
+                        List<PartitionMetadata> partitions,
                         HashSet<string> unauthorizedTopics,
                         HashSet<string> invalidTopics,
                         HashSet<string> internalTopics,
@@ -111,10 +111,10 @@ namespace Kafka.Common
             this.nodesById = Collections.unmodifiableMap(tmpNodesById);
 
             // index the partition infos by topic, topic+partition, and node
-            Dictionary<TopicPartition, PartitionInfo> tmpPartitionsByTopicPartition = new Dictionary<string, List<PartitionInfo>>(partitions.Count);
-            Dictionary<string, List<PartitionInfo>> tmpPartitionsByTopic = new Dictionary<string, List<PartitionInfo>>();
-            Dictionary<string, List<PartitionInfo>> tmpAvailablePartitionsByTopic = new Dictionary<string, List<PartitionInfo>>();
-            Dictionary<int, List<PartitionInfo>> tmpPartitionsByNode = new Dictionary<int, List<PartitionInfo>>();
+            Dictionary<TopicPartition, PartitionMetadata> tmpPartitionsByTopicPartition = new Dictionary<string, List<PartitionMetadata>>(partitions.Count);
+            Dictionary<string, List<PartitionMetadata>> tmpPartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
+            Dictionary<string, List<PartitionMetadata>> tmpAvailablePartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
+            Dictionary<int, List<PartitionMetadata>> tmpPartitionsByNode = new Dictionary<int, List<PartitionMetadata>>();
 
             foreach (var p in partitions)
             {
@@ -167,17 +167,17 @@ namespace Kafka.Common
         /**
          * Return a copy of this cluster combined with `partitions`.
          */
-        public Cluster withPartitions(Dictionary<TopicPartition, PartitionInfo> partitions)
+        public Cluster withPartitions(Dictionary<TopicPartition, PartitionMetadata> partitions)
         {
-            var combinedPartitions = new Dictionary<TopicPartition, PartitionInfo>(this.partitionsByTopicPartition);
+            var combinedPartitions = new Dictionary<TopicPartition, PartitionMetadata>(this.partitionsByTopicPartition);
             combinedPartitions.putAll(partitions);
             return new Cluster(
                 clusterResource.clusterId(),
                 this.nodes,
                 combinedPartitions.Values,
-                new Dictionary<TopicPartition, PartitionInfo>(this.unauthorizedTopics),
-                new Dictionary<TopicPartition, PartitionInfo>(this.invalidTopics),
-                new Dictionary<TopicPartition, PartitionInfo>(this.internalTopics), this.controller);
+                new Dictionary<TopicPartition, PartitionMetadata>(this.unauthorizedTopics),
+                new Dictionary<TopicPartition, PartitionMetadata>(this.invalidTopics),
+                new Dictionary<TopicPartition, PartitionMetadata>(this.internalTopics), this.controller);
         }
 
         /**
@@ -185,7 +185,7 @@ namespace Kafka.Common
          * @param id The id of the node
          * @return The node, or null if no such node exists
          */
-        public Node nodeById(int id)
+        public INode nodeById(int id)
         {
             return this.nodesById.get(id);
         }
@@ -216,7 +216,7 @@ namespace Kafka.Common
          */
         public Node leaderFor(TopicPartition topicPartition)
         {
-            PartitionInfo info = partitionsByTopicPartition.get(topicPartition);
+            PartitionMetadata info = partitionsByTopicPartition.get(topicPartition);
             if (info == null)
                 return null;
             else
@@ -228,7 +228,7 @@ namespace Kafka.Common
          * @param topicPartition The topic and partition to fetch info for
          * @return The metadata about the given topic and partition, or null if none is found
          */
-        public PartitionInfo partition(TopicPartition topicPartition)
+        public PartitionMetadata partition(TopicPartition topicPartition)
         {
             return partitionsByTopicPartition[topicPartition];
         }
@@ -238,7 +238,7 @@ namespace Kafka.Common
          * @param topic The topic name
          * @return A list of partitions
          */
-        public List<PartitionInfo> partitionsForTopic(string topic)
+        public List<PartitionMetadata> partitionsForTopic(string topic)
         {
             return partitionsByTopic.getOrDefault(topic, Collections.emptyList());
         }
@@ -250,7 +250,7 @@ namespace Kafka.Common
          */
         public int partitionCountForTopic(string topic)
         {
-            List<PartitionInfo> partitions = this.partitionsByTopic.get(topic);
+            List<PartitionMetadata> partitions = this.partitionsByTopic.get(topic);
             return partitions == null ? null : partitions.size();
         }
 
@@ -259,7 +259,7 @@ namespace Kafka.Common
          * @param topic The topic name
          * @return A list of partitions
          */
-        public List<PartitionInfo> availablePartitionsForTopic(string topic)
+        public List<PartitionMetadata> availablePartitionsForTopic(string topic)
         {
             return availablePartitionsByTopic.getOrDefault(topic, Collections.emptyList());
         }
@@ -269,7 +269,7 @@ namespace Kafka.Common
          * @param nodeId The node id
          * @return A list of partitions
          */
-        public List<PartitionInfo> partitionsForNode(int nodeId)
+        public List<PartitionMetadata> partitionsForNode(int nodeId)
         {
             return partitionsByNode.getOrDefault(nodeId, Collections.emptyList());
         }

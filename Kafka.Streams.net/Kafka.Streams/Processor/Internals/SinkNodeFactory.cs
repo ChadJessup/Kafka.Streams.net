@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private ISerializer<K> keySerializer;
         private ISerializer<V> valSerializer;
-        private StreamPartitioner<K, V> partitioner;
+        private IStreamPartitioner<K, V> partitioner;
         private ITopicNameExtractor<K, V> topicExtractor;
 
         private SinkNodeFactory(string name,
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Internals
                                 ITopicNameExtractor<K, V> topicExtractor,
                                 ISerializer<K> keySerializer,
                                 ISerializer<V> valSerializer,
-                                StreamPartitioner<K, V> partitioner)
+                                IStreamPartitioner<K, V> partitioner)
             : base(name, predecessors.clone())
         {
             this.topicExtractor = topicExtractor;

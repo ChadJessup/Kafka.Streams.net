@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals;
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.KStream.Windowed;
 using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.QueryableStoreType;
+using Kafka.Streams.State.IQueryableStoreType;
 using Kafka.Streams.State.ReadOnlySessionStore;
 
 
@@ -31,12 +31,12 @@ using Kafka.Streams.State.ReadOnlySessionStore;
  */
 public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
-    private StateStoreProvider storeProvider;
-    private QueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;
+    private IStateStoreProvider storeProvider;
+    private IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;
     private string storeName;
 
-    public CompositeReadOnlySessionStore(StateStoreProvider storeProvider,
-                                         QueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType,
+    public CompositeReadOnlySessionStore(IStateStoreProvider storeProvider,
+                                         IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType,
                                          string storeName)
 {
         this.storeProvider = storeProvider;

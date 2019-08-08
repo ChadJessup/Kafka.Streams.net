@@ -25,9 +25,9 @@ namespace Kafka.Streams.KStream.Internals
 
 class KStreamMapValues<K, V, V1> : ProcessorSupplier<K, V> {
 
-    private  ValueMapperWithKey<K, V, V1> mapper;
+    private  IValueMapperWithKey<K, V, V1> mapper;
 
-    public KStreamMapValues( ValueMapperWithKey<K, V, V1> mapper)
+    public KStreamMapValues( IValueMapperWithKey<K, V, V1> mapper)
 {
         this.mapper = mapper;
     }

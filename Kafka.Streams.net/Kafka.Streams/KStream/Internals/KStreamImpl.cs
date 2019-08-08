@@ -1,4 +1,5 @@
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor;
 using Kafka.Streams.State;
@@ -6,14 +7,11 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamImpl<K, V> : AbstractStream<K, V>, KStream<K, V>
+    public class KStreamImpl<K, V> : AbstractStream<K, V>, IKStream<K, V>
     {
-
-        static string SOURCE_NAME = "KSTREAM-SOURCE-";
-
-        static string SINK_NAME = "KSTREAM-SINK-";
-
-        static string REPARTITION_TOPIC_SUFFIX = "-repartition";
+        public static string SOURCE_NAME = "KSTREAM-SOURCE-";
+        public static string SINK_NAME = "KSTREAM-SINK-";
+        public static string REPARTITION_TOPIC_SUFFIX = "-repartition";
 
         private static string BRANCH_NAME = "KSTREAM-BRANCH-";
 
@@ -74,13 +72,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, V> filter(Predicate<K, V> predicate)
+        public IKStream<K, V> filter(IPredicate<K, V> predicate)
         {
             return filter(predicate, NamedInternal.empty());
         }
 
 
-        public KStream<K, V> filter(Predicate<K, V> predicate, Named named)
+        public IKStream<K, V> filter(IPredicate<K, V> predicate, Named named)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
@@ -100,13 +98,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, V> filterNot(Predicate<K, V> predicate)
+        public IKStream<K, V> filterNot(IPredicate<K, V> predicate)
         {
             return filterNot(predicate, NamedInternal.empty());
         }
 
 
-        public KStream<K, V> filterNot(Predicate<K, V> predicate, Named named)
+        public IKStream<K, V> filterNot(IPredicate<K, V> predicate, Named named)
         {
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
@@ -127,13 +125,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper)
+        public IKStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper)
         {
             return selectKey(mapper, NamedInternal.empty());
         }
 
 
-        public KStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper, Named named)
+        public IKStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper, Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
@@ -159,13 +157,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper)
+        public IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper)
         {
             return map(mapper, NamedInternal.empty());
         }
 
 
-        public KStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper, Named named)
+        public IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper, Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
@@ -189,25 +187,25 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> mapValues<VR>(ValueMapper<V, VR> mapper)
+        public IKStream<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper)
         {
             return mapValues(withKey(mapper));
         }
 
 
-        public KStream<K, VR> mapValues<VR>(ValueMapper<V, VR> mapper, Named named)
+        public IKStream<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper, Named named)
         {
             return mapValues(withKey(mapper), named);
         }
 
 
-        public KStream<K, VR> mapValues<VR>(ValueMapperWithKey<K, V, VR> mapper)
+        public IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
         {
             return mapValues(mapper, NamedInternal.empty());
         }
 
 
-        public KStream<K, VR> mapValues<VR>(ValueMapperWithKey<K, V, VR> mapper, Named named)
+        public IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper, Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             mapper = mapper ?? throw new System.ArgumentNullException("named can't be null", nameof(mapper));
@@ -242,13 +240,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<KR, VR> flatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper)
+        public IKStream<KR, VR> flatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper)
         {
             return flatMap(mapper, NamedInternal.empty());
         }
 
 
-        public KStream<KR, VR> flatMap<KR, VR>(
+        public IKStream<KR, VR> flatMap<KR, VR>(
             IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper,
             Named named)
         {
@@ -266,33 +264,34 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> flatMapValues<VR>(ValueMapper<V, IEnumerable<VR>> mapper)
+        public IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper)
         {
             return flatMapValues(withKey(mapper));
         }
 
 
-        public KStream<K, VR> flatMapValues<VR>(ValueMapper<V, IEnumerable<VR>> mapper,
+        public IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper,
                                                   Named named)
         {
             return flatMapValues(withKey(mapper), named);
         }
 
 
-        public KStream<K, VR> flatMapValues<VR>(ValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
+        public IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
         {
             return flatMapValues(mapper, NamedInternal.empty());
         }
 
 
-        public KStream<K, VR> flatMapValues<VR>(ValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
-                                                  Named named)
+        public IKStream<K, VR> flatMapValues<VR>(
+            IValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
+            Named named)
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FLATMAPVALUES_NAME);
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<>(new KStreamFlatMapValues<>(mapper), name);
-            ProcessorGraphNode<K, V> flatMapValuesNode = new ProcessorGraphNode<>(name, processorParameters);
+            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMapValues<K, V, VR>(mapper), name);
+            ProcessorGraphNode<K, V> flatMapValuesNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
             flatMapValuesNode.setValueChangingOperation(true);
             builder.addGraphNode(this.streamsGraphNode, flatMapValuesNode);
@@ -303,28 +302,28 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-        public KStream<K, V>[] branch(Predicate<K, V>[] predicates)
+        public IKStream<K, V>[] branch(IPredicate<K, V>[] predicates)
         {
             return doBranch(NamedInternal.empty(), predicates);
         }
 
 
 
-        public KStream<K, V>[] branch(Named name, Predicate<K, V>[] predicates)
+        public IKStream<K, V>[] branch(Named name, IPredicate<K, V>[] predicates)
         {
             name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
             return doBranch(new NamedInternal(name), predicates);
         }
 
 
-        private KStream<K, V>[] doBranch(NamedInternal named,
-                                          Predicate<K, V>[] predicates)
+        private IKStream<K, V>[] doBranch(NamedInternal named,
+                                          IPredicate<K, V>[] predicates)
         {
             if (predicates.Length == 0)
             {
                 throw new System.ArgumentException("you must provide at least one predicate");
             }
-            foreach (Predicate<K, V> predicate in predicates)
+            foreach (IPredicate<K, V> predicate in predicates)
             {
                 predicate = predicate ?? throw new System.ArgumentNullException("predicates can't have null values", nameof(predicate));
             }
@@ -341,7 +340,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> branchNode = new ProcessorGraphNode<>(branchName, processorParameters);
             builder.addGraphNode(this.streamsGraphNode, branchNode);
 
-            KStream<K, V>[] branchChildren = (KStream<K, V>[])Array.newInstance(KStream, predicates.Length);
+            IKStream<K, V>[] branchChildren = (IKStream<K, V>[])Array.newInstance(KStream, predicates.Length);
 
             for (int i = 0; i < predicates.Length; i++)
             {
@@ -356,21 +355,21 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, V> merge(KStream<K, V> stream)
+        public IKStream<K, V> merge(IKStream<K, V> stream)
         {
             Objects.requireNonNull(stream);
             return merge(builder, stream, NamedInternal.empty());
         }
 
 
-        public KStream<K, V> merge(KStream<K, V> stream, Named processorName)
+        public IKStream<K, V> merge(IKStream<K, V> stream, Named processorName)
         {
             Objects.requireNonNull(stream);
             return merge(builder, stream, new NamedInternal(processorName));
         }
 
-        private KStream<K, V> merge(InternalStreamsBuilder builder,
-                                     KStream<K, V> stream,
+        private IKStream<K, V> merge(InternalStreamsBuilder builder,
+                                     IKStream<K, V> stream,
                                      NamedInternal processorName)
         {
             KStreamImpl<K, V> streamImpl = (KStreamImpl<K, V>)stream;
@@ -412,13 +411,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, V> peek(ForeachAction<K, V> action)
+        public IKStream<K, V> peek(ForeachAction<K, V> action)
         {
             return peek(action, NamedInternal.empty());
         }
 
 
-        public KStream<K, V> peek(ForeachAction<K, V> action, Named named)
+        public IKStream<K, V> peek(ForeachAction<K, V> action, Named named)
         {
             action = action ?? throw new System.ArgumentNullException("action can't be null", nameof(action));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
@@ -437,13 +436,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, V> through(string topic)
+        public IKStream<K, V> through(string topic)
         {
             return through(topic, Produced.with(keySerde, valSerde, null));
         }
 
 
-        public KStream<K, V> through(string topic, Produced<K, V> produced)
+        public IKStream<K, V> through(string topic, Produced<K, V> produced)
         {
             topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
@@ -527,7 +526,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<KR, VR> transform<KR, VR>(TransformerSupplier<K, V, KeyValue<KR, VR>> transformerSupplier,
+        public IKStream<KR, VR> transform<KR, VR>(ITransformerSupplier<K, V, KeyValue<KR, VR>> transformerSupplier,
                                                    string[] stateStoreNames)
         {
             transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
@@ -536,7 +535,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<KR, VR> transform<KR, VR>(TransformerSupplier<K, V, KeyValue<KR, VR>> transformerSupplier,
+        public IKStream<KR, VR> transform<KR, VR>(ITransformerSupplier<K, V, KeyValue<KR, VR>> transformerSupplier,
                                                    Named named,
                                                    string[] stateStoreNames)
         {
@@ -545,7 +544,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K1, V1> flatTransform<K1, V1>(TransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
+        public IKStream<K1, V1> flatTransform<K1, V1>(ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
                                                        string[] stateStoreNames)
         {
             transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier can't be null", nameof(transformerSupplier));
@@ -554,7 +553,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K1, V1> flatTransform<K1, V1>(TransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
+        public IKStream<K1, V1> flatTransform<K1, V1>(ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
                                                        Named named,
                                                        string[] stateStoreNames)
         {
@@ -576,7 +575,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> transformValues<VR>(ValueTransformerSupplier<V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(IValueTransformerSupplier<V, VR> valueTransformerSupplier,
                                                     string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -584,7 +583,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> transformValues<VR>(ValueTransformerSupplier<V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(IValueTransformerSupplier<V, VR> valueTransformerSupplier,
                                                     Named named,
                                                     string[] stateStoreNames)
         {
@@ -595,7 +594,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                     string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -603,7 +602,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                     Named named,
                                                     string[] stateStoreNames)
         {
@@ -612,7 +611,7 @@ namespace Kafka.Streams.KStream.Internals
             return doTransformValues(valueTransformerSupplier, new NamedInternal(named), stateStoreNames);
         }
 
-        private KStream<K, VR> doTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerWithKeySupplier,
+        private IKStream<K, VR> doTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerWithKeySupplier,
                                                        NamedInternal named,
                                                        string[] stateStoreNames)
         {
@@ -632,7 +631,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> flatTransformValues<VR>(ValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
                                                         string[] stateStoreNames)
         {
             //valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -641,7 +640,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> flatTransformValues<VR>(ValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
                                                         Named named,
                                                         string[] stateStoreNames)
         {
@@ -651,7 +650,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                         string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -660,7 +659,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                         Named named,
                                                         string[] stateStoreNames)
         {
@@ -669,7 +668,7 @@ namespace Kafka.Streams.KStream.Internals
             return doFlatTransformValues(valueTransformerSupplier, named, stateStoreNames);
         }
 
-        private KStream<K, VR> doFlatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerWithKeySupplier,
+        private IKStream<K, VR> doFlatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerWithKeySupplier,
                                                            Named named,
                                                            string[] stateStoreNames)
         {
@@ -716,16 +715,16 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<VO, VR>(KStream<K, VO> other,
-                                             ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> join<VO, VR>(IKStream<K, VO> other,
+                                             IValueJoiner<V, VO, VR> joiner,
                                              JoinWindows windows)
         {
             return join(other, joiner, windows, Joined.with(null, null, null));
         }
 
 
-        public KStream<K, VR> join<VO, VR>(KStream<K, VO> otherStream,
-                                             ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> join<VO, VR>(IKStream<K, VO> otherStream,
+                                             IValueJoiner<V, VO, VR> joiner,
                                              JoinWindows windows,
                                              Joined<K, V, VO> joined)
         {
@@ -739,24 +738,24 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> outerJoin<VO, VR>(KStream<K, VO> other,
-                                                  ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> outerJoin<VO, VR>(IKStream<K, VO> other,
+                                                  IValueJoiner<V, VO, VR> joiner,
                                                   JoinWindows windows)
         {
             return outerJoin(other, joiner, windows, Joined.with(null, null, null));
         }
 
 
-        public KStream<K, VR> outerJoin<VO, VR>(KStream<K, VO> other,
-                                                  ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> outerJoin<VO, VR>(IKStream<K, VO> other,
+                                                  IValueJoiner<V, VO, VR> joiner,
                                                   JoinWindows windows,
                                                   Joined<K, V, VO> joined)
         {
             return doJoin(other, joiner, windows, joined, new KStreamImplJoin(true, true));
         }
 
-        private KStream<K, VR> doJoin<VO, VR>(KStream<K, VO> other,
-                                                ValueJoiner<V, VO, VR> joiner,
+        private IKStream<K, VR> doJoin<VO, VR>(IKStream<K, VO> other,
+                                                IValueJoiner<V, VO, VR> joiner,
                                                 JoinWindows windows,
                                                 Joined<K, V, VO> joined,
                                                 KStreamImplJoin join)
@@ -834,7 +833,7 @@ namespace Kafka.Streams.KStream.Internals
             string nullKeyFilterProcessorName = builder.newProcessorName(FILTER_NAME);
             string sourceName = builder.newProcessorName(SOURCE_NAME);
 
-            Predicate<K1, V1> notNullKeyPredicate = (k, v)->k != null;
+            IPredicate<K1, V1> notNullKeyPredicate = (k, v)->k != null;
 
             ProcessorParameters processorParameters = new ProcessorParameters<>(
                new KStreamFilter<>(notNullKeyPredicate, false),
@@ -855,17 +854,17 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> leftJoin<VO, VR>(KStream<K, VO> other,
-                                                 ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> leftJoin<VO, VR>(IKStream<K, VO> other,
+                                                 IValueJoiner<V, VO, VR> joiner,
                                                  JoinWindows windows)
         {
             return leftJoin(other, joiner, windows, Joined.with(null, null, null));
         }
 
 
-        public KStream<K, VR> leftJoin<VO, VR>(
-            KStream<K, VO> other,
-            ValueJoiner<V, VO, VR> joiner,
+        public IKStream<K, VR> leftJoin<VO, VR>(
+            IKStream<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
             JoinWindows windows,
             Joined<K, V, VO> joined)
         {
@@ -881,16 +880,16 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<VO, VR>(IKTable<K, VO> other,
-                                             ValueJoiner<V, VO, VR> joiner)
+        public IKStream<K, VR> join<VO, VR>(IKTable<K, VO> other,
+                                             IValueJoiner<V, VO, VR> joiner)
         {
             return join(other, joiner, Joined.with(null, null, null));
         }
 
 
-        public KStream<K, VR> join<VO, VR>(
+        public IKStream<K, VR> join<VO, VR>(
             IKTable<K, VO> other,
-            ValueJoiner<V, VO, VR> joiner,
+            IValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined)
         {
             //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
@@ -916,15 +915,15 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other, ValueJoiner<V, VO, VR> joiner)
+        public IKStream<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other, IValueJoiner<V, VO, VR> joiner)
         {
             return leftJoin(other, joiner, Joined.with(null, null, null));
         }
 
 
-        public KStream<K, VR> leftJoin<VO, VR>(
+        public IKStream<K, VR> leftJoin<VO, VR>(
             IKTable<K, VO> other,
-            ValueJoiner<V, VO, VR> joiner,
+            IValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined)
         {
             //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
@@ -949,46 +948,46 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
+        public IKStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
                                                  IKeyValueMapper<K, V, KG> keyMapper,
-                                                 ValueJoiner<V, VG, VR> joiner)
+                                                 IValueJoiner<V, VG, VR> joiner)
         {
             return globalTableJoin(globalTable, keyMapper, joiner, false, NamedInternal.empty());
         }
 
 
-        public KStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
+        public IKStream<K, VR> join<KG, VG, VR>(IGlobalKTable<KG, VG> globalTable,
                                                  IKeyValueMapper<K, V, KG> keyMapper,
-                                                 ValueJoiner<V, VG, VR> joiner,
+                                                 IValueJoiner<V, VG, VR> joiner,
                                                  Named named)
         {
             return globalTableJoin(globalTable, keyMapper, joiner, false, named);
         }
 
 
-        public KStream<K, VR> leftJoin<KG, VG, VR>(
+        public IKStream<K, VR> leftJoin<KG, VG, VR>(
             IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
-            ValueJoiner<V, VG, VR> joiner)
+            IValueJoiner<V, VG, VR> joiner)
         {
             return globalTableJoin(globalTable, keyMapper, joiner, true, NamedInternal.empty());
         }
 
 
-        public KStream<K, VR> leftJoin<KG, VG, VR>(
+        public IKStream<K, VR> leftJoin<KG, VG, VR>(
             IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
-            ValueJoiner<V, VG, VR> joiner,
+            IValueJoiner<V, VG, VR> joiner,
             Named named)
         {
             return globalTableJoin(globalTable, keyMapper, joiner, true, named);
         }
 
 
-        private KStream<K, VR> globalTableJoin<KG, VG, VR>(
+        private IKStream<K, VR> globalTableJoin<KG, VG, VR>(
             IGlobalKTable<KG, VG> globalTable,
             IKeyValueMapper<K, V, KG> keyMapper,
-            ValueJoiner<V, VG, VR> joiner,
+            IValueJoiner<V, VG, VR> joiner,
             bool leftJoin,
             Named named)
         {
@@ -1021,9 +1020,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private KStream<K, VR> doStreamTableJoin<VR, VO>(
+        private IKStream<K, VR> doStreamTableJoin<VR, VO>(
             IKTable<K, VO> other,
-            ValueJoiner<V, VO, VR> joiner,
+            IValueJoiner<V, VO, VR> joiner,
             Joined<K, V, VO> joined,
             bool leftJoin)
         {
@@ -1058,12 +1057,12 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector)
+        public IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector)
         {
             return groupBy(selector, Grouped.with(null, valSerde));
         }
 
-        public KGroupedStream<KR, V> groupBy<KR>(
+        public IKGroupedStream<KR, V> groupBy<KR>(
             IKeyValueMapper<K, V, KR> selector,
             Grouped<KR, V> grouped)
         {
@@ -1085,12 +1084,12 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KGroupedStream<K, V> groupByKey()
+        public IKGroupedStream<K, V> groupByKey()
         {
             return groupByKey(Grouped.with(keySerde, valSerde));
         }
 
-        public KGroupedStream<K, V> groupByKey(Grouped<K, V> grouped)
+        public IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped)
         {
             GroupedInternal<K, V> groupedInternal = new GroupedInternal<K, V>(grouped);
 
@@ -1137,10 +1136,10 @@ namespace Kafka.Streams.KStream.Internals
                 this.rightOuter = rightOuter;
             }
 
-            public KStream<K1, R> join<K1, V1, V2, R>(
-                KStream<K1, V1> lhs,
-                KStream<K1, V2> other,
-                ValueJoiner<V1, V2, R> joiner,
+            public IKStream<K1, R> join<K1, V1, V2, R>(
+                IKStream<K1, V1> lhs,
+                IKStream<K1, V2> other,
+                IValueJoiner<V1, V2, R> joiner,
                 JoinWindows windows,
                 Joined<K1, V1, V2> joined)
             {

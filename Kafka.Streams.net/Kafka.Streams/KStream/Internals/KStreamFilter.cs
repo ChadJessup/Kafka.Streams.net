@@ -25,10 +25,10 @@ namespace Kafka.Streams.KStream.Internals
 
 class KStreamFilter<K, V> : ProcessorSupplier<K, V> {
 
-    private  Predicate<K, V> predicate;
+    private  IPredicate<K, V> predicate;
     private  bool filterNot;
 
-    public KStreamFilter( Predicate<K, V> predicate,  bool filterNot)
+    public KStreamFilter( IPredicate<K, V> predicate,  bool filterNot)
 {
         this.predicate = predicate;
         this.filterNot = filterNot;

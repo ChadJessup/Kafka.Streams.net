@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     {
         private string sourceName;
         private string topic;
-        private ConsumedInternal consumed;
+        private ConsumedInternal<K, V> consumed;
         private string processorName;
         private IProcessorSupplier stateUpdateSupplier;
 

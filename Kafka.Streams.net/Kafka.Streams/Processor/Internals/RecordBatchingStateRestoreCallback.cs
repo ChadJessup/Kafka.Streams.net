@@ -25,10 +25,10 @@ namespace Kafka.Streams.Processor.Internals;
 public interface RecordBatchingStateRestoreCallback : BatchingStateRestoreCallback
 {
 
-    void restoreBatch(Collection<ConsumeResult<byte[], byte[]>> records);
+    void restoreBatch(List<ConsumeResult<byte[], byte[]>> records);
 
     
-    default void restoreAll(Collection<KeyValue<byte[], byte[]>> records)
+    default void restoreAll(List<KeyValue<byte[], byte[]>> records)
 {
         throw new InvalidOperationException();
     }

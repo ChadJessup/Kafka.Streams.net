@@ -24,8 +24,8 @@ namespace Kafka.Streams.Processor.Internals
         {
 
             string name;
-            HashSet<TopologyDescription.Node> predecessors = new TreeSet<>(NODE_COMPARATOR);
-            HashSet<TopologyDescription.Node> successors = new TreeSet<>(NODE_COMPARATOR);
+            HashSet<TopologyDescription.Node> predecessors = new SortedSet<>(NODE_COMPARATOR);
+            HashSet<TopologyDescription.Node> successors = new SortedSet<>(NODE_COMPARATOR);
 
             // size of the sub-topology rooted at this node, including the node itself
             int size;

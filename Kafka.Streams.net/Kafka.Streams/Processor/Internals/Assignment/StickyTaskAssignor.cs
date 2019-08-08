@@ -280,7 +280,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         }
 
-        private int sumCapacity(Collection<ClientState> values)
+        private int sumCapacity(List<ClientState> values)
         {
             int capacity = 0;
             foreach (ClientState client in values)

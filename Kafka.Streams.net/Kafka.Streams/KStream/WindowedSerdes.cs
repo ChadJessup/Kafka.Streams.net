@@ -48,24 +48,26 @@ namespace Kafka.Streams.KStream
             return new SessionWindowedSerde<T>(Serdes.serdeFrom<T>());
         }
 
-        static void verifyInnerSerializerNotNull(final Serializer inner,
-                                                 final Serializer wrapper)
+        public static void verifyInnerSerializerNotNull<T>(
+            ISerializer<T> inner,
+             ISerializer<T> wrapper)
         {
             if (inner == null)
             {
-                throw new NullPointerException("Inner serializer is `null`. " +
-                    "User code must use constructor `" + wrapper.getClass().getSimpleName() + "(final Serializer<T> inner)` " +
+                throw new ArgumentNullException("Inner serializer is `null`. " +
+                    "User code must use constructor `" + wrapper.GetType().Name + "(Serializer<T> inner)` " +
                     "instead of the no-arg constructor.");
             }
         }
 
-        static void verifyInnerDeserializerNotNull(IDeserializer inner,
-                                                   IDeserializer wrapper)
+        static void verifyInnerDeserializerNotNull<T>(
+            IDeserializer<T> inner,
+            IDeserializer<T> wrapper)
         {
             if (inner == null)
             {
                 throw new ArgumentNullException("Inner deserializer is `null`. " +
-                    "User code must use constructor `" + wrapper.GetType().FullName + "(final Deserializer<T> inner)` " +
+                    "User code must use constructor `" + wrapper.GetType().FullName + "(Deserializer<T> inner)` " +
                     "instead of the no-arg constructor.");
             }
         }

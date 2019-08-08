@@ -31,27 +31,27 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde,
             ISerde<V> valSerde,
             ITimestampExtractor timestampExtractor,
-            Topology.AutoOffsetReset offsetReset)
+            AutoOffsetReset offsetReset)
             : this(Consumed<K, V>.with(keySerde, valSerde, timestampExtractor, offsetReset))
         {
         }
 
-    public ConsumedInternal()
-        : this(with(null, null))
+        public ConsumedInternal()
+            : this(with(null, null))
         {
         }
 
         public IDeserializer<K> keyDeserializer()
         {
-            return keySerde?.Deserializer();
+            return keySerde?.Deserializer;
         }
 
         public IDeserializer<V> valueDeserializer()
         {
-            return valueSerde?.Deserializer();
+            return valueSerde?.Deserializer;
         }
 
-        public Topology.AutoOffsetReset offsetResetPolicy()
+        public AutoOffsetReset offsetResetPolicy()
         {
             return resetPolicy;
         }

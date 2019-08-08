@@ -16,31 +16,23 @@
  */
 namespace Kafka.Streams.KStream
 {
-
-
-
-
-/**
- * The {@code Predicate} interface represents a predicate (boolean-valued function) of a {@link KeyValue} pair.
- * This is a stateless record-by-record operation, i.e, {@link #test(object, object)} is invoked individually for each
- * record of a stream.
- *
- * @param key type
- * @param value type
- * @see KStream#filter(Predicate)
- * @see KStream#filterNot(Predicate)
- * @see KStream#branch(Predicate[])
- * @see KTable#filter(Predicate)
- * @see KTable#filterNot(Predicate)
- */
-public interface Predicate<K, V> {
-
     /**
-     * Test if the record with the given key and value satisfies the predicate.
+     * The interface for merging aggregate values for {@link SessionWindows} with the given key.
      *
-     * @param key   the key of the record
-     * @param value the value of the record
-     * @return {@code true} if the {@link KeyValue} pair satisfies the predicate&mdash;{@code false} otherwise
+     * @param   key type
+     * @param   aggregate value type
      */
-    bool test( K key,  V value);
+    public interface IMerger<K, V>
+    {
+
+        /**
+         * Compute a new aggregate from the key and two aggregates.
+         *
+         * @param aggKey    the key of the record
+         * @param aggOne    the first aggregate
+         * @param aggTwo    the second aggregate
+         * @return          the new aggregate value
+         */
+        V apply(K aggKey, V aggOne, V aggTwo);
+    }
 }

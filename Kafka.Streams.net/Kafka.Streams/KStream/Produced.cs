@@ -18,6 +18,7 @@ using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
@@ -29,15 +30,15 @@ namespace Kafka.Streams.KStream
      */
     public class Produced<K, V> : INamedOperation<Produced<K, V>>
     {
-        protected ISerde<K> _keySerde
+        protected ISerde<K> _keySerde;
         protected ISerde<V> _valueSerde;
-        protected StreamPartitioner<K, V> partitioner;
+        protected IStreamPartitioner<K, V> partitioner;
         protected string processorName;
 
         private Produced(
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string processorName)
         {
             this._keySerde = keySerde;
@@ -92,7 +93,7 @@ namespace Kafka.Streams.KStream
         public static Produced<K, V> with(
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
-            StreamPartitioner<K, V> partitioner)
+            IStreamPartitioner<K, V> partitioner)
         {
             return new Produced<K, V>(
                 keySerde,
@@ -163,7 +164,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> streamPartitioner(StreamPartitioner<K, V> partitioner)
+        public static Produced<K, V> streamPartitioner(IStreamPartitioner<K, V> partitioner)
         {
             return new Produced<K, V>(null, null, partitioner, null);
         }
@@ -175,7 +176,7 @@ namespace Kafka.Streams.KStream
          *                      {@link WindowedStreamPartitioner} will be used&mdash;otherwise {@link DefaultPartitioner} wil be used
          * @return this
          */
-        public Produced<K, V> withStreamPartitioner(StreamPartitioner<K, V> partitioner)
+        public Produced<K, V> withStreamPartitioner(IStreamPartitioner<K, V> partitioner)
         {
             this.partitioner = partitioner;
             return this;

@@ -15,41 +15,29 @@
  * limitations under the License.
  */
 using Kafka.Common;
+using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
+using System.Text;
 
-public static class Subtopology : TopologyDescription.Subtopology
+public class Subtopology : ISubtopology
 {
+    public int id { get; private set; }
+    public HashSet<INode> nodes { get; private set; }
 
-    private int id;
-    private HashSet<TopologyDescription.Node> nodes;
-
-    public Subtopology(int id, HashSet<TopologyDescription.Node> nodes)
+    public Subtopology(int id, HashSet<INode> nodes)
     {
         this.id = id;
-        this.nodes = new TreeSet<>(NODE_COMPARATOR);
-        this.nodes.AddAll(nodes);
-    }
-
-
-    public int id()
-    {
-        return id;
-    }
-
-
-    public HashSet<TopologyDescription.Node> nodes()
-    {
-        return Collections.unmodifiableSet(nodes);
+        this.nodes = new HashSet<INode>(/*NODE_COMPARATOR*/);
+        this.nodes.UnionWith(nodes);
     }
 
     // visible for testing
-    IEnumerator<TopologyDescription.Node> nodesInOrder()
+    IEnumerator<INode> nodesInOrder()
     {
-        return nodes.iterator();
+        return nodes.GetEnumerator();
     }
 
-
-    public string ToString()
+    public override string ToString()
     {
         return "Sub-topology: " + id + "\n" + nodesAsString() + "\n";
     }
@@ -57,7 +45,7 @@ public static class Subtopology : TopologyDescription.Subtopology
     private string nodesAsString()
     {
         StringBuilder sb = new StringBuilder();
-        foreach (TopologyDescription.Node node in nodes)
+        foreach (INode node in nodes)
         {
             sb.Append("    ");
             sb.Append(node);
@@ -67,12 +55,13 @@ public static class Subtopology : TopologyDescription.Subtopology
     }
 
 
-    public bool Equals(object o)
+    public override bool Equals(object o)
     {
         if (this == o)
         {
             return true;
         }
+
         if (o == null || GetType() != o.GetType())
         {
             return false;
@@ -83,9 +72,8 @@ public static class Subtopology : TopologyDescription.Subtopology
             && nodes.Equals(that.nodes);
     }
 
-
-    public int GetHashCode()
+    public override int GetHashCode()
     {
-        return Objects.hash(id, nodes);
+        return (id, nodes).GetHashCode();
     }
 }

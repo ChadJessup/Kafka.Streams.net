@@ -1,7 +1,7 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
+ * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
@@ -14,26 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream
+
+namespace Kafka.Streams.Interfaces
 {
-
-
-
-/**
- * The interface for merging aggregate values for {@link SessionWindows} with the given key.
- *
- * @param   key type
- * @param   aggregate value type
- */
-public interface Merger<K, V> {
-
     /**
-     * Compute a new aggregate from the key and two aggregates.
-     *
-     * @param aggKey    the key of the record
-     * @param aggOne    the first aggregate
-     * @param aggTwo    the second aggregate
-     * @return          the new aggregate value
+     * Listen to {@link State} change events.
      */
-    V apply( K aggKey,  V aggOne,  V aggTwo);
+    public interface IStateListener
+    {
+        /**
+         * Called when state changes.
+         *
+         * @param newState new state
+         * @param oldState previous state
+         */
+        void onChange(KafkaStreamsStates newState, KafkaStreamsStates oldState);
+    }
 }

@@ -26,10 +26,10 @@ namespace Kafka.Streams.KStream.Internals
 
 class KStreamBranch<K, V> : ProcessorSupplier<K, V> {
 
-    private  Predicate<K, V>[] predicates;
+    private  IPredicate<K, V>[] predicates;
     private  string[] childNodes;
 
-    KStreamBranch( Predicate<K, V>[] predicates,
+    KStreamBranch( IPredicate<K, V>[] predicates,
                    string[] childNodes)
 {
         this.predicates = predicates;

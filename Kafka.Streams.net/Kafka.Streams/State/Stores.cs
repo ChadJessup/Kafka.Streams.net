@@ -171,7 +171,7 @@ namespace Kafka.Streams.State
         // *                              careful to set it the same as the windowed keys you're actually storing.
         // * @param retainDuplicates      whether or not to retain duplicates.
         // * @return an instance of {@link WindowBytesStoreSupplier}
-        // * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, boolean)} instead
+        // * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, bool)} instead
         // */
         //[System.Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
         //public static WindowBytesStoreSupplier persistentWindowStore(string name,
@@ -201,7 +201,7 @@ namespace Kafka.Streams.State
         // * <p>
         // * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
         // * If you want to create a {@link TimestampedWindowStore} you should use
-        // * {@link #persistentTimestampedWindowStore(string, Duration, Duration, boolean)} to create a store supplier instead.
+        // * {@link #persistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
         // *
         // * @param name                  name of the store (cannot be {@code null})
         // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)
@@ -227,7 +227,7 @@ namespace Kafka.Streams.State
         // * This store supplier can be passed into a
         // * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
         // * If you want to create a {@link WindowStore} you should use
-        // * {@link #persistentWindowStore(string, Duration, Duration, boolean)} to create a store supplier instead.
+        // * {@link #persistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
         // *
         // * @param name                  name of the store (cannot be {@code null})
         // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)

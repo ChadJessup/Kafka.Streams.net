@@ -22,13 +22,13 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableFilter<K, V> : IKTableProcessorSupplier<K, V, V>
     {
         private KTableImpl<K, object, V> parent;
-        private Predicate<K, V> predicate;
+        private IPredicate<K, V> predicate;
         private bool filterNot;
         private string queryableName;
         private bool sendOldValues = false;
 
         KTableFilter(KTableImpl<K, object, V> parent,
-                      Predicate<K, V> predicate,
+                      IPredicate<K, V> predicate,
                       bool filterNot,
                       string queryableName)
         {

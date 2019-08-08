@@ -170,7 +170,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         }
 
         protected void encodeTasks(ByteBuffer buf,
-                                   Collection<TaskId> taskIds)
+                                   List<TaskId> taskIds)
         {
             buf.putInt(taskIds.size());
             foreach (TaskId id in taskIds)

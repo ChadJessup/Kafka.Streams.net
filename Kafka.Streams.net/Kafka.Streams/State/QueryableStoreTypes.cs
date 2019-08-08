@@ -91,7 +91,7 @@ namespace Kafka.Streams.State
             return new SessionStoreType<>();
         }
 
-        private static abstract class QueryableStoreTypeMatcher<T> : QueryableStoreType<T>
+        private static abstract class QueryableStoreTypeMatcher<T> : IQueryableStoreType<T>
         {
 
             private HashSet<Class> matchTo;

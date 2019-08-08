@@ -20,12 +20,14 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -227,18 +229,26 @@ namespace Kafka.Streams.Processor.Internals
             string topic,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] predecessorNames)
         {
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
             predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
+
             if (predecessorNames.Length == 0)
             {
                 throw new TopologyException("Sink " + name + " must have at least one parent");
             }
 
-            addSink(name, new StaticTopicNameExtractor<>(topic), keySerializer, valSerializer, partitioner, predecessorNames);
+            addSink(
+                name,
+                new StaticTopicNameExtractor<K, V>(topic),
+                keySerializer,
+                valSerializer,
+                partitioner,
+                predecessorNames);
+
             nodeToSinkTopic.Add(name, topic);
             nodeGroups = null;
         }
@@ -248,12 +258,13 @@ namespace Kafka.Streams.Processor.Internals
             ITopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] predecessorNames)
         {
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor must not be null", nameof(topicExtractor));
             predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
+
             if (nodeFactories.ContainsKey(name))
             {
                 throw new TopologyException("Processor " + name + " is already.Added.");
@@ -344,7 +355,10 @@ namespace Kafka.Streams.Processor.Internals
             string[] processorNames)
             where T : IStateStore
         {
-            addStateStore(storeBuilder, false, processorNames);
+            addStateStore(
+                storeBuilder,
+                false,
+                processorNames);
         }
 
         public void addStateStore<T>(
@@ -468,9 +482,9 @@ namespace Kafka.Streams.Processor.Internals
             internalTopicNames.Add(topicName);
         }
 
-        public void copartitionSources(Collection<string> sourceNodes)
+        public void copartitionSources(HashSet<string> sourceNodes)
         {
-            copartitionSourceGroups.Add(Collections.unmodifiableSet(new HashSet<>(sourceNodes)));
+            copartitionSourceGroups.Add(new HashSet<string>(sourceNodes));
         }
 
         private void validateGlobalStoreArguments(string sourceName,
@@ -1066,7 +1080,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                     if (!updatedTopicsForStateStore.isEmpty())
                     {
-                        Collection<string> storeTopics = stateStoreNameToSourceTopics[storePattern.Key];
+                        List<string> storeTopics = stateStoreNameToSourceTopics[storePattern.Key];
                         if (storeTopics != null)
                         {
                             updatedTopicsForStateStore.AddAll(storeTopics);
@@ -1115,8 +1129,8 @@ namespace Kafka.Streams.Processor.Internals
             return buildPatternForOffsetResetTopics(topics, resetPatterns);
         }
 
-        private static Pattern buildPatternForOffsetResetTopics(Collection<string> sourceTopics,
-                                                                Collection<Pattern> sourcePatterns)
+        private static Pattern buildPatternForOffsetResetTopics(List<string> sourceTopics,
+                                                                List<Pattern> sourcePatterns)
         {
             StringBuilder builder = new StringBuilder();
 
@@ -1150,7 +1164,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Collection<HashSet<string>> copartitionGroups()
+        public List<HashSet<string>> copartitionGroups()
         {
             List<HashSet<string>> list = new List<>(copartitionSourceGroups.size());
             foreach (HashSet<string> nodeNames in copartitionSourceGroups)
@@ -1169,7 +1183,7 @@ namespace Kafka.Streams.Processor.Internals
             return Collections.unmodifiableList(list);
         }
 
-        private List<string> maybeDecorateInternalSourceTopics(Collection<string> sourceTopics)
+        private List<string> maybeDecorateInternalSourceTopics(List<string> sourceTopics)
         {
             List<string> decoratedTopics = new List<>();
             foreach (string topic in sourceTopics)
@@ -1515,15 +1529,15 @@ private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyCom
 private static string nodeNames(HashSet<TopologyDescription.Node> nodes)
 {
     StringBuilder sb = new StringBuilder();
-    if (!nodes.isEmpty())
+    if (nodes.Any())
     {
-        foreach (TopologyDescription.Node n in nodes)
+        foreach (INode n in nodes)
         {
             sb.Append(n.name());
             sb.Append(", ");
         }
-        sb.deleteCharAt(sb.Length - 1);
-        sb.deleteCharAt(sb.Length - 1);
+        sb.Remove(sb.Length - 1, 1);
+        sb.Remove(sb.Length - 1, 1);
     }
     else
     {

@@ -19,9 +19,9 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-    internal class Arrays
+    public class Arrays
     {
-        internal static string ToString(string[] parentNames)
+        public static string ToString(string[] parentNames)
         {
             throw new NotImplementedException();
         }

@@ -54,7 +54,7 @@ public class StandbyTask : AbstractTask
      * @param stateDirectory the {@link StateDirectory} created by the thread
      */
     StandbyTask(TaskId id,
-                Collection<TopicPartition> partitions,
+                List<TopicPartition> partitions,
                 ProcessorTopology topology,
                 IConsumer<byte[], byte[]> consumer,
                 ChangelogReader changelogReader,

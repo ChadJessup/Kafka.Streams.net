@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-    public class GlobalStateStoreProvider : StateStoreProvider
+    public class GlobalStateStoreProvider : IStateStoreProvider
     {
         private Dictionary<string, IStateStore> globalStateStores;
 
@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override List<T> stores(string storeName, QueryableStoreType<T> queryableStoreType)
+        public override List<T> stores(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
             IStateStore store = globalStateStores[storeName];
             if (store == null || !queryableStoreType.accepts(store))

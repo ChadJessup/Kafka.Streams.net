@@ -16,28 +16,26 @@
  */
 namespace Kafka.Streams.KStream
 {
-
-
-
-/**
- * A {@code TransformerSupplier} interface which can create one or more {@link Transformer} instances.
- *
- * @param key type
- * @param value type
- * @param {@link org.apache.kafka.streams.KeyValue KeyValue} return type (both key and value type can be set
- *            arbitrarily)
- * @see Transformer
- * @see KStream#transform(TransformerSupplier, string...)
- * @see ValueTransformer
- * @see ValueTransformerSupplier
- * @see KStream#transformValues(ValueTransformerSupplier, string...)
- */
-public interface TransformerSupplier<K, V, R> {
-
     /**
-     * Return a new {@link Transformer} instance.
+     * A {@code TransformerSupplier} interface which can create one or more {@link Transformer} instances.
      *
-     * @return a new {@link Transformer} instance
+     * @param key type
+     * @param value type
+     * @param {@link org.apache.kafka.streams.KeyValue KeyValue} return type (both key and value type can be set
+     *            arbitrarily)
+     * @see Transformer
+     * @see KStream#transform(TransformerSupplier, string...)
+     * @see ValueTransformer
+     * @see ValueTransformerSupplier
+     * @see KStream#transformValues(ValueTransformerSupplier, string...)
      */
-    Transformer<K, V, R> get();
+    public interface ITransformerSupplier<K, V, R>
+    {
+        /**
+         * Return a new {@link Transformer} instance.
+         *
+         * @return a new {@link Transformer} instance
+         */
+        ITransformer<K, V, R> get();
+    }
 }

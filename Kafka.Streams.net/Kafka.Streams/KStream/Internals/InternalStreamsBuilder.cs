@@ -17,6 +17,7 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
@@ -33,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class InternalStreamsBuilder : InternalNameProvider
     {
-        InternalTopologyBuilder internalTopologyBuilder;
+        public InternalTopologyBuilder internalTopologyBuilder;
         private AtomicInteger index = new AtomicInteger(0);
 
         private AtomicInteger buildPriorityIndex = new AtomicInteger(0);
@@ -58,8 +59,9 @@ namespace Kafka.Streams.KStream.Internals
             this.internalTopologyBuilder = internalTopologyBuilder;
         }
 
-        public KStream<K, V> stream<K, V>(Collection<string> topics,
-                                            ConsumedInternal<K, V> consumed)
+        public IKStream<K, V> stream<K, V>(
+            List<string> topics,
+            ConsumedInternal<K, V> consumed)
         {
 
             string name = new NamedInternal(consumed.name()).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
@@ -76,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
                                          this);
         }
 
-        public KStream<K, V> stream<K, V>(Pattern topicPattern,
+        public IKStream<K, V> stream<K, V>(Pattern topicPattern,
                                             ConsumedInternal<K, V> consumed)
         {
             string name = newProcessorName(KStreamImpl.SOURCE_NAME);
@@ -93,19 +95,22 @@ namespace Kafka.Streams.KStream.Internals
                                      this);
         }
 
-        public IKTable<K, V> table(string topic,
-                                          ConsumedInternal<K, V> consumed,
-                                          MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, V> table<K, V>(
+            string topic,
+            ConsumedInternal<K, V> consumed,
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             string sourceName = new NamedInternal(consumed.name())
-                   .orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
+                   .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SOURCE_NAME);
+
             string tableSourceName = new NamedInternal(consumed.name())
                    .suffixWithOrElseGet("-table-source", this, KTableImpl.SOURCE_NAME);
+
             KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());
 
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
-            TableSourceNode<K, V> tableSourceNode = TableSourceNode.< K, V> tableSourceNodeBuilder()
+            TableSourceNode<K, V> tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder()
                  .withTopic(topic)
                  .withSourceName(sourceName)
                  .withNodeName(tableSourceName)
@@ -221,7 +226,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        void addGraphNode(Collection<StreamsGraphNode> parents,
+        void addGraphNode(List<StreamsGraphNode> parents,
                            StreamsGraphNode child)
         {
             parents = parents ?? throw new System.ArgumentNullException("parent node can't be null", nameof(parents));
@@ -374,8 +379,8 @@ namespace Kafka.Streams.KStream.Internals
                     keyChangingNode.removeChild(keyChangingNodeChild);
 
                     // now need to get children of repartition node so we can Remove repartition node
-                    Collection<StreamsGraphNode> repartitionNodeToBeReplacedChildren = repartitionNodeToBeReplaced.children();
-                    Collection<StreamsGraphNode> parentsOfRepartitionNodeToBeReplaced = repartitionNodeToBeReplaced.parentNodes();
+                    List<StreamsGraphNode> repartitionNodeToBeReplacedChildren = repartitionNodeToBeReplaced.children();
+                    List<StreamsGraphNode> parentsOfRepartitionNodeToBeReplaced = repartitionNodeToBeReplaced.parentNodes();
 
                     foreach (StreamsGraphNode repartitionNodeToBeReplacedChild in repartitionNodeToBeReplacedChildren)
                     {
@@ -405,7 +410,7 @@ namespace Kafka.Streams.KStream.Internals
             foreach (StreamsGraphNode mergeNode in mergeNodes)
             {
                 mergeNodesToKeyChangers.Add(mergeNode, new HashSet<>());
-                Collection<StreamsGraphNode> keys = keyChangingOperationsToOptimizableRepartitionNodes.Keys;
+                List<StreamsGraphNode> keys = keyChangingOperationsToOptimizableRepartitionNodes.Keys;
                 foreach (StreamsGraphNode key in keys)
                 {
                     StreamsGraphNode maybeParentKey = findParentNodeMatching(mergeNode, node->node.parentNodes().contains(key));
@@ -419,7 +424,7 @@ namespace Kafka.Streams.KStream.Internals
             foreach (KeyValuePair<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers)
             {
                 StreamsGraphNode mergeKey = entry.Key;
-                Collection<StreamsGraphNode> keyChangingParents = entry.Value;
+                List<StreamsGraphNode> keyChangingParents = entry.Value;
                 HashSet<OptimizableRepartitionNode> repartitionNodes = new HashSet<>();
                 foreach (StreamsGraphNode keyChangingParent in keyChangingParents)
                 {
@@ -465,13 +470,13 @@ namespace Kafka.Streams.KStream.Internals
             return null;
         }
 
-        private string getFirstRepartitionTopicName(Collection<OptimizableRepartitionNode> repartitionNodes)
+        private string getFirstRepartitionTopicName(List<OptimizableRepartitionNode> repartitionNodes)
         {
             return repartitionNodes.iterator().next().repartitionTopic();
         }
 
 
-        private GroupedInternal getRepartitionSerdes<K, V>(Collection<OptimizableRepartitionNode<K, V>> repartitionNodes)
+        private GroupedInternal getRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
         {
             ISerde<K> keySerde = null;
             ISerde<V> valueSerde = null;

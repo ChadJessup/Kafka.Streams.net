@@ -59,7 +59,7 @@ public class ProcessorStateManager : StateManager
      * @throws IOException             if any severe error happens while creating or locking the state directory
      */
     public ProcessorStateManager(TaskId taskId,
-                                 Collection<TopicPartition> sources,
+                                 List<TopicPartition> sources,
                                  bool isStandby,
                                  StateDirectory stateDirectory,
                                  Dictionary<string, string> storeToChangelogTopic,
@@ -175,7 +175,7 @@ public class ProcessorStateManager : StateManager
     }
 
 
-    public void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
+    public void reinitializeStateStoresForPartitions(List<TopicPartition> partitions,
                                                      IInternalProcessorContext processorContext)
 {
         StateManagerUtil.reinitializeStateStoresForPartitions(log,
@@ -454,7 +454,7 @@ public class ProcessorStateManager : StateManager
         return globalStores.getOrDefault(name, Optional.empty()).orElse(null);
     }
 
-    Collection<TopicPartition> changelogPartitions()
+    List<TopicPartition> changelogPartitions()
 {
         return unmodifiableList(changelogPartitions);
     }

@@ -21,12 +21,12 @@ namespace Kafka.Streams.State.Internals
     /**
      * Provides a wrapper over multiple underlying {@link StateStoreProvider}s
      */
-    public class WrappingStoreProvider : StateStoreProvider
+    public class WrappingStoreProvider : IStateStoreProvider
     {
 
-        private List<StateStoreProvider> storeProviders;
+        private List<IStateStoreProvider> storeProviders;
 
-        WrappingStoreProvider(List<StateStoreProvider> storeProviders)
+        WrappingStoreProvider(List<IStateStoreProvider> storeProviders)
         {
             this.storeProviders = storeProviders;
         }
@@ -40,10 +40,10 @@ namespace Kafka.Streams.State.Internals
          * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
          */
         public List<T> stores(string storeName,
-                                  QueryableStoreType<T> type)
+                                  IQueryableStoreType<T> type)
         {
             List<T> allStores = new List<>();
-            foreach (StateStoreProvider provider in storeProviders)
+            foreach (IStateStoreProvider provider in storeProviders)
             {
                 List<T> stores = provider.stores(storeName, type);
                 allStores.AddAll(stores);

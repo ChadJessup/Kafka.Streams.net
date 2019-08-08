@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
 using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -131,14 +134,15 @@ namespace Kafka.Streams.State.Internals
 
         public static Windowed<Bytes> from(Bytes bytesKey)
         {
-            byte[] binaryKey = bytesKey[];
+            byte[] binaryKey = Array.Empty();
             Window window = extractWindow(binaryKey);
-            return new Windowed<>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
+            return new Windowed<Bytes>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
         }
 
-        public static Windowed<K> from(Windowed<Bytes> keyBytes,
-                                           IDeserializer<K> keyDeserializer,
-                                           string topic)
+        public static Windowed<K> from(
+            Windowed<Bytes> keyBytes,
+            IDeserializer<K> keyDeserializer,
+            string topic)
         {
             K key = keyDeserializer.Deserialize(topic, keyBytes.key()());
             return new Windowed<>(key, keyBytes.window());

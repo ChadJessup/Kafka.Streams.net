@@ -40,7 +40,7 @@ namespace Kafka.Streams
      */
     public class Topology
     {
-        private InternalTopologyBuilder internalTopologyBuilder =
+        public InternalTopologyBuilder internalTopologyBuilder =
             new InternalTopologyBuilder();
 
         /**
@@ -478,7 +478,7 @@ namespace Kafka.Streams
         public Topology addSink<K, V>(
             string name,
             string topic,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
             internalTopologyBuilder.addSink(name, topic, null, null, partitioner, parentNames);
@@ -544,7 +544,7 @@ namespace Kafka.Streams
             string topic,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
             internalTopologyBuilder.addSink(name, topic, keySerializer, valueSerializer, partitioner, parentNames);
@@ -608,7 +608,7 @@ namespace Kafka.Streams
         public Topology addSink<K, V>(
             string name,
             ITopicNameExtractor<K, V> topicExtractor,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
             internalTopologyBuilder.addSink(name, topicExtractor, null, null, partitioner, parentNames);
@@ -676,7 +676,7 @@ namespace Kafka.Streams
             ITopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
-            StreamPartitioner<K, V> partitioner,
+            IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
             internalTopologyBuilder.addSink(name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);

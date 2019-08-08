@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        bool mayPunctuate(long timestamp, PunctuationType type, ProcessorNodePunctuator processorNodePunctuator)
+        bool mayPunctuate(long timestamp, PunctuationType type, IProcessorNodePunctuator processorNodePunctuator)
         {
             synchronized(pq)
     {

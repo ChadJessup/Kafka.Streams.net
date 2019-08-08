@@ -22,5 +22,9 @@ namespace Kafka.Common
 {
     public class Pattern : Regex
     {
+        public static Pattern compile(string v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,5 @@
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
@@ -6,9 +7,8 @@ namespace Kafka.Streams.KStream
      * The {@code Joined} represents optional params that can be passed to
      * {@link KStream#join}, {@link KStream#leftJoin}, and  {@link KStream#outerJoin} operations.
      */
-    public class Joined<K, V, VO> : NamedOperation<Joined<K, V, VO>>
+    public class Joined<K, V, VO> : INamedOperation<Joined<K, V, VO>>
     {
-
         protected ISerde<K> keySerde;
         protected ISerde<V> valueSerde;
         protected ISerde<VO> otherValueSerde;
@@ -88,7 +88,7 @@ namespace Kafka.Streams.KStream
          * @param     other value type
          * @return new {@code Joined} instance configured with the keySerde
          */
-        public static Joined<K, V, VO> keySerde(ISerde<K> keySerde)
+        public static Joined<K, V, VO> JoinedKeySerde(ISerde<K> keySerde)
         {
             return new Joined<K, V, VO>(keySerde, null, null, null);
         }
@@ -103,7 +103,7 @@ namespace Kafka.Streams.KStream
          * @param       other value type
          * @return new {@code Joined} instance configured with the valueSerde
          */
-        public static Joined<K, V, VO> valueSerde(ISerde<V> valueSerde)
+        public static Joined<K, V, VO> JoinedValueSerde(ISerde<V> valueSerde)
         {
             return new Joined<K, V, VO>(null, valueSerde, null, null);
         }
@@ -118,28 +118,9 @@ namespace Kafka.Streams.KStream
          * @param            other value type
          * @return new {@code Joined} instance configured with the otherValueSerde
          */
-        public static Joined<K, V, VO> otherValueSerde(ISerde<VO> otherValueSerde)
+        public static Joined<K, V, VO> OtherValueSerde(ISerde<VO> otherValueSerde)
         {
             return new Joined<K, V, VO>(null, null, otherValueSerde, null);
-        }
-
-        /**
-         * Create an instance of {@code Joined} with base name for all components of the join, this may
-         * include any repartition topics created to complete the join.
-         *
-         * @param name the name used as the base for naming components of the join including any
-         * repartition topics
-         * @param key type
-         * @param value type
-         * @param other value type
-         * @return new {@code Joined} instance configured with the name
-         *
-         * @deprecated use {@link #As(string)} instead
-         */
-        [System.Obsolete]
-        public static Joined<K, V, VO> named(string name)
-        {
-            return new Joined<K, V, VO>(null, null, null, name);
         }
 
         /**
@@ -209,28 +190,5 @@ namespace Kafka.Streams.KStream
         {
             return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
         }
-
-        public ISerde<K> keySerde()
-        {
-            return keySerde;
-        }
-
-        public ISerde<V> valueSerde()
-        {
-            return valueSerde;
-        }
-
-        public ISerde<VO> otherValueSerde()
-        {
-            return otherValueSerde;
-        }
-
-        /**
-         * @deprecated this method will be removed in a in a future release
-         */
-        [System.Obsolete]
-        public string name()
-        {
-            return name;
-        }
     }
+}

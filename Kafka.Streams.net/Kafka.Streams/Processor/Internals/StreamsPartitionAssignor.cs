@@ -845,7 +845,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         // visible for testing
-        List<List<TaskId>> interleaveTasksByGroupId(Collection<TaskId> taskIds, int numberThreads)
+        List<List<TaskId>> interleaveTasksByGroupId(List<TaskId> taskIds, int numberThreads)
         {
             LinkedList<TaskId> sortedTasks = new LinkedList<>(taskIds);
             Collections.sort(sortedTasks);
@@ -1072,7 +1072,7 @@ namespace Kafka.Streams.Processor.Internals
             log.LogDebug("Completed validating internal topics {} in partition assignor.", topicPartitions);
         }
 
-        private void ensureCopartitioning(Collection<Set<string>> copartitionGroups,
+        private void ensureCopartitioning(List<Set<string>> copartitionGroups,
                                           Dictionary<string, InternalTopicConfig> allRepartitionTopicsNumPartitions,
                                           Cluster metadata)
         {
@@ -1119,7 +1119,7 @@ namespace Kafka.Streams.Processor.Internals
                         }
                         else if (numPartitions != partitions)
                         {
-                            string[] topics = copartitionGroup.toArray(new string[0]);
+                            string[] topics = copartitionGroup.ToArray(new string[0]);
                             Arrays.sort(topics);
                             throw new org.apache.kafka.streams.errors.TopologyException(string.Format("%sTopics not co-partitioned: [%s]", logPrefix, Utils.join(Arrays.asList(topics), ",")));
                         }

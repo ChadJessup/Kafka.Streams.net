@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
         private SessionWindows windows;
         private Initializer<Agg> initializer;
         private Aggregator<K, V, Agg> aggregator;
-        private Merger<K, Agg> sessionMerger;
+        private IMerger<K, Agg> sessionMerger;
 
         private bool sendOldValues = false;
 
@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
                                               string storeName,
                                               Initializer<Agg> initializer,
                                               Aggregator<K, V, Agg> aggregator,
-                                              Merger<K, Agg> sessionMerger)
+                                              IMerger<K, Agg> sessionMerger)
         {
             this.windows = windows;
             this.storeName = storeName;
