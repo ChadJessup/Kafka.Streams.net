@@ -49,7 +49,7 @@ public class MeteredTimestampedKeyValueStore<K, V>
     }
 
 
-    void initStoreSerde(IProcessorContext context)
+    void initStoreSerde(IProcessorContext<K, V> context)
 {
         serdes = new StateSerdes<>(
             ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),

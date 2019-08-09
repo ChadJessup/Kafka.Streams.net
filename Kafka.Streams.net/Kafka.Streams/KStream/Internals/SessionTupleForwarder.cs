@@ -34,13 +34,13 @@ namespace Kafka.Streams.KStream.Internals
  * @param <V>
  */
 class SessionTupleForwarder<K, V> {
-    private  IProcessorContext context;
+    private  IProcessorContext<K, V> context;
     private  bool sendOldValues;
     private  bool cachingEnabled;
 
     
     SessionTupleForwarder( IStateStore store,
-                           IProcessorContext context,
+                           IProcessorContext<K, V> context,
                            CacheFlushListener<Windowed<K>, V> flushListener,
                            bool sendOldValues)
 {

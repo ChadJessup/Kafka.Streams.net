@@ -50,7 +50,7 @@ namespace Kafka.Streams
         import org.apache.kafka.streams.processor.Processor;
         import org.apache.kafka.streams.processor.ProcessorSupplier;
         import org.apache.kafka.streams.processor.StateStore;
-        import org.apache.kafka.streams.processor.TimestampExtractor;
+        import org.apache.kafka.streams.processor.ITimestampExtractor;
         import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
         import org.apache.kafka.streams.processor.internals.ProcessorNode;
         import org.apache.kafka.streams.processor.internals.SourceNode;
@@ -84,7 +84,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topic.
-         * The default {@code "auto.offset.reset"} strategy, default {@link TimestampExtractor}, and default key and value
+         * The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
          * deserializers as specified in the {@link StreamsConfig config} are used.
          * <p>
          * If multiple topics are specified there is no ordering guarantee for records from different topics.
@@ -104,7 +104,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topic.
-         * The {@code "auto.offset.reset"} strategy, {@link TimestampExtractor}, key and value deserializers
+         * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
          * are defined by the options in {@link Consumed} are used.
          * <p>
          * Note that the specified input topic must be partitioned by key.
@@ -124,7 +124,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topics.
-         * The default {@code "auto.offset.reset"} strategy, default {@link TimestampExtractor}, and default key and value
+         * The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
          * deserializers as specified in the {@link StreamsConfig config} are used.
          * <p>
          * If multiple topics are specified there is no ordering guarantee for records from different topics.
@@ -144,7 +144,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topics.
-         * The {@code "auto.offset.reset"} strategy, {@link TimestampExtractor}, key and value deserializers
+         * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
          * are defined by the options in {@link Consumed} are used.
          * <p>
          * If multiple topics are specified there is no ordering guarantee for records from different topics.
@@ -169,7 +169,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topic pattern.
-         * The default {@code "auto.offset.reset"} strategy, default {@link TimestampExtractor}, and default key and value
+         * The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
          * deserializers as specified in the {@link StreamsConfig config} are used.
          * <p>
          * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from all of
@@ -190,7 +190,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KStream} from the specified topic pattern.
-         * The {@code "auto.offset.reset"} strategy, {@link TimestampExtractor}, key and value deserializers
+         * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
          * are defined by the options in {@link Consumed} are used.
          * <p>
          * If multiple topics are matched by the specified pattern, the created {@link KStream} will read data from all of
@@ -216,7 +216,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KTable} for the specified topic.
-         * The {@code "auto.offset.reset"} strategy, {@link TimestampExtractor}, key and value deserializers
+         * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
          * are defined by the options in {@link Consumed} are used.
          * Input {@link KeyValue records} with {@code null} key will be dropped.
          * <p>
@@ -295,7 +295,7 @@ namespace Kafka.Streams
 
         /**
          * Create a {@link KTable} for the specified topic.
-         * The {@code "auto.offset.reset"} strategy, {@link TimestampExtractor}, key and value deserializers
+         * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
          * are defined by the options in {@link Consumed} are used.
          * Input {@link KeyValue records} with {@code null} key will be dropped.
          * <p>
@@ -568,7 +568,7 @@ namespace Kafka.Streams
          * the global state store. This store uses the source topic as changelog and during restore will insert records directly
          * from the source.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
-         * The default {@link TimestampExtractor} as specified in the {@link StreamsConfig config} is used.
+         * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          * <p>
          * It is not required to connect a global store to {@link Processor Processors}, {@link Transformer Transformers},
          * or {@link ValueTransformer ValueTransformer}; those have read-only access to all global stores by default.

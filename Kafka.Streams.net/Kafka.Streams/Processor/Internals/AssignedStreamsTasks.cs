@@ -70,7 +70,7 @@ namespace Kafka.Streams.Processor.Internals
             while (restoringTaskIterator.hasNext())
             {
                 StreamTask task = restoringTaskIterator.next();
-                log.LogDebug("Closing restoring task {}", task.id());
+                log.LogDebug("Closing restoring task {}", task.id);
                 try
                 {
 
@@ -139,8 +139,8 @@ namespace Kafka.Streams.Processor.Internals
 
         void addToRestoring(StreamTask task)
         {
-            restoring.Add(task.id(), task);
-            foreach (TopicPartition topicPartition in task.partitions())
+            restoring.Add(task.id, task);
+            foreach (TopicPartition topicPartition in task.partitions)
             {
                 restoringByPartition.Add(topicPartition, task);
             }
@@ -159,7 +159,7 @@ namespace Kafka.Streams.Processor.Internals
             int committed = 0;
             RuntimeException firstException = null;
 
-            for (IEnumerator<StreamTask> it = running().iterator(); it.hasNext();)
+            for (IEnumerator<StreamTask> it = running.iterator(); it.hasNext();)
             {
                 StreamTask task = it.next();
                 try

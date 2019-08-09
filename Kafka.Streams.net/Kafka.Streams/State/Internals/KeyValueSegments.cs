@@ -32,7 +32,7 @@ class KeyValueSegments : AbstractSegments<KeyValueSegment>
     }
 
     public override KeyValueSegment getOrCreateSegment(long segmentId,
-                                              IInternalProcessorContext context)
+                                              IInternalProcessorContext<K, V>  context)
 {
         if (segments.ContainsKey(segmentId))
 {

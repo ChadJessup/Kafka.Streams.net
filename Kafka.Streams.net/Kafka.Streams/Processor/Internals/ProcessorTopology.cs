@@ -21,35 +21,32 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
-
-    public class ProcessorTopology
+    public class ProcessorTopology<K, V>
     {
-
-
-        private List<ProcessorNode> processorNodes;
-        private Dictionary<string, SourceNode> sourcesByTopic;
-        private Dictionary<string, SinkNode> sinksByTopic;
-        private List<IStateStore> stateStores;
+        private List<ProcessorNode<K, V>> processorNodes;
+        private Dictionary<string, SourceNode<K, V>> sourcesByTopic;
+        private Dictionary<string, SinkNode<K, V>> sinksByTopic;
+        public List<IStateStore> stateStores { get; }
         private List<IStateStore> globalStateStores;
         private Dictionary<string, string> storeToChangelogTopic;
         private HashSet<string> repartitionTopics;
 
-        public ProcessorTopology(List<ProcessorNode> processorNodes,
-                                 Dictionary<string, SourceNode> sourcesByTopic,
-                                 Dictionary<string, SinkNode> sinksByTopic,
-                                 List<IStateStore> stateStores,
-                                 List<IStateStore> globalStateStores,
-                                 Dictionary<string, string> storeToChangelogTopic,
-                                 HashSet<string> repartitionTopics)
+        public ProcessorTopology(
+            List<ProcessorNode<K, V>> processorNodes,
+            Dictionary<string, SourceNode<K, V>> sourcesByTopic,
+            Dictionary<string, SinkNode<K, V>> sinksByTopic,
+            List<IStateStore> stateStores,
+            List<IStateStore> globalStateStores,
+            Dictionary<string, string> storeToChangelogTopic,
+            HashSet<string> repartitionTopics)
         {
-            this.processorNodes = Collections.unmodifiableList(processorNodes);
-            this.sourcesByTopic = Collections.unmodifiableMap(sourcesByTopic);
-            this.sinksByTopic = Collections.unmodifiableMap(sinksByTopic);
-            this.stateStores = Collections.unmodifiableList(stateStores);
-            this.globalStateStores = Collections.unmodifiableList(globalStateStores);
-            this.storeToChangelogTopic = Collections.unmodifiableMap(storeToChangelogTopic);
-            this.repartitionTopics = Collections.unmodifiableSet(repartitionTopics);
+            this.processorNodes = processorNodes;
+            this.sourcesByTopic = sourcesByTopic;
+            this.sinksByTopic = sinksByTopic;
+            this.stateStores = stateStores;
+            this.globalStateStores = globalStateStores;
+            this.storeToChangelogTopic = storeToChangelogTopic;
+            this.repartitionTopics = repartitionTopics;
         }
 
         public HashSet<string> sourceTopics()
@@ -57,27 +54,27 @@ namespace Kafka.Streams.Processor.Internals
             return sourcesByTopic.Keys;
         }
 
-        public SourceNode source(string topic)
+        public SourceNode<K, V> source(string topic)
         {
             return sourcesByTopic[topic];
         }
 
-        public HashSet<SourceNode> sources()
+        public HashSet<SourceNode<K, V>> sources()
         {
-            return new HashSet<>(sourcesByTopic.Values);
+            return new HashSet<SourceNode<K, V>>(sourcesByTopic.Values);
         }
 
         public HashSet<string> sinkTopics()
         {
-            return sinksByTopic.Keys;
+            return new HashSet<string>(sinksByTopic.Keys);
         }
 
-        public SinkNode sink(string topic)
+        public SinkNode<K, V> sink(string topic)
         {
             return sinksByTopic[topic];
         }
 
-        public List<ProcessorNode> processors()
+        public List<ProcessorNode<K, V>> processors()
         {
             return processorNodes;
         }
@@ -89,7 +86,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public bool hasPersistentLocalStore()
         {
-            foreach (IStateStore store in stateStores())
+            foreach (IStateStore store in stateStores)
             {
                 if (store.persistent())
                 {
@@ -102,7 +99,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public bool hasPersistentGlobalStore()
         {
-            foreach (IStateStore store in globalStateStores())
+            foreach (IStateStore store in globalStateStores)
             {
                 if (store.persistent())
                 {
@@ -130,8 +127,8 @@ namespace Kafka.Streams.Processor.Internals
             sb.Append("]\n");
 
             // recursively print children
-            foreach (ProcessorNode <?, object> child in children)
-{
+            foreach (ProcessorNode<K, V> child in children)
+            {
                 sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children()));
             }
             return sb.ToString();
@@ -160,7 +157,7 @@ namespace Kafka.Streams.Processor.Internals
             // start from sources
             foreach (var source in sourcesByTopic.Values)
             {
-                sb.Append(source.ToString(indent + "\t")).Append(childrenToString(indent + "\t", source.children()));
+                sb.Append(source.ToString(indent + "\t")).Append(childrenToString(indent + "\t", source.children));
             }
 
             return sb.ToString();
@@ -169,15 +166,15 @@ namespace Kafka.Streams.Processor.Internals
         // for testing only
         public HashSet<string> processorConnectedStateStores(string processorName)
         {
-            foreach (ProcessorNode <?, object> node in processorNodes)
-{
-                if (node.name().Equals(processorName))
+            foreach (ProcessorNode<K, V> node in processorNodes)
+            {
+                if (node.name.Equals(processorName))
                 {
                     return node.stateStores;
                 }
             }
 
-            return Collections.emptySet();
+            return new HashSet<string>();
         }
     }
 }

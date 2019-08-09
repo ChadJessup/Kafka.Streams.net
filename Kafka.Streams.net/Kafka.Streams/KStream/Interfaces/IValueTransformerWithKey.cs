@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream
          * Initialize this transformer.
          * This is called once per instance when the topology gets initialized.
          * <p>
-         * The provided {@link IProcessorContext context} can be used to access topology and record meta data, to
+         * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
          * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
          * <p>

@@ -17,6 +17,9 @@
 using Confluent.Kafka;
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Errors.Interfaces;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 
@@ -118,12 +121,12 @@ namespace Kafka.Streams.Processor.Internals
             ProcessorContextImpl processorContextImpl = new ProcessorContextImpl(id, this, config, this.recordCollector, stateMgr, streamsMetrics, cache);
             processorContext = processorContextImpl;
 
-            TimestampExtractor defaultTimestampExtractor = config.defaultTimestampExtractor();
-            DeserializationExceptionHandler defaultDeserializationExceptionHandler = config.defaultDeserializationExceptionHandler();
+            ITimestampExtractor defaultTimestampExtractor = config.defaultTimestampExtractor();
+            IDeserializationExceptionHandler defaultDeserializationExceptionHandler = config.defaultDeserializationExceptionHandler();
             foreach (TopicPartition partition in partitions)
             {
                 SourceNode source = topology.source(partition.Topic);
-                TimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
+                ITimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
                 RecordQueue queue = new RecordQueue(
                     partition,
                     source,
@@ -138,7 +141,7 @@ namespace Kafka.Streams.Processor.Internals
             recordInfo = new PartitionGroup.RecordInfo();
             partitionGroup = new PartitionGroup(partitionQueues, recordLatenessSensor(processorContextImpl));
 
-            stateMgr.registerGlobalStateStores(topology.globalStateStores());
+            stateMgr.registerGlobalStateStores(topology.globalStateStores);
 
             // initialize transactions if eos is turned on, which will block if the previous transaction has not
             // completed yet; do not start the first transaction until the topology has been initialized later
@@ -309,9 +312,9 @@ namespace Kafka.Streams.Processor.Internals
             catch (KafkaException e)
             {
                 string stackTrace = getStacktraceString(e);
-                throw new StreamsException(format("Exception caught in process. taskId=%s, " +
+                throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
-                    id(),
+                    id,
                     processorContext.currentNode().name(),
                     record.Topic,
                     record.partition(),

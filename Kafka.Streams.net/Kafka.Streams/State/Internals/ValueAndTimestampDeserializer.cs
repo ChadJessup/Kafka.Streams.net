@@ -14,77 +14,71 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Confluent.Kafka;
 
-using Kafka.Common.serialization.Deserializer;
-using Kafka.Common.serialization.LongDeserializer;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-
-
-class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
+namespace Kafka.Streams.State.Internals
 {
-    private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
+    public class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
+    {
+        private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
 
-    public IDeserializer<V> valueDeserializer;
-    private IDeserializer<long> timestampDeserializer;
+        public IDeserializer<V> valueDeserializer;
+        private IDeserializer<long> timestampDeserializer;
 
-    ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
-{
-        Objects.requireNonNull(valueDeserializer);
-        this.valueDeserializer = valueDeserializer;
-        timestampDeserializer = new LongDeserializer();
-    }
-
-    public override void configure(Dictionary<string, object> configs,
-                          bool isKey)
-{
-        valueDeserializer.configure(configs, isKey);
-        timestampDeserializer.configure(configs, isKey);
-    }
-
-    public override ValueAndTimestamp<V> deserialize(string topic,
-                                            byte[] valueAndTimestamp)
-{
-        if (valueAndTimestamp == null)
-{
-            return null;
+        ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
+        {
+            Objects.requireNonNull(valueDeserializer);
+            this.valueDeserializer = valueDeserializer;
+            timestampDeserializer = new LongDeserializer();
         }
 
-        long timestamp = timestampDeserializer.Deserialize(topic, rawTimestamp(valueAndTimestamp));
-        V value = valueDeserializer.Deserialize(topic, rawValue(valueAndTimestamp));
-        return ValueAndTimestamp.make(value, timestamp);
+        public override void configure(Dictionary<string, object> configs,
+                              bool isKey)
+        {
+            valueDeserializer.configure(configs, isKey);
+            timestampDeserializer.configure(configs, isKey);
+        }
+
+        public override ValueAndTimestamp<V> deserialize(string topic,
+                                                byte[] valueAndTimestamp)
+        {
+            if (valueAndTimestamp == null)
+            {
+                return null;
+            }
+
+            long timestamp = timestampDeserializer.Deserialize(topic, rawTimestamp(valueAndTimestamp));
+            V value = valueDeserializer.Deserialize(topic, rawValue(valueAndTimestamp));
+            return ValueAndTimestamp.make(value, timestamp);
+        }
+
+        public override void close()
+        {
+            valueDeserializer.close();
+            timestampDeserializer.close();
+        }
+
+        static byte[] rawValue(byte[] rawValueAndTimestamp)
+        {
+            int rawValueLength = rawValueAndTimestamp.Length - 8;
+
+            return ByteBuffer
+                .allocate(rawValueLength)
+                .Add(rawValueAndTimestamp, 8, rawValueLength)
+                .array();
+        }
+
+        private static byte[] rawTimestamp(byte[] rawValueAndTimestamp)
+        {
+            return ByteBuffer
+                .allocate(8)
+                .Add(rawValueAndTimestamp, 0, 8)
+                .array();
+        }
+
+        static long timestamp(byte[] rawValueAndTimestamp)
+        {
+            return LONG_DESERIALIZER.Deserialize(null, rawTimestamp(rawValueAndTimestamp));
+        }
     }
-
-    public override void close()
-{
-        valueDeserializer.close();
-        timestampDeserializer.close();
-    }
-
-    static byte[] rawValue(byte[] rawValueAndTimestamp)
-{
-        int rawValueLength = rawValueAndTimestamp.Length - 8;
-
-        return ByteBuffer
-            .allocate(rawValueLength)
-            .Add(rawValueAndTimestamp, 8, rawValueLength)
-            .array();
-    }
-
-    private static byte[] rawTimestamp(byte[] rawValueAndTimestamp)
-{
-        return ByteBuffer
-            .allocate(8)
-            .Add(rawValueAndTimestamp, 0, 8)
-            .array();
-    }
-
-    static long timestamp(byte[] rawValueAndTimestamp)
-{
-        return LONG_DESERIALIZER.Deserialize(null, rawTimestamp(rawValueAndTimestamp));
-    }
-
 }

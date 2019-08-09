@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.Internals
             return name;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
             StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics();
             string taskName = context.taskId().ToString();

@@ -14,46 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.IKeyValueIterator;
-
-class WrappedSessionStoreIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
+namespace Kafka.Streams.State.Internals
 {
+    public class WrappedSessionStoreIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
+    {
 
-    private IKeyValueIterator<Bytes, byte[]> bytesIterator;
+        private IKeyValueIterator<Bytes, byte[]> bytesIterator;
 
-    WrappedSessionStoreIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator)
-{
-        this.bytesIterator = bytesIterator;
-    }
+        WrappedSessionStoreIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator)
+        {
+            this.bytesIterator = bytesIterator;
+        }
 
-    public override void close()
-{
-        bytesIterator.close();
-    }
+        public override void close()
+        {
+            bytesIterator.close();
+        }
 
-    public override Windowed<Bytes> peekNextKey()
-{
-        return SessionKeySchema.from(bytesIterator.peekNextKey());
-    }
+        public override Windowed<Bytes> peekNextKey()
+        {
+            return SessionKeySchema.from(bytesIterator.peekNextKey());
+        }
 
-    public override bool hasNext()
-{
-        return bytesIterator.hasNext();
-    }
+        public override bool hasNext()
+        {
+            return bytesIterator.hasNext();
+        }
 
-    public override KeyValue<Windowed<Bytes>, byte[]> next()
-{
-        KeyValue<Bytes, byte[]> next = bytesIterator.next();
-        return KeyValue.pair(SessionKeySchema.from(next.key), next.value);
-    }
+        public override KeyValue<Windowed<Bytes>, byte[]> next()
+        {
+            KeyValue<Bytes, byte[]> next = bytesIterator.next();
+            return KeyValue.pair(SessionKeySchema.from(next.key), next.value);
+        }
 
-    public override void Remove()
-{
-        throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
+        public override void Remove()
+        {
+            throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
+        }
     }
 }

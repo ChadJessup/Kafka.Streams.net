@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
          */
         public IStoreBuilder<ITimestampedKeyValueStore<K, V>> materialize()
         {
-            IKeyValueBytesStoreSupplier supplier = (IKeyValueBytesStoreSupplier<K, V>)materialized.storeSupplier();
+            IKeyValueBytesStoreSupplier supplier = (IKeyValueBytesStoreSupplier)materialized.storeSupplier;
             if (supplier == null)
             {
                 string name = materialized.storeName();

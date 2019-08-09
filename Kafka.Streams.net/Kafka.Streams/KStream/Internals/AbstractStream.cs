@@ -114,7 +114,7 @@ namespace Kafka.Streams.KStream.Internals
             //        return new ValueTransformerWithKey<K, V, VR>()
             //        {
 
-            //        public void init(IProcessorContext context)
+            //        public void init(IProcessorContext<K, V> context)
             //        {
             //            valueTransformer.init(context);
             //        }

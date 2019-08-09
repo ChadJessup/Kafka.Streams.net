@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals.Metrics
 
         private Sensors() { }
 
-        public static Sensor lateRecordDropSensor(IInternalProcessorContext context)
+        public static Sensor lateRecordDropSensor(IInternalProcessorContext<K, V>  context)
         {
             StreamsMetricsImpl metrics = context.metrics();
             Sensor sensor = metrics.nodeLevelSensor(
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals.Metrics
             return sensor;
         }
 
-        public static Sensor recordLatenessSensor(IInternalProcessorContext context)
+        public static Sensor recordLatenessSensor(IInternalProcessorContext<K, V>  context)
         {
             StreamsMetricsImpl metrics = context.metrics();
 

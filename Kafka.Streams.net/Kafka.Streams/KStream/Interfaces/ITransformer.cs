@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream
          * When the framework is done with the transformer, {@link #close()} will be called on it; the
          * framework may later re-use the transformer by calling {@link #init(IProcessorContext)} again.
          * <p>
-         * The provided {@link IProcessorContext context} can be used to access topology and record meta data, to
+         * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
          * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
          * <p>

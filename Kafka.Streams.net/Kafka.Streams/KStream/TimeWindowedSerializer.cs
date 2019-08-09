@@ -87,7 +87,7 @@ namespace Kafka.Streams.KStream
         {
             WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
-            return inner.Serialize(topic, data.key());
+            return inner.Serialize(topic, data.key);
         }
 
         // Only for testing

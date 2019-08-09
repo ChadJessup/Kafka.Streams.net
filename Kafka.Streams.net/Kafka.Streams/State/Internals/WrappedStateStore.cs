@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
             this.wrapped = wrapped;
         }
 
-        public void init(IProcessorContext context, IStateStore root)
+        public void init(IProcessorContext<K, V> context, IStateStore root)
         {
             wrapped.init(context, root);
         }

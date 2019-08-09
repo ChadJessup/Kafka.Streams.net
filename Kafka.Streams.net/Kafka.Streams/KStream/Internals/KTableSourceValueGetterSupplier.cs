@@ -46,7 +46,7 @@ public class KTableSourceValueGetterSupplier<K, V> : IKTableValueGetterSupplier<
         private TimestampedKeyValueStore<K, V> store = null;
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }

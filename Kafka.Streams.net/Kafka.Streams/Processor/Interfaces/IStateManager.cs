@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processor.Interfaces
 
         void reinitializeStateStoresForPartitions(
             List<TopicPartition> partitions,
-            IInternalProcessorContext processorContext);
+            IInternalProcessorContext<K, V>  processorContext);
 
         void close(bool clean);
 

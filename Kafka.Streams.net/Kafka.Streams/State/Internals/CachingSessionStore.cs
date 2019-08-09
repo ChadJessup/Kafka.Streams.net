@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
         private SegmentedCacheFunction cacheFunction;
         private string cacheName;
         private ThreadCache cache;
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
         private CacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
 
@@ -32,14 +32,14 @@ namespace Kafka.Streams.State.Internals
             this.maxObservedTimestamp = RecordQueue.UNKNOWN;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
             initInternal((IInternalProcessorContext)context);
             base.init(context, root);
         }
 
 
-        private void initInternal(IInternalProcessorContext context)
+        private void initInternal(IInternalProcessorContext<K, V>  context)
         {
             this.context = context;
 
@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.Internals
             });
         }
 
-        private void putAndMaybeForward(DirtyEntry entry, IInternalProcessorContext context)
+        private void putAndMaybeForward(DirtyEntry entry, IInternalProcessorContext<K, V>  context)
         {
             Bytes binaryKey = cacheFunction.key(entry.key());
             Windowed<Bytes> bytesKey = SessionKeySchema.from(binaryKey);

@@ -67,7 +67,7 @@ public class MeteredSessionStore<K, V>
     }
 
 
-    public override void init(IProcessorContext context,
+    public override void init(IProcessorContext<K, V> context,
                      IStateStore root)
 {
         //noinspection unchecked

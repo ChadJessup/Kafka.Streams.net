@@ -14,60 +14,55 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Common.Utils.Utils;
-using Kafka.Streams.Processor.IProcessorContext;
-
-
-
-
-class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegment>, Segment
+namespace Kafka.Streams.State.Internals
 {
-    public long id;
+    public class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegment>, Segment
+    {
+        public long id;
 
-    TimestampedSegment(string segmentName,
-                       string windowName,
-                       long id)
-{
-        base(segmentName, windowName);
-        this.id = id;
-    }
-
-    public override void destroy()
-{
-        Utils.delete(dbDir);
-    }
-
-    public override int CompareTo(TimestampedSegment segment)
-{
-        return long.compare(id, segment.id);
-    }
-
-    public override void openDB(IProcessorContext context)
-{
-        base.openDB(context);
-        // skip the registering step
-        internalProcessorContext = context;
-    }
-
-    public override string ToString()
-{
-        return "TimestampedSegment(id=" + id + ", name=" + name() + ")";
-    }
-
-    public override bool Equals(object obj)
-{
-        if (obj == null || GetType() != obj.GetType())
-{
-            return false;
+        TimestampedSegment(string segmentName,
+                           string windowName,
+                           long id)
+            : base(segmentName, windowName)
+        {
+            this.id = id;
         }
-        TimestampedSegment segment = (TimestampedSegment) obj;
-        return id == segment.id;
-    }
 
-    public override int GetHashCode()
-{
-        return Objects.hash(id);
+        public override void destroy()
+        {
+            Utils.delete(dbDir);
+        }
+
+        public override int CompareTo(TimestampedSegment segment)
+        {
+            return long.compare(id, segment.id);
+        }
+
+        public override void openDB(IProcessorContext<K, V> context)
+        {
+            base.openDB(context);
+            // skip the registering step
+            internalProcessorContext = context;
+        }
+
+        public override string ToString()
+        {
+            return "TimestampedSegment(id=" + id + ", name=" + name() + ")";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+            TimestampedSegment segment = (TimestampedSegment)obj;
+            return id == segment.id;
+        }
+
+        public override int GetHashCode()
+        {
+            return Objects.hash(id);
+        }
     }
 }

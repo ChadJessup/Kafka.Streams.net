@@ -56,7 +56,7 @@ class StateManagerUtil
                                                             FixedOrderMap<string, Optional<IStateStore>> stateStores,
                                                             Dictionary<string, string> storeToChangelogTopic,
                                                             List<TopicPartition> partitions,
-                                                            IInternalProcessorContext processorContext,
+                                                            IInternalProcessorContext<K, V>  processorContext,
                                                             OffsetCheckpoint checkpointFile,
                                                             Dictionary<TopicPartition, long> checkpointFileCache)
 {

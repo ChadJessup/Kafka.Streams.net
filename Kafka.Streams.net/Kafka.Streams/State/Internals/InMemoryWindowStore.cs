@@ -11,7 +11,7 @@ namespace Kafka.Streams.State.Internals
 
         private string name;
         private string metricScope;
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
         private Sensor expiredRecordSensor;
         private int seqnum = 0;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
@@ -43,7 +43,7 @@ namespace Kafka.Streams.State.Internals
             return name;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
             this.context = (IInternalProcessorContext)context;
 

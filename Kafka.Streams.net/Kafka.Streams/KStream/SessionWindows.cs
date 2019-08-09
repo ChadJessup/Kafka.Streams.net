@@ -67,13 +67,13 @@ namespace Kafka.Streams.KStream
      * The previous 2 sessions would be merged into a single session with start time 10 and end time 20.
      * The aggregate value for this session would be the result of aggregating all 4 values.
      * <p>
-     * For time semantics, see {@link TimestampExtractor}.
+     * For time semantics, see {@link ITimestampExtractor}.
      *
      * @see TimeWindows
      * @see UnlimitedWindows
      * @see JoinWindows
      * @see KGroupedStream#windowedBy(SessionWindows)
-     * @see TimestampExtractor
+     * @see ITimestampExtractor
      */
     public class SessionWindows
     {

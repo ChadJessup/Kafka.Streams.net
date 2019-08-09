@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream
         // Helper method for users to specify whether the input topic is a changelog topic for deserializing the key properly.
         public TimeWindowedSerde<T> forChangelog(bool isChangelogTopic)
         {
-            TimeWindowedDeserializer deserializer = (TimeWindowedDeserializer)this.deserializer();
+            TimeWindowedDeserializer<T> deserializer = (TimeWindowedDeserializer<T>)this.deserializer;
             deserializer.setIsChangelogTopic(isChangelogTopic);
             return this;
         }

@@ -36,13 +36,13 @@ namespace Kafka.Streams.KStream
      * It has a fixed starting point while its window end is defined as infinite.
      * With this regard, it is a fixed-size window with infinite window size.
      * <p>
-     * For time semantics, see {@link TimestampExtractor}.
+     * For time semantics, see {@link ITimestampExtractor}.
      *
      * @see TimeWindows
      * @see SessionWindows
      * @see JoinWindows
      * @see KGroupedStream#windowedBy(Windows)
-     * @see TimestampExtractor
+     * @see ITimestampExtractor
      */
     public class UnlimitedWindows : Windows<UnlimitedWindow>
     {

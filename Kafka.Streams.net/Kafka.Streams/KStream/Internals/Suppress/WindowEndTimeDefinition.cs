@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public long time(IProcessorContext context, K key)
+        public long time(IProcessorContext<K, V> context, K key)
         {
             return key.window().end();
         }

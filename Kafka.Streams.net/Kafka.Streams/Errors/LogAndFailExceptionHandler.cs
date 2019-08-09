@@ -33,7 +33,7 @@ namespace Kafka.Streams.Errors
         private static ILogger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler>();
 
 
-        public DeserializationHandlerResponse handle(IProcessorContext context,
+        public DeserializationHandlerResponse handle(IProcessorContext<K, V> context,
                                                       ConsumeResult<byte[], byte[]> record,
                                                       Exception exception)
         {

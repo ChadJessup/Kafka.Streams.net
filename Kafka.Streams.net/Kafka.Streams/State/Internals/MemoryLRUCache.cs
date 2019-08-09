@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.Internals
             //    }
 
             //public override void init(
-            //    IProcessorContext context,
+            //    IProcessorContext<K, V> context,
             //    IStateStore root)
             //{
 
@@ -181,7 +181,7 @@ namespace Kafka.Streams.State.Internals
             throw new System.NotImplementedException();
         }
 
-        public void init(IProcessorContext context, IStateStore root)
+        public void init(IProcessorContext<K, V> context, IStateStore root)
         {
             throw new System.NotImplementedException();
         }

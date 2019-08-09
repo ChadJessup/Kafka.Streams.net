@@ -37,7 +37,7 @@ class ChangeLoggingWindowBytesStore
 {
 
     private bool retainDuplicates;
-    private IProcessorContext context;
+    private IProcessorContext<K, V> context;
     private int seqnum = 0;
 
     StoreChangeLogger<Bytes, byte[]> changeLogger;
@@ -49,7 +49,7 @@ class ChangeLoggingWindowBytesStore
         this.retainDuplicates = retainDuplicates;
     }
 
-    public override void init(IProcessorContext context,
+    public override void init(IProcessorContext<K, V> context,
                      IStateStore root)
 {
         this.context = context;

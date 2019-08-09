@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
         }

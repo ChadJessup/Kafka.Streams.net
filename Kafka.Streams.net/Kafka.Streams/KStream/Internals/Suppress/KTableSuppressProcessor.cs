@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private string storeName;
 
         private TimeOrderedKeyValueBuffer<K, V> buffer;
-        private IInternalProcessorContext internalProcessorContext;
+        private IInternalProcessorContext<K, V>  internalProcessorContext;
         private Sensor suppressionEmitSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 

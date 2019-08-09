@@ -59,7 +59,7 @@ public interface Task
 
     ProcessorTopology topology();
 
-    IProcessorContext context;
+    IProcessorContext<K, V> context;
 
     TaskId id();
 

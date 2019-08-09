@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
         private RocksDBConfigSetter configSetter;
 
         private bool prepareForBulkload = false;
-        IProcessorContext internalProcessorContext;
+        IProcessorContext<K, V> internalProcessorContext;
         // visible for testing
         BatchingStateRestoreCallback batchingStateRestoreCallback = null;
 
@@ -66,7 +66,7 @@ namespace Kafka.Streams.State.Internals
 
 
 
-        void openDB(IProcessorContext context)
+        void openDB(IProcessorContext<K, V> context)
         {
             // initialize the default rocksdb options
 
@@ -155,7 +155,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public void init(IProcessorContext context,
+        public void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             // open the DB dir

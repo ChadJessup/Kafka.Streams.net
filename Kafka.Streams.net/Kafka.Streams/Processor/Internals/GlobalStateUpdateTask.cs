@@ -36,17 +36,17 @@ public class GlobalStateUpdateTask : IGlobalStateMaintainer
 
 
     private ProcessorTopology topology;
-    private IInternalProcessorContext processorContext;
+    private IInternalProcessorContext<K, V>  processorContext;
     private Dictionary<TopicPartition, long> offsets = new Dictionary<>();
     private Dictionary<string, RecordDeserializer> deserializers = new Dictionary<>();
     private IGlobalStateManager stateMgr;
-    private DeserializationExceptionHandler deserializationExceptionHandler;
+    private IDeserializationExceptionHandler deserializationExceptionHandler;
     private LogContext logContext;
 
     public GlobalStateUpdateTask(ProcessorTopology topology,
-                                 IInternalProcessorContext processorContext,
+                                 IInternalProcessorContext<K, V>  processorContext,
                                  IGlobalStateManager stateMgr,
-                                 DeserializationExceptionHandler deserializationExceptionHandler,
+                                 IDeserializationExceptionHandler deserializationExceptionHandler,
                                  LogContext logContext)
 {
         this.topology = topology;

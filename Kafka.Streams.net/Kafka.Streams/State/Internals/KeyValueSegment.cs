@@ -44,7 +44,7 @@ class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
         return long.compare(id, segment.id);
     }
 
-    public override void openDB(IProcessorContext context)
+    public override void openDB(IProcessorContext<K, V> context)
 {
         base.openDB(context);
         // skip the registering step

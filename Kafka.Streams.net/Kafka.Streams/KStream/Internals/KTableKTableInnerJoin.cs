@@ -70,7 +70,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics();
@@ -139,7 +139,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             valueGetter1.init(context);
             valueGetter2.init(context);

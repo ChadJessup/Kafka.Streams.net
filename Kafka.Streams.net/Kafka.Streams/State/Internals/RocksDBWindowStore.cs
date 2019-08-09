@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.Internals
         private bool retainDuplicates;
         private long windowSize;
 
-        private IProcessorContext context;
+        private IProcessorContext<K, V> context;
         private int seqnum = 0;
 
         RocksDBWindowStore(SegmentedBytesStore bytesStore,
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
             this.windowSize = windowSize;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
             this.context = context;
             base.init(context, root);

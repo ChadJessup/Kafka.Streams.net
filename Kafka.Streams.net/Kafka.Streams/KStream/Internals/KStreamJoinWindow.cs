@@ -45,7 +45,7 @@ class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
 
         
         
-        public void init( IProcessorContext context)
+        public void init( IProcessorContext<K, V> context)
 {
             base.init(context);
 

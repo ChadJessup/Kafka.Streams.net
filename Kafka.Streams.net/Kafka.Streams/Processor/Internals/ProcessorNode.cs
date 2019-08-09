@@ -14,7 +14,7 @@ namespace Kafka.Streams.Processor.Internals
     public class ProcessorNode<K, V>
     {
         // TODO: 'children' can be removed when #forward() via index is removed
-        private List<ProcessorNode<K, V>> children;
+        public List<ProcessorNode<K, V>> children { get; }
         private Dictionary<string, ProcessorNode<K, V>> childByName;
 
         public NodeMetrics<K, V> nodeMetrics { get; private set; }

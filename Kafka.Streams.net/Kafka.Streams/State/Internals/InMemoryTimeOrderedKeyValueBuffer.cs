@@ -158,9 +158,9 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = this.valueSerde == null ? FullChangeSerde.wrap(valueSerde) : this.valueSerde;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
-            IInternalProcessorContext internalProcessorContext = (IInternalProcessorContext)context;
+            IInternalProcessorContext<K, V>  internalProcessorContext = (IInternalProcessorContext)context;
 
             bufferSizeSensor = Sensors.createBufferSizeSensor(this, internalProcessorContext);
             bufferCountSensor = Sensors.createBufferCountSensor(this, internalProcessorContext);

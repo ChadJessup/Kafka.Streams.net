@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
         private AbstractSegments<S> segments;
         private string metricScope;
         private KeySchema keySchema;
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
         private volatile bool open;
         private HashSet<S> bulkLoadSegments;
         private Sensor expiredRecordSensor;
@@ -159,7 +159,7 @@ namespace Kafka.Streams.State.Internals
             return name;
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             this.context = (IInternalProcessorContext)context;

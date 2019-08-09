@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
             //        private Transformer<KIn, VIn, KeyValue<KOut, VOut>> transformer = transformerSupplier[];
 
 
-            //    public void init(IProcessorContext context)
+            //    public void init(IProcessorContext<K, V> context)
             //    {
             //        transformer.init(context);
             //    }

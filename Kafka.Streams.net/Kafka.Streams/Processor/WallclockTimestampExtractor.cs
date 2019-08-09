@@ -32,7 +32,7 @@ using Kafka.Common.annotation.InterfaceStability;
  * @see UsePreviousTimeOnInvalidTimestamp
  */
 
-public class WallclockTimestampExtractor : TimestampExtractor
+public class WallclockTimestampExtractor : ITimestampExtractor
 {
 
 

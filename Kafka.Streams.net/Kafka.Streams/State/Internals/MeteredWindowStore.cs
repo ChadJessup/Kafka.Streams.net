@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
         private Sensor putTime;
         private Sensor fetchTime;
         private Sensor flushTime;
-        private IProcessorContext context;
+        private IProcessorContext<K, V> context;
         private string taskName;
 
         MeteredWindowStore(IWindowStore<Bytes, byte[]> inner,
@@ -56,7 +56,7 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = valueSerde;
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             this.context = context;
@@ -90,7 +90,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        void initStoreSerde(IProcessorContext context)
+        void initStoreSerde(IProcessorContext<K, V> context)
         {
             serdes = new StateSerdes<>(
                 ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),

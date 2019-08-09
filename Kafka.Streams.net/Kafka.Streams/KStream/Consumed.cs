@@ -102,7 +102,7 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Create an instance of {@link Consumed} with a {@link TimestampExtractor}.
+         * Create an instance of {@link Consumed} with a {@link ITimestampExtractor}.
          *
          * @param timestampExtractor the timestamp extractor to used. If {@code null} the default timestamp extractor from config will be used
          * @param                key type
@@ -165,7 +165,7 @@ namespace Kafka.Streams.KStream
         }
 
         /**
-         * Configure the instance of {@link Consumed} with a {@link TimestampExtractor}.
+         * Configure the instance of {@link Consumed} with a {@link ITimestampExtractor}.
          *
          * @param timestampExtractor the timestamp extractor to used. If {@code null} the default timestamp extractor from config will be used
          * @return this

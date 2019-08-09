@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processor.Internals
         private HashSet<string> globalStoreNames = new HashSet<string>();
         private FixedOrderMap<string, Optional<IStateStore>> globalStores = new FixedOrderMap<>();
         private IStateRestoreListener stateRestoreListener;
-        private IInternalProcessorContext globalProcessorContext;
+        private IInternalProcessorContext<K, V>  globalProcessorContext;
         private int retries;
         private long retryBackoffMs;
         private TimeSpan pollTime;
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Processor.Internals
             pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
         }
 
-        public void setGlobalProcessorContext(IInternalProcessorContext globalProcessorContext)
+        public void setGlobalProcessorContext(IInternalProcessorContext<K, V>  globalProcessorContext)
         {
             this.globalProcessorContext = globalProcessorContext;
         }
@@ -119,7 +119,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
         public void reinitializeStateStoresForPartitions(List<TopicPartition> partitions,
-                                                         IInternalProcessorContext processorContext)
+                                                         IInternalProcessorContext<K, V>  processorContext)
         {
             StateManagerUtil.reinitializeStateStoresForPartitions(
                 log,

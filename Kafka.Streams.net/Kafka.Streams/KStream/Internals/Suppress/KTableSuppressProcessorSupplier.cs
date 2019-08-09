@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             //            return new KTableValueGetter<K, V>()
             //            {
             //                    private TimeOrderedKeyValueBuffer<K, V> buffer;
-            //        public void init(IProcessorContext context)
+            //        public void init(IProcessorContext<K, V> context)
             //        {
             //            parentGetter.init(context);
             //            // the main processor is responsible for the buffer's lifecycle

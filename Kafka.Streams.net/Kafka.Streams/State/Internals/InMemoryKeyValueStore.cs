@@ -49,7 +49,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         return name;
     }
 
-    public override void init(IProcessorContext context,
+    public override void init(IProcessorContext<K, V> context,
                      IStateStore root)
 {
 

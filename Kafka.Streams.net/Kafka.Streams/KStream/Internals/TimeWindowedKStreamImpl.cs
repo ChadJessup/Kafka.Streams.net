@@ -182,12 +182,12 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private IStoreBuilder<ITimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
+        private IStoreBuilder<ITimestampedWindowStore<K, VR>> materialize<VR>(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
             IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier();
             if (supplier == null)
             {
-                if (materialized.retention() != null)
+                if (materialized.retention != null)
                 {
                     // new style retention: use Materialized retention and default segmentInterval
                     long retentionPeriod = materialized.retention().toMillis();
@@ -251,7 +251,7 @@ namespace Kafka.Streams.KStream.Internals
                 builder.withLoggingDisabled();
             }
 
-            if (materialized.cachingEnabled())
+            if (materialized.cachingEnabled)
             {
                 builder.withCachingEnabled();
             }

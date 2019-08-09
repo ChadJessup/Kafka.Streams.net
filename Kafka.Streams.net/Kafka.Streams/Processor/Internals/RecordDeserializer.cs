@@ -31,12 +31,12 @@ class RecordDeserializer
 {
 
     private SourceNode sourceNode;
-    private DeserializationExceptionHandler deserializationExceptionHandler;
+    private IDeserializationExceptionHandler deserializationExceptionHandler;
     private ILogger log;
     private Sensor skippedRecordSensor;
 
     RecordDeserializer(SourceNode sourceNode,
-                       DeserializationExceptionHandler deserializationExceptionHandler,
+                       IDeserializationExceptionHandler deserializationExceptionHandler,
                        LogContext logContext,
                        Sensor skippedRecordsSensor)
 {
@@ -48,11 +48,11 @@ class RecordDeserializer
 
     /**
      * @throws StreamsException if a deserialization error occurs and the deserialization callback returns
-     *                          {@link DeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
+     *                          {@link IDeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
      *                          oritself
      */
     
-    ConsumeResult<object, object> deserialize(IProcessorContext processorContext,
+    ConsumeResult<object, object> deserialize(IProcessorContext<K, V> processorContext,
                                                ConsumeResult<byte[], byte[]> rawRecord)
 {
 
@@ -72,7 +72,7 @@ class RecordDeserializer
                 sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers());
         } catch (Exception deserializationException)
 {
-            DeserializationExceptionHandler.DeserializationHandlerResponse response;
+            IDeserializationExceptionHandler.DeserializationHandlerResponse response;
             try
 {
 
@@ -86,7 +86,7 @@ class RecordDeserializer
                 throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
             }
 
-            if (response == DeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
+            if (response == IDeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
 {
                 throw new StreamsException("Deserialization exception handler is set to fail upon" +
                     " a deserialization error. If you would rather have the streaming pipeline" +

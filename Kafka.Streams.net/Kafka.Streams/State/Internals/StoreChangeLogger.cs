@@ -35,20 +35,20 @@ class StoreChangeLogger<K, V>
 
     private string topic;
     private int partition;
-    private IProcessorContext context;
+    private IProcessorContext<K, V> context;
     private RecordCollector collector;
     private ISerializer<K> keySerializer;
     private ISerializer<V> valueSerializer;
 
     StoreChangeLogger(string storeName,
-                      IProcessorContext context,
+                      IProcessorContext<K, V> context,
                       StateSerdes<K, V> serialization)
 {
         this(storeName, context, context.taskId().partition, serialization);
     }
 
     private StoreChangeLogger(string storeName,
-                              IProcessorContext context,
+                              IProcessorContext<K, V> context,
                               int partition,
                               StateSerdes<K, V> serialization)
 {

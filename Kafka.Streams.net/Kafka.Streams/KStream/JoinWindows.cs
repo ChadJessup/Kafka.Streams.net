@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream
      * This implies, that each input record defines its own window with start and end time being relative to the record's
      * timestamp.
      * <p>
-     * For time semantics, see {@link TimestampExtractor}.
+     * For time semantics, see {@link ITimestampExtractor}.
      *
      * @see TimeWindows
      * @see UnlimitedWindows
@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream
      * @see KStream#leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
      * @see KStream#outerJoin(KStream, ValueJoiner, JoinWindows)
      * @see KStream#outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
-     * @see TimestampExtractor
+     * @see ITimestampExtractor
      */
     public class JoinWindows : Windows<Window>
     {

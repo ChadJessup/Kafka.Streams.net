@@ -36,7 +36,7 @@ namespace Kafka.Streams.State.Internals
         private string name;
         private ThreadCache cache;
         private bool sendOldValues;
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
         private StateSerdes<Bytes, byte[]> bytesSerdes;
         private CacheFlushListener<byte[], byte[]> flushListener;
 
@@ -54,14 +54,14 @@ namespace Kafka.Streams.State.Internals
             this.maxObservedTimestamp = RecordQueue.UNKNOWN;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
             initInternal((IInternalProcessorContext)context);
             base.init(context, root);
         }
 
 
-        private void initInternal(IInternalProcessorContext context)
+        private void initInternal(IInternalProcessorContext<K, V>  context)
         {
             this.context = context;
             string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
@@ -83,7 +83,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private void putAndMaybeForward(DirtyEntry entry,
-                                        IInternalProcessorContext context)
+                                        IInternalProcessorContext<K, V>  context)
         {
             byte[] binaryWindowKey = cacheFunction.key(entry.key())[];
             Windowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);

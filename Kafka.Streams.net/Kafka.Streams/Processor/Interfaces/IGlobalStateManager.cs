@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processor.Interfaces
     {
 
 
-        void setGlobalProcessorContext(IInternalProcessorContext processorContext);
+        void setGlobalProcessorContext(IInternalProcessorContext<K, V>  processorContext);
 
         /**
          * @throws InvalidOperationException If store gets registered after initialized is already finished

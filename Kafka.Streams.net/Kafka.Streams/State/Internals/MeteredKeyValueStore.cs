@@ -47,7 +47,7 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = valueSerde;
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             metrics = (StreamsMetricsImpl)context.metrics();
@@ -87,7 +87,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        void initStoreSerde(IProcessorContext context)
+        void initStoreSerde(IProcessorContext<K, V> context)
         {
             serdes = new StateSerdes<>(
                 ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),

@@ -27,12 +27,12 @@ namespace Kafka.Streams.KStream.Internals
      * It is a fixed size window, i.e., all instances (of a single {@link org.apache.kafka.streams.kstream.TimeWindows
      * window specification}) will have the same size.
      * <p>
-     * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
+     * For time semantics, see {@link org.apache.kafka.streams.processor.ITimestampExtractor ITimestampExtractor}.
      *
      * @see SessionWindow
      * @see UnlimitedWindow
      * @see org.apache.kafka.streams.kstream.TimeWindows
-     * @see org.apache.kafka.streams.processor.TimestampExtractor
+     * @see org.apache.kafka.streams.processor.ITimestampExtractor
      */
 
     public class TimeWindow : Window

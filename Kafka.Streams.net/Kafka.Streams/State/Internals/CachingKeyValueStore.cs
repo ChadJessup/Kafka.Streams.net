@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
         private bool sendOldValues;
         private string cacheName;
         private ThreadCache cache;
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
         private Thread streamThread;
         private ReadWriteLock @lock = new ReentrantReadWriteLock();
 
@@ -42,7 +42,7 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             initInternal(context);
@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        private void initInternal(IProcessorContext context)
+        private void initInternal(IProcessorContext<K, V> context)
         {
             this.context = (IInternalProcessorContext)context;
 
@@ -69,7 +69,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         private void putAndMaybeForward(DirtyEntry entry,
-                                        IInternalProcessorContext context)
+                                        IInternalProcessorContext<K, V>  context)
         {
             if (flushListener != null)
             {

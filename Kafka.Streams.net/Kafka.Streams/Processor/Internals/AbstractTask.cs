@@ -15,39 +15,22 @@
  * limitations under the License.
  */
 namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processor.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 
-
-
-using Kafka.Common.KafkaException;
-using Kafka.Common.TopicPartition;
-using Kafka.Common.errors.AuthorizationException;
-using Kafka.Common.errors.WakeupException;
-using Kafka.Common.Utils.LogContext;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public abstract class AbstractTask : Task
+public abstract class AbstractTask<K, V> : Task
 {
-
-
     TaskId id;
     string applicationId;
     ProcessorTopology topology;
     ProcessorStateManager stateMgr;
-    HashSet<TopicPartition> partitions;
+    public HashSet<TopicPartition> partitions { get; }
     IConsumer<byte[], byte[]> consumer;
     string logPrefix;
     bool eosEnabled;
@@ -59,7 +42,7 @@ public abstract class AbstractTask : Task
     bool taskClosed;
     bool commitNeeded;
 
-    IInternalProcessorContext processorContext;
+    IInternalProcessorContext<K, V> processorContext;
 
     /**
      * @throws ProcessorStateException if the state manager cannot be created
@@ -72,7 +55,7 @@ public abstract class AbstractTask : Task
                  bool isStandby,
                  StateDirectory stateDirectory,
                  StreamsConfig config)
-{
+    {
         this.id = id;
         this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
         this.partitions = new HashSet<>(partitions);
@@ -87,7 +70,7 @@ public abstract class AbstractTask : Task
 
         // create the processor state manager
         try
-{
+        {
 
             stateMgr = new ProcessorStateManager(
                 id,
@@ -98,45 +81,21 @@ public abstract class AbstractTask : Task
                 changelogReader,
                 eosEnabled,
                 logContext);
-        } catch (IOException e)
-{
+        }
+        catch (IOException e)
+        {
             throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
         }
     }
 
-
-    public TaskId id()
-{
-        return id;
-    }
-
-
-    public string applicationId()
-{
-        return applicationId;
-    }
-
-
-    public HashSet<TopicPartition> partitions()
-{
-        return partitions;
-    }
-
-
-    public ProcessorTopology topology()
-{
-        return topology;
-    }
-
-
-    public IProcessorContext context
-{
+    public IProcessorContext<K, V> context
+    {
         return processorContext;
     }
 
 
     public IStateStore getStore(string name)
-{
+    {
         return stateMgr.getStore(name);
     }
 
@@ -147,13 +106,13 @@ public abstract class AbstractTask : Task
      * @return A string representation of the StreamTask instance.
      */
 
-    public string ToString()
-{
+    public override string ToString()
+    {
         return ToString("");
     }
 
     public bool isEosEnabled()
-{
+    {
         return eosEnabled;
     }
 
@@ -164,7 +123,7 @@ public abstract class AbstractTask : Task
      * @return A string representation of the Task instance.
      */
     public string ToString(string indent)
-{
+    {
         StringBuilder sb = new StringBuilder();
         sb.Append(indent);
         sb.Append("TaskId: ");
@@ -173,52 +132,52 @@ public abstract class AbstractTask : Task
 
         // print topology
         if (topology != null)
-{
+        {
             sb.Append(indent).Append(topology.ToString(indent + "\t"));
         }
 
         // print assigned partitions
-        if (partitions != null && !partitions.isEmpty())
-{
+        if (partitions != null && partitions.Any())
+        {
             sb.Append(indent).Append("Partitions [");
             foreach (TopicPartition topicPartition in partitions)
-{
+            {
                 sb.Append(topicPartition.ToString()).Append(", ");
             }
-            sb.setLength(sb.Length - 2);
+            sb.Length = sb.Length - 2;
             sb.Append("]\n");
         }
         return sb.ToString();
     }
 
     protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
-{
-        return Collections.emptyMap();
+    {
+        return new Dictionary<TopicPartition, long>();
     }
 
     protected void updateOffsetLimits()
-{
+    {
         foreach (TopicPartition partition in partitions)
-{
+        {
             try
-{
+            {
 
                 OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
                 long offset = metadata != null ? metadata.offset() : 0L;
                 stateMgr.putOffsetLimit(partition, offset);
 
-                if (log.isTraceEnabled())
-{
-                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
-                }
-            } catch (AuthorizationException e)
-{
+                log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
+            }
+            catch (AuthorizationException e)
+            {
                 throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
-            } catch (WakeupException e)
-{
+            }
+            catch (WakeupException e)
+            {
                 throw e;
-            } catch (KafkaException e)
-{
+            }
+            catch (KafkaException e)
+            {
                 throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
             }
         }
@@ -228,7 +187,7 @@ public abstract class AbstractTask : Task
      * Flush all state stores owned by this task
      */
     void flushState()
-{
+    {
         stateMgr.flush();
     }
 
@@ -238,21 +197,22 @@ public abstract class AbstractTask : Task
      * @throws StreamsException If the store's change log does not contain the partition
      */
     void registerStateStores()
-{
-        if (topology.stateStores().isEmpty())
-{
+    {
+        if (topology.stateStores.isEmpty())
+        {
             return;
         }
 
         try
-{
+        {
 
-            if (!stateDirectory.lock(id))
-{
+            if (!stateDirectory.@lock(id))
+            {
                 throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
             }
-        } catch (IOException e)
-{
+        }
+        catch (IOException e)
+        {
             throw new StreamsException(
                 string.Format("%sFatal error while trying to lock the state directory for task %s",
                 logPrefix, id));
@@ -262,70 +222,64 @@ public abstract class AbstractTask : Task
         // set initial offset limits
         updateOffsetLimits();
 
-        foreach (IStateStore store in topology.stateStores())
-{
-            log.LogTrace("Initializing store {}", store.name());
+        foreach (IStateStore store in topology.stateStores)
+        {
+            log.LogTrace("Initializing store {}", store.name);
             processorContext.uninitialize();
             store.init(processorContext, store);
         }
     }
 
     void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
-{
+    {
         stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
     }
 
     /**
      * @throws ProcessorStateException if there is an error while closing the state manager
      */
-    void closeStateManager(bool clean){
+    void closeStateManager(bool clean)
+    {
         ProcessorStateException exception = null;
         log.LogTrace("Closing state manager");
         try
-{
+        {
 
             stateMgr.close(clean);
-        } catch (ProcessorStateException e)
-{
+        }
+        catch (ProcessorStateException e)
+        {
             exception = e;
-        } finally
-{
+        }
+        finally
+        {
 
             try
-{
+            {
 
                 stateDirectory.unlock(id);
-            } catch (IOException e)
-{
+            }
+            catch (IOException e)
+            {
                 if (exception == null)
-{
+                {
                     exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
                 }
             }
         }
         if (exception != null)
-{
+        {
             throw exception;
         }
     }
 
     public bool isClosed()
-{
+    {
         return taskClosed;
     }
 
-    public bool commitNeeded()
-{
-        return commitNeeded;
-    }
-
     public bool hasStateStores()
-{
+    {
         return !topology.stateStores().isEmpty();
-    }
-
-    public List<TopicPartition> changelogPartitions()
-{
-        return stateMgr.changelogPartitions();
     }
 }

@@ -69,14 +69,14 @@ namespace Kafka.Streams.KStream.Internals
         private TimestampedWindowStore<K, Agg> windowStore;
         private TimestampedTupleForwarder<Windowed<K>, Agg> tupleForwarder;
         private StreamsMetricsImpl metrics;
-        private IInternalProcessorContext internalProcessorContext;
+        private IInternalProcessorContext<K, V>  internalProcessorContext;
         private Sensor lateRecordDropSensor;
         private Sensor skippedRecordsSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             base.init(context);
             internalProcessorContext = (IInternalProcessorContext)context;

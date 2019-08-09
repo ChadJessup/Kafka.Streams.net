@@ -95,7 +95,7 @@ namespace Kafka.Streams.Processor.Internals
             return created.isEmpty() && suspended.isEmpty();
         }
 
-        List<T> running()
+        public List<T> running()
         {
             return running.Values;
         }

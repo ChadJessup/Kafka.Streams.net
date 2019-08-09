@@ -34,13 +34,13 @@ namespace Kafka.Streams.KStream
  * For example, hopping windows with size of 5000ms and advance of 3000ms, have window boundaries
  * [0;5000),[3000;8000),[] and not [1000;6000),[4000;9000),[] or even something "random" like [1452;6452),[4452;9452],...
  * <p>
- * For time semantics, see {@link TimestampExtractor}.
+ * For time semantics, see {@link ITimestampExtractor}.
  *
  * @see SessionWindows
  * @see UnlimitedWindows
  * @see JoinWindows
  * @see KGroupedStream#windowedBy(Windows)
- * @see TimestampExtractor
+ * @see ITimestampExtractor
  */
 public class TimeWindows : Windows<TimeWindow> {
 

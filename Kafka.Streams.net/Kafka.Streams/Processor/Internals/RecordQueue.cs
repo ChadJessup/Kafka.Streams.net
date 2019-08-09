@@ -43,8 +43,8 @@ public class RecordQueue
     private ILogger log;
     private SourceNode source;
     private TopicPartition partition;
-    private IProcessorContext processorContext;
-    private TimestampExtractor timestampExtractor;
+    private IProcessorContext<K, V> processorContext;
+    private ITimestampExtractor timestampExtractor;
     private RecordDeserializer recordDeserializer;
     private ArrayDeque<ConsumeResult<byte[], byte[]>> fifoQueue;
 
@@ -55,9 +55,9 @@ public class RecordQueue
 
     RecordQueue(TopicPartition partition,
                 SourceNode source,
-                TimestampExtractor timestampExtractor,
-                DeserializationExceptionHandler deserializationExceptionHandler,
-                IInternalProcessorContext processorContext,
+                ITimestampExtractor timestampExtractor,
+                IDeserializationExceptionHandler deserializationExceptionHandler,
+                IInternalProcessorContext<K, V>  processorContext,
                 LogContext logContext)
 {
         this.source = source;
@@ -203,7 +203,7 @@ public class RecordQueue
             } catch (Exception fatalUserException)
 {
                 throw new StreamsException(
-                        string.Format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
+                        string.Format("Fatal user code error in ITimestampExtractor callback for record %s.", deserialized),
                         fatalUserException);
             }
             log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name(), timestamp, deserialized);

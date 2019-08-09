@@ -251,7 +251,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public void init(IProcessorContext context,
+            public void init(IProcessorContext<K, V> context,
                              IStateStore root)
             {
                 throw new InvalidOperationException(ERROR_MESSAGE);
@@ -487,7 +487,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public void init(IProcessorContext context,
+            public void init(IProcessorContext<K, V> context,
                              IStateStore root)
             {
                 throw new InvalidOperationException(ERROR_MESSAGE);

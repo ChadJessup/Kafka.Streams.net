@@ -61,7 +61,7 @@ public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
 
 
 
-        public void init( IProcessorContext context)
+        public void init( IProcessorContext<K, V> context)
 {
             base.init(context);
             store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);

@@ -106,7 +106,7 @@ namespace Kafka.Streams.State.Internals
             return store.name();
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             store.init(context, root);

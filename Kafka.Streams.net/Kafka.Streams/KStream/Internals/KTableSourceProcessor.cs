@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics();

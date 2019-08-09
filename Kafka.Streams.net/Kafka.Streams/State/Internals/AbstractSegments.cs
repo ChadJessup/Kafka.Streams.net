@@ -60,7 +60,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     }
 
     public override S getOrCreateSegmentIfLive(long segmentId,
-                                      IInternalProcessorContext context,
+                                      IInternalProcessorContext<K, V>  context,
                                       long streamTime)
     {
         long minLiveTimestamp = streamTime - retentionPeriod;
@@ -81,7 +81,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
         return toReturn;
     }
 
-    public override void openExisting(IInternalProcessorContext context, long streamTime)
+    public override void openExisting(IInternalProcessorContext<K, V>  context, long streamTime)
     {
         try
         {

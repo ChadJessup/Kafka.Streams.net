@@ -81,7 +81,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * The type parameter controls what notion of time is used for punctuation:
          * <ul>
          *   <li>{@link PunctuationType#STREAM_TIME} &mdash; uses "stream time", which is advanced by the processing of messages
-         *   in accordance with the timestamp as extracted by the {@link TimestampExtractor} in use.
+         *   in accordance with the timestamp as extracted by the {@link ITimestampExtractor} in use.
          *   The first punctuation will be triggered by the first record that is processed.
          *   <b>NOTE:</b> Only advanced if messages arrive</li>
          *   <li>{@link PunctuationType#WALL_CLOCK_TIME} &mdash; uses system time (the wall-clock time),
@@ -176,7 +176,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * Returns the current timestamp.
          *
          * If it is triggered while processing a record streamed from the source processor, timestamp is defined as the timestamp of the current input record; the timestamp is extracted from
-         * {@link org.apache.kafka.clients.consumer.ConsumeResult ConsumeResult} by {@link TimestampExtractor}.
+         * {@link org.apache.kafka.clients.consumer.ConsumeResult ConsumeResult} by {@link ITimestampExtractor}.
          *
          * If it is triggered while processing a record generated not from the source processor (for example,
          * if this method is invoked from the punctuate call), timestamp is defined as the current

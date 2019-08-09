@@ -176,7 +176,7 @@ public class ProcessorStateManager : IStateManager
 
 
     public void reinitializeStateStoresForPartitions(List<TopicPartition> partitions,
-                                                     IInternalProcessorContext processorContext)
+                                                     IInternalProcessorContext<K, V>  processorContext)
 {
         StateManagerUtil.reinitializeStateStoresForPartitions(log,
                                                               eosEnabled,

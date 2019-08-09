@@ -14,122 +14,119 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.WindowStoreIterator;
-
-class WindowStoreIteratorWrapper
+namespace Kafka.Streams.State.Internals
 {
+    public class WindowStoreIteratorWrapper
+    {
 
-    private IKeyValueIterator<Bytes, byte[]> bytesIterator;
-    private long windowSize;
+        private IKeyValueIterator<Bytes, byte[]> bytesIterator;
+        private long windowSize;
 
-    WindowStoreIteratorWrapper(IKeyValueIterator<Bytes, byte[]> bytesIterator,
-                               long windowSize)
-{
-        this.bytesIterator = bytesIterator;
-        this.windowSize = windowSize;
-    }
-
-    public WindowStoreIterator<byte[]> valuesIterator()
-{
-        return new WrappedWindowStoreIterator(bytesIterator);
-    }
-
-    public IKeyValueIterator<Windowed<Bytes>, byte[]> keyValueIterator()
-{
-        return new WrappedKeyValueIterator(bytesIterator, windowSize);
-    }
-
-    private static WrappedWindowStoreIterator : WindowStoreIterator<byte[]>
-{
-        IKeyValueIterator<Bytes, byte[]> bytesIterator;
-
-        WrappedWindowStoreIterator(
-            IKeyValueIterator<Bytes, byte[]> bytesIterator)
-{
-            this.bytesIterator = bytesIterator;
-        }
-
-
-        public long peekNextKey()
-{
-            return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()());
-        }
-
-
-        public bool hasNext()
-{
-            return bytesIterator.hasNext();
-        }
-
-
-        public KeyValue<long, byte[]> next()
-{
-            KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key());
-            return KeyValue.pair(timestamp, next.value);
-        }
-
-
-        public void Remove()
-{
-            throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
-        }
-
-
-        public void close()
-{
-            bytesIterator.close();
-        }
-    }
-
-    private static class WrappedKeyValueIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
-{
-        IKeyValueIterator<Bytes, byte[]> bytesIterator;
-        long windowSize;
-
-        WrappedKeyValueIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator,
-                                long windowSize)
-{
+        WindowStoreIteratorWrapper(IKeyValueIterator<Bytes, byte[]> bytesIterator,
+                                   long windowSize)
+        {
             this.bytesIterator = bytesIterator;
             this.windowSize = windowSize;
         }
 
-
-        public Windowed<Bytes> peekNextKey()
-{
-            byte[] nextKey = bytesIterator.peekNextKey()[];
-            return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
+        public WindowStoreIterator<byte[]> valuesIterator()
+        {
+            return new WrappedWindowStoreIterator(bytesIterator);
         }
 
-
-        public bool hasNext()
-{
-            return bytesIterator.hasNext();
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> keyValueIterator()
+        {
+            return new WrappedKeyValueIterator(bytesIterator, windowSize);
         }
 
+        private static class WrappedWindowStoreIterator : IWindowStoreIterator<byte[]>
+        {
+            IKeyValueIterator<Bytes, byte[]> bytesIterator;
 
-        public KeyValue<Windowed<Bytes>, byte[]> next()
-{
-            KeyValue<Bytes, byte[]> next = bytesIterator.next();
-            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
+            WrappedWindowStoreIterator(
+                IKeyValueIterator<Bytes, byte[]> bytesIterator)
+            {
+                this.bytesIterator = bytesIterator;
+            }
+
+
+            public long peekNextKey()
+            {
+                return WindowKeySchema.extractStoreTimestamp(bytesIterator.peekNextKey()());
+            }
+
+
+            public bool hasNext()
+            {
+                return bytesIterator.hasNext();
+            }
+
+
+            public KeyValue<long, byte[]> next()
+            {
+                KeyValue<Bytes, byte[]> next = bytesIterator.next();
+                long timestamp = WindowKeySchema.extractStoreTimestamp(next.key());
+                return KeyValue.pair(timestamp, next.value);
+            }
+
+
+            public void Remove()
+            {
+                throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
+            }
+
+
+            public void close()
+            {
+                bytesIterator.close();
+            }
         }
 
+        private static class WrappedKeyValueIterator : IKeyValueIterator<Windowed<Bytes>, byte[]>
+        {
+            IKeyValueIterator<Bytes, byte[]> bytesIterator;
+            long windowSize;
 
-        public void Remove()
-{
-            throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
-        }
+            WrappedKeyValueIterator(IKeyValueIterator<Bytes, byte[]> bytesIterator,
+                                    long windowSize)
+            {
+                this.bytesIterator = bytesIterator;
+                this.windowSize = windowSize;
+            }
 
 
-        public void close()
-{
-            bytesIterator.close();
+            public Windowed<Bytes> peekNextKey()
+            {
+                byte[] nextKey = bytesIterator.peekNextKey()[];
+                return WindowKeySchema.fromStoreBytesKey(nextKey, windowSize);
+            }
+
+
+            public bool hasNext()
+            {
+                return bytesIterator.hasNext();
+            }
+
+
+            public KeyValue<Windowed<Bytes>, byte[]> next()
+            {
+                KeyValue<Bytes, byte[]> next = bytesIterator.next();
+                return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
+            }
+
+
+            public void Remove()
+            {
+                throw new InvalidOperationException("Remove() is not supported in " + GetType().getName());
+            }
+
+
+            public void close()
+            {
+                bytesIterator.close();
+            }
         }
     }
-}

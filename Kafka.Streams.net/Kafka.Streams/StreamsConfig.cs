@@ -277,7 +277,7 @@ namespace Kafka.Streams
          */
 
         public static string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG = "default.deserialization.exception.handler";
-        private static string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling that : the <code>org.apache.kafka.streams.errors.DeserializationExceptionHandler</code> interface.";
+        private static string DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_DOC = "Exception handling that : the <code>org.apache.kafka.streams.errors.IDeserializationExceptionHandler</code> interface.";
 
         /**
          * {@code default.production.exception.handler}
@@ -315,7 +315,7 @@ namespace Kafka.Streams
         /** {@code default.timestamp.extractor} */
 
         public static string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG = "default.timestamp.extractor";
-        private static string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor that : the <code>org.apache.kafka.streams.processor.TimestampExtractor</code> interface.";
+        private static string DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_DOC = "Default timestamp extractor that : the <code>org.apache.kafka.streams.processor.ITimestampExtractor</code> interface.";
 
         /** {@code metadata.max.age.ms} */
 

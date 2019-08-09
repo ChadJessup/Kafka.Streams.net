@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
         {
 
             private IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer;
-            private IProcessorContext context;
+            private IProcessorContext<K, V> context;
 
             KStreamFlatTransformValuesProcessor(IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer)
             {
@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
 
-            public void init(IProcessorContext context)
+            public void init(IProcessorContext<K, V> context)
             {
                 valueTransformer.init(new ForwardingDisabledProcessorContext(context));
                 this.context = context;

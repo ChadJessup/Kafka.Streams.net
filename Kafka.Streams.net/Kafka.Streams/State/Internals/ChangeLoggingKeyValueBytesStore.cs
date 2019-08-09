@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Internals
             base(inner);
         }
 
-        public override void init(IProcessorContext context,
+        public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
             base.init(context, root);

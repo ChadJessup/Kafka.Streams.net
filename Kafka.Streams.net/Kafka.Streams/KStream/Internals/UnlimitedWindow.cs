@@ -27,12 +27,12 @@ namespace Kafka.Streams.KStream.Internals
      * same start time.
      * To make the window size "infinite" end time is set to {@link long#MaxValue}.
      * <p>
-     * For time semantics, see {@link org.apache.kafka.streams.processor.TimestampExtractor TimestampExtractor}.
+     * For time semantics, see {@link org.apache.kafka.streams.processor.ITimestampExtractor ITimestampExtractor}.
      *
      * @see TimeWindow
      * @see SessionWindow
      * @see org.apache.kafka.streams.kstream.UnlimitedWindows
-     * @see org.apache.kafka.streams.processor.TimestampExtractor
+     * @see org.apache.kafka.streams.processor.ITimestampExtractor
      */
 
     public class UnlimitedWindow : Window

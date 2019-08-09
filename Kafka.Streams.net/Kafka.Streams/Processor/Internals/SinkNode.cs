@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processor.Internals
         private ITopicNameExtractor<K, V> topicExtractor;
         private IStreamPartitioner<K, V> partitioner;
 
-        private IInternalProcessorContext context;
+        private IInternalProcessorContext<K, V>  context;
 
         SinkNode(string name,
                  ITopicNameExtractor<K, V> topicExtractor,
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Processor.Internals
 
 
 
-        public void init(IInternalProcessorContext context)
+        public void init(IInternalProcessorContext<K, V>  context)
         {
             base.init(context);
             this.context = context;
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Processor.Internals
 
             // if value serializers are for {@code Change} values, set the inner serializer when necessary
             if (valSerializer is ChangedSerializer<V> &&
-                    ((ChangedSerializer<V>)valSerializer).inner() == null)
+                    ((ChangedSerializer<V>)valSerializer).inner == null)
             {
                 ((ChangedSerializer<V>)valSerializer).setInner(context.valueSerde.Serializer);
             }

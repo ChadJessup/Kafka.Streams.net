@@ -932,10 +932,10 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         return new Transformer()
 {
-         *             private IProcessorContext context;
+         *             private IProcessorContext<K, V> context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1030,10 +1030,10 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         return new Transformer()
 {
-         *             private IProcessorContext context;
+         *             private IProcessorContext<K, V> context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1131,10 +1131,10 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         return new Transformer()
 {
-         *             private IProcessorContext context;
+         *             private IProcessorContext<K, V> context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1231,10 +1231,10 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *         return new Transformer()
 {
-         *             private IProcessorContext context;
+         *             private IProcessorContext<K, V> context;
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.context = context;
          *                 this.state = context.getStateStore("myTransformState");
@@ -1336,7 +1336,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1418,7 +1418,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1505,7 +1505,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1590,7 +1590,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1677,7 +1677,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1770,7 +1770,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1865,7 +1865,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -1959,7 +1959,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myValueTransformState");
          *                 // punctuate each second, can access this.state
@@ -2045,7 +2045,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state
@@ -2110,7 +2110,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private IStateStore state;
          *
-         *             void init(IProcessorContext context)
+         *             void init(IProcessorContext<K, V> context)
 {
          *                 this.state = context.getStateStore("myProcessorState");
          *                 // punctuate each second, can access this.state

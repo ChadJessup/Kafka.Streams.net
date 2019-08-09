@@ -108,7 +108,7 @@ namespace Kafka.Streams.KStream.Internals
         {
 
             private IKTableValueGetter<K, V> parentGetter;
-            private IProcessorContext context;
+            private IProcessorContext<K, V> context;
 
             KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
             {
@@ -116,7 +116,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
 
-            public void init(IProcessorContext context)
+            public void init(IProcessorContext<K, V> context)
             {
                 this.context = context;
                 parentGetter.init(context);

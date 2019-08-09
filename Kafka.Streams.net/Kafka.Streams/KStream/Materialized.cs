@@ -55,9 +55,9 @@ namespace Kafka.Streams.KStream
         public ISerde<V> valueSerde;
         public ISerde<K> keySerde;
         protected bool loggingEnabled = true;
-        protected bool cachingEnabled = true;
+        public bool cachingEnabled { get; private set; } = true;
         protected Dictionary<string, string> topicConfig = new Dictionary<string, string>();
-        protected TimeSpan retention;
+        public TimeSpan retention { get; private set; }
 
         private Materialized(IStoreSupplier<S> storeSupplier)
         {
