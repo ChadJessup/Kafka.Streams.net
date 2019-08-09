@@ -64,7 +64,7 @@ class ChangeLoggingWindowBytesStore
     public override byte[] fetch(Bytes key,
                         long timestamp)
 {
-        return wrapped().fetch(key, timestamp);
+        return wrapped.fetch(key, timestamp);
     }
 
     
@@ -72,7 +72,7 @@ class ChangeLoggingWindowBytesStore
                                              long from,
                                              long to)
 {
-        return wrapped().fetch(key, from, to);
+        return wrapped.fetch(key, from, to);
     }
 
     
@@ -81,19 +81,19 @@ class ChangeLoggingWindowBytesStore
                                                            long from,
                                                            long to)
 {
-        return wrapped().fetch(keyFrom, keyTo, from, to);
+        return wrapped.fetch(keyFrom, keyTo, from, to);
     }
 
     public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
 {
-        return wrapped().all();
+        return wrapped.all();
     }
 
     
     public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom,
                                                               long timeTo)
 {
-        return wrapped().fetchAll(timeFrom, timeTo);
+        return wrapped.fetchAll(timeFrom, timeTo);
     }
 
     public override void put(Bytes key, byte[] value)
@@ -109,7 +109,7 @@ class ChangeLoggingWindowBytesStore
                     byte[] value,
                     long windowStartTimestamp)
 {
-        wrapped().Add(key, value, windowStartTimestamp);
+        wrapped.Add(key, value, windowStartTimestamp);
         log(WindowKeySchema.toStoreKeyBinary(key, windowStartTimestamp, maybeUpdateSeqnumForDups()), value);
     }
 

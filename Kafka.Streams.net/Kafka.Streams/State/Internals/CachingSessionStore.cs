@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.Internals
 
             cacheName = context.taskId() + "-" + name();
             cache = context.getCache();
-            cache.AddDirtyEntryFlushListener(cacheName, entries->
+            cache.AddDirtyEntryFlushListener(cacheName, entries=>
     {
                 foreach (DirtyEntry entry in entries)
                 {
@@ -62,24 +62,24 @@ namespace Kafka.Streams.State.Internals
             {
                 byte[] newValueBytes = entry.newValue();
                 byte[] oldValueBytes = newValueBytes == null || sendOldValues ?
-                    wrapped().fetchSession(bytesKey.key(), bytesKey.window().start(), bytesKey.window().end()) : null;
+                    wrapped.fetchSession(bytesKey.key(), bytesKey.window().start(), bytesKey.window().end()) : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
                 if (newValueBytes != null || oldValueBytes != null)
                 {
                     // we need to get the old values if needed, and then put to store, and then flush
-                    wrapped().Add(bytesKey, entry.newValue());
+                    wrapped.Add(bytesKey, entry.newValue());
 
                     ProcessorRecordContext current = context.recordContext();
-                    context.setRecordContext(entry.entry().context());
+                    context.setRecordContext(entry.entry().context);
                     try
                     {
                         flushListener.apply(
                             binaryKey[],
                             newValueBytes,
                             sendOldValues ? oldValueBytes : null,
-                            entry.entry().context().timestamp());
+                            entry.entry().context.timestamp());
                     }
                     finally
                     {
@@ -89,7 +89,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                wrapped().Add(bytesKey, entry.newValue());
+                wrapped.Add(bytesKey, entry.newValue());
             }
         }
 
@@ -132,14 +132,14 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped().persistent() ?
+            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(key, earliestSessionEndTime, latestSessionStartTime) :
                 cache.range(cacheName,
                             cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, earliestSessionEndTime)),
                             cacheFunction.cacheKey(keySchema.upperRangeFixedSize(key, latestSessionStartTime))
                 );
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(key,
+            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped.findSessions(key,
                                                                                                    earliestSessionEndTime,
                                                                                                    latestSessionStartTime);
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(key,
@@ -170,7 +170,7 @@ namespace Kafka.Streams.State.Internals
             Bytes cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, latestSessionStartTime));
             MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, cacheKeyFrom, cacheKeyTo);
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped().findSessions(
+            IKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator = wrapped.findSessions(
                 keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime
             );
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(keyFrom,
@@ -188,7 +188,7 @@ namespace Kafka.Streams.State.Internals
             validateStoreOpen();
             if (cache == null)
             {
-                return wrapped().fetchSession(key, startTime, endTime);
+                return wrapped.fetchSession(key, startTime, endTime);
             }
             else
             {
@@ -197,7 +197,7 @@ namespace Kafka.Streams.State.Internals
                 LRUCacheEntry entry = cache[cacheName, cacheKey];
                 if (entry == null)
                 {
-                    return wrapped().fetchSession(key, startTime, endTime);
+                    return wrapped.fetchSession(key, startTime, endTime);
                 }
                 else
                 {

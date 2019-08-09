@@ -22,13 +22,13 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
 
 
-    public class FinalResultsSuppressionBuilder<K> : Suppressed<K>, NamedSuppressed<K>
+    public class FinalResultsSuppressionBuilder<K> : ISuppressed<K>, NamedSuppressed<K>
         where K : Windowed<K>
     {
         private string name;
-        private StrictBufferConfig bufferConfig;
+        private IStrictBufferConfig bufferConfig;
 
-        public FinalResultsSuppressionBuilder(string name, Suppressed.StrictBufferConfig bufferConfig)
+        public FinalResultsSuppressionBuilder(string name, ISuppressed.StrictBufferConfig bufferConfig)
         {
             this.name = name;
             this.bufferConfig = bufferConfig;
@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public Suppressed<K> withName(string name)
+        public ISuppressed<K> withName(string name)
         {
             return new FinalResultsSuppressionBuilder<>(name, bufferConfig);
         }

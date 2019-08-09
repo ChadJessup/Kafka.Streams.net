@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.Internals
         private ILogger log;
         private long maxCacheSizeBytes;
         private StreamsMetricsImpl metrics;
-        private Dictionary<string, NamedCache> caches = new HashMap<>();
+        private Dictionary<string, NamedCache> caches = new Dictionary<>();
 
         // internal stats
         private long numPuts = 0;

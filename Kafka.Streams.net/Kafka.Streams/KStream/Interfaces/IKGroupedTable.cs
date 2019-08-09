@@ -322,7 +322,7 @@ namespace Kafka.Streams.KStream
          * latest (rolling) aggregate for each key
          */
         IKTable<K, VR> aggregate<VR>(
-            Initializer<VR> initializer,
+            IInitializer<VR> initializer,
             IAggregator<K, V, VR> adder,
             IAggregator<K, V, VR> subtractor,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
@@ -396,7 +396,7 @@ namespace Kafka.Streams.KStream
          * latest (rolling) aggregate for each key
          */
         IKTable<K, VR> aggregate<VR>(
-            Initializer<VR> initializer,
+            IInitializer<VR> initializer,
             IAggregator<K, V, VR> adder,
             IAggregator<K, V, VR> subtractor);
 

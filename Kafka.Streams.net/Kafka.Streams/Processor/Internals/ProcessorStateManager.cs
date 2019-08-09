@@ -22,7 +22,7 @@ using Kafka.Common.Utils.LogContext;
 using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 
-public class ProcessorStateManager : StateManager
+public class ProcessorStateManager : IStateManager
 {
 
     private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
@@ -49,9 +49,9 @@ public class ProcessorStateManager : StateManager
     private Dictionary<string, TopicPartition> partitionForTopic;
 
     private bool eosEnabled;
-    private File baseDir;
+    private FileInfo baseDir;
     private OffsetCheckpoint checkpointFile;
-    private Dictionary<TopicPartition, long> checkpointFileCache = new HashMap<>();
+    private Dictionary<TopicPartition, long> checkpointFileCache = new Dictionary<>();
     private Dictionary<TopicPartition, long> initialLoadedCheckpoints;
 
     /**
@@ -73,20 +73,20 @@ public class ProcessorStateManager : StateManager
         this.changelogReader = changelogReader;
         logPrefix = string.Format("task [%s] ", taskId);
 
-        partitionForTopic = new HashMap<>();
+        partitionForTopic = new Dictionary<>();
         foreach (TopicPartition source in sources)
 {
             partitionForTopic.Add(source.Topic, source);
         }
-        offsetLimits = new HashMap<>();
-        standbyRestoredOffsets = new HashMap<>();
+        offsetLimits = new Dictionary<>();
+        standbyRestoredOffsets = new Dictionary<>();
         this.isStandby = isStandby;
-        restoreCallbacks = isStandby ? new HashMap<>() : null;
-        recordConverters = isStandby ? new HashMap<>() : null;
-        this.storeToChangelogTopic = new HashMap<>(storeToChangelogTopic);
+        restoreCallbacks = isStandby ? new Dictionary<>() : null;
+        recordConverters = isStandby ? new Dictionary<>() : null;
+        this.storeToChangelogTopic = new Dictionary<>(storeToChangelogTopic);
 
         baseDir = stateDirectory.directoryForTask(taskId);
-        checkpointFile = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
+        checkpointFile = new OffsetCheckpoint(new FileInfo(baseDir, CHECKPOINT_FILE_NAME));
         initialLoadedCheckpoints = checkpointFile.read();
 
         log.LogTrace("Checkpointable offsets read from checkpoint: {}", initialLoadedCheckpoints);
@@ -110,7 +110,7 @@ public class ProcessorStateManager : StateManager
     }
 
 
-    public File baseDir()
+    public FileInfo baseDir()
 {
         return baseDir;
     }
@@ -204,7 +204,7 @@ public class ProcessorStateManager : StateManager
     public Dictionary<TopicPartition, long> checkpointed()
 {
         updateCheckpointFileCache(emptyMap());
-        Dictionary<TopicPartition, long> partitionsAndOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> partitionsAndOffsets = new Dictionary<>();
 
         foreach (KeyValuePair<string, StateRestoreCallback> entry in restoreCallbacks)
 {
@@ -374,7 +374,7 @@ public class ProcessorStateManager : StateManager
         // write the checkpoint file before closing
         if (checkpointFile == null)
 {
-            checkpointFile = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
+            checkpointFile = new OffsetCheckpoint(new FileInfo(baseDir, CHECKPOINT_FILE_NAME));
         }
 
         updateCheckpointFileCache(checkpointableOffsetsFromProcessing);
@@ -497,12 +497,12 @@ public class ProcessorStateManager : StateManager
         HashSet<TopicPartition> validCheckpointableTopics)
 {
 
-        Dictionary<TopicPartition, long> result = new HashMap<>(checkpointableOffsets.size());
+        Dictionary<TopicPartition, long> result = new Dictionary<>(checkpointableOffsets.size());
 
         foreach (KeyValuePair<TopicPartition, long> topicToCheckpointableOffset in checkpointableOffsets)
 {
             TopicPartition topic = topicToCheckpointableOffset.Key;
-            if (validCheckpointableTopics.contains(topic))
+            if (validCheckpointableTopics.Contains(topic))
 {
                 long checkpointableOffset = topicToCheckpointableOffset.Value;
                 result.Add(topic, checkpointableOffset);

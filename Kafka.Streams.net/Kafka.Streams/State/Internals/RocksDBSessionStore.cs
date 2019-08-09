@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Internals
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
-            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(
                 key,
                 earliestSessionEndTime,
                 latestSessionStartTime
@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
                                                                       long earliestSessionEndTime,
                                                                       long latestSessionStartTime)
         {
-            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped().fetch(
+            IKeyValueIterator<Bytes, byte[]> bytesIterator = wrapped.fetch(
                 keyFrom,
                 keyTo,
                 earliestSessionEndTime,
@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         public override byte[] fetchSession(Bytes key, long startTime, long endTime)
         {
-            return wrapped()[SessionKeySchema.toBinary(key, startTime, endTime)];
+            return wrapped[SessionKeySchema.toBinary(key, startTime, endTime)];
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
@@ -70,12 +70,12 @@ namespace Kafka.Streams.State.Internals
 
         public override void Remove(Windowed<Bytes> key)
         {
-            wrapped().Remove(SessionKeySchema.toBinary(key));
+            wrapped.Remove(SessionKeySchema.toBinary(key));
         }
 
         public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
         {
-            wrapped().Add(SessionKeySchema.toBinary(sessionKey), aggregate);
+            wrapped.Add(SessionKeySchema.toBinary(sessionKey), aggregate);
         }
     }
 }

@@ -56,7 +56,7 @@ public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
         if (root != null)
 {
             // register the store
-            context.register(root, (key, value) ->
+            context.register(root, (key, value) =>
 {
                 // this is a delete
                 if (value == null)

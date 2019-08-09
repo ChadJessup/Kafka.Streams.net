@@ -38,7 +38,7 @@ namespace Kafka.Common.Metrics.Stats
         }
         public string unitName()
         {
-            return this.unit.ToString(); // unit.name().substring(0, unit.name().Length - 2).ToLowerCase(CultureInfo.InvariantCulture);
+            return this.unit.ToString(); // unit.name().Substring(0, unit.name().Length - 2).ToLowerCase(CultureInfo.InvariantCulture);
         }
 
         public void record(MetricConfig config, double value, long timeMs)

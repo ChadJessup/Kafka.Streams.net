@@ -14,54 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class TimestampedKeyValueStoreMaterializer<K, V>
+    {
+        private MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
 
+        public TimestampedKeyValueStoreMaterializer(MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        {
+            this.materialized = materialized;
+        }
 
+        /**
+         * @return  StoreBuilder
+         */
+        public IStoreBuilder<ITimestampedKeyValueStore<K, V>> materialize()
+        {
+            IKeyValueBytesStoreSupplier supplier = (IKeyValueBytesStoreSupplier<K, V>)materialized.storeSupplier();
+            if (supplier == null)
+            {
+                string name = materialized.storeName();
+                supplier = Stores.persistentTimestampedKeyValueStore(name);
+            }
+            StoreBuilder<TimestampedKeyValueStore<K, V>> builder = Stores.timestampedKeyValueStoreBuilder(
+               supplier,
+               materialized.keySerde,
+               materialized.valueSerde);
 
+            if (materialized.loggingEnabled())
+            {
+                builder.withLoggingEnabled(materialized.logConfig());
+            }
+            else
+            {
 
+                builder.withLoggingDisabled();
+            }
 
-
-
-
-
-public class TimestampedKeyValueStoreMaterializer<K, V> {
-    private  MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
-
-    public TimestampedKeyValueStoreMaterializer( MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-{
-        this.materialized = materialized;
+            if (materialized.cachingEnabled())
+            {
+                builder.withCachingEnabled();
+            }
+            return builder;
+        }
     }
-
-    /**
-     * @return  StoreBuilder
-     */
-    public StoreBuilder<TimestampedKeyValueStore<K, V>> materialize()
-{
-        KeyValueBytesStoreSupplier supplier = (KeyValueBytesStoreSupplier) materialized.storeSupplier();
-        if (supplier == null)
-{
-             string name = materialized.storeName();
-            supplier = Stores.persistentTimestampedKeyValueStore(name);
-        }
-         StoreBuilder<TimestampedKeyValueStore<K, V>> builder = Stores.timestampedKeyValueStoreBuilder(
-            supplier,
-            materialized.keySerde(),
-            materialized.valueSerde());
-
-        if (materialized.loggingEnabled())
-{
-            builder.withLoggingEnabled(materialized.logConfig());
-        } else
-{
-
-            builder.withLoggingDisabled();
-        }
-
-        if (materialized.cachingEnabled())
-{
-            builder.withCachingEnabled();
-        }
-        return builder;
-    }
-}

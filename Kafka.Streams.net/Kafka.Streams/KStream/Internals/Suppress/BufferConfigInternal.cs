@@ -16,8 +16,8 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    abstract class BufferConfigInternal<BC> : Suppressed.BufferConfig<BC>
-        where BC : Suppressed.BufferConfig<BC>
+    abstract class BufferConfigInternal<BC> : ISuppressed.BufferConfig<BC>
+        where BC : ISuppressed.BufferConfig<BC>
     {
         public abstract long maxRecords();
 
@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public abstract BufferFullStrategy bufferFullStrategy();
 
 
-        public Suppressed.StrictBufferConfig withNoBound()
+        public ISuppressed.StrictBufferConfig withNoBound()
         {
             return new StrictBufferConfigImpl(
                 long.MaxValue,
@@ -37,13 +37,13 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public Suppressed.StrictBufferConfig shutDownWhenFull()
+        public ISuppressed.StrictBufferConfig shutDownWhenFull()
         {
             return new StrictBufferConfigImpl(maxRecords(), maxBytes(), SHUT_DOWN);
         }
 
 
-        public Suppressed.EagerBufferConfig emitEarlyWhenFull()
+        public ISuppressed.EagerBufferConfig emitEarlyWhenFull()
         {
             return new EagerBufferConfigImpl(maxRecords(), maxBytes());
         }

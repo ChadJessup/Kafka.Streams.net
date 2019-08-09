@@ -257,7 +257,7 @@ namespace Kafka.Streams.KStream
          * will be handled as newly initialized value.
          */
         IKTable<K, VR> aggregate<VR>(
-            Initializer<VR> initializer,
+            IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator);
 
         /**
@@ -317,7 +317,7 @@ namespace Kafka.Streams.KStream
          * will be handled as newly initialized value.
          */
         IKTable<K, VR> aggregate<VR>(
-            Initializer<VR> initializer,
+            IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 

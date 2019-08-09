@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 
@@ -22,20 +24,21 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
     {
-        private IInternalProcessorContext context;
-        private ProcessorNode myNode;
+        private IInternalProcessorContext<K, V> context;
+        private ProcessorNode<K, V> myNode;
 
-        TimestampedCacheFlushListener(IProcessorContext context)
+        TimestampedCacheFlushListener(IProcessorContext<K, V> context)
         {
-            this.context = (IInternalProcessorContext)context;
+            this.context = (IInternalProcessorContext<K, V>)context;
             myNode = this.context.currentNode();
         }
 
 
-        public void apply(K key,
-                           ValueAndTimestamp<V> newValue,
-                           ValueAndTimestamp<V> oldValue,
-                           long timestamp)
+        public void apply(
+            K key,
+            ValueAndTimestamp<V> newValue,
+            ValueAndTimestamp<V> oldValue,
+            long timestamp)
         {
             var prev = context.currentNode();
             context.setCurrentNode(myNode);
@@ -43,8 +46,8 @@ namespace Kafka.Streams.KStream.Internals
             {
                 context.forward(
                     key,
-                    new Change<>(getValueOrNull(newValue), getValueOrNull(oldValue)),
-                    To.all().withTimestamp(newValue != null ? newValue.timestamp() : timestamp));
+                    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
+                    To.all().withTimestamp(newValue != null ? newValue.timestamp : timestamp));
             }
             finally
             {

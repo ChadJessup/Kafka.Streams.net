@@ -30,9 +30,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private ISerde<VR> valueSerde;
         private string[] joinThisStoreNames;
         private string[] joinOtherStoreNames;
-        private readonly IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+        private readonly IStoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;
 
-        KTableKTableJoinNode(
+        public KTableKTableJoinNode(
             string nodeName,
             ProcessorParameters<K, Change<V1>> joinThisProcessorParameters,
             ProcessorParameters<K, Change<V2>> joinOtherProcessorParameters,
@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             ISerde<VR> valueSerde,
             string[] joinThisStoreNames,
             string[] joinOtherStoreNames,
-            IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+            IStoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder)
             : base(nodeName,
                 null,
                 joinThisProcessorParameters,
@@ -99,7 +99,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeBuilder != null)
             {
-                topologyBuilder.addStateStore(storeBuilder, mergeProcessorName);
+                topologyBuilder.addStateStore<K, V1, ITimestampedKeyValueStore<K, VR>>(storeBuilder, mergeProcessorName);
             }
         }
 
@@ -107,8 +107,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public string ToString()
         {
             return "KTableKTableJoinNode{" +
-                "joinThisStoreNames=" + Arrays.ToString(joinThisStoreNames()) +
-                ", joinOtherStoreNames=" + Arrays.ToString(joinOtherStoreNames()) +
+                "joinThisStoreNames=" + Arrays.ToString(joinThisStoreNames) +
+                ", joinOtherStoreNames=" + Arrays.ToString(joinOtherStoreNames) +
                 "} " + base.ToString();
         }
 

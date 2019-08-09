@@ -100,13 +100,13 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, long, IWindowStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
-                materializedInternal.withValueSerde(Serdes.long());
+                materializedInternal.withValueSerde(Serdes.Long());
             }
 
             return aggregateBuilder.build(
@@ -114,19 +114,19 @@ namespace Kafka.Streams.KStream.Internals
                 materialize(materializedInternal),
                 new KStreamWindowAggregate<>(windows, materializedInternal.storeName(), aggregateBuilder.countInitializer, aggregateBuilder.countAggregator),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde(), windows.size()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde, windows.size()) : null,
+                materializedInternal.valueSerde);
         }
 
 
-        public IKTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
+        public IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
                                                        Aggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
         }
 
 
-        public IKTable<Windowed<K>, VR> aggregate(Initializer<VR> initializer,
+        public IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
                                                        Aggregator<K, V, VR> aggregator,
                                                        Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
@@ -135,7 +135,7 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
             MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
@@ -144,8 +144,8 @@ namespace Kafka.Streams.KStream.Internals
                 materialize(materializedInternal),
                 new KStreamWindowAggregate<>(windows, materializedInternal.storeName(), initializer, aggregator),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde(), windows.size()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde, windows.size()) : null,
+                materializedInternal.valueSerde);
         }
 
 
@@ -163,11 +163,11 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, V, IWindowStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
                 materializedInternal.withValueSerde(valSerde);
             }
@@ -177,12 +177,12 @@ namespace Kafka.Streams.KStream.Internals
                 materialize(materializedInternal),
                 new KStreamWindowAggregate<>(windows, materializedInternal.storeName(), aggregateBuilder.reduceInitializer, aggregatorForReducer(reducer)),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde(), windows.size()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new FullTimeWindowedSerde<>(materializedInternal.keySerde, windows.size()) : null,
+                materializedInternal.valueSerde);
         }
 
 
-        private IStoreBuilder<TimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
+        private IStoreBuilder<ITimestampedWindowStore<K, VR>> materialize(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
             IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier();
             if (supplier == null)
@@ -235,10 +235,10 @@ namespace Kafka.Streams.KStream.Internals
                         true);
                 }
             }
-            IStoreBuilder<TimestampedWindowStore<K, VR>> builder = Stores.timestampedWindowStoreBuilder(
+            IStoreBuilder<ITimestampedWindowStore<K, VR>> builder = Stores.timestampedWindowStoreBuilder(
                supplier,
-               materialized.keySerde(),
-               materialized.valueSerde()
+               materialized.keySerde,
+               materialized.valueSerde
            );
 
             if (materialized.loggingEnabled())
@@ -260,6 +260,6 @@ namespace Kafka.Streams.KStream.Internals
 
         private Aggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
-            return (aggKey, value, aggregate)->aggregate == null ? value : reducer.apply(aggregate, value);
+            return (aggKey, value, aggregate)=>aggregate == null ? value : reducer.apply(aggregate, value);
         }
     }

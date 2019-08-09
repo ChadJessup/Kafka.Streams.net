@@ -96,7 +96,7 @@ namespace Kafka.Streams.State
 
             private HashSet<Class> matchTo;
 
-            QueryableStoreTypeMatcher(Set<Class> matchTo)
+            QueryableStoreTypeMatcher(HashSet<Class> matchTo)
             {
                 this.matchTo = matchTo;
             }
@@ -140,7 +140,7 @@ namespace Kafka.Streams.State
             TimestampedKeyValueStoreType()
             {
                 base(new HashSet<>(Arrays.asList(
-                    TimestampedKeyValueStore,
+                    ITimestampedKeyValueStore,
                     IReadOnlyKeyValueStore)));
             }
 
@@ -174,7 +174,7 @@ namespace Kafka.Streams.State
 
             TimestampedWindowStoreType()
         : base(new HashSet<>(Arrays.asList(
-            TimestampedWindowStore,
+            ITimestampedWindowStore,
             ReadOnlyWindowStore)))
             {
             }

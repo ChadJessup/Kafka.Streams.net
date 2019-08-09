@@ -20,7 +20,6 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
@@ -171,8 +170,8 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             nodeFactories.Add(name, new SourceNodeFactory(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
-            nodeToSourceTopics.Add(name, Arrays.asList(topics));
-            nodeGrouper.Add(name);
+            nodeToSourceTopics.Add(name, topics.ToList());
+            nodeGrouper.add(name);
             nodeGroups = null;
         }
 
@@ -202,7 +201,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (Pattern otherPattern in earliestResetPatterns)
             {
-                if (topicPattern.pattern().contains(otherPattern.pattern()) || otherPattern.pattern().contains(topicPattern.pattern()))
+                if (topicPattern.pattern().Contains(otherPattern.pattern()) || otherPattern.pattern().Contains(topicPattern.pattern()))
                 {
                     throw new TopologyException("Pattern " + topicPattern + " will overlap with another pattern " + otherPattern + " already been registered by another source");
                 }
@@ -210,7 +209,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (Pattern otherPattern in latestResetPatterns)
             {
-                if (topicPattern.pattern().contains(otherPattern.pattern()) || otherPattern.pattern().contains(topicPattern.pattern()))
+                if (topicPattern.pattern.Contains(otherPattern.pattern) || otherPattern.pattern.Contains(topicPattern.pattern))
                 {
                     throw new TopologyException("Pattern " + topicPattern + " will overlap with another pattern " + otherPattern + " already been registered by another source");
                 }
@@ -294,7 +293,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
             }
 
-            nodeFactories.Add(name, new SinkNodeFactory<>(name, predecessorNames, topicExtractor, keySerializer, valSerializer, partitioner));
+            nodeFactories.Add(name, new SinkNodeFactory<K, V>(name, predecessorNames, topicExtractor, keySerializer, valSerializer, partitioner));
             nodeGrouper.add(name);
             nodeGrouper.unite(name, predecessorNames);
             nodeGroups = null;
@@ -397,7 +396,7 @@ namespace Kafka.Streams.Processor.Internals
             IDeserializer<V> valueDeserializer,
             string topic,
             string processorName,
-            IProcessorSupplier stateUpdateSupplier)
+            IProcessorSupplier<K, V> stateUpdateSupplier)
         {
             storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("store builder must not be null", nameof(storeBuilder));
             validateGlobalStoreArguments(sourceName,
@@ -435,7 +434,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private void validateTopicNotAlreadyRegistered(string topic)
         {
-            if (sourceTopicNames.contains(topic) || globalTopics.contains(topic))
+            if (sourceTopicNames.Contains(topic) || globalTopics.Contains(topic))
             {
                 throw new TopologyException("Topic " + topic + " has already been registered by another source.");
             }
@@ -596,7 +595,7 @@ namespace Kafka.Streams.Processor.Internals
             HashSet<SourceNodeFactory> sourceNodesForPredecessor =
                 findSourcesForProcessorPredecessors(processorNodeFactory.predecessors);
 
-            foreach (SourceNodeFactory sourceNodeFactory in sourceNodesForPredecessor)
+            foreach (var sourceNodeFactory in sourceNodesForPredecessor)
             {
                 if (sourceNodeFactory.pattern != null)
                 {
@@ -772,8 +771,8 @@ namespace Kafka.Streams.Processor.Internals
             applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
             Dictionary<string, ProcessorNode> processorMap = new LinkedHashMap<>();
-            Dictionary<string, SourceNode> topicSourceMap = new HashMap<>();
-            Dictionary<string, SinkNode> topicSinkMap = new HashMap<>();
+            Dictionary<string, SourceNode> topicSourceMap = new Dictionary<>();
+            Dictionary<string, SinkNode> topicSinkMap = new Dictionary<>();
             Dictionary<string, IStateStore> stateStoreMap = new LinkedHashMap<>();
             HashSet<string> repartitionTopics = new HashSet<>();
 
@@ -781,7 +780,7 @@ namespace Kafka.Streams.Processor.Internals
             // also make sure the state store map values following the insertion ordering
             foreach (NodeFactory factory in nodeFactories.Values)
             {
-                if (nodeGroup == null || nodeGroup.contains(factory.name))
+                if (nodeGroup == null || nodeGroup.Contains(factory.name))
                 {
                     ProcessorNode node = factory.build();
                     processorMap.Add(node.name(), node);
@@ -842,7 +841,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     string topic = ((StaticTopicNameExtractor)sinkNodeFactory.topicExtractor).topicName;
 
-                    if (internalTopicNames.contains(topic))
+                    if (internalTopicNames.Contains(topic))
                     {
                         // prefix the internal topic name with the application id
                         string decoratedTopic = decorateTopic(topic);
@@ -871,7 +870,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (string topic in topics)
             {
-                if (internalTopicNames.contains(topic))
+                if (internalTopicNames.Contains(topic))
                 {
                     // prefix the internal topic name with the application id
                     string decoratedTopic = decorateTopic(topic);
@@ -964,8 +963,8 @@ namespace Kafka.Streams.Processor.Internals
             {
                 HashSet<string> sinkTopics = new HashSet<>();
                 HashSet<string> sourceTopics = new HashSet<>();
-                Dictionary<string, InternalTopicConfig> repartitionTopics = new HashMap<>();
-                Dictionary<string, InternalTopicConfig> stateChangelogTopics = new HashMap<>();
+                Dictionary<string, InternalTopicConfig> repartitionTopics = new Dictionary<>();
+                Dictionary<string, InternalTopicConfig> stateChangelogTopics = new Dictionary<>();
                 foreach (string node in entry.Value)
                 {
                     // if the node is a source node,.Add to the source topics
@@ -976,11 +975,11 @@ namespace Kafka.Streams.Processor.Internals
                         foreach (string topic in topics)
                         {
                             // skip global topic as they don't need partition assignment
-                            if (globalTopics.contains(topic))
+                            if (globalTopics.Contains(topic))
                             {
                                 continue;
                             }
-                            if (internalTopicNames.contains(topic))
+                            if (internalTopicNames.Contains(topic))
                             {
                                 // prefix the internal topic name with the application id
                                 string internalTopic = decorateTopic(topic);
@@ -1001,7 +1000,7 @@ namespace Kafka.Streams.Processor.Internals
                     string topic = nodeToSinkTopic[node];
                     if (topic != null)
                     {
-                        if (internalTopicNames.contains(topic))
+                        if (internalTopicNames.Contains(topic))
                         {
                             // prefix the change log topic name with the application id
                             sinkTopics.Add(decorateTopic(topic));
@@ -1017,7 +1016,7 @@ namespace Kafka.Streams.Processor.Internals
                     //.Add to the changelog topics
                     foreach (StateStoreFactory stateFactory in stateFactories.Values)
                     {
-                        if (stateFactory.loggingEnabled() && stateFactory.users().contains(node))
+                        if (stateFactory.loggingEnabled() && stateFactory.users().Contains(node))
                         {
                             string topicName = storeToChangelogTopic.ContainsKey(stateFactory.name()) ?
                                     storeToChangelogTopic[stateFactory.name()] :
@@ -1188,7 +1187,7 @@ namespace Kafka.Streams.Processor.Internals
             List<string> decoratedTopics = new List<>();
             foreach (string topic in sourceTopics)
             {
-                if (internalTopicNames.contains(topic))
+                if (internalTopicNames.Contains(topic))
                 {
                     decoratedTopics.Add(decorateTopic(topic));
                 }
@@ -1254,7 +1253,7 @@ namespace Kafka.Streams.Processor.Internals
             if (nodeFactory is SourceNodeFactory)
             {
                 List<string> topics = ((SourceNodeFactory)nodeFactory).topics;
-                return topics != null && topics.size() == 1 && globalTopics.contains(topics[0]);
+                return topics != null && topics.size() == 1 && globalTopics.Contains(topics[0]);
             }
             return false;
         }
@@ -1322,13 +1321,13 @@ namespace Kafka.Streams.Processor.Internals
             return false;
         }
 
-        private static class NodeComparator : Comparator<TopologyDescription.Node>, Serializable
+        private static class NodeComparator : Comparator<TopologyDescription.INode>, Serializable
         {
 
 
 
-            public int compare(TopologyDescription.Node node1,
-                               TopologyDescription.Node node2)
+            public int compare(TopologyDescription.INode node1,
+                               TopologyDescription.INode node2)
             {
                 if (node1.Equals(node2))
                 {
@@ -1358,7 +1357,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             node.size += delta;
 
-            foreach (TopologyDescription.Node predecessor in node.predecessors())
+            foreach (TopologyDescription.INode predecessor in node.predecessors())
             {
                 updateSize((AbstractNode)predecessor, delta);
             }
@@ -1369,7 +1368,7 @@ namespace Kafka.Streams.Processor.Internals
                                          HashSet<string> nodeNames)
         {
 
-            Dictionary<string, AbstractNode> nodesByName = new HashMap<>();
+            Dictionary<string, AbstractNode> nodesByName = new Dictionary<>();
 
             //.Add all nodes
             foreach (string nodeName in nodeNames)
@@ -1480,7 +1479,7 @@ namespace Kafka.Streams.Processor.Internals
     }
 
 
-    public void addSuccessor(TopologyDescription.Node successor)
+    public void addSuccessor(TopologyDescription.INode successor)
     {
         throw new InvalidOperationException("Sinks don't have successors.");
     }
@@ -1526,7 +1525,7 @@ private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreCom
 
 private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
 
-private static string nodeNames(HashSet<TopologyDescription.Node> nodes)
+private static string nodeNames(HashSet<TopologyDescription.INode> nodes)
 {
     StringBuilder sb = new StringBuilder();
     if (nodes.Any())

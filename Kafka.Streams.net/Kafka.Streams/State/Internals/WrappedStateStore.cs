@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals
             }
             //else if (stateStore is WrappedStateStore)
             //{
-            //    return isTimestamped(((WrappedStateStore)stateStore).wrapped());
+            //    return isTimestamped(((WrappedStateStore)stateStore).wrapped);
             //}
             else
             {
@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.Internals
 
         public string name()
         {
-            return wrapped.name();
+            return wrapped.name;
         }
 
         public bool persistent()
@@ -65,7 +65,7 @@ namespace Kafka.Streams.State.Internals
         {
             if (!wrapped.isOpen())
             {
-                throw new InvalidStateStoreException("Store " + wrapped.name() + " is currently closed.");
+                throw new InvalidStateStoreException("Store " + wrapped.name + " is currently closed.");
             }
         }
 

@@ -269,7 +269,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     try
                     {
-                        WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s-> new WriteBatch());
+                        WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s=> new WriteBatch());
                         segment.AddToBatch(record, batch);
                     }
                     catch (RocksDbException e)

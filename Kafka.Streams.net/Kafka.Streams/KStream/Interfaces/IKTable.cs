@@ -314,7 +314,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length);
+         * KTable<string, int> outputTable = inputTable.mapValues(value => value.split(" ").Length);
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -344,7 +344,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below counts the number of token of the value string.
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
-         * KTable<string, int> outputTable = inputTable.mapValues(value -> value.split(" ").Length, Named.As("countTokenValue"));
+         * KTable<string, int> outputTable = inputTable.mapValues(value => value.split(" ").Length, Named.As("countTokenValue"));
          * }</pre>
          * <p>
          * This operation preserves data co-location with respect to the key.
@@ -377,7 +377,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length);
+         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.split(" ").Length + value.split(" ").Length);
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -409,7 +409,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KTable<string, string> inputTable = builder.table("topic");
          * KTable<string, int> outputTable =
-         *  inputTable.mapValues((readOnlyKey, value) -> readOnlyKey.split(" ").Length + value.split(" ").Length, Named.As("countTokenValueAndKey"));
+         *  inputTable.mapValues((readOnlyKey, value) => readOnlyKey.split(" ").Length + value.split(" ").Length, Named.As("countTokenValueAndKey"));
          * }</pre>
          * <p>
          * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
@@ -651,7 +651,7 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
          * <p>
-         * For example, you can compute the new key as the length of the value string.
+         * For example, you can compute the new key as the.Length of the value string.
          * <pre>{@code
          * KTable<string, string> table = builder.table("topic");
          * KTable<int, string> keyedStream = table.toStream(new KeyValueMapper<string, string, int> {
@@ -679,7 +679,7 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Convert this changelog stream to a {@link KStream} using the given {@link KeyValueMapper} to select the new key.
          * <p>
-         * For example, you can compute the new key as the length of the value string.
+         * For example, you can compute the new key as the.Length of the value string.
          * <pre>{@code
          * KTable<string, string> table = builder.table("topic");
          * KTable<int, string> keyedStream = table.toStream(new KeyValueMapper<string, string, int> {
@@ -714,7 +714,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param suppressed Configuration object determining what, if any, updates to suppress
          * @return A new KTable with the desired suppression characteristics.
          */
-        IKTable<K, V> suppress(Suppressed<K> suppressed);
+        IKTable<K, V> suppress(ISuppressed<K> suppressed);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -792,7 +792,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             string[] stateStoreNames);
 
         /**
@@ -872,7 +872,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Named named,
                                             string[] stateStoreNames);
 
@@ -957,7 +957,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                             string[] stateStoreNames);
 
@@ -1043,7 +1043,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapper)
          * @see #mapValues(ValueMapperWithKey)
          */
-        IKTable<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        IKTable<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                             Named named,
                                             string[] stateStoreNames);

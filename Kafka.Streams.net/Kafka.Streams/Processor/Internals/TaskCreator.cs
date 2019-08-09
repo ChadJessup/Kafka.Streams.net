@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processor.Internals
                 stateDirectory,
                 cache,
                 time,
-                ()->createProducer(taskId));
+                ()=>createProducer(taskId));
         }
 
         private IProducer<byte[], byte[]> createProducer(TaskId id)
@@ -753,7 +753,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     if (!standbyRecords.isEmpty())
                     {
-                        Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> remainingStandbyRecords = new HashMap<>();
+                        Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> remainingStandbyRecords = new Dictionary<>();
 
                         foreach (var entry in standbyRecords)
                         {

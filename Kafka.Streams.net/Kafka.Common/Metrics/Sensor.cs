@@ -1,6 +1,6 @@
 ﻿using Kafka.Common.Metrics.Stats;
 using Kafka.Common.Utils.Interfaces;
-using Kakfa.Common.Metrics;
+using Kafka.Common.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -297,10 +297,10 @@ namespace Kafka.Common.Metrics
          * </p><p>
          * Locking order (assume all MetricsReporter methods may be synchronized):
          * <ul>
-         *   <li>Sensor.Add: Sensor -> Metrics -> MetricsReporter</li>
-         *   <li>Metrics#removeSensor: Sensor -> Metrics -> MetricsReporter</li>
-         *   <li>KafkaMetric#metricValue: MetricsReporter -> Sensor#metricLock</li>
-         *   <li>Sensor#record: Sensor -> Sensor#metricLock</li>
+         *   <li>Sensor.Add: Sensor => Metrics => MetricsReporter</li>
+         *   <li>Metrics#removeSensor: Sensor => Metrics => MetricsReporter</li>
+         *   <li>KafkaMetric#metricValue: MetricsReporter => Sensor#metricLock</li>
+         *   <li>Sensor#record: Sensor => Sensor#metricLock</li>
          * </ul>
          * </p>
          */

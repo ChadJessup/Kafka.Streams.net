@@ -29,11 +29,11 @@ namespace Kafka.Streams.KStream.Internals
         //    }
         //};
 
-        private KTableValueGetterSupplier<K, V2> valueGetterSupplier;
+        private IKTableValueGetterSupplier<K, V2> valueGetterSupplier;
         private IValueJoiner<V1, V2, R> joiner;
         private bool leftJoin;
 
-        KStreamKTableJoin(KTableValueGetterSupplier<K, V2> valueGetterSupplier, IValueJoiner<V1, V2, R> joiner, bool leftJoin)
+        KStreamKTableJoin(IKTableValueGetterSupplier<K, V2> valueGetterSupplier, IValueJoiner<V1, V2, R> joiner, bool leftJoin)
         {
             this.valueGetterSupplier = valueGetterSupplier;
             this.joiner = joiner;

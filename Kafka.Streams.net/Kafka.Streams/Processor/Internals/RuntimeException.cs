@@ -34,7 +34,7 @@ namespace Kafka.Streams
         {
         }
 
-        protected RuntimeException(SerializationInfo info, StreamingContext context) : base(info, context)
+        protected RuntimeException(SerializationInfo LogInformation, StreamingContext context) : base(LogInformation, context)
         {
         }
     }

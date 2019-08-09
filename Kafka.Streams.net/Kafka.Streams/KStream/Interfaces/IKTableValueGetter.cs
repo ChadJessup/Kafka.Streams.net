@@ -14,22 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
+
+namespace Kafka.Streams.KStream.Internals
 {
+    public interface IKTableValueGetter<K, V>
+    {
+        void init(IProcessorContext<K, V> context);
 
+        ValueAndTimestamp<V> get(K key);
 
-/**
- * @param  key type
- * @param  value type
- * @param transformed value type
- * @see ValueTransformer
- * @see ValueTransformerWithKey
- * @see KStream#transformValues(ValueTransformerSupplier, string...)
- * @see KStream#transformValues(ValueTransformerWithKeySupplier, string...)
- * @see Transformer
- * @see TransformerSupplier
- * @see KStream#transform(TransformerSupplier, string...)
- */
-public interface ValueTransformerWithKeySupplier<K, V, VR> {
-    ValueTransformerWithKey<K, V, VR> get();
+        void close();
+    }
 }

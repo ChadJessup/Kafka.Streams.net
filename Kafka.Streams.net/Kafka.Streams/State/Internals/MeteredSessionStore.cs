@@ -73,8 +73,8 @@ public class MeteredSessionStore<K, V>
         //noinspection unchecked
         serdes = new StateSerdes<>(
             ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
-            keySerde == null ? (ISerde<K>) context.keySerde() : keySerde,
-            valueSerde == null ? (ISerde<V>) context.valueSerde() : valueSerde);
+            keySerde == null ? (ISerde<K>) context.keySerde : keySerde,
+            valueSerde == null ? (ISerde<V>) context.valueSerde : valueSerde);
         metrics = (StreamsMetricsImpl) context.metrics();
 
         taskName = context.taskId().ToString();
@@ -107,11 +107,11 @@ public class MeteredSessionStore<K, V>
     public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                     bool sendOldValues)
 {
-        ISessionStore<Bytes, byte[]> wrapped = wrapped();
+        ISessionStore<Bytes, byte[]> wrapped = wrapped;
         if (wrapped is CachedStateStore)
 {
             return ((CachedStateStore<byte[], byte[]>) wrapped].setFlushListener(
-                (key, newValue, oldValue, timestamp) -> listener.apply(
+                (key, newValue, oldValue, timestamp) => listener.apply(
                     SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.Topic),
                     newValue != null ? serdes.valueFrom(newValue) : null,
                     oldValue != null ? serdes.valueFrom(oldValue) : null,
@@ -130,7 +130,7 @@ public class MeteredSessionStore<K, V>
         try
 {
             Bytes key = keyBytes(sessionKey.key());
-            wrapped().Add(new Windowed<>(key, sessionKey.window()), serdes.rawValue(aggregate));
+            wrapped.Add(new Windowed<>(key, sessionKey.window()), serdes.rawValue(aggregate));
         } catch (ProcessorStateException e)
 {
             string message = string.Format(e.getMessage(), sessionKey.key(), aggregate);
@@ -148,7 +148,7 @@ public class MeteredSessionStore<K, V>
         try
 {
             Bytes key = keyBytes(sessionKey.key());
-            wrapped().Remove(new Windowed<>(key, sessionKey.window()));
+            wrapped.Remove(new Windowed<>(key, sessionKey.window()));
         } catch (ProcessorStateException e)
 {
             string message = string.Format(e.getMessage(), sessionKey.key());
@@ -166,7 +166,7 @@ public class MeteredSessionStore<K, V>
         long startNs = time.nanoseconds();
         try
 {
-            byte[] result = wrapped().fetchSession(bytesKey, startTime, endTime);
+            byte[] result = wrapped.fetchSession(bytesKey, startTime, endTime);
             if (result == null)
 {
                 return default;
@@ -182,7 +182,7 @@ public class MeteredSessionStore<K, V>
 {
         key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         return new MeteredWindowedKeyValueIterator<>(
-            wrapped().fetch(keyBytes(key)),
+            wrapped.fetch(keyBytes(key)),
             fetchTime,
             metrics,
             serdes,
@@ -195,7 +195,7 @@ public class MeteredSessionStore<K, V>
         from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
         to = to ?? throw new System.ArgumentNullException("to cannot be null", nameof(to));
         return new MeteredWindowedKeyValueIterator<>(
-            wrapped().fetch(keyBytes(from), keyBytes(to)),
+            wrapped.fetch(keyBytes(from), keyBytes(to)),
             fetchTime,
             metrics,
             serdes,
@@ -209,7 +209,7 @@ public class MeteredSessionStore<K, V>
         key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
         Bytes bytesKey = keyBytes(key);
         return new MeteredWindowedKeyValueIterator<>(
-            wrapped().findSessions(
+            wrapped.findSessions(
                 bytesKey,
                 earliestSessionEndTime,
                 latestSessionStartTime),
@@ -229,7 +229,7 @@ public class MeteredSessionStore<K, V>
         Bytes bytesKeyFrom = keyBytes(keyFrom);
         Bytes bytesKeyTo = keyBytes(keyTo);
         return new MeteredWindowedKeyValueIterator<>(
-            wrapped().findSessions(
+            wrapped.findSessions(
                 bytesKeyFrom,
                 bytesKeyTo,
                 earliestSessionEndTime,

@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream
 {
@@ -13,9 +14,9 @@ namespace Kafka.Streams.KStream
      */
     public class Grouped<K, V> : INamedOperation<Grouped<K, V>>
     {
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
-        protected string name;
+        public ISerde<K> keySerde { get; private set; }
+        public ISerde<V> valueSerde { get; private set; }
+        public string name { get; }
 
         private Grouped(string name, ISerde<K> keySerde, ISerde<V> valueSerde)
         {
@@ -118,8 +119,7 @@ namespace Kafka.Streams.KStream
          * @param name the name used for the processor name and as part of the repartition topic name if required
          * @return a new {@link Grouped} instance configured with the name
          * */
-        public Grouped<K, V> WithName(string name)
-
+        public Grouped<K, V> withName(string name)
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }
@@ -149,5 +149,4 @@ namespace Kafka.Streams.KStream
         }
 
     }
-
 }

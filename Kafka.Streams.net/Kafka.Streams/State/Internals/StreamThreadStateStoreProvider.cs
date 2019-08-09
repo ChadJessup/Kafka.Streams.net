@@ -14,70 +14,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
 
-using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.Internals.StreamThread;
-using Kafka.Streams.Processor.Internals.Task;
-using Kafka.Streams.State.IQueryableStoreType;
-using Kafka.Streams.State.QueryableStoreTypes;
-using Kafka.Streams.State.TimestampedKeyValueStore;
-using Kafka.Streams.State.TimestampedWindowStore;
-
-
-
-
-
-/**
- * Wrapper over StreamThread that : StateStoreProvider
- */
-public class StreamThreadStateStoreProvider : IStateStoreProvider
+namespace Kafka.Streams.State.Internals
 {
+    /**
+     * Wrapper over StreamThread that : StateStoreProvider
+     */
+    public class StreamThreadStateStoreProvider : IStateStoreProvider
+    {
+        private StreamThread streamThread;
 
-    private StreamThread streamThread;
-
-    public StreamThreadStateStoreProvider(StreamThread streamThread)
-{
-        this.streamThread = streamThread;
-    }
-
-
-    public override List<T> stores(string storeName, IQueryableStoreType<T> queryableStoreType)
-{
-        if (streamThread.state() == StreamThread.State.DEAD)
-{
-            return Collections.emptyList();
+        public StreamThreadStateStoreProvider(StreamThread streamThread)
+        {
+            this.streamThread = streamThread;
         }
-        if (!streamThread.isRunningAndNotRebalancing())
-{
-            throw new InvalidStateStoreException("Cannot get state store " + storeName + " because the stream thread is " +
-                    streamThread.state() + ", not RUNNING");
-        }
-        List<T> stores = new List<>();
-        foreach (Task streamTask in streamThread.tasks().Values)
-{
-            IStateStore store = streamTask.getStore(storeName);
-            if (store != null && queryableStoreType.accepts(store))
-{
-                if (!store.isOpen())
-{
-                    throw new InvalidStateStoreException("Cannot get state store " + storeName + " for task " + streamTask +
-                            " because the store is not open. The state store may have migrated to another instances.");
-                }
-                if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
-{
-                    stores.Add((T) new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>) store));
-                } else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
-{
-                    stores.Add((T) new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>) store));
-                } else
-{
-                    stores.Add((T) store);
+
+        public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
+        {
+            if (streamThread.state() == StreamThread.State.DEAD)
+            {
+                return new List<T>();
+            }
+
+            if (!streamThread.isRunningAndNotRebalancing())
+            {
+                throw new InvalidStateStoreException("Cannot get state store " + storeName + " because the stream thread is " +
+                        streamThread.state() + ", not RUNNING");
+            }
+            List<T> stores = new List<T>();
+            foreach (Task streamTask in streamThread.tasks().Values)
+            {
+                IStateStore store = streamTask.getStore(storeName);
+                if (store != null && queryableStoreType.accepts(store))
+                {
+                    if (!store.isOpen())
+                    {
+                        throw new InvalidStateStoreException("Cannot get state store " + storeName + " for task " + streamTask +
+                                " because the store is not open. The state store may have migrated to another instances.");
+                    }
+                    if (store is ITimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
+                    {
+                        stores.Add((T)new ReadOnlyKeyValueStoreFacade((ITimestampedKeyValueStore<object, object>)store));
+                    }
+                    else if (store is ITimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
+                    {
+                        stores.Add((T)new ReadOnlyWindowStoreFacade((ITimestampedWindowStore<object, object>)store));
+                    }
+                    else
+                    {
+                        stores.Add((T)store);
+                    }
                 }
             }
+            return stores;
         }
-        return stores;
-    }
 
+    }
 }

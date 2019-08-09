@@ -21,8 +21,8 @@ namespace Kafka.Streams.Errors
         {
         }
 
-        protected KafkaStreamsExceptions(SerializationInfo info, StreamingContext context)
-            : base(info, context)
+        protected KafkaStreamsExceptions(SerializationInfo LogInformation, StreamingContext context)
+            : base(LogInformation, context)
         {
         }
     }

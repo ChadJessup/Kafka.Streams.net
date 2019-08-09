@@ -26,14 +26,13 @@ namespace Kafka.Streams.Interfaces
      */
     public interface IKafkaClientSupplier
     {
-
         /**
          * Create an {@link Admin} which is used for internal topic management.
          *
          * @param config Supplied by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of {@link Admin}
          */
-        Admin getAdminClient(Dictionary<string, object> config);
+        IAdminClient getAdminClient(Dictionary<string, object> config);
 
         /**
          * Create a {@link Producer} which is used to write records to sink topics.

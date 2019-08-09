@@ -37,13 +37,13 @@ namespace Kafka.Streams.State.Internals
             {
                 throw new InvalidStateStoreException("the state store, " + storeName + ", is not open.");
             }
-            if (store is TimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
+            if (store is ITimestampedKeyValueStore && queryableStoreType is QueryableStoreTypes.KeyValueStoreType)
             {
-                return (List<T>)Collections.singletonList(new ReadOnlyKeyValueStoreFacade((TimestampedKeyValueStore<object, object>)store));
+                return (List<T>)Collections.singletonList(new ReadOnlyKeyValueStoreFacade((ITimestampedKeyValueStore<object, object>)store));
             }
-            else if (store is TimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
+            else if (store is ITimestampedWindowStore && queryableStoreType is QueryableStoreTypes.WindowStoreType)
             {
-                return (List<T>)Collections.singletonList(new ReadOnlyWindowStoreFacade((TimestampedWindowStore<object, object>)store));
+                return (List<T>)Collections.singletonList(new ReadOnlyWindowStoreFacade((ITimestampedWindowStore<object, object>)store));
             }
             return (List<T>)Collections.singletonList(store);
         }

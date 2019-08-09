@@ -102,7 +102,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <p>
          * For example, you can use this transformation to set a key for a key-less input record {@code <null,V>} by
          * extracting a key from the value within your {@link KeyValueMapper}. The example below computes the new key as the
-         * length of the value string.
+         *.Length of the value string.
          * <pre>{@code
          * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
          * KStream<int, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, int> {
@@ -135,7 +135,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * <p>
          * For example, you can use this transformation to set a key for a key-less input record {@code <null,V>} by
          * extracting a key from the value within your {@link KeyValueMapper}. The example below computes the new key as the
-         * length of the value string.
+         *.Length of the value string.
          * <pre>{@code
          * KStream<Byte[], string> keyLessStream = builder.stream("key-less-topic");
          * KStream<int, string> keyedStream = keyLessStream.selectKey(new KeyValueMapper<Byte[], string, int> {
@@ -1544,7 +1544,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                              string[] stateStoreNames);
 
         /**
@@ -1630,7 +1630,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                              Named named,
                                              string[] stateStoreNames);
         /**
@@ -1912,7 +1912,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                  string[] stateStoreNames);
 
         /**
@@ -2007,7 +2007,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                  Named named,
                                                  string[] stateStoreNames);
 

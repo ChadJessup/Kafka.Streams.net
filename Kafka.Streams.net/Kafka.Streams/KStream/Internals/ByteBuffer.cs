@@ -64,5 +64,15 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
+
+        internal void putLong(long timestamp)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal long getLong()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

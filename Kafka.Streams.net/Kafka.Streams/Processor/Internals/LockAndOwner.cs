@@ -1,8 +1,8 @@
 ﻿namespace Kafka.Streams.Processor.Internals
 {
-    public static class LockAndOwner
+    public class LockAndOwner
     {
-        //FileLock @lock;
-        string owningThread;
+        public FileLock @lock { get; set; }
+        public string owningThread { get; set; }
     }
 }

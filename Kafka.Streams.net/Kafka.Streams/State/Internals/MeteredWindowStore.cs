@@ -94,19 +94,19 @@ namespace Kafka.Streams.State.Internals
         {
             serdes = new StateSerdes<>(
                 ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
-                keySerde == null ? (ISerde<K>)context.keySerde() : keySerde,
-                valueSerde == null ? (ISerde<V>)context.valueSerde() : valueSerde);
+                keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
+                valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
         }
 
 
         public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
                                         bool sendOldValues)
         {
-            IWindowStore<Bytes, byte[]> wrapped = wrapped();
+            IWindowStore<Bytes, byte[]> wrapped = wrapped;
             if (wrapped is CachedStateStore)
             {
                 return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
-                   (key, newValue, oldValue, timestamp)->listener.apply(
+                   (key, newValue, oldValue, timestamp)=>listener.apply(
                        WindowKeySchema.fromStoreKey(key, windowSizeMs, serdes.keyDeserializer(), serdes.Topic),
                        newValue != null ? serdes.valueFrom(newValue) : null,
                        oldValue != null ? serdes.valueFrom(oldValue) : null,
@@ -130,7 +130,7 @@ namespace Kafka.Streams.State.Internals
             long startNs = time.nanoseconds();
             try
             {
-                wrapped().Add(keyBytes(key), serdes.rawValue(value), windowStartTimestamp);
+                wrapped.Add(keyBytes(key), serdes.rawValue(value), windowStartTimestamp);
             }
             catch (ProcessorStateException e)
             {
@@ -149,7 +149,7 @@ namespace Kafka.Streams.State.Internals
             long startNs = time.nanoseconds();
             try
             {
-                byte[] result = wrapped().fetch(keyBytes(key), timestamp);
+                byte[] result = wrapped.fetch(keyBytes(key), timestamp);
                 if (result == null)
                 {
                     return default;
@@ -167,7 +167,7 @@ namespace Kafka.Streams.State.Internals
                                             long timeFrom,
                                             long timeTo)
         {
-            return new MeteredWindowStoreIterator<>(wrapped().fetch(keyBytes(key), timeFrom, timeTo),
+            return new MeteredWindowStoreIterator<>(wrapped.fetch(keyBytes(key), timeFrom, timeTo),
                                                     fetchTime,
                                                     metrics,
                                                     serdes,
@@ -181,7 +181,7 @@ namespace Kafka.Streams.State.Internals
                                                       long timeTo)
         {
             return new MeteredWindowedKeyValueIterator<>(
-                wrapped().fetch(keyBytes(from), keyBytes(to), timeFrom, timeTo),
+                wrapped.fetch(keyBytes(from), keyBytes(to), timeFrom, timeTo),
                 fetchTime,
                 metrics,
                 serdes,
@@ -193,7 +193,7 @@ namespace Kafka.Streams.State.Internals
                                                          long timeTo)
         {
             return new MeteredWindowedKeyValueIterator<>(
-                wrapped().fetchAll(timeFrom, timeTo),
+                wrapped.fetchAll(timeFrom, timeTo),
                 fetchTime,
                 metrics,
                 serdes,
@@ -202,7 +202,7 @@ namespace Kafka.Streams.State.Internals
 
         public override IKeyValueIterator<Windowed<K>, V> all()
         {
-            return new MeteredWindowedKeyValueIterator<>(wrapped().all(), fetchTime, metrics, serdes, time);
+            return new MeteredWindowedKeyValueIterator<>(wrapped.all(), fetchTime, metrics, serdes, time);
         }
 
         public override void flush()

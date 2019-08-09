@@ -474,7 +474,7 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                 new Max());
         }
 
-        public void addInvocationRateAndCount(
+        public static void addInvocationRateAndCount(
             Sensor sensor,
             string group,
             Dictionary<string, string> tags,
@@ -499,13 +499,13 @@ namespace Kafka.Streams.Processor.Internals.Metrics
                 new Rate(TimeUnit.SECONDS, new WindowedCount()));
         }
 
-        public void addInvocationRateAndCount(
+        public static void addInvocationRateAndCount(
             Sensor sensor,
             string group,
             Dictionary<string, string> tags,
             string operation)
         {
-            this.addInvocationRateAndCount(
+            addInvocationRateAndCount(
                 sensor,
                 group,
                 tags,

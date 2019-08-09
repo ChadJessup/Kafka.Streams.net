@@ -16,24 +16,20 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-    abstract class KTableKTableAbstractJoin<K, R, V1, V2> : IKTableProcessorSupplier<K, V1, R>
+    public abstract class KTableKTableAbstractJoin<K, R, V1, V2> : IKTableProcessorSupplier<K, V1, R>
     {
-
         private KTableImpl<K, object, V1> table1;
         private KTableImpl<K, object, V2> table2;
-        KTableValueGetterSupplier<K, V1> valueGetterSupplier1;
-        KTableValueGetterSupplier<K, V2> valueGetterSupplier2;
+        IKTableValueGetterSupplier<K, V1> valueGetterSupplier1;
+        IKTableValueGetterSupplier<K, V2> valueGetterSupplier2;
         IValueJoiner<V1, V2, R> joiner;
 
         bool sendOldValues = false;
 
-        KTableKTableAbstractJoin(KTableImpl<K, object, V1> table1,
-                                  KTableImpl<K, object, V2> table2,
-                                  IValueJoiner<V1, V2, R> joiner)
+        public KTableKTableAbstractJoin(
+            KTableImpl<K, object, V1> table1,
+            KTableImpl<K, object, V2> table2,
+            IValueJoiner<V1, V2, R> joiner)
         {
             this.table1 = table1;
             this.table2 = table2;
@@ -41,7 +37,6 @@ namespace Kafka.Streams.KStream.Internals
             this.valueGetterSupplier2 = table2.valueGetterSupplier();
             this.joiner = joiner;
         }
-
 
         public void enableSendingOldValues()
         {

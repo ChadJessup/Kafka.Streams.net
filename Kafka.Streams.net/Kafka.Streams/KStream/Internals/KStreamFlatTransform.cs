@@ -66,7 +66,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 foreach (KeyValue<KOut, VOut> pair in pairs)
                 {
-                    context().forward(pair.key, pair.value);
+                    context.forward(pair.key, pair.value);
                 }
             }
         }

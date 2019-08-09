@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMapValuesProcessor : AbstractProcessor<K, Change<V>>
     {
-        private TimestampedKeyValueStore<K, V1> store;
+        private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
 
 
@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
             base.init(context);
             if (queryableName != null)
             {
-                store = (TimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<>(
                     store,
                     context,
@@ -48,13 +48,13 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
+                store.Add(key, ValueAndTimestamp.make(newValue, context.timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
             }
             else
             {
 
-                context().forward(key, new Change<>(newValue, oldValue));
+                context.forward(key, new Change<>(newValue, oldValue));
             }
         }
     }

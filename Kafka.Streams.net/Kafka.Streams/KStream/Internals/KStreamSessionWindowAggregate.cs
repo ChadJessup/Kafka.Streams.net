@@ -1,4 +1,3 @@
-using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
@@ -9,7 +8,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private string storeName;
         private SessionWindows windows;
-        private Initializer<Agg> initializer;
+        private IInitializer<Agg> initializer;
         private Aggregator<K, V, Agg> aggregator;
         private IMerger<K, Agg> sessionMerger;
 
@@ -17,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public KStreamSessionWindowAggregate(SessionWindows windows,
                                               string storeName,
-                                              Initializer<Agg> initializer,
+                                              IInitializer<Agg> initializer,
                                               Aggregator<K, V, Agg> aggregator,
                                               IMerger<K, Agg> sessionMerger)
         {
@@ -78,13 +77,13 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    value, context().Topic, context().partition(), context().offset()
+                    value, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
             }
 
-            long timestamp = context().timestamp();
+            long timestamp = context.timestamp();
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
             long closeTime = observedStreamTime - windows.gracePeriodMs();
 
@@ -106,7 +105,7 @@ namespace Kafka.Streams.KStream.Internals
                     KeyValue<Windowed<K>, Agg> next = iterator.next();
                     merged.Add(next);
                     agg = sessionMerger.apply(key, agg, next.value);
-                    mergedWindow = mergeSessionWindow(mergedWindow, (SessionWindow)next.key.window());
+                    mergedWindow = mergeSessionWindow(mergedWindow, next.key.window);
                 }
             }
 
@@ -123,9 +122,9 @@ namespace Kafka.Streams.KStream.Internals
                         "expiration=[{}] " +
                         "streamTime=[{}]",
                     key,
-                    context().Topic,
-                    context().partition(),
-                    context().offset(),
+                    context.Topic,
+                    context.partition(),
+                    context.offset(),
                     timestamp,
                     mergedWindow.start(),
                     mergedWindow.end(),
@@ -147,7 +146,7 @@ namespace Kafka.Streams.KStream.Internals
                 }
 
                 agg = aggregator.apply(key, value, agg);
-                Windowed<K> sessionKey = new Windowed<>(key, mergedWindow);
+                Windowed<K> sessionKey = new Windowed<K>(key, mergedWindow);
                 store.Add(sessionKey, agg);
                 tupleForwarder.maybeForward(sessionKey, agg, null);
             }
@@ -162,46 +161,21 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+    public IKTableValueGetterSupplier<Windowed<K>, Agg> view()
     {
-        return new KTableValueGetterSupplier<Windowed<K>, Agg>()
-        {
+        //    return new IKTableValueGetterSupplier<Windowed<K>, Agg>()
+        //    {
 
-            public KTableValueGetter<Windowed<K>, Agg> get()
-        {
-            return new KTableSessionWindowValueGetter();
-        }
-
-
-        public string[] storeNames()
-        {
-            return new string[] { storeName };
-        }
-    };
-}
-
-private class KTableSessionWindowValueGetter : KTableValueGetter<Windowed<K>, Agg>
-{
-    private ISessionStore<K, Agg> store;
+        //        public IKTableValueGetter<Windowed<K>, Agg> get()
+        //    {
+        //        return new KTableSessionWindowValueGetter();
+        //    }
 
 
-
-    public void init(IProcessorContext context)
-    {
-        store = (ISessionStore<K, Agg>)context.getStateStore(storeName);
+        //    public string[] storeNames()
+        //    {
+        //        return new string[] { storeName };
+        //    }
+        //};
     }
-
-
-    public ValueAndTimestamp<Agg> get(Windowed<K> key)
-    {
-        return ValueAndTimestamp.make(
-            store.fetchSession(key.key(), key.window().start(), key.window().end()),
-            key.window().end());
-    }
-
-
-    public void close()
-    {
-    }
-}
 }

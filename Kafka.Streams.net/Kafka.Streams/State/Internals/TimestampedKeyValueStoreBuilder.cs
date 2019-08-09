@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals
 {
     public class TimestampedKeyValueStoreBuilder<K, V>
-        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, TimestampedKeyValueStore<K, V>>
+        : AbstractStoreBuilder<K, ValueAndTimestamp<V>, ITimestampedKeyValueStore<K, V>>
     {
 
         private IKeyValueBytesStoreSupplier storeSupplier;
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
             this.storeSupplier = storeSupplier;
         }
 
-        public override TimestampedKeyValueStore<K, V> build()
+        public override ITimestampedKeyValueStore<K, V> build()
         {
             IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
             if (!(store is ITimestampedBytesStore))

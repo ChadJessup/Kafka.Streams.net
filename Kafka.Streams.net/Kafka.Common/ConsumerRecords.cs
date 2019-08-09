@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,16 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using System.Collections.Generic;
 
-using Kafka.Common.TopicPartition;
-
-
-
-// Interface to indicate that an object has associated partition offsets that can be checkpointed
-interface Checkpointable
+namespace Kafka.Common
 {
-
-    void checkpoint(Dictionary<TopicPartition, long> offsets);
-    Dictionary<TopicPartition, long> checkpointed();
+    public class ConsumerRecords<T1, T2> : List<ConsumeResult<T1, T2>>
+    {
+    }
 }

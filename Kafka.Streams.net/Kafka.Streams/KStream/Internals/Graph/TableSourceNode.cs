@@ -16,8 +16,11 @@
  */
 
 using Kafka.Common.Utils;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -25,9 +28,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
      * Used to represent either a KTable source or a GlobalKTable source. A bool flag is used to indicate if this represents a GlobalKTable a {@link
      * org.apache.kafka.streams.kstream.GlobalKTable}
      */
-    public partial class TableSourceNode<K, V> : StreamSourceNode<K, V>
+    public class TableSourceNode<K, V, T> : StreamSourceNode<K, V>
+        where T : IStateStore
     {
-        private MaterializedInternal<K, V, object> materializedInternal;
+        private MaterializedInternal<K, V, T> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
         private string sourceName;
         private bool isGlobalKTable;
@@ -38,11 +42,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
             string sourceName,
             string topic,
             ConsumedInternal<K, V> consumedInternal,
-            MaterializedInternal<K, V, object> materializedInternal,
+            MaterializedInternal<K, V, T> materializedInternal,
             ProcessorParameters<K, V> processorParameters,
             bool isGlobalKTable)
             : base(nodeName,
-                  Collections.singletonList(topic),
+                  new List<string> { topic },
                   consumedInternal)
         {
 
@@ -67,51 +71,52 @@ namespace Kafka.Streams.KStream.Internals.Graph
                    "} " + base.ToString();
         }
 
-        public static TableSourceNodeBuilder<K, V> tableSourceNodeBuilder()
+        public static TableSourceNodeBuilder<K, V, T> tableSourceNodeBuilder()
         {
-            return new TableSourceNodeBuilder<K, V>();
+            return new TableSourceNodeBuilder<K, V, T>();
         }
 
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            string topicName = getTopicNames().iterator().next();
+            string topicName = getTopicNames().GetEnumerator().Current;
 
             // TODO: we assume source KTables can only be timestamped-key-value stores for now.
             // should be expanded for other types of stores as well.
-            IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder =
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>((MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
 
             if (isGlobalKTable)
             {
-                topologyBuilder.AddGlobalStore(
+                topologyBuilder.addGlobalStore(
                     storeBuilder,
                     sourceName,
-                    consumedInternal.timestampExtractor(),
+                    consumedInternal.timestampExtractor,
                     consumedInternal.keyDeserializer(),
                     consumedInternal.valueDeserializer(),
                     topicName,
-                    processorParameters.processorName(),
-                    processorParameters.processorSupplier());
+                    processorParameters.processorName,
+                    processorParameters.processorSupplier);
             }
             else
             {
 
-                topologyBuilder.AddSource(consumedInternal().offsetResetPolicy(),
-                                          sourceName,
-                                          consumedInternal().timestampExtractor(),
-                                          consumedInternal().keyDeserializer(),
-                                          consumedInternal().valueDeserializer(),
-                                          topicName);
+                topologyBuilder.addSource(
+                    consumedInternal.offsetResetPolicy(),
+                    sourceName,
+                    consumedInternal.timestampExtractor,
+                    consumedInternal.keyDeserializer(),
+                    consumedInternal.valueDeserializer(),
+                    topicName);
 
-                topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), sourceName);
+                topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.processorSupplier(), sourceName);
 
-                // only.Add state store if the source KTable should be materialized
-                KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.processorSupplier();
+                // only add state store if the source KTable should be materialized
+                KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.processorSupplier;
                 if (ktableSource.queryableName() != null)
                 {
-                    topologyBuilder.AddStateStore(storeBuilder, nodeName());
+                    topologyBuilder.addStateStore<K, V, ?>(storeBuilder, nodeName);
 
                     if (shouldReuseSourceTopicForChangelog)
                     {

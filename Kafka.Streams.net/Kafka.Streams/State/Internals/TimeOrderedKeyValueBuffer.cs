@@ -14,84 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Confluent.Kafka;
+using Kafka.Common.Interfaces;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
-using Kafka.Common.serialization.Serde;
-using Kafka.Streams.KStream.Internals.Change;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
-using Kafka.Streams.State.ValueAndTimestamp;
-
-
-
-
-
-public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
+namespace Kafka.Streams.State.Internals
 {
+    public interface TimeOrderedKeyValueBuffer<K, V> : IStateStore
+    {
 
-    Eviction<K, V>
-{
-        private K key;
-        private Change<V> value;
-        private ProcessorRecordContext recordContext;
+        void setSerdesIfNull(ISerde<K> keySerde, ISerde<V> valueSerde);
 
-        Eviction(K key, Change<V> value, ProcessorRecordContext recordContext)
-{
-            this.key = key;
-            this.value = value;
-            this.recordContext = recordContext;
-        }
+        void evictWhile(ISupplier<bool> predicate, IConsumer<K, Eviction<K, V>> callback);
 
-        public K key()
-{
-            return key;
-        }
+        Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key);
 
-        public Change<V> value()
-{
-            return value;
-        }
+        void put(long time, K key, Change<V> value, ProcessorRecordContext recordContext);
 
-        public ProcessorRecordContext recordContext()
-{
-            return recordContext;
-        }
+        int numRecords();
 
-        
-        public string ToString()
-{
-            return "Eviction{key=" + key + ", value=" + value + ", recordContext=" + recordContext + '}';
-        }
+        long bufferSize();
 
-        
-        public bool Equals(object o)
-{
-            if (this == o) return true;
-            if (o == null || GetType() != o.GetType()) return false;
-            Eviction<?, object> eviction = (Eviction<?, object>) o;
-            return Objects.Equals(key, eviction.key) &&
-                Objects.Equals(value, eviction.value) &&
-                Objects.Equals(recordContext, eviction.recordContext);
-        }
-
-        
-        public int GetHashCode()
-{
-            return Objects.hash(key, value, recordContext);
-        }
+        long minTimestamp();
     }
-
-    void setSerdesIfNull(ISerde<K> keySerde, ISerde<V> valueSerde);
-
-    void evictWhile(Supplier<Boolean> predicate, IConsumer<Eviction<K, V>> callback);
-
-    Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key);
-
-    void put(long time, K key, Change<V> value, ProcessorRecordContext recordContext);
-
-    int numRecords();
-
-    long bufferSize();
-
-    long minTimestamp();
 }

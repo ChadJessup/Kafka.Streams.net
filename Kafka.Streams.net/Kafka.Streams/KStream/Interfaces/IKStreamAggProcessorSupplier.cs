@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
     public interface IKStreamAggProcessorSupplier<K, RK, V, T> : IProcessorSupplier<K, V>
     {
-        KTableValueGetterSupplier<RK, T> view();
+        IKTableValueGetterSupplier<RK, T> view();
 
         void enableSendingOldValues();
     }

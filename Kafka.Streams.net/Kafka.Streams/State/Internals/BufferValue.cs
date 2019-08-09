@@ -62,7 +62,7 @@ namespace Kafka.Streams.State.Internals
             return newValue;
         }
 
-        ProcessorRecordContext context()
+        ProcessorRecordContext context
         {
             return recordContext;
         }
@@ -112,7 +112,7 @@ namespace Kafka.Streams.State.Internals
         ByteBuffer serialize(int end.Adding)
         {
 
-            int sizeOfValueLength = int.BYTES;
+            int sizeOfValueLength = sizeof(int);
 
             int sizeOfPriorValue = priorValue == null ? 0 : priorValue.Length;
             int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.Length;

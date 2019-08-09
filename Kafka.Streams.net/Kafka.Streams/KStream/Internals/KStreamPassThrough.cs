@@ -34,7 +34,7 @@ class KStreamPassThrough<K, V> : ProcessorSupplier<K, V> {
         
         public void process( K key,  V value)
 {
-            context().forward(key, value);
+            context.forward(key, value);
         }
     }
 }

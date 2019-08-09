@@ -62,7 +62,7 @@ namespace Kafka.Streams.KStream
 
             try
             {
-                return new Printed<K, V>(File.OpenWrite(filePath));
+                return new Printed<K, V>(FileInfo.OpenWrite(filePath));
             }
             catch (IOException e)
             {

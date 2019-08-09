@@ -30,21 +30,21 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the key serializer
          */
-        ISerde<K> keySerde();
+        ISerde<K> keySerde;
 
         /**
          * Returns the default value serde
          *
          * @return the value serializer
          */
-        ISerde<V> valueSerde();
+        ISerde<V> valueSerde;
 
         /**
          * Returns the state directory for the partition.
          *
          * @return the state directory
          */
-        File stateDir();
+        FileInfo stateDir();
 
         /**
          * Returns Metrics instance

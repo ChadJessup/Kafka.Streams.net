@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private ILogger log;
         private long windowChangeLogAdditionalRetention;
-        private Dictionary<string, string> defaultTopicConfigs = new HashMap<>();
+        private Dictionary<string, string> defaultTopicConfigs = new Dictionary<>();
 
         private short replicationFactor;
         private Admin adminClient;
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.adminClient = adminClient;
 
-            LogContext logContext = new LogContext(string.Format("stream-thread [%s] ", Thread.currentThread().getName()));
+            LogContext logContext = new LogContext(string.Format("stream-thread [%s] ", Thread.CurrentThread.getName()));
             log = logContext.logger(GetType());
 
             replicationFactor = streamsConfig.getInt(StreamsConfig.REPLICATION_FACTOR_CONFIG).shortValue();
@@ -131,7 +131,7 @@ namespace Kafka.Streams.Processor.Internals
                         catch (InterruptedException fatalException)
                         {
                             // this should not happen; if it ever happens it indicate a bug
-                            Thread.currentThread().interrupt();
+                            Thread.CurrentThread.interrupt();
                             log.LogError(INTERRUPTED_ERROR_MESSAGE, fatalException);
                             throw new InvalidOperationException(INTERRUPTED_ERROR_MESSAGE, fatalException);
                         }
@@ -183,14 +183,14 @@ namespace Kafka.Streams.Processor.Internals
          * Topics that were not able to get its description will simply not be returned
          */
         // visible for testing
-        protected Dictionary<string, int> getNumPartitions(Set<string> topics)
+        protected Dictionary<string, int> getNumPartitions(HashSet<string> topics)
         {
             log.LogDebug("Trying to check if topics {} have been created with expected number of partitions.", topics);
 
             DescribeTopicsResult describeTopicsResult = adminClient.describeTopics(topics);
             Dictionary<string, KafkaFuture<TopicDescription>> futures = describeTopicsResult.Values;
 
-            Dictionary<string, int> existedTopicPartition = new HashMap<>();
+            Dictionary<string, int> existedTopicPartition = new Dictionary<>();
             foreach (KeyValuePair<string, KafkaFuture<TopicDescription>> topicFuture in futures)
             {
                 string topicName = topicFuture.Key;
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Processor.Internals
                 catch (InterruptedException fatalException)
                 {
                     // this should not happen; if it ever happens it indicate a bug
-                    Thread.currentThread().interrupt();
+                    Thread.CurrentThread.interrupt();
                     log.LogError(INTERRUPTED_ERROR_MESSAGE, fatalException);
                     throw new InvalidOperationException(INTERRUPTED_ERROR_MESSAGE, fatalException);
                 }
@@ -234,7 +234,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * Check the existing topics to have correct number of partitions; and return the remaining topics that needs to be created
          */
-        private HashSet<string> validateTopics(Set<string> topicsToValidate,
+        private HashSet<string> validateTopics(HashSet<string> topicsToValidate,
                                            Dictionary<string, InternalTopicConfig> topicsMap)
         {
 

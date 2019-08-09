@@ -13,5 +13,10 @@ namespace Kafka.Common.Extensions
 
             return (long)delta.TotalMilliseconds;
         }
+
+        public static DateTime ofEpochMilli(this DateTime dateTime, long milliseconds)
+        {
+            return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).DateTime;
+        }
     }
 }

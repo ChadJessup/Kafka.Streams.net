@@ -20,11 +20,11 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapValuesValueGetter : KTableValueGetter<K, V1>
+    public class KTableMapValuesValueGetter : IKTableValueGetter<K, V1>
     {
-        private KTableValueGetter<K, V> parentGetter;
+        private IKTableValueGetter<K, V> parentGetter;
 
-        KTableMapValuesValueGetter(KTableValueGetter<K, V> parentGetter)
+        KTableMapValuesValueGetter(IKTableValueGetter<K, V> parentGetter)
         {
             this.parentGetter = parentGetter;
         }

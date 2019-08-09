@@ -108,11 +108,11 @@ namespace Kafka.Streams.Processor.Internals
             maxBufferedSize = config.getInt(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG);
 
             // initialize the consumed and committed offset cache
-            consumedOffsets = new HashMap<>();
+            consumedOffsets = new Dictionary<>();
 
             // create queues for each assigned partition and associate them
             // to corresponding source nodes in the processor topology
-            Dictionary<TopicPartition, RecordQueue> partitionQueues = new HashMap<>();
+            Dictionary<TopicPartition, RecordQueue> partitionQueues = new Dictionary<>();
 
             // initialize the topology with its own context
             ProcessorContextImpl processorContextImpl = new ProcessorContextImpl(id, this, config, this.recordCollector, stateMgr, streamsMetrics, cache);
@@ -299,7 +299,7 @@ namespace Kafka.Streams.Processor.Internals
                 // decreased to the threshold, we can then resume the consumption on this partition
                 if (recordInfo.queue().size() == maxBufferedSize)
                 {
-                    consumer.resume(singleton(partition));
+                    consumer.resume(partition);
                 }
             }
             catch (ProducerFencedException fatal)
@@ -427,7 +427,7 @@ namespace Kafka.Streams.Processor.Internals
                 stateMgr.checkpoint(activeTaskCheckpointableOffsets());
             }
 
-            Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new HashMap<>(consumedOffsets.size());
+            Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new Dictionary<>(consumedOffsets.size());
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 TopicPartition partition = entry.Key;
@@ -496,7 +496,7 @@ namespace Kafka.Streams.Processor.Internals
 
             Dictionary<TopicPartition, long> purgableOffsets()
             {
-                Dictionary<TopicPartition, long> purgableConsumedOffsets = new HashMap<>();
+                Dictionary<TopicPartition, long> purgableConsumedOffsets = new Dictionary<>();
                 foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
                 {
                     TopicPartition tp = entry.Key;
@@ -638,7 +638,7 @@ namespace Kafka.Streams.Processor.Internals
                     {
                         /* TODO
                          * this should actually never happen atm as we guard the call to #abortTransaction
-                         * -> the reason for the guard is a "bug" in the Producer -- it throws InvalidOperationException
+                         * => the reason for the guard is a "bug" in the Producer -- it throws InvalidOperationException
                          * instead of ProducerFencedException atm. We can Remove the isZombie flag after KAFKA-5604 got
                          * fixed and fall-back to this catch-and-swallow code
                          */

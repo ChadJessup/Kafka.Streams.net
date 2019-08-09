@@ -73,7 +73,7 @@ namespace Kafka.Streams.State.Internals
             name = context.taskId() + "-" + name();
             cache = this.context.getCache();
 
-            cache.AddDirtyEntryFlushListener(name, entries->
+            cache.AddDirtyEntryFlushListener(name, entries=>
     {
                 foreach (DirtyEntry entry in entries)
                 {
@@ -93,24 +93,24 @@ namespace Kafka.Streams.State.Internals
             {
                 byte[] rawNewValue = entry.newValue();
                 byte[] rawOldValue = rawNewValue == null || sendOldValues ?
-                    wrapped().fetch(binaryKey, windowStartTimestamp) : null;
+                    wrapped.fetch(binaryKey, windowStartTimestamp) : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
                 if (rawNewValue != null || rawOldValue != null)
                 {
                     // we need to get the old values if needed, and then put to store, and then flush
-                    wrapped().Add(binaryKey, entry.newValue(), windowStartTimestamp);
+                    wrapped.Add(binaryKey, entry.newValue(), windowStartTimestamp);
 
                     ProcessorRecordContext current = context.recordContext();
-                    context.setRecordContext(entry.entry().context());
+                    context.setRecordContext(entry.entry().context);
                     try
                     {
                         flushListener.apply(
                             binaryWindowKey,
                             rawNewValue,
                             sendOldValues ? rawOldValue : null,
-                            entry.entry().context().timestamp());
+                            entry.entry().context.timestamp());
                     }
                     finally
                     {
@@ -120,7 +120,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                wrapped().Add(binaryKey, entry.newValue(), windowStartTimestamp);
+                wrapped.Add(binaryKey, entry.newValue(), windowStartTimestamp);
             }
         }
 
@@ -172,12 +172,12 @@ namespace Kafka.Streams.State.Internals
             Bytes cacheKey = cacheFunction.cacheKey(bytesKey);
             if (cache == null)
             {
-                return wrapped().fetch(key, timestamp);
+                return wrapped.fetch(key, timestamp);
             }
             LRUCacheEntry entry = cache[name, cacheKey];
             if (entry == null)
             {
-                return wrapped().fetch(key, timestamp);
+                return wrapped.fetch(key, timestamp);
             }
             else
             {
@@ -194,13 +194,13 @@ namespace Kafka.Streams.State.Internals
             // if store is open outside as well.
             validateStoreOpen();
 
-            WindowStoreIterator<byte[]> underlyingIterator = wrapped().fetch(key, timeFrom, timeTo);
+            WindowStoreIterator<byte[]> underlyingIterator = wrapped.fetch(key, timeFrom, timeTo);
             if (cache == null)
             {
                 return underlyingIterator;
             }
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped().persistent() ?
+            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(key, timeFrom, timeTo) :
                 cache.range(name,
                             cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, timeFrom)),
@@ -234,13 +234,13 @@ namespace Kafka.Streams.State.Internals
             validateStoreOpen();
 
             IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator =
-                wrapped().fetch(from, to, timeFrom, timeTo);
+                wrapped.fetch(from, to, timeFrom, timeTo);
             if (cache == null)
             {
                 return underlyingIterator;
             }
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped().persistent() ?
+            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(from, to, timeFrom, timeTo) :
                 cache.range(name,
                             cacheFunction.cacheKey(keySchema.lowerRange(from, timeFrom)),
@@ -265,7 +265,7 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().fetchAll(timeFrom, timeTo);
+            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped.fetchAll(timeFrom, timeTo);
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
@@ -284,7 +284,7 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
 
-            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped().all();
+            IKeyValueIterator<Windowed<Bytes>, byte[]> underlyingIterator = wrapped.all();
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
             return new MergedSortedCacheWindowStoreKeyValueIterator(
@@ -299,14 +299,14 @@ namespace Kafka.Streams.State.Internals
         public override void flush()
         {
             cache.flush(name);
-            wrapped().flush();
+            wrapped.flush();
         }
 
         public override void close()
         {
             flush();
             cache.close(name);
-            wrapped().close();
+            wrapped.close();
         }
 
         private class CacheIteratorWrapper : PeekingKeyValueIterator<Bytes, LRUCacheEntry>

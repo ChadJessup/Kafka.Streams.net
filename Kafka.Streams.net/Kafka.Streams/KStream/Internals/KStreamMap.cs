@@ -44,7 +44,7 @@ class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
         public void process( K key,  V value)
 {
              KeyValue<K1, V1> newPair = mapper.apply(key, value);
-            context().forward(newPair.key, newPair.value);
+            context.forward(newPair.key, newPair.value);
         }
     }
 }

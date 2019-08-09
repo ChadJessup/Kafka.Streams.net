@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTableValueGetterSupplier<K, R> view()
+        public IKTableValueGetterSupplier<K, R> view()
         {
             return new KTableKTableOuterJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
         }
@@ -42,13 +42,13 @@ namespace Kafka.Streams.KStream.Internals
         private class KTableKTableOuterJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2>
         {
 
-            KTableKTableOuterJoinValueGetterSupplier(KTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-                                                      KTableValueGetterSupplier<K, V2> valueGetterSupplier2)
+            KTableKTableOuterJoinValueGetterSupplier(IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
+                                                      IKTableValueGetterSupplier<K, V2> valueGetterSupplier2)
                 : base(valueGetterSupplier1, valueGetterSupplier2)
             {
             }
 
-            public KTableValueGetter<K, R> get()
+            public IKTableValueGetter<K, R> get()
             {
                 return new KTableKTableOuterJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2());
             }
@@ -57,11 +57,11 @@ namespace Kafka.Streams.KStream.Internals
         private class KTableKTableOuterJoinProcessor : AbstractProcessor<K, Change<V1>>
         {
 
-            private KTableValueGetter<K, V2> valueGetter;
+            private IKTableValueGetter<K, V2> valueGetter;
             private StreamsMetricsImpl metrics;
             private Sensor skippedRecordsSensor;
 
-            KTableKTableOuterJoinProcessor(KTableValueGetter<K, V2> valueGetter)
+            KTableKTableOuterJoinProcessor(IKTableValueGetter<K, V2> valueGetter)
             {
                 this.valueGetter = valueGetter;
             }
@@ -83,7 +83,7 @@ namespace Kafka.Streams.KStream.Internals
                 {
                     LOG.LogWarning(
                         "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                        change, context().Topic, context().partition(), context().offset()
+                        change, context.Topic, context.partition(), context.offset()
                     );
                     skippedRecordsSensor.record();
                     return;
@@ -101,12 +101,12 @@ namespace Kafka.Streams.KStream.Internals
                     {
                         return;
                     }
-                    resultTimestamp = context().timestamp();
+                    resultTimestamp = context.timestamp();
                 }
                 else
                 {
 
-                    resultTimestamp = Math.Max(context().timestamp(), valueAndTimestamp2.timestamp());
+                    resultTimestamp = Math.Max(context.timestamp(), valueAndTimestamp2.timestamp());
                 }
 
                 if (value2 != null || change.newValue != null)
@@ -119,7 +119,7 @@ namespace Kafka.Streams.KStream.Internals
                     oldValue = joiner.apply(change.oldValue, value2);
                 }
 
-                context().forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
+                context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
             }
 
 
@@ -129,13 +129,13 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        private KTableKTableOuterJoinValueGetter : KTableValueGetter<K, R> {
+        private KTableKTableOuterJoinValueGetter : IKTableValueGetter<K, R> {
 
-        private KTableValueGetter<K, V1> valueGetter1;
-        private KTableValueGetter<K, V2> valueGetter2;
+        private IKTableValueGetter<K, V1> valueGetter1;
+        private IKTableValueGetter<K, V2> valueGetter2;
 
-        KTableKTableOuterJoinValueGetter(KTableValueGetter<K, V1> valueGetter1,
-                                          KTableValueGetter<K, V2> valueGetter2)
+        KTableKTableOuterJoinValueGetter(IKTableValueGetter<K, V1> valueGetter1,
+                                          IKTableValueGetter<K, V2> valueGetter2)
         {
             this.valueGetter1 = valueGetter1;
             this.valueGetter2 = valueGetter2;

@@ -17,6 +17,7 @@
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processor;
 using System;
+using System.Linq;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -57,9 +58,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 }
             }
 
-            string newChain = chain.Equals("") ? streamsGraphNode.nodeName() : streamsGraphNode.nodeName() + "->" + chain;
+            string newChain = chain.Equals("") ? streamsGraphNode.nodeName : streamsGraphNode.nodeName + "=>" + chain;
 
-            if (streamsGraphNode.parentNodes().isEmpty())
+            if (!streamsGraphNode.parentNodes.Any())
             {
                 // error base case: we traversed to the end of the graph without finding a window definition
                 throw new TopologyException(
@@ -69,7 +70,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             // recursive case: all parents must define a grace period, and we use the max of our parents' graces.
             long inheritedGrace = -1;
-            foreach (StreamsGraphNode parentNode in streamsGraphNode.parentNodes())
+            foreach (StreamsGraphNode parentNode in streamsGraphNode.parentNodes)
             {
                 long parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
                 inheritedGrace = Math.Max(inheritedGrace, parentGrace);
@@ -83,11 +84,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
             return inheritedGrace;
         }
 
-        private static long extractGracePeriod(StreamsGraphNode node)
+        private static long extractGracePeriod<K, V>(StreamsGraphNode node)
         {
-            if (node is StatefulProcessorNode)
+            if (node is StatefulProcessorNode<K, V>)
             {
-                IProcessorSupplier processorSupplier = ((StatefulProcessorNode)node).processorParameters().processorSupplier();
+                IProcessorSupplier<K, V> processorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().processorSupplier();
                 if (processorSupplier is KStreamWindowAggregate)
                 {
                     KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate)processorSupplier;

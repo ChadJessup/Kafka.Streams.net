@@ -1,6 +1,12 @@
-using Kafka.Common.Utils.Time;
-using Kafka.Common.Utils.Utils;
+using Kafka.Common;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Errors;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -14,12 +20,12 @@ namespace Kafka.Streams.Processor.Internals
         private static Pattern PATH_NAME = Pattern.compile("\\d+_\\d+");
 
         static string LOCK_FILE_NAME = ".lock";
-        private static ILogger log = new LoggerFactory().CreateLogger < StateDirectory);
+        private static ILogger log = new LoggerFactory().CreateLogger<StateDirectory>();
 
-        private File stateDir;
+        private FileInfo stateDir;
         private bool createStateDirectory;
-        private HashMap<TaskId, FileChannel> channels = new HashMap<>();
-        private HashMap<TaskId, LockAndOwner> locks = new HashMap<>();
+        private Dictionary<TaskId, FileChannel> channels = new Dictionary<TaskId, FileChannel>();
+        private Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
         private ITime time;
 
         private FileChannel globalStateChannel;
@@ -31,20 +37,22 @@ namespace Kafka.Streams.Processor.Internals
          * @throws ProcessorStateException if the base state directory or application state directory does not exist
          *                                 and could not be created when createStateDirectory is enabled.
          */
-        public StateDirectory(StreamsConfig config,
-                              ITime time,
-                              bool createStateDirectory)
+        public StateDirectory(
+            StreamsConfig config,
+            ITime time,
+            bool createStateDirectory)
         {
             this.time = time;
             this.createStateDirectory = createStateDirectory;
             string stateDirName = config.getString(StreamsConfig.STATE_DIR_CONFIG);
-            File baseDir = new File(stateDirName);
-            if (this.createStateDirectory && !baseDir.exists() && !baseDir.mkdirs())
+            FileInfo baseDir = new FileInfo(stateDirName);
+
+            if (this.createStateDirectory && !baseDir.Exists && !Directory.CreateDirectory(baseDir.DirectoryName))
             {
                 throw new ProcessorStateException(
                     string.Format("base state directory [%s] doesn't exist and couldn't be created", stateDirName));
             }
-            stateDir = new File(baseDir, config.getString(StreamsConfig.APPLICATION_ID_CONFIG));
+            stateDir = new FileInfo(baseDir, config.getString(StreamsConfig.APPLICATION_ID_CONFIG));
             if (this.createStateDirectory && !stateDir.exists() && !stateDir.mkdir())
             {
                 throw new ProcessorStateException(
@@ -57,10 +65,10 @@ namespace Kafka.Streams.Processor.Internals
          * @return directory for the {@link TaskId}
          * @throws ProcessorStateException if the task directory does not exists and could not be created
          */
-        public File directoryForTask(TaskId taskId)
+        public FileInfo directoryForTask(TaskId taskId)
         {
-            File taskDir = new File(stateDir, taskId.ToString());
-            if (createStateDirectory && !taskDir.exists() && !taskDir.mkdir())
+            FileInfo taskDir = new FileInfo(Path.Combine(stateDir, taskId.ToString()));
+            if (createStateDirectory && !taskDir.Exists && !taskDir.mkdir())
             {
                 throw new ProcessorStateException(
                     string.Format("task directory [%s] doesn't exist and couldn't be created", taskDir.getPath()));
@@ -73,10 +81,10 @@ namespace Kafka.Streams.Processor.Internals
          * @return directory for the global stores
          * @throws ProcessorStateException if the global store directory does not exists and could not be created
          */
-        File globalStateDir()
+        FileInfo globalStateDir()
         {
-            File dir = new File(stateDir, "global");
-            if (createStateDirectory && !dir.exists() && !dir.mkdir())
+            FileInfo dir = new FileInfo(Path.Combine(stateDir, "global"));
+            if (createStateDirectory && !dir.Exists && !dir.mkdir())
             {
                 throw new ProcessorStateException(
                     string.Format("global state directory [%s] doesn't exist and couldn't be created", dir.getPath()));
@@ -86,7 +94,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private string logPrefix()
         {
-            return string.Format("stream-thread [%s]", Thread.currentThread().getName());
+            return string.Format("stream-thread [%s]", Thread.CurrentThread.getName());
         }
 
         /**
@@ -103,10 +111,10 @@ namespace Kafka.Streams.Processor.Internals
                 return true;
             }
 
-            File lockFile;
+            FileInfo lockFile;
             // we already have the lock so bail out here
             LockAndOwner lockAndOwner = locks[taskId];
-            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.currentThread().getName()))
+            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
             {
                 log.LogTrace("{} Found cached state dir lock for task {}", logPrefix(), taskId);
                 return true;
@@ -119,8 +127,7 @@ namespace Kafka.Streams.Processor.Internals
 
             try
             {
-
-                lockFile = new File(directoryForTask(taskId), LOCK_FILE_NAME);
+                lockFile = new FileInfo(Path.Combine(directoryForTask(taskId), LOCK_FILE_NAME));
             }
             catch (ProcessorStateException e)
             {
@@ -136,22 +143,22 @@ namespace Kafka.Streams.Processor.Internals
 
                 channel = getOrCreateFileChannel(taskId, lockFile.toPath());
             }
-            catch (NoSuchFileException e)
+            catch (FileNotFoundException e)
             {
-                // FileChannel.open(..) could throw NoSuchFileException when there is another thread
+                // FileChannel.open(..) could throw FileNotFoundException when there is another thread
                 // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
                 // file, in this case we will return immediately indicating locking failed.
                 return false;
             }
 
-            FileLock lock = tryLock(channel);
-            if (lock != null)
+            FileLock @lock = tryLock(channel);
+            if (@lock != null)
                 {
-                    locks.Add(taskId, new LockAndOwner(Thread.currentThread().getName(), lock));
+                    locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, @lock));
 
                     log.LogDebug("{} Acquired state dir lock for task {}", logPrefix(), taskId);
                 }
-            return lock != null;
+            return @lock != null;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -168,16 +175,16 @@ namespace Kafka.Streams.Processor.Internals
                 return true;
             }
 
-            File lockFile = new File(globalStateDir(), LOCK_FILE_NAME);
+            FileInfo lockFile = new FileInfo(Path.Combine(globalStateDir(), LOCK_FILE_NAME));
             FileChannel channel;
             try
             {
 
                 channel = FileChannel.open(lockFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             }
-            catch (NoSuchFileException e)
+            catch (FileNotFoundException e)
             {
-                // FileChannel.open(..) could throw NoSuchFileException when there is another thread
+                // FileChannel.open(..) could throw FileNotFoundException when there is another thread
                 // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
                 // file, in this case we will return immediately indicating locking failed.
                 return false;
@@ -218,10 +225,10 @@ namespace Kafka.Streams.Processor.Internals
         void unlock(TaskId taskId)
         {
             LockAndOwner lockAndOwner = locks[taskId];
-            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.currentThread().getName()))
+            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
             {
                 locks.Remove(taskId);
-                lockAndOwner.lock.release();
+                lockAndOwner.@lock.release();
                 log.LogDebug("{} Released state dir lock for task {}", logPrefix(), taskId);
 
                 FileChannel fileChannel = channels.Remove(taskId);
@@ -281,16 +288,17 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private synchronized void cleanRemovedTasks(long cleanupDelayMs,
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void cleanRemovedTasks(long cleanupDelayMs,
                                                     bool manualUserCall)
         {
-            File[] taskDirs = listTaskDirectories();
+            FileInfo[] taskDirs = listTaskDirectories();
             if (taskDirs == null || taskDirs.Length == 0)
             {
                 return; // nothing to do
             }
 
-            foreach (File taskDir in taskDirs)
+            foreach (FileInfo taskDir in taskDirs)
             {
                 string dirName = taskDir.getName();
                 TaskId id = TaskId.parse(dirName);
@@ -370,10 +378,10 @@ namespace Kafka.Streams.Processor.Internals
          * List all of the task directories
          * @return The list of all the existing local directories for stream tasks
          */
-        File[] listTaskDirectories()
+        FileInfo[] listTaskDirectories()
         {
-            return !stateDir.exists() ? new File[0] :
-                    stateDir.listFiles(pathname->pathname.isDirectory() && PATH_NAME.matcher(pathname.getName()).matches());
+            return !stateDir.exists() ? new FileInfo[0] :
+                    stateDir.listFiles(pathname => pathname.isDirectory() && PATH_NAME.matcher(pathname.getName()).matches());
         }
 
         private FileChannel getOrCreateFileChannel(TaskId taskId,

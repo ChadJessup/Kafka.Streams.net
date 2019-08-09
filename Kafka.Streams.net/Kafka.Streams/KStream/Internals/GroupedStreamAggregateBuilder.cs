@@ -20,28 +20,8 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    class GroupedStreamAggregateBuilder<K, V>
+    public class GroupedStreamAggregateBuilder<K, V>
     {
-
         private InternalStreamsBuilder builder;
         private ISerde<K> keySerde;
         private ISerde<V> valueSerde;
@@ -52,28 +32,28 @@ namespace Kafka.Streams.KStream.Internals
         private StreamsGraphNode streamsGraphNode;
         private StreamsGraphNode repartitionNode;
 
-        Initializer<long> countInitializer = ()-> 0L;
+        IInitializer<long> countInitializer;// = () => 0L;
 
-        Aggregator<K, V, long> countAggregator = (aggKey, value, aggregate)->aggregate + 1;
+        IAggregator<K, V, long> countAggregator;// = (aggKey, value, aggregate) => aggregate + 1;
 
-        Initializer<V> reduceInitializer = ()-> null;
+        IInitializer<V> reduceInitializer;// = () => null;
 
-        GroupedStreamAggregateBuilder(InternalStreamsBuilder builder,
-                                       GroupedInternal<K, V> groupedInternal,
-                                       bool repartitionRequired,
-                                       HashSet<string> sourceNodes,
-                                       string name,
-                                       StreamsGraphNode streamsGraphNode)
+        public GroupedStreamAggregateBuilder(
+            InternalStreamsBuilder builder,
+            GroupedInternal<K, V> groupedInternal,
+            bool repartitionRequired,
+            HashSet<string> sourceNodes,
+            string name,
+            StreamsGraphNode streamsGraphNode)
         {
-
             this.builder = builder;
-            this.keySerde = groupedInternal.keySerde();
-            this.valueSerde = groupedInternal.valueSerde();
+            this.keySerde = groupedInternal.keySerde;
+            this.valueSerde = groupedInternal.valueSerde;
             this.repartitionRequired = repartitionRequired;
             this.sourceNodes = sourceNodes;
             this.name = name;
             this.streamsGraphNode = streamsGraphNode;
-            this.userProvidedRepartitionTopicName = groupedInternal.name();
+            this.userProvidedRepartitionTopicName = groupedInternal.name;
         }
 
         IKTable<KR, VR> build(string functionName,

@@ -15,31 +15,13 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.Interfaces;
-
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
     public class GroupedInternal<K, V> : Grouped<K, V>
     {
-
         public GroupedInternal(Grouped<K, V> grouped)
             : base(grouped)
         {
-        }
-
-        public ISerde<K> keySerde()
-        {
-            return keySerde;
-        }
-
-        public ISerde<V> valueSerde()
-        {
-            return valueSerde;
         }
     }
 }

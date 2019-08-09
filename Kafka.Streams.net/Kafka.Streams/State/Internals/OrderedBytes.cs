@@ -28,7 +28,7 @@ class OrderedBytes
     /**
      * Returns the upper byte range for a key with a given fixed size maximum suffix
      *
-     * Assumes the minimum key length is one byte
+     * Assumes the minimum key.Length is one byte
      */
     static Bytes upperRange(Bytes key, byte[] maxSuffix)
 {
@@ -59,7 +59,7 @@ class OrderedBytes
         // any key in the range would start at least with the given prefix to be
         // in the range, and have at least SUFFIX_SIZE number of trailing zero bytes.
 
-        // unless there is a maximum key length, you can keep appending more zero bytes
+        // unless there is a maximum key.Length, you can keep appending more zero bytes
         // to keyFrom to create a key that will match the range, yet that would precede
         // KeySchema.toBinaryKey(keyFrom, from, 0) in byte order
         return Bytes.wrap(

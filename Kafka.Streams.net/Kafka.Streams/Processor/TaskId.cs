@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Errors;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Internals.Assignment;
+using System;
+
 namespace Kafka.Streams.Processor
 {
-
-
-
-
-
-
-
     /**
      * The task ID representation composed as topic group ID plus the assigned partition ID.
      */
-    public class TaskId : Comparable<TaskId>
+    public class TaskId : IComparable<TaskId>
     {
 
         /** The ID of the topic group. */
@@ -50,7 +48,7 @@ namespace Kafka.Streams.Processor
          */
         public static TaskId parse(string taskIdStr)
         {
-            int index = taskIdStr.indexOf('_');
+            int index = taskIdStr.IndexOf('_');
             if (index <= 0 || index + 1 >= taskIdStr.Length)
             {
                 throw new TaskIdFormatException(taskIdStr);
@@ -59,8 +57,8 @@ namespace Kafka.Streams.Processor
             try
             {
 
-                int topicGroupId = int.Parse(taskIdStr.substring(0, index));
-                int partition = int.Parse(taskIdStr.substring(index + 1));
+                int topicGroupId = int.Parse(taskIdStr.Substring(0, index));
+                int partition = int.Parse(taskIdStr.Substring(index + 1));
 
                 return new TaskId(topicGroupId, partition);
             }
@@ -73,18 +71,18 @@ namespace Kafka.Streams.Processor
         /**
          * @throws IOException if cannot write to output stream
          */
-        public void writeTo(DataOutputStream out)
+        public void writeTo(DataOutputStream @out)
         {
-        out.writeInt(topicGroupId);
-        out.writeInt(partition);
+            @out.writeInt(topicGroupId);
+            @out.writeInt(partition);
         }
 
         /**
          * @throws IOException if cannot read from input stream
          */
-        public static TaskId readFrom(DataInputStream in)
+        public static TaskId readFrom(DataInputStream input)
         {
-            return new TaskId(in.readInt(), in.readInt());
+            return new TaskId(input.readInt(), input.readInt());
         }
 
         public void writeTo(ByteBuffer buf)
@@ -99,7 +97,7 @@ namespace Kafka.Streams.Processor
         }
 
 
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
@@ -119,7 +117,7 @@ namespace Kafka.Streams.Processor
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             long n = ((long)topicGroupId << 32) | (long)partition;
             return (int)(n % 0xFFFFFFFFL);
@@ -128,8 +126,8 @@ namespace Kafka.Streams.Processor
 
         public int CompareTo(TaskId other)
         {
-            int compare = int.compare(this.topicGroupId, other.topicGroupId);
-            return compare != 0 ? compare : int.compare(this.partition, other.partition);
+            int compare = this.topicGroupId.CompareTo(other.topicGroupId);
+            return compare != 0 ? compare : this.partition.CompareTo(other.partition);
         }
     }
 }

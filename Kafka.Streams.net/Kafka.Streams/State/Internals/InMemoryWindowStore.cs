@@ -64,7 +64,7 @@ namespace Kafka.Streams.State.Internals
 
             if (root != null)
             {
-                context.register(root, (key, value)->
+                context.register(root, (key, value)=>
     {
                     put(Bytes.wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
                 });
@@ -94,7 +94,7 @@ namespace Kafka.Streams.State.Internals
             {
                 if (value != null)
                 {
-                    segmentMap.computeIfAbsent(windowStartTimestamp, t-> new ConcurrentSkipListMap<>());
+                    segmentMap.computeIfAbsent(windowStartTimestamp, t=> new ConcurrentSkipListMap<>());
                     segmentMap[windowStartTimestamp].Add(keyBytes, value);
                 }
                 else
@@ -467,7 +467,7 @@ namespace Kafka.Streams.State.Internals
 
             public static WrappedInMemoryWindowStoreIterator emptyIterator()
             {
-                return new WrappedInMemoryWindowStoreIterator(null, null, null, it-> { }, false);
+                return new WrappedInMemoryWindowStoreIterator(null, null, null, it=> { }, false);
             }
         }
 

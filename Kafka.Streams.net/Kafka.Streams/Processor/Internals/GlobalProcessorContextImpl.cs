@@ -45,7 +45,7 @@ public class GlobalProcessorContextImpl : AbstractProcessorContext
 
 
     public GlobalProcessorContextImpl(StreamsConfig config,
-                                      StateManager stateMgr,
+                                      IStateManager stateMgr,
                                       StreamsMetricsImpl metrics,
                                       ThreadCache cache)
 {

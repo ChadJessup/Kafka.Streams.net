@@ -14,77 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    class TimeDefinitions
+
+    public class RecordTimeDefintion<K, V> : ITimeDefinition<K, V>
     {
+        private static RecordTimeDefintion<K, V> INSTANCE = new RecordTimeDefintion<K, V>();
 
-        private TimeDefinitions() { }
+        private RecordTimeDefintion() { }
 
-        enum TimeDefinitionType
+
+        public static RecordTimeDefintion<K, V> instance()
         {
-
-            RECORD_TIME, WINDOW_END_TIME
+            return RecordTimeDefintion<K, V>.INSTANCE;
         }
 
-        /**
-         * This interface should never be instantiated outside of this.
-         */
-        interface TimeDefinition<K>
-        {
-            long time(IProcessorContext context, K key);
 
-            TimeDefinitionType type();
+        public long time(IProcessorContext<K, V> context, K key)
+        {
+            return context.timestamp();
         }
 
-        public static class RecordTimeDefintion<K> : TimeDefinition<K>
+
+        public TimeDefinitionType type()
         {
-            private static RecordTimeDefintion INSTANCE = new RecordTimeDefintion();
-
-            private RecordTimeDefintion() { }
-
-
-            public static RecordTimeDefintion<K> instance()
-            {
-                return RecordTimeDefintion.INSTANCE;
-            }
-
-
-            public long time(IProcessorContext context, K key)
-            {
-                return context.timestamp();
-            }
-
-
-            public TimeDefinitionType type()
-            {
-                return TimeDefinitionType.RECORD_TIME;
-            }
-        }
-
-        public static class WindowEndTimeDefinition<K> : TimeDefinition<K>
-            where K : Windowed
-        {
-            private static WindowEndTimeDefinition INSTANCE = new WindowEndTimeDefinition();
-
-            private WindowEndTimeDefinition() { }
-
-
-            public static K WindowEndTimeDefinition<K> instance()
-            {
-                return WindowEndTimeDefinition.INSTANCE;
-            }
-
-
-            public long time(IProcessorContext context, K key)
-            {
-                return key.window().end();
-            }
-
-
-            public TimeDefinitionType type()
-            {
-                return TimeDefinitionType.WINDOW_END_TIME;
-            }
+            return TimeDefinitionType.RECORD_TIME;
         }
     }
+}

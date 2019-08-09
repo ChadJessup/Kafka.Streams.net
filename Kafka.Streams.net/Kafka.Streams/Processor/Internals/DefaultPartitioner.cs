@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.State.Internals;
+using System;
+using Kafka.Common;
 
-namespace Kafka.Streams.State
+namespace Kafka.Streams.Processor.Internals
 {
-
-    /**
-     * A key-(value/timestamp) store that supports put/get/delete and range queries.
-     *
-     * @param The key type
-     * @param The value type
-     */
-    public interface TimestampedKeyValueStore<K, V> : IKeyValueStore<K, ValueAndTimestamp<V>>
+    public class DefaultPartitioner
     {
+        public int partition<K, V>(string topic, K key, byte[] keyBytes, V value, object p, Cluster cluster)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

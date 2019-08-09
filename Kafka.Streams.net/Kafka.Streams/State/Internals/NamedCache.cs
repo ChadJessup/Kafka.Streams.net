@@ -158,7 +158,7 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         void put(Bytes key, LRUCacheEntry value)
         {
-            if (!value.isDirty() && dirtyKeys.contains(key))
+            if (!value.isDirty() && dirtyKeys.Contains(key))
             {
                 throw new InvalidOperationException(
                     string.Format(

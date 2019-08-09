@@ -66,7 +66,7 @@ namespace Kafka.Streams
         private void maybeSetRunning()
         {
             // state can be transferred to RUNNING if all threads are either RUNNING or DEAD
-            //for (StreamThread.State state : threadState.values())
+            //foreach (StreamThread.State state in threadState.values())
             //{
             //    if (state != StreamThread.State.RUNNING && state != StreamThread.State.DEAD)
             //    {

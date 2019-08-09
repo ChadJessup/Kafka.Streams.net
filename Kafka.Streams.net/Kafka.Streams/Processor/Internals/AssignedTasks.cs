@@ -15,15 +15,18 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
-    abstract class AssignedTasks<T>
+    public abstract class AssignedTasks<T>
         where T : Task
     {
         ILogger log;
@@ -36,8 +39,9 @@ namespace Kafka.Streams.Processor.Internals
         ConcurrentDictionary<TaskId, T> running = new ConcurrentDictionary<TaskId, T>();
         private Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
 
-        AssignedTasks(LogContext logContext,
-                      string taskTypeName)
+        public AssignedTasks(
+            LogContext logContext,
+            string taskTypeName)
         {
             this.taskTypeName = taskTypeName;
             this.log = logContext.logger(GetType());
@@ -55,10 +59,11 @@ namespace Kafka.Streams.Processor.Internals
          */
         void initializeNewTasks()
         {
-            if (!created.isEmpty())
+            if (created.Any())
             {
                 log.LogDebug("Initializing {}s {}", taskTypeName, created.Keys);
             }
+
             for (IEnumerator<KeyValuePair<TaskId, T>> it = created.iterator(); it.hasNext();)
             {
                 KeyValuePair<TaskId, T> entry = it.next();
@@ -68,7 +73,7 @@ namespace Kafka.Streams.Processor.Internals
                     if (!entry.Value.initializeStateStores())
                     {
                         log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
-                        ((AssignedStreamsTasks)this).AddToRestoring((StreamTask)entry.Value);
+                        ((AssignedStreamsTasks)this).addToRestoring(entry.Value);
                     }
                     else
                     {
@@ -268,7 +273,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             return ToString("");
         }
@@ -276,16 +281,18 @@ namespace Kafka.Streams.Processor.Internals
         public string ToString(string indent)
         {
             StringBuilder builder = new StringBuilder();
+
             describe(builder, running.Values, indent, "Running:");
             describe(builder, suspended.Values, indent, "Suspended:");
             describe(builder, created.Values, indent, "New:");
             return builder.ToString();
         }
 
-        void describe(StringBuilder builder,
-                      List<T> tasks,
-                      string indent,
-                      string name)
+        void describe(
+            StringBuilder builder,
+            List<T> tasks,
+            string indent,
+            string name)
         {
             builder.Append(indent).Append(name);
             foreach (T t in tasks)
@@ -425,7 +432,7 @@ namespace Kafka.Streams.Processor.Internals
                 catch (RuntimeException t)
                 {
                     log.LogError("Failed while closing {} {} due to the following error:",
-                              task.GetType().getSimpleName(),
+                              task.GetType().Name,
                               task.id(),
                               t);
                     if (clean)
@@ -463,7 +470,7 @@ namespace Kafka.Streams.Processor.Internals
             catch (RuntimeException fatalException)
             {
                 log.LogError("Failed while closing {} {} due to the following error:",
-                    task.GetType().getSimpleName(),
+                    task.GetType().Name,
                     task.id(),
                     fatalException);
                 return false;

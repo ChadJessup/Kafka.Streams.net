@@ -49,7 +49,7 @@ namespace Kafka.Streams.State.Internals
             base.init(context, root);
             // save the stream thread as we only ever want to trigger a flush
             // when the stream thread is the current thread.
-            streamThread = Thread.currentThread();
+            streamThread = Thread.CurrentThread;
         }
 
 
@@ -74,24 +74,24 @@ namespace Kafka.Streams.State.Internals
             if (flushListener != null)
             {
                 byte[] rawNewValue = entry.newValue();
-                byte[] rawOldValue = rawNewValue == null || sendOldValues ? wrapped()[entry.key()] : null;
+                byte[] rawOldValue = rawNewValue == null || sendOldValues ? wrapped[entry.key()] : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
                 if (rawNewValue != null || rawOldValue != null)
                 {
                     // we need to get the old values if needed, and then put to store, and then flush
-                    wrapped().Add(entry.key(), entry.newValue());
+                    wrapped.Add(entry.key(), entry.newValue());
 
                     ProcessorRecordContext current = context.recordContext();
-                    context.setRecordContext(entry.entry().context());
+                    context.setRecordContext(entry.entry().context);
                     try
                     {
                         flushListener.apply(
                             entry.key(),
                             rawNewValue,
                             sendOldValues ? rawOldValue : null,
-                            entry.entry().context().timestamp());
+                            entry.entry().context.timestamp());
                     }
                     finally
                     {
@@ -101,7 +101,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                wrapped().Add(entry.key(), entry.newValue());
+                wrapped.Add(entry.key(), entry.newValue());
             }
         }
 
@@ -215,7 +215,7 @@ namespace Kafka.Streams.State.Internals
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             validateStoreOpen();
             Lock theLock;
-            if (Thread.currentThread().Equals(streamThread))
+            if (Thread.CurrentThread.Equals(streamThread))
             {
                 theLock = @lock.writeLock();
             }
@@ -245,14 +245,14 @@ namespace Kafka.Streams.State.Internals
             }
             if (entry == null)
             {
-                byte[] rawValue = wrapped()[key];
+                byte[] rawValue = wrapped[key];
                 if (rawValue == null)
                 {
                     return null;
                 }
                 // only update the cache if this call is on the streamThread
                 // as we don't want other threads to trigger an eviction/flush
-                if (Thread.currentThread().Equals(streamThread))
+                if (Thread.CurrentThread.Equals(streamThread))
                 {
                     cache.Add(cacheName, key, new LRUCacheEntry(rawValue));
                 }
@@ -276,7 +276,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             validateStoreOpen();
-            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped().range(from, to);
+            IKeyValueIterator<Bytes, byte[]> storeIterator = wrapped.range(from, to);
             MemoryLRUCacheBytesIterator cacheIterator = cache.range(cacheName, from, to);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }
@@ -285,7 +285,7 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
             IKeyValueIterator<Bytes, byte[]> storeIterator =
-                new DelegatingPeekingKeyValueIterator<>(this.name(), wrapped().all());
+                new DelegatingPeekingKeyValueIterator<>(this.name(), wrapped.all());
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }
@@ -297,7 +297,7 @@ namespace Kafka.Streams.State.Internals
             {
                 try
                 {
-                    return wrapped().approximateNumEntries();
+                    return wrapped.approximateNumEntries();
                 }
                 finally
                 {

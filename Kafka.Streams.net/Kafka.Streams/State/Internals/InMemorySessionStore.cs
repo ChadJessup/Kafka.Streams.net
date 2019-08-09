@@ -72,7 +72,7 @@ namespace Kafka.Streams.State.Internals
 
             if (root != null)
             {
-                context.register(root, (key, value)->put(SessionKeySchema.from(Bytes.wrap(key)), value));
+                context.register(root, (key, value)=>put(SessionKeySchema.from(Bytes.wrap(key)), value));
             }
             open = true;
         }
@@ -93,9 +93,9 @@ namespace Kafka.Streams.State.Internals
             {
                 if (aggregate != null)
                 {
-                    endTimeMap.computeIfAbsent(windowEndTimestamp, t-> new ConcurrentSkipListMap<>());
+                    endTimeMap.computeIfAbsent(windowEndTimestamp, t=> new ConcurrentSkipListMap<>());
                     ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>> keyMap = endTimeMap[windowEndTimestamp];
-                    keyMap.computeIfAbsent(sessionKey.key(), t-> new ConcurrentSkipListMap<>());
+                    keyMap.computeIfAbsent(sessionKey.key(), t=> new ConcurrentSkipListMap<>());
                     keyMap[sessionKey.key()].Add(sessionKey.window().start(), aggregate);
                 }
                 else
@@ -263,7 +263,7 @@ namespace Kafka.Streams.State.Internals
                                                                  long latestSessionStartTime,
                                                                  IEnumerator<Entry<long, ConcurrentNavigableMap<Bytes, ConcurrentNavigableMap<long, byte[]>>>> endTimeIterator)
         {
-            InMemorySessionStoreIterator iterator = new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it->openIterators.Remove(it));
+            InMemorySessionStoreIterator iterator = new InMemorySessionStoreIterator(keyFrom, keyTo, latestSessionStartTime, endTimeIterator, it=>openIterators.Remove(it));
             openIterators.Add(iterator);
             return iterator;
         }

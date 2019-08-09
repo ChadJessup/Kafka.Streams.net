@@ -46,12 +46,12 @@ public abstract class AbstractProcessorContext : IInternalProcessorContext
     private bool initialized;
     protected ProcessorRecordContext recordContext;
     protected ProcessorNode currentNode;
-    StateManager stateManager;
+    IStateManager stateManager;
 
     public AbstractProcessorContext(TaskId taskId,
                                     StreamsConfig config,
                                     StreamsMetricsImpl metrics,
-                                    StateManager stateManager,
+                                    IStateManager stateManager,
                                     ThreadCache cache)
     {
         this.taskId = taskId;
@@ -77,19 +77,19 @@ public abstract class AbstractProcessorContext : IInternalProcessorContext
     }
 
 
-    public ISerde<object> keySerde()
+    public ISerde<object> keySerde
     {
         return keySerde;
     }
 
 
-    public ISerde<object> valueSerde()
+    public ISerde<object> valueSerde
     {
         return valueSerde;
     }
 
 
-    public File stateDir()
+    public FileInfo stateDir()
     {
         return stateManager.baseDir();
     }
@@ -185,7 +185,7 @@ public abstract class AbstractProcessorContext : IInternalProcessorContext
 
     public Dictionary<string, object> appConfigs()
     {
-        Dictionary<string, object> combined = new HashMap<>();
+        Dictionary<string, object> combined = new Dictionary<>();
         combined.putAll(config.originals());
         combined.putAll(config.Values);
         return combined;

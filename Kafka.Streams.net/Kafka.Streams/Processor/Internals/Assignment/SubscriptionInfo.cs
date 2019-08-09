@@ -159,8 +159,8 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         {
             return 4 + // version
                    16 + // client ID
-                   4 + prevTasks.size() * 8 + // length + prev tasks
-                   4 + standbyTasks.size() * 8; // length + standby tasks
+                   4 + prevTasks.size() * 8 + //.Length + prev tasks
+                   4 + standbyTasks.size() * 8; //.Length + standby tasks
         }
 
         protected void encodeClientUUID(ByteBuffer buf)
@@ -211,9 +211,9 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         {
             return 4 + // version
                    16 + // client ID
-                   4 + prevTasks.size() * 8 + // length + prev tasks
-                   4 + standbyTasks.size() * 8 + // length + standby tasks
-                   4 + endPointBytes.Length; // length + userEndPoint
+                   4 + prevTasks.size() * 8 + //.Length + prev tasks
+                   4 + standbyTasks.size() * 8 + //.Length + standby tasks
+                   4 + endPointBytes.Length; //.Length + userEndPoint
         }
 
         protected void encodeUserEndPoint(ByteBuffer buf,
@@ -263,9 +263,9 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             return 4 + // used version
                    4 + // latest supported version version
                    16 + // client ID
-                   4 + prevTasks.size() * 8 + // length + prev tasks
-                   4 + standbyTasks.size() * 8 + // length + standby tasks
-                   4 + endPointBytes.Length; // length + userEndPoint
+                   4 + prevTasks.size() * 8 + //.Length + prev tasks
+                   4 + standbyTasks.size() * 8 + //.Length + standby tasks
+                   4 + endPointBytes.Length; //.Length + userEndPoint
         }
 
         /**

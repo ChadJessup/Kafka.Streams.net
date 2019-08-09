@@ -14,11 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream
+namespace Kafka.Streams.KStream.Interfaces
 {
-
-
-
     /**
      * The {@code Initializer} interface for creating an initial value in aggregations.
      * {@code Initializer} is used in combination with {@link Aggregator}.
@@ -32,9 +29,8 @@ namespace Kafka.Streams.KStream
      * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger)
      * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
      */
-    public interface Initializer<VA>
+    public interface IInitializer<VA>
     {
-
         /**
          * Return the initial value for an aggregation.
          *

@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
             lock (@lock)
             {
                 // write to temp file and then swap with the existing file
-                FileStream temp = File.OpenWrite(file.FullName + ".tmp");
+                FileStream temp = FileInfo.OpenWrite(file.FullName + ".tmp");
                 LOG.LogTrace("Writing tmp checkpoint file {}", temp.Name);
 
                 FileStream fileOutputStream = new FileStream(temp);
@@ -77,7 +77,7 @@ namespace Kafka.Streams.State.Internals
                 }
 
                 LOG.LogTrace("Swapping tmp checkpoint file {} {}", temp.FullName, file.FullName);
-                File.Move(temp.Name, file.FullName);
+                FileInfo.Move(temp.Name, file.FullName);
             }
         }
 
@@ -166,7 +166,7 @@ namespace Kafka.Streams.State.Internals
             string line = reader.readLine();
             if (line == null)
             {
-                throw new Exception("File ended prematurely.");
+                throw new Exception("FileInfo ended prematurely.");
             }
             return int.Parse(line);
         }

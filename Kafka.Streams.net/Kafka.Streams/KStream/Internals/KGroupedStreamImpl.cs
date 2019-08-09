@@ -7,21 +7,21 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KGroupedStreamImpl<K, V> : AbstractStream<K, V> : IKGroupedStream<K, V>
+    public class KGroupedStreamImpl<K, V> : AbstractStream<K, V>, IKGroupedStream<K, V>
     {
-
         static string REDUCE_NAME = "KSTREAM-REDUCE-";
         static string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
 
         private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
-        KGroupedStreamImpl(string name,
-                            HashSet<string> sourceNodes,
-                            GroupedInternal<K, V> groupedInternal,
-                            bool repartitionRequired,
-                            StreamsGraphNode streamsGraphNode,
-                            InternalStreamsBuilder builder)
-            : base(name, groupedInternal.keySerde(), groupedInternal.valueSerde(), sourceNodes, streamsGraphNode, builder)
+        KGroupedStreamImpl(
+            string name,
+            HashSet<string> sourceNodes,
+            GroupedInternal<K, V> groupedInternal,
+            bool repartitionRequired,
+            StreamsGraphNode streamsGraphNode,
+            InternalStreamsBuilder builder)
+            : base(name, groupedInternal.keySerde, groupedInternal.valueSerde, sourceNodes, streamsGraphNode, builder)
         {
             this.aggregateBuilder = new GroupedStreamAggregateBuilder<>(
                 builder,
@@ -49,12 +49,12 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, builder, REDUCE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
 
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
                 materializedInternal.withValueSerde(valSerde);
             }
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+        public IKTable<K, VR> aggregate<VR>(IInitializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -78,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
@@ -91,7 +91,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> aggregate<VR>(Initializer<VR> initializer,
+        public IKTable<K, VR> aggregate<VR>(IInitializer<VR> initializer,
                                              Aggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
@@ -123,13 +123,13 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
-                materializedInternal.withValueSerde(Serdes.long());
+                materializedInternal.withValueSerde(Serdes.Long());
             }
 
             return doAggregate(
@@ -180,8 +180,8 @@ namespace Kafka.Streams.KStream.Internals
                 new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize(),
                 aggregateSupplier,
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde(),
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde,
+                materializedInternal.valueSerde);
         }
     }
 }

@@ -53,7 +53,7 @@ public class ContextualRecord
         byte[] serializedContext = recordContext.Serialize();
 
         int sizeOfContext = serializedContext.Length;
-        int sizeOfValueLength = int.BYTES;
+        int sizeOfValueLength = sizeof(int);
         int sizeOfValue = value == null ? 0 : value.Length;
         ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + end.Adding);
 

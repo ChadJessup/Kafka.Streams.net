@@ -46,7 +46,7 @@ class KStreamFilter<K, V> : ProcessorSupplier<K, V> {
 {
             if (filterNot ^ predicate.test(key, value))
 {
-                context().forward(key, value);
+                context.forward(key, value);
             }
         }
     }

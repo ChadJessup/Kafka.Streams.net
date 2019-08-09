@@ -1,5 +1,12 @@
+using Kafka.Common.Utils;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Processor;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -12,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
      */
     public class KTableImpl<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableImpl>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableImpl<K, S, V>>();
 
         public static string SOURCE_NAME = "KTABLE-SOURCE-";
 
@@ -36,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
 
-        private ProcessorSupplier<?, object> processorSupplier;
+        private IProcessorSupplier<K, object> processorSupplier;
 
         private string queryableStoreName;
 
@@ -47,30 +54,25 @@ namespace Kafka.Streams.KStream.Internals
                            ISerde<V> valSerde,
                            HashSet<string> sourceNodes,
                            string queryableStoreName,
-                           ProcessorSupplier<?, object> processorSupplier,
+                           IProcessorSupplier<K, object> processorSupplier,
                            StreamsGraphNode streamsGraphNode,
                            InternalStreamsBuilder builder)
+            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
-            base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder);
             this.processorSupplier = processorSupplier;
             this.queryableStoreName = queryableStoreName;
         }
 
-
-        public string queryableStoreName()
-        {
-            return queryableStoreName;
-        }
-
-        private IKTable<K, V> doFilter(IPredicate<K, V> predicate,
-                                       Named named,
-                                       MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal,
-                                       bool filterNot)
+        private IKTable<K, V> doFilter(
+            IPredicate<K, V> predicate,
+            Named named,
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal,
+            bool filterNot)
         {
             ISerde<K> keySerde;
             ISerde<V> valueSerde;
             string queryableStoreName;
-            StoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
 
             if (materializedInternal != null)
             {
@@ -82,12 +84,12 @@ namespace Kafka.Streams.KStream.Internals
                 }
                 // we can inherit parent key and value serde if user do not provide specific overrides, more specifically:
                 // we preserve the key following the order of 1) materialized, 2) parent
-                keySerde = materializedInternal.keySerde() != null ? materializedInternal.keySerde() : this.keySerde;
+                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
                 // we preserve the value following the order of 1) materialized, 2) parent
-                valueSerde = materializedInternal.valueSerde() != null ? materializedInternal.valueSerde() : this.valSerde;
+                valueSerde = materializedInternal.valueSerde != null ? materializedInternal.valueSerde : this.valSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
-                storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
+                storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<K, V>(materializedInternal)).materialize() : null;
             }
             else
             {
@@ -99,10 +101,10 @@ namespace Kafka.Streams.KStream.Internals
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, FILTER_NAME);
 
             IKTableProcessorSupplier<K, V, V> processorSupplier =
-               new KTableFilter<>(this, predicate, filterNot, queryableStoreName);
+               new KTableFilter<K, V>(this, predicate, filterNot, queryableStoreName);
 
             ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType(
-               new ProcessorParameters<>(processorSupplier, name)
+               new ProcessorParameters<K, V>(processorSupplier, name)
            );
 
             StreamsGraphNode tableNode = new TableProcessorNode<>(
@@ -197,7 +199,7 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde;
             ISerde<VR> valueSerde;
             string queryableStoreName;
-            StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+            StoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;
 
             if (materializedInternal != null)
             {
@@ -207,8 +209,8 @@ namespace Kafka.Streams.KStream.Internals
                 {
                     builder.newStoreName(MAPVALUES_NAME);
                 }
-                keySerde = materializedInternal.keySerde() != null ? materializedInternal.keySerde() : this.keySerde;
-                valueSerde = materializedInternal.valueSerde();
+                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
+                valueSerde = materializedInternal.valueSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
@@ -324,14 +326,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    string[] stateStoreNames)
         {
             return doTransformValues(transformerSupplier, null, NamedInternal.empty(), stateStoreNames);
         }
 
 
-        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Named named,
                                                    string[] stateStoreNames)
         {
@@ -340,7 +342,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                    string[] stateStoreNames)
         {
@@ -348,7 +350,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> transformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        public IKTable<K, VR> transformValues(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                    Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
                                                    Named named,
                                                    string[] stateStoreNames)
@@ -360,7 +362,7 @@ namespace Kafka.Streams.KStream.Internals
             return doTransformValues(transformerSupplier, materializedInternal, new NamedInternal(named), stateStoreNames);
         }
 
-        private IKTable<K, VR> doTransformValues(ValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
+        private IKTable<K, VR> doTransformValues(IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
                                                       MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
                                                       NamedInternal namedInternal,
                                                       string[] stateStoreNames)
@@ -369,15 +371,15 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde;
             ISerde<VR> valueSerde;
             string queryableStoreName;
-            StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+            StoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;
 
             if (materializedInternal != null)
             {
                 // don't inherit parent value serde, since this operation may change the value type, more specifically:
                 // we preserve the key following the order of 1) materialized, 2) parent, 3) null
-                keySerde = materializedInternal.keySerde() != null ? materializedInternal.keySerde() : this.keySerde;
+                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
                 // we preserve the value following the order of 1) materialized, 2) null
-                valueSerde = materializedInternal.valueSerde();
+                valueSerde = materializedInternal.valueSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<>(materializedInternal)).materialize() : null;
@@ -433,7 +435,7 @@ namespace Kafka.Streams.KStream.Internals
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
 
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, TOSTREAM_NAME);
-            ProcessorSupplier<K, Change<V>> kStreamMapValues = new KStreamMapValues<>((key, change)->change.newValue);
+            ProcessorSupplier<K, Change<V>> kStreamMapValues = new KStreamMapValues<>((key, change)=>change.newValue);
             ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType(
                new ProcessorParameters<>(kStreamMapValues, name)
            );
@@ -463,7 +465,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, V> suppress(Suppressed<K> suppressed)
+        public IKTable<K, V> suppress(ISuppressed<K> suppressed)
         {
             string name;
             if (suppressed is NamedSuppressed)
@@ -508,7 +510,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private SuppressedInternal<K> buildSuppress(Suppressed<K> suppress, string name)
+        private SuppressedInternal<K> buildSuppress(ISuppressed<K> suppress, string name)
         {
             if (suppress is FinalResultsSuppressionBuilder)
             {
@@ -628,25 +630,27 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> leftJoin(IKTable<K, VO> other,
-                                                IValueJoiner<V, VO, VR> joiner,
-                                                Named named,
-                                                Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, VR> leftJoin<VR, VO>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named,
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-               new MaterializedInternal<>(materialized, builder, MERGE_NAME);
+               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, MERGE_NAME);
 
             return doJoin(other, joiner, named, materializedInternal, true, false);
         }
 
 
-        private IKTable<K, VR> doJoin(IKTable<K, VO> other,
-                                               IValueJoiner<V, VO, VR> joiner,
-                                               Named joinName,
-                                               MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
-                                               bool leftOuter,
-                                               bool rightOuter)
+        private IKTable<K, VR> doJoin<VR, VO>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named joinName,
+            MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal,
+            bool leftOuter,
+            bool rightOuter)
         {
             other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
             joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
@@ -670,18 +674,18 @@ namespace Kafka.Streams.KStream.Internals
 
             if (!leftOuter)
             { // inner
-                joinThis = new KTableKTableInnerJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
-                joinOther = new KTableKTableInnerJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
+                joinThis = new KTableKTableInnerJoin<>(this, (KTableImpl<K, object, VO>) other, joiner);
+                joinOther = new KTableKTableInnerJoin<>((KTableImpl<K, object, VO>) other, this, reverseJoiner(joiner));
             }
             else if (!rightOuter)
             { // left
-                joinThis = new KTableKTableLeftJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
-                joinOther = new KTableKTableRightJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
+                joinThis = new KTableKTableLeftJoin<>(this, (KTableImpl<K, object, VO>) other, joiner);
+                joinOther = new KTableKTableRightJoin<>((KTableImpl<K, object, VO>) other, this, reverseJoiner(joiner));
             }
             else
             { // outer
-                joinThis = new KTableKTableOuterJoin<>(this, (KTableImpl < K, ?, VO >) other, joiner);
-                joinOther = new KTableKTableOuterJoin<>((KTableImpl < K, ?, VO >) other, this, reverseJoiner(joiner));
+                joinThis = new KTableKTableOuterJoin<>(this, (KTableImpl< K, object, VO>) other, joiner);
+                joinOther = new KTableKTableOuterJoin<>((KTableImpl<K, object, VO>) other, this, reverseJoiner(joiner));
             }
 
             string joinThisName = renamed.suffixWithOrElseGet("-join-this", builder, JOINTHIS_NAME);
@@ -693,12 +697,12 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde;
             ISerde<VR> valueSerde;
             string queryableStoreName;
-            StoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+            StoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;
 
             if (materializedInternal != null)
             {
-                keySerde = materializedInternal.keySerde() != null ? materializedInternal.keySerde() : this.keySerde;
-                valueSerde = materializedInternal.valueSerde();
+                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
+                valueSerde = materializedInternal.valueSerde;
                 queryableStoreName = materializedInternal.storeName();
                 storeBuilder = new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize();
             }
@@ -729,8 +733,8 @@ namespace Kafka.Streams.KStream.Internals
             // we can inherit parent key serde if user do not provide specific overrides
             return new KTableImpl<K, Change<VR>, VR>(
                 kTableKTableJoinNode.nodeName(),
-                kTableKTableJoinNode.keySerde(),
-                kTableKTableJoinNode.valueSerde(),
+                kTableKTableJoinNode.keySerde,
+                kTableKTableJoinNode.valueSerde,
                 allSourceNodes,
                 kTableKTableJoinNode.queryableStoreName(),
                 kTableKTableJoinNode.joinMerger(),
@@ -753,7 +757,7 @@ namespace Kafka.Streams.KStream.Internals
             selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
             serialized = serialized ?? throw new System.ArgumentNullException("serialized can't be null", nameof(serialized));
             SerializedInternal<K1, V1> serializedInternal = new SerializedInternal<>(serialized);
-            return groupBy(selector, Grouped.with(serializedInternal.keySerde(), serializedInternal.valueSerde()));
+            return groupBy(selector, Grouped.with(serializedInternal.keySerde, serializedInternal.valueSerde));
         }
 
 
@@ -763,7 +767,7 @@ namespace Kafka.Streams.KStream.Internals
             selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
             grouped = grouped ?? throw new System.ArgumentNullException("grouped can't be null", nameof(grouped));
             GroupedInternal<K1, V1> groupedInternal = new GroupedInternal<>(grouped);
-            string selectName = new NamedInternal(groupedInternal.name()).orElseGenerateWithPrefix(builder, SELECT_NAME);
+            string selectName = new NamedInternal(groupedInternal.name).orElseGenerateWithPrefix(builder, SELECT_NAME);
 
             IKTableProcessorSupplier<K, V, KeyValue<K1, V1>> selectSupplier = new KTableRepartitionMap<>(this, selector);
             ProcessorParameters<K, Change<V>> processorParameters = new ProcessorParameters<>(selectSupplier, selectName);
@@ -784,7 +788,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTableValueGetterSupplier<K, V> valueGetterSupplier()
+        public IKTableValueGetterSupplier<K, V> valueGetterSupplier()
         {
             if (processorSupplier is KTableSource)
             {

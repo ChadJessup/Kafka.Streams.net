@@ -30,12 +30,12 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
-        public ISerde<K> keySerde()
+        public ISerde<K> keySerde
         {
             return keySerde;
         }
 
-        public ISerde<V> valueSerde()
+        public ISerde<V> valueSerde
         {
             return valueSerde;
         }

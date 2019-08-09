@@ -129,7 +129,7 @@ public abstract class AbstractTask : Task
     }
 
 
-    public IProcessorContext context()
+    public IProcessorContext context
 {
         return processorContext;
     }

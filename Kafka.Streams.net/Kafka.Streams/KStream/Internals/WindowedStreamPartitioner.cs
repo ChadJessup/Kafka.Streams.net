@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
-    public class WindowedStreamPartitioner<K, V> : StreamPartitioner<Windowed<K>, V>
+    public class WindowedStreamPartitioner<K, V> : IStreamPartitioner<Windowed<K>, V>
     {
-
         private IWindowedSerializer<K> serializer;
 
         public WindowedStreamPartitioner(IWindowedSerializer<K> serializer)
@@ -43,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
             byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
 
             // hash the keyBytes to choose a partition
-            return toPositive(Utils.murmur2(keyBytes)) % numPartitions;
+            return 0; // toPositive(Utils.murmur2(keyBytes)) % numPartitions;
         }
     }
 }

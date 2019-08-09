@@ -14,30 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.State;
+using Kafka.Streams.Processor;
+using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    class KStreamKStreamJoin<K, R, V1, V2> : ProcessorSupplier<K, V1>
+    public partial class KStreamKStreamJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger < KStreamKStreamJoin);
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKStreamJoin<K, R, V1, V2>>();
 
         private string otherWindowName;
         private long joinBeforeMs;
@@ -46,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
         private IValueJoiner<V1, V2, R> joiner;
         private bool outer;
 
-        KStreamKStreamJoin(string otherWindowName, long joinBeforeMs, long joinAfterMs, IValueJoiner<V1, V2, R> joiner, bool outer)
+        public KStreamKStreamJoin(string otherWindowName, long joinBeforeMs, long joinAfterMs, IValueJoiner<V1, V2, R> joiner, bool outer)
         {
             this.otherWindowName = otherWindowName;
             this.joinBeforeMs = joinBeforeMs;
@@ -55,72 +39,9 @@ namespace Kafka.Streams.KStream.Internals
             this.outer = outer;
         }
 
-
-        public Processor<K, V1> get()
+        public IProcessor<K, V1> get()
         {
             return new KStreamKStreamJoinProcessor();
-        }
-
-        private KStreamKStreamJoinProcessor : AbstractProcessor<K, V1> {
-
-        private IWindowStore<K, V2> otherWindow;
-        private StreamsMetricsImpl metrics;
-        private Sensor skippedRecordsSensor;
-
-
-
-        public void init(IProcessorContext context)
-        {
-            base.init(context);
-            metrics = (StreamsMetricsImpl)context.metrics();
-            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-
-            otherWindow = (IWindowStore<K, V2>)context.getStateStore(otherWindowName);
-        }
-
-
-
-        public void process(K key, V1 value)
-        {
-            // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
-            //
-            // we also ignore the record if value is null, because in a key-value data model a null-value indicates
-            // an empty message (ie, there is nothing to be joined) -- this contrast SQL NULL semantics
-            // furthermore, on left/outer joins 'null' in ValueJoiner#apply() indicates a missing record --
-            // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
-            if (key == null || value == null)
-            {
-                LOG.LogWarning(
-                    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().Topic, context().partition(), context().offset()
-                );
-                skippedRecordsSensor.record();
-                return;
-            }
-
-            bool needOuterJoin = outer;
-
-            long inputRecordTimestamp = context().timestamp();
-            long timeFrom = Math.Max(0L, inputRecordTimestamp - joinBeforeMs);
-            long timeTo = Math.Max(0L, inputRecordTimestamp + joinAfterMs);
-
-            using WindowStoreIterator<V2> iter = otherWindow.fetch(key, timeFrom, timeTo);
-            {
-                while (iter.hasNext())
-                {
-                    needOuterJoin = false;
-                    KeyValue<long, V2> otherRecord = iter.next();
-                    context().forward(
-                        key,
-                        joiner.apply(value, otherRecord.value),
-                        To.all().withTimestamp(Math.Max(inputRecordTimestamp, otherRecord.key)));
-                }
-
-                if (needOuterJoin)
-                {
-                    context().forward(key, joiner.apply(value, null));
-                }
-            }
         }
     }
 }

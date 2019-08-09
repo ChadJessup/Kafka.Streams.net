@@ -221,7 +221,7 @@ namespace Kafka.Streams.State.Internals
         private void logValue(Bytes key, BufferKey bufferKey, BufferValue value)
         {
 
-            int sizeOfBufferTime = long.BYTES;
+            int sizeOfBufferTime = sizeof(long);
             ByteBuffer buffer = value.Serialize(sizeOfBufferTime);
             buffer.putLong(bufferKey.time());
 
@@ -398,7 +398,7 @@ namespace Kafka.Streams.State.Internals
                         changelogTopic,
                         new Change<>(bufferValue.newValue(), bufferValue.oldValue())
                     );
-                    callback.accept(new Eviction<>(key, value, bufferValue.context()));
+                    callback.accept(new Eviction<>(key, value, bufferValue.context));
 
                     delegate.Remove();
                     index.Remove(next.Key.key());

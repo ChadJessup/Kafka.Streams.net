@@ -8,12 +8,12 @@ namespace Kafka.Streams.KStream.Internals
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamAggregate<K, V, T>>();
         private string storeName;
-        private Initializer<T> initializer;
+        private IInitializer<T> initializer;
         private Aggregator<K, V, T> aggregator;
 
         private bool sendOldValues = false;
 
-        KStreamAggregate(string storeName, Initializer<T> initializer, Aggregator<K, V, T> aggregator)
+        KStreamAggregate(string storeName, IInitializer<T> initializer, Aggregator<K, V, T> aggregator)
         {
             this.storeName = storeName;
             this.initializer = initializer;
@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private KStreamAggregateProcessor : AbstractProcessor<K, V>
         {
-        private TimestampedKeyValueStore<K, T> store;
+        private ITimestampedKeyValueStore<K, T> store;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
         private TimestampedTupleForwarder<K, T> tupleForwarder;
@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-            store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<>(
                 store,
                 context,
@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().Topic, context().partition(), context().offset()
+                    key, value, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
@@ -78,12 +78,12 @@ namespace Kafka.Streams.KStream.Internals
             if (oldAgg == null)
             {
                 oldAgg = initializer.apply();
-                newTimestamp = context().timestamp();
+                newTimestamp = context.timestamp();
             }
             else
             {
                 oldAgg = oldAggAndTimestamp.value();
-                newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
             }
 
             newAgg = aggregator.apply(key, value, oldAgg);
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public KTableValueGetterSupplier<K, T> view()
+    public IKTableValueGetterSupplier<K, T> view()
     {
         //    return new KTableValueGetterSupplier<K, T>()
         //    {
@@ -113,15 +113,15 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    private class KStreamAggregateValueGetter : KTableValueGetter<K, T>
+    private class KStreamAggregateValueGetter : IKTableValueGetter<K, T>
     {
-        private TimestampedKeyValueStore<K, T> store;
+        private ITimestampedKeyValueStore<K, T> store;
 
 
 
         public void init(IProcessorContext context)
         {
-            store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
         }
 
 

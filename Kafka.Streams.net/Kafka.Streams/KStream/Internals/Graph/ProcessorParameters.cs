@@ -31,8 +31,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public IProcessorSupplier<K, V> processorSupplier { get; }
         public string processorName { get; }
 
-        public ProcessorParameters(IProcessorSupplier<K, V> processorSupplier,
-                                    string processorName)
+        public ProcessorParameters(
+            IProcessorSupplier<K, V> processorSupplier,
+            string processorName)
         {
             this.processorSupplier = processorSupplier;
             this.processorName = processorName;

@@ -16,7 +16,6 @@
  */
 using Confluent.Kafka;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Kafka.Common
@@ -31,7 +30,7 @@ namespace Kafka.Common
         private HashSet<string> unauthorizedTopics;
         private HashSet<string> invalidTopics;
         private HashSet<string> internalTopics;
-        private INode controller;
+        private Node controller;
         private Dictionary<TopicPartition, PartitionMetadata> partitionsByTopicPartition;
         private Dictionary<string, List<PartitionMetadata>> partitionsByTopic;
         private Dictionary<string, List<PartitionMetadata>> availablePartitionsByTopic;
@@ -49,7 +48,7 @@ namespace Kafka.Common
                        List<PartitionMetadata> partitions,
                        HashSet<string> unauthorizedTopics,
                        HashSet<string> internalTopics)
-            : this(clusterId, false, nodes, partitions, unauthorizedTopics, Collections.emptySet(), internalTopics, null)
+            : this(clusterId, false, nodes, partitions, unauthorizedTopics, new HashSet<string>(), internalTopics, null)
         {
         }
 
@@ -58,13 +57,14 @@ namespace Kafka.Common
          * @param nodes The nodes in the cluster
          * @param partitions Information about a subset of the topic-partitions this cluster hosts
          */
-        public Cluster(string clusterId,
-                       List<Node> nodes,
-                       List<PartitionMetadata> partitions,
-                       HashSet<string> unauthorizedTopics,
-                       HashSet<string> internalTopics,
-                       Node controller)
-            : this(clusterId, false, nodes, partitions, unauthorizedTopics, Collections.emptySet(), internalTopics, controller)
+        public Cluster(
+            string clusterId,
+            List<Node> nodes,
+            List<PartitionMetadata> partitions,
+            HashSet<string> unauthorizedTopics,
+            HashSet<string> internalTopics,
+            Node controller)
+            : this(clusterId, false, nodes, partitions, unauthorizedTopics, new HashSet<string>(), internalTopics, controller)
         {
         }
 
@@ -93,48 +93,48 @@ namespace Kafka.Common
                         HashSet<string> internalTopics,
                         Node controller)
         {
-            this.isBootstrapConfigured = isBootstrapConfigured;
-            this.clusterResource = new ClusterResource(clusterId);
-            // make a randomized, unmodifiable copy of the nodes
-            List<Node> copy = new List<Node>(nodes);
-            Collections.shuffle(copy);
-            this.nodes = Collections.unmodifiableList(copy);
+            //this.isBootstrapConfigured = isBootstrapConfigured;
+            //this.clusterResource = new ClusterResource(clusterId);
+            //// make a randomized, unmodifiable copy of the nodes
+            //List<Node> copy = new List<Node>(nodes);
+            //Collections.shuffle(copy);
+            //this.nodes = Collections.unmodifiableList(copy);
 
-            // Index the nodes for quick lookup
-            Dictionary<int, Node> tmpNodesById = new Dictionary<int, Node>();
+            //// Index the nodes for quick lookup
+            //Dictionary<int, Node> tmpNodesById = new Dictionary<int, Node>();
 
-            foreach (var node in nodes)
-            {
-                tmpNodesById.Add(node.id(), node);
-            }
+            //foreach (var node in nodes)
+            //{
+            //    tmpNodesById.Add(node.id, node);
+            //}
 
-            this.nodesById = Collections.unmodifiableMap(tmpNodesById);
+            //this.nodesById = Collections.unmodifiableMap(tmpNodesById);
 
-            // index the partition infos by topic, topic+partition, and node
-            Dictionary<TopicPartition, PartitionMetadata> tmpPartitionsByTopicPartition = new Dictionary<string, List<PartitionMetadata>>(partitions.Count);
-            Dictionary<string, List<PartitionMetadata>> tmpPartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
-            Dictionary<string, List<PartitionMetadata>> tmpAvailablePartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
-            Dictionary<int, List<PartitionMetadata>> tmpPartitionsByNode = new Dictionary<int, List<PartitionMetadata>>();
+            //// index the partition infos by topic, topic+partition, and node
+            //Dictionary<TopicPartition, PartitionMetadata> tmpPartitionsByTopicPartition = new Dictionary<string, List<PartitionMetadata>>(partitions.Count);
+            //Dictionary<string, List<PartitionMetadata>> tmpPartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
+            //Dictionary<string, List<PartitionMetadata>> tmpAvailablePartitionsByTopic = new Dictionary<string, List<PartitionMetadata>>();
+            //Dictionary<int, List<PartitionMetadata>> tmpPartitionsByNode = new Dictionary<int, List<PartitionMetadata>>();
 
-            foreach (var p in partitions)
-            {
-                tmpPartitionsByTopicPartition.Add(new TopicPartition(p.topic(), p.partition()), p);
-                tmpPartitionsByTopic.Zip(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
-                if (p.leader() != null)
-                {
-                    tmpAvailablePartitionsByTopic.merge(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
-                    tmpPartitionsByNode.merge(p.leader().id(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
-                }
-            }
-            this.partitionsByTopicPartition = Collections.unmodifiableMap(tmpPartitionsByTopicPartition);
-            this.partitionsByTopic = Collections.unmodifiableMap(tmpPartitionsByTopic);
-            this.availablePartitionsByTopic = Collections.unmodifiableMap(tmpAvailablePartitionsByTopic);
-            this.partitionsByNode = Collections.unmodifiableMap(tmpPartitionsByNode);
+            //foreach (var p in partitions)
+            //{
+            //    tmpPartitionsByTopicPartition.Add(new TopicPartition(p.topic(), p.partition()), p);
+            //    tmpPartitionsByTopic.Zip(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
+            //    if (p.leader() != null)
+            //    {
+            //        tmpAvailablePartitionsByTopic.merge(p.topic(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
+            //        tmpPartitionsByNode.merge(p.leader().id(), Collections.singletonList(p), Utils::concatListsUnmodifiable);
+            //    }
+            //}
+            //this.partitionsByTopicPartition = Collections.unmodifiableMap(tmpPartitionsByTopicPartition);
+            //this.partitionsByTopic = Collections.unmodifiableMap(tmpPartitionsByTopic);
+            //this.availablePartitionsByTopic = Collections.unmodifiableMap(tmpAvailablePartitionsByTopic);
+            //this.partitionsByNode = Collections.unmodifiableMap(tmpPartitionsByNode);
 
-            this.unauthorizedTopics = Collections.unmodifiableSet(unauthorizedTopics);
-            this.invalidTopics = Collections.unmodifiableSet(invalidTopics);
-            this.internalTopics = Collections.unmodifiableSet(internalTopics);
-            this.controller = controller;
+            //this.unauthorizedTopics = Collections.unmodifiableSet(unauthorizedTopics);
+            //this.invalidTopics = Collections.unmodifiableSet(invalidTopics);
+            //this.internalTopics = Collections.unmodifiableSet(internalTopics);
+            //this.controller = controller;
         }
 
         /**
@@ -142,8 +142,13 @@ namespace Kafka.Common
          */
         public static Cluster empty()
         {
-            return new Cluster(null, new ArrayList<>(0), new ArrayList<>(0), Collections.emptySet(),
-                Collections.emptySet(), null);
+            return new Cluster(
+                null,
+                new List<Node>(0),
+                new List<PartitionMetadata>(0),
+                new HashSet<string>(),
+                new HashSet<string>(),
+                null);
         }
 
         /**
@@ -151,43 +156,44 @@ namespace Kafka.Common
          * @param addresses The addresses
          * @return A cluster for these hosts/ports
          */
-        public static Cluster bootstrap(List<InetSocketAddress> addresses)
-        {
-            List<Node> nodes = new List<Node>();
-            int nodeId = -1;
-            foreach (var address in addresses)
-            {
-                nodes.Add(new Node(nodeId--, address.getHostString(), address.getPort()));
-            }
+        //public static Cluster bootstrap(List<INetSocketAddress> addresses)
+        //{
+        //    List<Node> nodes = new List<Node>();
+        //    int nodeId = -1;
+        //    foreach (var address in addresses)
+        //    {
+        //        nodes.Add(new Node(nodeId--, address.getHostString(), address.getPort()));
+        //    }
 
-            return new Cluster(null, true, nodes, new ArrayList<>(0),
-                Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), null);
-        }
+        //    return new Cluster(null, true, nodes, new List<>(0),
+        //        Collections.emptySet(), Collections.emptySet(), Collections.emptySet(), null);
+        //}
 
         /**
          * Return a copy of this cluster combined with `partitions`.
          */
-        public Cluster withPartitions(Dictionary<TopicPartition, PartitionMetadata> partitions)
-        {
-            var combinedPartitions = new Dictionary<TopicPartition, PartitionMetadata>(this.partitionsByTopicPartition);
-            combinedPartitions.putAll(partitions);
-            return new Cluster(
-                clusterResource.clusterId(),
-                this.nodes,
-                combinedPartitions.Values,
-                new Dictionary<TopicPartition, PartitionMetadata>(this.unauthorizedTopics),
-                new Dictionary<TopicPartition, PartitionMetadata>(this.invalidTopics),
-                new Dictionary<TopicPartition, PartitionMetadata>(this.internalTopics), this.controller);
-        }
+        //public Cluster withPartitions(Dictionary<TopicPartition, PartitionMetadata> partitions)
+        //{
+        //    var combinedPartitions = new Dictionary<TopicPartition, PartitionMetadata>(this.partitionsByTopicPartition);
+        //    combinedPartitions = combinedPartitions.Union(partitions).ToDictionary();
+
+        //    return new Cluster(
+        //        clusterResource.clusterId(),
+        //        this.nodes,
+        //        combinedPartitions.Values,
+        //        new Dictionary<TopicPartition, PartitionMetadata>(this.unauthorizedTopics),
+        //        new Dictionary<TopicPartition, PartitionMetadata>(this.invalidTopics),
+        //        new Dictionary<TopicPartition, PartitionMetadata>(this.internalTopics), this.controller);
+        //}
 
         /**
          * Get the node by the node id (or null if no such node exists)
          * @param id The id of the node
          * @return The node, or null if no such node exists
          */
-        public INode nodeById(int id)
+        public Node nodeById(int id)
         {
-            return this.nodesById.get(id);
+            return this.nodesById[id];
         }
 
         /**
@@ -196,36 +202,36 @@ namespace Kafka.Common
          * @param id
          * @return the node
          */
-        public Optional<Node> nodeIfOnline(TopicPartition partition, int id)
-        {
-            Node node = nodeById(id);
-            if (node != null && !Arrays.asList(partition(partition).offlineReplicas()).contains(node))
-            {
-                return Optional.of(node);
-            }
-            else
-            {
-                return Optional.empty();
-            }
-        }
+        //public Optional<Node> nodeIfOnline(TopicPartition partition, int id)
+        //{
+        //    Node node = nodeById(id);
+        //    if (node != null && !Arrays.asList(partition(partition).offlineReplicas()).Contains(node))
+        //    {
+        //        return Optional.of(node);
+        //    }
+        //    else
+        //    {
+        //        return Optional.empty();
+        //    }
+        //}
 
         /**
          * Get the current leader for the given topic-partition
          * @param topicPartition The topic and partition we want to know the leader for
          * @return The node that is the leader for this topic-partition, or null if there is currently no leader
          */
-        public Node leaderFor(TopicPartition topicPartition)
-        {
-            PartitionMetadata info = partitionsByTopicPartition.get(topicPartition);
-            if (info == null)
-                return null;
-            else
-                return info.leader();
-        }
+        //public Node leaderFor(TopicPartition topicPartition)
+        //{
+        //    PartitionMetadata LogInformation = partitionsByTopicPartition.get(topicPartition);
+        //    if (LogInformation == null)
+        //        return null;
+        //    else
+        //        return LogInformation.leader();
+        //}
 
         /**
          * Get the metadata for the specified partition
-         * @param topicPartition The topic and partition to fetch info for
+         * @param topicPartition The topic and partition to fetch LogInformation for
          * @return The metadata about the given topic and partition, or null if none is found
          */
         public PartitionMetadata partition(TopicPartition topicPartition)
@@ -238,10 +244,10 @@ namespace Kafka.Common
          * @param topic The topic name
          * @return A list of partitions
          */
-        public List<PartitionMetadata> partitionsForTopic(string topic)
-        {
-            return partitionsByTopic.getOrDefault(topic, Collections.emptyList());
-        }
+        //public List<PartitionMetadata> partitionsForTopic(string topic)
+        //{
+        //    return partitionsByTopic.getOrDefault(topic, Collections.emptyList());
+        //}
 
         /**
          * Get the number of partitions for the given topic.
@@ -250,8 +256,10 @@ namespace Kafka.Common
          */
         public int partitionCountForTopic(string topic)
         {
-            List<PartitionMetadata> partitions = this.partitionsByTopic.get(topic);
-            return partitions == null ? null : partitions.size();
+            List<PartitionMetadata> partitions = this.partitionsByTopic[topic];
+            return partitions == null
+                ? 0
+                : partitions.Count;
         }
 
         /**
@@ -259,20 +267,20 @@ namespace Kafka.Common
          * @param topic The topic name
          * @return A list of partitions
          */
-        public List<PartitionMetadata> availablePartitionsForTopic(string topic)
-        {
-            return availablePartitionsByTopic.getOrDefault(topic, Collections.emptyList());
-        }
+        //public List<PartitionMetadata> availablePartitionsForTopic(string topic)
+        //{
+        //    return availablePartitionsByTopic.getOrDefault(topic, Collections.emptyList());
+        //}
 
         /**
          * Get the list of partitions whose leader is this node
          * @param nodeId The node id
          * @return A list of partitions
          */
-        public List<PartitionMetadata> partitionsForNode(int nodeId)
-        {
-            return partitionsByNode.getOrDefault(nodeId, Collections.emptyList());
-        }
+        //public List<PartitionMetadata> partitionsForNode(int nodeId)
+        //{
+        //    return partitionsByNode.getOrDefault(nodeId, Collections.emptyList());
+        //}
 
         /**
          * Get all topics.
@@ -309,8 +317,8 @@ namespace Kafka.Common
 
         public override int GetHashCode()
         {
-            return Objects.hash(isBootstrapConfigured, nodes, unauthorizedTopics, invalidTopics, internalTopics, controller,
-                    partitionsByTopicPartition, clusterResource);
+            return (isBootstrapConfigured, nodes, unauthorizedTopics, invalidTopics, internalTopics, controller,
+                    partitionsByTopicPartition, clusterResource).GetHashCode();
         }
     }
 }

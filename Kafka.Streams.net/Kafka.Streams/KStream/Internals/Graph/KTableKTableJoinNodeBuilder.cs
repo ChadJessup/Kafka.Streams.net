@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             private string[] joinThisStoreNames;
             private string[] joinOtherStoreNames;
             private string queryableStoreName;
-            private IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder;
+            private IStoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;
 
             public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withNodeName(string nodeName)
             {
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 return this;
             }
 
-            public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder(IStoreBuilder<TimestampedKeyValueStore<K, VR>> storeBuilder)
+            public KTableKTableJoinNodeBuilder<K, V1, V2, VR> withStoreBuilder(IStoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder)
             {
                 this.storeBuilder = storeBuilder;
                 return this;
@@ -103,13 +103,14 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             public KTableKTableJoinNode<K, V1, V2, VR> build()
             {
-                return new KTableKTableJoinNode<K, V1, V2, VR>(nodeName,
+                return new KTableKTableJoinNode<K, V1, V2, VR>(
+                    nodeName,
                     joinThisProcessorParameters,
                     joinOtherProcessorParameters,
                     new ProcessorParameters<K, V>(
                         KTableKTableJoinMerger.of(
-                            (IKTableProcessorSupplier<K, V1, VR>)(joinThisProcessorParameters.processorSupplier()),
-                            (IKTableProcessorSupplier<K, V2, VR>)(joinOtherProcessorParameters.processorSupplier()),
+                            (IKTableProcessorSupplier<K, V1, VR>)(joinThisProcessorParameters.processorSupplier),
+                            (IKTableProcessorSupplier<K, V2, VR>)(joinOtherProcessorParameters.processorSupplier),
                             queryableStoreName),
                         nodeName),
                     thisJoinSide,

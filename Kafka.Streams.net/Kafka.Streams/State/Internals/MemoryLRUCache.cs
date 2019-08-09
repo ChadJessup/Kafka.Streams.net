@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * An in-memory LRU cache store based on HashSet and HashMap.
+     * An in-memory LRU cache store based on HashSet and Dictionary.
      */
     public class MemoryLRUCache : IKeyValueStore<Bytes, byte[]>
     {

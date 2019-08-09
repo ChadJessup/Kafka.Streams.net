@@ -14,50 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KTableMaterializedValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, V>
+    {
+        private string storeName;
 
+        public KTableMaterializedValueGetterSupplier(string storeName)
+        {
+            this.storeName = storeName;
+        }
 
-
-
-
-
-public class KTableMaterializedValueGetterSupplier<K, V> : KTableValueGetterSupplier<K, V> {
-    private  string storeName;
-
-    KTableMaterializedValueGetterSupplier( string storeName)
-{
-        this.storeName = storeName;
-    }
-
-    public KTableValueGetter<K, V> get()
-{
-        return new KTableMaterializedValueGetter();
-    }
-
-
-    public string[] storeNames()
-{
-        return new string[]{storeName};
-    }
-
-    private KTableMaterializedValueGetter : KTableValueGetter<K, V> {
-        private TimestampedKeyValueStore<K, V> store;
-
-
-
-        public void init( IProcessorContext context)
-{
-            store = (TimestampedKeyValueStore<K, V>) context.getStateStore(storeName);
+        public IKTableValueGetter<K, V> get()
+        {
+            return new KTableMaterializedValueGetter<K, V>();
         }
 
 
-        public ValueAndTimestamp<V> get( K key)
-{
-            return store[key];
+        public string[] storeNames()
+        {
+            return new string[] { storeName };
         }
-
-
-        public void close() {}
     }
 }

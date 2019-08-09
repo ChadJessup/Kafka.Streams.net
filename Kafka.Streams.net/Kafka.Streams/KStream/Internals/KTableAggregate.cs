@@ -33,14 +33,14 @@ namespace Kafka.Streams.KStream.Internals
     {
 
         private string storeName;
-        private Initializer<T> initializer;
+        private IInitializer<T> initializer;
         private Aggregator<K, V, T>.Add;
     private Aggregator<K, V, T> Remove;
 
         private bool sendOldValues = false;
 
         KTableAggregate(string storeName,
-                         Initializer<T> initializer,
+                         IInitializer<T> initializer,
                          Aggregator<K, V, T>.Add,
                          Aggregator<K, V, T> Remove)
         {
@@ -94,13 +94,13 @@ namespace Kafka.Streams.KStream.Internals
             ValueAndTimestamp<T> oldAggAndTimestamp = store[key];
             T oldAgg = getValueOrNull(oldAggAndTimestamp);
             T intermediateAgg;
-            long newTimestamp = context().timestamp();
+            long newTimestamp = context.timestamp();
 
             // first try to Remove the old value
             if (value.oldValue != null && oldAgg != null)
             {
                 intermediateAgg = Remove.apply(key, value.oldValue, oldAgg);
-                newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
             }
             else
             {
@@ -125,7 +125,7 @@ namespace Kafka.Streams.KStream.Internals
                 newAgg =.Add.apply(key, value.newValue, initializedAgg);
                 if (oldAggAndTimestamp != null)
                 {
-                    newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                    newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
                 }
             }
             else
@@ -142,7 +142,7 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public KTableValueGetterSupplier<K, T> view()
+    public IKTableValueGetterSupplier<K, T> view()
     {
         return new KTableMaterializedValueGetterSupplier<>(storeName);
     }

@@ -84,7 +84,7 @@ namespace Kafka.Streams.Processor.Internals
 
         bool isRepartitionTopic(string topic)
         {
-            return repartitionTopics.contains(topic);
+            return repartitionTopics.Contains(topic);
         }
 
         public bool hasPersistentLocalStore()

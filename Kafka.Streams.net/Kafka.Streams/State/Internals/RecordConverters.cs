@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class RecordConverters
     {
-        private static RecordConverter IDENTITY_INSTANCE = record->record;
+        private static RecordConverter IDENTITY_INSTANCE = record=>record;
 
 
         private static RecordConverter RAW_TO_TIMESTAMED_INSTANCE = record =>

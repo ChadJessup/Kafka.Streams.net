@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class KTableSuppressProcessorSupplier<K, V> : IKTableProcessorSupplier<K, V, V>
+    public partial class KTableSuppressProcessorSupplier<K, V> : IKTableProcessorSupplier<K, V, V>
     {
         private SuppressedInternal<K> suppress;
         private string storeName;
@@ -33,24 +35,23 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             parentKTable.enableSendingOldValues();
         }
 
-
-        public Processor<K, Change<V>> get()
+        public IProcessor<K, Change<V>> get()
         {
-            return new KTableSuppressProcessor<>(suppress, storeName);
+            return new KTableSuppressProcessor<K, Change<V>>(suppress, storeName);
         }
 
 
-        public KTableValueGetterSupplier<K, V> view()
+        public IKTableValueGetterSupplier<K, V> view()
         {
-            KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
-            return new KTableValueGetterSupplier<K, V>()
-            {
+            IKTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
+            return parentValueGetterSupplier;
+        }
 
-            }
-            }
-        public KTableValueGetter<K, V> get()
+        public IKTableValueGetter<K, V> get()
         {
-            KTableValueGetter<K, V> parentGetter = parentValueGetterSupplier[];
+//            IKTableValueGetter<K, V> parentGetter = parentValueGetterSupplier[];
+
+            return null;
             //            return new KTableValueGetter<K, V>()
             //            {
             //                    private TimeOrderedKeyValueBuffer<K, V> buffer;
@@ -102,125 +103,6 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         public void enableSendingOldValues()
         {
             parentKTable.enableSendingOldValues();
-        }
-
-        private static class KTableSuppressProcessor<K, V> : Processor<K, Change<V>>
-        {
-            private long maxRecords;
-            private long maxBytes;
-            private long suppressDurationMillis;
-            private TimeDefinition<K> bufferTimeDefinition;
-            private BufferFullStrategy bufferFullStrategy;
-            private bool safeToDropTombstones;
-            private string storeName;
-
-            private TimeOrderedKeyValueBuffer<K, V> buffer;
-            private IInternalProcessorContext internalProcessorContext;
-            private Sensor suppressionEmitSensor;
-            private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
-
-            private KTableSuppressProcessor(SuppressedInternal<K> suppress, string storeName)
-            {
-                this.storeName = storeName;
-                requireNonNull(suppress);
-                maxRecords = suppress.bufferConfig().maxRecords();
-                maxBytes = suppress.bufferConfig().maxBytes();
-                suppressDurationMillis = suppress.timeToWaitForMoreEvents().toMillis();
-                bufferTimeDefinition = suppress.timeDefinition();
-                bufferFullStrategy = suppress.bufferConfig().bufferFullStrategy();
-                safeToDropTombstones = suppress.safeToDropTombstones();
-            }
-
-
-
-            public void init(IProcessorContext context)
-            {
-                internalProcessorContext = (IInternalProcessorContext)context;
-                suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);
-
-                buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
-                buffer.setSerdesIfNull((ISerde<K>)context.keySerde(), (ISerde<V>)context.valueSerde());
-            }
-
-
-            public void process(K key, Change<V> value)
-            {
-                observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp());
-                buffer(key, value);
-                enforceConstraints();
-            }
-
-            private void buffer(K key, Change<V> value)
-            {
-                long bufferTime = bufferTimeDefinition.time(internalProcessorContext, key);
-
-                buffer.Add(bufferTime, key, value, internalProcessorContext.recordContext());
-            }
-
-            private void enforceConstraints()
-            {
-                long streamTime = observedStreamTime;
-                long expiryTime = streamTime - suppressDurationMillis;
-
-                buffer.evictWhile(()->buffer.minTimestamp() <= expiryTime, this::emit);
-
-                if (overCapacity())
-                {
-                    switch (bufferFullStrategy)
-                    {
-                        case EMIT:
-                            buffer.evictWhile(this::overCapacity, this::emit);
-                            return;
-                        case SHUT_DOWN:
-                            throw new StreamsException(string.Format(
-                                "%s buffer exceeded its max capacity. Currently [%d/%d] records and [%d/%d] bytes.",
-                                internalProcessorContext.currentNode().name(),
-                                buffer.numRecords(), maxRecords,
-                                buffer.bufferSize(), maxBytes
-                            ));
-                        default:
-                            throw new InvalidOperationException(
-                                "The bufferFullStrategy [" + bufferFullStrategy +
-                                    "] is not implemented. This is a bug in Kafka Streams."
-                            );
-                    }
-                }
-            }
-
-            private bool overCapacity()
-            {
-                return buffer.numRecords() > maxRecords || buffer.bufferSize() > maxBytes;
-            }
-
-            private void emit(TimeOrderedKeyValueBuffer.Eviction<K, V> toEmit)
-            {
-                if (shouldForward(toEmit.value()))
-                {
-                    ProcessorRecordContext prevRecordContext = internalProcessorContext.recordContext();
-                    internalProcessorContext.setRecordContext(toEmit.recordContext());
-                    try
-                    {
-
-                        internalProcessorContext.forward(toEmit.key(), toEmit.value());
-                        suppressionEmitSensor.record();
-                    }
-                    finally
-                    {
-
-                        internalProcessorContext.setRecordContext(prevRecordContext);
-                    }
-                }
-            }
-
-            private bool shouldForward(Change<V> value)
-            {
-                return value.newValue != null || !safeToDropTombstones;
-            }
-
-
-            public void close()
-            {
-            }
         }
     }
 }

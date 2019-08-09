@@ -26,8 +26,8 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         private static ILogger log = new LoggerFactory().CreateLogger<StickyTaskAssignor>();
         private Dictionary<ID, ClientState> clients;
         private HashSet<TaskId> taskIds;
-        private Dictionary<TaskId, ID> previousActiveTaskAssignment = new HashMap<>();
-        private Dictionary<TaskId, HashSet<ID>> previousStandbyTaskAssignment = new HashMap<>();
+        private Dictionary<TaskId, ID> previousActiveTaskAssignment = new Dictionary<>();
+        private Dictionary<TaskId, HashSet<ID>> previousStandbyTaskAssignment = new Dictionary<>();
         private TaskPairs taskPairs;
 
         public StickyTaskAssignor(Dictionary<ID, ClientState> clients, HashSet<TaskId> taskIds)
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             foreach (KeyValuePair<TaskId, ID> entry in previousActiveTaskAssignment)
             {
                 TaskId taskId = entry.Key;
-                if (taskIds.contains(taskId))
+                if (taskIds.Contains(taskId))
                 {
                     ClientState client = clients[entry.Value];
                     if (client.hasUnfulfilledQuota(tasksPerThread))
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             client.assign(taskId, active);
         }
 
-        private void assignTaskToClient(Set<TaskId> assigned, TaskId taskId, ClientState client)
+        private void assignTaskToClient(HashSet<TaskId> assigned, TaskId taskId, ClientState client)
         {
             taskPairs.AddPairs(taskId, client.assignedTasks());
             client.assign(taskId, true);
@@ -200,7 +200,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
                                                                         HashSet<ID> clientsWithin)
         {
             ID previous = previousActiveTaskAssignment[taskId];
-            if (previous != null && clientsWithin.contains(previous))
+            if (previous != null && clientsWithin.Contains(previous))
             {
                 return clients[previous];
             }
@@ -311,7 +311,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             }
             foreach (TaskId taskId in taskIds)
             {
-                if (!pairs.contains(pair(task1, taskId)))
+                if (!pairs.Contains(pair(task1, taskId)))
                 {
                     return true;
                 }

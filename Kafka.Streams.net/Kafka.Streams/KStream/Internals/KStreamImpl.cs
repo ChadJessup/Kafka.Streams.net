@@ -59,13 +59,14 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool repartitionRequired;
 
-        KStreamImpl(string name,
-                     ISerde<K> keySerde,
-                     ISerde<V> valueSerde,
-                     HashSet<string> sourceNodes,
-                     bool repartitionRequired,
-                     StreamsGraphNode streamsGraphNode,
-                     InternalStreamsBuilder builder)
+        public KStreamImpl(
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            HashSet<string> sourceNodes,
+            bool repartitionRequired,
+            StreamsGraphNode streamsGraphNode,
+            InternalStreamsBuilder builder)
             : base(name, keySerde, valueSerde, sourceNodes, streamsGraphNode, builder)
         {
             this.repartitionRequired = repartitionRequired;
@@ -87,7 +88,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> filterProcessorNode = new ProcessorGraphNode<>(name, processorParameters);
             builder.addGraphNode(this.streamsGraphNode, filterProcessorNode);
 
-            return new KStreamImpl<>(
+            return new KStreamImpl<K, V>(
                     name,
                     keySerde,
                     valSerde,
@@ -114,7 +115,7 @@ namespace Kafka.Streams.KStream.Internals
 
             builder.addGraphNode(this.streamsGraphNode, filterNotProcessorNode);
 
-            return new KStreamImpl<>(
+            return new KStreamImpl<K, V>(
                     name,
                     keySerde,
                     valSerde,
@@ -142,14 +143,14 @@ namespace Kafka.Streams.KStream.Internals
             builder.addGraphNode(this.streamsGraphNode, selectKeyProcessorNode);
 
             // key serde cannot be preserved
-            return new KStreamImpl<>(selectKeyProcessorNode.nodeName(), null, valSerde, sourceNodes, true, selectKeyProcessorNode, builder);
+            return new KStreamImpl<K, V>(selectKeyProcessorNode.nodeName, null, valSerde, sourceNodes, true, selectKeyProcessorNode, builder);
         }
 
         private ProcessorGraphNode<K, V> internalSelectKey<KR>(IKeyValueMapper<K, V, KR> mapper,
                                                                  NamedInternal named)
         {
             string name = named.orElseGenerateWithPrefix(builder, KEY_SELECT_NAME);
-            //KStreamMap<K, V, KR, V> kStreamMap = new KStreamMap<>((key, value)-> new KeyValue<>(mapper.apply(key, value), value));
+            //KStreamMap<K, V, KR, V> kStreamMap = new KStreamMap<>((key, value)=> new KeyValue<>(mapper.apply(key, value), value));
 
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(kStreamMap, name);
 
@@ -170,7 +171,7 @@ namespace Kafka.Streams.KStream.Internals
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, MAP_NAME);
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamMap<K, V, KR, VR>(mapper), name);
 
-            ProcessorGraphNode<K, V> mapProcessorNode = new ProcessorGraphNode<>(name, processorParameters);
+            ProcessorGraphNode<K, V> mapProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
             mapProcessorNode.keyChangingOperation(true);
             builder.addGraphNode(this.streamsGraphNode, mapProcessorNode);
@@ -447,11 +448,11 @@ namespace Kafka.Streams.KStream.Internals
             topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
             ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
-            if (producedInternal.keySerde() == null)
+            if (producedInternal.keySerde == null)
             {
                 producedInternal.withKeySerde(keySerde);
             }
-            if (producedInternal.valueSerde() == null)
+            if (producedInternal.valueSerde == null)
             {
                 producedInternal.withValueSerde(valSerde);
             }
@@ -459,8 +460,8 @@ namespace Kafka.Streams.KStream.Internals
             return builder.stream(
                 Collections.singleton(topic),
                 new ConsumedInternal<>(
-                    producedInternal.keySerde(),
-                    producedInternal.valueSerde(),
+                    producedInternal.keySerde,
+                    producedInternal.valueSerde,
                     new FailOnInvalidTimestamp(),
                     null
                 )
@@ -479,11 +480,11 @@ namespace Kafka.Streams.KStream.Internals
             topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
             ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
-            if (producedInternal.keySerde() == null)
+            if (producedInternal.keySerde == null)
             {
                 producedInternal.withKeySerde(keySerde);
             }
-            if (producedInternal.valueSerde() == null)
+            if (producedInternal.valueSerde == null)
             {
                 producedInternal.withValueSerde(valSerde);
             }
@@ -502,11 +503,11 @@ namespace Kafka.Streams.KStream.Internals
             topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor can't be null", nameof(topicExtractor));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
             ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
-            if (producedInternal.keySerde() == null)
+            if (producedInternal.keySerde == null)
             {
                 producedInternal.withKeySerde(keySerde);
             }
-            if (producedInternal.valueSerde() == null)
+            if (producedInternal.valueSerde == null)
             {
                 producedInternal.withValueSerde(valSerde);
             }
@@ -594,7 +595,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                     string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -602,7 +603,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKStream<K, VR> transformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+        public IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                     Named named,
                                                     string[] stateStoreNames)
         {
@@ -611,7 +612,7 @@ namespace Kafka.Streams.KStream.Internals
             return doTransformValues(valueTransformerSupplier, new NamedInternal(named), stateStoreNames);
         }
 
-        private IKStream<K, VR> doTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, VR> valueTransformerWithKeySupplier,
+        private IKStream<K, VR> doTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerWithKeySupplier,
                                                        NamedInternal named,
                                                        string[] stateStoreNames)
         {
@@ -650,7 +651,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                         string[] stateStoreNames)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
@@ -659,7 +660,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKStream<K, VR> flatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+        public IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
                                                         Named named,
                                                         string[] stateStoreNames)
         {
@@ -668,7 +669,7 @@ namespace Kafka.Streams.KStream.Internals
             return doFlatTransformValues(valueTransformerSupplier, named, stateStoreNames);
         }
 
-        private IKStream<K, VR> doFlatTransformValues<VR>(ValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerWithKeySupplier,
+        private IKStream<K, VR> doFlatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerWithKeySupplier,
                                                            Named named,
                                                            string[] stateStoreNames)
         {
@@ -774,14 +775,14 @@ namespace Kafka.Streams.KStream.Internals
             {
                 string joinThisName = joinThis.name;
                 string leftJoinRepartitionTopicName = name.suffixWithOrElseGet("-left", joinThisName);
-                joinThis = joinThis.repartitionForJoin(leftJoinRepartitionTopicName, joined.keySerde(), joined.valueSerde());
+                joinThis = joinThis.repartitionForJoin(leftJoinRepartitionTopicName, joined.keySerde, joined.valueSerde);
             }
 
             if (joinOther.repartitionRequired)
             {
                 string joinOtherName = joinOther.name;
                 string rightJoinRepartitionTopicName = name.suffixWithOrElseGet("-right", joinOtherName);
-                joinOther = joinOther.repartitionForJoin(rightJoinRepartitionTopicName, joined.keySerde(), joined.otherValueSerde());
+                joinOther = joinOther.repartitionForJoin(rightJoinRepartitionTopicName, joined.keySerde, joined.otherValueSerde());
             }
 
             joinThis.ensureJoinableWith(joinOther);
@@ -833,7 +834,7 @@ namespace Kafka.Streams.KStream.Internals
             string nullKeyFilterProcessorName = builder.newProcessorName(FILTER_NAME);
             string sourceName = builder.newProcessorName(SOURCE_NAME);
 
-            IPredicate<K1, V1> notNullKeyPredicate = (k, v)->k != null;
+            IPredicate<K1, V1> notNullKeyPredicate = (k, v)=>k != null;
 
             ProcessorParameters processorParameters = new ProcessorParameters<>(
                new KStreamFilter<>(notNullKeyPredicate, false),
@@ -902,8 +903,8 @@ namespace Kafka.Streams.KStream.Internals
             {
                 KStreamImpl<K, V> thisStreamRepartitioned = repartitionForJoin(
                    name != null ? name : this.name,
-                   joined.keySerde(),
-                   joined.valueSerde()
+                   joined.keySerde,
+                   joined.valueSerde
                );
                 return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, false);
             }
@@ -935,8 +936,8 @@ namespace Kafka.Streams.KStream.Internals
             {
                 KStreamImpl<K, V> thisStreamRepartitioned = repartitionForJoin(
                    internalName != null ? internalName : name,
-                   joined.keySerde(),
-                   joined.valueSerde()
+                   joined.keySerde,
+                   joined.valueSerde
                );
                 return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, true);
             }
@@ -996,7 +997,7 @@ namespace Kafka.Streams.KStream.Internals
             //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
             //named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
 
-            KTableValueGetterSupplier<KG, VG> valueGetterSupplier = ((GlobalKTableImpl<KG, VG>)globalTable).valueGetterSupplier();
+            IKTableValueGetterSupplier<KG, VG> valueGetterSupplier = ((GlobalKTableImpl<KG, VG>)globalTable).valueGetterSupplier();
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, LEFTJOIN_NAME);
 
             IProcessorSupplier<K, V> processorSupplier = new KStreamGlobalKTableJoin<K, V>(
@@ -1052,7 +1053,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.addGraphNode(this.streamsGraphNode, streamTableJoinNode);
 
             // do not have serde for joined result
-            return new KStreamImpl<>(name, joined.keySerde() != null ? joined.keySerde() : keySerde, null, allSourceNodes, false, streamTableJoinNode, builder);
+            return new KStreamImpl<>(name, joined.keySerde != null ? joined.keySerde : keySerde, null, allSourceNodes, false, streamTableJoinNode, builder);
 
         }
 
@@ -1165,9 +1166,9 @@ namespace Kafka.Streams.KStream.Internals
 
 
                 IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
-                   joinWindowStoreBuilder(joinThisName, windows, joined.keySerde(), joined.valueSerde());
+                   joinWindowStoreBuilder(joinThisName, windows, joined.keySerde, joined.valueSerde);
                 IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
-                   joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde(), joined.otherValueSerde());
+                   joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde, joined.otherValueSerde());
 
                 KStreamJoinWindow<K1, V1> thisWindowedStream = new KStreamJoinWindow<>(thisWindowStore.name());
 
@@ -1224,7 +1225,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 // do not have serde for joined result;
                 // also for key serde we do not inherit from either since we cannot tell if these two serdes are different
-                return new KStreamImpl<>(joinMergeName, joined.keySerde(), null, allSourceNodes, false, joinGraphNode, builder);
+                return new KStreamImpl<>(joinMergeName, joined.keySerde, null, allSourceNodes, false, joinGraphNode, builder);
             }
         }
 

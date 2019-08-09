@@ -52,7 +52,7 @@ class KStreamBranch<K, V> : ProcessorSupplier<K, V> {
 {
                     // use forward with child here and then break the loop
                     // so that no record is going to be piped to multiple streams
-                    context().forward(key, value, To.child(childNodes[i]));
+                    context.forward(key, value, To.child(childNodes[i]));
                     break;
                 }
             }

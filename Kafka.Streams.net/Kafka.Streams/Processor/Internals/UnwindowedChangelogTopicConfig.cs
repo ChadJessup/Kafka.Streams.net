@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private static Dictionary<string, string> UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
 
-        //Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
+        //Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<>();
         //tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT);
         //UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
 
@@ -53,7 +53,7 @@ namespace Kafka.Streams.Processor.Internals
         public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
-            Dictionary<string, string> topicConfig = new HashMap<>(UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
+            Dictionary<string, string> topicConfig = new Dictionary<>(UNWINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
             topicConfig.putAll(defaultProperties);
 

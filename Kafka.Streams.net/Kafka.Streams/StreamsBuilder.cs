@@ -506,8 +506,8 @@ namespace Kafka.Streams
                  new MaterializedInternal<>(materialized, internalStreamsBuilder, topic + "-");
 
             return internalStreamsBuilder.globalTable(topic,
-                                                      new ConsumedInternal<>(Consumed.with(materializedInternal.keySerde(),
-                                                                                           materializedInternal.valueSerde())),
+                                                      new ConsumedInternal<>(Consumed.with(materializedInternal.keySerde,
+                                                                                           materializedInternal.valueSerde)),
                                                       materializedInternal);
         }
 

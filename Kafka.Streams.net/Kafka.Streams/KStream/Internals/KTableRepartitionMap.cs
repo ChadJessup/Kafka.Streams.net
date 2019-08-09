@@ -40,11 +40,11 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTableValueGetterSupplier<K, KeyValue<K1, V1>> view()
+        public IKTableValueGetterSupplier<K, KeyValue<K1, V1>> view()
         {
-            KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
+            IKTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
 
-            return new KTableValueGetterSupplier<K, KeyValue<K1, V1>>()
+            return new IKTableValueGetterSupplier<K, KeyValue<K1, V1>>()
         //    {
 
             //    public KTableValueGetter<K, KeyValue<K1, V1>> get()
@@ -93,24 +93,24 @@ namespace Kafka.Streams.KStream.Internals
                 // forward oldPair first, to be consistent with reduce and aggregate
                 if (oldPair != null && oldPair.key != null && oldPair.value != null)
                 {
-                    context().forward(oldPair.key, new Change<>(null, oldPair.value));
+                    context.forward(oldPair.key, new Change<>(null, oldPair.value));
                 }
 
                 if (newPair != null && newPair.key != null && newPair.value != null)
                 {
-                    context().forward(newPair.key, new Change<>(newPair.value, null));
+                    context.forward(newPair.key, new Change<>(newPair.value, null));
                 }
 
             }
         }
 
-        private class KTableMapValueGetter : KTableValueGetter<K, KeyValue<K1, V1>>
+        private class KTableMapValueGetter : IKTableValueGetter<K, KeyValue<K1, V1>>
         {
 
-            private KTableValueGetter<K, V> parentGetter;
+            private IKTableValueGetter<K, V> parentGetter;
             private IProcessorContext context;
 
-            KTableMapValueGetter(KTableValueGetter<K, V> parentGetter)
+            KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
             {
                 this.parentGetter = parentGetter;
             }

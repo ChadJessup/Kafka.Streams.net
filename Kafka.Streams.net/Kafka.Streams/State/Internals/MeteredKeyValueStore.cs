@@ -73,7 +73,7 @@ namespace Kafka.Streams.State.Internals
             if (restoreTime.shouldRecord())
             {
                 measureLatency(
-                    ()->
+                    ()=>
     {
                     base.init(context, root);
                     return null;
@@ -91,19 +91,19 @@ namespace Kafka.Streams.State.Internals
         {
             serdes = new StateSerdes<>(
                 ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
-                keySerde == null ? (ISerde<K>)context.keySerde() : keySerde,
-                valueSerde == null ? (ISerde<V>)context.valueSerde() : valueSerde);
+                keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
+                valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
         }
 
 
         public override bool setFlushListener(CacheFlushListener<K, V> listener,
                                         bool sendOldValues)
         {
-            IKeyValueStore<Bytes, byte[]> wrapped = wrapped();
+            IKeyValueStore<Bytes, byte[]> wrapped = wrapped;
             if (wrapped is CachedStateStore)
             {
                 return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
-                   (rawKey, rawNewValue, rawOldValue, timestamp)->listener.apply(
+                   (rawKey, rawNewValue, rawOldValue, timestamp)=>listener.apply(
                        serdes.keyFrom(rawKey),
                        rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
                        rawOldValue != null ? serdes.valueFrom(rawOldValue) : null,
@@ -120,11 +120,11 @@ namespace Kafka.Streams.State.Internals
             {
                 if (getTime.shouldRecord())
                 {
-                    return measureLatency(()->outerValue(wrapped()[keyBytes(key)]), getTime);
+                    return measureLatency(()=>outerValue(wrapped[keyBytes(key)]), getTime);
                 }
                 else
                 {
-                    return outerValue(wrapped()[keyBytes(key)]);
+                    return outerValue(wrapped[keyBytes(key)]);
                 }
             }
             catch (ProcessorStateException e)
@@ -141,15 +141,15 @@ namespace Kafka.Streams.State.Internals
             {
                 if (putTime.shouldRecord())
                 {
-                    measureLatency(()->
+                    measureLatency(()=>
     {
-                        wrapped().Add(keyBytes(key), serdes.rawValue(value));
+                        wrapped.Add(keyBytes(key), serdes.rawValue(value));
                         return null;
                     }, putTime);
                 }
                 else
                 {
-                    wrapped().Add(keyBytes(key), serdes.rawValue(value));
+                    wrapped.Add(keyBytes(key), serdes.rawValue(value));
                 }
             }
             catch (ProcessorStateException e)
@@ -165,12 +165,12 @@ namespace Kafka.Streams.State.Internals
             if (putIfAbsentTime.shouldRecord())
             {
                 return measureLatency(
-                    ()=>outerValue(wrapped().putIfAbsent(keyBytes(key), serdes.rawValue(value))),
+                    ()=>outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value))),
                     putIfAbsentTime);
             }
             else
             {
-                return outerValue(wrapped().putIfAbsent(keyBytes(key), serdes.rawValue(value)));
+                return outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value)));
             }
         }
 
@@ -181,14 +181,14 @@ namespace Kafka.Streams.State.Internals
                 measureLatency(
                     ()=>
     {
-                    wrapped().putAll(innerEntries(entries));
+                    wrapped.putAll(innerEntries(entries));
                     return null;
                 },
                 putAllTime);
             }
             else
             {
-                wrapped().putAll(innerEntries(entries));
+                wrapped.putAll(innerEntries(entries));
             }
         }
 
@@ -198,11 +198,11 @@ namespace Kafka.Streams.State.Internals
             {
                 if (deleteTime.shouldRecord())
                 {
-                    return measureLatency(()->outerValue(wrapped().delete(keyBytes(key))), deleteTime);
+                    return measureLatency(()=>outerValue(wrapped.delete(keyBytes(key))), deleteTime);
                 }
                 else
                 {
-                    return outerValue(wrapped().delete(keyBytes(key)));
+                    return outerValue(wrapped.delete(keyBytes(key)));
                 }
             }
             catch (ProcessorStateException e)
@@ -216,13 +216,13 @@ namespace Kafka.Streams.State.Internals
                                             K to)
         {
             return new MeteredKeyValueIterator(
-                wrapped().range(Bytes.wrap(serdes.rawKey(from)), Bytes.wrap(serdes.rawKey(to))),
+                wrapped.range(Bytes.wrap(serdes.rawKey(from)), Bytes.wrap(serdes.rawKey(to))),
                 rangeTime);
         }
 
         public override IKeyValueIterator<K, V> all()
         {
-            return new MeteredKeyValueIterator(wrapped().all(), allTime);
+            return new MeteredKeyValueIterator(wrapped.all(), allTime);
         }
 
         public override void flush()
@@ -230,7 +230,7 @@ namespace Kafka.Streams.State.Internals
             if (flushTime.shouldRecord())
             {
                 measureLatency(
-                    ()->
+                    ()=>
     {
                     base.flush();
                     return null;
@@ -245,7 +245,7 @@ namespace Kafka.Streams.State.Internals
 
         public override long approximateNumEntries()
         {
-            return wrapped().approximateNumEntries();
+            return wrapped.approximateNumEntries();
         }
 
         public override void close()

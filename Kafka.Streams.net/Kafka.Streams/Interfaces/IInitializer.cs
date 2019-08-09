@@ -1,4 +1,6 @@
-﻿namespace Kafka.Streams.Interfaces
+﻿using System;
+
+namespace Kafka.Streams.Interfaces
 {
     /**
  * The {@code Initializer} interface for creating an initial value in aggregations.
@@ -14,9 +16,7 @@
  * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
  */
     public interface IInitializer<VA>
-   
-{
-
+    {
         /**
          * Return the initial value for an aggregation.
          *

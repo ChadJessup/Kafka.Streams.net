@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class EagerBufferConfigImpl : BufferConfigInternal<Suppressed.EagerBufferConfig>, Suppressed.EagerBufferConfig
+    public class EagerBufferConfigImpl : BufferConfigInternal<ISuppressed.EagerBufferConfig>, ISuppressed.EagerBufferConfig
     {
 
 
@@ -30,13 +30,13 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public Suppressed.EagerBufferConfig withMaxRecords(long recordLimit)
+        public ISuppressed.EagerBufferConfig withMaxRecords(long recordLimit)
         {
             return new EagerBufferConfigImpl(recordLimit, maxBytes);
         }
 
 
-        public Suppressed.EagerBufferConfig withMaxBytes(long byteLimit)
+        public ISuppressed.EagerBufferConfig withMaxBytes(long byteLimit)
         {
             return new EagerBufferConfigImpl(maxRecords, byteLimit);
         }

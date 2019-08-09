@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
             IEnumerable<V1> newValues = this.mapper.apply(key, value);
             foreach (V1 v in newValues)
             {
-                context().forward(key, v);
+                context.forward(key, v);
             }
         }
     }

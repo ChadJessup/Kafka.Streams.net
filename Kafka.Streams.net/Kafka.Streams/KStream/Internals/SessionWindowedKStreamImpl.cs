@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -22,16 +28,17 @@ namespace Kafka.Streams.KStream.Internals
     {
         private SessionWindows windows;
         private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
-        private IMerger<K, long> countMerger = (aggKey, aggOne, aggTwo)->aggOne + aggTwo;
+        private IMerger<K, long> countMerger = null; // (aggKey, aggOne, aggTwo)=>aggOne + aggTwo;
 
-        SessionWindowedKStreamImpl(SessionWindows windows,
-                                    InternalStreamsBuilder builder,
-                                    HashSet<string> sourceNodes,
-                                    string name,
-                                    ISerde<K> keySerde,
-                                    ISerde<V> valSerde,
-                                    GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
-                                    StreamsGraphNode streamsGraphNode)
+        public SessionWindowedKStreamImpl(
+            SessionWindows windows,
+            InternalStreamsBuilder builder,
+            HashSet<string> sourceNodes,
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valSerde,
+            GroupedStreamAggregateBuilder<K, V> aggregateBuilder,
+            StreamsGraphNode streamsGraphNode)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
             windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
@@ -42,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTable<Windowed<K>, long> count()
         {
-            return doCount(Materialized.with(keySerde, Serdes.long()));
+            return doCount(Materialized.with(keySerde, Serdes.Long()));
         }
 
 
@@ -64,13 +71,13 @@ namespace Kafka.Streams.KStream.Internals
         {
             MaterializedInternal<K, long, ISessionStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
-                materializedInternal.withValueSerde(Serdes.long());
+                materializedInternal.withValueSerde(Serdes.Long());
             }
 
             return aggregateBuilder.build(
@@ -83,8 +90,8 @@ namespace Kafka.Streams.KStream.Internals
                     aggregateBuilder.countAggregator,
                     countMerger),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde) : null,
+                materializedInternal.valueSerde);
         }
 
 
@@ -102,11 +109,11 @@ namespace Kafka.Streams.KStream.Internals
             Aggregator<K, V, V> reduceAggregator = aggregatorForReducer(reducer);
             MaterializedInternal<K, V, ISessionStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            if (materializedInternal.valueSerde() == null)
+            if (materializedInternal.valueSerde == null)
             {
                 materializedInternal.withValueSerde(valSerde);
             }
@@ -122,13 +129,13 @@ namespace Kafka.Streams.KStream.Internals
                     mergerForAggregator(reduceAggregator)
                 ),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde) : null,
+                materializedInternal.valueSerde);
         }
 
 
         public IKTable<Windowed<K>, T> aggregate(
-            Initializer<T> initializer,
+            IInitializer<T> initializer,
             Aggregator<K, V, T> aggregator,
             IMerger<K, T> sessionMerger)
         {
@@ -137,7 +144,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public IKTable<Windowed<K>, VR> aggregate(
-            Initializer<VR> initializer,
+            IInitializer<VR> initializer,
             Aggregator<K, V, VR> aggregator,
             IMerger<K, VR> sessionMerger,
             Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
@@ -149,7 +156,7 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde() == null)
+            if (materializedInternal.keySerde == null)
             {
                 materializedInternal.withKeySerde(keySerde);
             }
@@ -164,12 +171,12 @@ namespace Kafka.Streams.KStream.Internals
                     aggregator,
                     sessionMerger),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde() != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde()) : null,
-                materializedInternal.valueSerde());
+                materializedInternal.keySerde != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde) : null,
+                materializedInternal.valueSerde);
         }
 
 
-        private StoreBuilder<ISessionStore<K, VR>> materialize(MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
+        private IStoreBuilder<ISessionStore<K, VR>> materialize(MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
         {
             SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier)materialized.storeSupplier();
             if (supplier == null)
@@ -195,8 +202,8 @@ namespace Kafka.Streams.KStream.Internals
             }
             StoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(
                supplier,
-               materialized.keySerde(),
-               materialized.valueSerde()
+               materialized.keySerde,
+               materialized.valueSerde
            );
 
             if (materialized.loggingEnabled())
@@ -216,14 +223,14 @@ namespace Kafka.Streams.KStream.Internals
             return builder;
         }
 
-        private IMerger<K, V> mergerForAggregator(Aggregator<K, V, V> aggregator)
+        private IMerger<K, V> mergerForAggregator(IAggregator<K, V, V> aggregator)
         {
-            return (aggKey, aggOne, aggTwo)->aggregator.apply(aggKey, aggTwo, aggOne);
+            return (aggKey, aggOne, aggTwo)=>aggregator.apply(aggKey, aggTwo, aggOne);
         }
 
         private Aggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
-            return (aggKey, value, aggregate)->aggregate == null ? value : reducer.apply(aggregate, value);
+            return (aggKey, value, aggregate)=>aggregate == null ? value : reducer.apply(aggregate, value);
         }
     }
 }

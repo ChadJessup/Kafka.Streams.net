@@ -1,5 +1,9 @@
+using Kafka.Streams.Errors;
+using Kafka.Streams.KStream.Internals;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Kafka.Streams.Processor.Internals.Assignment
 {
@@ -109,93 +113,96 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         public ByteBuffer encode()
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            try (DataOutputStream out = new DataOutputStream(baos))
-{
-                switch (usedVersion)
+            try
+            {
+                using (DataOutputStream @out = new DataOutputStream(baos))
                 {
-                    case 1:
-                        encodeVersionOne(out);
-                        break;
-                    case 2:
-                        encodeVersionTwo(out);
-                        break;
-                    case 3:
-                        encodeVersionThree(out);
-                        break;
-                    case 4:
-                        encodeVersionFour(out);
-                        break;
-                    default:
-                        throw new InvalidOperationException("Unknown metadata version: " + usedVersion
-                            + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
+                    switch (usedVersion)
+                    {
+                        case 1:
+                            encodeVersionOne(@out);
+                            break;
+                        case 2:
+                            encodeVersionTwo(@out);
+                            break;
+                        case 3:
+                            encodeVersionThree(@out);
+                            break;
+                        case 4:
+                            encodeVersionFour(@out);
+                            break;
+                        default:
+                            throw new InvalidOperationException("Unknown metadata version: " + usedVersion
+                                + "; latest supported version: " + LATEST_SUPPORTED_VERSION);
+                    }
+
+                    @out.flush();
+                    @out.close();
+
+                    return ByteBuffer.wrap(baos.toByteArray());
                 }
-
-            out.flush();
-            out.close();
-
-                return ByteBuffer.wrap(baos.toByteArray());
-            } catch (IOException ex)
+            }
+            catch (IOException ex)
             {
                 throw new TaskAssignmentException("Failed to encode AssignmentInfo", ex);
             }
         }
 
-        private void encodeVersionOne(DataOutputStream out)
+        private void encodeVersionOne(DataOutputStream @out)
         {
-        out.writeInt(1); // version
-            encodeActiveAndStandbyTaskAssignment(out);
+            @out.writeInt(1); // version
+            encodeActiveAndStandbyTaskAssignment(@out);
         }
 
-        private void encodeActiveAndStandbyTaskAssignment(DataOutputStream out)
+        private void encodeActiveAndStandbyTaskAssignment(DataOutputStream @out)
         {
-        // encode active tasks
-        out.writeInt(activeTasks.size());
+            // encode active tasks
+            @out.writeInt(activeTasks.size());
             foreach (TaskId id in activeTasks)
             {
-                id.writeTo(out);
+                id.writeTo(@out);
             }
 
-        // encode standby tasks
-        out.writeInt(standbyTasks.size());
+            // encode standby tasks
+            @out.writeInt(standbyTasks.size());
             foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in standbyTasks)
             {
                 TaskId id = entry.Key;
-                id.writeTo(out);
+                id.writeTo(@out);
 
                 HashSet<TopicPartition> partitions = entry.Value;
-                writeTopicPartitions(out, partitions);
+                writeTopicPartitions(@out, partitions);
             }
         }
 
-        private void encodeVersionTwo(DataOutputStream out)
+        private void encodeVersionTwo(DataOutputStream @out)
         {
-        out.writeInt(2); // version
-            encodeActiveAndStandbyTaskAssignment(out);
-            encodePartitionsByHost(out);
+            @out.writeInt(2); // version
+            encodeActiveAndStandbyTaskAssignment(@out);
+            encodePartitionsByHost(@out);
         }
 
-        private void encodePartitionsByHost(DataOutputStream out)
+        private void encodePartitionsByHost(DataOutputStream @out)
         {
-        // encode partitions by host
-        out.writeInt(partitionsByHost.size());
+            // encode partitions by host
+            @out.writeInt(partitionsByHost.size());
             foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in partitionsByHost)
             {
                 HostInfo hostInfo = entry.Key;
-            out.writeUTF(hostInfo.host());
-            out.writeInt(hostInfo.port());
-                writeTopicPartitions(out, entry.Value);
+                @out.writeUTF(hostInfo.host());
+                @out.writeInt(hostInfo.port());
+                writeTopicPartitions(@out, entry.Value);
             }
         }
 
-        private void writeTopicPartitions(DataOutputStream out,
+        private void writeTopicPartitions(DataOutputStream @out,
                                           HashSet<TopicPartition> partitions)
         {
-        out.writeInt(partitions.size());
+            @out.writeInt(partitions.size());
             foreach (TopicPartition partition in partitions)
             {
-            out.writeUTF(partition.Topic);
-            out.writeInt(partition.partition());
+                @out.writeUTF(partition.Topic);
+                @out.writeInt(partition.partition());
             }
         }
 
@@ -224,31 +231,31 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             // ensure we are at the beginning of the ByteBuffer
             data.rewind();
 
-            try (DataInputStream in = new DataInputStream(new ByteBufferInputStream(data)))
+            try (DataInputStream input = new DataInputStream(new ByteBufferInputStream(data)))
 {
                 AssignmentInfo assignmentInfo;
 
-                int usedVersion = in.readInt();
+                int usedVersion = input.readInt();
                 int latestSupportedVersion;
                 switch (usedVersion)
                 {
                     case 1:
                         assignmentInfo = new AssignmentInfo(usedVersion, UNKNOWN);
-                        decodeVersionOneData(assignmentInfo, in);
+                        decodeVersionOneData(assignmentInfo, input);
                         break;
                     case 2:
                         assignmentInfo = new AssignmentInfo(usedVersion, UNKNOWN);
-                        decodeVersionTwoData(assignmentInfo, in);
+                        decodeVersionTwoData(assignmentInfo, input);
                         break;
                     case 3:
-                        latestSupportedVersion = in.readInt();
+                        latestSupportedVersion = input.readInt();
                         assignmentInfo = new AssignmentInfo(usedVersion, latestSupportedVersion);
-                        decodeVersionThreeData(assignmentInfo, in);
+                        decodeVersionThreeData(assignmentInfo, input);
                         break;
                     case 4:
-                        latestSupportedVersion = in.readInt();
+                        latestSupportedVersion = input.readInt();
                         assignmentInfo = new AssignmentInfo(usedVersion, latestSupportedVersion);
-                        decodeVersionFourData(assignmentInfo, in);
+                        decodeVersionFourData(assignmentInfo, input);
                         break;
                     default:
                         TaskAssignmentException fatalException = new TaskAssignmentException("Unable to decode assignment data: " +
@@ -265,17 +272,17 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         }
 
         private static void decodeVersionOneData(AssignmentInfo assignmentInfo,
-                                                 DataInputStream in)
+                                                 DataInputStream input)
         {
-            decodeActiveTasks(assignmentInfo, in);
-            decodeStandbyTasks(assignmentInfo, in);
-            assignmentInfo.partitionsByHost = new HashMap<>();
+            decodeActiveTasks(assignmentInfo, input);
+            decodeStandbyTasks(assignmentInfo, input);
+            assignmentInfo.partitionsByHost = new Dictionary<>();
         }
 
         private static void decodeActiveTasks(AssignmentInfo assignmentInfo,
-                                              DataInputStream in)
+                                              DataInputStream input)
         {
-            int count = in.readInt();
+            int count = input.readInt();
             assignmentInfo.activeTasks = new List<>(count);
             for (int i = 0; i < count; i++)
             {
@@ -284,61 +291,63 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         }
 
         private static void decodeStandbyTasks(AssignmentInfo assignmentInfo,
-                                               DataInputStream in)
+                                               DataInputStream input)
         {
-            int count = in.readInt();
-            assignmentInfo.standbyTasks = new HashMap<>(count);
+            int count = input.readInt();
+            assignmentInfo.standbyTasks = new Dictionary<>(count);
             for (int i = 0; i < count; i++)
             {
                 TaskId id = TaskId.readFrom(in);
-                assignmentInfo.standbyTasks.Add(id, readTopicPartitions(in));
+                assignmentInfo.standbyTasks.Add(id, readTopicPartitions(input));
             }
         }
 
-        private static void decodeVersionTwoData(AssignmentInfo assignmentInfo,
-                                                 DataInputStream in)
+        private static void decodeVersionTwoData(
+            AssignmentInfo assignmentInfo,
+            DataInputStream input)
         {
-            decodeActiveTasks(assignmentInfo, in);
-            decodeStandbyTasks(assignmentInfo, in);
-            decodeGlobalAssignmentData(assignmentInfo, in);
+            decodeActiveTasks(assignmentInfo, input);
+            decodeStandbyTasks(assignmentInfo, input);
+            decodeGlobalAssignmentData(assignmentInfo, input);
         }
 
-        private static void decodeGlobalAssignmentData(AssignmentInfo assignmentInfo,
-                                                       DataInputStream in)
+        private static void decodeGlobalAssignmentData(
+            AssignmentInfo assignmentInfo,
+            DataInputStream input)
         {
-            assignmentInfo.partitionsByHost = new HashMap<>();
-            int numEntries = in.readInt();
+            assignmentInfo.partitionsByHost = new Dictionary<>();
+            int numEntries = input.readInt();
             for (int i = 0; i < numEntries; i++)
             {
-                HostInfo hostInfo = new HostInfo(in.readUTF(), in.readInt());
-                assignmentInfo.partitionsByHost.Add(hostInfo, readTopicPartitions(in));
+                HostInfo hostInfo = new HostInfo(input.readUTF(), input.readInt());
+                assignmentInfo.partitionsByHost.Add(hostInfo, readTopicPartitions(input));
             }
         }
 
-        private static HashSet<TopicPartition> readTopicPartitions(DataInputStream in)
+        private static HashSet<TopicPartition> readTopicPartitions(DataInputStream input)
         {
-            int numPartitions = in.readInt();
+            int numPartitions = input.readInt();
             HashSet<TopicPartition> partitions = new HashSet<>(numPartitions);
             for (int j = 0; j < numPartitions; j++)
             {
-                partitions.Add(new TopicPartition(in.readUTF(), in.readInt()));
+                partitions.Add(new TopicPartition(input.readUTF(), input.readInt()));
             }
             return partitions;
         }
 
         private static void decodeVersionThreeData(AssignmentInfo assignmentInfo,
-                                                   DataInputStream in)
+                                                   DataInputStream input)
         {
-            decodeActiveTasks(assignmentInfo, in);
-            decodeStandbyTasks(assignmentInfo, in);
-            decodeGlobalAssignmentData(assignmentInfo, in);
+            decodeActiveTasks(assignmentInfo, input);
+            decodeStandbyTasks(assignmentInfo, input);
+            decodeGlobalAssignmentData(assignmentInfo, input);
         }
 
         private static void decodeVersionFourData(AssignmentInfo assignmentInfo,
-                                                  DataInputStream in)
+                                                  DataInputStream input)
         {
-            decodeVersionThreeData(assignmentInfo, in);
-            assignmentInfo.errCode = in.readInt();
+            decodeVersionThreeData(assignmentInfo, input);
+            assignmentInfo.errCode = input.readInt();
         }
 
 

@@ -15,27 +15,26 @@
  * limitations under the License.
  */
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    private class KTableFilterProcessor : AbstractProcessor<K, Change<V>>
+    public class KTableFilterProcessor<K, V> : AbstractProcessor<K, Change<V>>
     {
-        private TimestampedKeyValueStore<K, V> store;
+        private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-
-
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             base.init(context);
             if (queryableName != null)
             {
-                store = (TimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<>(
+                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,
-                    new TimestampedCacheFlushListener<>(context),
+                    new TimestampedCacheFlushListener<K, V>(context),
                     sendOldValues);
             }
         }
@@ -53,13 +52,13 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp.make(newValue, context().timestamp()));
+                store.Add(key, ValueAndTimestamp.make(newValue, context.timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
             }
             else
             {
 
-                context().forward(key, new Change<>(newValue, oldValue));
+                context.forward(key, new Change<>(newValue, oldValue));
             }
         }
     }

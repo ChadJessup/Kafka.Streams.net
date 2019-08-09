@@ -97,12 +97,12 @@ public class PartitionGroup
      *
      * @return StampedRecord
      */
-    StampedRecord nextRecord(RecordInfo info)
+    StampedRecord nextRecord(RecordInfo LogInformation)
 {
         StampedRecord record = null;
 
         RecordQueue queue = nonEmptyQueuesByTime.poll();
-        info.queue = queue;
+        LogInformation.queue = queue;
 
         if (queue != null)
 {

@@ -47,8 +47,8 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             Change<object> change = (Change<object>)o;
-            return object.Equals(newValue, change.newValue)
-                && object.Equals(oldValue, change.oldValue);
+            return newValue.Equals(change.newValue)
+                && oldValue.Equals(change.oldValue);
         }
 
         public override int GetHashCode()

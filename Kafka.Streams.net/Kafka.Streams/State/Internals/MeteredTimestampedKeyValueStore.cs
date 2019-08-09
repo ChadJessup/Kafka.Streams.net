@@ -23,7 +23,7 @@ using Kafka.Streams.Processor.IProcessorContext;
 using Kafka.Streams.Processor.Internals.ProcessorStateManager;
 using Kafka.Streams.State.KeyValueStore;
 using Kafka.Streams.State.StateSerdes;
-using Kafka.Streams.State.TimestampedKeyValueStore;
+using Kafka.Streams.State.ITimestampedKeyValueStore;
 using Kafka.Streams.State.ValueAndTimestamp;
 
 /**
@@ -36,7 +36,7 @@ using Kafka.Streams.State.ValueAndTimestamp;
  */
 public class MeteredTimestampedKeyValueStore<K, V>
     : MeteredKeyValueStore<K, ValueAndTimestamp<V>>
-    : TimestampedKeyValueStore<K, V>
+    : ITimestampedKeyValueStore<K, V>
 {
 
     MeteredTimestampedKeyValueStore(IKeyValueStore<Bytes, byte[]> inner,
@@ -53,7 +53,7 @@ public class MeteredTimestampedKeyValueStore<K, V>
 {
         serdes = new StateSerdes<>(
             ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
-            keySerde == null ? (ISerde<K>) context.keySerde() : keySerde,
-            valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>) context.valueSerde()) : valueSerde);
+            keySerde == null ? (ISerde<K>) context.keySerde : keySerde,
+            valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>) context.valueSerde) : valueSerde);
     }
 }

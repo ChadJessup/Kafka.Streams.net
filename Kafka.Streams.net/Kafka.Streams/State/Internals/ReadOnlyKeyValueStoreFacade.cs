@@ -2,9 +2,9 @@ namespace Kafka.Streams.State.Internals
 {
     public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
     {
-        protected TimestampedKeyValueStore<K, V> inner;
+        protected ITimestampedKeyValueStore<K, V> inner;
 
-        protected ReadOnlyKeyValueStoreFacade(TimestampedKeyValueStore<K, V> store)
+        protected ReadOnlyKeyValueStoreFacade(ITimestampedKeyValueStore<K, V> store)
         {
             inner = store;
         }

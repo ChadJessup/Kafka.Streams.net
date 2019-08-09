@@ -293,7 +293,7 @@ namespace Kafka.Streams.State.Internals
             // RocksDB's JNI interface does not expose getters/setters that allow the
             // comparator to be pluggable, and the default is lexicographic, so it's
             // safe to just force lexicographic comparator here for now.
-            private Comparator<byte[]> comparator = Bytes.BYTES_LEXICO_COMPARATOR;
+            private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
 
             private string storeName;
             private RocksIterator iterWithTimestamp;
@@ -415,7 +415,7 @@ namespace Kafka.Streams.State.Internals
             // RocksDB's JNI interface does not expose getters/setters that allow the
             // comparator to be pluggable, and the default is lexicographic, so it's
             // safe to just force lexicographic comparator here for now.
-            private Comparator<byte[]> comparator = Bytes.BYTES_LEXICO_COMPARATOR;
+            private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
             private byte[] upperBoundKey;
 
             RocksDBDualCFRangeIterator(string storeName,

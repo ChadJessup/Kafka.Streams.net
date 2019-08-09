@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
     public abstract class AbstractStoreBuilder<K, V, T> : IStoreBuilder<T>
         where T : IStateStore
     {
-        private Dictionary<string, string> logConfig = new HashMap<>();
+        private Dictionary<string, string> logConfig = new Dictionary<>();
         protected string name;
         ISerde<K> keySerde;
         ISerde<V> valueSerde;

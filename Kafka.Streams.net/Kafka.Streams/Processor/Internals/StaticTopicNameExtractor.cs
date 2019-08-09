@@ -31,7 +31,7 @@ public class StaticTopicNameExtractor<K, V> : ITopicNameExtractor<K, V> {
         this.topicName = topicName;
     }
 
-    public string extract(K key, V value, RecordContext recordContext)
+    public string extract(K key, V value, IRecordContext recordContext)
 {
         return topicName;
     }

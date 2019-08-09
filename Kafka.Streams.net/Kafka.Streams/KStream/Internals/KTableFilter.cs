@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processor;
 using Kafka.Streams.State;
 
@@ -27,10 +28,11 @@ namespace Kafka.Streams.KStream.Internals
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableFilter(KTableImpl<K, object, V> parent,
-                      IPredicate<K, V> predicate,
-                      bool filterNot,
-                      string queryableName)
+        public KTableFilter(
+            KTableImpl<K, object, V> parent,
+            IPredicate<K, V> predicate,
+            bool filterNot,
+            string queryableName)
         {
             this.parent = parent;
             this.predicate = predicate;
@@ -79,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
             return newValueAndTimestamp;
         }
 
-        public KTableValueGetterSupplier<K, V> view<K, V>()
+        public IKTableValueGetterSupplier<K, V> view<K, V>()
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply filter on-the-fly
@@ -109,11 +111,11 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private class KTableFilterValueGetter<K, V> : KTableValueGetter<K, V>
+        private class KTableFilterValueGetter<K, V> : IKTableValueGetter<K, V>
         {
-            private KTableValueGetter<K, V> parentGetter;
+            private IKTableValueGetter<K, V> parentGetter;
 
-            KTableFilterValueGetter(KTableValueGetter<K, V> parentGetter)
+            KTableFilterValueGetter(IKTableValueGetter<K, V> parentGetter)
             {
                 this.parentGetter = parentGetter;
             }

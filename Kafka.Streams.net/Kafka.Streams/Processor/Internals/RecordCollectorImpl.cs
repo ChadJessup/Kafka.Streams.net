@@ -47,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
                                    IProductionExceptionHandler productionExceptionHandler,
                                    Sensor skippedRecordsSensor)
         {
-            this.offsets = new HashMap<>();
+            this.offsets = new Dictionary<>();
             this.logPrefix = string.Format("task [%s] ", streamTaskId);
             this.log = logContext.logger(GetType());
             this.productionExceptionHandler = productionExceptionHandler;

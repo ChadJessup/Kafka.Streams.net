@@ -2,6 +2,8 @@ using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,9 +17,9 @@ namespace Kafka.Streams.Processor.Internals
         private List<ProcessorNode<K, V>> children;
         private Dictionary<string, ProcessorNode<K, V>> childByName;
 
-        private NodeMetrics<K, V> nodeMetrics;
+        public NodeMetrics<K, V> nodeMetrics { get; private set; }
         private IProcessor<K, V> processor;
-        private string name;
+        public string name { get; }
         private ITime time;
 
         public HashSet<string> stateStores;
@@ -56,12 +58,13 @@ namespace Kafka.Streams.Processor.Internals
         {
             try
             {
-                nodeMetrics = new NodeMetrics<K, V>(context.metrics, name, context);
+                nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, name, context);
                 long startNs = time.nanoseconds();
                 if (processor != null)
                 {
                     processor.init(context);
                 }
+
                 nodeMetrics.nodeCreationSensor.record(time.nanoseconds() - startNs);
             }
             catch (Exception e)

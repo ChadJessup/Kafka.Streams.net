@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 foreach (KeyValue<K1, V1> newPair in mapper.apply(key, value))
                 {
-                    context().forward(newPair.key, newPair.value);
+                    context.forward(newPair.key, newPair.value);
                 }
             }
         }

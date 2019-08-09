@@ -52,7 +52,7 @@ class StateManagerUtil
 
     public static void reinitializeStateStoresForPartitions(ILogger log,
                                                             bool eosEnabled,
-                                                            File baseDir,
+                                                            FileInfo baseDir,
                                                             FixedOrderMap<string, Optional<IStateStore>> stateStores,
                                                             Dictionary<string, string> storeToChangelogTopic,
                                                             List<TopicPartition> partitions,
@@ -95,7 +95,7 @@ class StateManagerUtil
             IStateStore stateStore = stateStores
                 [storeName]
                 .orElseThrow(
-                    () -> new InvalidOperationException(
+                    () => new InvalidOperationException(
                         "Re-initializing store that has not been initialized. This is a bug in Kafka Streams."
                     )
                 );
@@ -109,13 +109,13 @@ class StateManagerUtil
             stateStores.Add(storeName, Optional.empty());
 
             // TODO Remove this eventually
-            // -> (only after we are sure, we don't need it for backward compatibility reasons anymore; maybe 2.0 release?)
+            // => (only after we are sure, we don't need it for backward compatibility reasons anymore; maybe 2.0 release?)
             // this is an ugly "hack" that is required because RocksDBStore does not follow the pattern to put the
             // store directory as <taskDir>/<storeName> but nests it with an intermediate <taskDir>/rocksdb/<storeName>
             try
 {
 
-                Utils.delete(new File(baseDir + File.separator + "rocksdb" + File.separator + storeName));
+                Utils.delete(new FileInfo(baseDir + FileInfo.separator + "rocksdb" + FileInfo.separator + storeName));
             } catch (IOException fatalException)
 {
                 log.LogError("Failed to reinitialize store {}.", storeName, fatalException);
@@ -125,7 +125,7 @@ class StateManagerUtil
             try
 {
 
-                Utils.delete(new File(baseDir + File.separator + storeName));
+                Utils.delete(new FileInfo(baseDir + FileInfo.separator + storeName));
             } catch (IOException fatalException)
 {
                 log.LogError("Failed to reinitialize store {}.", storeName, fatalException);
@@ -138,7 +138,7 @@ class StateManagerUtil
 
     private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
 {
-        Dictionary<string, string> reversedMap = new HashMap<>();
+        Dictionary<string, string> reversedMap = new Dictionary<>();
         foreach (KeyValuePair<string, string> entry in origin)
 {
             reversedMap.Add(entry.Value, entry.Key);

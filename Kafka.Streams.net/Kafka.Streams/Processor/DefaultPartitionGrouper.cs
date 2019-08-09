@@ -52,7 +52,7 @@ public class DefaultPartitionGrouper : IPartitionGrouper
      */
     public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
 {
-        Dictionary<TaskId, HashSet<TopicPartition>> groups = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> groups = new Dictionary<>();
 
         foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups)
 {

@@ -76,7 +76,7 @@ public class LRUCacheEntry
         return record.value();
     }
 
-    public ProcessorRecordContext context()
+    public ProcessorRecordContext context
 {
         return record.recordContext();
     }

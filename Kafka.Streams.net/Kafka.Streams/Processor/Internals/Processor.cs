@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processor.Internals
 
             public string ToString()
             {
-                return "Processor: " + name + " (stores: " + stores + ")\n      --> "
+                return "Processor: " + name + " (stores: " + stores + ")\n      -=> "
                     + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
             }
 

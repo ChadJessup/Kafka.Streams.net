@@ -14,61 +14,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
 
+using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.Processor.IStateStore;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.IQueryableStoreType;
+using System.Collections.Generic;
+using System.Linq;
 
-
-
-
-
-
-/**
- * A wrapper over all of the {@link StateStoreProvider}s in a Topology
- */
-public class QueryableStoreProvider
+namespace Kafka.Streams.State.Internals
 {
-
-    private List<IStateStoreProvider> storeProviders;
-    private GlobalStateStoreProvider globalStoreProvider;
-
-    public QueryableStoreProvider(List<IStateStoreProvider> storeProviders,
-                                  GlobalStateStoreProvider globalStateStoreProvider)
-{
-        this.storeProviders = new List<>(storeProviders);
-        this.globalStoreProvider = globalStateStoreProvider;
-    }
-
     /**
-     * Get a composite object wrapping the instances of the {@link IStateStore} with the provided
-     * storeName and {@link QueryableStoreType}
-     *
-     * @param storeName          name of the store
-     * @param queryableStoreType accept stores passing {@link QueryableStoreType#accepts(IStateStore)}
-     * @param                The expected type of the returned store
-     * @return A composite object that wraps the store instances.
+     * A wrapper over all of the {@link StateStoreProvider}s in a Topology
      */
-    public T getStore(string storeName,
-                          IQueryableStoreType<T> queryableStoreType)
-{
-        List<T> globalStore = globalStoreProvider.stores(storeName, queryableStoreType);
-        if (!globalStore.isEmpty())
-{
-            return queryableStoreType.create(new WrappingStoreProvider(singletonList(globalStoreProvider)), storeName);
+    public class QueryableStoreProvider
+    {
+        private List<IStateStoreProvider> storeProviders;
+        private GlobalStateStoreProvider globalStoreProvider;
+
+        public QueryableStoreProvider(
+            List<IStateStoreProvider> storeProviders,
+            GlobalStateStoreProvider globalStateStoreProvider)
+        {
+            this.storeProviders = new List<IStateStoreProvider>(storeProviders);
+            this.globalStoreProvider = globalStateStoreProvider;
         }
-        List<T> allStores = new List<>();
-        foreach (IStateStoreProvider storeProvider in storeProviders)
-{
-            allStores.AddAll(storeProvider.stores(storeName, queryableStoreType));
+
+        /**
+         * Get a composite object wrapping the instances of the {@link IStateStore} with the provided
+         * storeName and {@link QueryableStoreType}
+         *
+         * @param storeName          name of the store
+         * @param queryableStoreType accept stores passing {@link QueryableStoreType#accepts(IStateStore)}
+         * @param                The expected type of the returned store
+         * @return A composite object that wraps the store instances.
+         */
+        public T getStore<T>(
+            string storeName,
+            IQueryableStoreType<T> queryableStoreType)
+        {
+            List<T> globalStore = globalStoreProvider.stores(storeName, queryableStoreType);
+            if (globalStore.Any())
+            {
+                return queryableStoreType.create(new WrappingStoreProvider(globalStoreProvider), storeName);
+            }
+
+            List<T> allStores = new List<T>();
+            foreach (IStateStoreProvider storeProvider in storeProviders)
+            {
+                allStores.AddAll(storeProvider.stores(storeName, queryableStoreType));
+            }
+            if (!allStores.Any())
+            {
+                throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
+            }
+            return queryableStoreType.create(
+                    new WrappingStoreProvider<T>(storeProviders),
+                    storeName);
         }
-        if (allStores.isEmpty())
-{
-            throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
-        }
-        return queryableStoreType.create(
-                new WrappingStoreProvider(storeProviders),
-                storeName);
     }
 }

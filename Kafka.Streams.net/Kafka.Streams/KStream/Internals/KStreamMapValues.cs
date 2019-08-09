@@ -43,7 +43,7 @@ class KStreamMapValues<K, V, V1> : ProcessorSupplier<K, V> {
         public void process( K readOnlyKey,  V value)
 {
              V1 newValue = mapper.apply(readOnlyKey, value);
-            context().forward(readOnlyKey, newValue);
+            context.forward(readOnlyKey, newValue);
         }
     }
 }

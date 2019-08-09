@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         private KStreamReduceProcessor : AbstractProcessor<K, V> {
-        private TimestampedKeyValueStore<K, V> store;
+        private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-            store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<K, V>(
                 store,
                 context,
@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().Topic, context().partition(), context().offset()
+                    key, value, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
@@ -79,13 +79,13 @@ namespace Kafka.Streams.KStream.Internals
             if (oldAgg == null)
             {
                 newAgg = value;
-                newTimestamp = context().timestamp();
+                newTimestamp = context.timestamp();
             }
             else
             {
 
                 newAgg = reducer.apply(oldAgg, value);
-                newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
             }
 
             store.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp));
@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public KTableValueGetterSupplier<K, V> view()
+    public IKTableValueGetterSupplier<K, V> view()
     {
         //    return new KTableValueGetterSupplier<K, V>()
         //    {
@@ -113,15 +113,15 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    private class KStreamReduceValueGetter : KTableValueGetter<K, V>
+    private class KStreamReduceValueGetter : IKTableValueGetter<K, V>
     {
-        private TimestampedKeyValueStore<K, V> store;
+        private ITimestampedKeyValueStore<K, V> store;
 
 
 
         public void init(IProcessorContext context)
         {
-            store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }
 
 

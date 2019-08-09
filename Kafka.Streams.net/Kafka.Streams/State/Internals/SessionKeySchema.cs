@@ -17,6 +17,7 @@
 using Confluent.Kafka;
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
 using System;
 using System.Collections.Generic;
 
@@ -139,31 +140,33 @@ namespace Kafka.Streams.State.Internals
             return new Windowed<Bytes>(Bytes.wrap(extractKeyBytes(binaryKey)), window);
         }
 
-        public static Windowed<K> from(
+        public static Windowed<K> from<K>(
             Windowed<Bytes> keyBytes,
             IDeserializer<K> keyDeserializer,
             string topic)
         {
-            K key = keyDeserializer.Deserialize(topic, keyBytes.key()());
-            return new Windowed<>(key, keyBytes.window());
+            K key = keyDeserializer.Deserialize(keyBytes.key, new SerializationContext(MessageComponentType.Key, topic);
+            return new Windowed<K>(key, keyBytes.window);
         }
 
-        public static byte[] toBinary(Windowed<K> sessionKey,
-                                          ISerializer<K> serializer,
-                                          string topic)
+        public static byte[] toBinary<K>(
+            Windowed<K> sessionKey,
+            ISerializer<K> serializer,
+            string topic)
         {
-            byte[] bytes = serializer.Serialize(topic, sessionKey.key());
-            return toBinary(Bytes.wrap(bytes), sessionKey.window().start(), sessionKey.window().end())[];
+            byte[] bytes = serializer.Serialize(topic, sessionKey.key);
+            return toBinary(Bytes.wrap(bytes), sessionKey.window.start(), sessionKey.window.end())[];
         }
 
         public static Bytes toBinary(Windowed<Bytes> sessionKey)
         {
-            return toBinary(sessionKey.key(), sessionKey.window().start(), sessionKey.window().end());
+            return toBinary(sessionKey.key, sessionKey.window.start(), sessionKey.window.end());
         }
 
-        public static Bytes toBinary(Bytes key,
-                                     long startTime,
-                                     long endTime)
+        public static Bytes toBinary(
+            Bytes key,
+            long startTime,
+            long endTime)
         {
             byte[] bytes = key[];
             ByteBuffer buf = ByteBuffer.allocate(bytes.Length + 2 * TIMESTAMP_SIZE);

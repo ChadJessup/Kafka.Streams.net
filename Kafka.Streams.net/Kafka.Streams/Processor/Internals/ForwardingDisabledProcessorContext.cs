@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Kafka.Streams.Processor.Internals
 {
     /**
      * {@code IProcessorContext} implementation that will throw on any forward call.
      */
-    public class ForwardingDisabledProcessorContext : IProcessorContext
+    public class ForwardingDisabledProcessorContext<K, V> : IProcessorContext<K, V>
     {
-        private IProcessorContext @delegate;
+        private IProcessorContext<K, V> @delegate;
 
-        public ForwardingDisabledProcessorContext(IProcessorContext @delegate)
+        public ForwardingDisabledProcessorContext(IProcessorContext<K, V> @delegate)
         {
             this.@delegate = @delegate = @delegate ?? throw new System.ArgumentNullException("@delegate", nameof(@delegate));
         }
@@ -45,32 +49,28 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public ISerde<object> keySerde()
+        public ISerde<K> keySerde
         {
-            return @delegate.keySerde();
+            return @delegate.keySerde;
         }
 
 
-        public ISerde<object> valueSerde()
+        public ISerde<V> valueSerde
         {
-            return @delegate.valueSerde();
+            return @delegate.valueSerde;
         }
 
-
-        public File stateDir()
+        public FileInfo stateDir()
         {
             return @delegate.stateDir();
         }
 
+        public IStreamsMetrics metrics
+            => @delegate.metrics;
 
-        public IStreamsMetrics metrics()
-        {
-            return @delegate.metrics();
-        }
-
-
-        public void register(IStateStore store,
-                             StateRestoreCallback stateRestoreCallback)
+        public void register(
+            IStateStore store,
+            StateRestoreCallback stateRestoreCallback)
         {
             @delegate.register(store, stateRestoreCallback);
         }
@@ -83,17 +83,19 @@ namespace Kafka.Streams.Processor.Internals
 
 
         [System.Obsolete]
-        public ICancellable schedule(long intervalMs,
-                                    PunctuationType type,
-                                    Punctuator callback)
+        public ICancellable schedule(
+            long intervalMs,
+            PunctuationType type,
+            Punctuator callback)
         {
-            return @delegate.schedule(intervalMs, type, callback);
+            return @delegate.schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
         }
 
 
-        public ICancellable schedule(TimeSpan interval,
-                                    PunctuationType type,
-                                    Punctuator callback)
+        public ICancellable schedule(
+            TimeSpan interval,
+            PunctuationType type,
+            Punctuator callback)
         {
             return @delegate.schedule(interval, type, callback);
         }
@@ -124,30 +126,22 @@ namespace Kafka.Streams.Processor.Internals
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-
         public void commit()
         {
             @delegate.commit();
         }
 
-
-        public string Topic
-        {
-            return @delegate.Topic;
-        }
-
+        public string Topic => @delegate.Topic;
 
         public int partition()
         {
             return @delegate.partition();
         }
 
-
         public long offset()
         {
             return @delegate.offset();
         }
-
 
         public Headers headers()
         {

@@ -53,40 +53,40 @@ namespace Kafka.Streams.State.Internals
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes key, long earliestSessionEndTime, long latestSessionStartTime)
         {
-            return wrapped().findSessions(key, earliestSessionEndTime, latestSessionStartTime);
+            return wrapped.findSessions(key, earliestSessionEndTime, latestSessionStartTime);
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> findSessions(Bytes keyFrom, Bytes keyTo, long earliestSessionEndTime, long latestSessionStartTime)
         {
-            return wrapped().findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
+            return wrapped.findSessions(keyFrom, keyTo, earliestSessionEndTime, latestSessionStartTime);
         }
 
         public override void Remove(Windowed<Bytes> sessionKey)
         {
-            wrapped().Remove(sessionKey);
+            wrapped.Remove(sessionKey);
             changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), null);
         }
 
         public override void put(Windowed<Bytes> sessionKey, byte[] aggregate)
         {
-            wrapped().Add(sessionKey, aggregate);
+            wrapped.Add(sessionKey, aggregate);
             changeLogger.logChange(SessionKeySchema.toBinary(sessionKey), aggregate);
 
         }
 
         public override byte[] fetchSession(Bytes key, long startTime, long endTime)
         {
-            return wrapped().fetchSession(key, startTime, endTime);
+            return wrapped.fetchSession(key, startTime, endTime);
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
         {
-            return wrapped().fetch(key);
+            return wrapped.fetch(key);
         }
 
         public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
         {
-            return wrapped().fetch(from, to);
+            return wrapped.fetch(from, to);
         }
     }
 }

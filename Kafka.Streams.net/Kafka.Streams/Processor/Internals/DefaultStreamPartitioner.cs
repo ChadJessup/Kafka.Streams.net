@@ -14,30 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using Kafka.Common;
+using Kafka.Streams.Processor.Interfaces;
 
-
-using Kafka.Common.Cluster;
-using Kafka.Common.serialization.Serializer;
-
-
-public class DefaultStreamPartitioner<K, V> : IStreamPartitioner<K, V> {
-
-    private Cluster cluster;
-    private ISerializer<K> keySerializer;
-    private DefaultPartitioner defaultPartitioner;
-
-    public DefaultStreamPartitioner(ISerializer<K> keySerializer, Cluster cluster)
+namespace Kafka.Streams.Processor.Internals
 {
-        this.cluster = cluster;
-        this.keySerializer = keySerializer;
-        this.defaultPartitioner = new DefaultPartitioner();
-    }
+    public class DefaultStreamPartitioner<K, V> : IStreamPartitioner<K, V>
+    {
+        private Cluster cluster;
+        private ISerializer<K> keySerializer;
+        private DefaultPartitioner defaultPartitioner;
+
+        public DefaultStreamPartitioner(
+            ISerializer<K> keySerializer,
+            Cluster cluster)
+        {
+            this.cluster = cluster;
+            this.keySerializer = keySerializer;
+            this.defaultPartitioner = new DefaultPartitioner();
+        }
 
 
-    public int partition(string topic, K key, V value, int numPartitions)
-{
-        byte[] keyBytes = keySerializer.Serialize(topic, key);
-        return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
+        public int partition(string topic, K key, V value, int numPartitions)
+        {
+            byte[] keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
+            return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
+        }
     }
 }

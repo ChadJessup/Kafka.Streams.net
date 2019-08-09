@@ -14,51 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public class KStreamWindowAggregate<K, V, Agg, W : Window> : KStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+    public class KStreamWindowAggregate<K, V, Agg, W> : IKStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
+        where W : Window
     {
-        private ILogger log = new LoggerFactory().CreateLogger < GetType());
+        private ILogger log = new LoggerFactory().CreateLogger<KStreamWindowAggregate<K, V, Agg, W>>();
 
         private string storeName;
         private Windows<W> windows;
-        private Initializer<Agg> initializer;
-        private Aggregator<K, V, Agg> aggregator;
+        private IInitializer<Agg> initializer;
+        private IAggregator<K, V, Agg> aggregator;
 
         private bool sendOldValues = false;
 
-        public KStreamWindowAggregate(Windows<W> windows,
-                                       string storeName,
-                                       Initializer<Agg> initializer,
-                                       Aggregator<K, V, Agg> aggregator)
+        public KStreamWindowAggregate(
+            Windows<W> windows,
+            string storeName,
+            IInitializer<Agg> initializer,
+            IAggregator<K, V, Agg> aggregator)
         {
             this.windows = windows;
             this.storeName = storeName;
@@ -119,14 +100,14 @@ namespace Kafka.Streams.KStream.Internals
             {
                 log.LogWarning(
                     "Skipping record due to null key. value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    value, context().Topic, context().partition(), context().offset()
+                    value, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
             }
 
             // first get the matching windows
-            long timestamp = context().timestamp();
+            long timestamp = context.timestamp();
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
             long closeTime = observedStreamTime - windows.gracePeriodMs();
 
@@ -148,12 +129,12 @@ namespace Kafka.Streams.KStream.Internals
                     if (oldAgg == null)
                     {
                         oldAgg = initializer.apply();
-                        newTimestamp = context().timestamp();
+                        newTimestamp = context.timestamp();
                     }
                     else
                     {
 
-                        newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                        newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
                     }
 
                     newAgg = aggregator.apply(key, value, oldAgg);
@@ -180,10 +161,10 @@ namespace Kafka.Streams.KStream.Internals
                             "expiration=[{}] " +
                             "streamTime=[{}]",
                         key,
-                        context().Topic,
-                        context().partition(),
-                        context().offset(),
-                        context().timestamp(),
+                        context.Topic,
+                        context.partition(),
+                        context.offset(),
+                        context.timestamp(),
                         windowStart, windowEnd,
                         closeTime,
                         observedStreamTime
@@ -195,7 +176,7 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public KTableValueGetterSupplier<Windowed<K>, Agg> view()
+    public IKTableValueGetterSupplier<Windowed<K>, Agg> view()
     {
         //return new KTableValueGetterSupplier<Windowed<K>, Agg>()
         //{
@@ -211,30 +192,5 @@ namespace Kafka.Streams.KStream.Internals
         //                return new string[] {storeName};
         //            }
         //        };
-    }
-
-
-    private class KStreamWindowAggregateValueGetter : KTableValueGetter<Windowed<K>, Agg>
-    {
-        private TimestampedWindowStore<K, Agg> windowStore;
-
-
-
-        public void init(IProcessorContext context)
-        {
-            windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
-        }
-
-
-
-        public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
-        {
-            K key = windowedKey.key();
-            W window = (W)windowedKey.window();
-            return windowStore.fetch(key, window.start());
-        }
-
-
-        public void close() { }
     }
 }

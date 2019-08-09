@@ -1,4 +1,5 @@
 ﻿using System;
+using Kafka.Common.Extensions;
 
 namespace Kafka.Streams.KStream
 {
@@ -15,7 +16,7 @@ namespace Kafka.Streams.KStream
          *
          * @param startMs the start timestamp of the window
          * @param endMs   the end timestamp of the window
-         * @throws IllegalArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
+         * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
          */
         public Window(long startMs, long endMs)
         {
@@ -56,7 +57,7 @@ namespace Kafka.Streams.KStream
 
         /**
          * Check if the given window overlaps with this window.
-         * Should throw an {@link IllegalArgumentException} if the {@code other} window has a different type than {@code
+         * Should throw an {@link ArgumentException} if the {@code other} window has a different type than {@code
          * this} window.
          *
          * @param other another window of the same type

@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public KTableValueGetterSupplier<K, V1> view()
+        public IKTableValueGetterSupplier<K, V1> view()
         {
             // if the KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply map-values on-the-fly

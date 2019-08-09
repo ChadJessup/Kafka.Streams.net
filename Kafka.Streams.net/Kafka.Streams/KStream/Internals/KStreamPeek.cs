@@ -47,7 +47,7 @@ class KStreamPeek<K, V> : ProcessorSupplier<K, V> {
             action.apply(key, value);
             if (forwardDownStream)
 {
-                context().forward(key, value);
+                context.forward(key, value);
             }
         }
     }

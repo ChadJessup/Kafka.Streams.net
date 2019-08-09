@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processor.Internals
      * This is responsible for the initialization, restoration, closing, flushing etc
      * of Global State Stores. There is only ever 1 instance of this per Application Instance.
      */
-    public class GlobalStateManagerImpl : GlobalStateManager
+    public class GlobalStateManagerImpl : IGlobalStateManager
     {
         private ILogger log;
         private bool eosEnabled;
@@ -46,7 +46,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
             baseDir = stateDirectory.globalStateDir();
-            checkpointFile = new OffsetCheckpoint(new File(baseDir, CHECKPOINT_FILE_NAME));
+            checkpointFile = new OffsetCheckpoint(new FileInfo(baseDir, CHECKPOINT_FILE_NAME));
             checkpointFileCache = new Dictionary<TopicPartition, long>();
 
             // Find non persistent store's topics
@@ -149,7 +149,7 @@ namespace Kafka.Streams.Processor.Internals
             return getGlobalStore(name);
         }
 
-        public File baseDir()
+        public FileInfo baseDir()
         {
             return baseDir;
         }
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Processor.Internals
                 throw new System.ArgumentException(string.Format("Global Store %s has already been registered", store.name()));
             }
 
-            if (!globalStoreNames.contains(store.name()))
+            if (!globalStoreNames.Contains(store.name()))
             {
                 throw new System.ArgumentException(string.Format("Trying to register store %s that is not a known global store", store.name()));
             }
@@ -435,7 +435,7 @@ namespace Kafka.Streams.Processor.Internals
             foreach (KeyValuePair<TopicPartition, long> topicPartitionOffset in checkpointFileCache)
             {
                 string topic = topicPartitionOffset.Key.Topic;
-                if (!globalNonPersistentStoresTopics.contains(topic))
+                if (!globalNonPersistentStoresTopics.Contains(topic))
                 {
                     filteredOffsets.Add(topicPartitionOffset.Key, topicPartitionOffset.Value);
                 }

@@ -20,29 +20,20 @@ using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
     /**
      * Represents a join between a KStream and a KTable or GlobalKTable
      */
-
     public class StreamTableJoinNode<K, V> : StreamsGraphNode
     {
-
-
         private string[] storeNames;
         private ProcessorParameters<K, V> processorParameters;
         private string otherJoinSideNodeName;
 
-        public StreamTableJoinNode(string nodeName,
-                                    ProcessorParameters<K, V> processorParameters,
-                                    string[] storeNames,
-                                    string otherJoinSideNodeName)
+        public StreamTableJoinNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters,
+            string[] storeNames,
+            string otherJoinSideNodeName)
             : base(nodeName)
         {
 
@@ -52,8 +43,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.otherJoinSideNodeName = otherJoinSideNodeName;
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "StreamTableJoinNode{" +
                    "storeNames=" + Arrays.ToString(storeNames) +
@@ -63,13 +53,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            string processorName = processorParameters.processorName();
-            IProcessorSupplier processorSupplier = processorParameters.processorSupplier();
+            string processorName = processorParameters.processorName;
+            IProcessorSupplier<K, V> processorSupplier = processorParameters.processorSupplier;
 
             // Stream - Table join (Global or KTable)
-            topologyBuilder.AddProcessor(processorName, processorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
 
             // Steam - KTable join only
             if (otherJoinSideNodeName != null)

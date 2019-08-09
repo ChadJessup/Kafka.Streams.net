@@ -5,7 +5,7 @@ using Kafka.Common.Utils.Interfaces;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Kakfa.Common.Metrics
+namespace Kafka.Common.Metrics
 {
     public class KafkaMetric : IMetric
     {

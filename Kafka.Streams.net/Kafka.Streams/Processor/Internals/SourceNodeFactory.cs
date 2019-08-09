@@ -20,6 +20,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -40,7 +41,10 @@ namespace Kafka.Streams.Processor.Internals
             IDeserializer<V> valDeserializer)
             : base(name, NO_PREDECESSORS)
         {
-            this.topics = topics != null ? Arrays.asList(topics) : new List<>();
+            this.topics = topics != null
+                ? topics.ToList()
+                : new List<string>();
+
             this.pattern = pattern;
             this.keyDeserializer = keyDeserializer;
             this.valDeserializer = valDeserializer;
@@ -52,9 +56,9 @@ namespace Kafka.Streams.Processor.Internals
             // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
             // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
-            if (subscribedTopics.isEmpty())
+            if (!subscribedTopics.Any())
             {
-                return Collections.singletonList(string.valueOf(pattern));
+                return new List<string>(); // string.valueOf(pattern));
             }
 
             List<string> matchedTopics = new List<string>();
@@ -90,7 +94,7 @@ namespace Kafka.Streams.Processor.Internals
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
             if (sourceTopics == null)
             {
-                return new SourceNode<>(name, Collections.singletonList(string.valueOf(pattern)), timestampExtractor, keyDeserializer, valDeserializer);
+                return new SourceNode<K, V>(name, new List<string>(), timestampExtractor, keyDeserializer, valDeserializer);
             }
             else
             {

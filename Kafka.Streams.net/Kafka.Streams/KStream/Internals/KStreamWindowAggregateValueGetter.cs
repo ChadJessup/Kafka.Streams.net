@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,18 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.State;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    private class KStreamWindowAggregateValueGetter : IKTableValueGetter<Windowed<K>, Agg>
+    {
+        private TimestampedWindowStore<K, Agg> windowStore;
 
 
 
+        public void init(IProcessorContext context)
+        {
+            windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
+        }
 
 
-public interface KTableValueGetter<K, V> {
 
-    void init(IProcessorContext context);
+        public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
+        {
+            K key = windowedKey.key();
+            W window = (W)windowedKey.window();
+            return windowStore.fetch(key, window.start());
+        }
 
-    ValueAndTimestamp<V> get(K key);
 
-    void close();
+        public void close() { }
+    }
 }

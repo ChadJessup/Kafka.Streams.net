@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             this(new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), new HashSet<>(), capacity);
         }
 
-        private ClientState(Set<TaskId> activeTasks,
+        private ClientState(HashSet<TaskId> activeTasks,
                             HashSet<TaskId> standbyTasks,
                             HashSet<TaskId> assignedTasks,
                             HashSet<TaskId> prevActiveTasks,
@@ -122,13 +122,13 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             return activeTasks.size();
         }
 
-        public void addPreviousActiveTasks(Set<TaskId> prevTasks)
+        public void addPreviousActiveTasks(HashSet<TaskId> prevTasks)
         {
             prevActiveTasks.AddAll(prevTasks);
             prevAssignedTasks.AddAll(prevTasks);
         }
 
-        public void addPreviousStandbyTasks(Set<TaskId> standbyTasks)
+        public void addPreviousStandbyTasks(HashSet<TaskId> standbyTasks)
         {
             prevStandbyTasks.AddAll(standbyTasks);
             prevAssignedTasks.AddAll(standbyTasks);
@@ -196,7 +196,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 
         bool hasAssignedTask(TaskId taskId)
         {
-            return assignedTasks.contains(taskId);
+            return assignedTasks.Contains(taskId);
         }
 
         // Visible for testing

@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             else if (restoreCallback is BatchingStateRestoreCallback)
             {
-                return records-> {
+                return records=> {
                     List<KeyValue<byte[], byte[]>> keyValues = new List<>();
                     foreach (ConsumeResult<byte[], byte[]> record in records)
                     {

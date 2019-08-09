@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-
-
     public class KTableKTableJoinMerger<K, V> : IKTableProcessorSupplier<K, V, V>
     {
-
-        private IKTableProcessorSupplier<K, ?, V> parent1;
-        private IKTableProcessorSupplier<K, ?, V> parent2;
+        private IKTableProcessorSupplier<K, object, V> parent1;
+        private IKTableProcessorSupplier<K, object, V> parent2;
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableKTableJoinMerger(IKTableProcessorSupplier<K, ?, V> parent1,
-                                IKTableProcessorSupplier<K, ?, V> parent2,
-                                string queryableName)
+        KTableKTableJoinMerger(
+            IKTableProcessorSupplier<K, object, V> parent1,
+            IKTableProcessorSupplier<K, object, V> parent2,
+            string queryableName)
         {
             this.parent1 = parent1;
             this.parent2 = parent2;
@@ -51,13 +41,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, Change<V>> get()
+        public IProcessor<K, Change<V>> get()
         {
             return new KTableKTableJoinMergeProcessor();
         }
 
 
-        public KTableValueGetterSupplier<K, V> view()
+        public IKTableValueGetterSupplier<K, V> view()
         {
             // if the result KTable is materialized, use the materialized store to return getter value;
             // otherwise rely on the parent getter and apply join on-the-fly

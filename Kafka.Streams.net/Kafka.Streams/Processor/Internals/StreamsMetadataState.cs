@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Common;
+using Kafka.Streams.State;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -30,16 +34,18 @@ namespace Kafka.Streams.Processor.Internals
 
         public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
         private InternalTopologyBuilder builder;
-        private List<StreamsMetadata> allMetadata = new List<>();
+        private List<StreamsMetadata> allMetadata = new List<StreamsMetadata>();
         private HashSet<string> globalStores;
         private HostInfo thisHost;
         private Cluster clusterMetadata;
         private StreamsMetadata myMetadata;
 
-        public StreamsMetadataState(InternalTopologyBuilder builder, HostInfo thisHost)
+        public StreamsMetadataState(
+            InternalTopologyBuilder builder,
+            HostInfo thisHost)
         {
             this.builder = builder;
-            this.globalStores = builder.globalStateStores().Keys;
+            this.globalStores = new HashSet<string>(builder.globalStateStores().Keys);
             this.thisHost = thisHost;
         }
 
@@ -85,10 +91,10 @@ namespace Kafka.Streams.Processor.Internals
 
             if (!isInitialized())
             {
-                return Collections.emptyList();
+                return new List<StreamsMetadata>();
             }
 
-            if (globalStores.contains(storeName))
+            if (globalStores.Contains(storeName))
             {
                 return allMetadata;
             }
@@ -96,13 +102,13 @@ namespace Kafka.Streams.Processor.Internals
             List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null)
             {
-                return Collections.emptyList();
+                return new List<StreamsMetadata>();
             }
 
-            List<StreamsMetadata> results = new List<>();
+            List<StreamsMetadata> results = new List<StreamsMetadata>();
             foreach (StreamsMetadata metadata in allMetadata)
             {
-                if (metadata.stateStoreNames().contains(storeName))
+                if (metadata.stateStoreNames().Contains(storeName))
                 {
                     results.Add(metadata);
                 }
@@ -126,9 +132,10 @@ namespace Kafka.Streams.Processor.Internals
          * if streams is (re-)initializing
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public StreamsMetadata getMetadataWithKey(string storeName,
-                                                                   K key,
-                                                                   ISerializer<K> keySerializer)
+        public StreamsMetadata getMetadataWithKey<K, V>(
+            string storeName,
+            K key,
+            ISerializer<K> keySerializer)
         {
             keySerializer = keySerializer ?? throw new System.ArgumentNullException("keySerializer can't be null", nameof(keySerializer));
             storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
@@ -139,9 +146,9 @@ namespace Kafka.Streams.Processor.Internals
                 return StreamsMetadata.NOT_AVAILABLE;
             }
 
-            if (globalStores.contains(storeName))
+            if (globalStores.Contains(storeName))
             {
-                // global stores are on every node. if we dont' have the host info
+                // global stores are on every node. if we dont' have the host LogInformation
                 // for this host then just pick the first metadata
                 if (thisHost == UNKNOWN_HOST)
                 {
@@ -156,10 +163,11 @@ namespace Kafka.Streams.Processor.Internals
                 return null;
             }
 
-            return getStreamsMetadataForKey(storeName,
-                                            key,
-                                            new DefaultStreamPartitioner<>(keySerializer, clusterMetadata),
-                                            sourceTopicsInfo);
+            return getStreamsMetadataForKey(
+                storeName,
+                key,
+                new DefaultStreamPartitioner<K, V>(keySerializer, clusterMetadata),
+                sourceTopicsInfo);
         }
 
 
@@ -193,9 +201,9 @@ namespace Kafka.Streams.Processor.Internals
                 return StreamsMetadata.NOT_AVAILABLE;
             }
 
-            if (globalStores.contains(storeName))
+            if (globalStores.Contains(storeName))
             {
-                // global stores are on every node. if we dont' have the host info
+                // global stores are on every node. if we dont' have the host LogInformation
                 // for this host then just pick the first metadata
                 if (thisHost == UNKNOWN_HOST)
                 {
@@ -213,9 +221,9 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         /**
-         * Respond to changes to the HostInfo -> TopicPartition mapping. Will rebuild the
+         * Respond to changes to the HostInfo => TopicPartition mapping. Will rebuild the
          * metadata
-         * @param currentState       the current mapping of {@link HostInfo} -> {@link TopicPartition}s
+         * @param currentState       the current mapping of {@link HostInfo} => {@link TopicPartition}s
          * @param clusterMetadata    the current clusterMetadata {@link Cluster}
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -229,7 +237,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             foreach (TopicPartition topicPartition in partitionForHost)
             {
-                if (topicNames.contains(topicPartition.Topic))
+                if (topicNames.Contains(topicPartition.Topic))
                 {
                     return true;
                 }
@@ -286,8 +294,8 @@ namespace Kafka.Streams.Processor.Internals
                 HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames();
                 HashSet<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
                 topicPartitions.retainAll(matchingPartitions);
-                if (stateStoreNames.contains(storeName)
-                        && !topicPartitions.isEmpty())
+                if (stateStoreNames.Contains(storeName)
+                        && topicPartitions.Any())
                 {
                     return streamsMetadata;
                 }
@@ -323,9 +331,9 @@ namespace Kafka.Streams.Processor.Internals
                 foreach (string topic in sourceTopics)
                 {
                     List<PartitionInfo> partitions = clusterMetadata.partitionsForTopic(topic);
-                    if (partitions.size() > maxPartitions)
+                    if (partitions.Count > maxPartitions)
                     {
-                        maxPartitions = partitions.size();
+                        maxPartitions = partitions.Count;
                         topicWithMostPartitions = partitions[0].Topic;
                     }
                 }

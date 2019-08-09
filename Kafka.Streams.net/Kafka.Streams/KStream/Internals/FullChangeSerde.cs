@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream.Internals
                 return null;
             }
 
-            ISerializer<T> innerSerializer = innerSerde().Serializer();
+            ISerializer<T> innerSerializer = innerSerde().Serializer;
 
             var oldBytes = data.oldValue == null ? null : innerSerializer.Serialize(data.oldValue, new SerializationContext(MessageComponentType.Key, topic));
             var newBytes = data.newValue == null ? null : innerSerializer.Serialize(data.newValue, new SerializationContext(MessageComponentType.Key, topic));
@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals
                 return null;
             }
 
-            IDeserializer<T> innerDeserializer = innerSerde().Deserializer();
+            IDeserializer<T> innerDeserializer = innerSerde().Deserializer;
 
             var oldValue = innerDeserializer.Deserialize(serialChange.oldValue, isNull: serialChange.oldValue == null, new SerializationContext(MessageComponentType.Key, topic));
             var newValue = innerDeserializer.Deserialize(serialChange.newValue, isNull: serialChange.newValue == null, new SerializationContext(MessageComponentType.Key, topic));

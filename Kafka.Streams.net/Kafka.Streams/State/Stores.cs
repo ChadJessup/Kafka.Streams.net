@@ -17,7 +17,7 @@ namespace Kafka.Streams.State
      * KTable<long,string> table = builder.table(
      *   "topicName",
      *   Materialized.<long,string>As(storeSupplier)
-     *               .withKeySerde(Serdes.long())
+     *               .withKeySerde(Serdes.Long())
      *               .withValueSerde(Serdes.string())
      *               .withCachingDisabled());
      * }</pre>
@@ -29,12 +29,12 @@ namespace Kafka.Streams.State
      * Topology topology = new Topology();
      * topology.AddProcessor("processorName", ...);
      *
-     * Dictionary<string,string> topicConfig = new HashMap<>();
+     * Dictionary<string,string> topicConfig = new Dictionary<>();
      * StoreBuilder<WindowStore<int, long>> storeBuilder = Stores
      *   .windowStoreBuilder(
      *     Stores.persistentWindowStore("queryable-store-name", ...),
      *     Serdes.int(),
-     *     Serdes.long())
+     *     Serdes.Long())
      *   .withLoggingEnabled(topicConfig);
      *
      * topology.AddStateStore(storeBuilder, "processorName");
@@ -160,7 +160,7 @@ namespace Kafka.Streams.State
         // * Create a persistent {@link WindowBytesStoreSupplier}.
         // *
         // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
         // *                              (note that the retention period must be at least long enough to contain the
         // *                              windowed data's entire life cycle, from window-start through window-end,
         // *                              and for the entire grace period)
@@ -204,7 +204,7 @@ namespace Kafka.Streams.State
         // * {@link #persistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
         // *
         // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
         // *                              (note that the retention period must be at least long enough to contain the
         // *                              windowed data's entire life cycle, from window-start through window-end,
         // *                              and for the entire grace period)
@@ -230,7 +230,7 @@ namespace Kafka.Streams.State
         // * {@link #persistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
         // *
         // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
         // *                              (note that the retention period must be at least long enough to contain the
         // *                              windowed data's entire life cycle, from window-start through window-end,
         // *                              and for the entire grace period)
@@ -307,7 +307,7 @@ namespace Kafka.Streams.State
         // * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
         // *
         // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod       length of time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
         // *                              Note that the retention period must be at least long enough to contain the
         // *                              windowed data's entire life cycle, from window-start through window-end,
         // *                              and for the entire grace period.
@@ -350,7 +350,7 @@ namespace Kafka.Streams.State
         //     * Create a persistent {@link SessionBytesStoreSupplier}.
         //     *
         //     * @param name              name of the store (cannot be {@code null})
-        //     * @param retentionPeriodMs length ot time to retain data in the store (cannot be negative)
+        //     * @param retentionPeriodMs.Length ot time to retain data in the store (cannot be negative)
         //     *                          (note that the retention period must be at least long enough to contain the
         //     *                          windowed data's entire life cycle, from window-start through window-end,
         //     *                          and for the entire grace period)
@@ -373,7 +373,7 @@ namespace Kafka.Streams.State
         // * Create a persistent {@link SessionBytesStoreSupplier}.
         // *
         // * @param name              name of the store (cannot be {@code null})
-        // * @param retentionPeriod   length ot time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
         // *                          Note that the retention period must be at least long enough to contain the
         // *                          windowed data's entire life cycle, from window-start through window-end,
         // *                          and for the entire grace period.
@@ -391,7 +391,7 @@ namespace Kafka.Streams.State
         // * Create an in-memory {@link SessionBytesStoreSupplier}.
         // *
         // * @param name              name of the store (cannot be {@code null})
-        // * @param retentionPeriod   length ot time to retain data in the store (cannot be negative)
+        // * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
         // *                          Note that the retention period must be at least long enough to contain the
         // *                          windowed data's entire life cycle, from window-start through window-end,
         // *                          and for the entire grace period.

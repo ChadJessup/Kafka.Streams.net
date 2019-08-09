@@ -93,11 +93,11 @@ public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
             if (value.oldValue != null && oldAgg != null)
 {
                 intermediateAgg = removeReducer.apply(oldAgg, value.oldValue);
-                newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
             } else
 {
                 intermediateAgg = oldAgg;
-                newTimestamp = context().timestamp();
+                newTimestamp = context.timestamp();
             }
 
             // then try to.Add the new value
@@ -110,7 +110,7 @@ public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
                 } else
 {
                     newAgg =.AddReducer.apply(intermediateAgg, value.newValue);
-                    newTimestamp = Math.Max(context().timestamp(), oldAggAndTimestamp.timestamp());
+                    newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
                 }
             } else
 {
@@ -124,7 +124,7 @@ public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V> {
     }
 
 
-    public KTableValueGetterSupplier<K, V> view()
+    public IKTableValueGetterSupplier<K, V> view()
 {
         return new KTableMaterializedValueGetterSupplier<>(storeName);
     }

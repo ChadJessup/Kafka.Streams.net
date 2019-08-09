@@ -59,9 +59,9 @@ class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
             // since it will never be considered for join operations
             if (key != null)
 {
-                context().forward(key, value);
+                context.forward(key, value);
                 // Every record basically starts a new window. We're using a window store mostly for the retention.
-                window.Add(key, value, context().timestamp());
+                window.Add(key, value, context.timestamp());
             }
         }
     }

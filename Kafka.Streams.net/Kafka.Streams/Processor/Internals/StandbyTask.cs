@@ -39,7 +39,7 @@ public class StandbyTask : AbstractTask
 {
 
 
-    private Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
+    private Dictionary<TopicPartition, long> checkpointedOffsets = new Dictionary<>();
     private Sensor closeTaskSensor;
 
     /**

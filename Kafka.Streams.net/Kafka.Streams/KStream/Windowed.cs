@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿
 namespace Kafka.Streams.KStream
 {
     public class Windowed<K>
     {
-        private K key;
-
-        private Window window;
+        public K key { get; private set; }
+        public Window window { get; private set; }
 
         public Windowed(K key, Window window)
         {

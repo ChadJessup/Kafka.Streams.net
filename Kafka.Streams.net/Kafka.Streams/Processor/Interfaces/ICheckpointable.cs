@@ -14,26 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using System.Collections.Generic;
 
-
-using Kafka.Common.TopicPartition;
-
-
-
-
-/**
- * Interface for maintaining global state stores. see {@link GlobalStateUpdateTask}
- */
-interface GlobalStateMaintainer
+namespace Kafka.Streams.Processor.Interfaces
 {
-
-
-    Dictionary<TopicPartition, long> initialize();
-
-    void flushState();
-
-    void close();
-
-    void update(ConsumeResult<byte[], byte[]> record);
+    // Interface to indicate that an object has associated partition offsets that can be checkpointed
+    public interface ICheckpointable
+    {
+        void checkpoint(Dictionary<TopicPartition, long> offsets);
+        Dictionary<TopicPartition, long> checkpointed();
+    }
 }

@@ -14,32 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
 
-using Kafka.Streams.Processor.Internals.IInternalProcessorContext;
-
-
-
-interface Segments<S : Segment>
+namespace Kafka.Streams.State.Internals
 {
 
-    long segmentId(long timestamp);
+    public interface Segments<S>
+        where S : ISegment
+    {
+        long segmentId(long timestamp);
 
-    string segmentName(long segmentId);
+        string segmentName(long segmentId);
 
-    S getSegmentForTimestamp(long timestamp);
+        S getSegmentForTimestamp(long timestamp);
 
-    S getOrCreateSegmentIfLive(long segmentId, IInternalProcessorContext context, long streamTime);
+        S getOrCreateSegmentIfLive<K, V>(long segmentId, IInternalProcessorContext<K, V> context, long streamTime);
 
-    S getOrCreateSegment(long segmentId, IInternalProcessorContext context);
+        S getOrCreateSegment<K, V>(long segmentId, IInternalProcessorContext<K, V> context);
 
-    void openExisting(IInternalProcessorContext context, long streamTime);
+        void openExisting<K, V>(IInternalProcessorContext<K, V> context, long streamTime);
 
-    List<S> segments(long timeFrom, long timeTo);
+        List<S> segments(long timeFrom, long timeTo);
 
-    List<S> allSegments();
+        List<S> allSegments();
 
-    void flush();
+        void flush();
 
-    void close();
+        void close();
+    }
 }

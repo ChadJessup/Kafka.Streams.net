@@ -54,7 +54,7 @@ namespace Kafka.Streams.KStream.Internals
             this.streamsGraphNode = stream.streamsGraphNode;
         }
 
-        AbstractStream(
+        public AbstractStream(
             string name,
             ISerde<K> keySerde,
             ISerde<V> valSerde,
@@ -101,13 +101,14 @@ namespace Kafka.Streams.KStream.Internals
         static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
-            return default; // (readOnlyKey, value)->valueMapper.apply(value);
+            return default; // (readOnlyKey, value)=>valueMapper.apply(value);
         }
 
-        static ValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
+        static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
              IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            return null;
             //    return ()=> {
             //        ValueTransformer<V, VR> valueTransformer = valueTransformerSupplier[];
             //        return new ValueTransformerWithKey<K, V, VR>()
@@ -133,7 +134,7 @@ namespace Kafka.Streams.KStream.Internals
             //};
         }
 
-        public ISerde<V> valueSerde()
+        public ISerde<V> valueSerde
         {
             return valSerde;
         }

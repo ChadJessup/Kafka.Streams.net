@@ -20,32 +20,23 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
     public class TableProcessorNode<K, V> : StreamsGraphNode
     {
-
-
         private ProcessorParameters<K, V> processorParameters;
-        private IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder;
+        private IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
         private string[] storeNames;
 
-        public TableProcessorNode(string nodeName,
-                                   ProcessorParameters<K, V> processorParameters,
-                                   IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder)
+        public TableProcessorNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters,
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder)
+            : this(nodeName, processorParameters, storeBuilder, null)
         {
-            this(nodeName, processorParameters, storeBuilder, null);
         }
 
         public TableProcessorNode(string nodeName,
                                    ProcessorParameters<K, V> processorParameters,
-                                   IStoreBuilder<TimestampedKeyValueStore<K, V>> storeBuilder,
+                                   IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder,
                                    string[] storeNames)
             : base(nodeName)
         {
@@ -64,12 +55,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 "} " + base.ToString();
         }
 
-
-
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            string processorName = processorParameters.processorName();
-            topologyBuilder.AddProcessor(processorName, processorParameters.processorSupplier(), parentNodeNames());
+            string processorName = processorParameters.processorName;
+            topologyBuilder.addProcessor(processorName, processorParameters.processorSupplier, parentNodeNames());
 
             if (storeNames.Length > 0)
             {
@@ -79,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores
             if (storeBuilder != null)
             {
-                topologyBuilder.addStateStore(storeBuilder, processorName);
+                topologyBuilder.addStateStore<K, V, T>(storeBuilder, processorName);
             }
         }
     }

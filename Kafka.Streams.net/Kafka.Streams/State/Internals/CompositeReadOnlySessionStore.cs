@@ -75,7 +75,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
         from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
         to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
-        NextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store -> store.fetch(from, to);
+        NextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
         return new DelegatingPeekingKeyValueIterator<>(storeName,
                                                        new CompositeKeyValueIterator<>(
                                                                storeProvider.stores(storeName, queryableStoreType).iterator(),

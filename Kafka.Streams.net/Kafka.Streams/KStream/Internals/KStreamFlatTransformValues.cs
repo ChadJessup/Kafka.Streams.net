@@ -28,9 +28,9 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamFlatTransformValues<KIn, VIn, VOut> : ProcessorSupplier<KIn, VIn>
     {
 
-        private ValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerSupplier;
+        private IValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerSupplier;
 
-        public KStreamFlatTransformValues(ValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerWithKeySupplier)
+        public KStreamFlatTransformValues(IValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerWithKeySupplier)
         {
             this.valueTransformerSupplier = valueTransformerWithKeySupplier;
         }
@@ -44,10 +44,10 @@ namespace Kafka.Streams.KStream.Internals
         public static class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : Processor<KIn, VIn>
         {
 
-            private ValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer;
+            private IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer;
             private IProcessorContext context;
 
-            KStreamFlatTransformValuesProcessor(ValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer)
+            KStreamFlatTransformValuesProcessor(IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer)
             {
                 this.valueTransformer = valueTransformer;
             }

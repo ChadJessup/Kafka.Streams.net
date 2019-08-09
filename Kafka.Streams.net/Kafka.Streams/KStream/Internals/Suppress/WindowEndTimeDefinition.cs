@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,21 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
 
-
-
-
-
-public interface GlobalStateManager : StateManager
+namespace Kafka.Streams.KStream.Internals.Suppress
 {
+    public class WindowEndTimeDefinition<K> : ITimeDefinition<K>
+        where K : Windowed
+    {
+        private static WindowEndTimeDefinition INSTANCE = new WindowEndTimeDefinition();
+
+        private WindowEndTimeDefinition() { }
 
 
-    void setGlobalProcessorContext(IInternalProcessorContext processorContext);
+        public static K WindowEndTimeDefinition<K> instance()
+            {
+            return WindowEndTimeDefinition.INSTANCE;
+        }
 
-    /**
-     * @throws InvalidOperationException If store gets registered after initialized is already finished
-     * @throws StreamsException if the store's change log does not contain the partition
-     */
-    HashSet<string> initialize();
+
+        public long time(IProcessorContext context, K key)
+        {
+            return key.window().end();
+        }
+
+
+        public TimeDefinitionType type()
+        {
+            return TimeDefinitionType.WINDOW_END_TIME;
+        }
+    }
 }

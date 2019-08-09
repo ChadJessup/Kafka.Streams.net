@@ -83,7 +83,7 @@ namespace Kafka.Streams.Processor.Internals
             metrics,
             stateMgr,
             new ThreadCache(
-                new LogContext(string.Format("stream-thread [%s] ", Thread.currentThread().getName())],
+                new LogContext(string.Format("stream-thread [%s] ", Thread.CurrentThread.getName())],
                 0,
                 metrics))
     {

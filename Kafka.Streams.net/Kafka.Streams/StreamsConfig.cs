@@ -46,8 +46,8 @@ namespace Kafka.Streams
      * streamsProperties.Add("my.custom.config2", "boom");
      *
      * // as a result, inside producer's serde configure(..) function,
-     * // users can now read both key-value pairs "my.custom.config" -> "foo"
-     * // and "my.custom.config2" -> "boom" from the config map
+     * // users can now read both key-value pairs "my.custom.config" => "foo"
+     * // and "my.custom.config2" => "boom" from the config map
      * StreamsConfig streamsConfig = new StreamsConfig(streamsProperties);
      * }</pre>
      *
@@ -669,7 +669,7 @@ namespace Kafka.Streams
         //    static
         //{
 
-        //         Dictionary<string, object> tempProducerDefaultOverrides = new HashMap<>();
+        //         Dictionary<string, object> tempProducerDefaultOverrides = new Dictionary<>();
         //        tempProducerDefaultOverrides.Add(ProducerConfig.LINGER_MS_CONFIG, "100");
         //        PRODUCER_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempProducerDefaultOverrides);
         //    }
@@ -678,7 +678,7 @@ namespace Kafka.Streams
         //    static
         //{
 
-        //         Dictionary<string, object> tempProducerDefaultOverrides = new HashMap<>(PRODUCER_DEFAULT_OVERRIDES);
+        //         Dictionary<string, object> tempProducerDefaultOverrides = new Dictionary<>(PRODUCER_DEFAULT_OVERRIDES);
         //        tempProducerDefaultOverrides.Add(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, int.MaxValue);
         //        tempProducerDefaultOverrides.Add(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
@@ -689,7 +689,7 @@ namespace Kafka.Streams
         //    static
         //{
 
-        //         Dictionary<string, object> tempConsumerDefaultOverrides = new HashMap<>();
+        //         Dictionary<string, object> tempConsumerDefaultOverrides = new Dictionary<>();
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, "1000");
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
@@ -701,7 +701,7 @@ namespace Kafka.Streams
         //    static
         //{
 
-        //         Dictionary<string, object> tempConsumerDefaultOverrides = new HashMap<>(CONSUMER_DEFAULT_OVERRIDES);
+        //         Dictionary<string, object> tempConsumerDefaultOverrides = new Dictionary<>(CONSUMER_DEFAULT_OVERRIDES);
         //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name().toLowerCase(Locale.ROOT));
         //        CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
         //    }
@@ -839,7 +839,7 @@ namespace Kafka.Streams
             checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
             checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
 
-            Dictionary<string, object> consumerProps = new HashMap<>(eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES);
+            Dictionary<string, object> consumerProps = new Dictionary<>(eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES);
             consumerProps.putAll(getClientCustomProps());
             consumerProps.putAll(clientProvidedProps);
 
@@ -1010,7 +1010,7 @@ namespace Kafka.Streams
             if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
                 producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
             {
-                int segmentSize = int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)].ToString());
+                int segmentSize = sizeof(int.Parse(topicProps[topicPrefix(TopicConfig.SEGMENT)_CONFIG)].ToString());
                 int batchSize = int.Parse(producerProps[ProducerConfig.BATCH_SIZE_CONFIG].ToString());
 
                 if (segmentSize < batchSize)

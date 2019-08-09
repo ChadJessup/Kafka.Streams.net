@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private static int NEWFLAG_SIZE = 1;
 
-        private ISerializer<T> inner;
+        public ISerializer<T> inner { get; private set; }
 
         public ChangedSerializer(ISerializer<T> inner)
         {

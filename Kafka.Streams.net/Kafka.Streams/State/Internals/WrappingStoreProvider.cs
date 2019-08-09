@@ -14,7 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Errors;
+using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -23,7 +26,6 @@ namespace Kafka.Streams.State.Internals
      */
     public class WrappingStoreProvider : IStateStoreProvider
     {
-
         private List<IStateStoreProvider> storeProviders;
 
         WrappingStoreProvider(List<IStateStoreProvider> storeProviders)
@@ -39,19 +41,21 @@ namespace Kafka.Streams.State.Internals
          * @param       The type of the Store, for example, {@link org.apache.kafka.streams.state.ReadOnlyKeyValueStore}
          * @return  a List of all the stores with the storeName and are accepted by {@link QueryableStoreType#accepts(IStateStore)}
          */
-        public List<T> stores(string storeName,
-                                  IQueryableStoreType<T> type)
+        public List<T> stores<T>(
+            string storeName,
+            IQueryableStoreType<T> type)
         {
-            List<T> allStores = new List<>();
+            List<T> allStores = new List<T>();
             foreach (IStateStoreProvider provider in storeProviders)
             {
                 List<T> stores = provider.stores(storeName, type);
-                allStores.AddAll(stores);
+                allStores.AddRange(stores);
             }
-            if (allStores.isEmpty())
+            if (!allStores.Any())
             {
                 throw new InvalidStateStoreException("The state store, " + storeName + ", may have migrated to another instance.");
             }
+
             return allStores;
         }
     }

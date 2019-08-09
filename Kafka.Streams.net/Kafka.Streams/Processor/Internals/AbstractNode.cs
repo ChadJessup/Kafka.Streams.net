@@ -20,12 +20,12 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class InternalTopologyBuilder
     {
-        public abstract class AbstractNode : TopologyDescription.Node
+        public abstract class AbstractNode : TopologyDescription.INode
         {
 
             string name;
-            HashSet<TopologyDescription.Node> predecessors = new SortedSet<>(NODE_COMPARATOR);
-            HashSet<TopologyDescription.Node> successors = new SortedSet<>(NODE_COMPARATOR);
+            HashSet<TopologyDescription.INode> predecessors = new SortedSet<>(NODE_COMPARATOR);
+            HashSet<TopologyDescription.INode> successors = new SortedSet<>(NODE_COMPARATOR);
 
             // size of the sub-topology rooted at this node, including the node itself
             int size;
@@ -44,23 +44,23 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public HashSet<TopologyDescription.Node> predecessors()
+            public HashSet<TopologyDescription.INode> predecessors()
             {
                 return Collections.unmodifiableSet(predecessors);
             }
 
 
-            public HashSet<TopologyDescription.Node> successors()
+            public HashSet<TopologyDescription.INode> successors()
             {
                 return Collections.unmodifiableSet(successors);
             }
 
-            public void addPredecessor(TopologyDescription.Node predecessor)
+            public void addPredecessor(TopologyDescription.INode predecessor)
             {
                 predecessors.Add(predecessor);
             }
 
-            public void addSuccessor(TopologyDescription.Node successor)
+            public void addSuccessor(TopologyDescription.INode successor)
             {
                 successors.Add(successor);
             }

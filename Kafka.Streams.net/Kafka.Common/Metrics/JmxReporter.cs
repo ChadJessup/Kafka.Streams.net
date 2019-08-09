@@ -51,7 +51,7 @@
 ////    private static ILogger log = new LoggerFactory().CreateLogger<JmxReporter);
 ////    private static object LOCK = new object();
 ////    private string prefix;
-////    private Dictionary<string, KafkaMbean> mbeans = new HashMap<string, KafkaMbean>();
+////    private Dictionary<string, KafkaMbean> mbeans = new Dictionary<string, KafkaMbean>();
 
 ////    public JmxReporter()
 //{
@@ -207,7 +207,7 @@
 ////        private Dictionary<string, KafkaMetric> metrics;
 
 ////        public KafkaMbean(string mbeanName){
-////            this.metrics = new HashMap<>();
+////            this.metrics = new Dictionary<>();
 ////            this.objectName = new ObjectName(mbeanName);
 ////        }
 

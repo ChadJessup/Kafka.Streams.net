@@ -31,21 +31,21 @@ using Kafka.Common.Utils.LogContext;
 /**
  * Updates the state for all Global State Stores.
  */
-public class GlobalStateUpdateTask : GlobalStateMaintainer
+public class GlobalStateUpdateTask : IGlobalStateMaintainer
 {
 
 
     private ProcessorTopology topology;
     private IInternalProcessorContext processorContext;
-    private Dictionary<TopicPartition, long> offsets = new HashMap<>();
-    private Dictionary<string, RecordDeserializer> deserializers = new HashMap<>();
-    private GlobalStateManager stateMgr;
+    private Dictionary<TopicPartition, long> offsets = new Dictionary<>();
+    private Dictionary<string, RecordDeserializer> deserializers = new Dictionary<>();
+    private IGlobalStateManager stateMgr;
     private DeserializationExceptionHandler deserializationExceptionHandler;
     private LogContext logContext;
 
     public GlobalStateUpdateTask(ProcessorTopology topology,
                                  IInternalProcessorContext processorContext,
-                                 GlobalStateManager stateMgr,
+                                 IGlobalStateManager stateMgr,
                                  DeserializationExceptionHandler deserializationExceptionHandler,
                                  LogContext logContext)
 {

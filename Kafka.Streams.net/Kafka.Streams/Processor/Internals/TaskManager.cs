@@ -122,7 +122,7 @@ public class TaskManager
 {
             return;
         }
-        Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new Dictionary<>();
         // collect newly assigned tasks and reopen re-assigned tasks
         log.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
         foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks)
@@ -158,7 +158,7 @@ public class TaskManager
 
         // CANNOT FIND RETRY AND BACKOFF LOGIC
         // create all newly assigned tasks (guard against race condition with other thread via backoff and retry)
-        // -> other thread will call removeSuspendedTasks(); eventually
+        // => other thread will call removeSuspendedTasks(); eventually
         log.LogTrace("New active tasks to be created: {}", newTasks);
 
         foreach (StreamTask task in taskCreator.createTasks(consumer, newTasks))
@@ -175,7 +175,7 @@ public class TaskManager
             return;
         }
         log.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
-        Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new HashMap<>();
+        Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new Dictionary<>();
         // collect newly assigned standby tasks and reopen re-assigned standby tasks
         foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks)
 {
@@ -193,7 +193,7 @@ public class TaskManager
         }
 
         // create all newly assigned standby tasks (guard against race condition with other thread via backoff and retry)
-        // -> other thread will call removeSuspendedStandbyTasks(); eventually
+        // => other thread will call removeSuspendedStandbyTasks(); eventually
         log.LogTrace("New standby tasks to be created: {}", newStandbyTasks);
 
         foreach (StandbyTask task in standbyTaskCreator.createTasks(consumer, newStandbyTasks))
@@ -229,17 +229,17 @@ public class TaskManager
 
         HashSet<TaskId> tasks = new HashSet<>();
 
-        File[] stateDirs = taskCreator.stateDirectory().listTaskDirectories();
+        FileInfo[] stateDirs = taskCreator.stateDirectory().listTaskDirectories();
         if (stateDirs != null)
 {
-            foreach (File dir in stateDirs)
+            foreach (FileInfo dir in stateDirs)
 {
                 try
 {
 
                     TaskId id = TaskId.parse(dir.getName());
                     // if the checkpoint file exists, the state is valid.
-                    if (new File(dir, StateManagerUtil.CHECKPOINT_FILE_NAME).exists())
+                    if (new FileInfo(dir, StateManagerUtil.CHECKPOINT_FILE_NAME).exists())
 {
                         tasks.Add(id);
                     }
@@ -406,7 +406,7 @@ public class TaskManager
     private void assignStandbyPartitions()
 {
         List<StandbyTask> running = standby.running();
-        Dictionary<TopicPartition, long> checkpointedOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> checkpointedOffsets = new Dictionary<>();
         foreach (StandbyTask standbyTask in running)
 {
             checkpointedOffsets.putAll(standbyTask.checkpointedOffsets());
@@ -464,7 +464,7 @@ public class TaskManager
         }
     }
 
-    public void updateSubscriptionsFromMetadata(Set<string> topics)
+    public void updateSubscriptionsFromMetadata(HashSet<string> topics)
 {
         if (builder().sourceTopicPattern() != null)
 {
@@ -524,7 +524,7 @@ public class TaskManager
                 log.LogDebug("Previous delete-records request has failed: {}. Try sending the new request now", deleteRecordsResult.lowWatermarks());
             }
 
-            Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new HashMap<>();
+            Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new Dictionary<>();
             foreach (KeyValuePair<TopicPartition, long> entry in active.recordsToDelete())
 {
                 recordsToDelete.Add(entry.Key, RecordsToDelete.beforeOffset(entry.Value));

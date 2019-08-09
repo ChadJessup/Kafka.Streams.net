@@ -14,172 +14,162 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
+    {
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableInnerJoin<K, R, V1, V2>>();
+
+        private IKeyValueMapper<K, V1, K> keyValueMapper = (key, value) => key;
+
+        KTableKTableInnerJoin(KTableImpl<K, ?, V1> table1,
+                               KTableImpl<K, ?, V2> table2,
+                               IValueJoiner<V1, V2, R> joiner)
+        {
+            base(table1, table2, joiner);
+        }
 
 
+        public Processor<K, Change<V1>> get()
+        {
+            return new KTableKTableJoinProcessor(valueGetterSupplier2());
+        }
 
 
+        public IKTableValueGetterSupplier<K, R> view()
+        {
+            return new KTableKTableInnerJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
+        }
 
+        private KTableKTableInnerJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> {
 
-
-
-
-
-
-
-
-
-
-
-
-class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2> {
-    private static  ILogger LOG= new LoggerFactory().CreateLogger<KTableKTableInnerJoin);
-
-    private  IKeyValueMapper<K, V1, K> keyValueMapper = (key, value) -> key;
-
-    KTableKTableInnerJoin( KTableImpl<K, ?, V1> table1,
-                           KTableImpl<K, ?, V2> table2,
-                           IValueJoiner<V1, V2, R> joiner)
-{
-        base(table1, table2, joiner);
-    }
-
-
-    public Processor<K, Change<V1>> get()
-{
-        return new KTableKTableJoinProcessor(valueGetterSupplier2());
-    }
-
-
-    public KTableValueGetterSupplier<K, R> view()
-{
-        return new KTableKTableInnerJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
-    }
-
-    private KTableKTableInnerJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2> {
-
-        KTableKTableInnerJoinValueGetterSupplier( KTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-                                                  KTableValueGetterSupplier<K, V2> valueGetterSupplier2)
-{
+        KTableKTableInnerJoinValueGetterSupplier(IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
+                                                  IKTableValueGetterSupplier<K, V2> valueGetterSupplier2)
+        {
             base(valueGetterSupplier1, valueGetterSupplier2);
         }
 
-        public KTableValueGetter<K, R> get()
-{
+        public IKTableValueGetter<K, R> get()
+        {
             return new KTableKTableInnerJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2());
         }
     }
 
-    private class KTableKTableJoinProcessor : AbstractProcessor<K, Change<V1>> {
+    private class KTableKTableJoinProcessor : AbstractProcessor<K, Change<V1>>
+    {
 
-        private  KTableValueGetter<K, V2> valueGetter;
+        private IKTableValueGetter<K, V2> valueGetter;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        KTableKTableJoinProcessor( KTableValueGetter<K, V2> valueGetter)
-{
+        KTableKTableJoinProcessor(IKTableValueGetter<K, V2> valueGetter)
+        {
             this.valueGetter = valueGetter;
         }
 
 
-        public void init( IProcessorContext context)
-{
+        public void init(IProcessorContext context)
+        {
             base.init(context);
-            metrics = (StreamsMetricsImpl) context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics();
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             valueGetter.init(context);
         }
 
 
-        public void process( K key,  Change<V1> change)
-{
+        public void process(K key, Change<V1> change)
+        {
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             if (key == null)
-{
+            {
                 LOG.LogWarning(
                     "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    change, context().Topic, context().partition(), context().offset()
+                    change, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
             }
 
             R newValue = null;
-             long resultTimestamp;
+            long resultTimestamp;
             R oldValue = null;
 
-             ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter[key];
-             V2 valueRight = getValueOrNull(valueAndTimestampRight);
+            ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter[key];
+            V2 valueRight = getValueOrNull(valueAndTimestampRight);
             if (valueRight == null)
-{
+            {
                 return;
             }
 
-            resultTimestamp = Math.Max(context().timestamp(), valueAndTimestampRight.timestamp());
+            resultTimestamp = Math.Max(context.timestamp(), valueAndTimestampRight.timestamp());
 
             if (change.newValue != null)
-{
+            {
                 newValue = joiner.apply(change.newValue, valueRight);
             }
 
             if (sendOldValues && change.oldValue != null)
-{
+            {
                 oldValue = joiner.apply(change.oldValue, valueRight);
             }
 
-            context().forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
+            context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
         }
 
 
         public void close()
-{
+        {
             valueGetter.close();
         }
     }
 
-    private class KTableKTableInnerJoinValueGetter : KTableValueGetter<K, R> {
+    private class KTableKTableInnerJoinValueGetter : IKTableValueGetter<K, R>
+    {
 
-        private  KTableValueGetter<K, V1> valueGetter1;
-        private  KTableValueGetter<K, V2> valueGetter2;
+        private IKTableValueGetter<K, V1> valueGetter1;
+        private IKTableValueGetter<K, V2> valueGetter2;
 
-        KTableKTableInnerJoinValueGetter( KTableValueGetter<K, V1> valueGetter1,
-                                          KTableValueGetter<K, V2> valueGetter2)
-{
+        KTableKTableInnerJoinValueGetter(IKTableValueGetter<K, V1> valueGetter1,
+                                          IKTableValueGetter<K, V2> valueGetter2)
+        {
             this.valueGetter1 = valueGetter1;
             this.valueGetter2 = valueGetter2;
         }
 
 
-        public void init( IProcessorContext context)
-{
+        public void init(IProcessorContext context)
+        {
             valueGetter1.init(context);
             valueGetter2.init(context);
         }
 
 
-        public ValueAndTimestamp<R> get( K key)
-{
-             ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
-             V1 value1 = getValueOrNull(valueAndTimestamp1);
+        public ValueAndTimestamp<R> get(K key)
+        {
+            ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
+            V1 value1 = getValueOrNull(valueAndTimestamp1);
 
             if (value1 != null)
-{
-                 ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1)];
-                 V2 value2 = getValueOrNull(valueAndTimestamp2);
+            {
+                ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[keyValueMapper.apply(key, value1)];
+                V2 value2 = getValueOrNull(valueAndTimestamp2);
 
                 if (value2 != null)
-{
+                {
                     return ValueAndTimestamp.make(
                         joiner.apply(value1, value2),
                         Math.Max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp()));
-                } else
-{
+                }
+                else
+                {
 
                     return null;
                 }
-            } else
-{
+            }
+            else
+            {
 
                 return null;
             }
@@ -187,7 +177,7 @@ class KTableKTableInnerJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V
 
 
         public void close()
-{
+        {
             valueGetter1.close();
             valueGetter2.close();
         }

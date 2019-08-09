@@ -23,20 +23,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public abstract class StreamsGraphNode
     {
         private HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
-        private HashSet<StreamsGraphNode> parentNodes = new HashSet<StreamsGraphNode>();
-        protected string nodeName;
+        public HashSet<StreamsGraphNode> parentNodes { get; } = new HashSet<StreamsGraphNode>();
+        public string nodeName { get; }
         private bool keyChangingOperation;
         private bool valueChangingOperation;
         private bool mergeNode;
-        private int buildPriority;
-        private bool hasWrittenToTopology = false;
+        public int buildPriority { get; private set; }
+        public bool hasWrittenToTopology { get; private set; } = false;
 
         public StreamsGraphNode(string nodeName)
         {
             this.nodeName = nodeName;
         }
 
-        string[] parentNodeNames()
+        public string[] parentNodeNames()
         {
             string[] parentNames = new string[parentNodes.Count];
             int index = 0;

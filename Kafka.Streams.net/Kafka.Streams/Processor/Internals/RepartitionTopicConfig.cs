@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processor.Internals
     {
         private static Dictionary<string, string> REPARTITION_TOPIC_DEFAULT_OVERRIDES;
 
-        Dictionary<string, string> tempTopicDefaultOverrides = new HashMap<>();
+        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<>();
         tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
         tempTopicDefaultOverrides.Add(TopicConfig.SEGMENT_BYTES_CONFIG, "52428800");         // 50 MB
         tempTopicDefaultOverrides.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(-1));  // Infinity
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
         public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
-            Dictionary<string, string> topicConfig = new HashMap<>(REPARTITION_TOPIC_DEFAULT_OVERRIDES);
+            Dictionary<string, string> topicConfig = new Dictionary<>(REPARTITION_TOPIC_DEFAULT_OVERRIDES);
 
             topicConfig.putAll(defaultProperties);
 

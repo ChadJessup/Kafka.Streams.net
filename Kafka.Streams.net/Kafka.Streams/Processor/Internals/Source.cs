@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
 
-            public void addPredecessor(TopologyDescription.Node predecessor)
+            public void addPredecessor(TopologyDescription.INode predecessor)
             {
                 throw new InvalidOperationException("Sources don't have predecessors.");
             }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 string topicsString = topics == null ? topicPattern.ToString() : topics.ToString();
 
-                return "Source: " + name + " (topics: " + topicsString + ")\n      --> " + nodeNames(successors);
+                return "Source: " + name + " (topics: " + topicsString + ")\n      -=> " + nodeNames(successors);
             }
 
 

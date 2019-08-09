@@ -121,7 +121,7 @@ namespace Kafka.Streams.State.Internals
                 userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            dbDir = new File(new File(context.stateDir(), parentDir), name);
+            dbDir = new FileInfo(new FileInfo(context.stateDir(), parentDir), name);
 
             try
             {
@@ -356,7 +356,7 @@ namespace Kafka.Streams.State.Internals
             if (prepareForBulkload)
             {
                 // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-                string[] sstFileNames = dbDir.list((dir, name)->SST_FILE_EXTENSION.matcher(name).matches());
+                string[] sstFileNames = dbDir.list((dir, name)=>SST_FILE_EXTENSION.matcher(name).matches());
 
                 if (sstFileNames != null && sstFileNames.Length > 0)
                 {

@@ -9,7 +9,7 @@ namespace Kafka.Streams.Processor.Internals
     {
         private StreamsMetricsImpl metrics;
 
-        private Sensor nodeProcessTimeSensor;
+        public Sensor nodeProcessTimeSensor { get; }
         private Sensor nodePunctuateTimeSensor;
         private Sensor sourceNodeForwardSensor;
         private Sensor nodeCreationSensor;

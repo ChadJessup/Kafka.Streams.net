@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K>
+public class SuppressedInternal<K> : ISuppressed<K>, NamedSuppressed<K>
 {
     private static TimeSpan DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MaxValue);
     private static StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl)BufferConfig.unbounded();
@@ -54,7 +54,7 @@ public class SuppressedInternal<K> : Suppressed<K>, NamedSuppressed<K>
     }
 
 
-    public Suppressed<K> withName(string name)
+    public ISuppressed<K> withName(string name)
     {
         return new SuppressedInternal<>(name, timeToWaitForMoreEvents, bufferConfig, timeDefinition, safeToDropTombstones);
     }

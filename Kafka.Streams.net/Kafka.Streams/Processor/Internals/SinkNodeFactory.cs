@@ -15,24 +15,26 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
+using Kafka.Streams.Processor.Interfaces;
+using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    private class SinkNodeFactory<K, V> : NodeFactory
+    public class SinkNodeFactory<K, V> : NodeFactory<K, V>
     {
-
         private ISerializer<K> keySerializer;
         private ISerializer<V> valSerializer;
         private IStreamPartitioner<K, V> partitioner;
         private ITopicNameExtractor<K, V> topicExtractor;
 
-        private SinkNodeFactory(string name,
-                                string[] predecessors,
-                                ITopicNameExtractor<K, V> topicExtractor,
-                                ISerializer<K> keySerializer,
-                                ISerializer<V> valSerializer,
-                                IStreamPartitioner<K, V> partitioner)
-            : base(name, predecessors.clone())
+        public SinkNodeFactory(
+            string name,
+            string[] predecessors,
+            ITopicNameExtractor<K, V> topicExtractor,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valSerializer,
+            IStreamPartitioner<K, V> partitioner)
+            : base(name, predecessors.ToArray())
         {
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
@@ -40,16 +42,20 @@ namespace Kafka.Streams.Processor.Internals
             this.partitioner = partitioner;
         }
 
-
-        public ProcessorNode build()
+        public override ProcessorNode<K, V> build()
         {
-            if (topicExtractor is StaticTopicNameExtractor)
+            if (topicExtractor is StaticTopicNameExtractor<K, V>)
             {
-                string topic = ((StaticTopicNameExtractor)topicExtractor).topicName;
-                if (internalTopicNames.contains(topic))
+                string topic = ((StaticTopicNameExtractor<K, V>)topicExtractor).topicName;
+                if (internalTopicNames.Contains(topic))
                 {
                     // prefix the internal topic name with the application id
-                    return new SinkNode<>(name, new StaticTopicNameExtractor<>(decorateTopic(topic)), keySerializer, valSerializer, partitioner);
+                    return new SinkNode<K, V>(
+                        name,
+                        new StaticTopicNameExtractor<K, V>(decorateTopic(topic)),
+                        keySerializer,
+                        valSerializer,
+                        partitioner);
                 }
                 else
                 {

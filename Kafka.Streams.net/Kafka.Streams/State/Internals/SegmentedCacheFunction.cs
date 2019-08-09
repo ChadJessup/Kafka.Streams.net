@@ -48,14 +48,14 @@ class SegmentedCacheFunction : CacheFunction
     Bytes cacheKey(Bytes key, long segmentId)
 {
         byte[] keyBytes = key[];
-        ByteBuffer buf = ByteBuffer.allocate(SEGMENT_ID_BYTES + keyBytes.Length);
+        ByteBuffer buf = sizeof(ByteBuffer.allocate(SEGMENT_ID) + keyBytes.Length);
         buf.putLong(segmentId).Add(keyBytes);
         return Bytes.wrap(buf.array());
     }
 
     static byte[] bytesFromCacheKey(Bytes cacheKey)
 {
-        byte[] binaryKey = new byte[cacheKey[].Length - SEGMENT_ID_BYTES];
+        byte[] binaryKey = sizeof(new byte[cacheKey[].Length - SEGMENT_ID)];
         System.arraycopy(cacheKey(), SEGMENT_ID_BYTES, binaryKey, 0, binaryKey.Length);
         return binaryKey;
     }

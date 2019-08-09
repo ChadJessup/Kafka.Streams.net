@@ -1,5 +1,5 @@
 using Kafka.Common.Interfaces;
-using Kakfa.Common.Metrics;
+using Kafka.Common.Metrics;
 using System;
 using System.Collections.Generic;
 

@@ -1,7 +1,7 @@
 using Kafka.Common.Metrics.Interfaces;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
-using Kakfa.Common.Metrics;
+using Kafka.Common.Metrics;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;

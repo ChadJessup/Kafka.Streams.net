@@ -85,7 +85,7 @@ public class StateSerdes<K, V>
      *
      * @return the key serde
      */
-    public ISerde<K> keySerde()
+    public ISerde<K> keySerde
 {
         return keySerde;
     }
@@ -95,7 +95,7 @@ public class StateSerdes<K, V>
      *
      * @return the value serde
      */
-    public ISerde<V> valueSerde()
+    public ISerde<V> valueSerde
 {
         return valueSerde;
     }

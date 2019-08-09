@@ -14,23 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
+using System.Text;
+
 namespace Kafka.Streams.Processor.Internals
 {
     public class SourceNode<K, V> : ProcessorNode<K, V>
     {
-
         private List<string> topics;
 
-        private IProcessorContext context;
+        private IProcessorContext<K, V> context;
         private IDeserializer<K> keyDeserializer;
         private IDeserializer<V> valDeserializer;
-        private TimestampExtractor timestampExtractor;
+        private ITimestampExtractor timestampExtractor;
 
-        public SourceNode(string name,
-                          List<string> topics,
-                          TimestampExtractor timestampExtractor,
-                          IDeserializer<K> keyDeserializer,
-                          IDeserializer<V> valDeserializer)
+        public SourceNode(
+            string name,
+            List<string> topics,
+            ITimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer)
             : base(name)
         {
             this.topics = topics;
@@ -39,27 +46,28 @@ namespace Kafka.Streams.Processor.Internals
             this.valDeserializer = valDeserializer;
         }
 
-        public SourceNode(string name,
-                          List<string> topics,
-                          IDeserializer<K> keyDeserializer,
-                          IDeserializer<V> valDeserializer)
+        public SourceNode(
+            string name,
+            List<string> topics,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer)
+            : this(name, topics, null, keyDeserializer, valDeserializer)
         {
-            this(name, topics, null, keyDeserializer, valDeserializer);
         }
 
         K deserializeKey(string topic, Headers headers, byte[] data)
         {
-            return keyDeserializer.Deserialize(topic, headers, data);
+            return keyDeserializer.Deserialize(data, false, new SerializationContext(MessageComponentType.Key, topic));
         }
 
         V deserializeValue(string topic, Headers headers, byte[] data)
         {
-            return valDeserializer.Deserialize(topic, headers, data);
+            return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
 
 
-        public void init(IInternalProcessorContext context)
+        public void init(IInternalProcessorContext<K, V> context)
         {
             base.init(context);
             this.context = context;
@@ -67,27 +75,26 @@ namespace Kafka.Streams.Processor.Internals
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                this.keyDeserializer = (IDeserializer<K>)context.keySerde().Deserializer();
+                this.keyDeserializer = (IDeserializer<K>)context.keySerde.Deserializer;
             }
             if (this.valDeserializer == null)
             {
-                this.valDeserializer = (IDeserializer<V>)context.valueSerde().Deserializer();
+                this.valDeserializer = (IDeserializer<V>)context.valueSerde.Deserializer;
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
-            if (this.valDeserializer is ChangedDeserializer &&
-                    ((ChangedDeserializer)this.valDeserializer).inner() == null)
+            if (this.valDeserializer is ChangedDeserializer<V> &&
+                    ((ChangedDeserializer<V>)this.valDeserializer).inner() == null)
             {
-                ((ChangedDeserializer)this.valDeserializer).setInner(context.valueSerde().Deserializer());
+                ((ChangedDeserializer<V>)this.valDeserializer).setInner(context.valueSerde.Deserializer);
             }
         }
-
 
 
         public void process(K key, V value)
         {
             context.forward(key, value);
-            sourceNodeForwardSensor().record();
+            //sourceNodeForwardSensor.record();
         }
 
         /**
@@ -111,12 +118,12 @@ namespace Kafka.Streams.Processor.Internals
                 sb.Append(topic);
                 sb.Append(", ");
             }
-            sb.setLength(sb.Length - 2);  // Remove the last comma
+            sb.Length = sb.Length - 2;  // Remove the last comma
             sb.Append("]\n");
             return sb.ToString();
         }
 
-        public TimestampExtractor getTimestampExtractor()
+        public ITimestampExtractor getTimestampExtractor()
         {
             return timestampExtractor;
         }

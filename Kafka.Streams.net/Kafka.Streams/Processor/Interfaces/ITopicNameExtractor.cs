@@ -30,6 +30,6 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param recordContext current context metadata of the record
          * @return              the topic name this record should be sent to
          */
-        string extract(K key, V value, RecordContext recordContext);
+        string extract(K key, V value, IRecordContext recordContext);
     }
 }

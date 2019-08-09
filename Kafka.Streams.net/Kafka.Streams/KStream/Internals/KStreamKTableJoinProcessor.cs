@@ -14,37 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Metrics;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1>
+    public class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger < KStreamKTableJoinProcessor);
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKTableJoinProcessor>();
 
-        private KTableValueGetter<K2, V2> valueGetter;
+        private IKTableValueGetter<K2, V2> valueGetter;
         private IKeyValueMapper<K1, V1, K2> keyMapper;
         private IValueJoiner<V1, V2, R> joiner;
         private bool leftJoin;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
 
-        KStreamKTableJoinProcessor(KTableValueGetter<K2, V2> valueGetter,
-                                    IKeyValueMapper<K1, V1, K2> keyMapper,
-                                    IValueJoiner<V1, V2, R> joiner,
-                                    bool leftJoin)
+        public KStreamKTableJoinProcessor(
+            IKTableValueGetter<K2, V2> valueGetter,
+            IKeyValueMapper<K1, V1, K2> keyMapper,
+            IValueJoiner<V1, V2, R> joiner,
+            bool leftJoin)
         {
             this.valueGetter = valueGetter;
             this.keyMapper = keyMapper;
@@ -53,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K1, V1> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics();
@@ -62,8 +55,7 @@ namespace Kafka.Streams.KStream.Internals
             valueGetter.init(context);
         }
 
-
-        public void process(K1 key, V1 value)
+        public override void process(K1 key, V1 value)
         {
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             // If {@code keyMapper} returns {@code null} it implies there is no match,
@@ -77,7 +69,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context().Topic, context().partition(), context().offset()
+                    key, value, context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
             }
@@ -88,7 +80,7 @@ namespace Kafka.Streams.KStream.Internals
                 V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey]);
                 if (leftJoin || value2 != null)
                 {
-                    context().forward(key, joiner.apply(value, value2));
+                    context.forward(key, joiner.apply(value, value2));
                 }
             }
         }

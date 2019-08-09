@@ -34,9 +34,9 @@ public class StoreChangelogReader : ChangelogReader
     private ILogger log;
     private IConsumer<byte[], byte[]> restoreConsumer;
     private IStateRestoreListener userStateRestoreListener;
-    private Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
-    private Dictionary<string, List<PartitionInfo>> partitionInfo = new HashMap<>();
-    private Dictionary<TopicPartition, StateRestorer> stateRestorers = new HashMap<>();
+    private Dictionary<TopicPartition, long> endOffsets = new Dictionary<>();
+    private Dictionary<string, List<PartitionInfo>> partitionInfo = new Dictionary<>();
+    private Dictionary<TopicPartition, StateRestorer> stateRestorers = new Dictionary<>();
     private HashSet<TopicPartition> needsRestoring = new HashSet<>();
     private HashSet<TopicPartition> needsInitializing = new HashSet<>();
     private HashSet<TopicPartition> completedRestorers = new HashSet<>();
@@ -201,7 +201,7 @@ public class StoreChangelogReader : ChangelogReader
         }
     }
 
-    private void startRestoration(Set<TopicPartition> initialized,
+    private void startRestoration(HashSet<TopicPartition> initialized,
                                   RestoringTasks active)
 {
         log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
@@ -299,7 +299,7 @@ public class StoreChangelogReader : ChangelogReader
 
     public Dictionary<TopicPartition, long> restoredOffsets()
 {
-        Dictionary<TopicPartition, long> restoredOffsets = new HashMap<>();
+        Dictionary<TopicPartition, long> restoredOffsets = new Dictionary<>();
         foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers)
 {
             StateRestorer restorer = entry.Value;

@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableSourceProcessor<K, V> : AbstractProcessor<K, V>
     {
 
-        private TimestampedKeyValueStore<K, V> store;
+        private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private StreamsMetricsImpl metrics;
         private Sensor skippedRecordsSensor;
@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             if (queryableName != null)
             {
-                store = (TimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
                 tupleForwarder = new TimestampedTupleForwarder<>(
                     store,
                     context,
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 LOG.LogWarning(
                     "Skipping record due to null key. topic=[{}] partition=[{}] offset=[{}]",
-                    context().Topic, context().partition(), context().offset()
+                    context.Topic, context.partition(), context.offset()
                 );
                 skippedRecordsSensor.record();
                 return;
@@ -52,11 +52,11 @@ namespace Kafka.Streams.KStream.Internals
                 V oldValue;
                 if (oldValueAndTimestamp != null)
                 {
-                    oldValue = oldValueAndTimestamp.value();
-                    if (context().timestamp() < oldValueAndTimestamp.timestamp())
+                    oldValue = oldValueAndTimestamp.value;
+                    if (context.timestamp() < oldValueAndTimestamp.timestamp)
                     {
                         LOG.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
-                            store.name(), context().offset(), context().partition());
+                            store.name, context.offset(), context.partition());
                     }
                 }
                 else
@@ -64,13 +64,13 @@ namespace Kafka.Streams.KStream.Internals
 
                     oldValue = null;
                 }
-                store.Add(key, ValueAndTimestamp.make(value, context().timestamp()));
+                store.Add(key, ValueAndTimestamp.make(value, context.timestamp()));
                 tupleForwarder.maybeForward(key, value, oldValue);
             }
             else
             {
 
-                context().forward(key, new Change<>(value, null));
+                context.forward(key, new Change<>(value, null));
             }
         }
     }

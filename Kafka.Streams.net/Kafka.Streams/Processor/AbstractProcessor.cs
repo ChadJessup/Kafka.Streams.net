@@ -12,13 +12,9 @@ namespace Kafka.Streams.Processor
      */
     public abstract class AbstractProcessor<K, V> : IProcessor<K, V>
     {
-        private IProcessorContext context;
+        public IProcessorContext<K, V> context { get; private set; }
 
-        protected AbstractProcessor()
-        {
-        }
-
-        public void init(IProcessorContext context)
+        public void init(IProcessorContext<K, V> context)
         {
             this.context = context;
         }

@@ -19,17 +19,17 @@ namespace Kafka.Streams.KStream.Internals
     public class GlobalKTableImpl<K, V> : IGlobalKTable<K, V>
     {
 
-        private KTableValueGetterSupplier<K, V> valueGetterSupplier;
+        private IKTableValueGetterSupplier<K, V> valueGetterSupplier;
         private string queryableStoreName;
 
-        GlobalKTableImpl(KTableValueGetterSupplier<K, V> valueGetterSupplier,
+        GlobalKTableImpl(IKTableValueGetterSupplier<K, V> valueGetterSupplier,
                           string queryableStoreName)
         {
             this.valueGetterSupplier = valueGetterSupplier;
             this.queryableStoreName = queryableStoreName;
         }
 
-        KTableValueGetterSupplier<K, V> valueGetterSupplier()
+        IKTableValueGetterSupplier<K, V> valueGetterSupplier()
         {
             return valueGetterSupplier;
         }

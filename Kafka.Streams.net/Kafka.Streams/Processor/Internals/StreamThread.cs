@@ -1,5 +1,9 @@
+using Confluent.Kafka;
+using Kafka.Common.Metrics;
+using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
@@ -34,17 +38,17 @@ namespace Kafka.Streams.Processor.Internals
          *          |           v              |
          *          |     +-----+-------+      |
          *          |     | Partitions  |      |
-         *          +<--- | Assigned (3)| ---->+
+         *          +<--- | Assigned (3)| ---=>+
          *          |     +-----+-------+      |
          *          |           |              |
          *          |           v              |
          *          |     +-----+-------+      |
-         *          |     | Running (4) | ---->+
+         *          |     | Running (4) | ---=>+
          *          |     +-----+-------+
          *          |           |
          *          |           v
          *          |     +-----+-------+
-         *          +---> | Pending     |
+         *          +--=> | Pending     |
          *                | Shutdown (5)|
          *                +-----+-------+
          *                      |
@@ -74,6 +78,7 @@ namespace Kafka.Streams.Processor.Internals
         {
 
             //            CREATED(1, 5), STARTING(2, 5), PARTITIONS_REVOKED(3, 5), PARTITIONS_ASSIGNED(2, 4, 5), RUNNING(2, 5), PENDING_SHUTDOWN(6), DEAD;
+            public static State DEAD { get; internal set; }
         }
 
         private HashSet<int> validTransitions = new HashSet<int>();
@@ -93,6 +98,36 @@ namespace Kafka.Streams.Processor.Internals
         {
             State tmpState = (State)newState;
             return validTransitions.Contains(tmpState);
+        }
+
+        internal static StreamThread create(InternalTopologyBuilder internalTopologyBuilder, StreamsConfig config, IKafkaClientSupplier clientSupplier, IAdminClient adminClient, Guid processId, string clientId, MetricsRegistry metrics, ITime time, StreamsMetadataState streamsMetadataState, long cacheSizePerThread, StateDirectory stateDirectory, IStateRestoreListener delegatingStateRestoreListener, int v)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal long getId()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal State state()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal object tasks()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool isRunningAndNotRebalancing()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static string getSharedAdminClientId(string clientId)
+        {
+            throw new NotImplementedException();
         }
     }
 

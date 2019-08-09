@@ -85,7 +85,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     {
         try
         {
-            File dir = new File(context.stateDir(), name);
+            FileInfo dir = new FileInfo(context.stateDir(), name);
             if (dir.exists())
             {
                 string[] list = dir.list();
@@ -195,11 +195,11 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
     }
 
     private long segmentIdFromSegmentName(string segmentName,
-                                          File parent)
+                                          FileInfo parent)
     {
         int segmentSeparatorIndex = name.Length;
         char segmentSeparator = segmentName.charAt(segmentSeparatorIndex);
-        string segmentIdString = segmentName.substring(segmentSeparatorIndex + 1);
+        string segmentIdString = segmentName.Substring(segmentSeparatorIndex + 1);
         long segmentId;
 
         // old style segment name with date
@@ -228,7 +228,7 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
                 throw new ProcessorStateException("Unable to parse segment id as long from segmentName: " + segmentName);
             }
 
-            // intermediate segment name with : breaks KafkaStreams on Windows OS -> rename segment file to new name with .
+            // intermediate segment name with : breaks KafkaStreams on Windows OS => rename segment file to new name with .
             if (segmentSeparator == ':')
             {
                 renameSegmentFile(parent, segmentName, segmentId);
@@ -239,12 +239,12 @@ abstract class AbstractSegments<S : Segment> : Segments<S>
 
     }
 
-    private void renameSegmentFile(File parent,
+    private void renameSegmentFile(FileInfo parent,
                                    string segmentName,
                                    long segmentId)
     {
-        File newName = new File(parent, segmentName(segmentId));
-        File oldName = new File(parent, segmentName);
+        FileInfo newName = new FileInfo(parent, segmentName(segmentId));
+        FileInfo oldName = new FileInfo(parent, segmentName);
         if (!oldName.renameTo(newName))
         {
             throw new ProcessorStateException("Unable to rename old style segment from: "

@@ -23,6 +23,6 @@ namespace Kafka.Streams.KStream.Internals.Suppress;
  * are name-able, but do not present a getter (for consistency with other config objects).
  * If we allow getters on config objects in the future, we can delete this interface.
  */
-public interface NamedSuppressed<K> : Suppressed<K> {
+public interface NamedSuppressed<K> : ISuppressed<K> {
     string name();
 }

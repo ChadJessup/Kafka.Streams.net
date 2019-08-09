@@ -14,50 +14,59 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using System.Collections.Generic;
+using System.Linq;
 
-
-
-
-
-
-
-
-using Kafka.Common.serialization.ByteArrayDeserializer;
-using Kafka.Common.serialization.ByteArraySerializer;
-
-
-public class DefaultKafkaClientSupplier : IKafkaClientSupplier
+namespace Kafka.Streams.Processor.Internals
 {
 
+    public class DefaultKafkaClientSupplier : IKafkaClientSupplier
+    {
+        public IAdminClient getAdminClient(Dictionary<string, object> config)
+        {
+            // create a new client upon each call; but expect this call to be only triggered once so this should be fine
+            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-    public Admin getAdminClient(Dictionary<string, object> config)
-{
-        // create a new client upon each call; but expect this call to be only triggered once so this should be fine
-        return Admin.create(config);
-    }
-
-
-    public IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config)
-{
-        return new KafkaProducer<>(config, new ByteArraySerializer(), new ByteArraySerializer());
-    }
+            return new AdminClientBuilder(convertedConfig)
+                .Build();
+        }
 
 
-    public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
-{
-        return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
-    }
+        public IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config)
+        {
+            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+            return new ProducerBuilder<byte[], byte[]>(convertedConfig)
+                .Build();
+        }
 
 
-    public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
-{
-        return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
-    }
+        public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
+        {
+            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
+                .Build();
+        }
 
 
-    public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
-{
-        return new KafkaConsumer<>(config, new ByteArrayDeserializer(), new ByteArrayDeserializer());
+        public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
+        {
+            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
+                .Build();
+        }
+
+
+        public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
+        {
+            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+
+            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
+                .Build();
+        }
     }
 }

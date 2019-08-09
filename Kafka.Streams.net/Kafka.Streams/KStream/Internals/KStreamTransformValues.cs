@@ -27,9 +27,9 @@ namespace Kafka.Streams.KStream.Internals
 
 public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
 
-    private  ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
+    private  IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
 
-    KStreamTransformValues( ValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier)
+    KStreamTransformValues( IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier)
 {
         this.valueTransformerSupplier = valueTransformerSupplier;
     }
@@ -42,10 +42,10 @@ public class KStreamTransformValues<K, V, R> : ProcessorSupplier<K, V> {
 
     public static KStreamTransformValuesProcessor<K, V, R> : Processor<K, V> {
 
-        private  ValueTransformerWithKey<K, V, R> valueTransformer;
+        private  IValueTransformerWithKey<K, V, R> valueTransformer;
         private IProcessorContext context;
 
-        KStreamTransformValuesProcessor( ValueTransformerWithKey<K, V, R> valueTransformer)
+        KStreamTransformValuesProcessor( IValueTransformerWithKey<K, V, R> valueTransformer)
 {
             this.valueTransformer = valueTransformer;
         }
