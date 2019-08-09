@@ -25,10 +25,10 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class AbstractRocksDBSegmentedBytesStore<S> : SegmentedBytesStore
+    public class AbstractRocksDbSegmentedBytesStore<S> : SegmentedBytesStore
         where S : ISegment
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDBSegmentedBytesStore<S>>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDbSegmentedBytesStore<S>>();
         private string name;
         private AbstractSegments<S> segments;
         private string metricScope;
@@ -39,7 +39,7 @@ namespace Kafka.Streams.State.Internals
         private Sensor expiredRecordSensor;
         private long observedStreamTime = (long)TimestampType.NotAvailable;
 
-        AbstractRocksDBSegmentedBytesStore(string name,
+        AbstractRocksDbSegmentedBytesStore(string name,
                                            string metricScope,
                                            KeySchema keySchema,
                                            AbstractSegments<S> segments)
@@ -185,7 +185,7 @@ namespace Kafka.Streams.State.Internals
             bulkLoadSegments = new HashSet<>(segments.allSegments());
 
             // register and possibly restore the state from the logs
-            context.register(root, new RocksDBSegmentsBatchingRestoreCallback());
+            context.register(root, new RocksDbSegmentsBatchingRestoreCallback());
 
             open = true;
         }
@@ -256,7 +256,7 @@ namespace Kafka.Streams.State.Internals
                 if (segment != null)
                 {
                     // This handles the case that state store is moved to a new client and does not
-                    // have the local RocksDB instance for the segment. In this case, toggleDBForBulkLoading
+                    // have the local RocksDb instance for the segment. In this case, toggleDBForBulkLoading
                     // will only close the database and open it again with bulk loading enabled.
                     if (!bulkLoadSegments.Contains(segment))
                     {
@@ -289,7 +289,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private RocksDBSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
+        private RocksDbSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
         {
             public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {

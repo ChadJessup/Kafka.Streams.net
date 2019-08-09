@@ -14,228 +14,219 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processor.Interfaces;
 
-using Kafka.Common.header.Headers;
-using Kafka.Common.serialization.Serde;
-
-
-
-
-
-
-
-
-
-
-
-
-
-public abstract class AbstractProcessorContext : IInternalProcessorContext
+namespace Kafka.Streams.Processor.Internals
 {
-
-
-    public static string NONEXIST_TOPIC = "__null_topic__";
-    private TaskId taskId;
-    private string applicationId;
-    private StreamsConfig config;
-    private StreamsMetricsImpl metrics;
-    private Serde keySerde;
-    private ThreadCache cache;
-    private Serde valueSerde;
-    private bool initialized;
-    protected ProcessorRecordContext recordContext;
-    protected ProcessorNode currentNode;
-    IStateManager stateManager;
-
-    public AbstractProcessorContext(TaskId taskId,
-                                    StreamsConfig config,
-                                    StreamsMetricsImpl metrics,
-                                    IStateManager stateManager,
-                                    ThreadCache cache)
+    public abstract class AbstractProcessorContext : IInternalProcessorContext
     {
-        this.taskId = taskId;
-        this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
-        this.config = config;
-        this.metrics = metrics;
-        this.stateManager = stateManager;
-        valueSerde = config.defaultValueSerde();
-        keySerde = config.defaultKeySerde();
-        this.cache = cache;
-    }
 
 
-    public string applicationId()
-    {
-        return applicationId;
-    }
+        public static string NONEXIST_TOPIC = "__null_topic__";
+        private TaskId taskId;
+        private string applicationId;
+        private StreamsConfig config;
+        private StreamsMetricsImpl metrics;
+        private Serde keySerde;
+        private ThreadCache cache;
+        private Serde valueSerde;
+        private bool initialized;
+        protected ProcessorRecordContext recordContext;
+        protected ProcessorNode currentNode;
+        IStateManager stateManager;
+
+        public AbstractProcessorContext(TaskId taskId,
+                                        StreamsConfig config,
+                                        StreamsMetricsImpl metrics,
+                                        IStateManager stateManager,
+                                        ThreadCache cache)
+        {
+            this.taskId = taskId;
+            this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
+            this.config = config;
+            this.metrics = metrics;
+            this.stateManager = stateManager;
+            valueSerde = config.defaultValueSerde();
+            keySerde = config.defaultKeySerde();
+            this.cache = cache;
+        }
 
 
-    public TaskId taskId()
-    {
-        return taskId;
-    }
+        public string applicationId()
+        {
+            return applicationId;
+        }
 
 
-    public ISerde<object> keySerde
-    {
+        public TaskId taskId()
+        {
+            return taskId;
+        }
+
+
+        public ISerde<object> keySerde
+        {
         return keySerde;
-    }
+        }
 
 
-    public ISerde<object> valueSerde
-    {
+        public ISerde<object> valueSerde
+        {
         return valueSerde;
-    }
-
-
-    public FileInfo stateDir()
-    {
-        return stateManager.baseDir();
-    }
-
-
-    public StreamsMetricsImpl metrics()
-    {
-        return metrics;
-    }
-
-
-    public void register(IStateStore store,
-                         StateRestoreCallback stateRestoreCallback)
-    {
-        if (initialized)
-        {
-            throw new InvalidOperationException("Can only create state stores during initialization.");
-        }
-        store = store ?? throw new System.ArgumentNullException("store must not be null", nameof(store));
-        stateManager.register(store, stateRestoreCallback);
-    }
-
-    /**
-     * @throws InvalidOperationException if the task's record is null
-     */
-
-    public string Topic
-    {
-        if (recordContext == null)
-        {
-            throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
         }
 
-        string topic = recordContext.Topic;
 
-        if (topic.Equals(NONEXIST_TOPIC))
+        public FileInfo stateDir()
         {
-            return null;
+            return stateManager.baseDir();
         }
 
-        return topic;
-    }
 
-    /**
-     * @throws InvalidOperationException if partition is null
-     */
-
-    public int partition()
-    {
-        if (recordContext == null)
+        public StreamsMetricsImpl metrics()
         {
-            throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
+            return metrics;
         }
-        return recordContext.partition();
-    }
 
-    /**
-     * @throws InvalidOperationException if offset is null
-     */
 
-    public long offset()
-    {
-        if (recordContext == null)
+        public void register(IStateStore store,
+                             IStateRestoreCallback stateRestoreCallback)
         {
-            throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
+            if (initialized)
+            {
+                throw new InvalidOperationException("Can only create state stores during initialization.");
+            }
+            store = store ?? throw new System.ArgumentNullException("store must not be null", nameof(store));
+            stateManager.register(store, stateRestoreCallback);
         }
-        return recordContext.offset();
-    }
 
+        /**
+         * @throws InvalidOperationException if the task's record is null
+         */
 
-    public Headers headers()
-    {
-        if (recordContext == null)
+        public string Topic
         {
-            throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
+            get
+            {
+                if (recordContext == null)
+                {
+                    throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
+                }
+
+                string topic = recordContext.Topic;
+
+                if (topic.Equals(NONEXIST_TOPIC))
+                {
+                    return null;
+                }
+
+                return topic;
+            }
         }
-        return recordContext.headers();
-    }
 
-    /**
-     * @throws InvalidOperationException if timestamp is null
-     */
+        /**
+         * @throws InvalidOperationException if partition is null
+         */
 
-    public long timestamp()
-    {
-        if (recordContext == null)
+        public int partition()
         {
-            throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
+            if (recordContext == null)
+            {
+                throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
+            }
+            return recordContext.partition();
         }
-        return recordContext.timestamp();
-    }
+
+        /**
+         * @throws InvalidOperationException if offset is null
+         */
+
+        public long offset()
+        {
+            if (recordContext == null)
+            {
+                throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
+            }
+            return recordContext.offset();
+        }
 
 
-    public Dictionary<string, object> appConfigs()
-    {
-        Dictionary<string, object> combined = new Dictionary<>();
-        combined.putAll(config.originals());
-        combined.putAll(config.Values);
-        return combined;
-    }
+        public Headers headers()
+        {
+            if (recordContext == null)
+            {
+                throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
+            }
+            return recordContext.headers();
+        }
+
+        /**
+         * @throws InvalidOperationException if timestamp is null
+         */
+
+        public long timestamp()
+        {
+            if (recordContext == null)
+            {
+                throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
+            }
+            return recordContext.timestamp();
+        }
 
 
-    public Dictionary<string, object> appConfigsWithPrefix(string prefix)
-    {
-        return config.originalsWithPrefix(prefix);
-    }
+        public Dictionary<string, object> appConfigs()
+        {
+            Dictionary<string, object> combined = new Dictionary<>();
+            combined.putAll(config.originals());
+            combined.putAll(config.Values);
+            return combined;
+        }
 
 
-    public void setRecordContext(ProcessorRecordContext recordContext)
-    {
-        this.recordContext = recordContext;
-    }
+        public Dictionary<string, object> appConfigsWithPrefix(string prefix)
+        {
+            return config.originalsWithPrefix(prefix);
+        }
 
 
-    public ProcessorRecordContext recordContext()
-    {
-        return recordContext;
-    }
+        public void setRecordContext(ProcessorRecordContext recordContext)
+        {
+            this.recordContext = recordContext;
+        }
 
 
-    public void setCurrentNode(ProcessorNode currentNode)
-    {
-        this.currentNode = currentNode;
-    }
+        public ProcessorRecordContext recordContext()
+        {
+            return recordContext;
+        }
 
 
-    public ProcessorNode currentNode()
-    {
-        return currentNode;
-    }
+        public void setCurrentNode(ProcessorNode currentNode)
+        {
+            this.currentNode = currentNode;
+        }
 
 
-    public ThreadCache getCache()
-    {
-        return cache;
-    }
+        public ProcessorNode currentNode()
+        {
+            return currentNode;
+        }
 
 
-    public void initialize()
-    {
-        initialized = true;
-    }
+        public ThreadCache getCache()
+        {
+            return cache;
+        }
 
 
-    public void uninitialize()
-    {
-        initialized = false;
+        public void initialize()
+        {
+            initialized = true;
+        }
+
+
+        public void uninitialize()
+        {
+            initialized = false;
+        }
     }
 }

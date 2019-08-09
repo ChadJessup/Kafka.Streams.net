@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.State.Interfaces;
 
-using Kafka.Streams.State.ITimestampedBytesStore;
-
-class RocksDBTimestampedWindowStore : RocksDBWindowStore : ITimestampedBytesStore
+namespace Kafka.Streams.State.Internals
 {
 
-    RocksDBTimestampedWindowStore(SegmentedBytesStore bytesStore,
-                                  bool retainDuplicates,
-                                  long windowSize)
-{
-        base(bytesStore, retainDuplicates, windowSize);
+    public class RocksDbTimestampedWindowStore : RocksDbWindowStore, ITimestampedBytesStore
+    {
+
+        RocksDbTimestampedWindowStore(SegmentedBytesStore bytesStore,
+                                      bool retainDuplicates,
+                                      long windowSize)
+            : base(bytesStore, retainDuplicates, windowSize)
+        {
+        }
+
     }
-
 }

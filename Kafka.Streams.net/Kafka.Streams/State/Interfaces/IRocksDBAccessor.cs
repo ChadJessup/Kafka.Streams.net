@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public interface IRocksDBAccessor
+    public interface IRocksDbAccessor
     {
 
         void put(byte[] key,

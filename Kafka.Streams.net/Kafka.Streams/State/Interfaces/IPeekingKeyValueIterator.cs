@@ -14,18 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
+using Kafka.Streams.State.Interfaces;
 
-using Kafka.Common.annotation.InterfaceStability;
-
-/**
- * Restoration logic for log-backed state stores upon restart,
- * it takes one record at a time from the logs to apply to the restoring state.
- */
-
-public interface StateRestoreCallback
+namespace Kafka.Streams.State.Internals
 {
-
-
-    void restore(byte[] key, byte[] value);
+    public interface IPeekingKeyValueIterator<K, V> : IKeyValueIterator<K, V>
+    {
+        KeyValue<K, V> peekNext();
+    }
 }

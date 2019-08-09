@@ -27,10 +27,10 @@ namespace Kafka.Streams.Processor.Internals
     using System;
     using Kafka.Streams.Processor.Interfaces;
 
-    class StandbyContextImpl : AbstractProcessorContext, RecordCollector.Supplier
+    class StandbyContextImpl : AbstractProcessorContext, IRecordCollector.Supplier
     {
 
-        private static RecordCollector NO_OP_COLLECTOR = new RecordCollector()
+        private static IRecordCollector NO_OP_COLLECTOR = new IRecordCollector()
         {
 
         public void send(
@@ -96,7 +96,7 @@ namespace Kafka.Streams.Processor.Internals
     }
 
 
-    public RecordCollector recordCollector()
+    public IRecordCollector recordCollector()
     {
         return NO_OP_COLLECTOR;
     }

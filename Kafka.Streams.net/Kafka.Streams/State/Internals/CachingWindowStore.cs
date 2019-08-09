@@ -200,7 +200,7 @@ namespace Kafka.Streams.State.Internals
                 return underlyingIterator;
             }
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(key, timeFrom, timeTo) :
                 cache.range(name,
                             cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, timeFrom)),
@@ -208,7 +208,7 @@ namespace Kafka.Streams.State.Internals
                 );
 
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(key, key, timeFrom, timeTo);
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(
                 cacheIterator, hasNextCondition, cacheFunction
             );
 
@@ -240,7 +240,7 @@ namespace Kafka.Streams.State.Internals
                 return underlyingIterator;
             }
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(from, to, timeFrom, timeTo) :
                 cache.range(name,
                             cacheFunction.cacheKey(keySchema.lowerRange(from, timeFrom)),
@@ -248,7 +248,7 @@ namespace Kafka.Streams.State.Internals
                 );
 
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(from, to, timeFrom, timeTo);
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator = new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
 
             return new MergedSortedCacheWindowStoreKeyValueIterator(
                 filteredCacheIterator,
@@ -269,7 +269,7 @@ namespace Kafka.Streams.State.Internals
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(name);
 
             HasNextCondition hasNextCondition = keySchema.hasNextCondition(null, null, timeFrom, timeTo);
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
                 new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
             return new MergedSortedCacheWindowStoreKeyValueIterator(
                     filteredCacheIterator,
@@ -309,7 +309,7 @@ namespace Kafka.Streams.State.Internals
             wrapped.close();
         }
 
-        private class CacheIteratorWrapper : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+        private class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
         {
 
             private long segmentInterval;

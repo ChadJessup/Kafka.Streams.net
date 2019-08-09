@@ -19,22 +19,30 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
-    public interface IRecordBatchingStateRestoreCallback : IBatchingStateRestoreCallback
+    /**
+     * Performs bulk read operations from a set of partitions. Used to
+     * restore  {@link org.apache.kafka.streams.processor.IStateStore}s from their
+     * change logs
+     */
+    public interface IChangelogReader
     {
+        /**
+         * Register a state store and it's partition for later restoration.
+         * @param restorer the state restorer to register
+         */
+        void register(StateRestorer restorer);
 
-        void restoreBatch(List<ConsumeResult<byte[], byte[]>> records);
+        /**
+         * Restore all registered state stores by reading from their changelogs.
+         * @return all topic partitions that have been restored
+         */
+        List<TopicPartition> restore(IRestoringTasks active);
 
+        /**
+         * @return the restored offsets for all persistent stores.
+         */
+        Dictionary<TopicPartition, long> restoredOffsets();
 
-        void restoreAll(List<KeyValue<byte[], byte[]>> records)
-        {
-            throw new InvalidOperationException();
-        }
-
-
-        void restore(byte[] key, byte[] value)
-        {
-            throw new InvalidOperationException();
-        }
+        void reset();
     }
 }

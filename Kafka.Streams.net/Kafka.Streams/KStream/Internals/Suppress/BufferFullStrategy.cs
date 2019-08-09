@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals.Suppress;
-
-public enum BufferFullStrategy
+namespace Kafka.Streams.KStream.Internals.Suppress
 {
-
-    EMIT,
-    SPILL_TO_DISK,
-    SHUT_DOWN
+    public enum BufferFullStrategy
+    {
+        EMIT,
+        SPILL_TO_DISK,
+        SHUT_DOWN
+    }
 }

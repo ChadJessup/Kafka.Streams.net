@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Streams.Processor.Internals.IInternalProcessorContext;
 
 /**
- * Manages the {@link KeyValueSegment}s that are used by the {@link RocksDBSegmentedBytesStore}
+ * Manages the {@link KeyValueSegment}s that are used by the {@link RocksDbSegmentedBytesStore}
  */
 class KeyValueSegments : AbstractSegments<KeyValueSegment>
 {

@@ -72,12 +72,12 @@ namespace Kafka.Streams.State
          * @return Map containing any log configs to be used when creating the changelog for the {@link IStateStore}
          * If {@code loggingEnabled} returns false, this function will always return an empty map
          */
-        Dictionary<string, string> logConfig();
+        Dictionary<string, string> logConfig { get; }
 
         /**
          * @return {@code true} if the {@link IStateStore} should have logging enabled
          */
-        bool loggingEnabled();
+        bool loggingEnabled { get; }
 
         /**
          * Return the name of this state store builder.
@@ -85,6 +85,6 @@ namespace Kafka.Streams.State
          *
          * @return the name of this state store builder
          */
-        string name();
+        string name { get; }
     }
 }

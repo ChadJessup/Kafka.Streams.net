@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
 
 
 
-class FilteredCacheIterator : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
 {
-    private PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+    private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
     private HasNextCondition hasNextCondition;
-    private PeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
+    private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
-    FilteredCacheIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+    FilteredCacheIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
                           HasNextCondition hasNextCondition,
-                          CacheFunction cacheFunction)
+                          ICacheFunction cacheFunction)
 {
         this.cacheIterator = cacheIterator;
         this.hasNextCondition = hasNextCondition;
-        this.wrappedIterator = new PeekingKeyValueIterator<Bytes, LRUCacheEntry>()
+        this.wrappedIterator = new IPeekingKeyValueIterator<Bytes, LRUCacheEntry>()
 {
             
             public KeyValue<Bytes, LRUCacheEntry> peekNext()

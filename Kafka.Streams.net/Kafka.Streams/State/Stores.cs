@@ -23,7 +23,7 @@ namespace Kafka.Streams.State
      * }</pre>
      * When using the Processor API, i.e., {@link org.apache.kafka.streams.Topology Topology}, users create
      * {@link StoreBuilder}s that can be attached to {@link org.apache.kafka.streams.processor.Processor Processor}s.
-     * For example, you can create a {@link org.apache.kafka.streams.kstream.Windowed windowed} RocksDB store with custom
+     * For example, you can create a {@link org.apache.kafka.streams.kstream.Windowed windowed} RocksDb store with custom
      * changelog topic configuration like:
      * <pre>{@code
      * Topology topology = new Topology();

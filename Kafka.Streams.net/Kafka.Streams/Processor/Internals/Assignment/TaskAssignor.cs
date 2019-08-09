@@ -14,8 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals.assignment;
+namespace Kafka.Streams.Processor.Internals.assignment
+{
 
-public interface TaskAssignor<C, T : Comparable<T>> {
-    void assign(int numStandbyReplicas);
+
+    public interface TaskAssignor<C, T : Comparable<T>> {
+        void assign(int numStandbyReplicas);
+    }
 }

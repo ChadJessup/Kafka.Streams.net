@@ -24,7 +24,7 @@ namespace Kafka.Streams.State.Internals
     /**
      * The interface representing a IStateStore that has 1 or more segments that are based
      * on time.
-     * @see RocksDBSegmentedBytesStore
+     * @see RocksDbSegmentedBytesStore
      */
     public interface SegmentedBytesStore : IStateStore
     {

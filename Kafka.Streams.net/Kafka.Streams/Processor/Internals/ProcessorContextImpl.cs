@@ -5,17 +5,17 @@ using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class ProcessorContextImpl : AbstractProcessorContext, RecordCollector.Supplier
+    public class ProcessorContextImpl : AbstractProcessorContext, IRecordCollector.Supplier
     {
         private StreamTask task;
-        private RecordCollector collector;
+        private IRecordCollector collector;
         private ToInternal toInternal = new ToInternal();
         private static To SEND_TO_ALL = To.all();
 
         ProcessorContextImpl(TaskId id,
                              StreamTask task,
                              StreamsConfig config,
-                             RecordCollector collector,
+                             IRecordCollector collector,
                              ProcessorStateManager stateMgr,
                              StreamsMetricsImpl metrics,
                              ThreadCache cache)
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public RecordCollector recordCollector()
+        public IRecordCollector recordCollector()
         {
             return collector;
         }

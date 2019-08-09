@@ -81,7 +81,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public override void process(K key, V value)
         {
-            RecordCollector collector = ((RecordCollector.Supplier)context).recordCollector();
+            IRecordCollector collector = ((IRecordCollector.Supplier)context).recordCollector();
 
             long timestamp = context.timestamp();
             if (timestamp < 0)

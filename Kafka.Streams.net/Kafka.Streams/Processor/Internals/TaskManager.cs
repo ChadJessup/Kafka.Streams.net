@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+namespace Kafka.Streams.Processor.Internals
+{
+
 
 
 
@@ -52,7 +54,7 @@ public class TaskManager
     private UUID processId;
     private AssignedStreamsTasks active;
     private AssignedStandbyTasks standby;
-    private ChangelogReader changelogReader;
+    private IChangelogReader changelogReader;
     private string logPrefix;
     private IConsumer<byte[], byte[]> restoreConsumer;
     private StreamThread.AbstractTaskCreator<StreamTask> taskCreator;
@@ -69,7 +71,7 @@ public class TaskManager
 
     private IConsumer<byte[], byte[]> consumer;
 
-    TaskManager(ChangelogReader changelogReader,
+    TaskManager(IChangelogReader changelogReader,
                 UUID processId,
                 string logPrefix,
                 IConsumer<byte[], byte[]> restoreConsumer,

@@ -14,272 +14,275 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-using Confluent.Kafka;
-using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-
-public abstract class AbstractTask<K, V> : Task
+namespace Kafka.Streams.Processor.Internals
 {
-    TaskId id;
-    string applicationId;
-    ProcessorTopology topology;
-    ProcessorStateManager stateMgr;
-    public HashSet<TopicPartition> partitions { get; }
-    IConsumer<byte[], byte[]> consumer;
-    string logPrefix;
-    bool eosEnabled;
-    ILogger log;
-    LogContext logContext;
-    StateDirectory stateDirectory;
 
-    bool taskInitialized;
-    bool taskClosed;
-    bool commitNeeded;
+    using Confluent.Kafka;
+    using Kafka.Streams.Errors;
+    using Kafka.Streams.Processor.Interfaces;
+    using Microsoft.Extensions.Logging;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Text;
 
-    IInternalProcessorContext<K, V> processorContext;
-
-    /**
-     * @throws ProcessorStateException if the state manager cannot be created
-     */
-    AbstractTask(TaskId id,
-                 List<TopicPartition> partitions,
-                 ProcessorTopology topology,
-                 IConsumer<byte[], byte[]> consumer,
-                 ChangelogReader changelogReader,
-                 bool isStandby,
-                 StateDirectory stateDirectory,
-                 StreamsConfig config)
+    public abstract class AbstractTask<K, V> : Task
     {
-        this.id = id;
-        this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
-        this.partitions = new HashSet<>(partitions);
-        this.topology = topology;
-        this.consumer = consumer;
-        this.eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
-        this.stateDirectory = stateDirectory;
+        TaskId id;
+        string applicationId;
+        ProcessorTopology topology;
+        ProcessorStateManager stateMgr;
+        public HashSet<TopicPartition> partitions { get; }
+        IConsumer<byte[], byte[]> consumer;
+        string logPrefix;
+        bool eosEnabled;
+        ILogger log;
+        LogContext logContext;
+        StateDirectory stateDirectory;
 
-        this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id);
-        this.logContext = new LogContext(logPrefix);
-        this.log = logContext.logger(GetType());
+        bool taskInitialized;
+        bool taskClosed;
+        bool commitNeeded;
 
-        // create the processor state manager
-        try
+        IInternalProcessorContext<K, V> processorContext;
+
+        /**
+         * @throws ProcessorStateException if the state manager cannot be created
+         */
+        AbstractTask(TaskId id,
+                     List<TopicPartition> partitions,
+                     ProcessorTopology topology,
+                     IConsumer<byte[], byte[]> consumer,
+                     IChangelogReader changelogReader,
+                     bool isStandby,
+                     StateDirectory stateDirectory,
+                     StreamsConfig config)
         {
+            this.id = id;
+            this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
+            this.partitions = new HashSet<>(partitions);
+            this.topology = topology;
+            this.consumer = consumer;
+            this.eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
+            this.stateDirectory = stateDirectory;
 
-            stateMgr = new ProcessorStateManager(
-                id,
-                partitions,
-                isStandby,
-                stateDirectory,
-                topology.storeToChangelogTopic(),
-                changelogReader,
-                eosEnabled,
-                logContext);
-        }
-        catch (IOException e)
-        {
-            throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
-        }
-    }
+            this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id);
+            this.logContext = new LogContext(logPrefix);
+            this.log = logContext.logger(GetType());
 
-    public IProcessorContext<K, V> context
-    {
-        return processorContext;
-    }
-
-
-    public IStateStore getStore(string name)
-    {
-        return stateMgr.getStore(name);
-    }
-
-    /**
-     * Produces a string representation containing useful information about a Task.
-     * This is useful in debugging scenarios.
-     *
-     * @return A string representation of the StreamTask instance.
-     */
-
-    public override string ToString()
-    {
-        return ToString("");
-    }
-
-    public bool isEosEnabled()
-    {
-        return eosEnabled;
-    }
-
-    /**
-     * Produces a string representation containing useful information about a Task starting with the given indent.
-     * This is useful in debugging scenarios.
-     *
-     * @return A string representation of the Task instance.
-     */
-    public string ToString(string indent)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append(indent);
-        sb.Append("TaskId: ");
-        sb.Append(id);
-        sb.Append("\n");
-
-        // print topology
-        if (topology != null)
-        {
-            sb.Append(indent).Append(topology.ToString(indent + "\t"));
-        }
-
-        // print assigned partitions
-        if (partitions != null && partitions.Any())
-        {
-            sb.Append(indent).Append("Partitions [");
-            foreach (TopicPartition topicPartition in partitions)
-            {
-                sb.Append(topicPartition.ToString()).Append(", ");
-            }
-            sb.Length = sb.Length - 2;
-            sb.Append("]\n");
-        }
-        return sb.ToString();
-    }
-
-    protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
-    {
-        return new Dictionary<TopicPartition, long>();
-    }
-
-    protected void updateOffsetLimits()
-    {
-        foreach (TopicPartition partition in partitions)
-        {
+            // create the processor state manager
             try
             {
 
-                OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
-                long offset = metadata != null ? metadata.offset() : 0L;
-                stateMgr.putOffsetLimit(partition, offset);
-
-                log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
-            }
-            catch (AuthorizationException e)
-            {
-                throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
-            }
-            catch (WakeupException e)
-            {
-                throw e;
-            }
-            catch (KafkaException e)
-            {
-                throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
-            }
-        }
-    }
-
-    /**
-     * Flush all state stores owned by this task
-     */
-    void flushState()
-    {
-        stateMgr.flush();
-    }
-
-    /**
-     * Package-private for testing only
-     *
-     * @throws StreamsException If the store's change log does not contain the partition
-     */
-    void registerStateStores()
-    {
-        if (topology.stateStores.isEmpty())
-        {
-            return;
-        }
-
-        try
-        {
-
-            if (!stateDirectory.@lock(id))
-            {
-                throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
-            }
-        }
-        catch (IOException e)
-        {
-            throw new StreamsException(
-                string.Format("%sFatal error while trying to lock the state directory for task %s",
-                logPrefix, id));
-        }
-        log.LogTrace("Initializing state stores");
-
-        // set initial offset limits
-        updateOffsetLimits();
-
-        foreach (IStateStore store in topology.stateStores)
-        {
-            log.LogTrace("Initializing store {}", store.name);
-            processorContext.uninitialize();
-            store.init(processorContext, store);
-        }
-    }
-
-    void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
-    {
-        stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
-    }
-
-    /**
-     * @throws ProcessorStateException if there is an error while closing the state manager
-     */
-    void closeStateManager(bool clean)
-    {
-        ProcessorStateException exception = null;
-        log.LogTrace("Closing state manager");
-        try
-        {
-
-            stateMgr.close(clean);
-        }
-        catch (ProcessorStateException e)
-        {
-            exception = e;
-        }
-        finally
-        {
-
-            try
-            {
-
-                stateDirectory.unlock(id);
+                stateMgr = new ProcessorStateManager(
+                    id,
+                    partitions,
+                    isStandby,
+                    stateDirectory,
+                    topology.storeToChangelogTopic(),
+                    changelogReader,
+                    eosEnabled,
+                    logContext);
             }
             catch (IOException e)
             {
-                if (exception == null)
+                throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
+            }
+        }
+
+        public IProcessorContext<K, V> context
+        {
+        return processorContext;
+        }
+
+
+        public IStateStore getStore(string name)
+        {
+            return stateMgr.getStore(name);
+        }
+
+        /**
+         * Produces a string representation containing useful information about a Task.
+         * This is useful in debugging scenarios.
+         *
+         * @return A string representation of the StreamTask instance.
+         */
+
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
+        public bool isEosEnabled()
+        {
+            return eosEnabled;
+        }
+
+        /**
+         * Produces a string representation containing useful information about a Task starting with the given indent.
+         * This is useful in debugging scenarios.
+         *
+         * @return A string representation of the Task instance.
+         */
+        public string ToString(string indent)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(indent);
+            sb.Append("TaskId: ");
+            sb.Append(id);
+            sb.Append("\n");
+
+            // print topology
+            if (topology != null)
+            {
+                sb.Append(indent).Append(topology.ToString(indent + "\t"));
+            }
+
+            // print assigned partitions
+            if (partitions != null && partitions.Any())
+            {
+                sb.Append(indent).Append("Partitions [");
+                foreach (TopicPartition topicPartition in partitions)
                 {
-                    exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
+                    sb.Append(topicPartition.ToString()).Append(", ");
+                }
+                sb.Length = sb.Length - 2;
+                sb.Append("]\n");
+            }
+            return sb.ToString();
+        }
+
+        protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
+        {
+            return new Dictionary<TopicPartition, long>();
+        }
+
+        protected void updateOffsetLimits()
+        {
+            foreach (TopicPartition partition in partitions)
+            {
+                try
+                {
+
+                    OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
+                    long offset = metadata != null ? metadata.offset() : 0L;
+                    stateMgr.putOffsetLimit(partition, offset);
+
+                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
+                }
+                catch (AuthorizationException e)
+                {
+                    throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
+                }
+                catch (WakeupException e)
+                {
+                    throw e;
+                }
+                catch (KafkaException e)
+                {
+                    throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
                 }
             }
         }
-        if (exception != null)
+
+        /**
+         * Flush all state stores owned by this task
+         */
+        void flushState()
         {
-            throw exception;
+            stateMgr.flush();
         }
-    }
 
-    public bool isClosed()
-    {
-        return taskClosed;
-    }
+        /**
+         * Package-private for testing only
+         *
+         * @throws StreamsException If the store's change log does not contain the partition
+         */
+        void registerStateStores()
+        {
+            if (topology.stateStores.isEmpty())
+            {
+                return;
+            }
 
-    public bool hasStateStores()
-    {
-        return !topology.stateStores().isEmpty();
+            try
+            {
+
+                if (!stateDirectory.@lock(id))
+                {
+                    throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
+                }
+            }
+            catch (IOException e)
+            {
+                throw new StreamsException(
+                    string.Format("%sFatal error while trying to lock the state directory for task %s",
+                    logPrefix, id));
+            }
+            log.LogTrace("Initializing state stores");
+
+            // set initial offset limits
+            updateOffsetLimits();
+
+            foreach (IStateStore store in topology.stateStores)
+            {
+                log.LogTrace("Initializing store {}", store.name);
+                processorContext.uninitialize();
+                store.init(processorContext, store);
+            }
+        }
+
+        void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
+        {
+            stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
+        }
+
+        /**
+         * @throws ProcessorStateException if there is an error while closing the state manager
+         */
+        void closeStateManager(bool clean)
+        {
+            ProcessorStateException exception = null;
+            log.LogTrace("Closing state manager");
+            try
+            {
+
+                stateMgr.close(clean);
+            }
+            catch (ProcessorStateException e)
+            {
+                exception = e;
+            }
+            finally
+            {
+
+                try
+                {
+
+                    stateDirectory.unlock(id);
+                }
+                catch (IOException e)
+                {
+                    if (exception == null)
+                    {
+                        exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
+                    }
+                }
+            }
+            if (exception != null)
+            {
+                throw exception;
+            }
+        }
+
+        public bool isClosed()
+        {
+            return taskClosed;
+        }
+
+        public bool hasStateStores()
+        {
+            return !topology.stateStores().isEmpty();
+        }
     }
 }

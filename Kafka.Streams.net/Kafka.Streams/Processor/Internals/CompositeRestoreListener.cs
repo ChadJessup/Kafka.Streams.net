@@ -15,119 +15,123 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor.Internals;
-
-
-
-using Kafka.Common.TopicPartition;
-
-
-
-
-
-
-
-
-public class CompositeRestoreListener : RecordBatchingStateRestoreCallback, IStateRestoreListener
+namespace Kafka.Streams.Processor.Internals
 {
 
 
-    public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
-    private RecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
-    private IStateRestoreListener storeRestoreListener;
-    private IStateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
 
-    CompositeRestoreListener(StateRestoreCallback stateRestoreCallback)
-{
 
-        if (stateRestoreCallback is IStateRestoreListener)
-{
-            storeRestoreListener = (IStateRestoreListener) stateRestoreCallback;
-        } else
-{
+    using Kafka.Common.TopicPartition;
 
-            storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
+
+
+
+
+
+
+
+    public class CompositeRestoreListener : IRecordBatchingStateRestoreCallback, IStateRestoreListener
+    {
+
+
+        public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
+        private IRecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
+        private IStateRestoreListener storeRestoreListener;
+        private IStateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
+
+        CompositeRestoreListener(IStateRestoreCallback stateRestoreCallback)
+        {
+
+            if (stateRestoreCallback is IStateRestoreListener)
+            {
+                storeRestoreListener = (IStateRestoreListener)stateRestoreCallback;
+            }
+            else
+            {
+
+                storeRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
+            }
+
+            internalBatchingRestoreCallback = StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
         }
 
-        internalBatchingRestoreCallback = StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
-    }
+        /**
+         * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
+         * {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)}
+         */
 
-    /**
-     * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
-     * {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)}
-     */
-
-    public void onRestoreStart(TopicPartition topicPartition,
-                               string storeName,
-                               long startingOffset,
-                               long endingOffset)
-{
-        userRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
-        storeRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
-    }
-
-    /**
-     * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
-     * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}
-     */
-
-    public void onBatchRestored(TopicPartition topicPartition,
-                                string storeName,
-                                long batchEndOffset,
-                                long numRestored)
-{
-        userRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
-        storeRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
-    }
-
-    /**
-     * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
-     * {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}
-     */
-
-    public void onRestoreEnd(TopicPartition topicPartition,
-                             string storeName,
-                             long totalRestored)
-{
-        userRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
-        storeRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
-    }
-
-
-    public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
-{
-        internalBatchingRestoreCallback.restoreBatch(records);
-    }
-
-    void setUserRestoreListener(IStateRestoreListener userRestoreListener)
-{
-        if (userRestoreListener != null)
-{
-            this.userRestoreListener = userRestoreListener;
+        public void onRestoreStart(TopicPartition topicPartition,
+                                   string storeName,
+                                   long startingOffset,
+                                   long endingOffset)
+        {
+            userRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            storeRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
         }
-    }
 
+        /**
+         * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
+         * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}
+         */
 
-    public void restoreAll(List<KeyValue<byte[], byte[]>> records)
-{
-        throw new InvalidOperationException();
-    }
+        public void onBatchRestored(TopicPartition topicPartition,
+                                    string storeName,
+                                    long batchEndOffset,
+                                    long numRestored)
+        {
+            userRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            storeRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+        }
 
+        /**
+         * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
+         * {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}
+         */
 
-    public void restore(byte[] key,
-                        byte[] value)
-{
-        throw new InvalidOperationException("Single restore functionality shouldn't be called directly but "
-                                                    + "through the delegated StateRestoreCallback instance");
-    }
-
-    private static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : RecordBatchingStateRestoreCallback
-{
+        public void onRestoreEnd(TopicPartition topicPartition,
+                                 string storeName,
+                                 long totalRestored)
+        {
+            userRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
+            storeRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
+        }
 
 
         public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
-{
+        {
+            internalBatchingRestoreCallback.restoreBatch(records);
+        }
 
+        void setUserRestoreListener(IStateRestoreListener userRestoreListener)
+        {
+            if (userRestoreListener != null)
+            {
+                this.userRestoreListener = userRestoreListener;
+            }
+        }
+
+
+        public void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        {
+            throw new InvalidOperationException();
+        }
+
+
+        public void restore(byte[] key,
+                            byte[] value)
+        {
+            throw new InvalidOperationException("Single restore functionality shouldn't be called directly but "
+                                                        + "through the delegated StateRestoreCallback instance");
+        }
+
+        private static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : IRecordBatchingStateRestoreCallback
+        {
+
+
+            public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
+            {
+
+            }
         }
     }
 }

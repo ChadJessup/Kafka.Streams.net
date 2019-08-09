@@ -36,10 +36,10 @@ namespace Kafka.Streams.State.Internals
             this.storeSupplier = storeSupplier;
         }
 
-    public override ISessionStore<K, V> build()
+    public override ISessionStore<K, V> build<K, V>()
     {
         return new MeteredSessionStore<K, V>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier())),
+            maybeWrapCaching(maybeWrapLogging(storeSupplier)),
             storeSupplier.metricsScope(),
             keySerde,
             valueSerde,

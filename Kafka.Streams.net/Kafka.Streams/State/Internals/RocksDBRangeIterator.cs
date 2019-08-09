@@ -14,56 +14,52 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.IKeyValueIterator;
-
-
-
-
-
-class RocksDBRangeIterator : RocksDbIterator
+namespace Kafka.Streams.State.Internals
 {
-    // RocksDB's JNI interface does not expose getters/setters that allow the
-    // comparator to be pluggable, and the default is lexicographic, so it's
-    // safe to just force lexicographic comparator here for now.
-    private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
+    public class RocksDbRangeIterator : RocksDbIterator
+    {
+        // RocksDb's JNI interface does not expose getters/setters that allow the
+        // comparator to be pluggable, and the default is lexicographic, so it's
+        // safe to just force lexicographic comparator here for now.
+        private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
     private byte[] rawToKey;
 
-    RocksDBRangeIterator(string storeName,
-                         RocksIterator iter,
-                         HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators,
-                         Bytes from,
-                         Bytes to)
-{
-        base(storeName, iter, openIterators);
-        iter.seek(from());
-        rawToKey = to[];
-        if (rawToKey == null)
-{
-            throw new NullPointerException("RocksDBRangeIterator: RawToKey is null for key " + to);
+        RocksDbRangeIterator(string storeName,
+                             RocksIterator iter,
+                             HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators,
+                             Bytes from,
+                             Bytes to)
+            : base(storeName, iter, openIterators)
+        {
+            iter.seek(from());
+            rawToKey = to[];
+            if (rawToKey == null)
+            {
+                throw new NullPointerException("RocksDbRangeIterator: RawToKey is null for key " + to);
+            }
         }
-    }
 
-    public override KeyValue<Bytes, byte[]> makeNext()
-{
-        KeyValue<Bytes, byte[]> next = base.makeNext();
+        public override KeyValue<Bytes, byte[]> makeNext()
+        {
+            KeyValue<Bytes, byte[]> next = base.makeNext();
 
-        if (next == null)
-{
-            return allDone();
-        } else
-{
-            if (comparator.compare(next.key(), rawToKey) <= 0)
-{
-                return next;
-            } else
-{
+            if (next == null)
+            {
                 return allDone();
+            }
+            else
+            {
+                if (comparator.compare(next.key(), rawToKey) <= 0)
+                {
+                    return next;
+                }
+                else
+                {
+                    return allDone();
+                }
             }
         }
     }
 }
-

@@ -18,10 +18,10 @@ namespace Kafka.Streams.State.Internals
 {
     public class RecordConverters
     {
-        private static RecordConverter IDENTITY_INSTANCE = record=>record;
+        private static IRecordConverter IDENTITY_INSTANCE = record=>record;
 
 
-        private static RecordConverter RAW_TO_TIMESTAMED_INSTANCE = record =>
+        private static IRecordConverter RAW_TO_TIMESTAMED_INSTANCE = record =>
     {
         byte[] rawValue = record.value();
         long timestamp = record.timestamp();
@@ -49,12 +49,12 @@ namespace Kafka.Streams.State.Internals
         // privatize the constructor so the cannot be instantiated (only used for its static members)
         private RecordConverters() { }
 
-        public static RecordConverter rawValueToTimestampedValue()
+        public static IRecordConverter rawValueToTimestampedValue()
         {
             return RAW_TO_TIMESTAMED_INSTANCE;
         }
 
-        public static RecordConverter identity()
+        public static IRecordConverter identity()
         {
             return IDENTITY_INSTANCE;
         }

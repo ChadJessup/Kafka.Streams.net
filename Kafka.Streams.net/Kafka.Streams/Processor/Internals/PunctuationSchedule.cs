@@ -14,112 +14,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processor.Interfaces;
 
-
-
-
-public class PunctuationSchedule : Stamped<ProcessorNode> {
-
-    private long interval;
-    private Punctuator punctuator;
-    private bool isCancelled = false;
-    // this Cancellable will be re-pointed at the successor schedule in next()
-    private RepointableCancellable cancellable;
-
-    PunctuationSchedule(ProcessorNode node,
-                        long time,
-                        long interval,
-                        Punctuator punctuator)
+namespace Kafka.Streams.Processor.Internals
 {
-        this(node, time, interval, punctuator, new RepointableCancellable());
-        cancellable.setSchedule(this);
-    }
+    public class PunctuationSchedule : Stamped<ProcessorNode>
+    {
 
-    private PunctuationSchedule(ProcessorNode node,
-                                long time,
-                                long interval,
-                                Punctuator punctuator,
-                                RepointableCancellable cancellable)
-{
-        base(node, time);
-        this.interval = interval;
-        this.punctuator = punctuator;
-        this.cancellable = cancellable;
-    }
+        private long interval;
+        private Punctuator punctuator;
+        private bool isCancelled = false;
+        // this Cancellable will be re-pointed at the successor schedule in next()
+        private RepointableCancellable cancellable;
 
-    public ProcessorNode node()
-{
-        return value;
-    }
-
-    public Punctuator punctuator()
-{
-        return punctuator;
-    }
-
-    public ICancellable cancellable()
-{
-        return cancellable;
-    }
-
-    void markCancelled()
-{
-        isCancelled = true;
-    }
-
-    bool isCancelled()
-{
-        return isCancelled;
-    }
-
-    public PunctuationSchedule next(long currTimestamp)
-{
-        long nextPunctuationTime = timestamp + interval;
-        if (currTimestamp >= nextPunctuationTime)
-{
-            // we missed one ore more punctuations
-            // avoid scheduling a new punctuations immediately, this can happen:
-            // - when using STREAM_TIME punctuation and there was a gap i.e., no data was
-            //   received for at least 2*interval
-            // - when using WALL_CLOCK_TIME and there was a gap i.e., punctuation was delayed for at least 2*interval (GC pause, overload, ...)
-            long intervalsMissed = (currTimestamp - timestamp) / interval;
-            nextPunctuationTime = timestamp + (intervalsMissed + 1) * interval;
+        PunctuationSchedule(ProcessorNode node,
+                            long time,
+                            long interval,
+                            Punctuator punctuator)
+            : this(node, time, interval, punctuator, new RepointableCancellable())
+        {
+            cancellable.setSchedule(this);
         }
 
-        PunctuationSchedule nextSchedule = new PunctuationSchedule(value, nextPunctuationTime, interval, punctuator, cancellable);
+        private PunctuationSchedule(ProcessorNode node,
+                                    long time,
+                                    long interval,
+                                    Punctuator punctuator,
+                                    RepointableCancellable cancellable)
+        {
+            base(node, time);
+            this.interval = interval;
+            this.punctuator = punctuator;
+            this.cancellable = cancellable;
+        }
 
-        cancellable.setSchedule(nextSchedule);
+        public ProcessorNode node()
+        {
+            return value;
+        }
 
-        return nextSchedule;
-    }
+        public Punctuator punctuator()
+        {
+            return punctuator;
+        }
 
+        public ICancellable cancellable()
+        {
+            return cancellable;
+        }
 
-    public bool Equals(object other)
-{
-        return base.Equals(other);
-    }
+        void markCancelled()
+        {
+            isCancelled = true;
+        }
 
+        bool isCancelled()
+        {
+            return isCancelled;
+        }
 
-    public int GetHashCode()
-{
-        return base.GetHashCode();
-    }
+        public PunctuationSchedule next(long currTimestamp)
+        {
+            long nextPunctuationTime = timestamp + interval;
+            if (currTimestamp >= nextPunctuationTime)
+            {
+                // we missed one ore more punctuations
+                // avoid scheduling a new punctuations immediately, this can happen:
+                // - when using STREAM_TIME punctuation and there was a gap i.e., no data was
+                //   received for at least 2*interval
+                // - when using WALL_CLOCK_TIME and there was a gap i.e., punctuation was delayed for at least 2*interval (GC pause, overload, ...)
+                long intervalsMissed = (currTimestamp - timestamp) / interval;
+                nextPunctuationTime = timestamp + (intervalsMissed + 1) * interval;
+            }
 
-    private static class RepointableCancellable : Cancellable
-{
+            PunctuationSchedule nextSchedule = new PunctuationSchedule(value, nextPunctuationTime, interval, punctuator, cancellable);
 
-        private PunctuationSchedule schedule;
+            cancellable.setSchedule(nextSchedule);
 
-        synchronized void setSchedule(PunctuationSchedule schedule)
-{
-            this.schedule = schedule;
+            return nextSchedule;
         }
 
 
-        synchronized public void cancel()
-{
-            schedule.markCancelled();
+        public bool Equals(object other)
+        {
+            return base.Equals(other);
+        }
+
+
+        public int GetHashCode()
+        {
+            return base.GetHashCode();
         }
     }
 }

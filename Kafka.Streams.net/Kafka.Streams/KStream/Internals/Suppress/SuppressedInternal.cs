@@ -16,7 +16,7 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-public class SuppressedInternal<K> : ISuppressed<K>, NamedSuppressed<K>
+public class SuppressedInternal<K> : ISuppressed<K>, INamedSuppressed<K>
 {
     private static TimeSpan DEFAULT_SUPPRESSION_TIME = Duration.ofMillis(long.MaxValue);
     private static StrictBufferConfigImpl DEFAULT_BUFFER_CONFIG = (StrictBufferConfigImpl)BufferConfig.unbounded();

@@ -35,13 +35,13 @@ namespace Kafka.Streams.State.Internals
 
         public override ISessionStore<Bytes, byte[]> get()
         {
-            RocksDBSegmentedBytesStore segmented = new RocksDBSegmentedBytesStore(
+            RocksDbSegmentedBytesStore segmented = new RocksDbSegmentedBytesStore(
                 name,
                 metricsScope(),
                 retentionPeriod,
                 segmentIntervalMs(),
                 new SessionKeySchema());
-            return new RocksDBSessionStore(segmented);
+            return new RocksDbSessionStore(segmented);
         }
 
         public override string metricsScope()

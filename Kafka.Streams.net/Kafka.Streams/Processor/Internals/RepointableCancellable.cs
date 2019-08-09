@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,13 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using System.Runtime.CompilerServices;
 
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.IKeyValueIterator;
-
-public interface PeekingKeyValueIterator<K, V> : IKeyValueIterator<K, V>
+namespace Kafka.Streams.Processor.Internals
 {
 
-    KeyValue<K, V> peekNext();
+
+
+
+
+    public partial class PunctuationSchedule
+    {
+        public class RepointableCancellable : ICancellable
+        {
+
+            private PunctuationSchedule schedule;
+
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            void setSchedule(PunctuationSchedule schedule)
+            {
+                this.schedule = schedule;
+            }
+
+
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public void cancel()
+            {
+                schedule.markCancelled();
+            }
+        }
+    }
 }

@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
-    public class TimestampedSegment : RocksDBTimestampedStore : Comparable<TimestampedSegment>, Segment
+    public class TimestampedSegment : RocksDbTimestampedStore, IComparable<TimestampedSegment>, ISegment
     {
         public long id;
 
@@ -35,12 +39,12 @@ namespace Kafka.Streams.State.Internals
 
         public override int CompareTo(TimestampedSegment segment)
         {
-            return long.compare(id, segment.id);
+            return id.CompareTo(segment.id);
         }
 
         public override void openDB(IProcessorContext<K, V> context)
         {
-            base.openDB(context);
+            base.OpenDb(context);
             // skip the registering step
             internalProcessorContext = context;
         }

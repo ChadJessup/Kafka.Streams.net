@@ -14,215 +14,221 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-using Kafka.Common.TopicPartition;
-using Kafka.Common.metrics.Sensor;
-
-
-
-
-
-
-
-/**
- * PartitionGroup is used to buffer all co-partitioned records for processing.
- *
- * In other words, it represents the "same" partition over multiple co-partitioned topics, and it is used
- * to buffer records from that partition in each of the contained topic-partitions.
- * Each StreamTask has exactly one PartitionGroup.
- *
- * PartitionGroup : the algorithm that determines in what order buffered records are selected for processing.
- *
- * Specifically, when polled, it returns the record from the topic-partition with the lowest stream-time.
- * Stream-time for a topic-partition is defined as the highest timestamp
- * yet observed at the head of that topic-partition.
- *
- * PartitionGroup also maintains a stream-time for the group as a whole.
- * This is defined as the highest timestamp of any record yet polled from the PartitionGroup.
- * Note however that any computation that depends on stream-time should track it on a per-operator basis to obtain an
- * accurate view of the local time as seen by that processor.
- *
- * The PartitionGroups's stream-time is initially UNKNOWN (-1), and it set to a known value upon first poll.
- * As a consequence of the definition, the PartitionGroup's stream-time is non-decreasing
- * (i.e., it increases or stays the same over time).
- */
-public class PartitionGroup
+namespace Kafka.Streams.Processor.Internals
 {
 
 
-    private Dictionary<TopicPartition, RecordQueue> partitionQueues;
-    private Sensor recordLatenessSensor;
-    private PriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
-    private long streamTime;
-    private int totalBuffered;
-    private bool allBuffered;
+    using Kafka.Common.TopicPartition;
+    using Kafka.Common.metrics.Sensor;
+    using Confluent.Kafka;
+    using Kafka.Common.Metrics;
+    using System.Collections.Generic;
 
 
-    public static class RecordInfo
-{
 
-        RecordQueue queue;
 
-        public ProcessorNode node()
-{
-            return queue.source();
-        }
 
-        public TopicPartition partition()
-{
-            return queue.partition();
-        }
 
-        RecordQueue queue()
-{
-            return queue;
-        }
-    }
-
-    PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
-{
-        nonEmptyQueuesByTime = new PriorityQueue<>(partitionQueues.size(), Comparator.comparingLong(RecordQueue::headRecordTimestamp));
-        this.partitionQueues = partitionQueues;
-        this.recordLatenessSensor = recordLatenessSensor;
-        totalBuffered = 0;
-        allBuffered = false;
-        streamTime = RecordQueue.UNKNOWN;
-    }
 
     /**
-     * Get the next record and queue
+     * PartitionGroup is used to buffer all co-partitioned records for processing.
      *
-     * @return StampedRecord
+     * In other words, it represents the "same" partition over multiple co-partitioned topics, and it is used
+     * to buffer records from that partition in each of the contained topic-partitions.
+     * Each StreamTask has exactly one PartitionGroup.
+     *
+     * PartitionGroup : the algorithm that determines in what order buffered records are selected for processing.
+     *
+     * Specifically, when polled, it returns the record from the topic-partition with the lowest stream-time.
+     * Stream-time for a topic-partition is defined as the highest timestamp
+     * yet observed at the head of that topic-partition.
+     *
+     * PartitionGroup also maintains a stream-time for the group as a whole.
+     * This is defined as the highest timestamp of any record yet polled from the PartitionGroup.
+     * Note however that any computation that depends on stream-time should track it on a per-operator basis to obtain an
+     * accurate view of the local time as seen by that processor.
+     *
+     * The PartitionGroups's stream-time is initially UNKNOWN (-1), and it set to a known value upon first poll.
+     * As a consequence of the definition, the PartitionGroup's stream-time is non-decreasing
+     * (i.e., it increases or stays the same over time).
      */
-    StampedRecord nextRecord(RecordInfo LogInformation)
-{
-        StampedRecord record = null;
+    public class PartitionGroup
+    {
+        private Dictionary<TopicPartition, RecordQueue> partitionQueues;
+        private Sensor recordLatenessSensor;
+        private PriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
-        RecordQueue queue = nonEmptyQueuesByTime.poll();
-        LogInformation.queue = queue;
+        private long streamTime;
+        private int totalBuffered;
+        private bool allBuffered;
 
-        if (queue != null)
-{
-            // get the first record from this queue.
-            record = queue.poll();
 
-            if (record != null)
-{
-                --totalBuffered;
+        public static class RecordInfo
+        {
 
-                if (queue.isEmpty())
-{
-                    // if a certain queue has been drained, reset the flag
-                    allBuffered = false;
-                } else
-{
+            RecordQueue queue;
 
-                    nonEmptyQueuesByTime.offer(queue);
-                }
+            public ProcessorNode node()
+            {
+                return queue.source();
+            }
 
-                // always update the stream-time to the record's timestamp yet to be processed if it is larger
-                if (record.timestamp > streamTime)
-{
-                    streamTime = record.timestamp;
-                    recordLatenessSensor.record(0);
-                } else
-{
+            public TopicPartition partition()
+            {
+                return queue.partition();
+            }
 
-                    recordLatenessSensor.record(streamTime - record.timestamp);
-                }
+            RecordQueue queue()
+            {
+                return queue;
             }
         }
 
-        return record;
-    }
+        PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
+        {
+            nonEmptyQueuesByTime = new PriorityQueue<>(partitionQueues.size(), Comparator.comparingLong(RecordQueue::headRecordTimestamp));
+            this.partitionQueues = partitionQueues;
+            this.recordLatenessSensor = recordLatenessSensor;
+            totalBuffered = 0;
+            allBuffered = false;
+            streamTime = RecordQueue.UNKNOWN;
+        }
 
-    /**
-     * Adds raw records to this partition group
-     *
-     * @param partition the partition
-     * @param rawRecords  the raw records
-     * @return the queue size for the partition
-     */
-    int.AddRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
-{
-        RecordQueue recordQueue = partitionQueues[partition];
+        /**
+         * Get the next record and queue
+         *
+         * @return StampedRecord
+         */
+        StampedRecord nextRecord(RecordInfo LogInformation)
+        {
+            StampedRecord record = null;
 
-        int oldSize = recordQueue.size();
-        int newSize = recordQueue.AddRawRecords(rawRecords);
+            RecordQueue queue = nonEmptyQueuesByTime.poll();
+            LogInformation.queue = queue;
 
-        //.Add this record queue to be considered for processing in the future if it was empty before
-        if (oldSize == 0 && newSize > 0)
-{
-            nonEmptyQueuesByTime.offer(recordQueue);
+            if (queue != null)
+            {
+                // get the first record from this queue.
+                record = queue.poll();
 
-            // if all partitions now are non-empty, set the flag
-            // we do not need to update the stream-time here since this task will definitely be
-            // processed next, and hence the stream-time will be updated when we retrieved records by then
-            if (nonEmptyQueuesByTime.size() == this.partitionQueues.size())
-{
-                allBuffered = true;
+                if (record != null)
+                {
+                    --totalBuffered;
+
+                    if (queue.isEmpty())
+                    {
+                        // if a certain queue has been drained, reset the flag
+                        allBuffered = false;
+                    }
+                    else
+                    {
+
+                        nonEmptyQueuesByTime.offer(queue);
+                    }
+
+                    // always update the stream-time to the record's timestamp yet to be processed if it is larger
+                    if (record.timestamp > streamTime)
+                    {
+                        streamTime = record.timestamp;
+                        recordLatenessSensor.record(0);
+                    }
+                    else
+                    {
+
+                        recordLatenessSensor.record(streamTime - record.timestamp);
+                    }
+                }
             }
+
+            return record;
         }
 
-        totalBuffered += newSize - oldSize;
+        /**
+         * Adds raw records to this partition group
+         *
+         * @param partition the partition
+         * @param rawRecords  the raw records
+         * @return the queue size for the partition
+         */
+        int addRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
+        {
+            RecordQueue recordQueue = partitionQueues[partition];
 
-        return newSize;
-    }
+            int oldSize = recordQueue.size();
+            int newSize = recordQueue.AddRawRecords(rawRecords);
 
-    public HashSet<TopicPartition> partitions()
-{
-        return Collections.unmodifiableSet(partitionQueues.Keys);
-    }
+            //.Add this record queue to be considered for processing in the future if it was empty before
+            if (oldSize == 0 && newSize > 0)
+            {
+                nonEmptyQueuesByTime.offer(recordQueue);
 
-    /**
-     * Return the stream-time of this partition group defined as the largest timestamp seen across all partitions
-     */
-    public long streamTime()
-{
-        return streamTime;
-    }
+                // if all partitions now are non-empty, set the flag
+                // we do not need to update the stream-time here since this task will definitely be
+                // processed next, and hence the stream-time will be updated when we retrieved records by then
+                if (nonEmptyQueuesByTime.size() == this.partitionQueues.size())
+                {
+                    allBuffered = true;
+                }
+            }
 
-    /**
-     * @throws InvalidOperationException if the record's partition does not belong to this partition group
-     */
-    int numBuffered(TopicPartition partition)
-{
-        RecordQueue recordQueue = partitionQueues[partition];
+            totalBuffered += newSize - oldSize;
 
-        if (recordQueue == null)
-{
-            throw new InvalidOperationException(string.Format("Record's partition %s does not belong to this partition-group.", partition));
+            return newSize;
         }
 
-        return recordQueue.size();
-    }
+        public HashSet<TopicPartition> partitions()
+        {
+            return Collections.unmodifiableSet(partitionQueues.Keys);
+        }
 
-    int numBuffered()
-{
-        return totalBuffered;
-    }
+        /**
+         * Return the stream-time of this partition group defined as the largest timestamp seen across all partitions
+         */
+        public long streamTime()
+        {
+            return streamTime;
+        }
 
-    bool allPartitionsBuffered()
-{
-        return allBuffered;
-    }
+        /**
+         * @throws InvalidOperationException if the record's partition does not belong to this partition group
+         */
+        int numBuffered(TopicPartition partition)
+        {
+            RecordQueue recordQueue = partitionQueues[partition];
 
-    public void close()
-{
-        clear();
-        partitionQueues.clear();
-    }
+            if (recordQueue == null)
+            {
+                throw new InvalidOperationException(string.Format("Record's partition %s does not belong to this partition-group.", partition));
+            }
 
-    public void clear()
-{
-        nonEmptyQueuesByTime.clear();
-        streamTime = RecordQueue.UNKNOWN;
-        foreach (RecordQueue queue in partitionQueues.Values)
-{
-            queue.clear();
+            return recordQueue.size();
+        }
+
+        int numBuffered()
+        {
+            return totalBuffered;
+        }
+
+        bool allPartitionsBuffered()
+        {
+            return allBuffered;
+        }
+
+        public void close()
+        {
+            clear();
+            partitionQueues.clear();
+        }
+
+        public void clear()
+        {
+            nonEmptyQueuesByTime.clear();
+            streamTime = RecordQueue.UNKNOWN;
+            foreach (RecordQueue queue in partitionQueues.Values)
+            {
+                queue.clear();
+            }
         }
     }
 }

@@ -8,15 +8,19 @@ using RocksDbSharp;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using Kafka.Common;
+using Confluent.Kafka;
+using Kafka.Streams.Errors;
+using System;
 
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * A persistent key-value store based on RocksDB.
+     * A persistent key-value store based on RocksDb.
      */
-    public class RocksDBStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
+    public class RocksDbStore<K, V> : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<RocksDBStore>();
+        private static ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
 
         private static Pattern SST_FILE_EXTENSION = Pattern.compile(".*\\.sst");
 
@@ -30,34 +34,34 @@ namespace Kafka.Streams.State.Internals
 
         string name;
         private string parentDir;
-        HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators = Collections.synchronizedSet(new HashSet<IKeyValueIterator<Bytes, byte[]>>());
+        HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
 
         FileInfo dbDir;
         RocksDb db;
-        IRocksDBAccessor dbAccessor;
+        IRocksDbAccessor dbAccessor;
 
         // the following option objects will be created in openDB and closed in the close() method
-        private RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter userSpecifiedOptions;
+        private RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter userSpecifiedOptions;
         WriteOptions wOptions;
         FlushOptions fOptions;
         private Cache cache;
         private BloomFilter filter;
 
-        private RocksDBConfigSetter configSetter;
+        private RocksDbConfigSetter configSetter;
 
         private bool prepareForBulkload = false;
-        IProcessorContext<K, V> internalProcessorContext;
+        public IProcessorContext<K, V> internalProcessorContext { get; private set; }
         // visible for testing
-        BatchingStateRestoreCallback batchingStateRestoreCallback = null;
+        IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
 
         protected volatile bool open = false;
 
-        RocksDBStore(string name)
+        RocksDbStore(string name)
             : this(name, DB_FILE_DIR)
         {
         }
 
-        RocksDBStore(string name,
+        RocksDbStore(string name,
                      string parentDir)
         {
             this.name = name;
@@ -72,7 +76,7 @@ namespace Kafka.Streams.State.Internals
 
             DBOptions dbOptions = new DBOptions();
             ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
-            userSpecifiedOptions = new RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(dbOptions, columnFamilyOptions);
+            userSpecifiedOptions = new RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(dbOptions, columnFamilyOptions);
 
             BlockBasedTableConfig tableConfig = new BlockBasedTableConfig();
             cache = new LRUCache(BLOCK_CACHE_SIZE);
@@ -97,7 +101,7 @@ namespace Kafka.Streams.State.Internals
             // the parallelism value needs to be at least two because of the code in
             // https://github.com/facebook/rocksdb/blob/62ad0a9b19f0be4cefa70b6b32876e764b7f3c11/util/options.cc#L580
             // subtracts one from the value passed to determine the number of compaction threads
-            // (this could be a bug in the RocksDB code and their devs have been contacted).
+            // (this could be a bug in the RocksDb code and their devs have been contacted).
             userSpecifiedOptions.setIncreaseParallelism(Math.Max(Runtime.getRuntime().availableProcessors(), 2));
 
             wOptions = new WriteOptions();
@@ -107,12 +111,12 @@ namespace Kafka.Streams.State.Internals
             fOptions.setWaitForFlush(true);
 
             Dictionary<string, object> configs = context.appConfigs();
-            Class<RocksDBConfigSetter> configSetterClass =
-                (Class<RocksDBConfigSetter>)configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
+            RocksDbConfigSetter configSetterClass =
+                (RocksDbConfigSetter)configs[StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
 
             if (configSetterClass != null)
             {
-                configSetter = Utils.newInstance(configSetterClass);
+                configSetter = (RocksDbConfigSetter)Activator.CreateInstance(configSetterClass.GetType());
                 configSetter.setConfig(name, userSpecifiedOptions, configs);
             }
 
@@ -121,7 +125,7 @@ namespace Kafka.Streams.State.Internals
                 userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            dbDir = new FileInfo(new FileInfo(context.stateDir(), parentDir), name);
+            dbDir = new FileInfo(Path.Combine(Path.Combine(context.stateDir(), parentDir), name));
 
             try
             {
@@ -133,23 +137,23 @@ namespace Kafka.Streams.State.Internals
                 throw new ProcessorStateException(fatal);
             }
 
-            openRocksDB(dbOptions, columnFamilyOptions);
+            openRocksDb(dbOptions, columnFamilyOptions);
             open = true;
         }
 
-        void openRocksDB(DBOptions dbOptions,
+        void openRocksDb(DBOptions dbOptions,
                          ColumnFamilyOptions columnFamilyOptions)
         {
             List<ColumnFamilyDescriptor> columnFamilyDescriptors
-                = Collections.singletonList(new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions));
-            List<ColumnFamilyHandle> columnFamilies = new List<>(columnFamilyDescriptors.size());
+                = new ColumnFamilyDescriptor(RocksDb.DEFAULT_COLUMN_FAMILY, columnFamilyOptions);
+            List<ColumnFamilyHandle> columnFamilies = new List<ColumnFamilyHandle>(columnFamilyDescriptors.size());
 
             try
             {
-                db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
+                db = RocksDb.Open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
                 dbAccessor = new SingleColumnFamilyAccessor(columnFamilies[0]);
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
             }
@@ -161,7 +165,7 @@ namespace Kafka.Streams.State.Internals
             // open the DB dir
             internalProcessorContext = context;
             openDB(context);
-            batchingStateRestoreCallback = new RocksDBBatchingRestoreCallback(this);
+            batchingStateRestoreCallback = new RocksDbBatchingRestoreCallback(this);
 
             // value getter should always read directly from rocksDB
             // since it is only for values that are already flushed
@@ -174,17 +178,12 @@ namespace Kafka.Streams.State.Internals
             return prepareForBulkload;
         }
 
-        public override string name()
-        {
-            return name;
-        }
-
-        public override bool persistent()
+        public bool persistent()
         {
             return true;
         }
 
-        public override bool isOpen()
+        public bool isOpen()
         {
             return open;
         }
@@ -199,7 +198,7 @@ namespace Kafka.Streams.State.Internals
 
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override void put(Bytes key,
+        public void put(Bytes key,
                                      byte[] value)
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
@@ -208,7 +207,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override byte[] putIfAbsent(Bytes key,
+        public byte[] putIfAbsent(Bytes key,
                                                byte[] value)
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
@@ -220,27 +219,31 @@ namespace Kafka.Streams.State.Internals
             return originalValue;
         }
 
-        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
         {
-            try (WriteBatch batch = new WriteBatch())
-{
-                dbAccessor.prepareBatch(entries, batch);
-                write(batch);
-            } catch (RocksDBException e)
+            try
+            {
+                using (WriteBatch batch = new WriteBatch())
+                {
+                    dbAccessor.prepareBatch(entries, batch);
+                    write(batch);
+                }
+            }
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error while batch writing to store " + name, e);
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override byte[] get(Bytes key)
+        public byte[] get(Bytes key)
         {
             validateStoreOpen();
             try
             {
-                return dbAccessor[key()];
+                return dbAccessor[key];
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                 throw new ProcessorStateException("Error while getting value for key from store " + name, e);
@@ -248,15 +251,15 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override byte[] delete(Bytes key)
+        public byte[] delete(Bytes key)
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             byte[] oldValue;
             try
             {
-                oldValue = dbAccessor.getOnly(key());
+                oldValue = dbAccessor.getOnly(key);
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                 throw new ProcessorStateException("Error while getting value for key from store " + name, e);
@@ -266,7 +269,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                                   Bytes to)
         {
             from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
@@ -300,7 +303,7 @@ namespace Kafka.Streams.State.Internals
         /**
          * Return an approximate count of key-value mappings in this store.
          *
-         * <code>RocksDB</code> cannot return an exact entry count without doing a
+         * <code>RocksDb</code> cannot return an exact entry count without doing a
          * full scan, so this method relies on the <code>rocksdb.estimate-num-keys</code>
          * property to get an approximate count. The returned size also includes
          * a count of dirty keys in the store's in-memory cache, which may lead to some
@@ -316,7 +319,7 @@ namespace Kafka.Streams.State.Internals
             {
                 numEntries = dbAccessor.approximateNumEntries();
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error fetching property from store " + name, e);
             }
@@ -329,7 +332,7 @@ namespace Kafka.Streams.State.Internals
 
         private bool isOverflowing(long value)
         {
-            // RocksDB returns an unsigned 8-byte integer, which could overflow long
+            // RocksDb returns an unsigned 8-byte integer, which could overflow long
             // and manifest as a negative value.
             return value < 0;
         }
@@ -345,7 +348,7 @@ namespace Kafka.Streams.State.Internals
             {
                 dbAccessor.flush();
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error while executing flush from store " + name, e);
             }
@@ -356,7 +359,7 @@ namespace Kafka.Streams.State.Internals
             if (prepareForBulkload)
             {
                 // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-                string[] sstFileNames = dbDir.list((dir, name)=>SST_FILE_EXTENSION.matcher(name).matches());
+                string[] sstFileNames = dbDir.list((dir, name) => SST_FILE_EXTENSION.matcher(name).matches());
 
                 if (sstFileNames != null && sstFileNames.Length > 0)
                 {
@@ -398,7 +401,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             // Important: do not rearrange the order in which the below objects are closed!
-            // Order of closing must follow: ColumnFamilyHandle > RocksDB > DBOptions > ColumnFamilyOptions
+            // Order of closing must follow: ColumnFamilyHandle > RocksDb > DBOptions > ColumnFamilyOptions
             dbAccessor.close();
             db.close();
             userSpecifiedOptions.close();
@@ -419,11 +422,11 @@ namespace Kafka.Streams.State.Internals
         private void closeOpenIterators()
         {
             HashSet<IKeyValueIterator<Bytes, byte[]>> iterators;
-            lock(openIterators)
-    {
-                iterators = new HashSet<>(openIterators);
+            lock (openIterators)
+            {
+                iterators = new HashSet<IKeyValueIterator<Bytes, byte[]>>(openIterators);
             }
-            if (iterators.size() != 0)
+            if (iterators.Count != 0)
             {
                 log.LogWarning("Closing {} open iterators for store {}", iterators.size(), name);
                 foreach (IKeyValueIterator<Bytes, byte[]> iterator in iterators)
@@ -434,153 +437,13 @@ namespace Kafka.Streams.State.Internals
         }
     }
 
-    class SingleColumnFamilyAccessor : IRocksDBAccessor
-    {
-        private ColumnFamilyHandle columnFamily;
-
-        SingleColumnFamilyAccessor(ColumnFamilyHandle columnFamily)
-        {
-            this.columnFamily = columnFamily;
-        }
-
-
-        public void put(byte[] key,
-                        byte[] value)
-        {
-            if (value == null)
-            {
-                try
-                {
-                    db.delete(columnFamily, wOptions, key);
-                }
-                catch (RocksDBException e)
-                {
-                    // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while removing key from store " + name, e);
-                }
-            }
-            else
-            {
-                try
-                {
-                    db.Add(columnFamily, wOptions, key, value);
-                }
-                catch (RocksDBException e)
-                {
-                    // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-                    throw new ProcessorStateException("Error while putting key/value into store " + name, e);
-                }
-            }
-        }
-
-
-        public void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
-                                 WriteBatch batch)
-        {
-            foreach (KeyValue<Bytes, byte[]> entry in entries)
-            {
-                entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
-               .AddToBatch(entry.key(), entry.value, batch);
-            }
-        }
-
-
-        public byte[] get(byte[] key)
-        {
-            return db[columnFamily, key];
-        }
-
-
-        public byte[] getOnly(byte[] key)
-        {
-            return db[columnFamily, key];
-        }
-
-
-        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
-                                                     Bytes to)
-        {
-            return new RocksDBRangeIterator(
-                name,
-                db.newIterator(columnFamily),
-                openIterators,
-                from,
-                to);
-        }
-
-
-        public IKeyValueIterator<Bytes, byte[]> all()
-        {
-            RocksIterator innerIterWithTimestamp = db.newIterator(columnFamily);
-            innerIterWithTimestamp.seekToFirst();
-            return new RocksDbIterator(name, innerIterWithTimestamp, openIterators);
-        }
-
-
-        public long approximateNumEntries()
-        {
-            return db.getLongProperty(columnFamily, "rocksdb.estimate-num-keys");
-        }
-
-
-        public void flush()
-        {
-            db.flush(fOptions, columnFamily);
-        }
-
-
-        public void prepareBatchForRestore(List<KeyValue<byte[], byte[]>> records,
-                                           WriteBatch batch)
-        {
-            foreach (KeyValue<byte[], byte[]> record in records)
-            {
-               .AddToBatch(record.key, record.value, batch);
-            }
-        }
-
-
-        public void addToBatch(byte[] key,
-                               byte[] value,
-                               WriteBatch batch)
-        {
-            if (value == null)
-            {
-                batch.delete(columnFamily, key);
-            }
-            else
-            {
-                batch.Add(columnFamily, key, value);
-            }
-        }
-
-
-        public void close()
-        {
-            columnFamily.close();
-        }
-
-
-
-        public void toggleDbForBulkLoading()
-        {
-            try
-            {
-                db.compactRange(columnFamily, true, 1, 0);
-            }
-            catch (RocksDBException e)
-            {
-                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
-            }
-        }
-    }
-
     // not private for testing
-    static class RocksDBBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
+    public static class RocksDbBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
     {
 
-        private RocksDBStore rocksDBStore;
+        private RocksDbStore rocksDBStore;
 
-        RocksDBBatchingRestoreCallback(RocksDBStore rocksDBStore)
+        RocksDbBatchingRestoreCallback(RocksDbStore rocksDBStore)
         {
             this.rocksDBStore = rocksDBStore;
         }
@@ -592,7 +455,7 @@ namespace Kafka.Streams.State.Internals
 {
                 rocksDBStore.dbAccessor.prepareBatchForRestore(records, batch);
                 rocksDBStore.write(batch);
-            } catch (RocksDBException e)
+            } catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error restoring batch to store " + rocksDBStore.name, e);
             }

@@ -14,25 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
     public abstract class AbstractStoreBuilder<K, V, T> : IStoreBuilder<T>
         where T : IStateStore
     {
-        private Dictionary<string, string> logConfig = new Dictionary<>();
-        protected string name;
+        public Dictionary<string, string> logConfig { get; private set; } = new Dictionary<string, string>();
+        public string name { get; }
+        public bool loggingEnabled { get; }
+
         ISerde<K> keySerde;
         ISerde<V> valueSerde;
         ITime time;
         bool enableCaching;
         bool enableLogging = true;
 
-        public AbstractStoreBuilder(string name,
-                                    ISerde<K> keySerde,
-                                    ISerde<V> valueSerde,
-                                    ITime time)
+        public AbstractStoreBuilder(
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            ITime time)
         {
             name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
             time = time ?? throw new System.ArgumentNullException("time cannot be null", nameof(time));
@@ -42,19 +48,19 @@ namespace Kafka.Streams.State.Internals
             this.time = time;
         }
 
-        public override IStoreBuilder<T> withCachingEnabled()
+        public IStoreBuilder<T> withCachingEnabled()
         {
             enableCaching = true;
             return this;
         }
 
-        public override IStoreBuilder<T> withCachingDisabled()
+        public IStoreBuilder<T> withCachingDisabled()
         {
             enableCaching = false;
             return this;
         }
 
-        public override IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
+        public IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
         {
             config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
             enableLogging = true;
@@ -62,26 +68,18 @@ namespace Kafka.Streams.State.Internals
             return this;
         }
 
-        public override IStoreBuilder<T> withLoggingDisabled()
+        public IStoreBuilder<T> withLoggingDisabled()
         {
             enableLogging = false;
-            logConfig.clear();
+            logConfig.Clear();
             return this;
         }
 
-        public override Dictionary<string, string> logConfig()
-        {
-            return logConfig;
-        }
-
-        public override bool loggingEnabled()
+        public bool loggingEnabled()
         {
             return enableLogging;
         }
 
-        public override string name()
-        {
-            return name;
-        }
+        public abstract T build();
     }
 }

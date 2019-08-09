@@ -14,97 +14,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor;
-
-using Kafka.Common.Cluster;
-using Kafka.Common.PartitionInfo;
-using Kafka.Common.TopicPartition;
-using Microsoft.Extensions.Logging;
-
-
-
-
-
-
-
-
-
-
-
-/**
- * Default implementation of the {@link PartitionGrouper} interface that groups partitions by the partition id.
- *
- * Join operations requires that topics of the joining entities are copartitoned, i.e., being partitioned by the same key and having the same
- * number of partitions. Copartitioning is ensured by having the same number of partitions on
- * joined topics, and by using the serialization and Producer's default partitioner.
- */
-public class DefaultPartitionGrouper : IPartitionGrouper
+namespace Kafka.Streams.Processor
 {
 
 
-    private static ILogger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper>();
+    using Kafka.Common.Cluster;
+    using Kafka.Common.PartitionInfo;
+    using Kafka.Common.TopicPartition;
+    using Microsoft.Extensions.Logging;
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * Generate tasks with the assigned topic partitions.
+     * Default implementation of the {@link PartitionGrouper} interface that groups partitions by the partition id.
      *
-     * @param topicGroups   group of topics that need to be joined together
-     * @param metadata      metadata of the consuming cluster
-     * @return The map from generated task ids to the assigned partitions
+     * Join operations requires that topics of the joining entities are copartitoned, i.e., being partitioned by the same key and having the same
+     * number of partitions. Copartitioning is ensured by having the same number of partitions on
+     * joined topics, and by using the serialization and Producer's default partitioner.
      */
-    public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
-{
-        Dictionary<TaskId, HashSet<TopicPartition>> groups = new Dictionary<>();
+    public class DefaultPartitionGrouper : IPartitionGrouper
+    {
 
-        foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups)
-{
-            int topicGroupId = entry.Key;
-            HashSet<string> topicGroup = entry.Value;
 
-            int maxNumPartitions = maxNumPartitions(metadata, topicGroup);
+        private static ILogger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper>();
+        /**
+         * Generate tasks with the assigned topic partitions.
+         *
+         * @param topicGroups   group of topics that need to be joined together
+         * @param metadata      metadata of the consuming cluster
+         * @return The map from generated task ids to the assigned partitions
+         */
+        public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
+        {
+            Dictionary<TaskId, HashSet<TopicPartition>> groups = new Dictionary<>();
 
-            for (int partitionId = 0; partitionId < maxNumPartitions; partitionId++)
-{
-                HashSet<TopicPartition> group = new HashSet<>(topicGroup.size());
+            foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups)
+            {
+                int topicGroupId = entry.Key;
+                HashSet<string> topicGroup = entry.Value;
 
-                foreach (string topic in topicGroup)
-{
-                    List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
-                    if (partitionId < partitions.size())
-{
-                        group.Add(new TopicPartition(topic, partitionId));
+                int maxNumPartitions = maxNumPartitions(metadata, topicGroup);
+
+                for (int partitionId = 0; partitionId < maxNumPartitions; partitionId++)
+                {
+                    HashSet<TopicPartition> group = new HashSet<>(topicGroup.size());
+
+                    foreach (string topic in topicGroup)
+                    {
+                        List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
+                        if (partitionId < partitions.size())
+                        {
+                            group.Add(new TopicPartition(topic, partitionId));
+                        }
                     }
+                    groups.Add(new TaskId(topicGroupId, partitionId), Collections.unmodifiableSet(group));
                 }
-                groups.Add(new TaskId(topicGroupId, partitionId), Collections.unmodifiableSet(group));
             }
+
+            return Collections.unmodifiableMap(groups);
         }
 
-        return Collections.unmodifiableMap(groups);
-    }
+        /**
+         * @throws StreamsException if no metadata can be received for a topic
+         */
+        protected int maxNumPartitions(Cluster metadata, HashSet<string> topics)
+        {
+            int maxNumPartitions = 0;
+            foreach (string topic in topics)
+            {
+                List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
+                if (partitions.isEmpty())
+                {
+                    log.LogError("Empty partitions for topic {}", topic);
+                    throw new RuntimeException("Empty partitions for topic " + topic);
+                }
 
-    /**
-     * @throws StreamsException if no metadata can be received for a topic
-     */
-    protected int maxNumPartitions(Cluster metadata, HashSet<string> topics)
-{
-        int maxNumPartitions = 0;
-        foreach (string topic in topics)
-{
-            List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
-            if (partitions.isEmpty())
-{
-                log.LogError("Empty partitions for topic {}", topic);
-                throw new RuntimeException("Empty partitions for topic " + topic);
+                int numPartitions = partitions.size();
+                if (numPartitions > maxNumPartitions)
+                {
+                    maxNumPartitions = numPartitions;
+                }
             }
-
-            int numPartitions = partitions.size();
-            if (numPartitions > maxNumPartitions)
-{
-                maxNumPartitions = numPartitions;
-            }
+            return maxNumPartitions;
         }
-        return maxNumPartitions;
     }
-
 }
-
-
-

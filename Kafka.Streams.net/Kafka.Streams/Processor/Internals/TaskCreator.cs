@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
                     StreamsConfig config,
                     StreamsMetricsImpl streamsMetrics,
                     StateDirectory stateDirectory,
-                    ChangelogReader storeChangelogReader,
+                    IChangelogReader storeChangelogReader,
                     ThreadCache cache,
                     ITime time,
                     IKafkaClientSupplier clientSupplier,

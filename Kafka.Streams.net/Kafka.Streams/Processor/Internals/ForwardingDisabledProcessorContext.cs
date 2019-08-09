@@ -70,7 +70,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public void register(
             IStateStore store,
-            StateRestoreCallback stateRestoreCallback)
+            IStateRestoreCallback stateRestoreCallback)
         {
             @delegate.register(store, stateRestoreCallback);
         }

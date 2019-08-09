@@ -24,7 +24,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class RecordCollectorImpl : RecordCollector
+    public class RecordCollectorImpl : IRecordCollector
     {
         private ILogger log;
         private string logPrefix;

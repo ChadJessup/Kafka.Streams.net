@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,30 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-namespace Kafka.Streams.Processor;
-
-
-
-
-
-
-/**
- * Interface for batching restoration of a {@link IStateStore}
- *
- * It is expected that implementations of this will not call the {@link StateRestoreCallback#restore(byte[],
- * byte[]]} method.
- */
-public interface BatchingStateRestoreCallback : StateRestoreCallback
+namespace Kafka.Streams.Processor.Internals
 {
-
-
-    /**
-     * Called to restore a number of records.  This method is called repeatedly until the {@link IStateStore} is fulled
-     * restored.
-     *
-     * @param records the records to restore.
-     */
-    void restoreAll(List<KeyValue<byte[], byte[]>> records);
-
+    public interface AutoCloseable
+    {
+    }
 }

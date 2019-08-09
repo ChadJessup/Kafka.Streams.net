@@ -22,7 +22,7 @@ using System.Text;
 namespace Kafka.Streams.Processor.Internals
 {
 
-    public class AssignedStreamsTasks : AssignedTasks<StreamTask>, RestoringTasks
+    public class AssignedStreamsTasks : AssignedTasks<StreamTask>, IRestoringTasks
     {
         private Dictionary<TaskId, StreamTask> restoring = new Dictionary<TaskId, StreamTask>();
         private HashSet<TopicPartition> restoredPartitions = new HashSet<TopicPartition>();

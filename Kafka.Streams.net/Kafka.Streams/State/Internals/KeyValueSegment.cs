@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Common.Utils.Utils;
 using Kafka.Streams.Processor.IProcessorContext;
@@ -22,7 +24,7 @@ using Kafka.Streams.Processor.IProcessorContext;
 
 
 
-class KeyValueSegment : RocksDBStore : Comparable<KeyValueSegment>, Segment
+class KeyValueSegment : RocksDbStore : Comparable<KeyValueSegment>, Segment
 {
     public long id;
 

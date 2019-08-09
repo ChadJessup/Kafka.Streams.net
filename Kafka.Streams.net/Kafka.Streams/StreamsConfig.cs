@@ -398,7 +398,7 @@ namespace Kafka.Streams
         /** {@code rocksdb.config.setter} */
 
         public static string ROCKSDB_CONFIG_SETTER_CLASS_CONFIG = "rocksdb.config.setter";
-        private static string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter or name that : the <code>org.apache.kafka.streams.state.RocksDBConfigSetter</code> interface";
+        private static string ROCKSDB_CONFIG_SETTER_CLASS_DOC = "A Rocks DB config setter or name that : the <code>org.apache.kafka.streams.state.RocksDbConfigSetter</code> interface";
 
         /** {@code security.protocol} */
 

@@ -49,7 +49,7 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * Returns Metrics instance
          *
-         * @return StreamsMetrics
+         * @return IStreamsMetrics
          */
         IStreamsMetrics metrics { get; }
 
@@ -63,7 +63,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @throws StreamsException if the store's change log does not contain the partition
          */
         void register(IStateStore store,
-                      StateRestoreCallback stateRestoreCallback);
+                      IStateRestoreCallback stateRestoreCallback);
 
         /**
          * Get the state store given the store name.

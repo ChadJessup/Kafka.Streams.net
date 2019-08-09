@@ -15,12 +15,13 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.State.Internals;
+using Kafka.Common.Utils;
 
-using Kafka.Common.Utils.Bytes;
-
-interface CacheFunction
+namespace Kafka.Streams.State.Interfaces
 {
-    Bytes key(Bytes cacheKey);
-    Bytes cacheKey(Bytes cacheKey);
+    public interface ICacheFunction
+    {
+        Bytes key(Bytes cacheKey);
+        Bytes cacheKey(Bytes cacheKey);
+    }
 }

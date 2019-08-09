@@ -14,103 +14,109 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-using Kafka.Common.metrics.Sensor;
-using Kafka.Common.record.TimestampType;
-using Kafka.Common.Utils.LogContext;
-
-
-
-
-
-
-
-class RecordDeserializer
+namespace Kafka.Streams.Processor.Internals
 {
 
-    private SourceNode sourceNode;
-    private IDeserializationExceptionHandler deserializationExceptionHandler;
-    private ILogger log;
-    private Sensor skippedRecordSensor;
 
-    RecordDeserializer(SourceNode sourceNode,
-                       IDeserializationExceptionHandler deserializationExceptionHandler,
-                       LogContext logContext,
-                       Sensor skippedRecordsSensor)
-{
-        this.sourceNode = sourceNode;
-        this.deserializationExceptionHandler = deserializationExceptionHandler;
-        this.log = logContext.logger<RecordDeserializer>();
-        this.skippedRecordSensor = skippedRecordsSensor;
-    }
 
-    /**
-     * @throws StreamsException if a deserialization error occurs and the deserialization callback returns
-     *                          {@link IDeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
-     *                          oritself
-     */
-    
-    ConsumeResult<object, object> deserialize(IProcessorContext<K, V> processorContext,
-                                               ConsumeResult<byte[], byte[]> rawRecord)
-{
+    using Kafka.Common.metrics.Sensor;
+    using Kafka.Common.record.TimestampType;
+    using Kafka.Common.Utils.LogContext;
 
-        try
-{
 
-            return new ConsumeResult<>(
-                rawRecord.Topic,
-                rawRecord.partition(),
-                rawRecord.offset(),
-                rawRecord.timestamp(),
-                TimestampType.CREATE_TIME,
-                rawRecord.checksum(),
-                rawRecord.serializedKeySize(),
-                rawRecord.serializedValueSize(),
-                sourceNode.deserializeKey(rawRecord.Topic, rawRecord.headers(), rawRecord.key()),
-                sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers());
-        } catch (Exception deserializationException)
-{
-            IDeserializationExceptionHandler.DeserializationHandlerResponse response;
+
+
+
+
+
+    class RecordDeserializer
+    {
+
+        private SourceNode sourceNode;
+        private IDeserializationExceptionHandler deserializationExceptionHandler;
+        private ILogger log;
+        private Sensor skippedRecordSensor;
+
+        RecordDeserializer(SourceNode sourceNode,
+                           IDeserializationExceptionHandler deserializationExceptionHandler,
+                           LogContext logContext,
+                           Sensor skippedRecordsSensor)
+        {
+            this.sourceNode = sourceNode;
+            this.deserializationExceptionHandler = deserializationExceptionHandler;
+            this.log = logContext.logger<RecordDeserializer>();
+            this.skippedRecordSensor = skippedRecordsSensor;
+        }
+
+        /**
+         * @throws StreamsException if a deserialization error occurs and the deserialization callback returns
+         *                          {@link IDeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
+         *                          oritself
+         */
+
+        ConsumeResult<object, object> deserialize(IProcessorContext<K, V> processorContext,
+                                                   ConsumeResult<byte[], byte[]> rawRecord)
+        {
+
             try
-{
+            {
 
-                response = deserializationExceptionHandler.handle(processorContext, rawRecord, deserializationException);
-            } catch (Exception fatalUserException)
-{
-                log.LogError(
-                    "Deserialization error callback failed after deserialization error for record {}",
-                    rawRecord,
-                    deserializationException);
-                throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
-            }
-
-            if (response == IDeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
-{
-                throw new StreamsException("Deserialization exception handler is set to fail upon" +
-                    " a deserialization error. If you would rather have the streaming pipeline" +
-                    " continue after a deserialization error, please set the " +
-                    DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG + " appropriately.",
-                    deserializationException);
-            } else
-{
-
-                log.LogWarning(
-                    "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
+                return new ConsumeResult<>(
                     rawRecord.Topic,
                     rawRecord.partition(),
                     rawRecord.offset(),
-                    deserializationException
-                );
-                skippedRecordSensor.record();
-                return null;
+                    rawRecord.timestamp(),
+                    TimestampType.CREATE_TIME,
+                    rawRecord.checksum(),
+                    rawRecord.serializedKeySize(),
+                    rawRecord.serializedValueSize(),
+                    sourceNode.deserializeKey(rawRecord.Topic, rawRecord.headers(), rawRecord.key()),
+                    sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers());
+            }
+            catch (Exception deserializationException)
+            {
+                IDeserializationExceptionHandler.DeserializationHandlerResponse response;
+                try
+                {
+
+                    response = deserializationExceptionHandler.handle(processorContext, rawRecord, deserializationException);
+                }
+                catch (Exception fatalUserException)
+                {
+                    log.LogError(
+                        "Deserialization error callback failed after deserialization error for record {}",
+                        rawRecord,
+                        deserializationException);
+                    throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
+                }
+
+                if (response == IDeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
+                {
+                    throw new StreamsException("Deserialization exception handler is set to fail upon" +
+                        " a deserialization error. If you would rather have the streaming pipeline" +
+                        " continue after a deserialization error, please set the " +
+                        DEFAULT_DESERIALIZATION_EXCEPTION_HANDLER_CLASS_CONFIG + " appropriately.",
+                        deserializationException);
+                }
+                else
+                {
+
+                    log.LogWarning(
+                        "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
+                        rawRecord.Topic,
+                        rawRecord.partition(),
+                        rawRecord.offset(),
+                        deserializationException
+                    );
+                    skippedRecordSensor.record();
+                    return null;
+                }
             }
         }
-    }
 
-    SourceNode sourceNode()
-{
-        return sourceNode;
+        SourceNode sourceNode()
+        {
+            return sourceNode;
+        }
     }
 }

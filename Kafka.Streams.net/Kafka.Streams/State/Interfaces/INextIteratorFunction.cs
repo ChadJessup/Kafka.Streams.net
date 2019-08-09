@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
-
-using Kafka.Streams.State.IKeyValueIterator;
-
-interface NextIteratorFunction<K, V, StoreType>
+namespace Kafka.Streams.State.Interfaces
 {
-
-    IKeyValueIterator<K, V> apply(StoreType store);
+    public interface INextIteratorFunction<K, V, StoreType>
+    {
+        IKeyValueIterator<K, V> apply(StoreType store);
+    }
 }

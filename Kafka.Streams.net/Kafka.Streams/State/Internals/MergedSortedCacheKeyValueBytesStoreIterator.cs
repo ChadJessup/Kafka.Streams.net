@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Common.Utils.Bytes;
 using Kafka.Streams.KeyValue;
@@ -28,7 +30,7 @@ class MergedSortedCacheKeyValueBytesStoreIterator : AbstractMergedSortedCacheSto
 {
 
 
-    MergedSortedCacheKeyValueBytesStoreIterator(PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+    MergedSortedCacheKeyValueBytesStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
                                                 IKeyValueIterator<Bytes, byte[]> storeIterator)
 {
         base(cacheIterator, storeIterator);

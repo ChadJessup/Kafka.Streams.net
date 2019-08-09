@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals
 {
 
-    public class RocksDBWindowStore
+    public class RocksDbWindowStore
         : WrappedStateStore<SegmentedBytesStore, object, object>
     : IWindowStore<Bytes, byte[]>
     {
@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
         private IProcessorContext<K, V> context;
         private int seqnum = 0;
 
-        RocksDBWindowStore(SegmentedBytesStore bytesStore,
+        RocksDbWindowStore(SegmentedBytesStore bytesStore,
                            bool retainDuplicates,
                            long windowSize)
         {

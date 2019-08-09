@@ -20,7 +20,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.State.Internals
 {
 
-    public class WindowKeySchema : RocksDBSegmentedBytesStore.KeySchema
+    public class WindowKeySchema : RocksDbSegmentedBytesStore.KeySchema
     {
 
         private static ILogger LOG = new LoggerFactory().CreateLogger<WindowKeySchema>();

@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Streams.Errors.ProcessorStateException;
 using Kafka.Streams.Processor.Internals.IInternalProcessorContext;

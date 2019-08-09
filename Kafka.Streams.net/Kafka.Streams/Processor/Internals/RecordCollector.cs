@@ -14,71 +14,67 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+using Confluent.Kafka;
+using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
 
-
-using Kafka.Common.TopicPartition;
-using Kafka.Common.header.Headers;
-using Kafka.Common.serialization.Serializer;
-
-
-
-
-public interface RecordCollector : AutoCloseable
+namespace Kafka.Streams.Processor.Internals
 {
 
+    public interface IRecordCollector : AutoCloseable
+    {
+        void send<K, V>(string topic,
+                         K key,
+                         V value,
+                         Headers headers,
+                         int partition,
+                         long timestamp,
+                         ISerializer<K> keySerializer,
+                         ISerializer<V> valueSerializer);
 
-    void send(string topic,
-                     K key,
-                     V value,
-                     Headers headers,
-                     int partition,
-                     long timestamp,
-                     ISerializer<K> keySerializer,
-                     ISerializer<V> valueSerializer);
-
-    void send(string topic,
-                     K key,
-                     V value,
-                     Headers headers,
-                     long timestamp,
-                     ISerializer<K> keySerializer,
-                     ISerializer<V> valueSerializer,
-                     IStreamPartitioner<K, V> partitioner);
-
-    /**
-     * Initialize the collector with a producer.
-     * @param producer the producer that should be used by this collector
-     */
-    void init(IProducer<byte[], byte[]> producer);
-
-    /**
-     * Flush the internal {@link Producer}.
-     */
-    void flush();
-
-    /**
-     * Close the internal {@link Producer}.
-     */
-    void close();
-
-    /**
-     * The last acked offsets from the internal {@link Producer}.
-     *
-     * @return the map from TopicPartition to offset
-     */
-    Dictionary<TopicPartition, long> offsets();
-
-    /**
-     * A supplier of a {@link RecordCollectorImpl} instance.
-     */
-    interface Supplier
-{
+        void send(string topic,
+                         K key,
+                         V value,
+                         Headers headers,
+                         long timestamp,
+                         ISerializer<K> keySerializer,
+                         ISerializer<V> valueSerializer,
+                         IStreamPartitioner<K, V> partitioner);
 
         /**
-         * Get the record collector.
-         * @return the record collector
+         * Initialize the collector with a producer.
+         * @param producer the producer that should be used by this collector
          */
-        RecordCollector recordCollector();
+        void init(IProducer<byte[], byte[]> producer);
+
+        /**
+         * Flush the internal {@link Producer}.
+         */
+        void flush();
+
+        /**
+         * Close the internal {@link Producer}.
+         */
+        void close();
+
+        /**
+         * The last acked offsets from the internal {@link Producer}.
+         *
+         * @return the map from TopicPartition to offset
+         */
+        Dictionary<TopicPartition, long> offsets();
+
+        /**
+         * A supplier of a {@link RecordCollectorImpl} instance.
+         */
+        interface Supplier
+        {
+
+            /**
+             * Get the record collector.
+             * @return the record collector
+             */
+            IRecordCollector recordCollector();
+        }
     }
 }

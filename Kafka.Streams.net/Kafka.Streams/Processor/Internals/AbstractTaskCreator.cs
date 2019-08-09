@@ -15,7 +15,7 @@ namespace Kafka.Streams.Processor.Internals
         StreamsConfig config;
         StreamsMetricsImpl streamsMetrics;
         StateDirectory stateDirectory;
-        ChangelogReader storeChangelogReader;
+        IChangelogReader storeChangelogReader;
         ITime time;
         ILogger log;
 
@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
                             StreamsConfig config,
                             StreamsMetricsImpl streamsMetrics,
                             StateDirectory stateDirectory,
-                            ChangelogReader storeChangelogReader,
+                            IChangelogReader storeChangelogReader,
                             ITime time,
                             ILogger log)
         {

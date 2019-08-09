@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
 
 
-    public class FinalResultsSuppressionBuilder<K> : ISuppressed<K>, NamedSuppressed<K>
+    public class FinalResultsSuppressionBuilder<K> : ISuppressed<K>, INamedSuppressed<K>
         where K : Windowed<K>
     {
         private string name;

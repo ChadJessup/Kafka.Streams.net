@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processor.Internals
         private int maxBufferedSize;
         private TaskMetrics taskMetrics;
         private PartitionGroup partitionGroup;
-        private RecordCollector recordCollector;
+        private IRecordCollector recordCollector;
         private PartitionGroup.RecordInfo recordInfo;
         private Dictionary<TopicPartition, long> consumedOffsets;
         private PunctuationQueue streamTimePunctuationQueue;
@@ -55,7 +55,7 @@ namespace Kafka.Streams.Processor.Internals
             List<TopicPartition> partitions,
             ProcessorTopology topology,
             IConsumer<byte[], byte[]> consumer,
-            ChangelogReader changelogReader,
+            IChangelogReader changelogReader,
             StreamsConfig config,
             StreamsMetricsImpl metrics,
             StateDirectory stateDirectory,
@@ -70,14 +70,14 @@ namespace Kafka.Streams.Processor.Internals
                           List<TopicPartition> partitions,
                           ProcessorTopology topology,
                           IConsumer<byte[], byte[]> consumer,
-                          ChangelogReader changelogReader,
+                          IChangelogReader changelogReader,
                           StreamsConfig config,
                           StreamsMetricsImpl streamsMetrics,
                           StateDirectory stateDirectory,
                           ThreadCache cache,
                           ITime time,
                           IProducerSupplier producerSupplier,
-                          RecordCollector recordCollector)
+                          IRecordCollector recordCollector)
             : base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config)
         {
 
@@ -933,7 +933,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             // visible for testing only
-            RecordCollector recordCollector()
+            IRecordCollector recordCollector()
             {
                 return recordCollector;
             }

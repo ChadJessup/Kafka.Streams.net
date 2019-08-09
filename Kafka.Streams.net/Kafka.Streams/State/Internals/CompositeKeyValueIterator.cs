@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Streams.KeyValue;
 using Kafka.Streams.State.IKeyValueIterator;
@@ -26,12 +28,12 @@ class CompositeKeyValueIterator<K, V, StoreType> : IKeyValueIterator<K, V>
 {
 
     private IEnumerator<StoreType> storeIterator;
-    private NextIteratorFunction<K, V, StoreType> nextIteratorFunction;
+    private INextIteratorFunction<K, V, StoreType> nextIteratorFunction;
 
     private IKeyValueIterator<K, V> current;
 
     CompositeKeyValueIterator(IEnumerator<StoreType> underlying,
-                              NextIteratorFunction<K, V, StoreType> nextIteratorFunction)
+                              INextIteratorFunction<K, V, StoreType> nextIteratorFunction)
 {
         this.storeIterator = underlying;
         this.nextIteratorFunction = nextIteratorFunction;

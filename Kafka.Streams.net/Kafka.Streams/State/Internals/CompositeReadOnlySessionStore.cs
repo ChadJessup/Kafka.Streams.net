@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals;
+namespace Kafka.Streams.State.Internals
+{
+
 
 using Kafka.Streams.Errors.InvalidStateStoreException;
 using Kafka.Streams.KStream.Windowed;
@@ -75,7 +77,7 @@ public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
 {
         from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
         to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
-        NextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
+        INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
         return new DelegatingPeekingKeyValueIterator<>(storeName,
                                                        new CompositeKeyValueIterator<>(
                                                                storeProvider.stores(storeName, queryableStoreType).iterator(),

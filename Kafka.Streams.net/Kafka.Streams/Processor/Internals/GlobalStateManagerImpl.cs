@@ -155,7 +155,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         public void register(IStateStore store,
-                             StateRestoreCallback stateRestoreCallback)
+                             IStateRestoreCallback stateRestoreCallback)
         {
 
             if (globalStores.ContainsKey(store.name()))
@@ -280,11 +280,11 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         private void restoreState(
-            StateRestoreCallback stateRestoreCallback,
+            IStateRestoreCallback stateRestoreCallback,
             List<TopicPartition> topicPartitions,
             Dictionary<TopicPartition, long> highWatermarks,
             string storeName,
-            RecordConverter recordConverter)
+            IRecordConverter recordConverter)
         {
             foreach (TopicPartition topicPartition in topicPartitions)
             {
@@ -302,7 +302,7 @@ namespace Kafka.Streams.Processor.Internals
 
                 long offset = globalConsumer.position(topicPartition);
                 long highWatermark = highWatermarks[topicPartition];
-                RecordBatchingStateRestoreCallback stateRestoreAdapter =
+                IRecordBatchingStateRestoreCallback stateRestoreAdapter =
                     StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
 
                 stateRestoreListener.onRestoreStart(topicPartition, storeName, offset, highWatermark);

@@ -17,7 +17,7 @@
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * Manages the {@link TimestampedSegment}s that are used by the {@link RocksDBTimestampedSegmentedBytesStore}
+     * Manages the {@link TimestampedSegment}s that are used by the {@link RocksDbTimestampedSegmentedBytesStore}
      */
     public class TimestampedSegments : AbstractSegments<TimestampedSegment>
     {

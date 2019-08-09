@@ -14,149 +14,142 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
-
-
-using Kafka.Common.TopicPartition;
-
-
-
-
-
-
-public class StateRestorer
+namespace Kafka.Streams.Processor.Internals
 {
+    public class StateRestorer
+    {
 
 
-    static int NO_CHECKPOINT = -1;
+        static int NO_CHECKPOINT = -1;
 
-    private long offsetLimit;
-    private bool persistent;
-    private string storeName;
-    private TopicPartition partition;
-    private CompositeRestoreListener compositeRestoreListener;
-    private RecordConverter recordConverter;
+        private long offsetLimit;
+        private bool persistent;
+        private string storeName;
+        private TopicPartition partition;
+        private CompositeRestoreListener compositeRestoreListener;
+        private RecordConverter recordConverter;
 
-    private long checkpointOffset;
-    private long restoredOffset;
-    private long startingOffset;
-    private long endingOffset;
+        private long checkpointOffset;
+        private long restoredOffset;
+        private long startingOffset;
+        private long endingOffset;
 
-    StateRestorer(TopicPartition partition,
-                  CompositeRestoreListener compositeRestoreListener,
-                  long checkpoint,
-                  long offsetLimit,
-                  bool persistent,
-                  string storeName,
-                  RecordConverter recordConverter)
-{
-        this.partition = partition;
-        this.compositeRestoreListener = compositeRestoreListener;
-        this.checkpointOffset = checkpoint == null ? NO_CHECKPOINT : checkpoint;
-        this.offsetLimit = offsetLimit;
-        this.persistent = persistent;
-        this.storeName = storeName;
-        this.recordConverter = recordConverter;
-    }
-
-    public TopicPartition partition()
-{
-        return partition;
-    }
-
-    public string storeName()
-{
-        return storeName;
-    }
-
-    long checkpoint()
-{
-        return checkpointOffset;
-    }
-
-    void setCheckpointOffset(long checkpointOffset)
-{
-        this.checkpointOffset = checkpointOffset;
-    }
-
-    void restoreStarted()
-{
-        compositeRestoreListener.onRestoreStart(partition, storeName, startingOffset, endingOffset);
-    }
-
-    void restoreDone()
-{
-        compositeRestoreListener.onRestoreEnd(partition, storeName, restoredNumRecords());
-    }
-
-    void restoreBatchCompleted(long currentRestoredOffset, int numRestored)
-{
-        compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
-    }
-
-    void restore(List<ConsumeResult<byte[], byte[]>> records)
-{
-        List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(records.size());
-        foreach (ConsumeResult<byte[], byte[]> record in records)
-{
-            convertedRecords.Add(recordConverter.convert(record));
+        StateRestorer(TopicPartition partition,
+                      CompositeRestoreListener compositeRestoreListener,
+                      long checkpoint,
+                      long offsetLimit,
+                      bool persistent,
+                      string storeName,
+                      RecordConverter recordConverter)
+        {
+            this.partition = partition;
+            this.compositeRestoreListener = compositeRestoreListener;
+            this.checkpointOffset = checkpoint == null ? NO_CHECKPOINT : checkpoint;
+            this.offsetLimit = offsetLimit;
+            this.persistent = persistent;
+            this.storeName = storeName;
+            this.recordConverter = recordConverter;
         }
-        compositeRestoreListener.restoreBatch(convertedRecords);
-    }
 
-    bool isPersistent()
-{
-        return persistent;
-    }
+        public TopicPartition partition()
+        {
+            return partition;
+        }
 
-    void setUserRestoreListener(IStateRestoreListener userRestoreListener)
-{
-        this.compositeRestoreListener.setUserRestoreListener(userRestoreListener);
-    }
+        public string storeName()
+        {
+            return storeName;
+        }
 
-    void setRestoredOffset(long restoredOffset)
-{
-        this.restoredOffset = Math.Min(offsetLimit, restoredOffset);
-    }
+        long checkpoint()
+        {
+            return checkpointOffset;
+        }
 
-    void setStartingOffset(long startingOffset)
-{
-        this.startingOffset = Math.Min(offsetLimit, startingOffset);
-    }
+        void setCheckpointOffset(long checkpointOffset)
+        {
+            this.checkpointOffset = checkpointOffset;
+        }
 
-    void setEndingOffset(long endingOffset)
-{
-        this.endingOffset = Math.Min(offsetLimit, endingOffset);
-    }
+        void restoreStarted()
+        {
+            compositeRestoreListener.onRestoreStart(partition, storeName, startingOffset, endingOffset);
+        }
 
-    long startingOffset()
-{
-        return startingOffset;
-    }
+        void restoreDone()
+        {
+            compositeRestoreListener.onRestoreEnd(partition, storeName, restoredNumRecords());
+        }
 
-    bool hasCompleted(long recordOffset, long endOffset)
-{
-        return endOffset == 0 || recordOffset >= readTo(endOffset);
-    }
+        void restoreBatchCompleted(long currentRestoredOffset, int numRestored)
+        {
+            compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
+        }
 
-    long restoredOffset()
-{
-        return restoredOffset;
-    }
+        void restore(List<ConsumeResult<byte[], byte[]>> records)
+        {
+            List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<>(records.size());
+            foreach (ConsumeResult<byte[], byte[]> record in records)
+            {
+                convertedRecords.Add(recordConverter.convert(record));
+            }
+            compositeRestoreListener.restoreBatch(convertedRecords);
+        }
 
-    long restoredNumRecords()
-{
-        return restoredOffset - startingOffset;
-    }
+        bool isPersistent()
+        {
+            return persistent;
+        }
 
-    long offsetLimit()
-{
-        return offsetLimit;
-    }
+        void setUserRestoreListener(IStateRestoreListener userRestoreListener)
+        {
+            this.compositeRestoreListener.setUserRestoreListener(userRestoreListener);
+        }
 
-    private long readTo(long endOffset)
-{
-        return endOffset < offsetLimit ? endOffset : offsetLimit;
-    }
+        void setRestoredOffset(long restoredOffset)
+        {
+            this.restoredOffset = Math.Min(offsetLimit, restoredOffset);
+        }
 
+        void setStartingOffset(long startingOffset)
+        {
+            this.startingOffset = Math.Min(offsetLimit, startingOffset);
+        }
+
+        void setEndingOffset(long endingOffset)
+        {
+            this.endingOffset = Math.Min(offsetLimit, endingOffset);
+        }
+
+        long startingOffset()
+        {
+            return startingOffset;
+        }
+
+        bool hasCompleted(long recordOffset, long endOffset)
+        {
+            return endOffset == 0 || recordOffset >= readTo(endOffset);
+        }
+
+        long restoredOffset()
+        {
+            return restoredOffset;
+        }
+
+        long restoredNumRecords()
+        {
+            return restoredOffset - startingOffset;
+        }
+
+        long offsetLimit()
+        {
+            return offsetLimit;
+        }
+
+        private long readTo(long endOffset)
+        {
+            return endOffset < offsetLimit ? endOffset : offsetLimit;
+        }
+
+    }
 }

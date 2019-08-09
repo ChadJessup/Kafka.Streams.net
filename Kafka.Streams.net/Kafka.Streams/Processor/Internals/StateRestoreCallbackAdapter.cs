@@ -22,14 +22,14 @@ namespace Kafka.Streams.Processor.Internals
 
         private StateRestoreCallbackAdapter() { }
 
-        public static RecordBatchingStateRestoreCallback adapt(StateRestoreCallback restoreCallback)
+        public static IRecordBatchingStateRestoreCallback adapt(IStateRestoreCallback restoreCallback)
         {
             restoreCallback = restoreCallback ?? throw new System.ArgumentNullException("stateRestoreCallback must not be null", nameof(restoreCallback));
-            if (restoreCallback is RecordBatchingStateRestoreCallback)
+            if (restoreCallback is IRecordBatchingStateRestoreCallback)
             {
-                return (RecordBatchingStateRestoreCallback)restoreCallback;
+                return (IRecordBatchingStateRestoreCallback)restoreCallback;
             }
-            else if (restoreCallback is BatchingStateRestoreCallback)
+            else if (restoreCallback is IBatchingStateRestoreCallback)
             {
                 return records=> {
                     List<KeyValue<byte[], byte[]>> keyValues = new List<>();
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processor.Internals
                     {
                         keyValues.Add(new KeyValue<>(record.key(), record.value()));
                     }
-                   ((BatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);
+                   ((IBatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);
                 };
             }
             else

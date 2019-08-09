@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream
     /**
      * Used to describe how a {@link IStateStore} should be materialized.
      * You can either provide a custom {@link IStateStore} backend through one of the provided methods accepting a supplier
-     * or use the default RocksDB backends by providing just a store name.
+     * or use the default RocksDb backends by providing just a store name.
      * <p>
      * For example, you can read a topic as {@link KTable} and force a state store materialization to access the content
      * via Interactive Queries API:

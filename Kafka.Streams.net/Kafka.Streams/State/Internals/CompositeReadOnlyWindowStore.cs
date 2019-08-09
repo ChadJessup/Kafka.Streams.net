@@ -115,7 +115,7 @@ namespace Kafka.Streams.State.Internals
         {
             from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
             to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
-            NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
+            INextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
                 store=>store.fetch(from, to, timeFrom, timeTo);
             return new DelegatingPeekingKeyValueIterator<>(
                 storeName,
@@ -138,7 +138,7 @@ namespace Kafka.Streams.State.Internals
 
         public override IKeyValueIterator<Windowed<K>, V> all()
         {
-            NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
+            INextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
                 ReadOnlyWindowStore::all;
             return new DelegatingPeekingKeyValueIterator<>(
                 storeName,
@@ -152,7 +152,7 @@ namespace Kafka.Streams.State.Internals
         public IKeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom,
                                                          long timeTo)
         {
-            NextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
+            INextIteratorFunction<Windowed<K>, V, ReadOnlyWindowStore<K, V>> nextIteratorFunction =
                 store=>store.fetchAll(timeFrom, timeTo);
             return new DelegatingPeekingKeyValueIterator<>(
                 storeName,

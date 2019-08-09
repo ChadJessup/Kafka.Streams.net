@@ -113,7 +113,9 @@ namespace Kafka.Streams.State.Internals
 
             if (listener == null)
             {
-                throw new System.ArgumentException("No listener for namespace " + name + " registered with cache");
+                throw new System.ArgumentException("No listener for namespace " + name + " registered with cache")
+{
+
             }
 
             if (dirtyKeys.isEmpty())

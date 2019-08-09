@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals.Suppress;
+using Confluent.Kafka;
 
-
-
-/**
- * Internally-facing interface to work around the fact that all Suppressed config objects
- * are name-able, but do not present a getter (for consistency with other config objects).
- * If we allow getters on config objects in the future, we can delete this interface.
- */
-public interface NamedSuppressed<K> : ISuppressed<K> {
-    string name();
+namespace Kafka.Streams.State.Interfaces
+{
+    public interface IRecordConverter
+    {
+        ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record);
+    }
 }

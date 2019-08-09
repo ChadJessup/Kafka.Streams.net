@@ -8,35 +8,35 @@ using System.Runtime.CompilerServices;
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * A persistent key-(value-timestamp) store based on RocksDB.
+     * A persistent key-(value-timestamp) store based on RocksDb.
      */
-    public class RocksDBTimestampedStore : RocksDBStore, ITimestampedBytesStore
+    public class RocksDbTimestampedStore : RocksDbStore, ITimestampedBytesStore
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<RocksDBTimestampedStore>();
+        private static ILogger log = new LoggerFactory().CreateLogger<RocksDbTimestampedStore>();
 
-        public RocksDBTimestampedStore(string name)
+        public RocksDbTimestampedStore(string name)
             : base(name)
         {
         }
 
-        RocksDBTimestampedStore(string name,
+        public RocksDbTimestampedStore(string name,
                                 string parentDir)
             : base(name, parentDir)
         {
         }
 
 
-        void openRocksDB(DBOptions dbOptions,
+        void openRocksDb(DBOptions dbOptions,
                          ColumnFamilyOptions columnFamilyOptions)
         {
             List<ColumnFamilyDescriptor> columnFamilyDescriptors = asList(
-                new ColumnFamilyDescriptor(RocksDB.DEFAULT_COLUMN_FAMILY, columnFamilyOptions),
+                new ColumnFamilyDescriptor(RocksDb.DEFAULT_COLUMN_FAMILY, columnFamilyOptions),
                 new ColumnFamilyDescriptor("keyValueWithTimestamp".getBytes(System.Text.Encoding.UTF8), columnFamilyOptions));
             List<ColumnFamilyHandle> columnFamilies = new List<ColumnFamilyHandle>(columnFamilyDescriptors.size());
 
             try
             {
-                db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
+                db = RocksDb.open(dbOptions, dbDir.FullName, columnFamilyDescriptors, columnFamilies);
 
                 ColumnFamilyHandle noTimestampColumnFamily = columnFamilies[0];
 
@@ -55,16 +55,16 @@ namespace Kafka.Streams.State.Internals
                 }
                 noTimestampsIter.close();
             }
-            catch (RocksDBException e)
+            catch (RocksDbException e)
             {
                 if ("Column family not found: : keyValueWithTimestamp".Equals(e.getMessage()))
                 {
                     try
                     {
-                        db = RocksDB.open(dbOptions, dbDir.FullName, columnFamilyDescriptors.subList(0, 1), columnFamilies);
+                        db = RocksDb.Open(dbOptions, dbDir.FullName, columnFamilyDescriptors.subList(0, 1), columnFamilies);
                         columnFamilies.Add(db.createColumnFamily(columnFamilyDescriptors[1]));
                     }
-                    catch (RocksDBException fatal)
+                    catch (RocksDbException fatal)
                     {
                         throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), fatal);
                     }
@@ -78,7 +78,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private class DualColumnFamilyAccessor : IRocksDBAccessor
+        private class DualColumnFamilyAccessor : IRocksDbAccessor
         {
             private ColumnFamilyHandle oldColumnFamily;
             private ColumnFamilyHandle newColumnFamily;
@@ -100,7 +100,7 @@ namespace Kafka.Streams.State.Internals
                     {
                         db.delete(oldColumnFamily, wOptions, key);
                     }
-                    catch (RocksDBException e)
+                    catch (RocksDbException e)
                     {
                         // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
@@ -109,7 +109,7 @@ namespace Kafka.Streams.State.Internals
                     {
                         db.delete(newColumnFamily, wOptions, key);
                     }
-                    catch (RocksDBException e)
+                    catch (RocksDbException e)
                     {
                         // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
@@ -121,7 +121,7 @@ namespace Kafka.Streams.State.Internals
                     {
                         db.delete(oldColumnFamily, wOptions, key);
                     }
-                    catch (RocksDBException e)
+                    catch (RocksDbException e)
                     {
                         // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
@@ -130,7 +130,7 @@ namespace Kafka.Streams.State.Internals
                     {
                         db.Add(newColumnFamily, wOptions, key, valueWithTimestamp);
                     }
-                    catch (RocksDBException e)
+                    catch (RocksDbException e)
                     {
                         // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while putting key/value into store " + name, e);
@@ -197,7 +197,7 @@ namespace Kafka.Streams.State.Internals
             public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                          Bytes to)
             {
-                return new RocksDBDualCFRangeIterator(
+                return new RocksDbDualCFRangeIterator(
                     name,
                     db.newIterator(newColumnFamily),
                     db.newIterator(oldColumnFamily),
@@ -212,7 +212,7 @@ namespace Kafka.Streams.State.Internals
                 innerIterWithTimestamp.seekToFirst();
                 RocksIterator innerIterNoTimestamp = db.newIterator(oldColumnFamily);
                 innerIterNoTimestamp.seekToFirst();
-                return new RocksDBDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
+                return new RocksDbDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
             }
 
 
@@ -271,7 +271,7 @@ namespace Kafka.Streams.State.Internals
                 {
                     db.compactRange(oldColumnFamily, true, 1, 0);
                 }
-                catch (RocksDBException e)
+                catch (RocksDbException e)
                 {
                     throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
                 }
@@ -279,18 +279,18 @@ namespace Kafka.Streams.State.Internals
                 {
                     db.compactRange(newColumnFamily, true, 1, 0);
                 }
-                catch (RocksDBException e)
+                catch (RocksDbException e)
                 {
                     throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
                 }
             }
         }
 
-        private class RocksDBDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
+        private class RocksDbDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
         : IKeyValueIterator<Bytes, byte[]>
         {
 
-            // RocksDB's JNI interface does not expose getters/setters that allow the
+            // RocksDb's JNI interface does not expose getters/setters that allow the
             // comparator to be pluggable, and the default is lexicographic, so it's
             // safe to just force lexicographic comparator here for now.
             private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
@@ -305,7 +305,7 @@ namespace Kafka.Streams.State.Internals
             private byte[] nextNoTimestamp;
             private KeyValue<Bytes, byte[]> next;
 
-            RocksDBDualCFIterator(string storeName,
+            RocksDbDualCFIterator(string storeName,
                                   RocksIterator iterWithTimestamp,
                                   RocksIterator iterNoTimestamp)
             {
@@ -319,7 +319,7 @@ namespace Kafka.Streams.State.Internals
             {
                 if (!open)
                 {
-                    throw new InvalidStateStoreException(string.Format("RocksDB iterator for store %s has closed", storeName));
+                    throw new InvalidStateStoreException(string.Format("RocksDb iterator for store %s has closed", storeName));
                 }
                 return base.hasNext();
             }
@@ -387,7 +387,7 @@ namespace Kafka.Streams.State.Internals
 
             public void Remove()
             {
-                throw new InvalidOperationException("RocksDB iterator does not support Remove()");
+                throw new InvalidOperationException("RocksDb iterator does not support Remove()");
             }
 
             [MethodImpl(MethodImplOptions.Synchronized)]
@@ -410,15 +410,15 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private class RocksDBDualCFRangeIterator : RocksDBDualCFIterator
+        private class RocksDbDualCFRangeIterator : RocksDbDualCFIterator
         {
-            // RocksDB's JNI interface does not expose getters/setters that allow the
+            // RocksDb's JNI interface does not expose getters/setters that allow the
             // comparator to be pluggable, and the default is lexicographic, so it's
             // safe to just force lexicographic comparator here for now.
             private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
             private byte[] upperBoundKey;
 
-            RocksDBDualCFRangeIterator(string storeName,
+            RocksDbDualCFRangeIterator(string storeName,
                                        RocksIterator iterWithTimestamp,
                                        RocksIterator iterNoTimestamp,
                                        Bytes from,
@@ -430,7 +430,7 @@ namespace Kafka.Streams.State.Internals
                 upperBoundKey = to[];
                 if (upperBoundKey == null)
                 {
-                    throw new NullPointerException("RocksDBDualCFRangeIterator: upperBoundKey is null for key " + to);
+                    throw new NullPointerException("RocksDbDualCFRangeIterator: upperBoundKey is null for key " + to);
                 }
             }
 

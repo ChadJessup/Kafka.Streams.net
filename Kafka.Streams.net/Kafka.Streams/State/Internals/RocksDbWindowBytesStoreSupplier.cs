@@ -49,8 +49,8 @@ namespace Kafka.Streams.State.Internals
         {
             if (!returnTimestampedStore)
             {
-                return new RocksDBWindowStore(
-                    new RocksDBSegmentedBytesStore(
+                return new RocksDbWindowStore(
+                    new RocksDbSegmentedBytesStore(
                         name,
                         metricsScope(),
                         retentionPeriod,
@@ -61,8 +61,8 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                return new RocksDBTimestampedWindowStore(
-                    new RocksDBTimestampedSegmentedBytesStore(
+                return new RocksDbTimestampedWindowStore(
+                    new RocksDbTimestampedSegmentedBytesStore(
                         name,
                         metricsScope(),
                         retentionPeriod,

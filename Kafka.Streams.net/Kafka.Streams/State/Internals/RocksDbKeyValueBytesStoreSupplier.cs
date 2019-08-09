@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
 
         public override IKeyValueStore<Bytes, byte[]> get()
         {
-            return returnTimestampedStore ? new RocksDBTimestampedStore(name) : new RocksDBStore(name);
+            return returnTimestampedStore ? new RocksDbTimestampedStore(name) : new RocksDbStore(name);
         }
 
         public override string metricsScope()

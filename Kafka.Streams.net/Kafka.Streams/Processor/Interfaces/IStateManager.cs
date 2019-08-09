@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * (e.g., when it conflicts with the names of internal topics, like the checkpoint file name)
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void register(IStateStore store, StateRestoreCallback stateRestoreCallback);
+        void register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
 
         void flush();
 

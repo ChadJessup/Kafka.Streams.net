@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals;
+namespace Kafka.Streams.Processor.Internals
+{
+
 
 
 
@@ -27,7 +29,7 @@ using Kafka.Common.Utils.LogContext;
 using System.Collections.Generic;
 using Confluent.Kafka;
 
-public class StoreChangelogReader : ChangelogReader
+public class StoreChangelogReader : IChangelogReader
 {
 
 
@@ -67,7 +69,7 @@ public class StoreChangelogReader : ChangelogReader
         needsInitializing.Add(restorer.partition());
     }
 
-    public List<TopicPartition> restore(RestoringTasks active)
+    public List<TopicPartition> restore(IRestoringTasks active)
 {
         if (!needsInitializing.isEmpty())
 {
@@ -126,7 +128,7 @@ public class StoreChangelogReader : ChangelogReader
         return completed();
     }
 
-    private void initialize(RestoringTasks active)
+    private void initialize(IRestoringTasks active)
 {
         if (!restoreConsumer.subscription().isEmpty())
 {
@@ -202,7 +204,7 @@ public class StoreChangelogReader : ChangelogReader
     }
 
     private void startRestoration(HashSet<TopicPartition> initialized,
-                                  RestoringTasks active)
+                                  IRestoringTasks active)
 {
         log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 

@@ -15,63 +15,66 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor;
-
-using Kafka.Common.TopicPartition;
-
-/**
- * Abstract implementation of the  {@link StateRestoreCallback} used for batch restoration operations.
- *
- * Includes default no-op methods of the {@link StateRestoreListener} {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)},
- * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}, and {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}.
- */
-public abstract class AbstractNotifyingRestoreCallback : StateRestoreCallback, IStateRestoreListener
+namespace Kafka.Streams.Processor
 {
 
 
+    using Kafka.Common.TopicPartition;
 
     /**
-     * @see StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)
+     * Abstract implementation of the  {@link StateRestoreCallback} used for batch restoration operations.
      *
-     * This method does nothing by default; if desired, sues should override it with custom functionality.
-     *
+     * Includes default no-op methods of the {@link StateRestoreListener} {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)},
+     * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}, and {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}.
      */
-
-    public void onRestoreStart(TopicPartition topicPartition,
-                               string storeName,
-                               long startingOffset,
-                               long endingOffset)
-{
-
-    }
+    public abstract class AbstractNotifyingRestoreCallback : IStateRestoreCallback, IStateRestoreListener
+    {
 
 
-    /**
-     * @see StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)
-     *
-     * This method does nothing by default; if desired, sues should override it with custom functionality.
-     *
-     */
 
-    public void onBatchRestored(TopicPartition topicPartition,
-                                string storeName,
-                                long batchEndOffset,
-                                long numRestored)
-{
+        /**
+         * @see StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)
+         *
+         * This method does nothing by default; if desired, sues should override it with custom functionality.
+         *
+         */
 
-    }
+        public void onRestoreStart(TopicPartition topicPartition,
+                                   string storeName,
+                                   long startingOffset,
+                                   long endingOffset)
+        {
 
-    /**
-     * @see StateRestoreListener#onRestoreEnd(TopicPartition, string, long)
-     *
-     * This method does nothing by default; if desired, sues should override it with custom functionality.
-     *
-     */
+        }
 
-    public void onRestoreEnd(TopicPartition topicPartition,
-                             string storeName,
-                             long totalRestored)
-{
 
+        /**
+         * @see StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)
+         *
+         * This method does nothing by default; if desired, sues should override it with custom functionality.
+         *
+         */
+
+        public void onBatchRestored(TopicPartition topicPartition,
+                                    string storeName,
+                                    long batchEndOffset,
+                                    long numRestored)
+        {
+
+        }
+
+        /**
+         * @see StateRestoreListener#onRestoreEnd(TopicPartition, string, long)
+         *
+         * This method does nothing by default; if desired, sues should override it with custom functionality.
+         *
+         */
+
+        public void onRestoreEnd(TopicPartition topicPartition,
+                                 string storeName,
+                                 long totalRestored)
+        {
+
+        }
     }
 }

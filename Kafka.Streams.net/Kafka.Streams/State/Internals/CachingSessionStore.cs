@@ -4,6 +4,7 @@ using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -18,13 +19,13 @@ namespace Kafka.Streams.State.Internals
         private SegmentedCacheFunction cacheFunction;
         private string cacheName;
         private ThreadCache cache;
-        private IInternalProcessorContext<K, V>  context;
+        private IInternalProcessorContext<Bytes, byte[]> context;
         private CacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
 
         private long maxObservedTimestamp; // Refers to the window end time (determines segmentId)
 
-        CachingSessionStore(ISessionStore<Bytes, byte[]> bytesStore, long segmentInterval)
+        public CachingSessionStore(ISessionStore<Bytes, byte[]> bytesStore, long segmentInterval)
             : base(bytesStore)
         {
             this.keySchema = new SessionKeySchema();
@@ -32,29 +33,30 @@ namespace Kafka.Streams.State.Internals
             this.maxObservedTimestamp = RecordQueue.UNKNOWN;
         }
 
-        public override void init(IProcessorContext<K, V> context, IStateStore root)
+        public override void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
         {
-            initInternal((IInternalProcessorContext)context);
+            initInternal((IInternalProcessorContext<Bytes, byte[]>)context);
             base.init(context, root);
         }
 
 
-        private void initInternal(IInternalProcessorContext<K, V>  context)
+        private void initInternal(IInternalProcessorContext<Bytes, byte[]> context)
         {
             this.context = context;
 
             cacheName = context.taskId() + "-" + name();
             cache = context.getCache();
-            cache.AddDirtyEntryFlushListener(cacheName, entries=>
-    {
-                foreach (DirtyEntry entry in entries)
-                {
-                    putAndMaybeForward(entry, context);
-                }
-            });
+            cache.addDirtyEntryFlushListener(cacheName, entries);
+            //=>
+            //{
+            //    foreach (DirtyEntry entry in entries)
+            //    {
+            //        putAndMaybeForward(entry, context);
+            //    }
+            //});
         }
 
-        private void putAndMaybeForward(DirtyEntry entry, IInternalProcessorContext<K, V>  context)
+        private void putAndMaybeForward(DirtyEntry entry, IInternalProcessorContext<K, V> context)
         {
             Bytes binaryKey = cacheFunction.key(entry.key());
             Windowed<Bytes> bytesKey = SessionKeySchema.from(binaryKey);
@@ -62,7 +64,7 @@ namespace Kafka.Streams.State.Internals
             {
                 byte[] newValueBytes = entry.newValue();
                 byte[] oldValueBytes = newValueBytes == null || sendOldValues ?
-                    wrapped.fetchSession(bytesKey.key(), bytesKey.window().start(), bytesKey.window().end()) : null;
+                    wrapped.fetchSession(bytesKey.key, bytesKey.window.start(), bytesKey.window.end()) : null;
 
                 // this is an optimization: if this key did not exist in underlying store and also not in the cache,
                 // we can skip flushing to downstream as well as writing to underlying store
@@ -76,7 +78,7 @@ namespace Kafka.Streams.State.Internals
                     try
                     {
                         flushListener.apply(
-                            binaryKey[],
+                            binaryKey.get(),
                             newValueBytes,
                             sendOldValues ? oldValueBytes : null,
                             entry.entry().context.timestamp());
@@ -132,7 +134,7 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
 
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator = wrapped.persistent() ?
                 new CacheIteratorWrapper(key, earliestSessionEndTime, latestSessionStartTime) :
                 cache.range(cacheName,
                             cacheFunction.cacheKey(keySchema.lowerRangeFixedSize(key, earliestSessionEndTime)),
@@ -146,7 +148,7 @@ namespace Kafka.Streams.State.Internals
                                                                                  key,
                                                                                  earliestSessionEndTime,
                                                                                  latestSessionStartTime);
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
                 new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
             return new MergedSortedCacheSessionStoreIterator(filteredCacheIterator, storeIterator, cacheFunction);
         }
@@ -177,7 +179,7 @@ namespace Kafka.Streams.State.Internals
                                                                                  keyTo,
                                                                                  earliestSessionEndTime,
                                                                                  latestSessionStartTime);
-            PeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
+            IPeekingKeyValueIterator<Bytes, LRUCacheEntry> filteredCacheIterator =
                 new FilteredCacheIterator(cacheIterator, hasNextCondition, cacheFunction);
             return new MergedSortedCacheSessionStoreIterator(filteredCacheIterator, storeIterator, cacheFunction);
         }
@@ -233,7 +235,7 @@ namespace Kafka.Streams.State.Internals
             base.close();
         }
 
-        private CacheIteratorWrapper : PeekingKeyValueIterator<Bytes, LRUCacheEntry>
+        private CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
 {
 
         private long segmentInterval;
