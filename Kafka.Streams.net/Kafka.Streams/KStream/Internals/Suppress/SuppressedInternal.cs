@@ -60,7 +60,7 @@ public class SuppressedInternal<K> : ISuppressed<K>, INamedSuppressed<K>
     }
 
 
-    public string name()
+    public string name
     {
         return name;
     }

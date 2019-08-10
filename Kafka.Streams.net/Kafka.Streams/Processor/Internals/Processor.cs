@@ -19,58 +19,56 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class InternalTopologyBuilder
+    public static class Processor : AbstractNode, TopologyDescription.Processor
     {
-        public static class Processor : AbstractNode, TopologyDescription.Processor
+
+        private HashSet<string> stores;
+
+        public Processor(string name,
+                         HashSet<string> stores)
         {
-
-            private HashSet<string> stores;
-
-            public Processor(string name,
-                             HashSet<string> stores)
-            {
-                base(name);
-                this.stores = stores;
-            }
-
-
-            public HashSet<string> stores()
-            {
-                return Collections.unmodifiableSet(stores);
-            }
-
-
-            public string ToString()
-            {
-                return "Processor: " + name + " (stores: " + stores + ")\n      -=> "
-                    + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Processor processor = (Processor)o;
-                // omit successor to avoid infinite loops
-                return name.Equals(processor.name)
-                    && stores.Equals(processor.stores)
-                    && predecessors.Equals(processor.predecessors);
-            }
-
-
-            public int GetHashCode()
-            {
-                // omit successor as it might change and alter the hash code
-                return Objects.hash(name, stores);
-            }
+            base(name);
+            this.stores = stores;
         }
+
+
+        public HashSet<string> stores()
+        {
+            return Collections.unmodifiableSet(stores);
+        }
+
+
+        public string ToString()
+        {
+            return "Processor: " + name + " (stores: " + stores + ")\n      -=> "
+                + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
+        }
+
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
             }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+
+            Processor processor = (Processor)o;
+            // omit successor to avoid infinite loops
+            return name.Equals(processor.name)
+                && stores.Equals(processor.stores)
+                && predecessors.Equals(processor.predecessors);
+        }
+
+
+        public int GetHashCode()
+        {
+            // omit successor as it might change and alter the hash code
+            return Objects.hash(name, stores);
+        }
+    }
 }
+

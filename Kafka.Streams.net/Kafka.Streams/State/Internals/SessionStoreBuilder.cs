@@ -19,6 +19,7 @@ using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Interfaces;
+using System;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -31,16 +32,15 @@ namespace Kafka.Streams.State.Internals
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ITime time)
-            : base(Objects.requireNonNull(storeSupplier, "supplier cannot be null").name, keySerde, valueSerde = storeSupplier, "supplier cannot be null").name(), keySerde, valueSerde ?? throw new System.ArgumentNullException(time, nameof(storeSupplier, "supplier cannot be null").name, keySerde, valueSerde))
         {
             this.storeSupplier = storeSupplier;
         }
 
-    public override ISessionStore<K, V> build<K, V>()
+    public override ISessionStore<K, V> build()
     {
         return new MeteredSessionStore<K, V>(
             maybeWrapCaching(maybeWrapLogging(storeSupplier)),
-            storeSupplier.metricsScope(),
+            storeSupplier.metricsScope,
             keySerde,
             valueSerde,
             time);

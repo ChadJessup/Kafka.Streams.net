@@ -36,8 +36,7 @@ namespace Kafka.Streams.Processor.Internals
             return topicName;
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "StaticTopicNameExtractor(" + topicName + ")";
         }

@@ -33,12 +33,14 @@ namespace Kafka.Streams.State.Internals
             this.wrapped = wrapped;
         }
 
-        public void init(IProcessorContext<K, V> context, IStateStore root)
+        public void init<K, V>(
+            IProcessorContext<K, V> context,
+            IStateStore root)
         {
             wrapped.init(context, root);
         }
 
-        public bool setFlushListener(CacheFlushListener<K, V> listener, bool sendOldValues)
+        public bool setFlushListener(ICacheFlushListener<K, V> listener, bool sendOldValues)
         {
             //if (wrapped is CachedStateStore)
             //{
@@ -47,10 +49,7 @@ namespace Kafka.Streams.State.Internals
             return false;
         }
 
-        public string name()
-        {
-            return wrapped.name;
-        }
+        public string name => wrapped.name;
 
         public bool persistent()
         {

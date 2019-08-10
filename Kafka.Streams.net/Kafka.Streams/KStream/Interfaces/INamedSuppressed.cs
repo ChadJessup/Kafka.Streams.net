@@ -23,6 +23,6 @@ namespace Kafka.Streams.KStream.Internals.Suppress
      */
     public interface INamedSuppressed<K> : ISuppressed<K>
     {
-        string name();
+        string name;
     }
 }

@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
         private string cacheName;
         private ThreadCache cache;
         private IInternalProcessorContext<Bytes, byte[]> context;
-        private CacheFlushListener<byte[], byte[]> flushListener;
+        private ICacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
 
         private long maxObservedTimestamp; // Refers to the window end time (determines segmentId)
@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = context;
 
-            cacheName = context.taskId() + "-" + name();
+            cacheName = context.taskId() + "-" + name;
             cache = context.getCache();
             cache.addDirtyEntryFlushListener(cacheName, entries);
             //=>
@@ -95,7 +95,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override bool setFlushListener(CacheFlushListener<byte[], byte[]> flushListener,
+        public override bool setFlushListener(ICacheFlushListener<byte[], byte[]> flushListener,
                                         bool sendOldValues)
         {
             this.flushListener = flushListener;

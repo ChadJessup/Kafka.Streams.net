@@ -101,9 +101,9 @@ namespace Kafka.Streams.State.Internals
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetchAll(from, to));
         }
 
-        public override string name()
+        public override string name
         {
-            return store.name();
+            return store.name;
         }
 
         public override void init(IProcessorContext<K, V> context,

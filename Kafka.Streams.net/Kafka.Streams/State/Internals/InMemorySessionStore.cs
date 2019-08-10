@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.Internals
             this.metricScope = metricScope;
         }
 
-        public override string name()
+        public override string name
         {
             return name;
         }
@@ -59,14 +59,14 @@ namespace Kafka.Streams.State.Internals
             string taskName = context.taskId().ToString();
             expiredRecordSensor = metrics.storeLevelSensor(
                 taskName,
-                name(),
+                name,
                 EXPIRED_WINDOW_RECORD_DROP,
                 RecordingLevel.INFO
             );
             AddInvocationRateAndCount(
                  expiredRecordSensor,
                  "stream-" + metricScope + "-metrics",
-                 metrics.tagMap("task-id", taskName, metricScope + "-id", name()),
+                 metrics.tagMap("task-id", taskName, metricScope + "-id", name),
                  EXPIRED_WINDOW_RECORD_DROP
              );
 

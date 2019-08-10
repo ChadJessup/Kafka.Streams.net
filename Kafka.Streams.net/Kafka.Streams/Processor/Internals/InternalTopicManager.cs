@@ -105,13 +105,13 @@ namespace Kafka.Streams.Processor.Internals
                         Dictionary<string, string> topicConfig = internalTopicConfig.getProperties(defaultTopicConfigs, windowChangeLogAdditionalRetention);
 
                         log.LogDebug("Going to create topic {} with {} partitions and config {}.",
-                            internalTopicConfig.name(),
+                            internalTopicConfig.name,
                             internalTopicConfig.numberOfPartitions(),
                             topicConfig);
 
                         newTopics.Add(
                             new NewTopic(
-                                internalTopicConfig.name(),
+                                internalTopicConfig.name,
                                 internalTopicConfig.numberOfPartitions(),
                                 replicationFactor)
                                 .configs(topicConfig));

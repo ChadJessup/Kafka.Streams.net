@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         public override string ToString()
         {
-            return "KeyValueSegment(id=" + id + ", name=" + name() + ")";
+            return "KeyValueSegment(id=" + id + ", name=" + name + ")";
         }
 
         public override bool Equals(object obj)

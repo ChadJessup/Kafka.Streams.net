@@ -947,7 +947,7 @@ namespace Kafka.Streams.Processor.Internals
 
             threadMetadata = new ThreadMetadata(
                 this.getName(),
-                this.state().name(),
+                this.state().name,
                 getConsumerClientId(this.getName()),
                 getRestoreConsumerClientId(this.getName()),
                 producer == null ? Collections.emptySet() : Collections.singleton(getThreadProducerClientId(this.getName())),
@@ -977,7 +977,7 @@ namespace Kafka.Streams.Processor.Internals
             string adminClientId = threadMetadata.adminClientId();
             threadMetadata = new ThreadMetadata(
                 this.getName(),
-                this.state().name(),
+                this.state().name,
                 getConsumerClientId(this.getName()),
                 getRestoreConsumerClientId(this.getName()),
                 producer == null ? producerClientIds : Collections.singleton(getThreadProducerClientId(this.getName())),

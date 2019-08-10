@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -16,10 +16,10 @@
  */
 namespace Kafka.Streams.Processor.Internals
 {
+    public class AtomicReference<T>
+    {
+        public AtomicReference(T reference) => this.Reference = reference;
 
-
-    interface TaskAction<T : ITask> {
-        string name;
-        void apply(T task);
+        public T Reference { get; }
     }
 }

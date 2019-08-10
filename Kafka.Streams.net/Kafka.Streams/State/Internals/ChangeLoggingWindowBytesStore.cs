@@ -56,9 +56,9 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = context;
             base.init(context, root);
-            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
+            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name);
             changeLogger = new StoreChangeLogger<>(
-                name(),
+                name,
                 context,
                 new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
         }

@@ -310,7 +310,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public string name()
+        public string name
         {
             return "stream";
         }
@@ -473,13 +473,13 @@ namespace Kafka.Streams.Processor.Internals
                         !metadata.topics().Contains(topic))
                     {
                         log.LogError("Missing source topic {} durign assignment. Returning error {}.",
-                                  topic, Error.INCOMPLETE_SOURCE_TOPIC_METADATA.name());
+                                  topic, Error.INCOMPLETE_SOURCE_TOPIC_METADATA.name);
                         return new GroupAssignment(errorAssignment(clientMetadataMap, topic, Error.INCOMPLETE_SOURCE_TOPIC_METADATA.code));
                     }
                 }
                 for (InternalTopicConfig topic: topicsInfo.repartitionSourceTopics.Values)
                 {
-                    repartitionTopicMetadata.Add(topic.name(), topic);
+                    repartitionTopicMetadata.Add(topic.name, topic);
                 }
             }
 
@@ -652,7 +652,7 @@ namespace Kafka.Streams.Processor.Internals
                         }
                         topicConfig.setNumberOfPartitions(numPartitions);
 
-                        changelogTopicMetadata.Add(topicConfig.name(), topicConfig);
+                        changelogTopicMetadata.Add(topicConfig.name, topicConfig);
                     }
                     else
                     {
@@ -1057,11 +1057,11 @@ namespace Kafka.Streams.Processor.Internals
                 int numPartitions = topic.numberOfPartitions();
                 if (numPartitions == UNKNOWN)
                 {
-                    throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.name()));
+                    throw new StreamsException(string.Format("%sTopic [%s] number of partitions not defined", logPrefix, topic.name));
                 }
 
                 topic.setNumberOfPartitions(numPartitions);
-                topicsToMakeReady.Add(topic.name(), topic);
+                topicsToMakeReady.Add(topic.name, topic);
             }
 
             if (!topicsToMakeReady.isEmpty())

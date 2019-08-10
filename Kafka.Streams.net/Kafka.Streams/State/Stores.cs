@@ -96,7 +96,7 @@ namespace Kafka.Streams.State
         //            {
 
 
-        //            public string name()
+        //            public string name
         //            {
         //                return name;
         //            }
@@ -137,7 +137,7 @@ namespace Kafka.Streams.State
         //        {
 
 
-        //            public string name()
+        //            public string name
         //        {
         //            return name;
         //        }

@@ -702,7 +702,7 @@ namespace Kafka.Streams
         //{
 
         //         Dictionary<string, object> tempConsumerDefaultOverrides = new Dictionary<>(CONSUMER_DEFAULT_OVERRIDES);
-        //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name().toLowerCase(Locale.ROOT));
+        //        tempConsumerDefaultOverrides.Add(ConsumerConfig.ISOLATION_LEVEL_CONFIG, READ_COMMITTED.name.toLowerCase(Locale.ROOT));
         //        CONSUMER_EOS_OVERRIDES = Collections.unmodifiableMap(tempConsumerDefaultOverrides);
         //    }
 

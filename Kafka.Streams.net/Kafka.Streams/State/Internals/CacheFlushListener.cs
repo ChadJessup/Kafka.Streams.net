@@ -16,16 +16,13 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-
-
     /**
      * Listen to cache flush events
      * @param key type
      * @param value type
      */
-    public interface CacheFlushListener<K, V>
+    public interface ICacheFlushListener<K, V>
     {
-
         /**
          * Called when records are flushed from the {@link ThreadCache}
          * @param key         key of the entry

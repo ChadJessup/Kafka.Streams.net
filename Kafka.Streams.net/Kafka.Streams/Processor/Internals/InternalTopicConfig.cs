@@ -47,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
          */
         abstract public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs);
 
-        public string name()
+        public string name
         {
             return name;
         }

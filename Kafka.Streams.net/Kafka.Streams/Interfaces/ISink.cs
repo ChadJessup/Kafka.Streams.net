@@ -5,7 +5,7 @@ namespace Kafka.Streams.Interfaces
     /**
      * A sink node of a topology.
      */
-    public interface ISink : INode
+    public interface ISink<K, V> : INode
     {
         /**
          * The topic name this sink node is writing to.
@@ -15,10 +15,11 @@ namespace Kafka.Streams.Interfaces
         string Topic { get; }
 
         /**
-         * The {@link TopicNameExtractor} that this sink node uses to dynamically extract the topic name to write to.
+         * The {@link TopicNameExtractor} that this sink node uses to dynamically
+         * extract the topic name to write to.
          * Could be {@code null} if the topic name is not dynamically determined.
          * @return the {@link TopicNameExtractor} used get the topic name
          */
-        ITopicNameExtractor<K, V> topicNameExtractor<K, V>();
+        ITopicNameExtractor<K, V> topicNameExtractor();
     }
 }

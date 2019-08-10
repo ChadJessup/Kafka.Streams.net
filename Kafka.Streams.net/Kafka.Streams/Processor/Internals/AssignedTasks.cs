@@ -20,7 +20,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
@@ -36,7 +35,7 @@ namespace Kafka.Streams.Processor.Internals
         private HashSet<TaskId> previousActiveTasks = new HashSet<TaskId>();
 
         // IQ may access this map.
-        ConcurrentDictionary<TaskId, T> running = new ConcurrentDictionary<TaskId, T>();
+        ConcurrentDictionary<TaskId, T> _running = new ConcurrentDictionary<TaskId, T>();
         private Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
 
         public AssignedTasks(
@@ -92,13 +91,10 @@ namespace Kafka.Streams.Processor.Internals
 
         bool allTasksRunning()
         {
-            return created.isEmpty() && suspended.isEmpty();
+            return !created.Any() || !suspended.Any();
         }
 
-        public List<T> running()
-        {
-            return running.Values;
-        }
+        public List<T> running => (List<T>)_running.Values;
 
         RuntimeException suspend()
         {
@@ -112,7 +108,7 @@ namespace Kafka.Streams.Processor.Internals
             running.clear();
             created.clear();
             runningByPartition.clear();
-            return firstException[];
+            return firstException;
         }
 
         private RuntimeException closeNonRunningTasks(List<T> tasks)
@@ -122,7 +118,6 @@ namespace Kafka.Streams.Processor.Internals
             {
                 try
                 {
-
                     task.close(false, false);
                 }
                 catch (RuntimeException e)
@@ -134,6 +129,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                 }
             }
+
             return exception;
         }
 
@@ -172,7 +168,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                 }
             }
-            return firstException[];
+            return firstException;
         }
 
         RuntimeException closeZombieTask(T task)
@@ -192,7 +188,7 @@ namespace Kafka.Streams.Processor.Internals
 
         bool hasRunningTasks()
         {
-            return !running.isEmpty();
+            return running.Any();
         }
 
         /**
@@ -264,12 +260,12 @@ namespace Kafka.Streams.Processor.Internals
 
         HashSet<TaskId> runningTaskIds()
         {
-            return running.Keys;
+            return new HashSet<TaskId>(_running.Keys);
         }
 
-        Dictionary<TaskId, T> runningTaskMap()
+        ConcurrentDictionary<TaskId, T> runningTaskMap()
         {
-            return Collections.unmodifiableMap(running);
+            return _running;
         }
 
 
@@ -282,7 +278,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             StringBuilder builder = new StringBuilder();
 
-            describe(builder, running.Values, indent, "Running:");
+            describe(builder, running, indent, "Running:");
             describe(builder, suspended.Values, indent, "Suspended:");
             describe(builder, created.Values, indent, "New:");
             return builder.ToString();
@@ -305,7 +301,7 @@ namespace Kafka.Streams.Processor.Internals
         List<T> allTasks()
         {
             List<T> tasks = new List<T>();
-            tasks.AddAll(running.Values);
+            tasks.AddAll(running);
             tasks.AddAll(suspended.Values);
             tasks.AddAll(created.Values);
             return tasks;
@@ -313,7 +309,7 @@ namespace Kafka.Streams.Processor.Internals
 
         HashSet<TaskId> allAssignedTaskIds()
         {
-            HashSet<TaskId> taskIds = new HashSet<>();
+            HashSet<TaskId> taskIds = new HashSet<TaskId>();
             taskIds.AddAll(running.Keys);
             taskIds.AddAll(suspended.Keys);
             taskIds.AddAll(created.Keys);
@@ -392,8 +388,8 @@ namespace Kafka.Streams.Processor.Internals
             while (standByTaskIterator.hasNext())
             {
                 T suspendedTask = standByTaskIterator.next();
-                if (!newAssignment.ContainsKey(suspendedTask.id()) || !suspendedTask.partitions().Equals(newAssignment[suspendedTask.id()])
-    {
+                if (!newAssignment.ContainsKey(suspendedTask.id()) || !suspendedTask.partitions().Equals(newAssignment[suspendedTask.id()]))
+                {
                     log.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedTask.id());
                     try
                     {
@@ -452,7 +448,7 @@ namespace Kafka.Streams.Processor.Internals
 
             clear();
 
-            RuntimeException fatalException = firstException[];
+            RuntimeException fatalException = firstException;
             if (fatalException != null)
             {
                 throw fatalException;

@@ -14,56 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class InternalTopologyBuilder
+    public abstract class AbstractNode : INode
     {
-        public abstract class AbstractNode : TopologyDescription.INode
+        public string name { get; }
+        public HashSet<INode> predecessors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
+        public HashSet<INode> successors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
+
+        // size of the sub-topology rooted at this node, including the node itself
+        int size;
+
+        public AbstractNode(string name)
         {
-
-            string name;
-            HashSet<TopologyDescription.INode> predecessors = new SortedSet<>(NODE_COMPARATOR);
-            HashSet<TopologyDescription.INode> successors = new SortedSet<>(NODE_COMPARATOR);
-
-            // size of the sub-topology rooted at this node, including the node itself
-            int size;
-
-            AbstractNode(string name)
-            {
-                name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-                this.name = name;
-                this.size = 1;
-            }
-
-
-            public string name()
-            {
-                return name;
-            }
-
-
-            public HashSet<TopologyDescription.INode> predecessors()
-            {
-                return Collections.unmodifiableSet(predecessors);
-            }
-
-
-            public HashSet<TopologyDescription.INode> successors()
-            {
-                return Collections.unmodifiableSet(successors);
-            }
-
-            public void addPredecessor(TopologyDescription.INode predecessor)
-            {
-                predecessors.Add(predecessor);
-            }
-
-            public void addSuccessor(TopologyDescription.INode successor)
-            {
-                successors.Add(successor);
-            }
+            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+            this.name = name;
+            this.size = 1;
         }
-            }
+
+        public void addPredecessor(INode predecessor)
+        {
+            predecessors.Add(predecessor);
+        }
+
+        public void addSuccessor(INode successor)
+        {
+            successors.Add(successor);
+        }
+    }
 }

@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public OptimizableRepartitionNode(
             string nodeName,
             string sourceName,
-            ProcessorParameters processorParameters,
+            ProcessorParameters<K, V> processorParameters,
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             string sinkName,
@@ -44,77 +44,55 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
 
         }
-
-        public ISerde<K> keySerde
+        public override ISerializer<V> getValueSerializer()
         {
-            return keySerde;
+            return valueSerde != null ? valueSerde.Serializer : null;
         }
 
-        public ISerde<V> valueSerde
+        public override IDeserializer<V> getValueDeserializer()
         {
-            return valueSerde;
+            return valueSerde != null ? valueSerde.Deserializer : null;
         }
 
-        public string repartitionTopic()
-        {
-            return repartitionTopic;
-        }
-
-
-        ISerializer<V> getValueSerializer()
-        {
-            return valueSerde != null ? valueSerde.Serializer() : null;
-        }
-
-
-        IDeserializer<V> getValueDeserializer()
-        {
-            return valueSerde != null ? valueSerde.Deserializer() : null;
-        }
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "OptimizableRepartitionNode{ " + base.ToString() + " }";
         }
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            ISerializer<K> keySerializer = keySerde != null ? keySerde.Serializer() : null;
-            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.Deserializer() : null;
+            ISerializer<K> keySerializer = keySerde != null ? keySerde.Serializer : null;
+            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.Deserializer : null;
 
-            topologyBuilder.AddInternalTopic(repartitionTopic);
+            topologyBuilder.addInternalTopic(repartitionTopic);
 
-            topologyBuilder.AddProcessor(
-                processorParameters.processorName(),
-                processorParameters.processorSupplier(),
-                parentNodeNames()
-            );
+            topologyBuilder.addProcessor(
+                processorParameters.processorName,
+                processorParameters.processorSupplier,
+                parentNodeNames());
 
-            topologyBuilder.AddSink(
+            topologyBuilder.addSink(
                 sinkName,
                 repartitionTopic,
-                keySerializer,
+                getKeySerializer,
                 getValueSerializer(),
                 null,
-                processorParameters.processorName()
-            );
+                new[] { processorParameters.processorName });
 
             topologyBuilder.addSource(
-                null,
+                AutoOffsetReset.UNKNOWN,
                 sourceName,
                 new FailOnInvalidTimestamp(),
                 keyDeserializer,
                 getValueDeserializer(),
-                repartitionTopic
-            );
+                new[] { repartitionTopic });
 
         }
 
         public static OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
         {
-            return new OptimizableRepartitionNodeBuilder<>();
+            return new OptimizableRepartitionNodeBuilder<K, V>();
         }
     }
 }

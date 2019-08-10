@@ -14,35 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.State.Interfaces;
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Interfaces;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Common.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
+using System.Collections.Generic;
+using Kafka.Streams.Errors;
+
 namespace Kafka.Streams.State.Internals
 {
-
-
-    using Kafka.Common.metrics.Sensor;
-    using Kafka.Common.serialization.Serde;
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Common.Utils.Time;
-    using Kafka.Streams.Errors.ProcessorStateException;
-    using Kafka.Streams.KStream.Windowed;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
-    using Kafka.Streams.Processor.Internals.ProcessorStateManager;
-    using Kafka.Streams.Processor.Internals.metrics.StreamsMetricsImpl;
-    using Kafka.Streams.State.IKeyValueIterator;
-    using Kafka.Streams.State.ISessionStore;
-    using Kafka.Streams.State.StateSerdes;
-
-
-
-
-
-
-
     public class MeteredSessionStore<K, V>
-        : WrappedStateStore<ISessionStore<Bytes, byte[]>, Windowed<K>, V>
-    : ISessionStore<K, V>
+        : WrappedStateStore<ISessionStore<Bytes, byte[]>, Windowed<K>, V>,
+        ISessionStore<K, V>
     {
-
         private string metricScope;
         private ISerde<K> keySerde;
         private ISerde<V> valueSerde;
@@ -55,13 +44,14 @@ namespace Kafka.Streams.State.Internals
         private Sensor removeTime;
         private string taskName;
 
-        MeteredSessionStore(ISessionStore<Bytes, byte[]> inner,
-                            string metricScope,
-                            ISerde<K> keySerde,
-                            ISerde<V> valueSerde,
-                            ITime time)
+        public MeteredSessionStore(
+            ISessionStore<Bytes, byte[]> inner,
+            string metricScope,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            ITime time)
+            : base(inner)
         {
-            base(inner);
             this.metricScope = metricScope;
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
@@ -69,12 +59,13 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override void init(IProcessorContext<K, V> context,
-                         IStateStore root)
+        public override void init(
+            IProcessorContext<K, V> context,
+            IStateStore root)
         {
             //noinspection unchecked
-            serdes = new StateSerdes<>(
-                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
+            serdes = new StateSerdes<K, V>(
+                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
                 keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
                 valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
             metrics = (StreamsMetricsImpl)context.metrics();
@@ -82,13 +73,13 @@ namespace Kafka.Streams.State.Internals
             taskName = context.taskId().ToString();
             string metricsGroup = "stream-" + metricScope + "-metrics";
             Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
-            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name());
+            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);
 
-            putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
+            putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            fetchTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "fetch", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            removeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "Remove", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
 
             // register and possibly restore the state from the logs
             long startNs = time.nanoseconds();
@@ -107,37 +98,39 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override bool setFlushListener(CacheFlushListener<Windowed<K>, V> listener,
-                                        bool sendOldValues)
+        public override bool setFlushListener(
+            ICacheFlushListener<Windowed<K>, V> listener,
+            bool sendOldValues)
         {
             ISessionStore<Bytes, byte[]> wrapped = wrapped;
-            if (wrapped is CachedStateStore)
+            if (wrapped is CachedStateStore<K, V>)
             {
-                return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
+                return ((CachedStateStore<byte[], byte[]>)wrapped).setFlushListener(
                    (key, newValue, oldValue, timestamp) => listener.apply(
                        SessionKeySchema.from(key, serdes.keyDeserializer(), serdes.Topic),
                        newValue != null ? serdes.valueFrom(newValue) : null,
                        oldValue != null ? serdes.valueFrom(oldValue) : null,
-                       timestamp
-                   ),
+                       timestamp),
                    sendOldValues);
             }
+
             return false;
         }
 
-        public override void put(Windowed<K> sessionKey,
-                        V aggregate)
+        public override void put(
+            Windowed<K> sessionKey,
+            V aggregate)
         {
             sessionKey = sessionKey ?? throw new System.ArgumentNullException("sessionKey can't be null", nameof(sessionKey));
             long startNs = time.nanoseconds();
             try
             {
-                Bytes key = keyBytes(sessionKey.key());
-                wrapped.Add(new Windowed<>(key, sessionKey.window()), serdes.rawValue(aggregate));
+                Bytes key = keyBytes(sessionKey.key);
+                wrapped.Add(new Windowed<K>(key, sessionKey.window), serdes.rawValue(aggregate));
             }
             catch (ProcessorStateException e)
             {
-                string message = string.Format(e.getMessage(), sessionKey.key(), aggregate);
+                string message = string.Format(e.Message, sessionKey.key, aggregate);
                 throw new ProcessorStateException(message, e);
             }
             finally
@@ -264,7 +257,7 @@ namespace Kafka.Streams.State.Internals
         public override void close()
         {
             base.close();
-            metrics.removeAllStoreLevelSensors(taskName, name());
+            metrics.removeAllStoreLevelSensors(taskName, name);
         }
 
         private Bytes keyBytes(K key)

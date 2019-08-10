@@ -14,13 +14,13 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.State;
 using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams
@@ -40,8 +40,8 @@ namespace Kafka.Streams
      */
     public class Topology
     {
-        public InternalTopologyBuilder internalTopologyBuilder =
-            new InternalTopologyBuilder();
+        public InternalTopologyBuilder internalTopologyBuilder { get; }
+            = new InternalTopologyBuilder();
 
         /**
          * Add a new source that consumes the named topics and forward the records to child processor and/or sink nodes.
@@ -61,7 +61,7 @@ namespace Kafka.Streams
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, null, null, null, topics);
+            internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, null, null, null, topics);
             return this;
         }
 
@@ -84,7 +84,7 @@ namespace Kafka.Streams
             string name,
             Pattern topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, null, null, null, topicPattern);
+            internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, null, null, null, topicPattern);
             return this;
         }
 
@@ -157,7 +157,7 @@ namespace Kafka.Streams
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, timestampExtractor, null, null, topics);
+            internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, timestampExtractor, null, null, topics);
             return this;
         }
 
@@ -182,7 +182,7 @@ namespace Kafka.Streams
             string name,
             Pattern topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, timestampExtractor, null, null, topicPattern);
+            internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, timestampExtractor, null, null, topicPattern);
             return this;
         }
 
@@ -263,7 +263,7 @@ namespace Kafka.Streams
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.addSource(null, name, null, keyDeserializer, valueDeserializer, topics);
+            internalTopologyBuilder.addSource(AutoOffsetReset.UNKNOWN, name, null, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -292,7 +292,7 @@ namespace Kafka.Streams
             IDeserializer<V> valueDeserializer,
             Pattern topicPattern)
         {
-            internalTopologyBuilder.addSource(null, name, null, keyDeserializer, valueDeserializer, topicPattern);
+            internalTopologyBuilder.addSource(AutoOffsetReset.UNKNOWN, name, null, keyDeserializer, valueDeserializer, topicPattern);
             return this;
         }
 
@@ -445,7 +445,7 @@ namespace Kafka.Streams
             string topic,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topic, null, null, null, parentNames);
+            internalTopologyBuilder.addSink<K, V>(name, topic, null, null, null, parentNames);
             return this;
         }
 
@@ -671,7 +671,7 @@ namespace Kafka.Streams
          * @see #addSink(string, string, ISerializer, ISerializer, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addSink(
+        public Topology addSink<K, V>(
             string name,
             ITopicNameExtractor<K, V> topicExtractor,
             ISerializer<K> keySerializer,
@@ -696,9 +696,10 @@ namespace Kafka.Streams
          * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addProcessor(string name,
-                                                  ProcessorSupplier supplier,
-                                                  string[] parentNames)
+        public Topology addProcessor<K, V>(
+            string name,
+            IProcessorSupplier<K, V> supplier,
+            string[] parentNames)
         {
             internalTopologyBuilder.addProcessor(name, supplier, parentNames);
             return this;
@@ -713,10 +714,16 @@ namespace Kafka.Streams
          * @throws TopologyException if state store supplier is already added
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addStateStore(IStoreBuilder storeBuilder,
-                                                   string[] processorNames)
+        public Topology addStateStore<T>(
+            IStoreBuilder<T> storeBuilder,
+            string[] processorNames)
+            where T : IStateStore
         {
-            internalTopologyBuilder.addStateStore(storeBuilder, processorNames);
+            internalTopologyBuilder.addStateStore<T>(
+                storeBuilder,
+                allowOverride: false,
+                processorNames);
+
             return this;
         }
 
@@ -744,16 +751,19 @@ namespace Kafka.Streams
          * @throws TopologyException if the processor of state is already registered
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addGlobalStore(IStoreBuilder storeBuilder,
-                                            string sourceName,
-                                            IDeserializer keyDeserializer,
-                                            IDeserializer valueDeserializer,
-                                            string topic,
-                                            string processorName,
-                                            IProcessorSupplier stateUpdateSupplier)
+        public Topology addGlobalStore<K, V, T>(
+            IStoreBuilder<T> storeBuilder,
+            string sourceName,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valueDeserializer,
+            string topic,
+            string processorName,
+            IProcessorSupplier<K, V> stateUpdateSupplier)
+            where T : IStateStore
         {
             internalTopologyBuilder.addGlobalStore(storeBuilder, sourceName, null, keyDeserializer,
                 valueDeserializer, topic, processorName, stateUpdateSupplier);
+
             return this;
         }
 
@@ -782,17 +792,20 @@ namespace Kafka.Streams
          * @throws TopologyException if the processor of state is already registered
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addGlobalStore(IStoreBuilder storeBuilder,
-                                            string sourceName,
-                                            ITimestampExtractor timestampExtractor,
-                                            IDeserializer keyDeserializer,
-                                            IDeserializer valueDeserializer,
-                                            string topic,
-                                            string processorName,
-                                            ProcessorSupplier stateUpdateSupplier)
+        public Topology addGlobalStore<K, V, T>(
+            IStoreBuilder<T> storeBuilder,
+            string sourceName,
+            ITimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valueDeserializer,
+            string topic,
+            string processorName,
+            IProcessorSupplier<K, V> stateUpdateSupplier)
+            where T : IStateStore
         {
             internalTopologyBuilder.addGlobalStore(storeBuilder, sourceName, timestampExtractor, keyDeserializer,
                 valueDeserializer, topic, processorName, stateUpdateSupplier);
+
             return this;
         }
 
@@ -805,8 +818,9 @@ namespace Kafka.Streams
          * @throws TopologyException if the processor or a state store is unknown
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology connectProcessorAndStateStores(string processorName,
-                                                                    string[] stateStoreNames)
+        public Topology connectProcessorAndStateStores(
+            string processorName,
+            string[] stateStoreNames)
         {
             internalTopologyBuilder.connectProcessorAndStateStores(processorName, stateStoreNames);
             return this;
@@ -823,23 +837,4 @@ namespace Kafka.Streams
             return internalTopologyBuilder.describe();
         }
     }
-
-    public TopologyDescription describe()
-    {
-        return internalTopologyBuilder.describe();
-    }
-}
-
-
-/**
-* Sets the {@code auto.offset.reset} configuration when
-* {@link .AddSource(AutoOffsetReset, string, string[]).Adding a source processor} or when creating {@link KStream}
-* or {@link KTable} via {@link StreamsBuilder}.
-*/
-public enum AutoOffsetReset
-{
-    UNKNOWN = 0,
-    EARLIEST,
-    LATEST
-}
 }

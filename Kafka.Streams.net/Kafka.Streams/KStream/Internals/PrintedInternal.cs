@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
             return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
         }
 
-        public string name()
+        public string name
         {
             return processorName;
         }

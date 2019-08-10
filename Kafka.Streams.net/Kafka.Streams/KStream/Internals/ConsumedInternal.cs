@@ -56,7 +56,7 @@ namespace Kafka.Streams.KStream.Internals
             return resetPolicy;
         }
 
-        public string name()
+        public string name
         {
             return processorName;
         }

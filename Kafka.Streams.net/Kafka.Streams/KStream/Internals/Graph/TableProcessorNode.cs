@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             return "TableProcessorNode{" +
                 ", processorParameters=" + processorParameters +
-                ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name()) +
+                ", storeBuilder=" + (storeBuilder == null ? "null" : storeBuilder.name) +
                 ", storeNames=" + Arrays.ToString(storeNames) +
                 "} " + base.ToString();
         }

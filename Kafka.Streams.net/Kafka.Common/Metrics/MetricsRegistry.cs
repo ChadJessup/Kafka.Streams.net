@@ -298,13 +298,13 @@ namespace Kafka.Common.Metrics
                         //    beansAndAttributes.Add(mBeanName, new TreeMap<string, string>());
                         //}
                         //Dictionary<string, string> attrAndDesc = beansAndAttributes["mBeanName"];
-                        //if (!attrAndDesc.ContainsKey(template.name()))
+                        //if (!attrAndDesc.ContainsKey(template.name))
                         //{
-                        //    attrAndDesc.Add(template.name(), template.description());
+                        //    attrAndDesc.Add(template.name, template.description());
                         //}
                         //else
                         //{
-                        //    throw new System.ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name() + "' is defined twice.");
+                        //    throw new System.ArgumentException("mBean '" + "mBeanName" + "' attribute '" + template.name + "' is defined twice.");
                         //}
                     }
                 }

@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
         private bool sendOldValues;
         private IInternalProcessorContext<K, V>  context;
         private StateSerdes<Bytes, byte[]> bytesSerdes;
-        private CacheFlushListener<byte[], byte[]> flushListener;
+        private ICacheFlushListener<byte[], byte[]> flushListener;
 
         private long maxObservedTimestamp;
 
@@ -64,13 +64,13 @@ namespace Kafka.Streams.State.Internals
         private void initInternal(IInternalProcessorContext<K, V>  context)
         {
             this.context = context;
-            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name());
+            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name);
 
             bytesSerdes = new StateSerdes<>(
                 topic,
                 Serdes.Bytes(),
                 Serdes.ByteArray());
-            name = context.taskId() + "-" + name();
+            name = context.taskId() + "-" + name;
             cache = this.context.getCache();
 
             cache.AddDirtyEntryFlushListener(name, entries=>
@@ -124,7 +124,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override bool setFlushListener(CacheFlushListener<byte[], byte[]> flushListener,
+        public override bool setFlushListener(ICacheFlushListener<byte[], byte[]> flushListener,
                                         bool sendOldValues)
         {
             this.flushListener = flushListener;

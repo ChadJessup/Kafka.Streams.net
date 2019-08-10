@@ -19,91 +19,88 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class InternalTopologyBuilder
+    public static class Source : AbstractNode, TopologyDescription.Source
     {
-        public static class Source : AbstractNode, TopologyDescription.Source
+
+        private HashSet<string> topics;
+        private Pattern topicPattern;
+
+        public Source(string name,
+                      HashSet<string> topics,
+                      Pattern pattern)
+            : base(name)
         {
-
-            private HashSet<string> topics;
-            private Pattern topicPattern;
-
-            public Source(string name,
-                          HashSet<string> topics,
-                          Pattern pattern)
-                : base(name)
+            if (topics == null && pattern == null)
             {
-                if (topics == null && pattern == null)
-                {
-                    throw new System.ArgumentException("Either topics or pattern must be not-null, but both are null.");
-                }
-                if (topics != null && pattern != null)
-                {
-                    throw new System.ArgumentException("Either topics or pattern must be null, but both are not null.");
-                }
-
-                this.topics = topics;
-                this.topicPattern = pattern;
+                throw new System.ArgumentException("Either topics or pattern must be not-null, but both are null.");
+            }
+            if (topics != null && pattern != null)
+            {
+                throw new System.ArgumentException("Either topics or pattern must be null, but both are not null.");
             }
 
-            [System.Obsolete]
-
-            public string topics()
-            {
-                return topics.ToString();
-            }
-
-
-            public HashSet<string> topicSet()
-            {
-                return topics;
-            }
-
-
-            public Pattern topicPattern()
-            {
-                return topicPattern;
-            }
-
-
-            public void addPredecessor(TopologyDescription.INode predecessor)
-            {
-                throw new InvalidOperationException("Sources don't have predecessors.");
-            }
-
-
-            public string ToString()
-            {
-                string topicsString = topics == null ? topicPattern.ToString() : topics.ToString();
-
-                return "Source: " + name + " (topics: " + topicsString + ")\n      -=> " + nodeNames(successors);
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                Source source = (Source)o;
-                // omit successor to avoid infinite loops
-                return name.Equals(source.name)
-                    && Objects.Equals(topics, source.topics)
-                    && (topicPattern == null ? source.topicPattern == null :
-                        topicPattern.pattern().Equals(source.topicPattern.pattern()));
-            }
-
-
-            public int GetHashCode()
-            {
-                // omit successor as it might change and alter the hash code
-                return Objects.hash(name, topics, topicPattern);
-            }
+            this.topics = topics;
+            this.topicPattern = pattern;
         }
+
+        [System.Obsolete]
+
+        public string topics()
+        {
+            return topics.ToString();
+        }
+
+
+        public HashSet<string> topicSet()
+        {
+            return topics;
+        }
+
+
+        public Pattern topicPattern()
+        {
+            return topicPattern;
+        }
+
+
+        public void addPredecessor(INode predecessor)
+        {
+            throw new InvalidOperationException("Sources don't have predecessors.");
+        }
+
+
+        public string ToString()
+        {
+            string topicsString = topics == null ? topicPattern.ToString() : topics.ToString();
+
+            return "Source: " + name + " (topics: " + topicsString + ")\n      -=> " + nodeNames(successors);
+        }
+
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
             }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+
+            Source source = (Source)o;
+            // omit successor to avoid infinite loops
+            return name.Equals(source.name)
+                && Objects.Equals(topics, source.topics)
+                && (topicPattern == null ? source.topicPattern == null :
+                    topicPattern.pattern().Equals(source.topicPattern.pattern()));
+        }
+
+
+        public int GetHashCode()
+        {
+            // omit successor as it might change and alter the hash code
+            return Objects.hash(name, topics, topicPattern);
+        }
+    }
 }

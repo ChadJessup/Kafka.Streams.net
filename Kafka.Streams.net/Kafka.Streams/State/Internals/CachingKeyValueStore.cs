@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.Internals
 
         private static ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
 
-        private CacheFlushListener<byte[], byte[]> flushListener;
+        private ICacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
         private string cacheName;
         private ThreadCache cache;
@@ -58,7 +58,7 @@ namespace Kafka.Streams.State.Internals
             this.context = (IInternalProcessorContext)context;
 
             this.cache = this.context.getCache();
-            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name());
+            this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name);
             //        cache.AddDirtyEntryFlushListener(cacheName, entries =>
             //{
             //    foreach (DirtyEntry entry in entries)
@@ -105,7 +105,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override bool setFlushListener(CacheFlushListener<byte[], byte[]> flushListener,
+        public override bool setFlushListener(ICacheFlushListener<byte[], byte[]> flushListener,
                                         bool sendOldValues)
         {
             this.flushListener = flushListener;
@@ -285,7 +285,7 @@ namespace Kafka.Streams.State.Internals
         {
             validateStoreOpen();
             IKeyValueIterator<Bytes, byte[]> storeIterator =
-                new DelegatingPeekingKeyValueIterator<>(this.name(), wrapped.all());
+                new DelegatingPeekingKeyValueIterator<>(this.name, wrapped.all());
             MemoryLRUCacheBytesIterator cacheIterator = cache.all(cacheName);
             return new MergedSortedCacheKeyValueBytesStoreIterator(cacheIterator, storeIterator);
         }

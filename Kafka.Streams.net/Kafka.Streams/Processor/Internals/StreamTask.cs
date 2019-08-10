@@ -315,7 +315,7 @@ namespace Kafka.Streams.Processor.Internals
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                     id,
-                    processorContext.currentNode().name(),
+                    processorContext.currentNode().name,
                     record.Topic,
                     record.partition(),
                     record.offset(),
@@ -362,7 +362,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (log.isTraceEnabled())
             {
-                log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name(), timestamp, type);
+                log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
             }
 
             try
@@ -376,7 +376,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             catch (KafkaException e)
             {
-                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.name()), e);
+                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.name), e);
             }
             finally
             {

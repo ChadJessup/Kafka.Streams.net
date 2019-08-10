@@ -22,11 +22,15 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class StateStoreFactory<T>
+    public class StateStoreFactory
+    {
+        protected HashSet<string> users { get; } = new HashSet<string>();
+    }
+
+    public class StateStoreFactory<T> : StateStoreFactory
         where T : IStateStore
     {
         private IStoreBuilder<T> builder;
-        private HashSet<string> users = new HashSet<string>();
 
         public StateStoreFactory(IStoreBuilder<T> builder)
         {
@@ -58,31 +62,13 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
+        public string name => builder.name;
 
-        public bool loggingEnabled()
+        private bool isWindowStore<K, V>()
         {
-            return builder.loggingEnabled();
-        }
-
-        private string name()
-        {
-            return builder.name();
-        }
-
-        private bool isWindowStore()
-        {
-            return builder is WindowStoreBuilder
-                || builder is TimestampedWindowStoreBuilder
-                || builder is SessionStoreBuilder;
-        }
-
-        // Apparently Java strips the generics from this method because we're using the raw type for builder,
-        // even though this method doesn't use builder's (missing) type parameter. Our usage seems obviously
-        // correct, though, hence the suppression.
-
-        private Dictionary<string, string> logConfig()
-        {
-            return builder.logConfig();
+            return builder is WindowStoreBuilder<K, V>
+                || builder is TimestampedWindowStoreBuilder<K, V>
+                || builder is SessionStoreBuilder<K, V>;
         }
     }
 }

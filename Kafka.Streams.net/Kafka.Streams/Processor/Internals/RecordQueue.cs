@@ -193,7 +193,7 @@ namespace Kafka.Streams.Processor.Internals
                             string.Format("Fatal user code error in ITimestampExtractor callback for record %s.", deserialized),
                             fatalUserException);
                 }
-                log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name(), timestamp, deserialized);
+                log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name, timestamp, deserialized);
 
                 // drop message if TS is invalid, i.e., negative
                 if (timestamp < 0)

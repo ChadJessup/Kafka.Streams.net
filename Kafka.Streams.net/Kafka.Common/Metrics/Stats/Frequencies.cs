@@ -109,7 +109,7 @@ namespace Kafka.Common.Metrics.Stats
             foreach (Frequency freq in frequencies)
             {
                 double center = freq.centerValue;
-                //ms.Add(new NamedMeasurable(frequency.name(), new IMeasurable()
+                //ms.Add(new NamedMeasurable(frequency.name, new IMeasurable()
                 //{
                 //    public double measure(MetricConfig config, long now)
                 //{

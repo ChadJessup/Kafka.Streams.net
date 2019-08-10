@@ -22,16 +22,6 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
-
-
-
-
-
-
     public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V>
     {
 
@@ -57,9 +47,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
          * Create a node representing a stateful processor,
          * where the store needs to be built and registered as part of building this node.
          */
-        public StatefulProcessorNode(string nodeName,
-                                      ProcessorParameters<K, V> processorParameters,
-                                      IStoreBuilder<IStateStore> materializedKTableStoreBuilder)
+        public StatefulProcessorNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters,
+            IStoreBuilder<IStateStore> materializedKTableStoreBuilder)
             : base(nodeName, processorParameters)
         {
 
@@ -77,11 +68,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-
-            string processorName = processorParameters().processorName();
-            IProcessorSupplier processorSupplier = processorParameters().processorSupplier();
+            string processorName = processorParameters.processorName;
+            var processorSupplier = processorParameters.processorSupplier;
 
             topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
 

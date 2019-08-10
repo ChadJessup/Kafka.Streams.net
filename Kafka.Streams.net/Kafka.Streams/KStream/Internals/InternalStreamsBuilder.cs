@@ -65,7 +65,7 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed)
         {
 
-            string name = new NamedInternal(consumed.name()).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
+            string name = new NamedInternal(consumed.name).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
             StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
 
             addGraphNode(root, streamSourceNode);
@@ -102,10 +102,10 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed,
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            string sourceName = new NamedInternal(consumed.name())
+            string sourceName = new NamedInternal(consumed.name)
                    .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SOURCE_NAME);
 
-            string tableSourceName = new NamedInternal(consumed.name())
+            string tableSourceName = new NamedInternal(consumed.name)
                    .suffixWithOrElseGet("-table-source", this, KTableImpl.SOURCE_NAME);
 
             KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());

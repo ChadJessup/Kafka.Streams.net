@@ -133,10 +133,5 @@ namespace Kafka.Streams.KStream.Internals
             //    };
             //};
         }
-
-        public ISerde<V> valueSerde
-        {
-            return valSerde;
-        }
     }
 }

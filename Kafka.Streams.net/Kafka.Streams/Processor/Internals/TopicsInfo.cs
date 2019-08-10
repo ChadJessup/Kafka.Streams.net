@@ -16,55 +16,55 @@
  */
 using System.Collections.Generic;
 
-public static class TopicsInfo
+namespace Kafka.Streams.Processor.Internals
 {
-
-    HashSet<string> sinkTopics;
-    HashSet<string> sourceTopics;
-    public Dictionary<string, InternalTopicConfig> stateChangelogTopics;
-    public Dictionary<string, InternalTopicConfig> repartitionSourceTopics;
-
-    TopicsInfo(HashSet<string> sinkTopics,
-               HashSet<string> sourceTopics,
-               Dictionary<string, InternalTopicConfig> repartitionSourceTopics,
-               Dictionary<string, InternalTopicConfig> stateChangelogTopics)
+    public class TopicsInfo
     {
-        this.sinkTopics = sinkTopics;
-        this.sourceTopics = sourceTopics;
-        this.stateChangelogTopics = stateChangelogTopics;
-        this.repartitionSourceTopics = repartitionSourceTopics;
-    }
+        HashSet<string> sinkTopics;
+        HashSet<string> sourceTopics;
+        public Dictionary<string, InternalTopicConfig> stateChangelogTopics;
+        public Dictionary<string, InternalTopicConfig> repartitionSourceTopics;
 
-
-    public bool Equals(object o)
-    {
-        if (o is TopicsInfo)
+        public TopicsInfo(
+            HashSet<string> sinkTopics,
+            HashSet<string> sourceTopics,
+            Dictionary<string, InternalTopicConfig> repartitionSourceTopics,
+            Dictionary<string, InternalTopicConfig> stateChangelogTopics)
         {
-            TopicsInfo other = (TopicsInfo)o;
-            return other.sourceTopics.Equals(sourceTopics) && other.stateChangelogTopics.Equals(stateChangelogTopics);
+            this.sinkTopics = sinkTopics;
+            this.sourceTopics = sourceTopics;
+            this.stateChangelogTopics = stateChangelogTopics;
+            this.repartitionSourceTopics = repartitionSourceTopics;
         }
-        else
+
+        public override bool Equals(object o)
         {
+            if (o is TopicsInfo)
+            {
+                TopicsInfo other = (TopicsInfo)o;
+                return other.sourceTopics.Equals(sourceTopics) && other.stateChangelogTopics.Equals(stateChangelogTopics);
+            }
+            else
+            {
 
-            return false;
+                return false;
+            }
         }
-    }
 
+        public override int GetHashCode()
+        {
+            long n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
+            return (int)(n % 0xFFFFFFFFL);
+        }
 
-    public int GetHashCode()
-    {
-        long n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
-        return (int)(n % 0xFFFFFFFFL);
-    }
-
-
-    public string ToString()
-    {
-        return "TopicsInfo{" +
-            "sinkTopics=" + sinkTopics +
-            ", sourceTopics=" + sourceTopics +
-            ", repartitionSourceTopics=" + repartitionSourceTopics +
-            ", stateChangelogTopics=" + stateChangelogTopics +
-            '}';
+        public override string ToString()
+        {
+            return "TopicsInfo{" +
+                "sinkTopics=" + sinkTopics +
+                ", sourceTopics=" + sourceTopics +
+                ", repartitionSourceTopics=" + repartitionSourceTopics +
+                ", stateChangelogTopics=" + stateChangelogTopics +
+                '}';
+        }
     }
 }

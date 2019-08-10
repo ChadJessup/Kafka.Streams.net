@@ -45,7 +45,7 @@ namespace Kafka.Streams.State.Internals
             //        this.listener = listener;
             //    }
 
-            //    public override string name()
+            //    public override string name
             //{
             //        return this.name;
             //    }
@@ -176,7 +176,7 @@ namespace Kafka.Streams.State.Internals
             throw new System.NotImplementedException();
         }
 
-        string IStateStore.name()
+        string IStateStore.name
         {
             throw new System.NotImplementedException();
         }

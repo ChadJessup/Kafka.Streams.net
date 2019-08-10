@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Internals
                                              ISerde<K> keySerde,
                                              ISerde<V> valueSerde,
                                              ITime time)
-            : base(storeSupplier.name(), keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time)
+            : base(storeSupplier.name, keySerde, valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde), time)
         {
             storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
             this.storeSupplier = storeSupplier;
@@ -177,9 +177,9 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public string name()
+            public string name
             {
-                return wrapped.name();
+                return wrapped.name;
             }
 
 

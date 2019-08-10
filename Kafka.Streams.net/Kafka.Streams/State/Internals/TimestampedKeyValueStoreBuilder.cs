@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
             ISerde<V> valueSerde,
             ITime time)
             : base(
-                storeSupplier.name(),
+                storeSupplier.name,
                 keySerde,
                 valueSerde == null ? null : new ValueAndTimestampSerde<>(valueSerde),
                 time)
@@ -169,9 +169,9 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public string name()
+            public string name
             {
-                return wrapped.name();
+                return wrapped.name;
             }
 
 

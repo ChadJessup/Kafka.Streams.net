@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
 
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        string name()
+        string name
         {
             return name;
         }

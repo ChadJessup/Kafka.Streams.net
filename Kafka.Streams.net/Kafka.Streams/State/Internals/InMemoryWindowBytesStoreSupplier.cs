@@ -34,7 +34,7 @@ namespace Kafka.Streams.State.Internals
             this.retainDuplicates = retainDuplicates;
         }
 
-        public override string name()
+        public override string name
         {
             return name;
         }

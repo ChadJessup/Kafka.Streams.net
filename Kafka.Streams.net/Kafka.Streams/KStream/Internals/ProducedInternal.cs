@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
             return partitioner;
         }
 
-        public string name()
+        public string name
         {
             return processorName;
         }

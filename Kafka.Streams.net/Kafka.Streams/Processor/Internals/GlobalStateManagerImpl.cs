@@ -111,7 +111,7 @@ namespace Kafka.Streams.Processor.Internals
             List<IStateStore> stateStores = topology.globalStateStores();
             foreach (IStateStore stateStore in stateStores)
             {
-                globalStoreNames.Add(stateStore.name());
+                globalStoreNames.Add(stateStore.name);
                 stateStore.init(globalProcessorContext, stateStore);
             }
             return Collections.unmodifiableSet(globalStoreNames);
@@ -158,22 +158,22 @@ namespace Kafka.Streams.Processor.Internals
                              IStateRestoreCallback stateRestoreCallback)
         {
 
-            if (globalStores.ContainsKey(store.name()))
+            if (globalStores.ContainsKey(store.name))
             {
-                throw new System.ArgumentException(string.Format("Global Store %s has already been registered", store.name()));
+                throw new System.ArgumentException(string.Format("Global Store %s has already been registered", store.name));
             }
 
-            if (!globalStoreNames.Contains(store.name()))
+            if (!globalStoreNames.Contains(store.name))
             {
-                throw new System.ArgumentException(string.Format("Trying to register store %s that is not a known global store", store.name()));
+                throw new System.ArgumentException(string.Format("Trying to register store %s that is not a known global store", store.name));
             }
 
             if (stateRestoreCallback == null)
             {
-                throw new System.ArgumentException(string.Format("The stateRestoreCallback provided for store %s was null", store.name()));
+                throw new System.ArgumentException(string.Format("The stateRestoreCallback provided for store %s was null", store.name));
             }
 
-            log.LogInformation("Restoring state for global store {}", store.name());
+            log.LogInformation("Restoring state for global store {}", store.name);
             List<TopicPartition> topicPartitions = topicPartitionsForStore(store);
             Dictionary<TopicPartition, long> highWatermarks = null;
 
@@ -191,11 +191,11 @@ namespace Kafka.Streams.Processor.Internals
                     {
                         log.LogError("Failed to get end offsets for topic partitions of global store {} after {} retry attempts. " +
                             "You can increase the number of retries via configuration parameter `retries`.",
-                            store.name(),
+                            store.name,
                             retries,
                             retryableException);
                         throw new StreamsException(string.Format("Failed to get end offsets for topic partitions of global store %s after %d retry attempts. " +
-                                "You can increase the number of retries via configuration parameter `retries`.", store.name(), retries),
+                                "You can increase the number of retries via configuration parameter `retries`.", store.name, retries),
                             retryableException);
                     }
                     log.LogDebug("Failed to get end offsets for partitions {}, backing off for {} ms to retry (attempt {} of {})",
@@ -214,10 +214,10 @@ namespace Kafka.Streams.Processor.Internals
                     stateRestoreCallback,
                     topicPartitions,
                     highWatermarks,
-                    store.name(),
+                    store.name,
                     converterForStore(store)
                 );
-                globalStores.Add(store.name(), Optional.of(store));
+                globalStores.Add(store.name, Optional.of(store));
             }
             finally
             {
@@ -229,7 +229,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private List<TopicPartition> topicPartitionsForStore(IStateStore store)
         {
-            string sourceTopic = topology.storeToChangelogTopic()[store.name()];
+            string sourceTopic = topology.storeToChangelogTopic()[store.name];
             List<PartitionInfo> partitionInfos;
             int attempts = 0;
             while (true)
@@ -268,7 +268,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (partitionInfos == null || !partitionInfos.Any())
             {
-                throw new StreamsException(string.Format("There are no partitions available for topic %s when initializing global store %s", sourceTopic, store.name()));
+                throw new StreamsException(string.Format("There are no partitions available for topic %s when initializing global store %s", sourceTopic, store.name));
             }
 
             List<TopicPartition> topicPartitions = new List<TopicPartition>();
@@ -355,13 +355,13 @@ namespace Kafka.Streams.Processor.Internals
                     try
                     {
 
-                        log.LogTrace("Flushing global store={}", store.name());
+                        log.LogTrace("Flushing global store={}", store.name);
                         store.flush();
                     }
                     catch (Exception e)
                     {
                         throw new ProcessorStateException(
-                            string.Format("Failed to flush global state store %s", store.name()),
+                            string.Format("Failed to flush global state store %s", store.name),
                             e
                         );
                     }

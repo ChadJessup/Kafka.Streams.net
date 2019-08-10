@@ -118,13 +118,13 @@ namespace Kafka.Streams.State.Internals
             }
 
 
-            public bool loggingEnabled()
+            public bool loggingEnabled
             {
                 return loggingEnabled;
             }
 
 
-            public string name()
+            public string name
             {
                 return storeName;
             }
@@ -141,7 +141,7 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = FullChangeSerde.wrap(valueSerde);
         }
 
-        public override string name()
+        public override string name
         {
             return storeName;
         }

@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.Internals
             this.returnTimestampedStore = returnTimestampedStore;
         }
 
-        public override string name()
+        public override string name
         {
             return name;
         }

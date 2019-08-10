@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
                     case SHUT_DOWN:
                         throw new StreamsException(string.Format(
                             "%s buffer exceeded its max capacity. Currently [%d/%d] records and [%d/%d] bytes.",
-                            internalProcessorContext.currentNode().name(),
+                            internalProcessorContext.currentNode().name,
                             buffer.numRecords(), maxRecords,
                             buffer.bufferSize(), maxBytes
                         ));

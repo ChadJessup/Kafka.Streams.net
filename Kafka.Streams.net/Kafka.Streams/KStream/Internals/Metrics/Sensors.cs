@@ -33,14 +33,14 @@ namespace Kafka.Streams.KStream.Internals.Metrics
             StreamsMetricsImpl metrics = context.metrics();
             Sensor sensor = metrics.nodeLevelSensor(
                context.taskId().ToString(),
-               context.currentNode().name(),
+               context.currentNode().name,
                LATE_RECORD_DROP,
                RecordingLevel.INFO
            );
             StreamsMetricsImpl.AddInvocationRateAndCount(
                 sensor,
                 PROCESSOR_NODE_METRICS_GROUP,
-                metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, context.currentNode().name()),
+                metrics.tagMap("task-id", context.taskId().ToString(), PROCESSOR_NODE_ID_TAG, context.currentNode().name),
                 LATE_RECORD_DROP
             );
             return sensor;
@@ -91,7 +91,7 @@ namespace Kafka.Streams.KStream.Internals.Metrics
 
             Dictionary<string, string> tags = metrics.tagMap(
                "task-id", context.taskId().ToString(),
-               PROCESSOR_NODE_ID_TAG, context.currentNode().name()
+               PROCESSOR_NODE_ID_TAG, context.currentNode().name
            );
 
             sensor.Add(

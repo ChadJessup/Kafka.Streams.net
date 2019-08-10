@@ -43,7 +43,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             TreeMap<Bytes, byte[]> treeMap = toTreeMap();
-            return new DelegatingPeekingKeyValueIterator<>(name(),
+            return new DelegatingPeekingKeyValueIterator<>(name,
                 new MemoryNavigableLRUCache.CacheIterator(treeMap.navigableKeySet()
                     .subSet(from, true, to, true).iterator(), treeMap));
         }

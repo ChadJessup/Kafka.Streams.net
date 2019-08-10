@@ -20,6 +20,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
@@ -137,7 +138,7 @@ namespace Kafka.Streams.Processor.Internals
             // build global state stores
             foreach (var storeBuilder in globalStateBuilders.Values)
             {
-                globalStateStores.Add(storeBuilder.name(), storeBuilder.build());
+                globalStateStores.Add(storeBuilder.name, storeBuilder.build());
             }
 
             return this;
@@ -163,13 +164,17 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (string topic in topics)
             {
-                topic = topic ?? throw new System.ArgumentNullException("topic names cannot be null", nameof(topic));
+                if (topic == null)
+                {
+                    throw new System.ArgumentNullException("topic names cannot be null", nameof(topic));
+                }
+
                 validateTopicNotAlreadyRegistered(topic);
                 maybeAddToResetList(earliestResetTopics, latestResetTopics, offsetReset, topic);
                 sourceTopicNames.Add(topic);
             }
 
-            nodeFactories.Add(name, new SourceNodeFactory(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
+            nodeFactories.Add(name, new SourceNodeFactory<K, V>(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
             nodeToSourceTopics.Add(name, topics.ToList());
             nodeGrouper.add(name);
             nodeGroups = null;
@@ -367,12 +372,12 @@ namespace Kafka.Streams.Processor.Internals
             where T : IStateStore
         {
             storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("storeBuilder can't be null", nameof(storeBuilder));
-            if (!allowOverride && stateFactories.ContainsKey(storeBuilder.name()))
+            if (!allowOverride && stateFactories.ContainsKey(storeBuilder.name))
             {
-                throw new TopologyException("IStateStore " + storeBuilder.name() + " is already.Added.");
+                throw new TopologyException("IStateStore " + storeBuilder.name + " is already.Added.");
             }
 
-            stateFactories.Add(storeBuilder.name(), new StateStoreFactory<T>(storeBuilder));
+            stateFactories.Add(storeBuilder.name, new StateStoreFactory<T>(storeBuilder));
 
             if (processorNames != null)
             {
@@ -382,7 +387,7 @@ namespace Kafka.Streams.Processor.Internals
                     {
                         throw new System.ArgumentNullException("processor name must not be null", nameof(processorName));
                     }
-                    connectProcessorAndStateStore(processorName, storeBuilder.name());
+                    connectProcessorAndStateStore(processorName, storeBuilder.name);
                 }
             }
             nodeGroups = null;
@@ -403,8 +408,8 @@ namespace Kafka.Streams.Processor.Internals
                                          topic,
                                          processorName,
                                          stateUpdateSupplier,
-                                         storeBuilder.name(),
-                                         storeBuilder.loggingEnabled());
+                                         storeBuilder.name,
+                                         storeBuilder.loggingEnabled);
             validateTopicNotAlreadyRegistered(topic);
 
             string[] topics = { topic };
@@ -423,12 +428,12 @@ namespace Kafka.Streams.Processor.Internals
                 valueDeserializer));
             nodeToSourceTopics.Add(sourceName, Arrays.asList(topics));
             nodeGrouper.add(sourceName);
-            nodeFactory.addStateStore(storeBuilder.name());
+            nodeFactory.addStateStore(storeBuilder.name);
             nodeFactories.Add(processorName, nodeFactory);
             nodeGrouper.add(processorName);
             nodeGrouper.unite(processorName, predecessors);
-            globalStateBuilders.Add(storeBuilder.name(), storeBuilder);
-            connectSourceStoreAndTopic(storeBuilder.name(), topic);
+            globalStateBuilders.Add(storeBuilder.name, storeBuilder);
+            connectSourceStoreAndTopic(storeBuilder.name, topic);
             nodeGroups = null;
         }
 
@@ -465,8 +470,9 @@ namespace Kafka.Streams.Processor.Internals
             nodeGroups = null;
         }
 
-        public void connectSourceStoreAndTopic(string sourceStoreName,
-                                                string topic)
+        public void connectSourceStoreAndTopic(
+            string sourceStoreName,
+            string topic)
         {
             if (storeToChangelogTopic.ContainsKey(sourceStoreName))
             {
@@ -486,12 +492,13 @@ namespace Kafka.Streams.Processor.Internals
             copartitionSourceGroups.Add(new HashSet<string>(sourceNodes));
         }
 
-        private void validateGlobalStoreArguments(string sourceName,
-                                                  string topic,
-                                                  string processorName,
-                                                  IProcessorSupplier stateUpdateSupplier,
-                                                  string storeName,
-                                                  bool loggingEnabled)
+        private void validateGlobalStoreArguments(
+            string sourceName,
+            string topic,
+            string processorName,
+            IProcessorSupplier stateUpdateSupplier,
+            string storeName,
+            bool loggingEnabled)
         {
             sourceName = sourceName ?? throw new System.ArgumentNullException("sourceName must not be null", nameof(sourceName));
             topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
@@ -519,8 +526,9 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private void connectProcessorAndStateStore(string processorName,
-                                                   string stateStoreName)
+        private void connectProcessorAndStateStore(
+            string processorName,
+            string stateStoreName)
         {
             if (globalStateBuilders.ContainsKey(stateStoreName))
             {
@@ -713,7 +721,7 @@ namespace Kafka.Streams.Processor.Internals
             HashSet<string> nodeGroup;
             if (topicGroupId != null)
             {
-                nodeGroup = nodeGroups()[topicGroupId];
+                nodeGroup = nodeGroups()[topicGroupId.Value];
             }
             else
             {
@@ -751,7 +759,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private HashSet<string> globalNodeGroups()
         {
-            HashSet<string> globalGroups = new HashSet<>();
+            HashSet<string> globalGroups = new HashSet<string>();
             foreach (KeyValuePair<int, HashSet<string>> nodeGroup in nodeGroups())
             {
                 HashSet<string> nodes = nodeGroup.Value;
@@ -783,14 +791,15 @@ namespace Kafka.Streams.Processor.Internals
                 if (nodeGroup == null || nodeGroup.Contains(factory.name))
                 {
                     ProcessorNode node = factory.build();
-                    processorMap.Add(node.name(), node);
+                    processorMap.Add(node.name, node);
 
                     if (factory is ProcessorNodeFactory)
                     {
-                        buildProcessorNode(processorMap,
-                                           stateStoreMap,
-                                           (ProcessorNodeFactory)factory,
-                                           node);
+                        buildProcessorNode(
+                            processorMap,
+                            stateStoreMap,
+                            (ProcessorNodeFactory)factory,
+                            node);
 
                     }
                     else if (factory is SourceNodeFactory)
@@ -827,11 +836,12 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        private void buildSinkNode(Dictionary<string, ProcessorNode> processorMap,
-                                   Dictionary<string, SinkNode> topicSinkMap,
-                                   HashSet<string> repartitionTopics,
-                                   SinkNodeFactory sinkNodeFactory,
-                                   SinkNode node)
+        private void buildSinkNode(
+            Dictionary<string, ProcessorNode> processorMap,
+            Dictionary<string, SinkNode> topicSinkMap,
+            HashSet<string> repartitionTopics,
+            SinkNodeFactory sinkNodeFactory,
+            SinkNode node)
         {
 
             foreach (string predecessor in sinkNodeFactory.predecessors)
@@ -858,10 +868,11 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private void buildSourceNode(Dictionary<string, SourceNode> topicSourceMap,
-                                     HashSet<string> repartitionTopics,
-                                     SourceNodeFactory sourceNodeFactory,
-                                     SourceNode node)
+        private void buildSourceNode(
+            Dictionary<string, SourceNode> topicSourceMap,
+            HashSet<string> repartitionTopics,
+            SourceNodeFactory sourceNodeFactory,
+            SourceNode node)
         {
 
             List<string> topics = (sourceNodeFactory.pattern != null) ?
@@ -906,7 +917,7 @@ namespace Kafka.Streams.Processor.Internals
                         StateStoreFactory stateStoreFactory = stateFactories[stateStoreName];
 
                         // remember the changelog topic if this state store is change-logging enabled
-                        if (stateStoreFactory.loggingEnabled() && !storeToChangelogTopic.ContainsKey(stateStoreName))
+                        if (stateStoreFactory.loggingEnabled && !storeToChangelogTopic.ContainsKey(stateStoreName))
                         {
                             string changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, stateStoreName);
                             storeToChangelogTopic.Add(stateStoreName, changelogTopic);
@@ -1016,11 +1027,11 @@ namespace Kafka.Streams.Processor.Internals
                     //.Add to the changelog topics
                     foreach (StateStoreFactory stateFactory in stateFactories.Values)
                     {
-                        if (stateFactory.loggingEnabled() && stateFactory.users().Contains(node))
+                        if (stateFactory.loggingEnabled && stateFactory.users().Contains(node))
                         {
-                            string topicName = storeToChangelogTopic.ContainsKey(stateFactory.name()) ?
-                                    storeToChangelogTopic[stateFactory.name()] :
-                                    ProcessorStateManager.storeChangelogTopic(applicationId, stateFactory.name());
+                            string topicName = storeToChangelogTopic.ContainsKey(stateFactory.name) ?
+                                    storeToChangelogTopic[stateFactory.name] :
+                                    ProcessorStateManager.storeChangelogTopic(applicationId, stateFactory.name);
                             if (!stateChangelogTopics.ContainsKey(topicName))
                             {
                                 InternalTopicConfig internalTopicConfig =
@@ -1321,13 +1332,13 @@ namespace Kafka.Streams.Processor.Internals
             return false;
         }
 
-        private static class NodeComparator : Comparator<TopologyDescription.INode>, Serializable
+        private static class NodeComparator : Comparator<INode>, Serializable
         {
 
 
 
-            public int compare(TopologyDescription.INode node1,
-                               TopologyDescription.INode node2)
+            public int compare(INode node1,
+                               INode node2)
             {
                 if (node1.Equals(node2))
                 {
@@ -1345,7 +1356,7 @@ namespace Kafka.Streams.Processor.Internals
                 else
                 {
 
-                    return node1.name().CompareTo(node2.name());
+                    return node1.name.CompareTo(node2.name);
                 }
             }
         }
@@ -1357,7 +1368,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             node.size += delta;
 
-            foreach (TopologyDescription.INode predecessor in node.predecessors())
+            foreach (INode predecessor in node.predecessors())
             {
                 updateSize((AbstractNode)predecessor, delta);
             }
@@ -1379,7 +1390,7 @@ namespace Kafka.Streams.Processor.Internals
             // connect each node to its predecessors and successors
             foreach (AbstractNode node in nodesByName.Values)
             {
-                foreach (string predecessorName in nodeFactories[node.name()].predecessors)
+                foreach (string predecessorName in nodeFactories[node.name].predecessors)
                 {
                     AbstractNode predecessor = nodesByName[predecessorName];
                     node.AddPredecessor(predecessor);
@@ -1479,7 +1490,7 @@ namespace Kafka.Streams.Processor.Internals
     }
 
 
-    public void addSuccessor(TopologyDescription.INode successor)
+    public void addSuccessor(INode successor)
     {
         throw new InvalidOperationException("Sinks don't have successors.");
     }
@@ -1514,10 +1525,10 @@ namespace Kafka.Streams.Processor.Internals
     }
 
 
-    public int GetHashCode()
+    public override int GetHashCode()
     {
         // omit predecessors as it might change and alter the hash code
-        return Objects.hash(name, topicNameExtractor);
+        return (name, topicNameExtractor).GetHashCode();
     }
 }
 
@@ -1525,14 +1536,14 @@ private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreCom
 
 private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
 
-private static string nodeNames(HashSet<TopologyDescription.INode> nodes)
+private static string nodeNames(HashSet<INode> nodes)
 {
     StringBuilder sb = new StringBuilder();
     if (nodes.Any())
     {
         foreach (INode n in nodes)
         {
-            sb.Append(n.name());
+            sb.Append(n.name);
             sb.Append(", ");
         }
         sb.Remove(sb.Length - 1, 1);

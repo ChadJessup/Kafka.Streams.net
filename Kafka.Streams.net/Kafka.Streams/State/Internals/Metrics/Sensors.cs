@@ -62,7 +62,7 @@ namespace Kafka.Streams.State.Internals.Metrics
 
             Sensor sensor = metrics.storeLevelSensor(
                 context.taskId().ToString(),
-                store.name(),
+                store.name,
                 sensorName,
                 RecordingLevel.DEBUG
             );
@@ -71,7 +71,7 @@ namespace Kafka.Streams.State.Internals.Metrics
 
             Dictionary<string, string> tags = metrics.tagMap(
                 "task-id", context.taskId().ToString(),
-                "buffer-id", store.name()
+                "buffer-id", store.name
             );
 
             sensor.Add(

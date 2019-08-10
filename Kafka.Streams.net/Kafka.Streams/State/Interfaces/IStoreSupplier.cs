@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Interfaces
          *
          * @return the name of this state store supplier
          */
-        string name();
+        string name;
 
         /**
          * Return a new {@link IStateStore} instance.

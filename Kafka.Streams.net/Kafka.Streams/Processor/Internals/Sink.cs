@@ -15,40 +15,49 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+
 namespace Kafka.Streams.Processor.Internals
 {
-    public class InternalTopologyBuilder
+    public class Sink<K, V> : AbstractNode, ISink<K, V>
     {
-        public static class Sink : AbstractNode, TopologyDescription.Sink
+        private ITopicNameExtractor<K, V> _topicNameExtractor;
+
+        public Sink(
+            string name,
+            ITopicNameExtractor<K, V> topicNameExtractor)
+            : base(name)
         {
+            this._topicNameExtractor = topicNameExtractor;
+        }
 
-            private ITopicNameExtractor topicNameExtractor;
+        public Sink(
+            string name,
+            string topic)
+            : base(name)
+        {
+            this._topicNameExtractor = new StaticTopicNameExtractor<K, V>(topic);
+        }
 
-            public Sink(string name,
-                        ITopicNameExtractor topicNameExtractor)
-                : base(name)
+        public string Topic
+        {
+            get
             {
-                this.topicNameExtractor = topicNameExtractor;
-            }
-
-            public Sink(string name,
-                        string topic)
-                : base(name)
-            {
-                this.topicNameExtractor = new StaticTopicNameExtractor(topic);
-            }
-
-
-            public string Topic
-            {
-                if (topicNameExtractor is StaticTopicNameExtractor)
+                if (_topicNameExtractor is StaticTopicNameExtractor<K, V>)
                 {
-                    return ((StaticTopicNameExtractor) topicNameExtractor).topicName;
+                    return ((StaticTopicNameExtractor<K, V>)_topicNameExtractor).topicName;
                 }
                 else
                 {
-
                     return null;
                 }
             }
+        }
+
+        public ITopicNameExtractor<K, V> topicNameExtractor()
+        {
+            return this._topicNameExtractor;
+        }
+    }
 }

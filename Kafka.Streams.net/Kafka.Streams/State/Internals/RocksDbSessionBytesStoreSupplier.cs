@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
             this.retentionPeriod = retentionPeriod;
         }
 
-        public override string name()
+        public override string name
         {
             return name;
         }

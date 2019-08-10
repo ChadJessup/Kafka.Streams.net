@@ -22,7 +22,7 @@ using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class TimestampedCacheFlushListener<K, V> : CacheFlushListener<K, ValueAndTimestamp<V>>
+    public class TimestampedCacheFlushListener<K, V> : ICacheFlushListener<K, ValueAndTimestamp<V>>
     {
         private IInternalProcessorContext<K, V> context;
         private ProcessorNode<K, V> myNode;

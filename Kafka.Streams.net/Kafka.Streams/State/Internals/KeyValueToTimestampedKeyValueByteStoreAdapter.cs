@@ -83,9 +83,9 @@ namespace Kafka.Streams.State.Internals
             return convertToTimestampedFormat(store.delete(key));
         }
 
-        public override string name()
+        public override string name
         {
-            return store.name();
+            return store.name;
         }
 
         public override void init(IProcessorContext<K, V> context,

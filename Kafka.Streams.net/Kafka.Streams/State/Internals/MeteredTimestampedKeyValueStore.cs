@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.Internals
         void initStoreSerde(IProcessorContext<K, V> context)
         {
             serdes = new StateSerdes<>(
-                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
+                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
                 keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
                 valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>)context.valueSerde) : valueSerde);
         }

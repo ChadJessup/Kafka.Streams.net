@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public string name()
+        public string name
         {
             return name;
         }

@@ -55,7 +55,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (storeSupplier != null)
             {
-                return storeSupplier.name();
+                return storeSupplier.name;
             }
 
             return _storeName;

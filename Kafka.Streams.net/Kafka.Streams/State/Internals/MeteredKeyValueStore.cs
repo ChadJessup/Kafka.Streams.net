@@ -55,19 +55,19 @@ namespace Kafka.Streams.State.Internals
             taskName = context.taskId().ToString();
             string metricsGroup = "stream-" + metricScope + "-metrics";
             Dictionary<string, string> taskTags = metrics.tagMap("task-id", taskName, metricScope + "-id", "all");
-            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name());
+            Dictionary<string, string> storeTags = metrics.tagMap("task-id", taskName, metricScope + "-id", name);
 
             initStoreSerde(context);
 
-            putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-if-absent", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-all", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "all", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
-            Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name(), taskTags, storeTags);
+            putTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            putIfAbsentTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-if-absent", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            putAllTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "put-all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            getTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "get", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            allTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "all", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            rangeTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "range", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            flushTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "flush", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            deleteTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "delete", metrics, metricsGroup, taskName, name, taskTags, storeTags);
+            Sensor restoreTime = createTaskAndStoreLatencyAndThroughputSensors(DEBUG, "restore", metrics, metricsGroup, taskName, name, taskTags, storeTags);
 
             // register and possibly restore the state from the logs
             if (restoreTime.shouldRecord())
@@ -90,13 +90,13 @@ namespace Kafka.Streams.State.Internals
         void initStoreSerde(IProcessorContext<K, V> context)
         {
             serdes = new StateSerdes<>(
-                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
+                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
                 keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
                 valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
         }
 
 
-        public override bool setFlushListener(CacheFlushListener<K, V> listener,
+        public override bool setFlushListener(ICacheFlushListener<K, V> listener,
                                         bool sendOldValues)
         {
             IKeyValueStore<Bytes, byte[]> wrapped = wrapped;
@@ -251,7 +251,7 @@ namespace Kafka.Streams.State.Internals
         public override void close()
         {
             base.close();
-            metrics.removeAllStoreLevelSensors(taskName, name());
+            metrics.removeAllStoreLevelSensors(taskName, name);
         }
 
         private interface Action<V>

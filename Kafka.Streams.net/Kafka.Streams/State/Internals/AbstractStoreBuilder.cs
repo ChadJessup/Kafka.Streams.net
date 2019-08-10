@@ -75,7 +75,7 @@ namespace Kafka.Streams.State.Internals
             return this;
         }
 
-        public bool loggingEnabled()
+        public bool loggingEnabled
         {
             return enableLogging;
         }

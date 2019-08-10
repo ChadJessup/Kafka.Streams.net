@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
             this.name = name;
         }
 
-        public override string name()
+        public override string name
         {
             return name;
         }

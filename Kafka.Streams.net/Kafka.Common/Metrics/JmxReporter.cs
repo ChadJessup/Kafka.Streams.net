@@ -120,7 +120,7 @@
 ////        MetricName metricName = metric.metricName;
 ////        KafkaMbean mbean = this.mbeans[mBeanName];
 ////        if (mbean != null)
-////            mbean.removeAttribute(metricName.name());
+////            mbean.removeAttribute(metricName.name);
 ////        return mbean;
 ////    }
 
@@ -134,7 +134,7 @@
 ////            if (!this.mbeans.ContainsKey(mBeanName))
 ////                mbeans.Add(mBeanName, new KafkaMbean(mBeanName));
 ////            KafkaMbean mbean = this.mbeans[mBeanName];
-////            mbean.setAttribute(metricName.name(), metric);
+////            mbean.setAttribute(metricName.name, metric);
 ////            return mbean;
 ////        } catch (JMException e)
 //{
@@ -179,8 +179,8 @@
 ////        try
 //{
 
-////            if (server.isRegistered(mbean.name()))
-////                server.unregisterMBean(mbean.name());
+////            if (server.isRegistered(mbean.name))
+////                server.unregisterMBean(mbean.name);
 ////        } catch (JMException e)
 //{
 ////            throw new KafkaException("Error unregistering mbean", e);
@@ -193,10 +193,10 @@
 ////        try
 //{
 
-////            ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, mbean.name());
+////            ManagementFactory.getPlatformMBeanServer().registerMBean(mbean, mbean.name);
 ////        } catch (JMException e)
 //{
-////            throw new KafkaException("Error registering mbean " + mbean.name(), e);
+////            throw new KafkaException("Error registering mbean " + mbean.name, e);
 ////        }
 ////    }
 
@@ -211,7 +211,7 @@
 ////            this.objectName = new ObjectName(mbeanName);
 ////        }
 
-////        public ObjectName name()
+////        public ObjectName name
 //{
 ////            return objectName;
 ////        }

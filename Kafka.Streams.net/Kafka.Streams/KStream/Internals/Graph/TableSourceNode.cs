@@ -121,7 +121,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                     if (shouldReuseSourceTopicForChangelog)
                     {
                         storeBuilder.withLoggingDisabled();
-                        topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name(), topicName);
+                        topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name, topicName);
                     }
                 }
             }

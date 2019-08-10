@@ -30,13 +30,14 @@ namespace Kafka.Streams.KStream.Internals.Graph
         protected ProcessorParameters<K, V> processorParameters;
 
 
-        public BaseRepartitionNode(string nodeName,
-                             string sourceName,
-                             ProcessorParameters processorParameters,
-                             ISerde<K> keySerde,
-                             ISerde<V> valueSerde,
-                             string sinkName,
-                             string repartitionTopic)
+        public BaseRepartitionNode(
+            string nodeName,
+            string sourceName,
+            ProcessorParameters<K, V> processorParameters,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde,
+            string sinkName,
+            string repartitionTopic)
             : base(nodeName)
         {
             this.keySerde = keySerde;
@@ -47,12 +48,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.processorParameters = processorParameters;
         }
 
-        abstract ISerializer<V> getValueSerializer();
+        public abstract ISerializer<V> getValueSerializer();
 
-        abstract IDeserializer<V> getValueDeserializer();
+        public abstract IDeserializer<V> getValueDeserializer();
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "BaseRepartitionNode{" +
                    "keySerde=" + keySerde +

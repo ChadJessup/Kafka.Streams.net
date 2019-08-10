@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
                materialized.keySerde,
                materialized.valueSerde);
 
-            if (materialized.loggingEnabled())
+            if (materialized.loggingEnabled)
             {
                 builder.withLoggingEnabled(materialized.logConfig());
             }

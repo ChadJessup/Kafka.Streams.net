@@ -15,7 +15,10 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
@@ -56,14 +59,18 @@ namespace Kafka.Streams.KStream.Internals
             this.userProvidedRepartitionTopicName = groupedInternal.name;
         }
 
-        IKTable<KR, VR> build(string functionName,
-                                       StoreBuilder<IStateStore> storeBuilder,
-                                       KStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
-                                       string queryableStoreName,
-                                       ISerde<KR> keySerde,
-                                       ISerde<VR> valSerde)
+        IKTable<KR, VR> build<KR, VR>(
+            string functionName,
+            IStoreBuilder<IStateStore> storeBuilder,
+            IKStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,
+            string queryableStoreName,
+            ISerde<KR> keySerde,
+            ISerde<VR> valSerde)
         {
-            assert queryableStoreName == null || queryableStoreName.Equals(storeBuilder.name());
+            if(queryableStoreName == null || queryableStoreName.Equals(storeBuilder.name))
+            {
+
+            }
 
             string aggFunctionName = builder.newProcessorName(functionName);
 
@@ -73,7 +80,7 @@ namespace Kafka.Streams.KStream.Internals
             if (repartitionRequired)
             {
                 OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder = optimizableRepartitionNodeBuilder();
-                string repartitionTopicPrefix = userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : storeBuilder.name();
+                string repartitionTopicPrefix = userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : storeBuilder.name;
                 sourceName = createRepartitionSource(repartitionTopicPrefix, repartitionNodeBuilder);
 
                 // First time through we need to create a repartition node.
@@ -90,11 +97,10 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             StatefulProcessorNode<K, V> statefulProcessorNode =
-               new StatefulProcessorNode<>(
+               new StatefulProcessorNode<K, V>(
                    aggFunctionName,
-                   new ProcessorParameters<>(aggregateSupplier, aggFunctionName),
-                   storeBuilder
-               );
+                   new ProcessorParameters<K, V>(aggregateSupplier, aggFunctionName),
+                   storeBuilder);
 
             builder.addGraphNode(parentNode, statefulProcessorNode);
 
@@ -116,11 +122,12 @@ namespace Kafka.Streams.KStream.Internals
                                                 OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
         {
 
-            return KStreamImpl.createRepartitionedSource(builder,
-                                                         keySerde,
-                                                         valueSerde,
-                                                         repartitionTopicNamePrefix,
-                                                         optimizableRepartitionNodeBuilder);
+            return KStreamImpl<K, V>.createRepartitionedSource(
+                builder,
+                keySerde,
+                valueSerde,
+                repartitionTopicNamePrefix,
+                optimizableRepartitionNodeBuilder);
 
         }
     }

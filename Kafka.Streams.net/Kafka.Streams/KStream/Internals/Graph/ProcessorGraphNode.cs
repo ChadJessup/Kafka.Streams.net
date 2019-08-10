@@ -19,10 +19,6 @@ using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-
-
-
-
     /**
      * Used to represent any type of stateless operation:
      *
@@ -30,24 +26,14 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class ProcessorGraphNode<K, V> : StreamsGraphNode
     {
+        public ProcessorParameters<K, V> processorParameters { get; }
 
-
-        private ProcessorParameters<K, V> processorParameters;
-
-        public ProcessorGraphNode(string nodeName,
-                                   ProcessorParameters<K, V> processorParameters)
+        public ProcessorGraphNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters)
             : base(nodeName)
         {
-
-
-            this.processorParameters = processorParameters;
         }
-
-        public ProcessorParameters processorParameters()
-        {
-            return processorParameters;
-        }
-
 
         public string ToString()
         {
@@ -57,10 +43,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
 
-            topologyBuilder.AddProcessor(processorParameters.processorName(), processorParameters.processorSupplier(), parentNodeNames());
+            topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.processorSupplier, parentNodeNames());
         }
     }
 }

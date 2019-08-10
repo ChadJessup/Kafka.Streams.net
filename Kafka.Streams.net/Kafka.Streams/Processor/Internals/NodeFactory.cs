@@ -17,11 +17,14 @@
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class NodeFactory<K, V>
+    public abstract class NodeFactory
     {
-        public string name { get; }
-        public string[] predecessors { get; }
+        public string name { get; protected set; }
+        public string[] predecessors { get; protected set; }
+    }
 
+    public abstract class NodeFactory<K, V> : NodeFactory
+    {
         public NodeFactory(
             string name,
             string[] predecessors)
@@ -32,6 +35,6 @@ namespace Kafka.Streams.Processor.Internals
 
         public abstract ProcessorNode<K, V> build();
 
-        public abstract AbstractNode<K, V> describe();
+        public abstract AbstractNode describe();
     }
 }

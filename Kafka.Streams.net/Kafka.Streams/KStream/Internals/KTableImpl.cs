@@ -470,7 +470,7 @@ namespace Kafka.Streams.KStream.Internals
             string name;
             if (suppressed is NamedSuppressed)
             {
-                string givenName = ((NamedSuppressed<object>)suppressed).name();
+                string givenName = ((NamedSuppressed<object>)suppressed).name;
                 name = givenName != null ? givenName : builder.newProcessorName(SUPPRESS_NAME);
             }
             else
@@ -481,7 +481,7 @@ namespace Kafka.Streams.KStream.Internals
             SuppressedInternal<K> suppressedInternal = buildSuppress(suppressed, name);
 
             string storeName =
-               suppressedInternal.name() != null ? suppressedInternal.name() + "-store" : builder.newStoreName(SUPPRESS_NAME);
+               suppressedInternal.name != null ? suppressedInternal.name + "-store" : builder.newStoreName(SUPPRESS_NAME);
 
             ProcessorSupplier<K, Change<V>> suppressionSupplier = new KTableSuppressProcessorSupplier<>(
                suppressedInternal,
