@@ -18,54 +18,55 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
-using Kafka.Streams.State.KeyValueStore;
+    using Kafka.Common.serialization.Serde;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Common.Utils.Time;
+    using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
+    using Kafka.Streams.State.KeyValueStore;
 
 
 
-public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
-{
-
-    private IKeyValueBytesStoreSupplier storeSupplier;
-
-    public KeyValueStoreBuilder(IKeyValueBytesStoreSupplier storeSupplier,
-                                ISerde<K> keySerde,
-                                ISerde<V> valueSerde,
-                                ITime time)
-        : base(storeSupplier.name(), keySerde, valueSerde, time)
+    public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
     {
-        storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
-        this.storeSupplier = storeSupplier;
-    }
 
-    public override IKeyValueStore<K, V> build()
-    {
-        return new MeteredKeyValueStore<>(
-            maybeWrapCaching(maybeWrapLogging(storeSupplier())],
-            storeSupplier.metricsScope(),
-            time,
-            keySerde,
-            valueSerde);
-    }
+        private IKeyValueBytesStoreSupplier storeSupplier;
 
-    private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
-    {
-        if (!enableCaching)
+        public KeyValueStoreBuilder(IKeyValueBytesStoreSupplier storeSupplier,
+                                    ISerde<K> keySerde,
+                                    ISerde<V> valueSerde,
+                                    ITime time)
+            : base(storeSupplier.name(), keySerde, valueSerde, time)
         {
-            return inner;
+            storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
+            this.storeSupplier = storeSupplier;
         }
-        return new CachingKeyValueStore(inner);
-    }
 
-    private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
-    {
-        if (!enableLogging)
+        public override IKeyValueStore<K, V> build()
         {
-            return inner;
+            return new MeteredKeyValueStore<>(
+                maybeWrapCaching(maybeWrapLogging(storeSupplier())],
+                storeSupplier.metricsScope(),
+                time,
+                keySerde,
+                valueSerde);
         }
-        return new ChangeLoggingKeyValueBytesStore(inner);
+
+        private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
+        {
+            if (!enableCaching)
+            {
+                return inner;
+            }
+            return new CachingKeyValueStore(inner);
+        }
+
+        private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
+        {
+            if (!enableLogging)
+            {
+                return inner;
+            }
+            return new ChangeLoggingKeyValueBytesStore(inner);
+        }
     }
 }

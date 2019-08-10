@@ -14,33 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+
 namespace Kafka.Streams.Processor.Internals
 {
+    /**
+     * Static topic name extractor
+     */
+    public class StaticTopicNameExtractor<K, V> : ITopicNameExtractor<K, V>
+    {
+
+        public string topicName;
+
+        public StaticTopicNameExtractor(string topicName)
+        {
+            this.topicName = topicName;
+        }
+
+        public string extract(K key, V value, IRecordContext recordContext)
+        {
+            return topicName;
+        }
 
 
-
-
-
-/**
- * Static topic name extractor
- */
-public class StaticTopicNameExtractor<K, V> : ITopicNameExtractor<K, V> {
-
-    public string topicName;
-
-    public StaticTopicNameExtractor(string topicName)
-{
-        this.topicName = topicName;
-    }
-
-    public string extract(K key, V value, IRecordContext recordContext)
-{
-        return topicName;
-    }
-
-
-    public string ToString()
-{
-        return "StaticTopicNameExtractor(" + topicName + ")";
+        public string ToString()
+        {
+            return "StaticTopicNameExtractor(" + topicName + ")";
+        }
     }
 }

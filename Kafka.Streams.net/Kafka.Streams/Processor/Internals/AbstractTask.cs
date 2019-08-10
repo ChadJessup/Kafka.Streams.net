@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processor.Internals
     using System.Linq;
     using System.Text;
 
-    public abstract class AbstractTask<K, V> : Task
+    public abstract class AbstractTask<K, V> : ITask
     {
         TaskId id;
         string applicationId;

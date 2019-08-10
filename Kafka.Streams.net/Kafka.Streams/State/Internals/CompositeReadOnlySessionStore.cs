@@ -18,69 +18,72 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.KStream.Windowed;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.IQueryableStoreType;
-using Kafka.Streams.State.ReadOnlySessionStore;
+    using Kafka.Streams.Errors.InvalidStateStoreException;
+    using Kafka.Streams.KStream.Windowed;
+    using Kafka.Streams.State.IKeyValueIterator;
+    using Kafka.Streams.State.IQueryableStoreType;
+    using Kafka.Streams.State.ReadOnlySessionStore;
 
 
 
 
-/**
- * Wrapper over the underlying {@link ReadOnlySessionStore}s found in a {@link
- * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
- */
-public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
-{
-    private IStateStoreProvider storeProvider;
-    private IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;
-    private string storeName;
+    /**
+     * Wrapper over the underlying {@link ReadOnlySessionStore}s found in a {@link
+     * org.apache.kafka.streams.processor.Internals.ProcessorTopology}
+     */
+    public class CompositeReadOnlySessionStore<K, V> : ReadOnlySessionStore<K, V>
+    {
+        private IStateStoreProvider storeProvider;
+        private IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType;
+        private string storeName;
 
-    public CompositeReadOnlySessionStore(IStateStoreProvider storeProvider,
-                                         IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType,
-                                         string storeName)
-{
-        this.storeProvider = storeProvider;
-        this.queryableStoreType = queryableStoreType;
-        this.storeName = storeName;
-    }
-
-    public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
-{
-        key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
-        List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
-        foreach (ReadOnlySessionStore<K, V> store in stores)
-{
-            try
-{
-                IKeyValueIterator<Windowed<K>, V> result = store.fetch(key);
-                if (!result.hasNext())
-{
-                    result.close();
-                } else
-{
-                    return result;
-                }
-            } catch (InvalidStateStoreException ise)
-{
-                throw new InvalidStateStoreException("State store  [" + storeName + "] is not available anymore" +
-                                                             " and may have been migrated to another instance; " +
-                                                             "please re-discover its location from the state metadata. " +
-                                                             "Original error message: " + ise.ToString());
-            }
+        public CompositeReadOnlySessionStore(IStateStoreProvider storeProvider,
+                                             IQueryableStoreType<ReadOnlySessionStore<K, V>> queryableStoreType,
+                                             string storeName)
+        {
+            this.storeProvider = storeProvider;
+            this.queryableStoreType = queryableStoreType;
+            this.storeName = storeName;
         }
-        return KeyValueIterators.emptyIterator();
-    }
 
-    public override IKeyValueIterator<Windowed<K>, V> fetch(K from, K to)
-{
-        from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
-        to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
-        INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
-        return new DelegatingPeekingKeyValueIterator<>(storeName,
-                                                       new CompositeKeyValueIterator<>(
-                                                               storeProvider.stores(storeName, queryableStoreType).iterator(),
-                                                               nextIteratorFunction));
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
+        {
+            key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
+            List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
+            foreach (ReadOnlySessionStore<K, V> store in stores)
+            {
+                try
+                {
+                    IKeyValueIterator<Windowed<K>, V> result = store.fetch(key);
+                    if (!result.hasNext())
+                    {
+                        result.close();
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+                catch (InvalidStateStoreException ise)
+                {
+                    throw new InvalidStateStoreException("State store  [" + storeName + "] is not available anymore" +
+                                                                 " and may have been migrated to another instance; " +
+                                                                 "please re-discover its location from the state metadata. " +
+                                                                 "Original error message: " + ise.ToString());
+                }
+            }
+            return KeyValueIterators.emptyIterator();
+        }
+
+        public override IKeyValueIterator<Windowed<K>, V> fetch(K from, K to)
+        {
+            from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
+            to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
+            INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
+            return new DelegatingPeekingKeyValueIterator<>(storeName,
+                                                           new CompositeKeyValueIterator<>(
+                                                                   storeProvider.stores(storeName, queryableStoreType).iterator(),
+                                                                   nextIteratorFunction));
+        }
     }
 }

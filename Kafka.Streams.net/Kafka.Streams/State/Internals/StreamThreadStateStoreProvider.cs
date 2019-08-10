@@ -47,7 +47,7 @@ namespace Kafka.Streams.State.Internals
                         streamThread.state() + ", not RUNNING");
             }
             List<T> stores = new List<T>();
-            foreach (Task streamTask in streamThread.tasks().Values)
+            foreach (ITask streamTask in streamThread.tasks().Values)
             {
                 IStateStore store = streamTask.getStore(storeName);
                 if (store != null && queryableStoreType.accepts(store))

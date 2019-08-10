@@ -19,35 +19,36 @@ namespace Kafka.Streams.Processor
 
 
 
-using Kafka.Common.annotation.InterfaceStability;
-
-/**
- * Retrieves current wall clock timestamps as {@link System#currentTimeMillis()}.
- * <p>
- * Using this extractor effectively provides <i>processing-time</i> semantics.
- * <p>
- * If you need <i>event-time</i> semantics, use {@link FailOnInvalidTimestamp} with
- * built-in <i>CreateTime</i> or <i>LogAppendTime</i> timestamp (see KIP-32: Add timestamps to Kafka message for details).
- *
- * @see FailOnInvalidTimestamp
- * @see LogAndSkipOnInvalidTimestamp
- * @see UsePreviousTimeOnInvalidTimestamp
- */
-
-public class WallclockTimestampExtractor : ITimestampExtractor
-{
-
+    using Kafka.Common.annotation.InterfaceStability;
 
     /**
-     * Return the current wall clock time as timestamp.
+     * Retrieves current wall clock timestamps as {@link System#currentTimeMillis()}.
+     * <p>
+     * Using this extractor effectively provides <i>processing-time</i> semantics.
+     * <p>
+     * If you need <i>event-time</i> semantics, use {@link FailOnInvalidTimestamp} with
+     * built-in <i>CreateTime</i> or <i>LogAppendTime</i> timestamp (see KIP-32: Add timestamps to Kafka message for details).
      *
-     * @param record a data record
-     * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
-     * @return the current wall clock time, expressed in milliseconds since midnight, January 1, 1970 UTC
+     * @see FailOnInvalidTimestamp
+     * @see LogAndSkipOnInvalidTimestamp
+     * @see UsePreviousTimeOnInvalidTimestamp
      */
 
-    public long extract(ConsumeResult<object, object> record, long partitionTime)
-{
-        return System.currentTimeMillis();
+    public class WallclockTimestampExtractor : ITimestampExtractor
+    {
+
+
+        /**
+         * Return the current wall clock time as timestamp.
+         *
+         * @param record a data record
+         * @param partitionTime the highest extracted valid timestamp of the current record's partition˙ (could be -1 if unknown)
+         * @return the current wall clock time, expressed in milliseconds since midnight, January 1, 1970 UTC
+         */
+
+        public long extract(ConsumeResult<object, object> record, long partitionTime)
+        {
+            return System.currentTimeMillis();
+        }
     }
 }

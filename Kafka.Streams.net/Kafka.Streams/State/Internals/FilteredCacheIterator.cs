@@ -18,91 +18,92 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Streams.KeyValue;
 
 
 
-class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
-{
-    private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
-    private HasNextCondition hasNextCondition;
-    private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
+    class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
+    {
+        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator;
+        private HasNextCondition hasNextCondition;
+        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
-    FilteredCacheIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                          HasNextCondition hasNextCondition,
-                          ICacheFunction cacheFunction)
-{
-        this.cacheIterator = cacheIterator;
-        this.hasNextCondition = hasNextCondition;
-        this.wrappedIterator = new IPeekingKeyValueIterator<Bytes, LRUCacheEntry>()
-{
-            
+        FilteredCacheIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+                              HasNextCondition hasNextCondition,
+                              ICacheFunction cacheFunction)
+        {
+            this.cacheIterator = cacheIterator;
+            this.hasNextCondition = hasNextCondition;
+            this.wrappedIterator = new IPeekingKeyValueIterator<Bytes, LRUCacheEntry>()
+            {
+
+
             public KeyValue<Bytes, LRUCacheEntry> peekNext()
-{
+            {
                 return cachedPair(cacheIterator.peekNext());
             }
 
-            
+
             public void close()
-{
+            {
                 cacheIterator.close();
             }
 
-            
+
             public Bytes peekNextKey()
-{
+            {
                 return cacheFunction.key(cacheIterator.peekNextKey());
             }
 
-            
+
             public bool hasNext()
-{
+            {
                 return cacheIterator.hasNext();
             }
 
-            
+
             public KeyValue<Bytes, LRUCacheEntry> next()
-{
+            {
                 return cachedPair(cacheIterator.next());
             }
 
             private KeyValue<Bytes, LRUCacheEntry> cachedPair(KeyValue<Bytes, LRUCacheEntry> next)
-{
+            {
                 return KeyValue.pair(cacheFunction.key(next.key), next.value);
             }
 
-            
+
             public void Remove()
-{
+            {
                 cacheIterator.Remove();
             }
         };
     }
 
     public override void close()
-{
+    {
         // no-op
     }
 
     public override Bytes peekNextKey()
-{
+    {
         if (!hasNext())
-{
+        {
             throw new NoSuchElementException();
         }
         return cacheIterator.peekNextKey();
     }
 
     public override bool hasNext()
-{
+    {
         return hasNextCondition.hasNext(wrappedIterator);
     }
 
     public override KeyValue<Bytes, LRUCacheEntry> next()
-{
+    {
         if (!hasNext())
-{
+        {
             throw new NoSuchElementException();
         }
         return cacheIterator.next();
@@ -110,14 +111,14 @@ class FilteredCacheIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     }
 
     public override void Remove()
-{
+    {
         throw new InvalidOperationException();
     }
 
     public override KeyValue<Bytes, LRUCacheEntry> peekNext()
-{
+    {
         if (!hasNext())
-{
+        {
             throw new NoSuchElementException();
         }
         return cacheIterator.peekNext();

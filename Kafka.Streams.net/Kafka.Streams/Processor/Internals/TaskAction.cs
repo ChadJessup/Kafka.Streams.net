@@ -18,7 +18,8 @@ namespace Kafka.Streams.Processor.Internals
 {
 
 
-interface TaskAction<T : Task> {
-    string name();
-    void apply(T task);
+    interface TaskAction<T : ITask> {
+        string name();
+        void apply(T task);
+    }
 }

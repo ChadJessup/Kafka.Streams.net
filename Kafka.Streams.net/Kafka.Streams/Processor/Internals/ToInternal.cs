@@ -20,31 +20,32 @@ namespace Kafka.Streams.Processor.Internals
 
 
 
-public class ToInternal : To
-{
+    public class ToInternal : To
+    {
 
-    public ToInternal()
-{
-        base(To.all());
-    }
+        public ToInternal()
+        {
+            base(To.all());
+        }
 
-    public void update(To to)
-{
-        base.update(to);
-    }
+        public void update(To to)
+        {
+            base.update(to);
+        }
 
-    public bool hasTimestamp()
-{
-        return timestamp != -1;
-    }
+        public bool hasTimestamp()
+        {
+            return timestamp != -1;
+        }
 
-    public long timestamp()
-{
-        return timestamp;
-    }
+        public long timestamp()
+        {
+            return timestamp;
+        }
 
-    public string child()
-{
-        return childName;
+        public string child()
+        {
+            return childName;
+        }
     }
 }

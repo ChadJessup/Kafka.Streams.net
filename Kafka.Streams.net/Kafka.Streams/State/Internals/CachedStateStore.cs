@@ -18,14 +18,15 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-public interface CachedStateStore<K, V>
-{
-    /**
-     * Set the {@link CacheFlushListener} to be notified when entries are flushed from the
-     * cache to the underlying {@link org.apache.kafka.streams.processor.IStateStore}
-     * @param listener
-     * @param sendOldValues
-     */
-    bool setFlushListener(CacheFlushListener<K, V> listener,
-                             bool sendOldValues);
+    public interface CachedStateStore<K, V>
+    {
+        /**
+         * Set the {@link CacheFlushListener} to be notified when entries are flushed from the
+         * cache to the underlying {@link org.apache.kafka.streams.processor.IStateStore}
+         * @param listener
+         * @param sendOldValues
+         */
+        bool setFlushListener(CacheFlushListener<K, V> listener,
+                                 bool sendOldValues);
+    }
 }

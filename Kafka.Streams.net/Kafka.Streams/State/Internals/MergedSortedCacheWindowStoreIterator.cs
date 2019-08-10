@@ -18,55 +18,56 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.WindowStoreIterator;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Streams.KeyValue;
+    using Kafka.Streams.State.IKeyValueIterator;
+    using Kafka.Streams.State.WindowStoreIterator;
 
 
 
-/**
- * Merges two iterators. Assumes each of them is sorted by key
- *
- */
-class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<long, long, byte[], byte[]> : WindowStoreIterator<byte[]>
-{
+    /**
+     * Merges two iterators. Assumes each of them is sorted by key
+     *
+     */
+    class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<long, long, byte[], byte[]> : WindowStoreIterator<byte[]>
+    {
 
 
-    MergedSortedCacheWindowStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
-                                         IKeyValueIterator<long, byte[]> storeIterator)
-{
-        base(cacheIterator, storeIterator);
-    }
+        MergedSortedCacheWindowStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+                                             IKeyValueIterator<long, byte[]> storeIterator)
+        {
+            base(cacheIterator, storeIterator);
+        }
 
-    public override KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
-{
-        return pair;
-    }
+        public override KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
+        {
+            return pair;
+        }
 
-    
-    long deserializeCacheKey(Bytes cacheKey)
-{
-        byte[] binaryKey = bytesFromCacheKey(cacheKey);
-        return WindowKeySchema.extractStoreTimestamp(binaryKey);
-    }
 
-    
-    byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
-{
-        return cacheEntry.value();
-    }
+        long deserializeCacheKey(Bytes cacheKey)
+        {
+            byte[] binaryKey = bytesFromCacheKey(cacheKey);
+            return WindowKeySchema.extractStoreTimestamp(binaryKey);
+        }
 
-    public override long deserializeStoreKey(long key)
-{
-        return key;
-    }
 
-    public override int compare(Bytes cacheKey, long storeKey)
-{
-        byte[] binaryKey = bytesFromCacheKey(cacheKey);
+        byte[] deserializeCacheValue(LRUCacheEntry cacheEntry)
+        {
+            return cacheEntry.value();
+        }
 
-        long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
-        return cacheTimestamp.CompareTo(storeKey);
+        public override long deserializeStoreKey(long key)
+        {
+            return key;
+        }
+
+        public override int compare(Bytes cacheKey, long storeKey)
+        {
+            byte[] binaryKey = bytesFromCacheKey(cacheKey);
+
+            long cacheTimestamp = WindowKeySchema.extractStoreTimestamp(binaryKey);
+            return cacheTimestamp.CompareTo(storeKey);
+        }
     }
 }

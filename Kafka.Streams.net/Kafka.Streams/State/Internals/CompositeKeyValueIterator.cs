@@ -18,64 +18,65 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.IKeyValueIterator;
+    using Kafka.Streams.KeyValue;
+    using Kafka.Streams.State.IKeyValueIterator;
 
 
 
 
-class CompositeKeyValueIterator<K, V, StoreType> : IKeyValueIterator<K, V>
-{
+    class CompositeKeyValueIterator<K, V, StoreType> : IKeyValueIterator<K, V>
+    {
 
-    private IEnumerator<StoreType> storeIterator;
-    private INextIteratorFunction<K, V, StoreType> nextIteratorFunction;
+        private IEnumerator<StoreType> storeIterator;
+        private INextIteratorFunction<K, V, StoreType> nextIteratorFunction;
 
-    private IKeyValueIterator<K, V> current;
+        private IKeyValueIterator<K, V> current;
 
-    CompositeKeyValueIterator(IEnumerator<StoreType> underlying,
-                              INextIteratorFunction<K, V, StoreType> nextIteratorFunction)
-{
-        this.storeIterator = underlying;
-        this.nextIteratorFunction = nextIteratorFunction;
-    }
-
-    public override void close()
-{
-        if (current != null)
-{
-            current.close();
-            current = null;
+        CompositeKeyValueIterator(IEnumerator<StoreType> underlying,
+                                  INextIteratorFunction<K, V, StoreType> nextIteratorFunction)
+        {
+            this.storeIterator = underlying;
+            this.nextIteratorFunction = nextIteratorFunction;
         }
-    }
 
-    public override K peekNextKey()
-{
-        throw new InvalidOperationException("peekNextKey not supported");
-    }
-
-    public override bool hasNext()
-{
-        while ((current == null || !current.hasNext())
-                && storeIterator.hasNext())
-{
-            close();
-            current = nextIteratorFunction.apply(storeIterator.next());
+        public override void close()
+        {
+            if (current != null)
+            {
+                current.close();
+                current = null;
+            }
         }
-        return current != null && current.hasNext();
-    }
 
-
-    public override KeyValue<K, V> next()
-{
-        if (!hasNext())
-{
-            throw new NoSuchElementException();
+        public override K peekNextKey()
+        {
+            throw new InvalidOperationException("peekNextKey not supported");
         }
-        return current.next();
-    }
 
-    public override void Remove()
-{
-        throw new InvalidOperationException("Remove not supported");
+        public override bool hasNext()
+        {
+            while ((current == null || !current.hasNext())
+                    && storeIterator.hasNext())
+            {
+                close();
+                current = nextIteratorFunction.apply(storeIterator.next());
+            }
+            return current != null && current.hasNext();
+        }
+
+
+        public override KeyValue<K, V> next()
+        {
+            if (!hasNext())
+            {
+                throw new NoSuchElementException();
+            }
+            return current.next();
+        }
+
+        public override void Remove()
+        {
+            throw new InvalidOperationException("Remove not supported");
+        }
     }
 }

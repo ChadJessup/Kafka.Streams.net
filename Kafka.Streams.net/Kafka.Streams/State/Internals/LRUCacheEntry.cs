@@ -18,89 +18,89 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Common.header.Headers;
-using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
+    using Kafka.Common.header.Headers;
+    using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 
 
 
-/**
- * A cache entry
- */
-public class LRUCacheEntry
-{
-    private ContextualRecord record;
-    private long sizeBytes;
-    private bool isDirty;
+    /**
+     * A cache entry
+     */
+    public class LRUCacheEntry
+    {
+        private ContextualRecord record;
+        private long sizeBytes;
+        private bool isDirty;
 
 
-    LRUCacheEntry(byte[] value)
-{
-        this(value, null, false, -1, -1, -1, "");
-    }
+        LRUCacheEntry(byte[] value)
+        {
+            this(value, null, false, -1, -1, -1, "");
+        }
 
-    LRUCacheEntry(byte[] value,
-                  Headers headers,
-                  bool isDirty,
-                  long offset,
-                  long timestamp,
-                  int partition,
-                  string topic)
-{
-        ProcessorRecordContext context = new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
+        LRUCacheEntry(byte[] value,
+                      Headers headers,
+                      bool isDirty,
+                      long offset,
+                      long timestamp,
+                      int partition,
+                      string topic)
+        {
+            ProcessorRecordContext context = new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
 
-        this.record = new ContextualRecord(
-            value,
-            context
-        );
+            this.record = new ContextualRecord(
+                value,
+                context
+            );
 
-        this.isDirty = isDirty;
-        this.sizeBytes = 1 + // isDirty
-            record.residentMemorySizeEstimate();
-    }
+            this.isDirty = isDirty;
+            this.sizeBytes = 1 + // isDirty
+                record.residentMemorySizeEstimate();
+        }
 
-    void markClean()
-{
-        isDirty = false;
-    }
+        void markClean()
+        {
+            isDirty = false;
+        }
 
-    bool isDirty()
-{
-        return isDirty;
-    }
+        bool isDirty()
+        {
+            return isDirty;
+        }
 
-    long size()
-{
-        return sizeBytes;
-    }
+        long size()
+        {
+            return sizeBytes;
+        }
 
-    byte[] value()
-{
-        return record.value();
-    }
+        byte[] value()
+        {
+            return record.value();
+        }
 
-    public ProcessorRecordContext context
-{
+        public ProcessorRecordContext context
+        {
         return record.recordContext();
     }
 
     public override bool Equals(object o)
-{
+    {
         if (this == o)
-{
+        {
             return true;
         }
         if (o == null || GetType() != o.GetType())
-{
+        {
             return false;
         }
-        LRUCacheEntry that = (LRUCacheEntry) o;
+        LRUCacheEntry that = (LRUCacheEntry)o;
         return sizeBytes == that.sizeBytes &&
             isDirty() == that.isDirty() &&
             Objects.Equals(record, that.record);
     }
 
     public override int GetHashCode()
-{
+    {
         return Objects.hash(record, sizeBytes, isDirty());
     }
 }

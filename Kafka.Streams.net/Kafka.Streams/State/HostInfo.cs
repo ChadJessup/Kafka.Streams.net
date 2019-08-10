@@ -18,75 +18,76 @@ namespace Kafka.Streams.State
 {
 
 
-using Kafka.Common.serialization.Serializer;
-using Kafka.Streams.KafkaStreams;
-using Kafka.Streams.Processor.IStreamPartitioner;
-using Kafka.Streams.Processor.Internals.StreamsPartitionAssignor;
+    using Kafka.Common.serialization.Serializer;
+    using Kafka.Streams.KafkaStreams;
+    using Kafka.Streams.Processor.IStreamPartitioner;
+    using Kafka.Streams.Processor.Internals.StreamsPartitionAssignor;
 
-/**
- * Represents a user defined endpoint in a {@link org.apache.kafka.streams.KafkaStreams} application.
- * Instances of this can be obtained by calling one of:
- *  {@link KafkaStreams#allMetadata()}
- *  {@link KafkaStreams#allMetadataForStore(string)}
- *  {@link KafkaStreams#metadataForKey(string, object, StreamPartitioner)}
- *  {@link KafkaStreams#metadataForKey(string, object, Serializer)}
- *
- *  The HostInfo is constructed during Partition Assignment
- *  see {@link StreamsPartitionAssignor}
- *  It is extracted from the config {@link org.apache.kafka.streams.StreamsConfig#APPLICATION_SERVER_CONFIG}
- *
- *  If developers wish to expose an endpoint in their KafkaStreams applications they should provide the above
- *  config.
- */
-public class HostInfo
-{
-    private string host;
-    private int port;
+    /**
+     * Represents a user defined endpoint in a {@link org.apache.kafka.streams.KafkaStreams} application.
+     * Instances of this can be obtained by calling one of:
+     *  {@link KafkaStreams#allMetadata()}
+     *  {@link KafkaStreams#allMetadataForStore(string)}
+     *  {@link KafkaStreams#metadataForKey(string, object, StreamPartitioner)}
+     *  {@link KafkaStreams#metadataForKey(string, object, Serializer)}
+     *
+     *  The HostInfo is constructed during Partition Assignment
+     *  see {@link StreamsPartitionAssignor}
+     *  It is extracted from the config {@link org.apache.kafka.streams.StreamsConfig#APPLICATION_SERVER_CONFIG}
+     *
+     *  If developers wish to expose an endpoint in their KafkaStreams applications they should provide the above
+     *  config.
+     */
+    public class HostInfo
+    {
+        private string host;
+        private int port;
 
-    public HostInfo(string host,
-                    int port)
-{
-        this.host = host;
-        this.port = port;
-    }
-
-    public override bool Equals(object o)
-{
-        if (this == o)
-{
-            return true;
-        }
-        if (o == null || GetType() != o.GetType())
-{
-            return false;
+        public HostInfo(string host,
+                        int port)
+        {
+            this.host = host;
+            this.port = port;
         }
 
-        HostInfo hostInfo = (HostInfo) o;
-        return port == hostInfo.port && host.Equals(hostInfo.host);
-    }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
 
-    public override int GetHashCode()
-{
-        int result = host.GetHashCode();
-        result = 31 * result + port;
-        return result;
-    }
+            HostInfo hostInfo = (HostInfo)o;
+            return port == hostInfo.port && host.Equals(hostInfo.host);
+        }
 
-    public string host()
-{
-        return host;
-    }
+        public override int GetHashCode()
+        {
+            int result = host.GetHashCode();
+            result = 31 * result + port;
+            return result;
+        }
 
-    public int port()
-{
-        return port;
-    }
+        public string host()
+        {
+            return host;
+        }
 
-    public override string ToString()
-{
-        return "HostInfo{" +
-                "host=\'" + host + '\'' +
-                ", port=" + port +
-                '}';
+        public int port()
+        {
+            return port;
+        }
+
+        public override string ToString()
+        {
+            return "HostInfo{" +
+                    "host=\'" + host + '\'' +
+                    ", port=" + port +
+                    '}';
+        }
     }
 }

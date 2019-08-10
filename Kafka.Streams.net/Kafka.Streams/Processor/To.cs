@@ -20,87 +20,88 @@ namespace Kafka.Streams.Processor
 
 
 
-/**
- * This is used to provide the optional parameters when sending output records to downstream processor
- * using {@link IProcessorContext#forward(object, object, To)}.
- */
-public class To
-{
-
-    protected string childName;
-    protected long timestamp;
-
-    private To(string childName,
-               long timestamp)
-{
-        this.childName = childName;
-        this.timestamp = timestamp;
-    }
-
-    protected To(To to)
-{
-        this(to.childName, to.timestamp);
-    }
-
-    protected void update(To to)
-{
-        childName = to.childName;
-        timestamp = to.timestamp;
-    }
-
     /**
-     * Forward the key/value pair to one of the downstream processors designated by the downstream processor name.
-     * @param childName name of downstream processor
-     * @return a new {@link To} instance configured with {@code childName}
+     * This is used to provide the optional parameters when sending output records to downstream processor
+     * using {@link IProcessorContext#forward(object, object, To)}.
      */
-    public static To child(string childName)
-{
-        return new To(childName, -1);
-    }
+    public class To
+    {
 
-    /**
-     * Forward the key/value pair to all downstream processors
-     * @return a new {@link To} instance configured for all downstream processor
-     */
-    public static To all()
-{
-        return new To(null, -1);
-    }
+        protected string childName;
+        protected long timestamp;
 
-    /**
-     * Set the timestamp of the output record.
-     * @param timestamp the output record timestamp
-     * @return itself (i.e., {@code this})
-     */
-    public To withTimestamp(long timestamp)
-{
-        this.timestamp = timestamp;
-        return this;
-    }
-
-
-    public bool Equals(object o)
-{
-        if (this == o)
-{
-            return true;
+        private To(string childName,
+                   long timestamp)
+        {
+            this.childName = childName;
+            this.timestamp = timestamp;
         }
-        if (o == null || GetType() != o.GetType())
-{
-            return false;
+
+        protected To(To to)
+        {
+            this(to.childName, to.timestamp);
         }
-        To to = (To) o;
-        return timestamp == to.timestamp &&
-            Objects.Equals(childName, to.childName);
+
+        protected void update(To to)
+        {
+            childName = to.childName;
+            timestamp = to.timestamp;
+        }
+
+        /**
+         * Forward the key/value pair to one of the downstream processors designated by the downstream processor name.
+         * @param childName name of downstream processor
+         * @return a new {@link To} instance configured with {@code childName}
+         */
+        public static To child(string childName)
+        {
+            return new To(childName, -1);
+        }
+
+        /**
+         * Forward the key/value pair to all downstream processors
+         * @return a new {@link To} instance configured for all downstream processor
+         */
+        public static To all()
+        {
+            return new To(null, -1);
+        }
+
+        /**
+         * Set the timestamp of the output record.
+         * @param timestamp the output record timestamp
+         * @return itself (i.e., {@code this})
+         */
+        public To withTimestamp(long timestamp)
+        {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+            To to = (To)o;
+            return timestamp == to.timestamp &&
+                Objects.Equals(childName, to.childName);
+        }
+
+        /**
+         * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
+         */
+
+        public int GetHashCode()
+        {
+            throw new InvalidOperationException("To is unsafe for use in Hash collections");
+        }
+
     }
-
-    /**
-     * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
-     */
-
-    public int GetHashCode()
-{
-        throw new InvalidOperationException("To is unsafe for use in Hash collections");
-    }
-
 }

@@ -18,69 +18,70 @@ namespace Kafka.Streams.Processor
 {
 
 
-using Kafka.Common.TopicPartition;
+    using Kafka.Common.TopicPartition;
 
 
 
 
 
 
-/**
- * Represents the state of a single task running within a {@link KafkaStreams} application.
- */
-public class TaskMetadata
-{
-
-
-    private string taskId;
-
-    private HashSet<TopicPartition> topicPartitions;
-
-    public TaskMetadata(string taskId,
-                        HashSet<TopicPartition> topicPartitions)
+    /**
+     * Represents the state of a single task running within a {@link KafkaStreams} application.
+     */
+    public class TaskMetadata
     {
-        this.taskId = taskId;
-        this.topicPartitions = Collections.unmodifiableSet(topicPartitions);
-    }
-
-    public string taskId()
-    {
-        return taskId;
-    }
-
-    public HashSet<TopicPartition> topicPartitions()
-    {
-        return topicPartitions;
-    }
 
 
-    public bool Equals(object o)
-    {
-        if (this == o)
+        private string taskId;
+
+        private HashSet<TopicPartition> topicPartitions;
+
+        public TaskMetadata(string taskId,
+                            HashSet<TopicPartition> topicPartitions)
         {
-            return true;
+            this.taskId = taskId;
+            this.topicPartitions = Collections.unmodifiableSet(topicPartitions);
         }
-        if (o == null || GetType() != o.GetType())
+
+        public string taskId()
         {
-            return false;
+            return taskId;
         }
-        TaskMetadata that = (TaskMetadata)o;
-        return Objects.Equals(taskId, that.taskId) &&
-               Objects.Equals(topicPartitions, that.topicPartitions);
-    }
+
+        public HashSet<TopicPartition> topicPartitions()
+        {
+            return topicPartitions;
+        }
 
 
-    public int GetHashCode()
-    {
-        return Objects.hash(taskId, topicPartitions);
-    }
+        public bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+            TaskMetadata that = (TaskMetadata)o;
+            return Objects.Equals(taskId, that.taskId) &&
+                   Objects.Equals(topicPartitions, that.topicPartitions);
+        }
 
 
-    public string ToString()
-    {
-        return "TaskMetadata{" +
-                "taskId=" + taskId +
-                ", topicPartitions=" + topicPartitions +
-                '}';
+        public int GetHashCode()
+        {
+            return Objects.hash(taskId, topicPartitions);
+        }
+
+
+        public string ToString()
+        {
+            return "TaskMetadata{" +
+                    "taskId=" + taskId +
+                    ", topicPartitions=" + topicPartitions +
+                    '}';
+        }
     }
 }

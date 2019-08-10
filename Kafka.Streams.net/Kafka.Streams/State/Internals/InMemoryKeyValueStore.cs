@@ -21,185 +21,188 @@ namespace Kafka.Streams.State.Internals
 
 
 
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.KeyValueStore;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Streams.KeyValue;
+    using Kafka.Streams.Processor.IProcessorContext;
+    using Kafka.Streams.Processor.IStateStore;
+    using Kafka.Streams.State.IKeyValueIterator;
+    using Kafka.Streams.State.KeyValueStore;
 
 
 
 
 
 
-public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
-{
-    private string name;
-    private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
-    private volatile bool open = false;
+    public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
+    {
+        private string name;
+        private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
+        private volatile bool open = false;
 
-    private static ILogger LOG= new LoggerFactory().CreateLogger<InMemoryKeyValueStore);
+        private static ILogger LOG = new LoggerFactory().CreateLogger < InMemoryKeyValueStore);
 
-    public InMemoryKeyValueStore(string name)
-{
-        this.name = name;
-    }
-
-    public override string name()
-{
-        return name;
-    }
-
-    public override void init(IProcessorContext<K, V> context,
-                     IStateStore root)
-{
-
-        if (root != null)
-{
-            // register the store
-            context.register(root, (key, value) =>
-{
-                // this is a delete
-                if (value == null)
-{
-                    delete(Bytes.wrap(key));
-                } else
-{
-                    put(Bytes.wrap(key), value);
-                }
-            });
+        public InMemoryKeyValueStore(string name)
+        {
+            this.name = name;
         }
 
-        open = true;
-    }
+        public override string name()
+        {
+            return name;
+        }
 
-    public override bool persistent()
-{
-        return false;
-    }
+        public override void init(IProcessorContext<K, V> context,
+                         IStateStore root)
+        {
 
-    public override bool isOpen()
-{
-        return open;
-    }
-
-    public override byte[] get(Bytes key)
-{
-        return map[key];
-    }
-
-    public override void put(Bytes key, byte[] value)
-{
+            if (root != null)
+            {
+                // register the store
+                context.register(root, (key, value) =>
+    {
+        // this is a delete
         if (value == null)
-{
-            map.Remove(key);
-        } else
-{
-            map.Add(key, value);
+        {
+            delete(Bytes.wrap(key));
         }
-    }
-
-    public override byte[] putIfAbsent(Bytes key, byte[] value)
-{
-        byte[] originalValue = get(key);
-        if (originalValue == null)
-{
-            put(key, value);
+        else
+        {
+            put(Bytes.wrap(key), value);
         }
-        return originalValue;
-    }
+    });
+            }
 
-    public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
-{
-        foreach (KeyValue<Bytes, byte[]> entry in entries)
-{
-            put(entry.key, entry.value);
-        }
-    }
-
-    public override byte[] delete(Bytes key)
-{
-        return map.Remove(key);
-    }
-
-    public override IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
-{
-
-        if (from.CompareTo(to) > 0)
-{
-            LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
-                + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
-                "Note that the built-in numerical serdes do not follow this for negative numbers");
-            return KeyValueIterators.emptyIterator();
+            open = true;
         }
 
-        return new DelegatingPeekingKeyValueIterator<>(
-            name,
-            new InMemoryKeyValueIterator(map.subMap(from, true, to, true).iterator()));
-    }
-
-    public override IKeyValueIterator<Bytes, byte[]> all()
-{
-        return new DelegatingPeekingKeyValueIterator<>(
-            name,
-            new InMemoryKeyValueIterator(map.iterator()));
-    }
-
-    public override long approximateNumEntries()
-{
-        return map.size();
-    }
-
-    public override void flush()
-{
-        // do-nothing since it is in-memory
-    }
-
-    public override void close()
-{
-        map.clear();
-        open = false;
-    }
-
-    private static class InMemoryKeyValueIterator : IKeyValueIterator<Bytes, byte[]>
-{
-        private IEnumerator<KeyValuePair<Bytes, byte[]>> iter;
-
-        private InMemoryKeyValueIterator(IEnumerator<KeyValuePair<Bytes, byte[]>> iter)
-{
-            this.iter = iter;
+        public override bool persistent()
+        {
+            return false;
         }
 
-
-        public bool hasNext()
-{
-            return iter.hasNext();
+        public override bool isOpen()
+        {
+            return open;
         }
 
-
-        public KeyValue<Bytes, byte[]> next()
-{
-            KeyValuePair<Bytes, byte[]> entry = iter.next();
-            return new KeyValue<>(entry.Key, entry.Value);
+        public override byte[] get(Bytes key)
+        {
+            return map[key];
         }
 
-
-        public void Remove()
-{
-            iter.Remove();
+        public override void put(Bytes key, byte[] value)
+        {
+            if (value == null)
+            {
+                map.Remove(key);
+            }
+            else
+            {
+                map.Add(key, value);
+            }
         }
 
-
-        public void close()
-{
-            // do nothing
+        public override byte[] putIfAbsent(Bytes key, byte[] value)
+        {
+            byte[] originalValue = get(key);
+            if (originalValue == null)
+            {
+                put(key, value);
+            }
+            return originalValue;
         }
 
+        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        {
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            {
+                put(entry.key, entry.value);
+            }
+        }
 
-        public Bytes peekNextKey()
-{
-            throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());
+        public override byte[] delete(Bytes key)
+        {
+            return map.Remove(key);
+        }
+
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+        {
+
+            if (from.CompareTo(to) > 0)
+            {
+                LOG.LogWarning("Returning empty iterator for fetch with invalid key range: from > to. "
+                    + "This may be due to serdes that don't preserve ordering when lexicographically comparing the serialized bytes. " +
+                    "Note that the built-in numerical serdes do not follow this for negative numbers");
+                return KeyValueIterators.emptyIterator();
+            }
+
+            return new DelegatingPeekingKeyValueIterator<>(
+                name,
+                new InMemoryKeyValueIterator(map.subMap(from, true, to, true).iterator()));
+        }
+
+        public override IKeyValueIterator<Bytes, byte[]> all()
+        {
+            return new DelegatingPeekingKeyValueIterator<>(
+                name,
+                new InMemoryKeyValueIterator(map.iterator()));
+        }
+
+        public override long approximateNumEntries()
+        {
+            return map.size();
+        }
+
+        public override void flush()
+        {
+            // do-nothing since it is in-memory
+        }
+
+        public override void close()
+        {
+            map.clear();
+            open = false;
+        }
+
+        private static class InMemoryKeyValueIterator : IKeyValueIterator<Bytes, byte[]>
+        {
+            private IEnumerator<KeyValuePair<Bytes, byte[]>> iter;
+
+            private InMemoryKeyValueIterator(IEnumerator<KeyValuePair<Bytes, byte[]>> iter)
+            {
+                this.iter = iter;
+            }
+
+
+            public bool hasNext()
+            {
+                return iter.hasNext();
+            }
+
+
+            public KeyValue<Bytes, byte[]> next()
+            {
+                KeyValuePair<Bytes, byte[]> entry = iter.next();
+                return new KeyValue<>(entry.Key, entry.Value);
+            }
+
+
+            public void Remove()
+            {
+                iter.Remove();
+            }
+
+
+            public void close()
+            {
+                // do nothing
+            }
+
+
+            public Bytes peekNextKey()
+            {
+                throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());
+            }
         }
     }
 }

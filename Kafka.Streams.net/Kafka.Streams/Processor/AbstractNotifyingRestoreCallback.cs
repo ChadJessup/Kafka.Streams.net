@@ -17,10 +17,6 @@
 
 namespace Kafka.Streams.Processor
 {
-
-
-    using Kafka.Common.TopicPartition;
-
     /**
      * Abstract implementation of the  {@link StateRestoreCallback} used for batch restoration operations.
      *

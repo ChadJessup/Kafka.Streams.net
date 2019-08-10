@@ -35,7 +35,7 @@ namespace Kafka.Streams.Errors
 
         private static long serialVersionUID = 1L;
 
-        private Task task;
+        private ITask task;
 
         // this is for unit test only
         public TaskMigratedException()
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Errors
             this.task = null;
         }
 
-        public TaskMigratedException(Task task,
+        public TaskMigratedException(ITask task,
                                       TopicPartition topicPartition,
                                       long endOffset,
                                       long pos)
@@ -59,14 +59,14 @@ namespace Kafka.Streams.Errors
             this.task = task;
         }
 
-        public TaskMigratedException(Task task)
+        public TaskMigratedException(ITask task)
             : base(string.Format("Task %s is unexpectedly closed during processing", task.id()), null)
         {
 
             this.task = task;
         }
 
-        public TaskMigratedException(Task task,
+        public TaskMigratedException(ITask task,
                                       Throwable throwable)
             : base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable)
         {
@@ -74,7 +74,7 @@ namespace Kafka.Streams.Errors
             this.task = task;
         }
 
-        public Task migratedTask()
+        public ITask migratedTask()
         {
             return task;
         }

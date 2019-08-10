@@ -18,44 +18,45 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-using Kafka.Common.serialization.Serde;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Common.Utils.Time;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.Internals.ProcessorStateManager;
-using Kafka.Streams.State.KeyValueStore;
-using Kafka.Streams.State.StateSerdes;
-using Kafka.Streams.State.ITimestampedKeyValueStore;
-using Kafka.Streams.State.ValueAndTimestamp;
+    using Kafka.Common.serialization.Serde;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Common.Utils.Time;
+    using Kafka.Streams.Processor.IProcessorContext;
+    using Kafka.Streams.Processor.Internals.ProcessorStateManager;
+    using Kafka.Streams.State.KeyValueStore;
+    using Kafka.Streams.State.StateSerdes;
+    using Kafka.Streams.State.ITimestampedKeyValueStore;
+    using Kafka.Streams.State.ValueAndTimestamp;
 
-/**
- * A Metered {@link TimestampedKeyValueStore} wrapper that is used for recording operation metrics, and hence its
- * inner KeyValueStore implementation do not need to provide its own metrics collecting functionality.
- * The inner {@link KeyValueStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
- * to convert from &lt;K,ValueAndTimestamp&lt;V&gt&gt; to &lt;Bytes,byte[]&gt;
- * @param <K>
- * @param <V>
- */
-public class MeteredTimestampedKeyValueStore<K, V>
-    : MeteredKeyValueStore<K, ValueAndTimestamp<V>>
+    /**
+     * A Metered {@link TimestampedKeyValueStore} wrapper that is used for recording operation metrics, and hence its
+     * inner KeyValueStore implementation do not need to provide its own metrics collecting functionality.
+     * The inner {@link KeyValueStore} of this is of type &lt;Bytes,byte[]&gt;, hence we use {@link Serde}s
+     * to convert from &lt;K,ValueAndTimestamp&lt;V&gt&gt; to &lt;Bytes,byte[]&gt;
+     * @param <K>
+     * @param <V>
+     */
+    public class MeteredTimestampedKeyValueStore<K, V>
+        : MeteredKeyValueStore<K, ValueAndTimestamp<V>>
     : ITimestampedKeyValueStore<K, V>
-{
+    {
 
-    MeteredTimestampedKeyValueStore(IKeyValueStore<Bytes, byte[]> inner,
-                                    string metricScope,
-                                    ITime time,
-                                    ISerde<K> keySerde,
-                                    ISerde<ValueAndTimestamp<V>> valueSerde)
-{
-        base(inner, metricScope, time, keySerde, valueSerde);
-    }
+        MeteredTimestampedKeyValueStore(IKeyValueStore<Bytes, byte[]> inner,
+                                        string metricScope,
+                                        ITime time,
+                                        ISerde<K> keySerde,
+                                        ISerde<ValueAndTimestamp<V>> valueSerde)
+        {
+            base(inner, metricScope, time, keySerde, valueSerde);
+        }
 
 
-    void initStoreSerde(IProcessorContext<K, V> context)
-{
-        serdes = new StateSerdes<>(
-            ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
-            keySerde == null ? (ISerde<K>) context.keySerde : keySerde,
-            valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>) context.valueSerde) : valueSerde);
+        void initStoreSerde(IProcessorContext<K, V> context)
+        {
+            serdes = new StateSerdes<>(
+                ProcessorStateManager.storeChangelogTopic(context.applicationId(), name()),
+                keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
+                valueSerde == null ? new ValueAndTimestampSerde<>((ISerde<V>)context.valueSerde) : valueSerde);
+        }
     }
 }

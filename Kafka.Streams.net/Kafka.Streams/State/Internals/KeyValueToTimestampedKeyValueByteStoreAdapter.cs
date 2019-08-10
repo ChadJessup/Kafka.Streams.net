@@ -17,122 +17,123 @@
 namespace Kafka.Streams.State.Internals
 {
 
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Bytes;
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.Processor.IProcessorContext;
-using Kafka.Streams.Processor.IStateStore;
-using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
-using Kafka.Streams.State.IKeyValueIterator;
-using Kafka.Streams.State.KeyValueStore;
-using System.Collections.Generic;
+    using Kafka.Common.Utils;
+    using Kafka.Common.Utils.Bytes;
+    using Kafka.Streams.KeyValue;
+    using Kafka.Streams.Processor.IProcessorContext;
+    using Kafka.Streams.Processor.IStateStore;
+    using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
+    using Kafka.Streams.State.IKeyValueIterator;
+    using Kafka.Streams.State.KeyValueStore;
+    using System.Collections.Generic;
 
 
 
 
 
 
-/**
- * This is used to ensure backward compatibility at DSL level between
- * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and {@link KeyValueStore}.
- * <p>
- * If a user provides a supplier for plain {@code KeyValueStores} via
- * {@link org.apache.kafka.streams.kstream.Materialized#As(KeyValueBytesStoreSupplier)} this adapter is used to
- * translate between old a new {@code byte[]} format of the value.
- *
- * @see KeyValueToTimestampedKeyValueIteratorAdapter
- */
-public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
-{
-    IKeyValueStore<Bytes, byte[]> store;
+    /**
+     * This is used to ensure backward compatibility at DSL level between
+     * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and {@link KeyValueStore}.
+     * <p>
+     * If a user provides a supplier for plain {@code KeyValueStores} via
+     * {@link org.apache.kafka.streams.kstream.Materialized#As(KeyValueBytesStoreSupplier)} this adapter is used to
+     * translate between old a new {@code byte[]} format of the value.
+     *
+     * @see KeyValueToTimestampedKeyValueIteratorAdapter
+     */
+    public class KeyValueToTimestampedKeyValueByteStoreAdapter : IKeyValueStore<Bytes, byte[]>
+    {
+        IKeyValueStore<Bytes, byte[]> store;
 
-    KeyValueToTimestampedKeyValueByteStoreAdapter(IKeyValueStore<Bytes, byte[]> store)
-{
-        if (!store.persistent())
-{
-            throw new System.ArgumentException("Provided store must be a persistent store, but it is not.");
+        KeyValueToTimestampedKeyValueByteStoreAdapter(IKeyValueStore<Bytes, byte[]> store)
+        {
+            if (!store.persistent())
+            {
+                throw new System.ArgumentException("Provided store must be a persistent store, but it is not.");
+            }
+            this.store = store;
         }
-        this.store = store;
-    }
 
-    public override void put(Bytes key,
-                    byte[] valueWithTimestamp)
-{
-        store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
-    }
-
-    public override byte[] putIfAbsent(Bytes key,
-                              byte[] valueWithTimestamp)
-{
-        return convertToTimestampedFormat(store.putIfAbsent(
-            key,
-            valueWithTimestamp == null ? null : rawValue(valueWithTimestamp)));
-    }
-
-    public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
-{
-        foreach (KeyValue<Bytes, byte[]> entry in entries)
-{
-            byte[] valueWithTimestamp = entry.value;
-            store.Add(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+        public override void put(Bytes key,
+                        byte[] valueWithTimestamp)
+        {
+            store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
         }
-    }
 
-    public override byte[] delete(Bytes key)
-{
-        return convertToTimestampedFormat(store.delete(key));
-    }
+        public override byte[] putIfAbsent(Bytes key,
+                                  byte[] valueWithTimestamp)
+        {
+            return convertToTimestampedFormat(store.putIfAbsent(
+                key,
+                valueWithTimestamp == null ? null : rawValue(valueWithTimestamp)));
+        }
 
-    public override string name()
-{
-        return store.name();
-    }
+        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        {
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            {
+                byte[] valueWithTimestamp = entry.value;
+                store.Add(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+            }
+        }
 
-    public override void init(IProcessorContext<K, V> context,
-                     IStateStore root)
-{
-        store.init(context, root);
-    }
+        public override byte[] delete(Bytes key)
+        {
+            return convertToTimestampedFormat(store.delete(key));
+        }
 
-    public override void flush()
-{
-        store.flush();
-    }
+        public override string name()
+        {
+            return store.name();
+        }
 
-    public override void close()
-{
-        store.close();
-    }
+        public override void init(IProcessorContext<K, V> context,
+                         IStateStore root)
+        {
+            store.init(context, root);
+        }
 
-    public override bool persistent()
-{
-        return true;
-    }
+        public override void flush()
+        {
+            store.flush();
+        }
 
-    public override bool isOpen()
-{
-        return store.isOpen();
-    }
+        public override void close()
+        {
+            store.close();
+        }
 
-    public override byte[] get(Bytes key)
-{
-        return convertToTimestampedFormat(store[key]);
-    }
+        public override bool persistent()
+        {
+            return true;
+        }
 
-    public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
-                                                 Bytes to)
-{
-        return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.range(from, to));
-    }
+        public override bool isOpen()
+        {
+            return store.isOpen();
+        }
 
-    public override IKeyValueIterator<Bytes, byte[]> all()
-{
-        return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
-    }
+        public override byte[] get(Bytes key)
+        {
+            return convertToTimestampedFormat(store[key]);
+        }
 
-    public override long approximateNumEntries()
-{
-        return store.approximateNumEntries();
-    }
+        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
+                                                     Bytes to)
+        {
+            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.range(from, to));
+        }
 
+        public override IKeyValueIterator<Bytes, byte[]> all()
+        {
+            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
+        }
+
+        public override long approximateNumEntries()
+        {
+            return store.approximateNumEntries();
+        }
+
+    }
 }

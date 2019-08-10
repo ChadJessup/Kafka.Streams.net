@@ -27,7 +27,7 @@ using System.Text;
 namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AssignedTasks<T>
-        where T : Task
+        where T : ITask
     {
         ILogger log;
         private string taskTypeName;

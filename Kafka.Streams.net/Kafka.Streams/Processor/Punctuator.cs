@@ -20,19 +20,20 @@ namespace Kafka.Streams.Processor
 
 
 
-/**
- * A functional interface used as an argument to {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator)}.
- *
- * @see Cancellable
- */
-public interface Punctuator
-{
-
-
     /**
-     * Perform the scheduled periodic operation.
+     * A functional interface used as an argument to {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator)}.
      *
-     * @param timestamp when the operation is being called, depending on {@link PunctuationType}
+     * @see Cancellable
      */
-    void punctuate(long timestamp);
+    public interface Punctuator
+    {
+
+
+        /**
+         * Perform the scheduled periodic operation.
+         *
+         * @param timestamp when the operation is being called, depending on {@link PunctuationType}
+         */
+        void punctuate(long timestamp);
+    }
 }

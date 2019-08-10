@@ -8,7 +8,7 @@ using System.Collections.ObjectModel;
 namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AbstractTaskCreator<T>
-        where T : Task
+        where T : ITask
     {
         string applicationId;
         InternalTopologyBuilder builder;
