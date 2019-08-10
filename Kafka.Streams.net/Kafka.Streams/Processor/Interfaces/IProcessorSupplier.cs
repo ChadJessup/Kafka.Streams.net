@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
-     * A processor supplier that can create one or more {@link Processor} instances.
+     * A processor supplier that can create one or more {@link IProcessor} instances.
      *
      * It is used in {@link Topology} for.Adding new processor operators, whose generated
-     * topology can then be replicated (and thus creating one or more {@link Processor} instances)
+     * topology can then be replicated (and thus creating one or more {@link IProcessor} instances)
      * and distributed to multiple stream threads.
      *
      * @param the type of keys
@@ -29,9 +29,9 @@ namespace Kafka.Streams.Processor
     public interface IProcessorSupplier<K, V>
     {
         /**
-         * Return a new {@link Processor} instance.
+         * Return a new {@link IProcessor} instance.
          *
-         * @return  a new {@link Processor} instance
+         * @return  a new {@link IProcessor} instance
          */
         IProcessor<K, V> get();
     }

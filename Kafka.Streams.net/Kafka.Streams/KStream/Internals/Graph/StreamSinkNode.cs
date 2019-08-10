@@ -17,8 +17,8 @@
 
 using Confluent.Kafka;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {

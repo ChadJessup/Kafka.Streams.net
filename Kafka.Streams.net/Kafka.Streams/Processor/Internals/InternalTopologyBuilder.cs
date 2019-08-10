@@ -19,8 +19,8 @@ using Kafka.Common;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
@@ -29,9 +29,9 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
-    public class InternalTopologyBuilder
+    public partial class InternalTopologyBuilder
     {
         private static ILogger log = new LoggerFactory().CreateLogger<InternalTopologyBuilder>();
         private static readonly Pattern EMPTY_ZERO_LENGTH_PATTERN = Pattern.compile("");
@@ -159,7 +159,7 @@ namespace Kafka.Streams.Processor.Internals
             name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
             if (nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("Processor " + name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
             foreach (string topic in topics)
@@ -193,7 +193,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("Processor " + name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
             foreach (string sourceTopicName in sourceTopicNames)
@@ -271,7 +271,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("Processor " + name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
             if (predecessorNames.Length == 0)
             {
@@ -284,7 +284,7 @@ namespace Kafka.Streams.Processor.Internals
 
                 if (predecessor.Equals(name))
                 {
-                    throw new TopologyException("Processor " + name + " cannot be a predecessor of itself.");
+                    throw new TopologyException("IProcessor " + name + " cannot be a predecessor of itself.");
                 }
 
                 if (!nodeFactories.ContainsKey(predecessor))
@@ -323,12 +323,12 @@ namespace Kafka.Streams.Processor.Internals
 
             if (nodeFactories.ContainsKey(name))
             {
-                throw new TopologyException("Processor " + name + " is already.Added.");
+                throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
             if (predecessorNames.Length == 0)
             {
-                throw new TopologyException("Processor " + name + " must have at least one parent");
+                throw new TopologyException("IProcessor " + name + " must have at least one parent");
             }
 
             foreach (string predecessor in predecessorNames)
@@ -340,7 +340,7 @@ namespace Kafka.Streams.Processor.Internals
 
                 if (predecessor.Equals(name))
                 {
-                    throw new TopologyException("Processor " + name + " cannot be a predecessor of itself.");
+                    throw new TopologyException("IProcessor " + name + " cannot be a predecessor of itself.");
                 }
                 if (!nodeFactories.ContainsKey(predecessor))
                 {
@@ -506,11 +506,11 @@ namespace Kafka.Streams.Processor.Internals
             processorName = processorName ?? throw new System.ArgumentNullException("processorName must not be null", nameof(processorName));
             if (nodeFactories.ContainsKey(sourceName))
             {
-                throw new TopologyException("Processor " + sourceName + " is already.Added.");
+                throw new TopologyException("IProcessor " + sourceName + " is already.Added.");
             }
             if (nodeFactories.ContainsKey(processorName))
             {
-                throw new TopologyException("Processor " + processorName + " is already.Added.");
+                throw new TopologyException("IProcessor " + processorName + " is already.Added.");
             }
             if (stateFactories.ContainsKey(storeName) || globalStateBuilders.ContainsKey(storeName))
             {
@@ -533,7 +533,7 @@ namespace Kafka.Streams.Processor.Internals
             if (globalStateBuilders.ContainsKey(stateStoreName))
             {
                 throw new TopologyException("Global IStateStore " + stateStoreName +
-                        " can be used by a Processor without being specified; it should not be explicitly passed.");
+                        " can be used by a IProcessor without being specified; it should not be explicitly passed.");
             }
             if (!stateFactories.ContainsKey(stateStoreName))
             {
@@ -541,7 +541,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             if (!nodeFactories.ContainsKey(processorName))
             {
-                throw new TopologyException("Processor " + processorName + " is not.Added yet.");
+                throw new TopologyException("IProcessor " + processorName + " is not.Added yet.");
             }
 
             StateStoreFactory stateStoreFactory = stateFactories[stateStoreName];
@@ -647,7 +647,7 @@ namespace Kafka.Streams.Processor.Internals
                     break;
                 case AutoOffsetReset.UNKNOWN:
                 default:
-                    throw new TopologyException(string.Format("Unrecognized reset format %s", offsetReset));
+                    throw new TopologyException(string.Format("Unrecognized reset string.Format %s", offsetReset));
             }
         }
 
@@ -1393,8 +1393,8 @@ namespace Kafka.Streams.Processor.Internals
                 foreach (string predecessorName in nodeFactories[node.name].predecessors)
                 {
                     AbstractNode predecessor = nodesByName[predecessorName];
-                    node.AddPredecessor(predecessor);
-                    predecessor.AddSuccessor(node);
+                    node.addPredecessor(predecessor);
+                    predecessor.addSuccessor(node);
                     updateSize(predecessor, node.size);
                 }
             }
@@ -1403,133 +1403,63 @@ namespace Kafka.Streams.Processor.Internals
                     subtopologyId,
                     new HashSet<>(nodesByName.Values)));
         }
-
-        public static class GlobalStore : TopologyDescription.IGlobalStore
-        {
-
-            private Source source;
-            private Processor processor;
-            private int id;
-
-            public GlobalStore(string sourceName,
-                               string processorName,
-                               string storeName,
-                               string topicName,
-                               int id)
-            {
-                source = new Source(sourceName, Collections.singleton(topicName), null);
-                processor = new Processor(processorName, Collections.singleton(storeName));
-                source.successors.Add(processor);
-                processor.predecessors.Add(source);
-                this.id = id;
-            }
-
-
-            public int id()
-            {
-                return id;
-            }
-
-
-            public TopologyDescription.Source source()
-            {
-                return source;
-            }
-
-
-            public TopologyDescription.Processor processor()
-            {
-                return processor;
-            }
-
-
-            public string ToString()
-            {
-                return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
-                        + "    " + source.ToString() + "\n"
-                        + "    " + processor.ToString() + "\n";
-            }
-
-
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                GlobalStore that = (GlobalStore)o;
-                return source.Equals(that.source)
-                    && processor.Equals(that.processor);
-            }
-
-
-            public int GetHashCode()
-            {
-                return Objects.hash(source, processor);
-            }
-        }
     }
+}
 
-
-    public ITopicNameExtractor topicNameExtractor()
+public ITopicNameExtractor topicNameExtractor()
+{
+    if (topicNameExtractor is StaticTopicNameExtractor)
     {
-        if (topicNameExtractor is StaticTopicNameExtractor)
-        {
-            return null;
-        }
-        else
-        {
-
-            return topicNameExtractor;
-        }
+        return null;
     }
-
-
-    public void addSuccessor(INode successor)
+    else
     {
-        throw new InvalidOperationException("Sinks don't have successors.");
+
+        return topicNameExtractor;
     }
+}
 
 
-    public string ToString()
+public void addSuccessor(INode successor)
+{
+    throw new InvalidOperationException("Sinks don't have successors.");
+}
+
+
+public string ToString()
+{
+    if (topicNameExtractor is StaticTopicNameExtractor)
     {
-        if (topicNameExtractor is StaticTopicNameExtractor)
-        {
-            return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
-        }
-        return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
-            + nodeNames(predecessors);
+        return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
     }
+    return "Sink: " + name + " (extractor: " + topicNameExtractor + ")\n      <-- "
+        + nodeNames(predecessors);
+}
 
 
-    public bool Equals(object o)
+public bool Equals(object o)
+{
+    if (this == o)
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || GetType() != o.GetType())
-        {
-            return false;
-        }
-
-        Sink sink = (Sink)o;
-        return name.Equals(sink.name)
-            && topicNameExtractor.Equals(sink.topicNameExtractor)
-            && predecessors.Equals(sink.predecessors);
+        return true;
     }
-
-
-    public override int GetHashCode()
+    if (o == null || GetType() != o.GetType())
     {
-        // omit predecessors as it might change and alter the hash code
-        return (name, topicNameExtractor).GetHashCode();
+        return false;
     }
+
+    Sink sink = (Sink)o;
+    return name.Equals(sink.name)
+        && topicNameExtractor.Equals(sink.topicNameExtractor)
+        && predecessors.Equals(sink.predecessors);
+}
+
+
+public override int GetHashCode()
+{
+    // omit predecessors as it might change and alter the hash code
+    return (name, topicNameExtractor).GetHashCode();
+}
 }
 
 private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();

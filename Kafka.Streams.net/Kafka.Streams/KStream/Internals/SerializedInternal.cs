@@ -14,24 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
     [System.Obsolete]
     public class SerializedInternal<K, V> : ISerialized<K, V>
     {
         public SerializedInternal(ISerialized<K, V> serialized)
-            : base(serialized)
         {
-        }
-
-        public ISerde<K> keySerde
-        {
-            return keySerde;
-        }
-
-        public ISerde<V> valueSerde
-        {
-            return valueSerde;
         }
     }
 }

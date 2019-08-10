@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * Interface for batching restoration of a {@link IStateStore}

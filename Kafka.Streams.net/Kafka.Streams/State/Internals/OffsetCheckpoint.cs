@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * This saves out a map of topic/partition=&gt;offsets to a file. The format of the file is UTF-8 text containing the following:
+     * This saves out a map of topic/partition=&gt;offsets to a file. The string.Format of the file is UTF-8 text containing the following:
      * <pre>
      *   &lt;version&gt;
      *   &lt;n&gt;
@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
      *   .
      *   &lt;topic_name_n&gt; &lt;partition_n&gt; &lt;offset_n&gt;
      * </pre>
-     *   The first line contains a number designating the format version (currently 0), the get line contains
+     *   The first line contains a number designating the string.Format version (currently 0), the get line contains
      *   a number giving the total number of offsets. Each successive line gives a topic/partition/offset triple
      *   separated by spaces.
      */

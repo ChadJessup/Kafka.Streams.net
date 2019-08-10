@@ -17,9 +17,9 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using System.Runtime.CompilerServices;
 
@@ -30,7 +30,7 @@ namespace Kafka.Streams
      * A topology is an acyclic graph of sources, processors, and sinks.
      * A {@link SourceNode source} is a node in the graph that consumes one or more Kafka topics and forwards them to its
      * successor nodes.
-     * A {@link Processor processor} is a node in the graph that receives input records from upstream nodes, processes the
+     * A {@link IProcessor processor} is a node in the graph that receives input records from upstream nodes, processes the
      * records, and optionally forwarding new records to one or all of its downstream nodes.
      * Finally, a {@link SinkNode sink} is a node in the graph that receives records from upstream nodes and writes them to
      * a Kafka topic.
@@ -51,7 +51,7 @@ namespace Kafka.Streams
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param name the unique name of the source used to reference this node when
-         * {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         * {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topics the name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -74,7 +74,7 @@ namespace Kafka.Streams
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param name the unique name of the source used to reference this node when
-         * {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         * {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -97,7 +97,7 @@ namespace Kafka.Streams
          *
          * @param offsetReset the auto offset reset policy to use for this source if no committed offsets found; acceptable values earliest or latest
          * @param name the unique name of the source used to reference this node when
-         * {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         * {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topics the name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -122,7 +122,7 @@ namespace Kafka.Streams
          *
          * @param offsetReset the auto offset reset policy value for this source if no committed offsets found; acceptable values earliest or latest.
          * @param name the unique name of the source used to reference this node when
-         * {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         * {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -146,7 +146,7 @@ namespace Kafka.Streams
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topics             the name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -171,7 +171,7 @@ namespace Kafka.Streams
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -197,7 +197,7 @@ namespace Kafka.Streams
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topics             the name of one or more Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -225,7 +225,7 @@ namespace Kafka.Streams
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param topicPattern       regular expression pattern to match Kafka topics that this source is to consume
          * @return itself
          * @throws TopologyException if processor is already added or if topics have already been registered by another source
@@ -247,7 +247,7 @@ namespace Kafka.Streams
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
@@ -272,11 +272,11 @@ namespace Kafka.Streams
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
          * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
-         * topics that share the same key-value data format.
+         * topics that share the same key-value data string.Format.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          *
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
@@ -301,12 +301,12 @@ namespace Kafka.Streams
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
          * The provided de-/serializers will be used for all the specified topics, so care should be taken when specifying
-         * topics that share the same key-value data format.
+         * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
@@ -332,12 +332,12 @@ namespace Kafka.Streams
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
          * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
-         * topics that share the same key-value data format.
+         * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
          *                           key deserializer defined in the configs will be used
          * @param valueDeserializer  value deserializer used to read this source,
@@ -365,7 +365,7 @@ namespace Kafka.Streams
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest.
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
@@ -394,12 +394,12 @@ namespace Kafka.Streams
          * and/or sink nodes.
          * The source will use the specified key and value deserializers.
          * The provided de-/serializers will be used for all matched topics, so care should be taken to specify patterns for
-         * topics that share the same key-value data format.
+         * topics that share the same key-value data string.Format.
          *
          * @param offsetReset        the auto offset reset policy to use for this stream if no committed offsets found;
          *                           acceptable values are earliest or latest
          * @param name               the unique name of the source used to reference this node when
-         *                           {@link #addProcessor(string, ProcessorSupplier, string[]) adding processor children}.
+         *                           {@link #addProcessor(string, IProcessorSupplier, string[]) adding processor children}.
          * @param timestampExtractor the stateless timestamp extractor used for this source,
          *                           if not specified the default extractor defined in the configs will be used
          * @param keyDeserializer    key deserializer used to read this source, if not specified the default
@@ -689,7 +689,7 @@ namespace Kafka.Streams
          * Any new record output by this processor will be forwarded to its child processor or sink nodes.
          *
          * @param name the unique name of the processor node
-         * @param supplier the supplier used to obtain this node's {@link Processor} instance
+         * @param supplier the supplier used to obtain this node's {@link IProcessor} instance
          * @param parentNames the name of one or more source or processor nodes whose output records this processor should receive
          * and process
          * @return itself
@@ -735,7 +735,7 @@ namespace Kafka.Streams
          * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
          * of the input topic.
          * <p>
-         * The provided {@link ProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
          * records forwarded from the {@link SourceNode}.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
@@ -745,8 +745,8 @@ namespace Kafka.Streams
          * @param keyDeserializer       the {@link IDeserializer} to deserialize keys with
          * @param valueDeserializer     the {@link IDeserializer} to deserialize values with
          * @param topic                 the topic to source the data from
-         * @param processorName         the name of the {@link ProcessorSupplier}
-         * @param stateUpdateSupplier   the instance of {@link ProcessorSupplier}
+         * @param processorName         the name of the {@link IProcessorSupplier}
+         * @param stateUpdateSupplier   the instance of {@link IProcessorSupplier}
          * @return itself
          * @throws TopologyException if the processor of state is already registered
          */
@@ -775,7 +775,7 @@ namespace Kafka.Streams
          * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
          * of the input topic.
          * <p>
-         * The provided {@link ProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
          * records forwarded from the {@link SourceNode}.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
          *
@@ -786,8 +786,8 @@ namespace Kafka.Streams
          * @param keyDeserializer       the {@link IDeserializer} to deserialize keys with
          * @param valueDeserializer     the {@link IDeserializer} to deserialize values with
          * @param topic                 the topic to source the data from
-         * @param processorName         the name of the {@link ProcessorSupplier}
-         * @param stateUpdateSupplier   the instance of {@link ProcessorSupplier}
+         * @param processorName         the name of the {@link IProcessorSupplier}
+         * @param stateUpdateSupplier   the instance of {@link IProcessorSupplier}
          * @return itself
          * @throws TopologyException if the processor of state is already registered
          */

@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream
 {
     /**
      * The {@code Reducer} interface for combining two values of the same type into a new value.
-     * In contrast to {@link Aggregator} the result type must be the same as the input type.
+     * In contrast to {@link IAggregator} the result type must be the same as the input type.
      * <p>
      * The provided values can be either original values from input {@link KeyValue} pair records or be a previously
      * computed result from {@link Reducer#apply(object, object)}.
@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream
      * @see TimeWindowedKStream#reduce(Reducer, Materialized)
      * @see SessionWindowedKStream#reduce(Reducer)
      * @see SessionWindowedKStream#reduce(Reducer, Materialized)
-     * @see Aggregator
+     * @see IAggregator
      */
     public interface IReducer<V>
     {

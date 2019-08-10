@@ -18,7 +18,7 @@ namespace Kafka.Streams.State.Internals
 {
 
 
-    using Kafka.Streams.Processor.Internals.IInternalProcessorContext;
+    using Kafka.Streams.IProcessor.Internals.IInternalProcessorContext;
 
     /**
      * Manages the {@link KeyValueSegment}s that are used by the {@link RocksDbSegmentedBytesStore}

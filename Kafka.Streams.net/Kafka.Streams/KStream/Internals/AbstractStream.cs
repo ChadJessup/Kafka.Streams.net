@@ -17,8 +17,8 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -82,7 +82,7 @@ namespace Kafka.Streams.KStream.Internals
             return builder.internalTopologyBuilder;
         }
 
-        HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
+        public HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
         {
             HashSet<string> allSourceNodes = new HashSet<string>();
             allSourceNodes.UnionWith(sourceNodes);
@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
-        static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
+        protected static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
             return default; // (readOnlyKey, value)=>valueMapper.apply(value);

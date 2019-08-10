@@ -23,7 +23,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * The states that the global stream thread can be in

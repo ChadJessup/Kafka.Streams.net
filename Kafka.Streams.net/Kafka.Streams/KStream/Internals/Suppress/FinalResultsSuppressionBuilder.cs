@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private string name;
         private IStrictBufferConfig bufferConfig;
 
-        public FinalResultsSuppressionBuilder(string name, ISuppressed.StrictBufferConfig bufferConfig)
+        public FinalResultsSuppressionBuilder(string name, IStrictBufferConfig bufferConfig)
         {
             this.name = name;
             this.bufferConfig = bufferConfig;

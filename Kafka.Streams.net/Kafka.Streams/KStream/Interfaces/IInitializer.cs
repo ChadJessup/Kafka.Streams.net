@@ -18,16 +18,16 @@ namespace Kafka.Streams.KStream.Interfaces
 {
     /**
      * The {@code Initializer} interface for creating an initial value in aggregations.
-     * {@code Initializer} is used in combination with {@link Aggregator}.
+     * {@code Initializer} is used in combination with {@link IAggregator}.
      *
      * @param aggregate value type
-     * @see Aggregator
-     * @see KGroupedStream#aggregate(Initializer, Aggregator)
-     * @see KGroupedStream#aggregate(Initializer, Aggregator, Materialized)
-     * @see TimeWindowedKStream#aggregate(Initializer, Aggregator)
-     * @see TimeWindowedKStream#aggregate(Initializer, Aggregator, Materialized)
-     * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger)
-     * @see SessionWindowedKStream#aggregate(Initializer, Aggregator, Merger, Materialized)
+     * @see IAggregator
+     * @see KGroupedStream#aggregate(Initializer, IAggregator)
+     * @see KGroupedStream#aggregate(Initializer, IAggregator, Materialized)
+     * @see TimeWindowedKStream#aggregate(Initializer, IAggregator)
+     * @see TimeWindowedKStream#aggregate(Initializer, IAggregator, Materialized)
+     * @see SessionWindowedKStream#aggregate(Initializer, IAggregator, Merger)
+     * @see SessionWindowedKStream#aggregate(Initializer, IAggregator, Merger, Materialized)
      */
     public interface IInitializer<VA>
     {

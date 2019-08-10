@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.IProcessor.Interfaces
 {
     /**
      * An interface that allows to dynamically determine the name of the Kafka topic to send at the sink node of the topology.

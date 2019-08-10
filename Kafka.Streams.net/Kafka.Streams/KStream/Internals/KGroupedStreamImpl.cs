@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public IKTable<K, VR> aggregate<VR>(IInitializer<VR> initializer,
-                                             Aggregator<K, V, VR> aggregator,
+                                             IAggregator<K, V, VR> aggregator,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public IKTable<K, VR> aggregate<VR>(IInitializer<VR> initializer,
-                                             Aggregator<K, V, VR> aggregator)
+                                             IAggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
         }
@@ -171,7 +171,7 @@ namespace Kafka.Streams.KStream.Internals
             );
         }
 
-        private IKTable<K, T> doAggregate(KStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
+        private IKTable<K, T> doAggregate(KStreamAggIProcessorSupplier<K, K, V, T> aggregateSupplier,
                                               string functionName,
                                               MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {

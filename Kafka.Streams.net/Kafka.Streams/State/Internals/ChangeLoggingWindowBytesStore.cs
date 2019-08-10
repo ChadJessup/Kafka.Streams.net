@@ -21,9 +21,9 @@ namespace Kafka.Streams.State.Internals
     using Kafka.Common.serialization.Serdes;
     using Kafka.Common.Utils.Bytes;
     using Kafka.Streams.KStream.Windowed;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
-    using Kafka.Streams.Processor.Internals.ProcessorStateManager;
+    using Kafka.Streams.IProcessor.IProcessorContext;
+    using Kafka.Streams.IProcessor.IStateStore;
+    using Kafka.Streams.IProcessor.Internals.ProcessorStateManager;
     using Kafka.Streams.State.IKeyValueIterator;
     using Kafka.Streams.State.StateSerdes;
     using Kafka.Streams.State.IWindowStore;

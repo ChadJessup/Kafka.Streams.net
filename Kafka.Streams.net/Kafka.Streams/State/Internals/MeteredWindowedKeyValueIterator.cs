@@ -18,7 +18,7 @@ using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.KStream;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.State.Internals

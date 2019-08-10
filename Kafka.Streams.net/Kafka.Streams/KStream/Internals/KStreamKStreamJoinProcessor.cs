@@ -15,75 +15,71 @@
  * limitations under the License.
  */
 using Kafka.Common.Metrics;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals.Metrics;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public partial class KStreamKStreamJoin<K, R, V1, V2>
+    public class KStreamKStreamJoinProcessor<K, V1, V2> : AbstractProcessor<K, V1>
     {
-        private class KStreamKStreamJoinProcessor : AbstractProcessor<K, V1>
+        private IWindowStore<K, V2> otherWindow;
+        private StreamsMetricsImpl metrics;
+        private Sensor skippedRecordsSensor;
+
+        public override void init(IProcessorContext<K, V1> context)
         {
-            private IWindowStore<K, V2> otherWindow;
-            private StreamsMetricsImpl metrics;
-            private Sensor skippedRecordsSensor;
+            base.init(context);
+            metrics = (StreamsMetricsImpl)context.metrics;
+            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
+            otherWindow = (IWindowStore<K, V2>)context.getStateStore(otherWindowName);
+        }
 
-
-            public void init(IProcessorContext<K, V1> context)
+        public override void process(K key, V1 value)
+        {
+            // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
+            //
+            // we also ignore the record if value is null, because in a key-value data model a null-value indicates
+            // an empty message (ie, there is nothing to be joined) -- this contrast SQL NULL semantics
+            // furthermore, on left/outer joins 'null' in ValueJoiner#apply() indicates a missing record --
+            // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
+            if (key == null || value == null)
             {
-                base.init(context);
-                metrics = (StreamsMetricsImpl)context.metrics();
-                skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-
-                otherWindow = (IWindowStore<K, V2>)context.getStateStore(otherWindowName);
+                LOG.LogWarning(
+                    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
+                    key, value, context.Topic, context.partition(), context.offset()
+                );
+                skippedRecordsSensor.record();
+                return;
             }
 
-            public void process(K key, V1 value)
+            bool needOuterJoin = outer;
+
+            long inputRecordTimestamp = context.timestamp();
+            long timeFrom = Math.Max(0L, inputRecordTimestamp - joinBeforeMs);
+            long timeTo = Math.Max(0L, inputRecordTimestamp + joinAfterMs);
+
+            using IWindowStoreIterator<V2> iter = otherWindow.fetch(key, timeFrom, timeTo);
             {
-                // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
-                //
-                // we also ignore the record if value is null, because in a key-value data model a null-value indicates
-                // an empty message (ie, there is nothing to be joined) -- this contrast SQL NULL semantics
-                // furthermore, on left/outer joins 'null' in ValueJoiner#apply() indicates a missing record --
-                // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
-                if (key == null || value == null)
+                while (iter.hasNext())
                 {
-                    LOG.LogWarning(
-                        "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                        key, value, context.Topic, context.partition(), context.offset()
-                    );
-                    skippedRecordsSensor.record();
-                    return;
+                    needOuterJoin = false;
+                    KeyValue<long, V2> otherRecord = iter.next();
+                    context.forward(
+                        key,
+                        joiner.apply(value, otherRecord.value),
+                        To.all().withTimestamp(Math.Max(inputRecordTimestamp, otherRecord.key)));
                 }
 
-                bool needOuterJoin = outer;
-
-                long inputRecordTimestamp = context.timestamp();
-                long timeFrom = Math.Max(0L, inputRecordTimestamp - joinBeforeMs);
-                long timeTo = Math.Max(0L, inputRecordTimestamp + joinAfterMs);
-
-                using IWindowStoreIterator<V2> iter = otherWindow.fetch(key, timeFrom, timeTo);
+                if (needOuterJoin)
                 {
-                    while (iter.hasNext())
-                    {
-                        needOuterJoin = false;
-                        KeyValue<long, V2> otherRecord = iter.next();
-                        context.forward(
-                            key,
-                            joiner.apply(value, otherRecord.value),
-                            To.all().withTimestamp(Math.Max(inputRecordTimestamp, otherRecord.key)));
-                    }
-
-                    if (needOuterJoin)
-                    {
-                        context.forward(key, joiner.apply(value, null));
-                    }
+                    context.forward(key, joiner.apply(value, null));
                 }
             }
         }
     }
+}

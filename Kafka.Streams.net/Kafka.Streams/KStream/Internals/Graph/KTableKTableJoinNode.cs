@@ -16,7 +16,7 @@
  */
 
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public string queryableStoreName()
         {
-            return ((KTableKTableJoinMerger<K, V1>)mergeProcessorParameters().processorSupplier).getQueryableName();
+            return ((KTableKTableJoinMerger<K, V1>)mergeProcessorParameters().IProcessorSupplier).getQueryableName();
         }
 
         /**
@@ -69,7 +69,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
          */
         public KTableKTableJoinMerger<K, VR> joinMerger()
         {
-            return (KTableKTableJoinMerger<K, VR>)mergeProcessorParameters().processorSupplier;
+            return (KTableKTableJoinMerger<K, VR>)mergeProcessorParameters().IProcessorSupplier;
         }
 
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
@@ -80,17 +80,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             topologyBuilder.addProcessor(
                 thisProcessorName,
-                thisProcessorParameters().processorSupplier,
+                thisProcessorParameters().IProcessorSupplier,
                 thisJoinSideNodeName);
 
             topologyBuilder.addProcessor(
                 otherProcessorName,
-                otherProcessorParameters().processorSupplier,
+                otherProcessorParameters().IProcessorSupplier,
                 otherJoinSideNodeName);
 
             topologyBuilder.addProcessor(
                 mergeProcessorName,
-                mergeProcessorParameters().processorSupplier,
+                mergeProcessorParameters().IProcessorSupplier,
                 thisProcessorName,
                 otherProcessorName);
 

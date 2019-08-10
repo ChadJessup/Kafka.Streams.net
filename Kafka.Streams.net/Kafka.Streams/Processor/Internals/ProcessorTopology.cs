@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class ProcessorTopology<K, V>
     {
@@ -27,8 +27,8 @@ namespace Kafka.Streams.Processor.Internals
         private Dictionary<string, SourceNode<K, V>> sourcesByTopic;
         private Dictionary<string, SinkNode<K, V>> sinksByTopic;
         public List<IStateStore> stateStores { get; }
-        private List<IStateStore> globalStateStores;
-        private Dictionary<string, string> storeToChangelogTopic;
+        public List<IStateStore> globalStateStores { get; }
+        public Dictionary<string, string> storeToChangelogTopic { get; }
         private HashSet<string> repartitionTopics;
 
         public ProcessorTopology(
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public HashSet<string> sourceTopics()
         {
-            return sourcesByTopic.Keys;
+            return new HashSet<string>(sourcesByTopic.Keys);
         }
 
         public SourceNode<K, V> source(string topic)
@@ -79,7 +79,7 @@ namespace Kafka.Streams.Processor.Internals
             return processorNodes;
         }
 
-        bool isRepartitionTopic(string topic)
+        public bool isRepartitionTopic(string topic)
         {
             return repartitionTopics.Contains(topic);
         }
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Processor.Internals
             // recursively print children
             foreach (ProcessorNode<K, V> child in children)
             {
-                sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children()));
+                sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children));
             }
             return sb.ToString();
         }

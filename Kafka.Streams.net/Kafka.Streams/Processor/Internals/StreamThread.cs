@@ -4,12 +4,12 @@ using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class StreamThread //: Thread
     {

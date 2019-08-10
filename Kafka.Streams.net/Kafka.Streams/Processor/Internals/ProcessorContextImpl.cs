@@ -1,9 +1,9 @@
 using Kafka.Streams.State;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class ProcessorContextImpl : AbstractProcessorContext, IRecordCollector.Supplier
     {
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (!currentNode().stateStores.Contains(name))
             {
-                throw new StreamsException("Processor " + currentNode().name + " has no access to IStateStore " + name +
+                throw new StreamsException("IProcessor " + currentNode().name + " has no access to IStateStore " + name +
                     " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
                     "make sure to connect the.Added store to the processor by providing the processor name to " +
                     "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +

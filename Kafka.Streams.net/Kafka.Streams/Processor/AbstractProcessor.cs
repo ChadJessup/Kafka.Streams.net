@@ -1,10 +1,10 @@
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
-     * An abstract implementation of {@link Processor} that manages the {@link IProcessorContext} instance and provides default no-op
+     * An abstract implementation of {@link IProcessor} that manages the {@link IProcessorContext} instance and provides default no-op
      * implementation of {@link #close()}.
      *
      * @param the type of keys
@@ -14,7 +14,7 @@ namespace Kafka.Streams.Processor
     {
         public IProcessorContext<K, V> context { get; private set; }
 
-        public void init(IProcessorContext<K, V> context)
+        public virtual void init(IProcessorContext<K, V> context)
         {
             this.context = context;
         }

@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
-        public ProcessorSupplier<K, V> build(string processorName)
+        public IProcessorSupplier<K, V> build(string processorName)
         {
             return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
         }

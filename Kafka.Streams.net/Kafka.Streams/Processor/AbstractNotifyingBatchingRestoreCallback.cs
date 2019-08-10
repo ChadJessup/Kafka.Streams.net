@@ -16,10 +16,10 @@
  */
 
 using Confluent.Kafka;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * Abstract implementation of the  {@link BatchingStateRestoreCallback} used for batch restoration operations.

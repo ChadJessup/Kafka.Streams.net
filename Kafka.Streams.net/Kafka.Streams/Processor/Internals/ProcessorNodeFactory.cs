@@ -18,7 +18,7 @@ using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>
     {

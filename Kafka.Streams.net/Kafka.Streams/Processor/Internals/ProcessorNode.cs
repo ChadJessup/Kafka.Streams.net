@@ -2,14 +2,14 @@ using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class ProcessorNode<K, V>
     {

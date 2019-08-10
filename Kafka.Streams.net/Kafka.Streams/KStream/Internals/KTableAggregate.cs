@@ -34,15 +34,15 @@ namespace Kafka.Streams.KStream.Internals
 
         private string storeName;
         private IInitializer<T> initializer;
-        private Aggregator<K, V, T>.Add;
-    private Aggregator<K, V, T> Remove;
+        private IAggregator<K, V, T>.Add;
+    private IAggregator<K, V, T> Remove;
 
         private bool sendOldValues = false;
 
         KTableAggregate(string storeName,
                          IInitializer<T> initializer,
-                         Aggregator<K, V, T>.Add,
-                         Aggregator<K, V, T> Remove)
+                         IAggregator<K, V, T>.Add,
+                         IAggregator<K, V, T> Remove)
         {
             this.storeName = storeName;
             this.initializer = initializer;
@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, Change<V>> get()
+        public IProcessor<K, Change<V>> get()
         {
             return new KTableAggregateProcessor();
         }

@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-class KStreamBranch<K, V> : ProcessorSupplier<K, V> {
+class KStreamBranch<K, V> : IProcessorSupplier<K, V> {
 
     private  IPredicate<K, V>[] predicates;
     private  string[] childNodes;
@@ -37,7 +37,7 @@ class KStreamBranch<K, V> : ProcessorSupplier<K, V> {
     }
 
     
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
 {
         return new KStreamBranchProcessor();
     }

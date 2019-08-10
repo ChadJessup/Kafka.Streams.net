@@ -19,8 +19,8 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
         private AtomicInteger index = new AtomicInteger(0);
 
         private AtomicInteger buildPriorityIndex = new AtomicInteger(0);
-        private LinkedHashMap<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes = new LinkedHashMap<>();
-        private HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNod>();
-        private HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNod>();
+        private Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes = new Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>();
+        private HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNode>();
+        private HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNode>();
 
         private static string TOPOLOGY_ROOT = "root";
         private static ILogger LOG = new LoggerFactory().CreateLogger<InternalStreamsBuilder>();
@@ -133,9 +133,10 @@ namespace Kafka.Streams.KStream.Internals
                                     this);
         }
 
-        public IGlobalKTable<K, V> globalTable<K, V>(string topic,
-                                                      ConsumedInternal<K, V> consumed,
-                                                      MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IGlobalKTable<K, V> globalTable<K, V>(
+            string topic,
+            ConsumedInternal<K, V> consumed,
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             consumed = consumed ?? throw new System.ArgumentNullException("consumed can't be null", nameof(consumed));
             materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
@@ -149,7 +150,7 @@ namespace Kafka.Streams.KStream.Internals
 
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
-            var tableSourceNode = TableSourceNode < K, V> tableSourceNodeBuilder()
+            var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
                   .withTopic(topic)
                   .isGlobalKTable(true)
                   .withSourceName(sourceName)

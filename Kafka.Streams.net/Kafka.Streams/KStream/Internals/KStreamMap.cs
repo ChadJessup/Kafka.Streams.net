@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
+class KStreamMap<K, V, K1, V1> : IProcessorSupplier<K, V> {
 
     private  IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
@@ -34,7 +34,7 @@ class KStreamMap<K, V, K1, V1> : ProcessorSupplier<K, V> {
     }
 
     
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
 {
         return new KStreamMapProcessor();
     }

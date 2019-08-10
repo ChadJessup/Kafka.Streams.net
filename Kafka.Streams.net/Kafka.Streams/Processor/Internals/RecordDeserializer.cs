@@ -14,37 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+using Kafka.Common.Metrics;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Errors.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-
-
-    using Kafka.Common.metrics.Sensor;
-    using Kafka.Common.record.TimestampType;
-    using Kafka.Common.Utils.LogContext;
-
-
-
-
-
-
-
-    class RecordDeserializer
+    public class RecordDeserializer<K, V>
     {
-
-        private SourceNode sourceNode;
+        private SourceNode<K, V> sourceNode;
         private IDeserializationExceptionHandler deserializationExceptionHandler;
         private ILogger log;
         private Sensor skippedRecordSensor;
 
-        RecordDeserializer(SourceNode sourceNode,
-                           IDeserializationExceptionHandler deserializationExceptionHandler,
-                           LogContext logContext,
-                           Sensor skippedRecordsSensor)
+        public RecordDeserializer(
+            SourceNode<K, V> sourceNode,
+            IDeserializationExceptionHandler deserializationExceptionHandler,
+            LogContext logContext,
+            Sensor skippedRecordsSensor)
         {
             this.sourceNode = sourceNode;
             this.deserializationExceptionHandler = deserializationExceptionHandler;
-            this.log = logContext.logger<RecordDeserializer>();
+            this.log = logContext.logger<RecordDeserializer<K, V>>();
             this.skippedRecordSensor = skippedRecordsSensor;
         }
 
@@ -54,16 +49,17 @@ namespace Kafka.Streams.Processor.Internals
          *                          oritself
          */
 
-        ConsumeResult<object, object> deserialize(IProcessorContext<K, V> processorContext,
-                                                   ConsumeResult<byte[], byte[]> rawRecord)
+        ConsumeResult<object, object> deserialize(
+            IProcessorContext<K, V> processorContext,
+            ConsumeResult<byte[], byte[]> rawRecord)
         {
 
             try
             {
 
-                return new ConsumeResult<>(
+                return new ConsumeResult<byte[], byte[]>(
                     rawRecord.Topic,
-                    rawRecord.partition(),
+                    rawRecord.partition,
                     rawRecord.offset(),
                     rawRecord.timestamp(),
                     TimestampType.CREATE_TIME,
@@ -75,7 +71,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             catch (Exception deserializationException)
             {
-                IDeserializationExceptionHandler.DeserializationHandlerResponse response;
+                DeserializationHandlerResponse response;
                 try
                 {
 
@@ -90,7 +86,7 @@ namespace Kafka.Streams.Processor.Internals
                     throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
                 }
 
-                if (response == IDeserializationExceptionHandler.DeserializationHandlerResponse.FAIL)
+                if (response == DeserializationHandlerResponse.FAIL)
                 {
                     throw new StreamsException("Deserialization exception handler is set to fail upon" +
                         " a deserialization error. If you would rather have the streaming pipeline" +
@@ -104,19 +100,14 @@ namespace Kafka.Streams.Processor.Internals
                     log.LogWarning(
                         "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
                         rawRecord.Topic,
-                        rawRecord.partition(),
-                        rawRecord.offset(),
+                        rawRecord.Partition,
+                        rawRecord.Offset,
                         deserializationException
                     );
                     skippedRecordSensor.record();
                     return null;
                 }
             }
-        }
-
-        SourceNode sourceNode()
-        {
-            return sourceNode;
         }
     }
 }

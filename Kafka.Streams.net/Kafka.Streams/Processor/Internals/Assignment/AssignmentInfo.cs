@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Internals.Assignment
+namespace Kafka.Streams.IProcessor.Internals.Assignment
 {
     public class AssignmentInfo
     {

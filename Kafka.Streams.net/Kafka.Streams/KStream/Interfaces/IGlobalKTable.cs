@@ -67,6 +67,6 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return the underlying state store name, or {@code null} if this {@code GlobalKTable} cannot be queried.
          */
-        string queryableStoreName();
+        string queryableStoreName { get; }
     }
 }

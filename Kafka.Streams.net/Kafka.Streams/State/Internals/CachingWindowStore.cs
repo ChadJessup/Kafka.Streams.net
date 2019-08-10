@@ -16,7 +16,7 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Runtime.CompilerServices;

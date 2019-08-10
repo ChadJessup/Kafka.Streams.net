@@ -1,15 +1,15 @@
 using Kafka.Common.Metrics;
 using Kafka.Streams.kstream;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor.Internals.metrics;
+using Kafka.Streams.IProcessor.Internals.metrics;
 using Kafka.Streams.State;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamReduce<K, V> : KStreamAggProcessorSupplier<K, K, V, V>
+    public class KStreamReduce<K, V> : KStreamAggIProcessorSupplier<K, K, V, V>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce>();
 
@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, V> get()
+        public IProcessor<K, V> get()
         {
             return new KStreamReduceProcessor();
         }

@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-    public class KStreamPrint<K, V> : ProcessorSupplier<K, V>
+    public class KStreamPrint<K, V> : IProcessorSupplier<K, V>
     {
 
         private ForeachAction<K, V> action;
@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, V> get()
+        public IProcessor<K, V> get()
         {
             return new KStreamPrintProcessor();
         }

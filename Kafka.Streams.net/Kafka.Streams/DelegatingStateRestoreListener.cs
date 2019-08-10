@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System;
 
 namespace Kafka.Streams

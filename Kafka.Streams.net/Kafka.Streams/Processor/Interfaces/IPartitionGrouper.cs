@@ -18,7 +18,7 @@ using Confluent.Kafka;
 using Kafka.Common;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * A partition grouper that generates partition groups given the list of topic-partitions.

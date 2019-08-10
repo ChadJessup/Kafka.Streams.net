@@ -14,35 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System.Runtime.CompilerServices;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-
-
-
-
-    public partial class PunctuationSchedule
+    public class RepointableCancellable : ICancellable
     {
-        public class RepointableCancellable : ICancellable
+
+        private PunctuationSchedule schedule;
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void setSchedule(PunctuationSchedule schedule)
         {
-
-            private PunctuationSchedule schedule;
-
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            void setSchedule(PunctuationSchedule schedule)
-            {
-                this.schedule = schedule;
-            }
+            this.schedule = schedule;
+        }
 
 
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public void cancel()
-            {
-                schedule.markCancelled();
-            }
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void cancel()
+        {
+            schedule.markCancelled();
         }
     }
 }

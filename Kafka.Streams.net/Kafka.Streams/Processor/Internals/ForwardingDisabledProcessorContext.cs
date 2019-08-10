@@ -17,12 +17,12 @@
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * {@code IProcessorContext} implementation that will throw on any forward call.

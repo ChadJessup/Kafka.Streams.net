@@ -17,11 +17,11 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class SourceNode<K, V> : ProcessorNode<K, V>
     {
@@ -55,12 +55,12 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-        K deserializeKey(string topic, Headers headers, byte[] data)
+        public K deserializeKey(string topic, Headers headers, byte[] data)
         {
             return keyDeserializer.Deserialize(data, false, new SerializationContext(MessageComponentType.Key, topic));
         }
 
-        V deserializeValue(string topic, Headers headers, byte[] data)
+        public V deserializeValue(string topic, Headers headers, byte[] data)
         {
             return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }

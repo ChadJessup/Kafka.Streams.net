@@ -1,7 +1,7 @@
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State.Internals;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.IProcessor.Interfaces
 {
     /**
      * For internal use so we can update the {@link RecordContext} and current

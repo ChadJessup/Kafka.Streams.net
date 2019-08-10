@@ -9,9 +9,9 @@ namespace Kafka.Streams.KStream
      */
     public class Joined<K, V, VO> : INamedOperation<Joined<K, V, VO>>
     {
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
-        protected ISerde<VO> otherValueSerde;
+        public ISerde<K> keySerde { get; }
+        public ISerde<V> valueSerde { get; }
+        public ISerde<VO> otherValueSerde { get; }
         protected string name;
 
         private Joined(

@@ -109,8 +109,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
                     joinOtherProcessorParameters,
                     new ProcessorParameters<K, V>(
                         KTableKTableJoinMerger.of(
-                            (IKTableProcessorSupplier<K, V1, VR>)(joinThisProcessorParameters.processorSupplier),
-                            (IKTableProcessorSupplier<K, V2, VR>)(joinOtherProcessorParameters.processorSupplier),
+                            (IKTableProcessorSupplier<K, V1, VR>)(joinThisProcessorParameters.IProcessorSupplier),
+                            (IKTableProcessorSupplier<K, V2, VR>)(joinOtherProcessorParameters.IProcessorSupplier),
                             queryableStoreName),
                         nodeName),
                     thisJoinSide,

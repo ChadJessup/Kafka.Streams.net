@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public partial class KTableSuppressProcessorSupplier<K, V> : IKTableProcessorSupplier<K, V, V>
+    public class KTableSuppressProcessorSupplier<K, V> : IKTableProcessorSupplier<K, V, V>
     {
-        private SuppressedInternal<K> suppress;
+        private SuppressedInternal<K, V> suppress;
         private string storeName;
         private KTableImpl<K, object, V> parentKTable;
 
-        public KTableSuppressProcessorSupplier(SuppressedInternal<K> suppress,
-                                                string storeName,
-                                                KTableImpl<K, object, V> parentKTable)
+        public KTableSuppressProcessorSupplier(
+            SuppressedInternal<K, V> suppress,
+            string storeName,
+            KTableImpl<K, object, V> parentKTable)
         {
             this.Suppress = suppress;
             this.storeName = storeName;
@@ -49,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public IKTableValueGetter<K, V> get()
         {
-//            IKTableValueGetter<K, V> parentGetter = parentValueGetterSupplier[];
+            //            IKTableValueGetter<K, V> parentGetter = parentValueGetterSupplier[];
 
             return null;
             //            return new KTableValueGetter<K, V>()

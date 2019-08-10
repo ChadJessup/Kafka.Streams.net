@@ -16,11 +16,11 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * The context associated with the current record being processed by
-     * an {@link Processor}
+     * an {@link IProcessor}
      */
     public interface IRecordContext
     {

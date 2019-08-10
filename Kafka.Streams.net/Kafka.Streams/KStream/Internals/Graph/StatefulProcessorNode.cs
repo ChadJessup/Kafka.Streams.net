@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -71,9 +71,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
-            var processorSupplier = processorParameters.processorSupplier;
+            var IProcessorSupplier = processorParameters.IProcessorSupplier;
 
-            topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorName, IProcessorSupplier, parentNodeNames());
 
             if (storeNames != null && storeNames.Length > 0)
             {

@@ -3,8 +3,8 @@ using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using System;
@@ -47,8 +47,8 @@ namespace Kafka.Streams
         import org.apache.kafka.streams.kstream.internals.ConsumedInternal;
         import org.apache.kafka.streams.kstream.internals.InternalStreamsBuilder;
         import org.apache.kafka.streams.kstream.internals.MaterializedInternal;
-        import org.apache.kafka.streams.processor.Processor;
-        import org.apache.kafka.streams.processor.ProcessorSupplier;
+        import org.apache.kafka.streams.processor.IProcessor;
+        import org.apache.kafka.streams.processor.IProcessorSupplier;
         import org.apache.kafka.streams.processor.StateStore;
         import org.apache.kafka.streams.processor.ITimestampExtractor;
         import org.apache.kafka.streams.processor.internals.InternalTopologyBuilder;
@@ -515,7 +515,7 @@ namespace Kafka.Streams
         /**
          * Adds a state store to the underlying {@link Topology}.
          * <p>
-         * It is required to connect state stores to {@link Processor Processors}, {@link Transformer Transformers},
+         * It is required to connect state stores to {@link IProcessor Processors}, {@link Transformer Transformers},
          * or {@link ValueTransformer ValueTransformers} before they can be used.
          *
          * @param builder the builder used to obtain this state store {@link StateStore} instance
@@ -531,7 +531,7 @@ namespace Kafka.Streams
         }
 
         /**
-         * @deprecated use {@link #addGlobalStore(StoreBuilder, String, Consumed, ProcessorSupplier)} instead
+         * @deprecated use {@link #addGlobalStore(StoreBuilder, String, Consumed, IProcessorSupplier)} instead
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
         public StreamsBuilder addGlobalStore(
@@ -563,20 +563,20 @@ namespace Kafka.Streams
          * A {@link SourceNode} with the provided sourceName will be added to consume the data arriving from the partitions
          * of the input topic.
          * <p>
-         * The provided {@link ProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
-         * records forwarded from the {@link SourceNode}. NOTE: you should not use the {@code Processor} to insert transformed records into
+         * The provided {@link IProcessorSupplier} will be used to create an {@link ProcessorNode} that will receive all
+         * records forwarded from the {@link SourceNode}. NOTE: you should not use the {@code IProcessor} to insert transformed records into
          * the global state store. This store uses the source topic as changelog and during restore will insert records directly
          * from the source.
          * This {@link ProcessorNode} should be used to keep the {@link StateStore} up-to-date.
          * The default {@link ITimestampExtractor} as specified in the {@link StreamsConfig config} is used.
          * <p>
-         * It is not required to connect a global store to {@link Processor Processors}, {@link Transformer Transformers},
+         * It is not required to connect a global store to {@link IProcessor Processors}, {@link Transformer Transformers},
          * or {@link ValueTransformer ValueTransformer}; those have read-only access to all global stores by default.
          *
          * @param storeBuilder          user defined {@link StoreBuilder}; can't be {@code null}
          * @param topic                 the topic to source the data from
          * @param consumed              the instance of {@link Consumed} used to define optional parameters; can't be {@code null}
-         * @param stateUpdateSupplier   the instance of {@link ProcessorSupplier}
+         * @param stateUpdateSupplier   the instance of {@link IProcessorSupplier}
          * @return itself
          * @throws TopologyException if the processor of state is already registered
          */

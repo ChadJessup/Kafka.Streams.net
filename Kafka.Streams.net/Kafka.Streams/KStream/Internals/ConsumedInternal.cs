@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -56,9 +56,6 @@ namespace Kafka.Streams.KStream.Internals
             return resetPolicy;
         }
 
-        public string name
-        {
-            return processorName;
-        }
+        public string name => processorName;
     }
 }

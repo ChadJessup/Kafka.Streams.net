@@ -114,7 +114,7 @@ namespace Kafka.Streams.KStream
          * Combine the values of records in this stream by the grouped key.
          * Records with {@code null} key or value are ignored.
          * Combining implies that the type of the aggregate result is the same as the type of the input value
-         * (c.f. {@link #aggregate(Initializer, Aggregator)}).
+         * (c.f. {@link #aggregate(Initializer, IAggregator)}).
          * <p>
          * The specified {@link Reducer} is applied for each input record and computes a new aggregate using the current
          * aggregate and the record's value.
@@ -152,7 +152,7 @@ namespace Kafka.Streams.KStream
          * Combine the value of records in this stream by the grouped key.
          * Records with {@code null} key or value are ignored.
          * Combining implies that the type of the aggregate result is the same as the type of the input value
-         * (c.f. {@link #aggregate(Initializer, Aggregator, Materialized)}).
+         * (c.f. {@link #aggregate(Initializer, IAggregator, Materialized)}).
          * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
          * provided by the given store name in {@code materialized}.
          * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
@@ -222,14 +222,14 @@ namespace Kafka.Streams.KStream
          * <p>
          * The specified {@link Initializer} is applied once directly before the first input record is processed to
          * provide an initial intermediate aggregation result that is used to process the first record.
-         * The specified {@link Aggregator} is applied for each input record and computes a new aggregate using the current
+         * The specified {@link IAggregator} is applied for each input record and computes a new aggregate using the current
          * aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value.
-         * Thus, {@code aggregate(Initializer, Aggregator)} can be used to compute aggregate functions like
+         * Thus, {@code aggregate(Initializer, IAggregator)} can be used to compute aggregate functions like
          * count (c.f. {@link #count()}).
          * <p>
          * The default value serde from config will be used for serializing the result.
-         * If a different serde is required then you should use {@link #aggregate(Initializer, Aggregator, Materialized)}.
+         * If a different serde is required then you should use {@link #aggregate(Initializer, IAggregator, Materialized)}.
          * <p>
          * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
          * the same key.
@@ -249,7 +249,7 @@ namespace Kafka.Streams.KStream
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
          *
          * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
-         * @param aggregator    an {@link Aggregator} that computes a new aggregate result
+         * @param aggregator    an {@link IAggregator} that computes a new aggregate result
          * @param          the value type of the resulting {@link KTable}
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key. If the aggregate function returns {@code null}, it is then interpreted as
@@ -271,10 +271,10 @@ namespace Kafka.Streams.KStream
          * <p>
          * The specified {@link Initializer} is applied once directly before the first input record is processed to
          * provide an initial intermediate aggregation result that is used to process the first record.
-         * The specified {@link Aggregator} is applied for each input record and computes a new aggregate using the current
+         * The specified {@link IAggregator} is applied for each input record and computes a new aggregate using the current
          * aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value.
-         * Thus, {@code aggregate(Initializer, Aggregator, Materialized)} can be used to compute aggregate functions like
+         * Thus, {@code aggregate(Initializer, IAggregator, Materialized)} can be used to compute aggregate functions like
          * count (c.f. {@link #count()}).
          * <p>
          * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
@@ -308,7 +308,7 @@ namespace Kafka.Streams.KStream
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
          *
          * @param initializer   an {@link Initializer} that computes an initial intermediate aggregation result
-         * @param aggregator    an {@link Aggregator} that computes a new aggregate result
+         * @param aggregator    an {@link IAggregator} that computes a new aggregate result
          * @param materialized  an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}.
          * @param          the value type of the resulting {@link KTable}
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the

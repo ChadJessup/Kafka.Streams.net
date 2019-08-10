@@ -8,7 +8,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * Manages the directories where the state of Tasks owned by a {@link StreamThread} are
@@ -153,11 +153,11 @@ namespace Kafka.Streams.Processor.Internals
 
             FileLock @lock = tryLock(channel);
             if (@lock != null)
-                {
-                    locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, @lock));
+            {
+                locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, @lock));
 
-                    log.LogDebug("{} Acquired state dir lock for task {}", logPrefix(), taskId);
-                }
+                log.LogDebug("{} Acquired state dir lock for task {}", logPrefix(), taskId);
+            }
             return @lock != null;
         }
 
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Processor.Internals
          * Unlock the state directory for the given {@link TaskId}.
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void unlock(TaskId taskId)
+        public void unlock(TaskId taskId)
         {
             LockAndOwner lockAndOwner = locks[taskId];
             if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
@@ -306,9 +306,8 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     try
                     {
-
-                        if (lock (id))
-{
+                        lock (id)
+                        {
                             long now = time.milliseconds();
                             long lastModifiedMs = taskDir.lastModified();
                             if (now > lastModifiedMs + cleanupDelayMs || manualUserCall)

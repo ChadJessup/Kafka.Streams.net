@@ -14,44 +14,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+using Kafka.Streams.Errors;
+using Kafka.Streams.IProcessor.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-    using Confluent.Kafka;
-    using Kafka.Streams.Errors;
-    using Kafka.Streams.Processor.Interfaces;
-    using Microsoft.Extensions.Logging;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Text;
-
     public abstract class AbstractTask<K, V> : ITask
     {
-        TaskId id;
-        string applicationId;
-        ProcessorTopology topology;
-        ProcessorStateManager stateMgr;
+        public TaskId id { get; }
+        public string applicationId { get; }
+        protected ProcessorTopology<K, V> topology { get; }
+        public ProcessorStateManager stateMgr { get; }
         public HashSet<TopicPartition> partitions { get; }
-        IConsumer<byte[], byte[]> consumer;
-        string logPrefix;
-        bool eosEnabled;
-        ILogger log;
-        LogContext logContext;
+        public IConsumer<byte[], byte[]> consumer { get; }
+        protected string logPrefix { get; }
+        protected bool eosEnabled { get; }
+        protected ILogger log { get; }
+        public LogContext logContext { get; }
         StateDirectory stateDirectory;
 
-        bool taskInitialized;
-        bool taskClosed;
-        bool commitNeeded;
+        protected bool taskInitialized { get; }
+        protected bool taskClosed { get; }
+        protected bool commitNeeded { get; }
 
-        IInternalProcessorContext<K, V> processorContext;
+        protected IInternalProcessorContext<K, V> processorContext { get; }
 
         /**
          * @throws ProcessorStateException if the state manager cannot be created
          */
-        AbstractTask(TaskId id,
+        public AbstractTask(TaskId id,
                      List<TopicPartition> partitions,
-                     ProcessorTopology topology,
+                     ProcessorTopology<K, V> topology,
                      IConsumer<byte[], byte[]> consumer,
                      IChangelogReader changelogReader,
                      bool isStandby,
@@ -60,7 +59,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.id = id;
             this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
-            this.partitions = new HashSet<>(partitions);
+            this.partitions = new HashSet<TopicPartition>(partitions);
             this.topology = topology;
             this.consumer = consumer;
             this.eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
@@ -79,7 +78,7 @@ namespace Kafka.Streams.Processor.Internals
                     partitions,
                     isStandby,
                     stateDirectory,
-                    topology.storeToChangelogTopic(),
+                    topology.storeToChangelogTopic,
                     changelogReader,
                     eosEnabled,
                     logContext);
@@ -90,12 +89,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        public IProcessorContext<K, V> context
-        {
-        return processorContext;
-        }
-
-
+        public IProcessorContext<K, V> context => processorContext;
         public IStateStore getStore(string name)
         {
             return stateMgr.getStore(name);
@@ -152,7 +146,7 @@ namespace Kafka.Streams.Processor.Internals
             return sb.ToString();
         }
 
-        protected Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
+        protected virtual Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
         {
             return new Dictionary<TopicPartition, long>();
         }
@@ -164,8 +158,8 @@ namespace Kafka.Streams.Processor.Internals
                 try
                 {
 
-                    OffsetAndMetadata metadata = consumer.committed(partition); // TODO: batch API?
-                    long offset = metadata != null ? metadata.offset() : 0L;
+                    OffsetAndMetadata metadata = consumer.Committed(partition); // TODO: batch API?
+                    long offset = metadata != null ? metadata.offset : 0L;
                     stateMgr.putOffsetLimit(partition, offset);
 
                     log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
@@ -188,7 +182,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * Flush all state stores owned by this task
          */
-        void flushState()
+        protected void flushState()
         {
             stateMgr.flush();
         }
@@ -198,9 +192,9 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @throws StreamsException If the store's change log does not contain the partition
          */
-        void registerStateStores()
+        protected void registerStateStores()
         {
-            if (topology.stateStores.isEmpty())
+            if (!topology.stateStores.Any())
             {
                 return;
             }
@@ -240,7 +234,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @throws ProcessorStateException if there is an error while closing the state manager
          */
-        void closeStateManager(bool clean)
+        protected void closeStateManager(bool clean)
         {
             ProcessorStateException exception = null;
             log.LogTrace("Closing state manager");
@@ -282,7 +276,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public bool hasStateStores()
         {
-            return !topology.stateStores().isEmpty();
+            return topology.stateStores.Any();
         }
     }
 }

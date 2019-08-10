@@ -16,12 +16,12 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
 
     public class StateManagerUtil

@@ -18,7 +18,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals.Assignment
+namespace Kafka.Streams.IProcessor.Internals.Assignment
 {
     public class SubscriptionInfo
     {

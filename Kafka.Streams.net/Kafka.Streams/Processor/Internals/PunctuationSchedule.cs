@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
-    public class PunctuationSchedule : Stamped<ProcessorNode>
+    public class PunctuationSchedule<K, V> : Stamped<ProcessorNode<K, V>>
     {
 
         private long interval;
@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processor.Internals
         // this Cancellable will be re-pointed at the successor schedule in next()
         private RepointableCancellable cancellable;
 
-        PunctuationSchedule(ProcessorNode node,
+        public PunctuationSchedule(ProcessorNode<K, V> node,
                             long time,
                             long interval,
                             Punctuator punctuator)
@@ -36,34 +36,24 @@ namespace Kafka.Streams.Processor.Internals
             cancellable.setSchedule(this);
         }
 
-        private PunctuationSchedule(ProcessorNode node,
+        public PunctuationSchedule(ProcessorNode<K, V> node,
                                     long time,
                                     long interval,
                                     Punctuator punctuator,
                                     RepointableCancellable cancellable)
+            : base(node, time)
         {
-            base(node, time);
             this.interval = interval;
             this.punctuator = punctuator;
             this.cancellable = cancellable;
         }
 
-        public ProcessorNode node()
+        public ProcessorNode<K, V> node()
         {
             return value;
         }
 
-        public Punctuator punctuator()
-        {
-            return punctuator;
-        }
-
-        public ICancellable cancellable()
-        {
-            return cancellable;
-        }
-
-        void markCancelled()
+        public void markCancelled()
         {
             isCancelled = true;
         }
@@ -73,7 +63,7 @@ namespace Kafka.Streams.Processor.Internals
             return isCancelled;
         }
 
-        public PunctuationSchedule next(long currTimestamp)
+        public PunctuationSchedule<K, V> next(long currTimestamp)
         {
             long nextPunctuationTime = timestamp + interval;
             if (currTimestamp >= nextPunctuationTime)
@@ -87,7 +77,7 @@ namespace Kafka.Streams.Processor.Internals
                 nextPunctuationTime = timestamp + (intervalsMissed + 1) * interval;
             }
 
-            PunctuationSchedule nextSchedule = new PunctuationSchedule(value, nextPunctuationTime, interval, punctuator, cancellable);
+            var nextSchedule = new PunctuationSchedule<K, V>(value, nextPunctuationTime, interval, punctuator, cancellable);
 
             cancellable.setSchedule(nextSchedule);
 
@@ -95,13 +85,13 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public bool Equals(object other)
+        public override bool Equals(object other)
         {
             return base.Equals(other);
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             return base.GetHashCode();
         }

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public partial class KStreamKStreamJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
+    public class KStreamKStreamJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKStreamJoin<K, R, V1, V2>>();
 

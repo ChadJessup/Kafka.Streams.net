@@ -14,21 +14,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+using Kafka.Common.Metrics;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Errors.Interfaces;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals.Metrics;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumeResult + timestamp). It also keeps track of the
      * partition timestamp defined as the largest timestamp seen on the partition so far; this is passed to the
      * timestamp extractor.
      */
+
     public class RecordQueue
     {
-
-
         public static long UNKNOWN = ConsumeResult.NO_TIMESTAMP;
 
+        internal void Clear()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal Internals.ProcessorNode source()
+        {
+            throw new NotImplementedException();
+        }
+
+        internal int size()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public static class ConsumeResult
+    {
+        public static long NO_TIMESTAMP { get; internal set; }
+    }
+
+    public class RecordQueue<K, V>
+    {
         private ILogger log;
-        private SourceNode source;
+        private SourceNode<K, V> source;
         private TopicPartition partition;
         private IProcessorContext<K, V> processorContext;
         private ITimestampExtractor timestampExtractor;
@@ -39,17 +72,23 @@ namespace Kafka.Streams.Processor.Internals
         private long partitionTime = RecordQueue.UNKNOWN;
 
         private Sensor skipRecordsSensor;
+        private SourceNode<object, object> source1;
+        private ITimestampExtractor sourceTimestampExtractor;
+        private IDeserializationExceptionHandler defaultDeserializationExceptionHandler;
+        private object processorContext1;
+        private object logContext;
 
-        RecordQueue(TopicPartition partition,
-                    SourceNode source,
-                    ITimestampExtractor timestampExtractor,
-                    IDeserializationExceptionHandler deserializationExceptionHandler,
-                    IInternalProcessorContext<K, V> processorContext,
-                    LogContext logContext)
+        public RecordQueue(
+            TopicPartition partition,
+            SourceNode<K, V> source,
+            ITimestampExtractor timestampExtractor,
+            IDeserializationExceptionHandler deserializationExceptionHandler,
+            IInternalProcessorContext<K, V> processorContext,
+            LogContext logContext)
         {
             this.source = source;
             this.partition = partition;
-            this.fifoQueue = new ArrayDeque<>();
+            this.fifoQueue = new ArrayDeque<ConsumeResult<byte[], byte[]>>();
             this.timestampExtractor = timestampExtractor;
             this.processorContext = processorContext;
             skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics());
@@ -62,25 +101,27 @@ namespace Kafka.Streams.Processor.Internals
             this.log = logContext.logger<RecordQueue>();
         }
 
+        public RecordQueue(TopicPartition partition, SourceNode<object, object> source1, ITimestampExtractor sourceTimestampExtractor, IDeserializationExceptionHandler defaultDeserializationExceptionHandler, object processorContext1, object logContext)
+        {
+            this.partition = partition;
+            this.source1 = source1;
+            this.sourceTimestampExtractor = sourceTimestampExtractor;
+            this.defaultDeserializationExceptionHandler = defaultDeserializationExceptionHandler;
+            this.processorContext1 = processorContext1;
+            this.logContext = logContext;
+        }
+
         /**
          * Returns the corresponding source node in the topology
          *
          * @return SourceNode
          */
-        public SourceNode source()
-        {
-            return source;
-        }
 
         /**
          * Returns the partition with which this queue is associated
          *
          * @return TopicPartition
          */
-        public TopicPartition partition()
-        {
-            return partition;
-        }
 
         /**
          * Add a batch of {@link ConsumeResult} into the queue
@@ -88,7 +129,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param rawRecords the raw records
          * @return the size of this queue
          */
-        int.AddRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
+        int addRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
             foreach (ConsumeResult<byte[], byte[]> rawRecord in rawRecords)
             {
@@ -151,10 +192,6 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @return partition time
          */
-        long partitionTime()
-        {
-            return partitionTime;
-        }
 
         /**
          * Clear the fifo queue of its elements, also clear the time tracker's kept stamped elements
@@ -184,10 +221,12 @@ namespace Kafka.Streams.Processor.Internals
                 {
 
                     timestamp = timestampExtractor.extract(deserialized, partitionTime);
-                } catch (StreamsException internalFatalExtractorException)
+                }
+                catch (StreamsException internalFatalExtractorException)
                 {
                     throw internalFatalExtractorException;
-                } catch (Exception fatalUserException)
+                }
+                catch (Exception fatalUserException)
                 {
                     throw new StreamsException(
                             string.Format("Fatal user code error in ITimestampExtractor callback for record %s.", deserialized),
@@ -200,7 +239,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     log.LogWarning(
                             "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
-                            deserialized.Topic, deserialized.partition(), deserialized.offset(), timestamp, timestampExtractor.GetType().getCanonicalName()
+                            deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName
                     );
 
                     skipRecordsSensor.record();

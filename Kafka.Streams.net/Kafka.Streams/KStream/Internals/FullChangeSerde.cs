@@ -78,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
 
         /**
          * We used to serialize a Change into a single byte[]. Now, we don't anymore, but we still keep this logic here
-         * so that we can produce the legacy format to test that we can still deserialize it.
+         * so that we can produce the legacy string.Format to test that we can still deserialize it.
          */
         public static byte[] mergeChangeArraysIntoSingleLegacyFormattedArray(Change<byte[]> serialChange)
         {

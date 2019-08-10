@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public partial class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
+    public class KTableKTableRightJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableRightJoin<K, R, V1, V2>>();
 
@@ -39,21 +39,6 @@ namespace Kafka.Streams.KStream.Internals
         public IKTableValueGetterSupplier<K, R> view()
         {
             return new KTableKTableRightJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
-        }
-
-        private class KTableKTableRightJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2>
-        {
-            public KTableKTableRightJoinValueGetterSupplier(
-                IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-                IKTableValueGetterSupplier<K, V2> valueGetterSupplier2)
-                : base(valueGetterSupplier1, valueGetterSupplier2)
-            {
-            }
-
-            public IKTableValueGetter<K, R> get()
-            {
-                return new KTableKTableRightJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2());
-            }
         }
     }
 }

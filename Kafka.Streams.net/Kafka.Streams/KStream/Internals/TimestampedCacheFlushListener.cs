@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 
@@ -27,12 +27,11 @@ namespace Kafka.Streams.KStream.Internals
         private IInternalProcessorContext<K, V> context;
         private ProcessorNode<K, V> myNode;
 
-        TimestampedCacheFlushListener(IProcessorContext<K, V> context)
+        public TimestampedCacheFlushListener(IProcessorContext<K, V> context)
         {
             this.context = (IInternalProcessorContext<K, V>)context;
             myNode = this.context.currentNode();
         }
-
 
         public void apply(
             K key,

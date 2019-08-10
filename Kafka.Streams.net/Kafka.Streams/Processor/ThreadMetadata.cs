@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * Represents the state of a single thread running within a {@link KafkaStreams} application.

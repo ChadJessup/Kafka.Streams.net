@@ -16,12 +16,10 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class EagerBufferConfigImpl : BufferConfigInternal<ISuppressed.EagerBufferConfig>, ISuppressed.EagerBufferConfig
+    public class EagerBufferConfigImpl : BufferConfigInternal<IEagerBufferConfig>, IEagerBufferConfig
     {
-
-
-        private long maxRecords;
-        private long maxBytes;
+        public long maxRecords { get; }
+        public long maxBytes { get; }
 
         public EagerBufferConfigImpl(long maxRecords, long maxBytes)
         {
@@ -29,38 +27,24 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             this.maxBytes = maxBytes;
         }
 
-
-        public ISuppressed.EagerBufferConfig withMaxRecords(long recordLimit)
+        public IEagerBufferConfig withMaxRecords(long recordLimit)
         {
             return new EagerBufferConfigImpl(recordLimit, maxBytes);
         }
 
 
-        public ISuppressed.EagerBufferConfig withMaxBytes(long byteLimit)
+        public IEagerBufferConfig withMaxBytes(long byteLimit)
         {
             return new EagerBufferConfigImpl(maxRecords, byteLimit);
         }
 
-
-        public long maxRecords()
-        {
-            return maxRecords;
-        }
-
-
-        public long maxBytes()
-        {
-            return maxBytes;
-        }
-
-
-        public BufferFullStrategy bufferFullStrategy()
+        public override BufferFullStrategy bufferFullStrategy()
         {
             return BufferFullStrategy.EMIT;
         }
 
 
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
@@ -70,19 +54,20 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             {
                 return false;
             }
+
             EagerBufferConfigImpl that = (EagerBufferConfigImpl)o;
             return maxRecords == that.maxRecords &&
                 maxBytes == that.maxBytes;
         }
 
 
-        public int hashCode()
+        public override int GetHashCode()
         {
-            return Objects.hash(maxRecords, maxBytes);
+            return (maxRecords, maxBytes).GetHashCode();
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             return "EagerBufferConfigImpl{maxRecords=" + maxRecords + ", maxBytes=" + maxBytes + '}';
         }

@@ -16,9 +16,9 @@
  */
 
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class Sink<K, V> : AbstractNode, ISink<K, V>
     {

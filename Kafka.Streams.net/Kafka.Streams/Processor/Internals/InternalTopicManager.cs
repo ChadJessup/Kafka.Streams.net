@@ -18,7 +18,7 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class InternalTopicManager
     {

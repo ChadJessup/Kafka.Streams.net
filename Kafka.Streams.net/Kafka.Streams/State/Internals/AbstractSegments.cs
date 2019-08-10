@@ -14,25 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Errors;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using System.IO;
+
 namespace Kafka.Streams.State.Internals
 {
 
-
-    using Kafka.Streams.Errors.ProcessorStateException;
-    using Kafka.Streams.Processor.Internals.IInternalProcessorContext;
-    using System.Collections.Generic;
-
-    abstract class AbstractSegments<S : Segment> : Segments<S>
+    public abstract class AbstractSegments<S> : Segments<S>
+        where S : ISegment
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<AbstractSegments>();
+        private static ILogger log = new LoggerFactory().CreateLogger<AbstractSegments<S>>();
 
-        TreeMap<long, S> segments = new TreeMap<>();
+        Dictionary<long, S> segments = new Dictionary<long, S>();
         string name;
         private long retentionPeriod;
         private long segmentInterval;
         private SimpleDateFormat formatter;
 
-        AbstractSegments(string name, long retentionPeriod, long segmentInterval)
+        public AbstractSegments(
+            string name,
+            long retentionPeriod,
+            long segmentInterval)
         {
             this.name = name;
             this.segmentInterval = segmentInterval;
@@ -42,28 +48,29 @@ namespace Kafka.Streams.State.Internals
             this.formatter.setTimeZone(new SimpleTimeZone(0, "UTC"));
         }
 
-        public override long segmentId(long timestamp)
+        public long segmentId(long timestamp)
         {
             return timestamp / segmentInterval;
         }
 
-        public override string segmentName(long segmentId)
+        public string segmentName(long segmentId)
         {
-            // (1) previous format used - as a separator so if this changes in the future
+            // (1) previous string.Format used - as a separator so if this changes in the future
             // then we should use something different.
-            // (2) previous format used : as a separator (which did break KafkaStreams on Windows OS)
+            // (2) previous string.Format used : as a separator (which did break KafkaStreams on Windows OS)
             // so if this changes in the future then we should use something different.
             return name + "." + segmentId * segmentInterval;
         }
 
-        public override S getSegmentForTimestamp(long timestamp)
+        public S getSegmentForTimestamp(long timestamp)
         {
             return segments[segmentId(timestamp)];
         }
 
-        public override S getOrCreateSegmentIfLive(long segmentId,
-                                          IInternalProcessorContext<K, V> context,
-                                          long streamTime)
+        public override S getOrCreateSegmentIfLive(
+            long segmentId,
+            IInternalProcessorContext<K, V> context,
+            long streamTime)
         {
             long minLiveTimestamp = streamTime - retentionPeriod;
             long minLiveSegment = segmentId(minLiveTimestamp);
@@ -146,7 +153,8 @@ namespace Kafka.Streams.State.Internals
 
         public override List<S> allSegments()
         {
-            List<S> result = new List<>();
+            List<S> result = new List<S>();
+
             foreach (S segment in segments.Values)
             {
                 if (segment.isOpen())
@@ -157,7 +165,7 @@ namespace Kafka.Streams.State.Internals
             return result;
         }
 
-        public override void flush()
+        public void flush()
         {
             foreach (S segment in segments.Values)
             {
@@ -165,7 +173,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override void close()
+        public void close()
         {
             foreach (S segment in segments.Values)
             {
@@ -196,8 +204,9 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private long segmentIdFromSegmentName(string segmentName,
-                                              FileInfo parent)
+        private long segmentIdFromSegmentName(
+            string segmentName,
+            FileInfo parent)
         {
             int segmentSeparatorIndex = name.Length;
             char segmentSeparator = segmentName.charAt(segmentSeparatorIndex);
@@ -241,9 +250,10 @@ namespace Kafka.Streams.State.Internals
 
         }
 
-        private void renameSegmentFile(FileInfo parent,
-                                       string segmentName,
-                                       long segmentId)
+        private void renameSegmentFile(
+            FileInfo parent,
+            string segmentName,
+            long segmentId)
         {
             FileInfo newName = new FileInfo(parent, segmentName(segmentId));
             FileInfo oldName = new FileInfo(parent, segmentName);

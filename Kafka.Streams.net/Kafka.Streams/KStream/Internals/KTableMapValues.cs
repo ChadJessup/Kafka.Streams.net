@@ -14,7 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.IProcessor;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
@@ -26,9 +27,10 @@ namespace Kafka.Streams.KStream.Internals
         private string queryableName;
         private bool sendOldValues = false;
 
-        KTableMapValues(KTableImpl<K, object, V> parent,
-                         IValueMapperWithKey<K, V, V1> mapper,
-                         string queryableName)
+        public KTableMapValues(
+            KTableImpl<K, object, V> parent,
+            IValueMapperWithKey<K, V, V1> mapper,
+            string queryableName)
         {
             this.parent = parent;
             this.mapper = mapper;
@@ -38,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableMapValuesProcessor();
+            return new KTableMapValuesProcessor<K, V, Change<V>>();
         }
 
 
@@ -66,43 +68,41 @@ namespace Kafka.Streams.KStream.Internals
                 //                public string[] storeNames()
                 //                {
                 //                    return parentValueGetterSupplier.storeNames();
-                //                }
-                //            };
             }
+            //            };
+            return null;
+        }
 
+        public void enableSendingOldValues()
+        {
+            parent.enableSendingOldValues();
+            sendOldValues = true;
+        }
 
+        private V1 computeValue(K key, V value)
+        {
+            V1 newValue = default;
 
-            public void enableSendingOldValues()
+            if (value != null)
             {
-                parent.enableSendingOldValues();
-                sendOldValues = true;
+                newValue = mapper.apply(key, value);
             }
 
-            private V1 computeValue(K key, V value)
+            return newValue;
+        }
+
+        private ValueAndTimestamp<V> computeValueAndTimestamp(K key, ValueAndTimestamp<V> valueAndTimestamp)
+        {
+            V newValue = default;
+            long timestamp = 0;
+
+            if (valueAndTimestamp != null)
             {
-                V1 newValue = null;
-
-                if (value != null)
-                {
-                    newValue = mapper.apply(key, value);
-                }
-
-                return newValue;
+                newValue = mapper.apply(key, valueAndTimestamp.value);
+                timestamp = valueAndTimestamp.timestamp;
             }
 
-            private ValueAndTimestamp<V1> computeValueAndTimestamp(K key, ValueAndTimestamp<V> valueAndTimestamp)
-            {
-                V1 newValue = null;
-                long timestamp = 0;
-
-                if (valueAndTimestamp != null)
-                {
-                    newValue = mapper.apply(key, valueAndTimestamp.value());
-                    timestamp = valueAndTimestamp.timestamp();
-                }
-
-                return ValueAndTimestamp.make(newValue, timestamp);
-            }
+            return ValueAndTimestamp<V>.make(newValue, timestamp);
         }
     }
 }

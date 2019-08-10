@@ -16,15 +16,16 @@
  */
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class StrictBufferConfigImpl : BufferConfigInternal<ISuppressed.StrictBufferConfig>, ISuppressed.StrictBufferConfig
+    public class StrictBufferConfigImpl : BufferConfigInternal<IStrictBufferConfig>, IStrictBufferConfig
     {
         private long maxRecords;
         private long maxBytes;
         private BufferFullStrategy bufferFullStrategy;
 
-        public StrictBufferConfigImpl(long maxRecords,
-                                       long maxBytes,
-                                       BufferFullStrategy bufferFullStrategy)
+        public StrictBufferConfigImpl(
+            long maxRecords,
+            long maxBytes,
+            BufferFullStrategy bufferFullStrategy)
         {
             this.maxRecords = maxRecords;
             this.maxBytes = maxBytes;
@@ -39,37 +40,18 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public ISuppressed.StrictBufferConfig withMaxRecords(long recordLimit)
+        public IStrictBufferConfig withMaxRecords(long recordLimit)
         {
             return new StrictBufferConfigImpl(recordLimit, maxBytes, bufferFullStrategy);
         }
 
 
-        public ISuppressed.StrictBufferConfig withMaxBytes(long byteLimit)
+        public IStrictBufferConfig withMaxBytes(long byteLimit)
         {
             return new StrictBufferConfigImpl(maxRecords, byteLimit, bufferFullStrategy);
         }
 
-
-        public long maxRecords()
-        {
-            return maxRecords;
-        }
-
-
-        public long maxBytes()
-        {
-            return maxBytes;
-        }
-
-
-        public BufferFullStrategy bufferFullStrategy()
-        {
-            return bufferFullStrategy;
-        }
-
-
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
@@ -86,13 +68,13 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         }
 
 
-        public int hashCode()
+        public override int GetHashCode()
         {
-            return Objects.hash(maxRecords, maxBytes, bufferFullStrategy);
+            return (maxRecords, maxBytes, bufferFullStrategy).GetHashCode();
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             return "StrictBufferConfigImpl{maxKeys=" + maxRecords +
                 ", maxBytes=" + maxBytes +

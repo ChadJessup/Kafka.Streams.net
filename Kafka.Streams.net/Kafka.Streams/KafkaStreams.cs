@@ -25,9 +25,9 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
@@ -45,7 +45,7 @@ namespace Kafka.Streams
      * sends output to zero, one, or more output topics.
      * <p>
      * The computational logic can be specified either by using the {@link Topology} to define a DAG topology of
-     * {@link Processor}s or by using the {@link StreamsBuilder} which provides the high-level DSL to define
+     * {@link IProcessor}s or by using the {@link StreamsBuilder} which provides the high-level DSL to define
      * transformations.
      * <p>
      * One {@code KafkaStreams} instance can contain one or more threads specified in the configs for the processing work.
@@ -582,7 +582,7 @@ namespace Kafka.Streams
 
             if (host == null || port == null)
             {
-                throw new Exception(string.Format("Error parsing host address %s. Expected format host:port.", endPoint));
+                throw new Exception(string.Format("Error parsing host address %s. Expected string.Format host:port.", endPoint));
             }
 
             return new HostInfo(host, port);

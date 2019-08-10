@@ -17,14 +17,14 @@
 using Kafka.Common;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
-    public static class Processor : AbstractNode, TopologyDescription.Processor
+    public static class IProcessor : AbstractNode, TopologyDescription.IProcessor
     {
 
         private HashSet<string> stores;
 
-        public Processor(string name,
+        public IProcessor(string name,
                          HashSet<string> stores)
         {
             base(name);
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public string ToString()
         {
-            return "Processor: " + name + " (stores: " + stores + ")\n      -=> "
+            return "IProcessor: " + name + " (stores: " + stores + ")\n      -=> "
                 + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
         }
 
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Processor.Internals
                 return false;
             }
 
-            Processor processor = (Processor)o;
+            IProcessor processor = (IProcessor)o;
             // omit successor to avoid infinite loops
             return name.Equals(processor.name)
                 && stores.Equals(processor.stores)

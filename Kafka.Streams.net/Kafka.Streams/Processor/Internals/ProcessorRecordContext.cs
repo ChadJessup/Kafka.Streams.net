@@ -20,7 +20,7 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class ProcessorRecordContext : IRecordContext
     {

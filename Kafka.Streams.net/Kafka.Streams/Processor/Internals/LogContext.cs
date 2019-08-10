@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class LogContext
     {
@@ -13,6 +13,11 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         internal ILogger logger(Type type)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal ILogger logger<T>()
         {
             throw new NotImplementedException();
         }

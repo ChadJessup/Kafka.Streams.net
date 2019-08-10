@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
 
     public class StampedRecord : Stamped<ConsumeResult<object, object>>
@@ -25,25 +27,16 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-        public string Topic
-        {
-            return value.Topic;
-        }
+        public string Topic => value.Topic;
 
-        public int partition()
-        {
-            return value.partition();
-        }
+        public int partition => value.Partition;
 
         public object key()
         {
             return value.key();
         }
 
-        public object value()
-        {
-            return value.value();
-        }
+        public object value => value.value;
 
         public long offset()
         {

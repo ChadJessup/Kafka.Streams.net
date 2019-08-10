@@ -22,10 +22,10 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-class KStreamPassThrough<K, V> : ProcessorSupplier<K, V> {
+class KStreamPassThrough<K, V> : IProcessorSupplier<K, V> {
 
     
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
 {
         return new KStreamPassThroughProcessor<>();
     }

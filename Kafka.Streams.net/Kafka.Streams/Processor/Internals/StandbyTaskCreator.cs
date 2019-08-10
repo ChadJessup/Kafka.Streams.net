@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     static class StandbyTaskCreator : AbstractTaskCreator<StandbyTask>
     {

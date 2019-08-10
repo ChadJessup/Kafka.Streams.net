@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.IProcessor.Interfaces
 {
     public interface IProducerSupplier
     {

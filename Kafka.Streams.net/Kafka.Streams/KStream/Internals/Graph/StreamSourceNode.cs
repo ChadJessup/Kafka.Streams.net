@@ -16,7 +16,7 @@
  */
 
 using Kafka.Common;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;

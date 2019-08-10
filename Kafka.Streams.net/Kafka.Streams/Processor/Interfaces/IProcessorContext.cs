@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.IProcessor.Interfaces
 {
     /**
-     * Processor context interface.
+     * IProcessor context interface.
      */
     public interface IProcessorContext<K, V>
     {
@@ -75,8 +75,8 @@ namespace Kafka.Streams.Processor.Interfaces
 
         /**
          * Schedules a periodic operation for processors. A processor may call this method during
-         * {@link Processor#init(IProcessorContext) initialization} or
-         * {@link Processor#process(object, object) processing} to
+         * {@link IProcessor#init(IProcessorContext) initialization} or
+         * {@link IProcessor#process(object, object) processing} to
          * schedule a periodic callback &mdash; called a punctuation &mdash; to {@link Punctuator#punctuate(long)}.
          * The type parameter controls what notion of time is used for punctuation:
          * <ul>

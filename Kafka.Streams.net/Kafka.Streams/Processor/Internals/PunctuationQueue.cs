@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Kafka.Streams.IProcessor.Interfaces;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class PunctuationQueue
     {
@@ -24,8 +26,8 @@ namespace Kafka.Streams.Processor.Internals
 
         public ICancellable schedule(PunctuationSchedule sched)
         {
-            synchronized(pq)
-    {
+            lock (pq)
+            {
                 pq.Add(sched);
             }
             return sched.cancellable();
@@ -33,8 +35,8 @@ namespace Kafka.Streams.Processor.Internals
 
         public void close()
         {
-            synchronized(pq)
-    {
+            lock (pq)
+            {
                 pq.clear();
             }
         }
@@ -42,10 +44,10 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        bool mayPunctuate(long timestamp, PunctuationType type, IProcessorNodePunctuator processorNodePunctuator)
+        public bool mayPunctuate(long timestamp, PunctuationType type, IProcessorNodePunctuator processorNodePunctuator)
         {
-            synchronized(pq)
-    {
+            lock (pq)
+            {
                 bool punctuated = false;
                 PunctuationSchedule top = pq.peek();
                 while (top != null && top.timestamp <= timestamp)

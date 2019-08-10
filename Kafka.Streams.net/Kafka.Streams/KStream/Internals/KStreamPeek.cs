@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-class KStreamPeek<K, V> : ProcessorSupplier<K, V> {
+class KStreamPeek<K, V> : IProcessorSupplier<K, V> {
 
     private  bool forwardDownStream;
     private  ForeachAction<K, V> action;
@@ -35,7 +35,7 @@ class KStreamPeek<K, V> : ProcessorSupplier<K, V> {
     }
 
     
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
 {
         return new KStreamPeekProcessor();
     }

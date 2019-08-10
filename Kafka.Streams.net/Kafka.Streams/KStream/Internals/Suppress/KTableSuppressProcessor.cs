@@ -14,11 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
-using Kafka.Streams.KStream.Internals.metrics;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State.Internals;
 using System;
 
@@ -29,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private long maxRecords;
         private long maxBytes;
         private long suppressDurationMillis;
-        private TimeDefinition<K> bufferTimeDefinition;
+        private ITimeDefinition<K, V> bufferTimeDefinition;
         private BufferFullStrategy bufferFullStrategy;
         private bool safeToDropTombstones;
         private string storeName;
@@ -39,16 +41,16 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private Sensor suppressionEmitSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
-        public KTableSuppressProcessor(SuppressedInternal<K> suppress, string storeName)
+        public KTableSuppressProcessor(SuppressedInternal<K, V> suppress, string storeName)
         {
             this.storeName = storeName;
             requireNonNull(suppress);
-            maxRecords = suppress.bufferConfig().maxRecords();
-            maxBytes = suppress.bufferConfig().maxBytes();
+            maxRecords = suppress.bufferConfig.maxRecords();
+            maxBytes = suppress.bufferConfig.maxBytes();
             suppressDurationMillis = suppress.timeToWaitForMoreEvents().toMillis();
-            bufferTimeDefinition = suppress.timeDefinition();
-            bufferFullStrategy = suppress.bufferConfig().bufferFullStrategy();
-            safeToDropTombstones = suppress.safeToDropTombstones();
+            bufferTimeDefinition = suppress.timeDefinition;
+            bufferFullStrategy = suppress.bufferConfig.bufferFullStrategy();
+            safeToDropTombstones = suppress.safeToDropTombstones;
         }
 
         public void init(IProcessorContext<K, V> context)

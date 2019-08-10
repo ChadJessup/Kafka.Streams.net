@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
 
 
@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processor.Internals
         public V value;
         public long timestamp;
 
-        Stamped(V value, long timestamp)
+        public Stamped(V value, long timestamp)
         {
             this.value = value;
             this.timestamp = timestamp;

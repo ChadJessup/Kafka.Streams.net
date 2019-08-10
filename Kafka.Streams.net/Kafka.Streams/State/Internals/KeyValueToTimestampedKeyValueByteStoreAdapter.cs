@@ -20,8 +20,8 @@ namespace Kafka.Streams.State.Internals
     using Kafka.Common.Utils;
     using Kafka.Common.Utils.Bytes;
     using Kafka.Streams.KeyValue;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
+    using Kafka.Streams.IProcessor.IProcessorContext;
+    using Kafka.Streams.IProcessor.IStateStore;
     using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
     using Kafka.Streams.State.IKeyValueIterator;
     using Kafka.Streams.State.KeyValueStore;
@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
      * <p>
      * If a user provides a supplier for plain {@code KeyValueStores} via
      * {@link org.apache.kafka.streams.kstream.Materialized#As(KeyValueBytesStoreSupplier)} this adapter is used to
-     * translate between old a new {@code byte[]} format of the value.
+     * translate between old a new {@code byte[]} string.Format of the value.
      *
      * @see KeyValueToTimestampedKeyValueIteratorAdapter
      */

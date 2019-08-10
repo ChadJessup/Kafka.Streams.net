@@ -16,6 +16,7 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.IProcessor;
 using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 
@@ -59,9 +60,9 @@ namespace Kafka.Streams.KStream.Internals
 
         private IInitializer<long> countInitializer = ()=> 0L;
 
-        private Aggregator<K, V, long> countAdder = (aggKey, value, aggregate)=>aggregate + 1L;
+        private IAggregator<K, V, long> countAdder = (aggKey, value, aggregate)=>aggregate + 1L;
 
-        private Aggregator<K, V, long> countSubtractor = (aggKey, value, aggregate)=>aggregate - 1L;
+        private IAggregator<K, V, long> countSubtractor = (aggKey, value, aggregate)=>aggregate - 1L;
 
         private StreamsGraphNode repartitionGraphNode;
 
@@ -76,7 +77,7 @@ namespace Kafka.Streams.KStream.Internals
             this.userProvidedRepartitionTopicName = groupedInternal.name;
         }
 
-        private IKTable<K, T> doAggregate(ProcessorSupplier<K, Change<V>> aggregateSupplier,
+        private IKTable<K, T> doAggregate(IProcessorSupplier<K, Change<V>> aggregateSupplier,
                                               string functionName,
                                               MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materialized)
         {
@@ -149,7 +150,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 materializedInternal.withValueSerde(valSerde);
             }
-            ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableReduce<>(materializedInternal.storeName(),
+            IProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableReduce<K, V>(materializedInternal.storeName(),
 
                                                                                        .Adder,
                                                                                         subtractor);
@@ -178,7 +179,7 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.withValueSerde(Serdes.Long());
             }
 
-            ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
+            IProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
                                                                                            countInitializer,
                                                                                            countAdder,
                                                                                            countSubtractor);
@@ -194,8 +195,8 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public IKTable<K, VR> aggregate<VR>(IInitializer<VR> initializer,
-                                             Aggregator<K, V, VR> adder,
-                                             Aggregator<K, V, VR> subtractor,
+                                             IAggregator<K, V, VR> adder,
+                                             IAggregator<K, V, VR> subtractor,
                                              Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
@@ -210,7 +211,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 materializedInternal.withKeySerde(keySerde);
             }
-            ProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
+            IProcessorSupplier<K, Change<V>> aggregateSupplier = new KTableAggregate<>(materializedInternal.storeName(),
                                                                                            initializer,
 
                                                                                           .Adder,
@@ -220,8 +221,8 @@ namespace Kafka.Streams.KStream.Internals
 
 
         public IKTable<K, T> aggregate(IInitializer<T> initializer,
-                                           Aggregator<K, V, T>.Adder,
-                                           Aggregator<K, V, T> subtractor)
+                                           IAggregator<K, V, T>.Adder,
+                                           IAggregator<K, V, T> subtractor)
         {
             return aggregate(initializer,.Adder, subtractor, Materialized.with(keySerde, null));
         }

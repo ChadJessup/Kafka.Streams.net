@@ -3,7 +3,7 @@
     /**
      * Represents a {@link Topology.AddGlobalStore(org.apache.kafka.streams.state.StoreBuilder, string,
      * org.apache.kafka.common.serialization.Deserializer, org.apache.kafka.common.serialization.Deserializer, string,
-     * string, org.apache.kafka.streams.processor.ProcessorSupplier) global store}.
+     * string, org.apache.kafka.streams.processor.IProcessorSupplier) global store}.
      * Adding a global store results in.Adding a source node and one stateful processor node.
      * Note, that all.Added global stores form a single unit (similar to a {@link Subtopology}) even if different
      * global stores are not connected to each other.

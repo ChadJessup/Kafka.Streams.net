@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public interface IRestoringTasks
     {

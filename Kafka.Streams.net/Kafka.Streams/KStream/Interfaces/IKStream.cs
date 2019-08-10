@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Interfaces
@@ -32,8 +32,8 @@ namespace Kafka.Streams.KStream.Interfaces
      * <p>
      * A {@code KStream} can be transformed record by record, joined with another {@code KStream}, {@link KTable},
      * {@link GlobalKTable}, or can be aggregated into a {@link KTable}.
-     * Kafka Streams DSL can be mixed-and-matched with Processor API (PAPI) (c.f. {@link Topology}) via
-     * {@link #process(ProcessorSupplier, string...) process(...)},
+     * Kafka Streams DSL can be mixed-and-matched with IProcessor API (PAPI) (c.f. {@link Topology}) via
+     * {@link #process(IProcessorSupplier, string...) process(...)},
      * {@link #transform(TransformerSupplier, string...) transform(...)}, and
      * {@link #transformValues(ValueTransformerSupplier, string...) transformValues(...)}.
      *
@@ -711,28 +711,28 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Perform an action on each record of {@code KStream}.
-         * This is a stateless record-by-record operation (cf. {@link #process(ProcessorSupplier, string...)}).
+         * This is a stateless record-by-record operation (cf. {@link #process(IProcessorSupplier, string...)}).
          * Note that this is a terminal operation that returns void.
          *
          * @param action an action to perform on each record
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         void ForEach(IForeachAction<K, V> action);
 
         /**
          * Perform an action on each record of {@code KStream}.
-         * This is a stateless record-by-record operation (cf. {@link #process(ProcessorSupplier, string...)}).
+         * This is a stateless record-by-record operation (cf. {@link #process(IProcessorSupplier, string...)}).
          * Note that this is a terminal operation that returns void.
          *
          * @param action an action to perform on each record
          * @param named  a {@link Named} config used to name the processor in the topology
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         void ForEach(IForeachAction<K, V> action, Named named);
 
         /**
          * Perform an action on each record of {@code KStream}.
-         * This is a stateless record-by-record operation (cf. {@link #process(ProcessorSupplier, string...)}).
+         * This is a stateless record-by-record operation (cf. {@link #process(IProcessorSupplier, string...)}).
          * <p>
          * Peek is a non-terminal operation that triggers a side effect (such as logging or statistics collection)
          * and returns an unchanged stream.
@@ -740,14 +740,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * Note that since this operation is stateless, it may execute multiple times for a single record in failure cases.
          *
          * @param action an action to perform on each record
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          * @return itself
          */
         IKStream<K, V> peek(IForeachAction<K, V> action);
 
         /**
          * Perform an action on each record of {@code KStream}.
-         * This is a stateless record-by-record operation (cf. {@link #process(ProcessorSupplier, string...)}).
+         * This is a stateless record-by-record operation (cf. {@link #process(IProcessorSupplier, string...)}).
          * <p>
          * Peek is a non-terminal operation that triggers a side effect (such as logging or statistics collection)
          * and returns an unchanged stream.
@@ -756,7 +756,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param action an action to perform on each record
          * @param named  a {@link Named} config used to name the processor in the topology
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          * @return itself
          */
         IKStream<K, V> peek(IForeachAction<K, V> action, Named named);
@@ -987,7 +987,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransform(TransformerSupplier, string...)
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         IKStream<K1, V1> transform<K1, V1>(
             ITransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
@@ -1086,7 +1086,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransform(TransformerSupplier, string...)
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         IKStream<K1, V1> transform<K1, V1>(
             ITransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
@@ -1187,7 +1187,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         IKStream<K1, V1> flatTransform<K1, V1>(
             ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
@@ -1288,7 +1288,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
-         * @see #process(ProcessorSupplier, string...)
+         * @see #process(IProcessorSupplier, string...)
          */
         IKStream<K1, V1> flatTransform<K1, V1>(
             ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
@@ -2012,8 +2012,8 @@ namespace Kafka.Streams.KStream.Interfaces
                                                  string[] stateStoreNames);
 
         /**
-         * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
-         * {@link ProcessorSupplier}).
+         * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
+         * {@link IProcessorSupplier}).
          * This is a stateful record-by-record operation (cf. {@link #foreach(IForeachAction)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
          * can be observed and.Additional periodic actions can be performed.
@@ -2030,18 +2030,18 @@ namespace Kafka.Streams.KStream.Interfaces
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
-         * inputStream.process(new ProcessorSupplier() { [] }, "myProcessorState");
+         * inputStream.process(new IProcessorSupplier() { [] }, "myProcessorState");
          * }</pre>
-         * Within the {@link Processor}, the state is obtained via the
+         * Within the {@link IProcessor}, the state is obtained via the
          * {@link IProcessorContext}.
          * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
          * a schedule must be registered.
          * <pre>{@code
-         * new ProcessorSupplier()
+         * new IProcessorSupplier()
 {
-         *     Processor get()
+         *     IProcessor get()
 {
-         *         return new Processor()
+         *         return new IProcessor()
 {
          *             private IStateStore state;
          *
@@ -2068,17 +2068,17 @@ namespace Kafka.Streams.KStream.Interfaces
          * Even if any upstream operation was key-changing, no auto-repartition is triggered.
          * If repartitioning is required, a call to {@link #through(string)} should be performed before {@code transform()}.
          *
-         * @param processorSupplier a instance of {@link ProcessorSupplier} that generates a {@link Processor}
+         * @param IProcessorSupplier a instance of {@link IProcessorSupplier} that generates a {@link IProcessor}
          * @param stateStoreNames   the names of the state store used by the processor
          * @see #foreach(IForeachAction)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process<K, V>(IProcessorSupplier<K, V> processorSupplier,
+        void process<K, V>(IProcessorSupplier<K, V> IProcessorSupplier,
                       string[] stateStoreNames);
 
         /**
-         * Process all records in this stream, one record at a time, by applying a {@link Processor} (provided by the given
-         * {@link ProcessorSupplier}).
+         * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
+         * {@link IProcessorSupplier}).
          * This is a stateful record-by-record operation (cf. {@link #foreach(IForeachAction)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
          * can be observed and.Additional periodic actions can be performed.
@@ -2095,18 +2095,18 @@ namespace Kafka.Streams.KStream.Interfaces
          * // register store
          * builder.AddStateStore(keyValueStoreBuilder);
          *
-         * inputStream.process(new ProcessorSupplier() { [] }, "myProcessorState");
+         * inputStream.process(new IProcessorSupplier() { [] }, "myProcessorState");
          * }</pre>
-         * Within the {@link Processor}, the state is obtained via the
+         * Within the {@link IProcessor}, the state is obtained via the
          * {@link IProcessorContext}.
          * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
          * a schedule must be registered.
          * <pre>{@code
-         * new ProcessorSupplier()
+         * new IProcessorSupplier()
 {
-         *     Processor get()
+         *     IProcessor get()
 {
-         *         return new Processor()
+         *         return new IProcessor()
 {
          *             private IStateStore state;
          *
@@ -2133,13 +2133,13 @@ namespace Kafka.Streams.KStream.Interfaces
          * Even if any upstream operation was key-changing, no auto-repartition is triggered.
          * If repartitioning is required, a call to {@link #through(string)} should be performed before {@code transform()}.
          *
-         * @param processorSupplier a instance of {@link ProcessorSupplier} that generates a {@link Processor}
+         * @param IProcessorSupplier a instance of {@link IProcessorSupplier} that generates a {@link IProcessor}
          * @param named             a {@link Named} config used to name the processor in the topology
          * @param stateStoreNames   the names of the state store used by the processor
          * @see #foreach(IForeachAction)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process<K, V>(IProcessorSupplier<K, V> processorSupplier,
+        void process<K, V>(IProcessorSupplier<K, V> IProcessorSupplier,
                       Named named,
                       string[] stateStoreNames);
 

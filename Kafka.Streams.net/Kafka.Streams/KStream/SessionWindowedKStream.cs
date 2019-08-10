@@ -94,16 +94,16 @@ namespace Kafka.Streams.KStream
          * <p>
          * The specified {@link Initializer} is applied once per session directly before the first input record is
          * processed to provide an initial intermediate aggregation result that is used to process the first record.
-         * The specified {@link Aggregator} is applied for each input record and computes a new aggregate using the current
+         * The specified {@link IAggregator} is applied for each input record and computes a new aggregate using the current
          * aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value.
          * The specified {@link Merger} is used to merge 2 existing sessions into one, i.e., when the windows overlap,
          * they are merged into a single session and the old sessions are discarded.
-         * Thus, {@code aggregate(Initializer, Aggregator, Merger)} can be used to compute
+         * Thus, {@code aggregate(Initializer, IAggregator, Merger)} can be used to compute
          * aggregate functions like count (c.f. {@link #count()})
          * <p>
          * The default value serde from config will be used for serializing the result.
-         * If a different serde is required then you should use {@link #aggregate(Initializer, Aggregator, Merger, Materialized)}.
+         * If a different serde is required then you should use {@link #aggregate(Initializer, IAggregator, Merger, Materialized)}.
          * <p>
          * Not all updates might get sent downstream, as an internal cache is used to deduplicate consecutive updates to
          * the same window and key.
@@ -113,14 +113,14 @@ namespace Kafka.Streams.KStream
          * {@link StreamsConfig#COMMIT_INTERVAL_MS_CONFIG commit intervall}.
          * <p>
          * @param initializer    the instance of {@link Initializer}
-         * @param aggregator     the instance of {@link Aggregator}
+         * @param aggregator     the instance of {@link IAggregator}
          * @param sessionMerger  the instance of {@link Merger}
          * @param            the value type of the resulting {@link KTable}
          * @return a windowed {@link KTable} that contains "update" records with unmodified keys, and values that represent
          * the latest (rolling) aggregate for each key within a window
          */
         IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
-                                                Aggregator<K, V, VR> aggregator,
+                                                IAggregator<K, V, VR> aggregator,
                                                 IMerger<K, VR> sessionMerger);
 
         /**
@@ -133,12 +133,12 @@ namespace Kafka.Streams.KStream
          * <p>
          * The specified {@link Initializer} is applied once per session directly before the first input record is
          * processed to provide an initial intermediate aggregation result that is used to process the first record.
-         * The specified {@link Aggregator} is applied for each input record and computes a new aggregate using the current
+         * The specified {@link IAggregator} is applied for each input record and computes a new aggregate using the current
          * aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value.
          * * The specified {@link Merger} is used to merge 2 existing sessions into one, i.e., when the windows overlap,
          * they are merged into a single session and the old sessions are discarded.
-         * Thus, {@code aggregate(Initializer, Aggregator, Merger)} can be used to compute
+         * Thus, {@code aggregate(Initializer, IAggregator, Merger)} can be used to compute
          * aggregate functions like count (c.f. {@link #count()})
          * <p>
          * Not all updates might get sent downstream, as an internal cache will be used to deduplicate consecutive updates to
@@ -169,7 +169,7 @@ namespace Kafka.Streams.KStream
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
          *
          * @param initializer    the instance of {@link Initializer}
-         * @param aggregator     the instance of {@link Aggregator}
+         * @param aggregator     the instance of {@link IAggregator}
          * @param sessionMerger  the instance of {@link Merger}
          * @param materialized   an instance of {@link Materialized} used to materialize a state store. Cannot be {@code null}
          * @param           the value type of the resulting {@link KTable}
@@ -177,7 +177,7 @@ namespace Kafka.Streams.KStream
          * the latest (rolling) aggregate for each key within a window
          */
         IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
-                                                Aggregator<K, V, VR> aggregator,
+                                                IAggregator<K, V, VR> aggregator,
                                                 IMerger<K, VR> sessionMerger,
                                                 Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized);
 
@@ -185,7 +185,7 @@ namespace Kafka.Streams.KStream
      * Combine values of this stream by the grouped key into {@link SessionWindows}.
      * Records with {@code null} key or value are ignored.
      * Combining implies that the type of the aggregate result is the same as the type of the input value
-     * (c.f. {@link #aggregate(Initializer, Aggregator, Merger)}).
+     * (c.f. {@link #aggregate(Initializer, IAggregator, Merger)}).
      * The result is written into a local {@link ISessionStore} (which is basically an ever-updating
      * materialized view).
      * <p>
@@ -213,7 +213,7 @@ namespace Kafka.Streams.KStream
          * Combine values of this stream by the grouped key into {@link SessionWindows}.
          * Records with {@code null} key or value are ignored.
          * Combining implies that the type of the aggregate result is the same as the type of the input value
-         * (c.f. {@link #aggregate(Initializer, Aggregator, Merger)}).
+         * (c.f. {@link #aggregate(Initializer, IAggregator, Merger)}).
          * The result is written into a local {@link ISessionStore} (which is basically an ever-updating materialized view)
          * provided by the given {@link Materialized} instance.
          * <p>

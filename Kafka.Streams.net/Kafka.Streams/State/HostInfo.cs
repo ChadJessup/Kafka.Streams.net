@@ -16,13 +16,6 @@
  */
 namespace Kafka.Streams.State
 {
-
-
-    using Kafka.Common.serialization.Serializer;
-    using Kafka.Streams.KafkaStreams;
-    using Kafka.Streams.Processor.IStreamPartitioner;
-    using Kafka.Streams.Processor.Internals.StreamsPartitionAssignor;
-
     /**
      * Represents a user defined endpoint in a {@link org.apache.kafka.streams.KafkaStreams} application.
      * Instances of this can be obtained by calling one of:
@@ -40,8 +33,8 @@ namespace Kafka.Streams.State
      */
     public class HostInfo
     {
-        private string host;
-        private int port;
+        public string host { get; }
+        public int port { get; }
 
         public HostInfo(string host,
                         int port)
@@ -70,16 +63,6 @@ namespace Kafka.Streams.State
             int result = host.GetHashCode();
             result = 31 * result + port;
             return result;
-        }
-
-        public string host()
-        {
-            return host;
-        }
-
-        public int port()
-        {
-            return port;
         }
 
         public override string ToString()

@@ -102,7 +102,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     catch (RocksDbException e)
                     {
-                        // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                        // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
                     }
                     try
@@ -111,7 +111,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     catch (RocksDbException e)
                     {
-                        // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                        // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
                     }
                 }
@@ -123,7 +123,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     catch (RocksDbException e)
                     {
-                        // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                        // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while removing key from store " + name, e);
                     }
                     try
@@ -132,7 +132,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     catch (RocksDbException e)
                     {
-                        // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                        // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                         throw new ProcessorStateException("Error while putting key/value into store " + name, e);
                     }
                 }
@@ -165,7 +165,7 @@ namespace Kafka.Streams.State.Internals
                 {
                     byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue);
                     // this does only work, because the changelog topic contains correct data already
-                    // for other format changes, we cannot take this short cut and can only migrate data
+                    // for other string.Format changes, we cannot take this short cut and can only migrate data
                     // from old to new store on put()
                     put(key, valueWithUnknownTimestamp);
                     return valueWithUnknownTimestamp;

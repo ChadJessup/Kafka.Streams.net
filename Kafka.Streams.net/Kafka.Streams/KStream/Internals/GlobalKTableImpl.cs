@@ -14,31 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public class GlobalKTableImpl<K, V> : IGlobalKTable<K, V>
     {
+        public IKTableValueGetterSupplier<K, V> valueGetterSupplier { get; }
+        public string queryableStoreName { get; }
 
-        private IKTableValueGetterSupplier<K, V> valueGetterSupplier;
-        private string queryableStoreName;
-
-        GlobalKTableImpl(IKTableValueGetterSupplier<K, V> valueGetterSupplier,
-                          string queryableStoreName)
+        public GlobalKTableImpl(
+            IKTableValueGetterSupplier<K, V> valueGetterSupplier,
+            string queryableStoreName)
         {
             this.valueGetterSupplier = valueGetterSupplier;
             this.queryableStoreName = queryableStoreName;
         }
-
-        IKTableValueGetterSupplier<K, V> valueGetterSupplier()
-        {
-            return valueGetterSupplier;
-        }
-
-
-        public string queryableStoreName()
-        {
-            return queryableStoreName;
-        }
-
     }
 }

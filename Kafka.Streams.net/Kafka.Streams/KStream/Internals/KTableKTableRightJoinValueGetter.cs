@@ -15,65 +15,66 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.State;
+using System;
+
 namespace Kafka.Streams.KStream.Internals
 {
-    public partial class KTableKTableRightJoin<K, R, V1, V2>
+    public class KTableKTableRightJoinValueGetter<K, R, V1, V2> : IKTableValueGetter<K, R>
     {
-        public class KTableKTableRightJoinValueGetter<K, R, V1> : IKTableValueGetter<K, R>
+
+        private IKTableValueGetter<K, V1> valueGetter1;
+        private IKTableValueGetter<K, V2> valueGetter2;
+
+        KTableKTableRightJoinValueGetter(IKTableValueGetter<K, V1> valueGetter1,
+                                          IKTableValueGetter<K, V2> valueGetter2)
         {
+            this.valueGetter1 = valueGetter1;
+            this.valueGetter2 = valueGetter2;
+        }
 
-            private IKTableValueGetter<K, V1> valueGetter1;
-            private IKTableValueGetter<K, V2> valueGetter2;
 
-            KTableKTableRightJoinValueGetter(IKTableValueGetter<K, V1> valueGetter1,
-                                              IKTableValueGetter<K, V2> valueGetter2)
+        public void init(IProcessorContext<K, V1> context)
+        {
+            valueGetter1.init(context);
+            valueGetter2.init(context);
+        }
+
+
+        public ValueAndTimestamp<R> get(K key)
+        {
+            ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2.get(key);
+            V2 value2 = getValueOrNull(valueAndTimestamp2);
+
+            if (value2 != null)
             {
-                this.valueGetter1 = valueGetter1;
-                this.valueGetter2 = valueGetter2;
-            }
-
-
-            public void init(IProcessorContext<K, V> context)
-            {
-                valueGetter1.init(context);
-                valueGetter2.init(context);
-            }
-
-
-            public ValueAndTimestamp<R> get(K key)
-            {
-                ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[key];
-                V2 value2 = getValueOrNull(valueAndTimestamp2);
-
-                if (value2 != null)
+                ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1.get(key);
+                V1 value1 = getValueOrNull(valueAndTimestamp1);
+                long resultTimestamp;
+                if (valueAndTimestamp1 == null)
                 {
-                    ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
-                    V1 value1 = getValueOrNull(valueAndTimestamp1);
-                    long resultTimestamp;
-                    if (valueAndTimestamp1 == null)
-                    {
-                        resultTimestamp = valueAndTimestamp2.timestamp();
-                    }
-                    else
-                    {
-
-                        resultTimestamp = Math.Max(valueAndTimestamp1.timestamp(), valueAndTimestamp2.timestamp());
-                    }
-                    return ValueAndTimestamp.make(joiner.apply(value1, value2), resultTimestamp);
+                    resultTimestamp = valueAndTimestamp2.timestamp;
                 }
                 else
                 {
 
-                    return null;
+                    resultTimestamp = Math.Max(valueAndTimestamp1.timestamp, valueAndTimestamp2.timestamp);
                 }
+                return ValueAndTimestamp<V1>.make(joiner.apply(value1, value2), resultTimestamp);
             }
-
-
-            public void close()
+            else
             {
-                valueGetter1.close();
-                valueGetter2.close();
+
+                return null;
             }
         }
 
+
+        public void close()
+        {
+            valueGetter1.close();
+            valueGetter2.close();
+        }
     }
+}

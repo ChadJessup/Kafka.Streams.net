@@ -3,7 +3,7 @@ using Kafka.Common.Interfaces;
 using Kafka.Common.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.IProcessor.Interfaces
 {
     public interface IStreamsMetrics
     {

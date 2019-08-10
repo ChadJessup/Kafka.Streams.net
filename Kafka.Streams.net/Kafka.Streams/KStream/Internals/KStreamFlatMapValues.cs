@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
     }
 
 
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
     {
         return new KStreamFlatMapValuesProcessor();
     }

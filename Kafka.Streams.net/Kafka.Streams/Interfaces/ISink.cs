@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.Processor.Interfaces;
+﻿using Kafka.Streams.IProcessor.Interfaces;
 
 namespace Kafka.Streams.Interfaces
 {

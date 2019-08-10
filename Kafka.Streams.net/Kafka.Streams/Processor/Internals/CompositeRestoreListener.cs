@@ -15,31 +15,21 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+using Kafka.Streams.IProcessor.Interfaces;
+using System;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-
-
-
-    using Kafka.Common.TopicPartition;
-
-
-
-
-
-
-
-
     public class CompositeRestoreListener : IRecordBatchingStateRestoreCallback, IStateRestoreListener
     {
-
-
         public static NoOpStateRestoreListener NO_OP_STATE_RESTORE_LISTENER = new NoOpStateRestoreListener();
         private IRecordBatchingStateRestoreCallback internalBatchingRestoreCallback;
         private IStateRestoreListener storeRestoreListener;
         private IStateRestoreListener userRestoreListener = NO_OP_STATE_RESTORE_LISTENER;
 
-        CompositeRestoreListener(IStateRestoreCallback stateRestoreCallback)
+        public CompositeRestoreListener(IStateRestoreCallback stateRestoreCallback)
         {
 
             if (stateRestoreCallback is IStateRestoreListener)
@@ -122,16 +112,6 @@ namespace Kafka.Streams.Processor.Internals
         {
             throw new InvalidOperationException("Single restore functionality shouldn't be called directly but "
                                                         + "through the delegated StateRestoreCallback instance");
-        }
-
-        private static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : IRecordBatchingStateRestoreCallback
-        {
-
-
-            public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
-            {
-
-            }
         }
     }
 }

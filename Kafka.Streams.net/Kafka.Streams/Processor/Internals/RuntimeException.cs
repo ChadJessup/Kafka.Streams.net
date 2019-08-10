@@ -20,7 +20,7 @@ using System.Runtime.Serialization;
 namespace Kafka.Streams
 {
     [Serializable]
-    class RuntimeException : Exception
+    public class RuntimeException : Exception
     {
         public RuntimeException()
         {

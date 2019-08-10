@@ -17,7 +17,7 @@
 using Kafka.Common;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public static class Source : AbstractNode, TopologyDescription.Source
     {

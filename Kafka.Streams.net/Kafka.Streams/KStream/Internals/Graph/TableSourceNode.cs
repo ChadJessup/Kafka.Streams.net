@@ -16,8 +16,8 @@
  */
 
 using Kafka.Common.Utils;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
@@ -85,7 +85,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
             // TODO: we assume source KTables can only be timestamped-key-value stores for now.
             // should be expanded for other types of stores as well.
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
-               new TimestampedKeyValueStoreMaterializer<K, V>((MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
+               new TimestampedKeyValueStoreMaterializer<K, V>(
+                   (MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
 
             if (isGlobalKTable)
             {
@@ -97,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                     consumedInternal.valueDeserializer(),
                     topicName,
                     processorParameters.processorName,
-                    processorParameters.processorSupplier);
+                    processorParameters.IProcessorSupplier);
             }
             else
             {
@@ -108,15 +109,15 @@ namespace Kafka.Streams.KStream.Internals.Graph
                     consumedInternal.timestampExtractor,
                     consumedInternal.keyDeserializer(),
                     consumedInternal.valueDeserializer(),
-                    topicName);
+                    new[] { topicName });
 
-                topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.processorSupplier(), sourceName);
+                topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.IProcessorSupplier, sourceName);
 
                 // only add state store if the source KTable should be materialized
-                KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.processorSupplier;
+                KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.IProcessorSupplier;
                 if (ktableSource.queryableName() != null)
                 {
-                    topologyBuilder.addStateStore<K, V, ?>(storeBuilder, nodeName);
+                    topologyBuilder.addStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { nodeName });
 
                     if (shouldReuseSourceTopicForChangelog)
                     {

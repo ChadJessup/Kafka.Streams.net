@@ -17,7 +17,7 @@
 using Kafka.Common.config.TopicConfig;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
 
 

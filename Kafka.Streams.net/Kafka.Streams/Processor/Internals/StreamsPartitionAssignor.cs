@@ -16,10 +16,10 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.State;
-using Kafka.Streams.Processor.Internals.Assignment;
+using Kafka.Streams.IProcessor.Internals.Assignment;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
 
 
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Processor.Internals
 
                 if (host == null || port == null)
                 {
-                    throw new ConfigException(string.Format("Error parsing host.Address %s. Expected format host:port.", endPoint));
+                    throw new ConfigException(string.Format("Error parsing host.Address %s. Expected string.Format host:port.", endPoint));
                 }
 
                 hostInfo = new HostInfo(host, port);
@@ -290,7 +290,7 @@ namespace Kafka.Streams.Processor.Internals
 
                     if (host == null || port == null)
                     {
-                        throw new ConfigException(string.Format("%s Config %s isn't in the correct format. Expected a host:port pair" +
+                        throw new ConfigException(string.Format("%s Config %s isn't in the correct string.Format. Expected a host:port pair" +
                                 " but received %s",
                             logPrefix, StreamsConfig.APPLICATION_SERVER_CONFIG, userEndPoint));
                     }

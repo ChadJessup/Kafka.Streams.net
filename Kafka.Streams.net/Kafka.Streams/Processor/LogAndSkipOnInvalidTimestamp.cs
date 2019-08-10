@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
 
 
@@ -31,7 +31,7 @@ namespace Kafka.Streams.Processor
      * Returning the timestamp as-is results in dropping the record, i.e., the record will not be processed.
      * <p>
      * Embedded metadata timestamp was introduced in "KIP-32: Add timestamps to Kafka message" for the new
-     * 0.10+ Kafka message format.
+     * 0.10+ Kafka message string.Format.
      * <p>
      * Here, "embedded metadata" refers to the fact that compatible Kafka producer clients automatically and
      * transparently embed such timestamps into message metadata they send to Kafka, which can then be retrieved

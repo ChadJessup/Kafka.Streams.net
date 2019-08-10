@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableMapValuesProcessor : AbstractProcessor<K, Change<V>>
+    public class KTableMapValuesProcessor<K, V, V1> : AbstractProcessor<K, Change<V>>
     {
         private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
@@ -32,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
             if (queryableName != null)
             {
                 store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<>(
+                tupleForwarder = new TimestampedTupleForwarder<K, V1>(
                     store,
                     context,
                     new TimestampedCacheFlushListener<K, V1>(context),

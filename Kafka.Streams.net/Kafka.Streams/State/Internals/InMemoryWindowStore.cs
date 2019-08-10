@@ -1,5 +1,5 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State.Internals

@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System.Linq;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class SinkNodeFactory<K, V> : NodeFactory<K, V>
     {

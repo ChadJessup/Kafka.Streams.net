@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
                 }
                 catch (RocksDbException e)
                 {
-                    // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                     throw new ProcessorStateException("Error while removing key from store " + name, e);
                 }
             }
@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.Internals
                 }
                 catch (RocksDbException e)
                 {
-                    // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                     throw new ProcessorStateException("Error while putting key/value into store " + name, e);
                 }
             }

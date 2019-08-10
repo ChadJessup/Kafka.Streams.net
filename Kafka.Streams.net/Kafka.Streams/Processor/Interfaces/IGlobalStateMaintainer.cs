@@ -17,7 +17,7 @@
 using Confluent.Kafka;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * Interface for maintaining global state stores. see {@link GlobalStateUpdateTask}

@@ -20,8 +20,8 @@ namespace Kafka.Streams.KStream.Internals
     {
         private KTableImpl<K, object, V1> table1;
         private KTableImpl<K, object, V2> table2;
-        IKTableValueGetterSupplier<K, V1> valueGetterSupplier1;
-        IKTableValueGetterSupplier<K, V2> valueGetterSupplier2;
+        protected IKTableValueGetterSupplier<K, V1> valueGetterSupplier1 { get; }
+        protected IKTableValueGetterSupplier<K, V2> valueGetterSupplier2 { get; }
         IValueJoiner<V1, V2, R> joiner;
 
         bool sendOldValues = false;

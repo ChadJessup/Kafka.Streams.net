@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * WindowedChangelogTopicConfig captures the properties required for configuring

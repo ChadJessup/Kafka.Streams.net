@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
     /**
-     * Class used to represent a {@link ProcessorSupplier} and the name
+     * Class used to represent a {@link IProcessorSupplier} and the name
      * used to register it with the {@link org.apache.kafka.streams.processor.Internals.InternalTopologyBuilder}
      *
      * Used by the Join nodes as there are several parameters, this abstraction helps
@@ -28,21 +28,21 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class ProcessorParameters<K, V>
     {
-        public IProcessorSupplier<K, V> processorSupplier { get; }
+        public IProcessorSupplier<K, V> IProcessorSupplier { get; }
         public string processorName { get; }
 
         public ProcessorParameters(
-            IProcessorSupplier<K, V> processorSupplier,
+            IProcessorSupplier<K, V> IProcessorSupplier,
             string processorName)
         {
-            this.processorSupplier = processorSupplier;
+            this.IProcessorSupplier = IProcessorSupplier;
             this.processorName = processorName;
         }
 
         public override string ToString()
         {
             return "ProcessorParameters{" +
-                "processor=" + processorSupplier.GetType() +
+                "processor=" + IProcessorSupplier.GetType() +
                 ", processor name='" + processorName + '\'' +
                 '}';
         }

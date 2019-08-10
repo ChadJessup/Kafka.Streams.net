@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;

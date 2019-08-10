@@ -6,7 +6,7 @@ namespace Kafka.Streams.Interfaces
      * A connected sub-graph of a {@link Topology}.
      * <p>
      * Nodes of a {@code Subtopology} are connected {@link Topology.AddProcessor(string,
-     * org.apache.kafka.streams.processor.ProcessorSupplier, string...) directly} or indirectly via
+     * org.apache.kafka.streams.processor.IProcessorSupplier, string...) directly} or indirectly via
      * {@link Topology#connectProcessorAndStateStores(string, string...) state stores}
      * (i.e., if multiple processors share the same state).
      */

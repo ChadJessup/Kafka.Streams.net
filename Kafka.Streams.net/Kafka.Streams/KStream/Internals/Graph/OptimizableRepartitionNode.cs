@@ -17,11 +17,15 @@
 
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
+    public class OptimizableRepartitionNode
+    {
+    }
+
     public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V>
     {
 
@@ -44,6 +48,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
 
         }
+
         public override ISerializer<V> getValueSerializer()
         {
             return valueSerde != null ? valueSerde.Serializer : null;
@@ -69,13 +74,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             topologyBuilder.addProcessor(
                 processorParameters.processorName,
-                processorParameters.processorSupplier,
+                processorParameters.IProcessorSupplier,
                 parentNodeNames());
 
             topologyBuilder.addSink(
                 sinkName,
                 repartitionTopic,
-                getKeySerializer,
+                keySerializer,
                 getValueSerializer(),
                 null,
                 new[] { processorParameters.processorName });
@@ -87,7 +92,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 keyDeserializer,
                 getValueDeserializer(),
                 new[] { repartitionTopic });
-
         }
 
         public static OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()

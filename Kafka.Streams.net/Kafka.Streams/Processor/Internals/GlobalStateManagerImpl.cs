@@ -1,10 +1,10 @@
 using Confluent.Kafka;
 using Kafka.Streams;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * This is responsible for the initialization, restoration, closing, flushing etc

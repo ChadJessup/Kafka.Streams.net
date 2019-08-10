@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -56,10 +56,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
-            IProcessorSupplier<K, V> processorSupplier = processorParameters.processorSupplier;
+            IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.IProcessorSupplier;
 
             // Stream - Table join (Global or KTable)
-            topologyBuilder.addProcessor(processorName, processorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorName, IProcessorSupplier, parentNodeNames());
 
             // Steam - KTable join only
             if (otherJoinSideNodeName != null)

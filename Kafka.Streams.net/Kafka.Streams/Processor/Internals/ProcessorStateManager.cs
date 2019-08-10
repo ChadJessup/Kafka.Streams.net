@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+using Confluent.Kafka;
+using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-    using Confluent.Kafka;
-    using Kafka.Common.TopicPartition;
-    using Kafka.Common.Utils.FixedOrderMap;
-    using Kafka.Common.Utils.LogContext;
-    using Kafka.Streams.Processor.Interfaces;
-    using System.Collections.Generic;
-
-    public class ProcessorStateManager : IStateManager
+    public class ProcessorStateManager<K, V> : IStateManager
     {
 
         private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
@@ -37,7 +35,7 @@ namespace Kafka.Streams.Processor.Internals
         private Dictionary<TopicPartition, long> offsetLimits;
         private Dictionary<TopicPartition, long> standbyRestoredOffsets;
         private Dictionary<string, IStateRestoreCallback> restoreCallbacks; // used for standby tasks, keyed by state topic name
-        private Dictionary<string, RecordConverter> recordConverters; // used for standby tasks, keyed by state topic name
+        private Dictionary<string, IRecordConverter> recordConverters; // used for standby tasks, keyed by state topic name
         private Dictionary<string, string> storeToChangelogTopic;
 
         // must be maintained in topological order
@@ -194,7 +192,7 @@ namespace Kafka.Streams.Processor.Internals
             );
         }
 
-        void clearCheckpoints()
+        public void clearCheckpoints()
         {
             if (checkpointFile != null)
             {
@@ -253,7 +251,7 @@ namespace Kafka.Streams.Processor.Internals
             standbyRestoredOffsets.Add(storePartition, lastOffset + 1);
         }
 
-        void putOffsetLimit(TopicPartition partition,
+        public void putOffsetLimit(TopicPartition partition,
                             long limit)
         {
             log.LogTrace("Updating store offset limit for partition {} to {}", partition, limit);
@@ -456,7 +454,7 @@ namespace Kafka.Streams.Processor.Internals
             return partition == null ? taskId.partition : partition.partition();
         }
 
-        void registerGlobalStateStores(List<IStateStore> stateStores)
+        public void registerGlobalStateStores(List<IStateStore> stateStores)
         {
             log.LogDebug("Register global stores {}", stateStores);
             foreach (IStateStore stateStore in stateStores)
@@ -476,9 +474,9 @@ namespace Kafka.Streams.Processor.Internals
             return unmodifiableList(changelogPartitions);
         }
 
-        void ensureStoresRegistered()
+        public void ensureStoresRegistered()
         {
-            foreach (KeyValuePair<string, Optional<IStateStore>> entry in registeredStores)
+            foreach (var entry in registeredStores)
             {
                 if (!entry.Value.isPresent())
                 {

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, V> get()
+        public IProcessor<K, V> get()
         {
             return new KStreamWindowAggregateProcessor();
         }

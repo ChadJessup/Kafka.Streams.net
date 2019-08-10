@@ -4,7 +4,7 @@ using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     static class RebalanceListener : ConsumerRebalanceListener
     {

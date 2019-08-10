@@ -23,7 +23,7 @@ namespace Kafka.Streams.State
      */
     public class ValueAndTimestamp<V>
     {
-        private V value;
+        public V value { get; }
         public long timestamp { get; }
 
         private ValueAndTimestamp(

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor;
+using Kafka.Streams.IProcessor;
 using System;
 using System.Linq;
 
@@ -88,16 +88,16 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             if (node is StatefulProcessorNode<K, V>)
             {
-                IProcessorSupplier<K, V> processorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().processorSupplier();
-                if (processorSupplier is KStreamWindowAggregate)
+                IProcessorSupplier<K, V> IProcessorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().IProcessorSupplier();
+                if (IProcessorSupplier is KStreamWindowAggregate)
                 {
-                    KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate)processorSupplier;
+                    KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate)IProcessorSupplier;
                     Windows windows = kStreamWindowAggregate.windows();
                     return windows.gracePeriodMs();
                 }
-                else if (processorSupplier is KStreamSessionWindowAggregate)
+                else if (IProcessorSupplier is KStreamSessionWindowAggregate)
                 {
-                    KStreamSessionWindowAggregate kStreamSessionWindowAggregate = (KStreamSessionWindowAggregate)processorSupplier;
+                    KStreamSessionWindowAggregate kStreamSessionWindowAggregate = (KStreamSessionWindowAggregate)IProcessorSupplier;
                     SessionWindows windows = kStreamSessionWindowAggregate.windows();
                     return windows.gracePeriodMs() + windows.inactivityGap();
                 }

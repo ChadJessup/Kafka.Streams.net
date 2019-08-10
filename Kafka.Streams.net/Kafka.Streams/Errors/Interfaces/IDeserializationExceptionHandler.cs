@@ -1,5 +1,5 @@
 using Confluent.Kafka;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor.Interfaces;
 using System;
 
 namespace Kafka.Streams.Errors.Interfaces
@@ -27,7 +27,8 @@ namespace Kafka.Streams.Errors.Interfaces
  */
     public class DeserializationHandlerResponse
     {
-        DeserializationHandlerResponses Response { get; }
+        public static DeserializationHandlerResponses Response { get; }
+        public static DeserializationHandlerResponse FAIL { get; internal set; }
 
         /** an english description of the api--this is for debugging and can change */
         string name { get; }

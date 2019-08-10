@@ -20,7 +20,7 @@ using Kafka.Streams.KStream.Internals;
 using System;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class SinkNode<K, V> : ProcessorNode<K, V>
     {

@@ -1,7 +1,7 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.State;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.IProcessor;
+using Kafka.Streams.IProcessor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
@@ -245,7 +245,7 @@ namespace Kafka.Streams.State.Internals
             }
             catch (RocksDbException e)
             {
-                // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                 throw new ProcessorStateException("Error while getting value for key from store " + name, e);
             }
         }
@@ -261,7 +261,7 @@ namespace Kafka.Streams.State.Internals
             }
             catch (RocksDbException e)
             {
-                // string format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
                 throw new ProcessorStateException("Error while getting value for key from store " + name, e);
             }
             put(key, null);

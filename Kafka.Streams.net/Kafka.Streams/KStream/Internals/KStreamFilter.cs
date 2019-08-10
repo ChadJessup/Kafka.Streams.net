@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-class KStreamFilter<K, V> : ProcessorSupplier<K, V> {
+class KStreamFilter<K, V> : IProcessorSupplier<K, V> {
 
     private  IPredicate<K, V> predicate;
     private  bool filterNot;
@@ -35,7 +35,7 @@ class KStreamFilter<K, V> : ProcessorSupplier<K, V> {
     }
 
     
-    public Processor<K, V> get()
+    public IProcessor<K, V> get()
 {
         return new KStreamFilterProcessor();
     }

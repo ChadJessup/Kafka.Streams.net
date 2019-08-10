@@ -16,10 +16,10 @@
  */
 using Confluent.Kafka;
 using Kafka.Common.Metrics;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.IProcessor.Internals.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     /**
      * A StandbyTask

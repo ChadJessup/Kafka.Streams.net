@@ -22,7 +22,7 @@ using Kafka.Streams.KStream.Internals.Graph;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class SourceNodeFactory<K, V> : NodeFactory<K, V>
     {

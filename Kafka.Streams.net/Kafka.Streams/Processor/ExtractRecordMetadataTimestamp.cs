@@ -17,14 +17,14 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.IProcessor
 {
     /**
      * Retrieves embedded metadata timestamps from Kafka messages.
      * If a record has a negative (invalid) timestamp value, an error handler method is called.
      * <p>
      * Embedded metadata timestamp was introduced in "KIP-32: Add timestamps to Kafka message" for the new
-     * 0.10+ Kafka message format.
+     * 0.10+ Kafka message string.Format.
      * <p>
      * Here, "embedded metadata" refers to the fact that compatible Kafka producer clients automatically and
      * transparently embed such timestamps into message metadata they send to Kafka, which can then be retrieved

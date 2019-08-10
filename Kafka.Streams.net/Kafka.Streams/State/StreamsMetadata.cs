@@ -14,17 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.State
 {
-
-
-    using Kafka.Common.TopicPartition;
-    using Kafka.Common.annotation.InterfaceStability;
-    using Kafka.Streams.KafkaStreams;
-
-
-
-
     /**
      * Represents the state of an instance (process) in a {@link KafkaStreams} application.
      * It contains the user supplied {@link HostInfo} that can be used by developers to build
@@ -39,17 +33,19 @@ namespace Kafka.Streams.State
          * Sentinel to indicate that the StreamsMetadata is currently unavailable. This can occur during rebalance
          * operations.
          */
-        public static StreamsMetadata NOT_AVAILABLE = new StreamsMetadata(new HostInfo("unavailable", -1),
-                                                                                Collections.emptySet(),
-                                                                                Collections.emptySet());
+        public static StreamsMetadata NOT_AVAILABLE = new StreamsMetadata(
+            new HostInfo("unavailable", -1),
+            new HashSet<string>(),
+            new HashSet<TopicPartition>());
 
         private HostInfo hostInfo;
         private HashSet<string> stateStoreNames;
         private HashSet<TopicPartition> topicPartitions;
 
-        public StreamsMetadata(HostInfo hostInfo,
-                               HashSet<string> stateStoreNames,
-                               HashSet<TopicPartition> topicPartitions)
+        public StreamsMetadata(
+            HostInfo hostInfo,
+            HashSet<string> stateStoreNames,
+            HashSet<TopicPartition> topicPartitions)
         {
 
             this.hostInfo = hostInfo;
@@ -57,30 +53,9 @@ namespace Kafka.Streams.State
             this.topicPartitions = topicPartitions;
         }
 
-        public HostInfo hostInfo()
-        {
-            return hostInfo;
-        }
+        public string host => hostInfo.host;
 
-        public HashSet<string> stateStoreNames()
-        {
-            return stateStoreNames;
-        }
-
-        public HashSet<TopicPartition> topicPartitions()
-        {
-            return topicPartitions;
-        }
-
-        public string host()
-        {
-            return hostInfo.host();
-        }
-
-        public int port()
-        {
-            return hostInfo.port();
-        }
+        public int port => hostInfo.port;
 
         public override bool Equals(object o)
         {

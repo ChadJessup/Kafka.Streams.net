@@ -14,56 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.IProcessor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamJoinWindow<K, V> : IProcessorSupplier<K, V>
+    {
+        private string windowName;
 
-
-
-
-
-
-
-
-class KStreamJoinWindow<K, V> : ProcessorSupplier<K, V> {
-
-    private  string windowName;
-
-    KStreamJoinWindow( string windowName)
-{
-        this.windowName = windowName;
-    }
-
-    
-    public Processor<K, V> get()
-{
-        return new KStreamJoinWindowProcessor();
-    }
-
-    private KStreamJoinWindowProcessor : AbstractProcessor<K, V> {
-
-        private WindowStore<K, V> window;
-
-        
-        
-        public void init( IProcessorContext<K, V> context)
-{
-            base.init(context);
-
-            window = (WindowStore<K, V>) context.getStateStore(windowName);
+        public KStreamJoinWindow(string windowName)
+        {
+            this.windowName = windowName;
         }
 
-        
-        public void process( K key,  V value)
-{
-            // if the key is null, we do not need to put the record into window store
-            // since it will never be considered for join operations
-            if (key != null)
-{
-                context.forward(key, value);
-                // Every record basically starts a new window. We're using a window store mostly for the retention.
-                window.Add(key, value, context.timestamp());
-            }
+
+        public IProcessor<K, V> get()
+        {
+            return new KStreamJoinWindowProcessor<K, V>(this.windowName);
         }
     }
-
 }

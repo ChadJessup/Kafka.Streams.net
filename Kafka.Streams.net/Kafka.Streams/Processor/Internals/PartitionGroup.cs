@@ -14,23 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+
+using Confluent.Kafka;
+using Kafka.Common.Metrics;
+using System;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.IProcessor.Internals
 {
-
-
-
-    using Kafka.Common.TopicPartition;
-    using Kafka.Common.metrics.Sensor;
-    using Confluent.Kafka;
-    using Kafka.Common.Metrics;
-    using System.Collections.Generic;
-
-
-
-
-
-
-
     /**
      * PartitionGroup is used to buffer all co-partitioned records for processing.
      *
@@ -63,31 +54,9 @@ namespace Kafka.Streams.Processor.Internals
         private int totalBuffered;
         private bool allBuffered;
 
-
-        public static class RecordInfo
-        {
-
-            RecordQueue queue;
-
-            public ProcessorNode node()
-            {
-                return queue.source();
-            }
-
-            public TopicPartition partition()
-            {
-                return queue.partition();
-            }
-
-            RecordQueue queue()
-            {
-                return queue;
-            }
-        }
-
         PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
         {
-            nonEmptyQueuesByTime = new PriorityQueue<>(partitionQueues.size(), Comparator.comparingLong(RecordQueue::headRecordTimestamp));
+            nonEmptyQueuesByTime = new Queue<RecordQueue>(partitionQueues.size(), Comparator.comparingLong(RecordQueue.headRecordTimestamp));
             this.partitionQueues = partitionQueues;
             this.recordLatenessSensor = recordLatenessSensor;
             totalBuffered = 0;
@@ -100,7 +69,7 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @return StampedRecord
          */
-        StampedRecord nextRecord(RecordInfo LogInformation)
+        public StampedRecord nextRecord(RecordInfo LogInformation)
         {
             StampedRecord record = null;
 
@@ -151,7 +120,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param rawRecords  the raw records
          * @return the queue size for the partition
          */
-        int addRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
+        public int addRawRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
             RecordQueue recordQueue = partitionQueues[partition];
 
@@ -185,15 +154,11 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * Return the stream-time of this partition group defined as the largest timestamp seen across all partitions
          */
-        public long streamTime()
-        {
-            return streamTime;
-        }
 
         /**
          * @throws InvalidOperationException if the record's partition does not belong to this partition group
          */
-        int numBuffered(TopicPartition partition)
+        public int numBuffered(TopicPartition partition)
         {
             RecordQueue recordQueue = partitionQueues[partition];
 
@@ -210,24 +175,21 @@ namespace Kafka.Streams.Processor.Internals
             return totalBuffered;
         }
 
-        bool allPartitionsBuffered()
-        {
-            return allBuffered;
-        }
+        public bool allPartitionsBuffered() => allBuffered;
 
         public void close()
         {
             clear();
-            partitionQueues.clear();
+            partitionQueues.Clear();
         }
 
         public void clear()
         {
-            nonEmptyQueuesByTime.clear();
+            nonEmptyQueuesByTime.Clear();
             streamTime = RecordQueue.UNKNOWN;
             foreach (RecordQueue queue in partitionQueues.Values)
             {
-                queue.clear();
+                queue.Clear();
             }
         }
     }

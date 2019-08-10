@@ -112,7 +112,7 @@ namespace Kafka.Streams.KStream
          * mapped} to the same key into a new instance of {@link KTable}.
          * Records with {@code null} key are ignored.
          * Combining implies that the type of the aggregate result is the same as the type of the input value
-         * (c.f. {@link #aggregate(Initializer, Aggregator, Aggregator, Materialized)}).
+         * (c.f. {@link #aggregate(Initializer, IAggregator, IAggregator, Materialized)}).
          * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
          * that can be queried using the provided {@code queryableStoreName}.
          * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
@@ -186,7 +186,7 @@ namespace Kafka.Streams.KStream
          * mapped} to the same key into a new instance of {@link KTable}.
          * Records with {@code null} key are ignored.
          * Combining implies that the type of the aggregate result is the same as the type of the input value
-         * (c.f. {@link #aggregate(Initializer, Aggregator, Aggregator)}).
+         * (c.f. {@link #aggregate(Initializer, IAggregator, IAggregator)}).
          * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
          * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
          * <p>
@@ -253,13 +253,13 @@ namespace Kafka.Streams.KStream
          * The specified {@link Initializer} is applied once directly before the first input record is processed to
          * provide an initial intermediate aggregation result that is used to process the first record.
          * Each update to the original {@link KTable} results in a two step update of the result {@link KTable}.
-         * The specified {@link Aggregator.Adder} is applied for each update record and computes a new aggregate using the
+         * The specified {@link IAggregator.Adder} is applied for each update record and computes a new aggregate using the
          * current aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value by.Adding the new record to the aggregate.
-         * The specified {@link Aggregator subtractor} is applied for each "replaced" record of the original {@link KTable}
+         * The specified {@link IAggregator subtractor} is applied for each "replaced" record of the original {@link KTable}
          * and computes a new aggregate using the current aggregate and the record's value by "removing" the "replaced"
          * record from the aggregate.
-         * Thus, {@code aggregate(Initializer, Aggregator, Aggregator, Materialized)} can be used to compute aggregate functions
+         * Thus, {@code aggregate(Initializer, IAggregator, IAggregator, Materialized)} can be used to compute aggregate functions
          * like sum.
          * For sum, the initializer,.Adder, and subtractor would work as follows:
          * <pre>{@code
@@ -271,14 +271,14 @@ namespace Kafka.Streams.KStream
          *   }
          * }
          *
-         * public SumAdder : Aggregator<string, int, long> {
+         * public SumAdder : IAggregator<string, int, long> {
          *   public long apply(string key, int newValue, long aggregate)
 {
          *     return aggregate + newValue;
          *   }
          * }
          *
-         * public SumSubtractor : Aggregator<string, int, long> {
+         * public SumSubtractor : IAggregator<string, int, long> {
          *   public long apply(string key, int oldValue, long aggregate)
 {
          *     return aggregate - oldValue;
@@ -314,8 +314,8 @@ namespace Kafka.Streams.KStream
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
          *
          * @param initializer   an {@link Initializer} that provides an initial aggregate result value
-         * @param.Adder         an {@link Aggregator} that.Adds a new record to the aggregate result
-         * @param subtractor    an {@link Aggregator} that removed an old record from the aggregate result
+         * @param.Adder         an {@link IAggregator} that.Adds a new record to the aggregate result
+         * @param subtractor    an {@link IAggregator} that removed an old record from the aggregate result
          * @param materialized  the instance of {@link Materialized} used to materialize the state store. Cannot be {@code null}
          * @param          the value type of the aggregated {@link KTable}
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
@@ -334,20 +334,20 @@ namespace Kafka.Streams.KStream
          * Aggregating is a generalization of {@link #reduce(Reducer, Reducer) combining via reduce(...)} as it,
          * for example, allows the result to have a different type than the input values.
          * If the result value type does not match the {@link StreamsConfig#DEFAULT_VALUE_SERDE_CLASS_CONFIG default value
-         * serde} you should use {@link #aggregate(Initializer, Aggregator, Aggregator, Materialized)}.
+         * serde} you should use {@link #aggregate(Initializer, IAggregator, IAggregator, Materialized)}.
          * The result is written into a local {@link KeyValueStore} (which is basically an ever-updating materialized view)
          * Furthermore, updates to the store are sent downstream into a {@link KTable} changelog stream.
          * <p>
          * The specified {@link Initializer} is applied once directly before the first input record is processed to
          * provide an initial intermediate aggregation result that is used to process the first record.
          * Each update to the original {@link KTable} results in a two step update of the result {@link KTable}.
-         * The specified {@link Aggregator.Adder} is applied for each update record and computes a new aggregate using the
+         * The specified {@link IAggregator.Adder} is applied for each update record and computes a new aggregate using the
          * current aggregate (or for the very first record using the intermediate aggregation result provided via the
          * {@link Initializer}) and the record's value by.Adding the new record to the aggregate.
-         * The specified {@link Aggregator subtractor} is applied for each "replaced" record of the original {@link KTable}
+         * The specified {@link IAggregator subtractor} is applied for each "replaced" record of the original {@link KTable}
          * and computes a new aggregate using the current aggregate and the record's value by "removing" the "replaced"
          * record from the aggregate.
-         * Thus, {@code aggregate(Initializer, Aggregator, Aggregator, string)} can be used to compute aggregate functions
+         * Thus, {@code aggregate(Initializer, IAggregator, IAggregator, string)} can be used to compute aggregate functions
          * like sum.
          * For sum, the initializer,.Adder, and subtractor would work as follows:
          * <pre>{@code
@@ -359,14 +359,14 @@ namespace Kafka.Streams.KStream
          *   }
          * }
          *
-         * public SumAdder : Aggregator<string, int, long> {
+         * public SumAdder : IAggregator<string, int, long> {
          *   public long apply(string key, int newValue, long aggregate)
 {
          *     return aggregate + newValue;
          *   }
          * }
          *
-         * public SumSubtractor : Aggregator<string, int, long> {
+         * public SumSubtractor : IAggregator<string, int, long> {
          *   public long apply(string key, int oldValue, long aggregate)
 {
          *     return aggregate - oldValue;
@@ -389,8 +389,8 @@ namespace Kafka.Streams.KStream
          * You can retrieve all generated internal topic names via {@link Topology#describe()}.
          *
          * @param initializer a {@link Initializer} that provides an initial aggregate result value
-         * @param.Adder       a {@link Aggregator} that.Adds a new record to the aggregate result
-         * @param subtractor  a {@link Aggregator} that removed an old record from the aggregate result
+         * @param.Adder       a {@link IAggregator} that.Adds a new record to the aggregate result
+         * @param subtractor  a {@link IAggregator} that removed an old record from the aggregate result
          * @param        the value type of the aggregated {@link KTable}
          * @return a {@link KTable} that contains "update" records with unmodified keys, and values that represent the
          * latest (rolling) aggregate for each key

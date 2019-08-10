@@ -17,20 +17,19 @@
 using Kafka.Common;
 using Kafka.Common.Metrics;
 using Kafka.Common.Metrics.Stats;
-using Kafka.Streams.Processor.Internals.metrics;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.IProcessor.Internals.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public class TaskMetrics
     {
         StreamsMetricsImpl metrics;
-        Sensor taskCommitTimeSensor;
-        Sensor taskEnforcedProcessSensor;
+        public Sensor taskCommitTimeSensor { get; }
+        public Sensor taskEnforcedProcessSensor { get; }
         private string taskName;
 
-        TaskMetrics(TaskId id, StreamsMetricsImpl metrics)
+        public TaskMetrics(TaskId id, StreamsMetricsImpl metrics)
         {
             taskName = id.ToString();
             this.metrics = metrics;
@@ -72,7 +71,7 @@ namespace Kafka.Streams.Processor.Internals
 
         }
 
-        void removeAllSensors()
+        public void removeAllSensors()
         {
             metrics.removeAllTaskLevelSensors(taskName);
         }

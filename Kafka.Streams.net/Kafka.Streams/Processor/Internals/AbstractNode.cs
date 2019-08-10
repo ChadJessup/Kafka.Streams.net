@@ -17,7 +17,7 @@
 using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.IProcessor.Internals
 {
     public abstract class AbstractNode : INode
     {

@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public Processor<K, Change<V1>> get()
+        public IProcessor<K, Change<V1>> get()
         {
             return new KTableKTableOuterJoinProcessor(valueGetterSupplier2());
         }

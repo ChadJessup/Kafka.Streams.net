@@ -6,7 +6,7 @@
      * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
      * record of a stream.
      * If stateful processing is required, consider using
-     * {@link KStream#process(org.apache.kafka.streams.processor.ProcessorSupplier, string...) KStream#process(...)}.
+     * {@link KStream#process(org.apache.kafka.streams.processor.IProcessorSupplier, string...) KStream#process(...)}.
      *
      * @param key type
      * @param value type

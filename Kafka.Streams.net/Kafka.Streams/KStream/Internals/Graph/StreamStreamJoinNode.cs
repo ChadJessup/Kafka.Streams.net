@@ -1,4 +1,4 @@
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.IProcessor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 
@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     /**
      * Too much information to generalize, so Stream-Stream joins are represented by a specific node.
      */
-    public partial class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, V2, VR>
+    public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, V2, VR>
     {
         private ProcessorParameters<K, V1> thisWindowedStreamProcessorParameters;
         private ProcessorParameters<K, V2> otherWindowedStreamProcessorParameters;
@@ -65,9 +65,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.processorName;
             string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.processorName;
 
-            topologyBuilder.addProcessor(thisProcessorName, thisProcessorParameters().processorSupplier, thisWindowedStreamProcessorName);
-            topologyBuilder.addProcessor(otherProcessorName, otherProcessorParameters().processorSupplier, otherWindowedStreamProcessorName);
-            topologyBuilder.addProcessor(mergeProcessorParameters().processorName, mergeProcessorParameters().processorSupplier, thisProcessorName, otherProcessorName);
+            topologyBuilder.addProcessor(thisProcessorName, thisProcessorParameters().IProcessorSupplier, thisWindowedStreamProcessorName);
+            topologyBuilder.addProcessor(otherProcessorName, otherProcessorParameters().IProcessorSupplier, otherWindowedStreamProcessorName);
+            topologyBuilder.addProcessor(mergeProcessorParameters().processorName, mergeProcessorParameters().IProcessorSupplier, thisProcessorName, otherProcessorName);
             topologyBuilder.addStateStore(thisWindowStoreBuilder, thisWindowedStreamProcessorName, otherProcessorName);
             topologyBuilder.addStateStore(otherWindowStoreBuilder, otherWindowedStreamProcessorName, thisProcessorName);
         }

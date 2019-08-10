@@ -144,7 +144,7 @@
 
 ////    /**
 ////     * @param metricName
-////     * @return standard JMX MBean name in the following format domainName:type=metricType,key1=val1,key2=val2
+////     * @return standard JMX MBean name in the following string.Format domainName:type=metricType,key1=val1,key2=val2
 ////     */
 ////    static string getMBeanName(string prefix, MetricName metricName)
 //{
