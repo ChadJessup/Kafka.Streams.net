@@ -7,6 +7,7 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace WordCountProcessorDemo
 {
@@ -57,7 +58,8 @@ namespace WordCountProcessorDemo
                 AutoOffsetReset = AutoOffsetReset.Earliest
             };
 
-            var locale = CultureInfo.InvariantCulture;
+            var latch = new ManualResetEvent(initialState: false);
+
             StreamsBuilder builder = new StreamsBuilder();
 
             IKStream<string, string> textLines = builder
@@ -88,23 +90,17 @@ namespace WordCountProcessorDemo
                 .with(Serdes.String(), Serdes.Long()));
 
             KafkaStreams streams2 = new KafkaStreams(builder.build(), streamsConfig);
-            //            CountDownLatch latch = new CountDownLatch(1);
 
             // attach shutdown handler to catch control-c
-            //    Runtime.getRuntime().addShutdownHook(new Thread("streams-wordcount-shutdown-hook")
-            //    {
-
-            //        public void run()
-            //    {
-            //        streams.close();
-            //        latch.countDown();
-            //    }
-            //});
+            Console.CancelKeyPress += (o, e) =>
+            {
+                latch.Set();
+            };
 
             try
             {
                 streams.start();
-                // latch.await();
+                latch.WaitOne();
             }
             catch (Exception e)
             {
@@ -112,11 +108,6 @@ namespace WordCountProcessorDemo
             }
 
             return 0;
-        }
-
-        private static object groupBy(Func<object, object, object> p)
-        {
-            throw new NotImplementedException();
         }
     }
 }
