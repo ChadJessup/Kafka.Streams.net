@@ -65,31 +65,31 @@ namespace WordCountProcessorDemo
             IKStream<string, string> textLines = builder
                 .stream<string, string>("TextLinesTopic");
 
-            IKTable<string, long> wordCounts = textLines
-                .flatMapValues<long>(textLine => textLine.ToLowerCase().Split("\\W+"))
-                .groupBy((key, word) => word)
-                .count("Counts");
+            //IKTable<string, long> wordCounts = textLines
+            //    .flatMapValues<long>(textLine => textLine.ToLowerCase().Split("\\W+"))
+            //    .groupBy((key, word) => word)
+            //    .count("Counts");
 
-            wordCounts.to(Serdes.String(), Serdes.Long(), "WordsWithCountsTopic");
+            //wordCounts.to(Serdes.String(), Serdes.Long(), "WordsWithCountsTopic");
 
-            KafkaStreams streams = new KafkaStreams(builder, streamsConfig);
+            KafkaStreams streams = new KafkaStreams(builder.build(), streamsConfig);
             streams.start();
 
-            var source = builder
-                .stream<string, string>("streams-plaintext-input");
+            //var source = builder
+            //    .stream<string, string>("streams-plaintext-input");
 
-            var counts = source
-                .flatMapValues<long>(value => value.ToLowerCase(locale).Split(" "))
-                .groupBy<string, long>((key, value) => value)
-                .count();
+            //var counts = source
+            //    .flatMapValues<long>(value => value.ToLowerCase(locale).Split(" "))
+            //    .groupBy<string, long>((key, value) => value)
+            //    .count();
 
-            // need to override value serde to Long type
-            counts
-                .toStream()
-                .to("streams-wordcount-output", Produced<string, long>
-                .with(Serdes.String(), Serdes.Long()));
+            //// need to override value serde to Long type
+            //counts
+            //    .toStream()
+            //    .to("streams-wordcount-output", Produced<string, long>
+            //    .with(Serdes.String(), Serdes.Long()));
 
-            KafkaStreams streams2 = new KafkaStreams(builder.build(), streamsConfig);
+            //KafkaStreams streams2 = new KafkaStreams(builder.build(), streamsConfig);
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>

@@ -1,4 +1,20 @@
-﻿using Kafka.Common;
+﻿/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements. See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License. You may obtain a copy of the License at
+*
+*    http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+using Kafka.Common;
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
@@ -15,41 +31,20 @@ using System.Text.RegularExpressions;
 
 namespace Kafka.Streams
 {
-    /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements. See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License. You may obtain a copy of the License at
-     *
-     *    http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
     namespace Kafka.Streams
     {
-        /**
-         * {@code StreamsBuilder} provide the high-level Kafka Streams DSL to specify a Kafka Streams topology.
-         *
-         * @see Topology
-         * @see KStream
-         * @see KTable
-         * @see GlobalKTable
-         */
+        /// <summary>
+        /// Provides the high-level Kafka Streams DSL to specify a Kafka Streams topology.
+        /// </summary>
         public class StreamsBuilder
         {
             /** The actual topology that is constructed by this StreamsBuilder. */
             private Topology topology = new Topology();
 
             /** The topology's internal builder. */
-            private InternalTopologyBuilder internalTopologyBuilder => topology.internalTopologyBuilder;
+            //private InternalTopologyBuilder internalTopologyBuilder => topology.internalTopologyBuilder;
 
-            private InternalStreamsBuilder internalStreamsBuilder = new InternalStreamsBuilder(internalTopologyBuilder);
+            //private InternalStreamsBuilder internalStreamsBuilder = new InternalStreamsBuilder(internalTopologyBuilder);
 
             /**
              * Create a {@link KStream} from the specified topic.
@@ -68,7 +63,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> stream<K, V>(string topic)
             {
-                return stream(new List<string>() { topic }.AsReadOnly());
+                return stream<K, V>(new List<string>() { topic }.AsReadOnly());
             }
 
             /**
@@ -131,13 +126,13 @@ namespace Kafka.Streams
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> stream<K, V>(
-                List<string> topics,
+                IReadOnlyList<string> topics,
                 Consumed<K, V> consumed)
             {
                 topics = topics ?? throw new ArgumentNullException("topics can't be null", nameof(topics));
                 consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
 
-                return internalStreamsBuilder.stream(topics, new ConsumedInternal<K, V>(consumed));
+                return null; // internalStreamsBuilder.stream(topics, new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -185,7 +180,8 @@ namespace Kafka.Streams
                 topicPattern = topicPattern ?? throw new ArgumentNullException("topic can't be null", nameof(topicPattern));
                 consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
 
-                return internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
+                return null; 
+                    //internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -225,24 +221,24 @@ namespace Kafka.Streams
              * @param materialized       the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKTable<K, V> table<K, V>(
-                string topic,
-                Consumed<K, V> consumed,
-                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                Objects.requireNonNull(materialized, "materialized can't be null");
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IKTable<K, V> table<K, V>(
+            //    string topic,
+            //    Consumed<K, V> consumed,
+            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(consumed, "consumed can't be null");
+            //    Objects.requireNonNull(materialized, "materialized can't be null");
 
-                ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
-                materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
+            //    ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
+            //    materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
 
-                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
 
-                return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            }
+            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+            //}
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -262,11 +258,11 @@ namespace Kafka.Streams
              * @param topic the topic name; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKTable<K, V> table<K, V>(string topic)
-            {
-                return table(topic, new ConsumedInternal<K, V>());
-            }
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IKTable<K, V> table<K, V>(string topic)
+            //{
+            //    return table(topic, new ConsumedInternal<K, V>());
+            //}
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -287,22 +283,22 @@ namespace Kafka.Streams
              * @param consumed  the instance of {@link Consumed} used to define optional parameters; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKTable<K, V> table<K, V>(
-                string topic,
-                Consumed<K, V> consumed)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                var consumedInternal = new ConsumedInternal<K, V>(consumed);
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IKTable<K, V> table<K, V>(
+            //    string topic,
+            //    Consumed<K, V> consumed)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(consumed, "consumed can't be null");
+            //    var consumedInternal = new ConsumedInternal<K, V>(consumed);
 
-                var materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(consumedInternal.keySerde, consumedInternal.valueSerde),
-                             internalStreamsBuilder, topic + "-");
+            //    var materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+            //                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(consumedInternal.keySerde, consumedInternal.valueSerde),
+            //                 internalStreamsBuilder, topic + "-");
 
-                return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            }
+            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+            //}
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -322,22 +318,22 @@ namespace Kafka.Streams
              * @param materialized  the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKTable<K, V> table<K, V>(
-                string topic,
-                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(materialized, "materialized can't be null");
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IKTable<K, V> table<K, V>(
+            //    string topic,
+            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(materialized, "materialized can't be null");
 
-                var materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+            //    var materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
 
-                var consumedInternal =
-                        new ConsumedInternal<K, V>(Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde));
+            //    var consumedInternal =
+            //            new ConsumedInternal<K, V>(Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde));
 
-                return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            }
+            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+            //}
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
@@ -355,22 +351,22 @@ namespace Kafka.Streams
              * @param consumed  the instance of {@link Consumed} used to define optional parameters
              * @return a {@link GlobalKTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IGlobalKTable<K, V> globalTable<K, V>(
-                string topic,
-                Consumed<K, V> consumed)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IGlobalKTable<K, V> globalTable<K, V>(
+            //    string topic,
+            //    Consumed<K, V> consumed)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(consumed, "consumed can't be null");
+            //    ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
 
-                var materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                         Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(consumedInternal.keySerde, consumedInternal.valueSerde),
-                         internalStreamsBuilder, topic + "-");
+            //    var materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+            //             Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(consumedInternal.keySerde, consumedInternal.valueSerde),
+            //             internalStreamsBuilder, topic + "-");
 
-                return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
-            }
+            //    return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
+            //}
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
@@ -391,7 +387,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IGlobalKTable<K, V> globalTable<K, V>(string topic)
             {
-                return globalTable<K, V>(topic, Consumed<K, V>.with(null, null));
+                return null; // globalTable<K, V>(topic, Consumed<K, V>.with(null, null));
             }
 
             /**
@@ -426,25 +422,25 @@ namespace Kafka.Streams
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IGlobalKTable<K, V> globalTable<K, V>(
-                string topic,
-                Consumed<K, V> consumed,
-                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                Objects.requireNonNull(materialized, "materialized can't be null");
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IGlobalKTable<K, V> globalTable<K, V>(
+            //    string topic,
+            //    Consumed<K, V> consumed,
+            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(consumed, "consumed can't be null");
+            //    Objects.requireNonNull(materialized, "materialized can't be null");
 
-                ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
-                // always use the serdes from consumed
-                materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
+            //    ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
+            //    // always use the serdes from consumed
+            //    materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
 
-                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
 
-                return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
-            }
+            //    return internalStreamsBuilder.globalTable(topic, consumedInternal, materializedInternal);
+            //}
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
@@ -471,23 +467,23 @@ namespace Kafka.Streams
              * @param materialized   the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link GlobalKTable} for the specified topic
              */
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            public IGlobalKTable<K, V> globalTable<K, V>(
-                string topic,
-                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            {
-                Objects.requireNonNull(topic, "topic can't be null");
-                Objects.requireNonNull(materialized, "materialized can't be null");
-                MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-                         materialized, internalStreamsBuilder, topic + "-");
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //public IGlobalKTable<K, V> globalTable<K, V>(
+            //    string topic,
+            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            //{
+            //    Objects.requireNonNull(topic, "topic can't be null");
+            //    Objects.requireNonNull(materialized, "materialized can't be null");
+            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+            //             materialized, internalStreamsBuilder, topic + "-");
 
-                return internalStreamsBuilder.globalTable(
-                    topic,
-                    new ConsumedInternal<K, V>(
-                        Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde)),
-                        materializedInternal);
-            }
+            //    return internalStreamsBuilder.globalTable(
+            //        topic,
+            //        new ConsumedInternal<K, V>(
+            //            Consumed<K, V>.with(materializedInternal.keySerde, materializedInternal.valueSerde)),
+            //            materializedInternal);
+            //}
 
 
             /**
@@ -504,7 +500,7 @@ namespace Kafka.Streams
             public StreamsBuilder addStateStore(IStoreBuilder builder)
             {
                 Objects.requireNonNull(builder, "builder can't be null");
-                internalStreamsBuilder.addStateStore(builder);
+                //internalStreamsBuilder.addStateStore(builder);
                 return this;
             }
 
@@ -522,13 +518,13 @@ namespace Kafka.Streams
             {
                 Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
                 Objects.requireNonNull(consumed, "consumed can't be null");
-                internalStreamsBuilder.addGlobalStore(
-                    storeBuilder,
-                    sourceName,
-                    topic,
-                    new ConsumedInternal<K, V>(consumed),
-                    processorName,
-                    stateUpdateSupplier);
+                //internalStreamsBuilder.addGlobalStore(
+                //    storeBuilder,
+                //    sourceName,
+                //    topic,
+                //    new ConsumedInternal<K, V>(consumed),
+                //    processorName,
+                //    stateUpdateSupplier);
 
                 return this;
             }
@@ -567,11 +563,11 @@ namespace Kafka.Streams
             {
                 Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
                 Objects.requireNonNull(consumed, "consumed can't be null");
-                internalStreamsBuilder.addGlobalStore(
-                    storeBuilder,
-                    topic,
-                    new ConsumedInternal<K, V>(consumed),
-                    stateUpdateSupplier);
+                //internalStreamsBuilder.addGlobalStore(
+                //    storeBuilder,
+                //    topic,
+                //    new ConsumedInternal<K, V>(consumed),
+                //    stateUpdateSupplier);
 
                 return this;
             }
@@ -598,7 +594,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public Topology build(StreamsConfig config)
             {
-                InternalStreamsBuilder.buildAndOptimizeTopology(config);
+                //InternalStreamsBuilder.buildAndOptimizeTopology(config);
 
                 return topology;
             }

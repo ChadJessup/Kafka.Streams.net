@@ -1,16 +1,16 @@
-﻿using Kafka.Streams.State;
+﻿//using Kafka.Streams.State;
 
-namespace Kafka.Streams.Processor.Internals
-{
-    public class TimestampedWindowStoreReadOnlyDecorator<K, V>
-        : WindowStoreReadOnlyDecorator<K, ValueAndTimestamp<V>>
-        , ITimestampedWindowStore<K, V>
-    {
+//namespace Kafka.Streams.Processor.Internals
+//{
+//    public class TimestampedWindowStoreReadOnlyDecorator<K, V>
+//        : WindowStoreReadOnlyDecorator<K, ValueAndTimestamp<V>>
+//        , ITimestampedWindowStore<K, V>
+//    {
 
-        public TimestampedWindowStoreReadOnlyDecorator(ITimestampedWindowStore<K, V> inner)
-            : base(inner)
-        {
-        }
-    }
-}
+//        public TimestampedWindowStoreReadOnlyDecorator(ITimestampedWindowStore<K, V> inner)
+//            : base(inner)
+//        {
+//        }
+//    }
+//}
 

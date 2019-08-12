@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Interfaces;
+﻿using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream
@@ -35,14 +36,14 @@ namespace Kafka.Streams.KStream
         public ISerde<K> keySerde { get; private set; }
         public ISerde<V> valueSerde { get; private set; }
         public ITimestampExtractor timestampExtractor;
-        protected AutoOffsetReset resetPolicy;
+        protected AutoOffsetReset? resetPolicy;
         protected string processorName;
 
         private Consumed(
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ITimestampExtractor timestampExtractor,
-            AutoOffsetReset resetPolicy,
+            AutoOffsetReset? resetPolicy,
             string processorName)
         {
             this.keySerde = keySerde;
@@ -80,7 +81,7 @@ namespace Kafka.Streams.KStream
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
             ITimestampExtractor timestampExtractor,
-            AutoOffsetReset resetPolicy)
+            AutoOffsetReset? resetPolicy)
         {
             return new Consumed<K, V>(keySerde, valueSerde, timestampExtractor, resetPolicy, null);
         }
@@ -98,7 +99,7 @@ namespace Kafka.Streams.KStream
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
-            return new Consumed<K, V>(keySerde, valueSerde, null, AutoOffsetReset.UNKNOWN, null);
+            return new Consumed<K, V>(keySerde, valueSerde, null, null, null);
         }
 
         /**
@@ -111,7 +112,7 @@ namespace Kafka.Streams.KStream
          */
         public static Consumed<K, V> with(ITimestampExtractor timestampExtractor)
         {
-            return new Consumed<K, V>(null, null, timestampExtractor, AutoOffsetReset.UNKNOWN, null);
+            return new Consumed<K, V>(null, null, timestampExtractor, null, null);
         }
 
         /**
@@ -137,7 +138,7 @@ namespace Kafka.Streams.KStream
          */
         public static Consumed<K, V> As(string processorName)
         {
-            return new Consumed<K, V>(null, null, null, AutoOffsetReset.UNKNOWN, processorName);
+            return new Consumed<K, V>(null, null, null, null, processorName);
         }
 
         /**

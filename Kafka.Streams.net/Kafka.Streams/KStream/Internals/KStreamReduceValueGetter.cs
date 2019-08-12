@@ -1,26 +1,26 @@
-﻿using Kafka.Streams.State;
-using Kafka.Streams.Processor.Interfaces;
+﻿//using Kafka.Streams.State;
+//using Kafka.Streams.Processor.Interfaces;
 
-namespace Kafka.Streams.KStream.Internals
-{
-    public class KStreamReduceValueGetter : IKTableValueGetter<K, V>
-    {
-        private ITimestampedKeyValueStore<K, V> store;
-
-
-
-        public void init(IProcessorContext<K, V> context)
-        {
-            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
-        }
+//namespace Kafka.Streams.KStream.Internals
+//{
+//    public class KStreamReduceValueGetter : IKTableValueGetter<K, V>
+//    {
+//        private ITimestampedKeyValueStore<K, V> store;
 
 
-        public ValueAndTimestamp<V> get(K key)
-        {
-            return store[key];
-        }
+
+//        public void init(IProcessorContext<K, V> context)
+//        {
+//            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+//        }
 
 
-        public void close() { }
-    }
-}
+//        public ValueAndTimestamp<V> get(K key)
+//        {
+//            return store[key];
+//        }
+
+
+//        public void close() { }
+//    }
+//}

@@ -1,60 +1,60 @@
-﻿using Kafka.Common.Utils;
-using Kafka.Streams.KStream;
-using Kafka.Streams.State.Interfaces;
-using Microsoft.Extensions.Logging;
+﻿//using Kafka.Common.Utils;
+//using Kafka.Streams.KStream;
+//using Kafka.Streams.State.Interfaces;
+//using Microsoft.Extensions.Logging;
 
-namespace Kafka.Streams.State.Internals
-{
-    public class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<Windowed<Bytes>, byte[]>
-    {
+//namespace Kafka.Streams.State.Internals
+//{
+//    public class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<Windowed<Bytes>, byte[]>
+//    {
 
-        private long windowSize;
+//        private long windowSize;
 
-        WrappedWindowedKeyValueIterator(Bytes keyFrom,
-                                        Bytes keyTo,
-                                        IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
-                                        ClosingCallback callback,
-                                        bool retainDuplicates,
-                                        long windowSize)
-        {
-            base(keyFrom, keyTo, segmentIterator, callback, retainDuplicates);
-            this.windowSize = windowSize;
-        }
+//        WrappedWindowedKeyValueIterator(Bytes keyFrom,
+//                                        Bytes keyTo,
+//                                        IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
+//                                        ClosingCallback callback,
+//                                        bool retainDuplicates,
+//                                        long windowSize)
+//        {
+//            base(keyFrom, keyTo, segmentIterator, callback, retainDuplicates);
+//            this.windowSize = windowSize;
+//        }
 
-        public Windowed<Bytes> peekNextKey()
-        {
-            if (!hasNext())
-            {
-                throw new NoSuchElementException();
-            }
-            return getWindowedKey();
-        }
+//        public Windowed<Bytes> peekNextKey()
+//        {
+//            if (!hasNext())
+//            {
+//                throw new NoSuchElementException();
+//            }
+//            return getWindowedKey();
+//        }
 
-        public KeyValue<Windowed<Bytes>, byte[]> next()
-        {
-            if (!hasNext())
-            {
-                throw new NoSuchElementException();
-            }
+//        public KeyValue<Windowed<Bytes>, byte[]> next()
+//        {
+//            if (!hasNext())
+//            {
+//                throw new NoSuchElementException();
+//            }
 
-            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), base.next.value);
-            base.next = null;
-            return result;
-        }
+//            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), base.next.value);
+//            base.next = null;
+//            return result;
+//        }
 
-        private Windowed<Bytes> getWindowedKey()
-        {
-            Bytes key = base.retainDuplicates ? getKey(base.next.key) : base.next.key;
-            long endTime = base.currentTime + windowSize;
+//        private Windowed<Bytes> getWindowedKey()
+//        {
+//            Bytes key = base.retainDuplicates ? getKey(base.next.key) : base.next.key;
+//            long endTime = base.currentTime + windowSize;
 
-            if (endTime < 0)
-            {
-                LOG.LogWarning("Warning: window end time was truncated to long.MAX");
-                endTime = long.MaxValue;
-            }
+//            if (endTime < 0)
+//            {
+//                LOG.LogWarning("Warning: window end time was truncated to long.MAX");
+//                endTime = long.MaxValue;
+//            }
 
-            TimeWindow timeWindow = new TimeWindow(base.currentTime, endTime);
-            return new Windowed<>(key, timeWindow);
-        }
-    }
-}
+//            TimeWindow timeWindow = new TimeWindow(base.currentTime, endTime);
+//            return new Windowed<>(key, timeWindow);
+//        }
+//    }
+//}
