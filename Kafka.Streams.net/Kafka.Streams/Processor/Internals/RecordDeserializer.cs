@@ -18,11 +18,11 @@ using Confluent.Kafka;
 using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class RecordDeserializer<K, V>
     {

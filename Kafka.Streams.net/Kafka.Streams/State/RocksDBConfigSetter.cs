@@ -14,17 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.State
 {
-
-
-
-
-
-
-
-
-
     /**
      * An interface to that allows developers to customize the RocksDb settings for a given Store.
      * Please read the <a href="https://github.com/facebook/rocksdb/wiki/RocksDb-Tuning-Guide">RocksDb Tuning Guide</a>.
@@ -35,8 +29,7 @@ namespace Kafka.Streams.State
      */
     public interface RocksDbConfigSetter
     {
-
-        ILogger LOG = new LoggerFactory().CreateLogger < RocksDbConfigSetter);
+        ILogger LOG = new LoggerFactory().CreateLogger<RocksDbConfigSetter>();
 
         /**
          * Set the rocks db options for the provided storeName.
@@ -47,20 +40,20 @@ namespace Kafka.Streams.State
          */
         void setConfig(string storeName, Options options, Dictionary<string, object> configs);
 
-    /**
-     * Close any user-constructed objects that inherit from {@code org.rocksdb.RocksObject}.
-     * <p>
-     * Any object created with {@code new} in {@link RocksDbConfigSetter#setConfig setConfig()} and that inherits
-     * from {@code org.rocksdb.RocksObject} should have {@code org.rocksdb.RocksObject#close()}
-     * called on it here to avoid leaking off-heap memory. Objects to be closed can be saved by the user or retrieved
-     * back from {@code options} using its getter methods.
-     * <p>
-     * Example objects needing to be closed include {@code org.rocksdb.Filter} and {@code org.rocksdb.Cache}.
-     *
-     * @param storeName     the name of the store being configured
-     * @param options       the RocksDb options
-     */
-    default void close(string storeName, Options options)
+        /**
+         * Close any user-constructed objects that inherit from {@code org.rocksdb.RocksObject}.
+         * <p>
+         * Any object created with {@code new} in {@link RocksDbConfigSetter#setConfig setConfig()} and that inherits
+         * from {@code org.rocksdb.RocksObject} should have {@code org.rocksdb.RocksObject#close()}
+         * called on it here to avoid leaking off-heap memory. Objects to be closed can be saved by the user or retrieved
+         * back from {@code options} using its getter methods.
+         * <p>
+         * Example objects needing to be closed include {@code org.rocksdb.Filter} and {@code org.rocksdb.Cache}.
+         *
+         * @param storeName     the name of the store being configured
+         * @param options       the RocksDb options
+         */
+        void close(string storeName, Options options)
         {
             LOG.LogWarning("The default close will be removed in 3.0.0 -- you should overwrite it if you have implemented RocksDbConfigSetter");
         }

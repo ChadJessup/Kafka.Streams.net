@@ -1,4 +1,4 @@
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.Internals
          * @param key The key to associate the value to
          * @param value The value to update, it can be {@code null};
          *              if the serialized bytes are also {@code null} it is interpreted as deletes
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          */
         void put(K key, V value);
 
@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
          * @param value The value to update, it can be {@code null};
          *              if the serialized bytes are also {@code null} it is interpreted as deletes
          * @return The old value or {@code null} if there is no such key.
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          */
         V putIfAbsent(K key, V value);
 
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
          *
          * @param entries A list of entries to put into the store;
          *                if the serialized bytes are also {@code null} it is interpreted as deletes
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          */
         void putAll(List<KeyValue<K, V>> entries);
 
@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
          *
          * @param key The key
          * @return The old value or {@code null} if there is no such key.
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          */
         V delete(K key);
     }

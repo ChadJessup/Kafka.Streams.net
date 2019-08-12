@@ -17,8 +17,8 @@
 using Kafka.Common;
 using Kafka.Common.Metrics;
 using Kafka.Common.Metrics.Stats;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals.Metrics
@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals.Metrics
 
         public static Sensor lateRecordDropSensor(IInternalProcessorContext<K, V>  context)
         {
-            StreamsMetricsImpl metrics = context.metrics();
+            StreamsMetricsImpl metrics = context.metrics;
             Sensor sensor = metrics.nodeLevelSensor(
                context.taskId().ToString(),
                context.currentNode().name,
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals.Metrics
 
         public static Sensor recordLatenessSensor(IInternalProcessorContext<K, V>  context)
         {
-            StreamsMetricsImpl metrics = context.metrics();
+            StreamsMetricsImpl metrics = context.metrics;
 
             Sensor sensor = metrics.taskLevelSensor(
                context.taskId().ToString(),

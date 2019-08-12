@@ -19,13 +19,13 @@ using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumeResult + timestamp). It also keeps track of the
@@ -65,8 +65,8 @@ namespace Kafka.Streams.IProcessor.Internals
         private TopicPartition partition;
         private IProcessorContext<K, V> processorContext;
         private ITimestampExtractor timestampExtractor;
-        private RecordDeserializer recordDeserializer;
-        private ArrayDeque<ConsumeResult<byte[], byte[]>> fifoQueue;
+        private RecordDeserializer<K, V> recordDeserializer;
+        private Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
 
         private StampedRecord headRecord = null;
         private long partitionTime = RecordQueue.UNKNOWN;
@@ -88,11 +88,11 @@ namespace Kafka.Streams.IProcessor.Internals
         {
             this.source = source;
             this.partition = partition;
-            this.fifoQueue = new ArrayDeque<ConsumeResult<byte[], byte[]>>();
+            this.fifoQueue = new Queue<ConsumeResult<byte[], byte[]>>();
             this.timestampExtractor = timestampExtractor;
             this.processorContext = processorContext;
-            skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics());
-            recordDeserializer = new RecordDeserializer(
+            skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics);
+            recordDeserializer = new RecordDeserializer<K, V>(
                 source,
                 deserializationExceptionHandler,
                 logContext,
@@ -219,8 +219,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 long timestamp;
                 try
                 {
-
-                    timestamp = timestampExtractor.extract(deserialized, partitionTime);
+                    timestamp = timestampExtractor.Extract(deserialized, partitionTime);
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
@@ -239,8 +238,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 {
                     log.LogWarning(
                             "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
-                            deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName
-                    );
+                            deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
 
                     skipRecordsSensor.record();
                     continue;

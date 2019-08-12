@@ -15,18 +15,15 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.IProcessor.Internals
+using Confluent.Kafka;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.Processor.Internals
 {
-    public partial class CompositeRestoreListener
+    public class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback, IRecordBatchingStateRestoreCallback
     {
-        public static class NoOpStateRestoreListener : AbstractNotifyingBatchingRestoreCallback : IRecordBatchingStateRestoreCallback
+        public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
         {
-
-
-            public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
-            {
-
-            }
         }
     }
 }

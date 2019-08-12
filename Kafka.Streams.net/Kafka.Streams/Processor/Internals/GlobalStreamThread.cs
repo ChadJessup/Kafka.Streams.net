@@ -17,15 +17,15 @@
 using Confluent.Kafka;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * This is the thread responsible for keeping all Global State Stores updated.
@@ -180,7 +180,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public Dictionary<MetricName, Metric> consumerMetrics()
         {
-            return Collections.unmodifiableMap(globalConsumer.metrics());
+            return Collections.unmodifiableMap(globalConsumer.metrics);
         }
 
         internal void setStateListener(StreamStateListener streamStateListener)

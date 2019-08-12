@@ -16,11 +16,19 @@
  */
 
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public class Sink<K, V> : AbstractNode, ISink<K, V>
+    public class Sink : AbstractNode
+    {
+        public Sink(string name)
+            : base(name)
+        {
+        }
+    }
+
+    public class Sink<K, V> : Sink, ISink<K, V>
     {
         private ITopicNameExtractor<K, V> _topicNameExtractor;
 

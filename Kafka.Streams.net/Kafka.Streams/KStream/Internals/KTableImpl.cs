@@ -3,7 +3,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.KStream.Internals.Suppress;
-using Kafka.Streams.IProcessor;
+using Kafka.Streams.Processor;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;

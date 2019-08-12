@@ -15,17 +15,17 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System.Linq;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class SinkNodeFactory<K, V> : NodeFactory<K, V>
     {
         private ISerializer<K> keySerializer;
         private ISerializer<V> valSerializer;
         private IStreamPartitioner<K, V> partitioner;
-        private ITopicNameExtractor<K, V> topicExtractor;
+        public ITopicNameExtractor<K, V> topicExtractor { get; }
 
         public SinkNodeFactory(
             string name,

@@ -14,48 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamBranch<K, V> : IProcessorSupplier<K, V>
+    {
+        private IPredicate<K, V>[] predicates;
+        private string[] childNodes;
+
+        KStreamBranch(IPredicate<K, V>[] predicates,
+                       string[] childNodes)
+        {
+            this.predicates = predicates;
+            this.childNodes = childNodes;
+        }
 
 
-
-
-
-
-
-
-class KStreamBranch<K, V> : IProcessorSupplier<K, V> {
-
-    private  IPredicate<K, V>[] predicates;
-    private  string[] childNodes;
-
-    KStreamBranch( IPredicate<K, V>[] predicates,
-                   string[] childNodes)
-{
-        this.predicates = predicates;
-        this.childNodes = childNodes;
-    }
-
-    
-    public IProcessor<K, V> get()
-{
-        return new KStreamBranchProcessor();
-    }
-
-    private KStreamBranchProcessor : AbstractProcessor<K, V> {
-        
-        public void process( K key,  V value)
-{
-            for (int i = 0; i < predicates.Length; i++)
-{
-                if (predicates[i].test(key, value))
-{
-                    // use forward with child here and then break the loop
-                    // so that no record is going to be piped to multiple streams
-                    context.forward(key, value, To.child(childNodes[i]));
-                    break;
-                }
-            }
+        public IProcessor<K, V> get()
+        {
+            return new KStreamBranchProcessor();
         }
     }
 }

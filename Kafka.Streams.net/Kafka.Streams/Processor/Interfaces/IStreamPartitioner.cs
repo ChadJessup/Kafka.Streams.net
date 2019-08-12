@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.IProcessor.Interfaces
+namespace Kafka.Streams.Processor.Interfaces
 {
     /**
      * Determine how records are distributed among the partitions in a Kafka topic. If not specified, the underlying producer's

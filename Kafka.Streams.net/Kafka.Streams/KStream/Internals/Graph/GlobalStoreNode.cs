@@ -15,27 +15,29 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Internals;
-using Kafka.Streams.State;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-    public class GlobalStoreNode<K, V> : StateStoreNode
+    public class GlobalStoreNode<K, V, T> : StateStoreNode<T>
+        where T : IStateStore
     {
         private string sourceName;
         private string topic;
         private ConsumedInternal<K, V> consumed;
         private string processorName;
-        private IProcessorSupplier stateUpdateSupplier;
+        private IProcessorSupplier<K, V> stateUpdateSupplier;
 
 
-        public GlobalStoreNode(IStoreBuilder<IKeyValueStore> storeBuilder,
-                                string sourceName,
-                                string topic,
-                                ConsumedInternal consumed,
-                                string processorName,
-                                IProcessorSupplier stateUpdateSupplier)
+        public GlobalStoreNode(
+            T storeBuilder,
+            string sourceName,
+            string topic,
+            ConsumedInternal<K, V> consumed,
+            string processorName,
+            IProcessorSupplier<K, V> stateUpdateSupplier)
             : base(storeBuilder)
         {
 
@@ -46,26 +48,20 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.stateUpdateSupplier = stateUpdateSupplier;
         }
 
-
-
-
-        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            storeBuilder.withLoggingDisabled();
-            topologyBuilder.AddGlobalStore(storeBuilder,
-                                           sourceName,
-                                           consumed.timestampExtractor,
-                                           consumed.keyDeserializer(),
-                                           consumed.valueDeserializer(),
-                                           topic,
-                                           processorName,
-                                           stateUpdateSupplier);
-
+            //storeBuilder.withLoggingDisabled();
+            //topologyBuilder.addGlobalStore(storeBuilder,
+            //                               sourceName,
+            //                               consumed.timestampExtractor,
+            //                               consumed.keyDeserializer(),
+            //                               consumed.valueDeserializer(),
+            //                               topic,
+            //                               processorName,
+            //                               stateUpdateSupplier);
         }
 
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "GlobalStoreNode{" +
                    "sourceName='" + sourceName + '\'' +

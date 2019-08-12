@@ -16,36 +16,30 @@
  */
 using Kafka.Common;
 using System.Collections.Generic;
+using Kafka.Streams.Interfaces;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public static class IProcessor : AbstractNode, TopologyDescription.IProcessor
+    public class Processor : AbstractNode, IProcessor
     {
+        public HashSet<string> stores { get; }
 
-        private HashSet<string> stores;
-
-        public IProcessor(string name,
-                         HashSet<string> stores)
+        public Processor(
+            string name,
+            HashSet<string> stores)
+            : base(name)
         {
-            base(name);
             this.stores = stores;
         }
 
-
-        public HashSet<string> stores()
-        {
-            return Collections.unmodifiableSet(stores);
-        }
-
-
-        public string ToString()
+        public override string ToString()
         {
             return "IProcessor: " + name + " (stores: " + stores + ")\n      -=> "
                 + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
         }
 
 
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
@@ -64,10 +58,10 @@ namespace Kafka.Streams.IProcessor.Internals
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             // omit successor as it might change and alter the hash code
-            return Objects.hash(name, stores);
+            return (name, stores).GetHashCode();
         }
     }
 }

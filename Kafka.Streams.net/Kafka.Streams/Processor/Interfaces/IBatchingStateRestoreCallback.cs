@@ -15,7 +15,9 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.IProcessor
+using System.Collections.Generic;
+
+namespace Kafka.Streams.Processor
 {
     /**
      * Interface for batching restoration of a {@link IStateStore}
@@ -32,6 +34,5 @@ namespace Kafka.Streams.IProcessor
          * @param records the records to restore.
          */
         void restoreAll(List<KeyValue<byte[], byte[]>> records);
-
     }
 }

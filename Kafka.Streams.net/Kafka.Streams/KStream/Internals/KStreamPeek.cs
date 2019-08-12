@@ -14,42 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamPeek<K, V> : IProcessorSupplier<K, V>
+    {
+
+        private bool forwardDownStream;
+        private IForeachAction<K, V> action;
+
+        public KStreamPeek(IForeachAction<K, V> action, bool forwardDownStream)
+        {
+            this.action = action;
+            this.forwardDownStream = forwardDownStream;
+        }
 
 
-
-
-
-
-
-class KStreamPeek<K, V> : IProcessorSupplier<K, V> {
-
-    private  bool forwardDownStream;
-    private  ForeachAction<K, V> action;
-
-    public KStreamPeek( ForeachAction<K, V> action,  bool forwardDownStream)
-{
-        this.action = action;
-        this.forwardDownStream = forwardDownStream;
-    }
-
-    
-    public IProcessor<K, V> get()
-{
-        return new KStreamPeekProcessor();
-    }
-
-    private KStreamPeekProcessor : AbstractProcessor<K, V> {
-        
-        public void process( K key,  V value)
-{
-            action.apply(key, value);
-            if (forwardDownStream)
-{
-                context.forward(key, value);
-            }
+        public IProcessor<K, V> get()
+        {
+            return new KStreamPeekProcessor();
         }
     }
-
 }

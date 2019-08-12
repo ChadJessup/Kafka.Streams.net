@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.IProcessor.Internals
+using System;
+
+namespace Kafka.Streams.Processor.Internals
 {
 
 
-    public class Stamped<V> : Comparable
+    public class Stamped<V> : IComparable
     {
-
-
         public V value;
         public long timestamp;
 
@@ -34,7 +34,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public int CompareTo(object other)
         {
-            long otherTimestamp = ((Stamped <object>) other).timestamp;
+            long otherTimestamp = ((Stamped<object>)other).timestamp;
 
             if (timestamp < otherTimestamp)
             {
@@ -48,20 +48,22 @@ namespace Kafka.Streams.IProcessor.Internals
         }
 
 
-        public bool Equals(object other)
+        public override bool Equals(object other)
         {
-            if (other == null || GetType() != other.GetType())
+            if (other == null || this.GetType() != other.GetType())
             {
                 return false;
             }
-            long otherTimestamp = ((Stamped <object>) other).timestamp;
+
+            long otherTimestamp = ((Stamped<object>)other).timestamp;
+
             return timestamp == otherTimestamp;
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
-            return Objects.hash(timestamp);
+            return (timestamp).GetHashCode();
         }
     }
 }

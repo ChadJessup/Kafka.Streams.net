@@ -17,8 +17,8 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 using System.Linq;
 

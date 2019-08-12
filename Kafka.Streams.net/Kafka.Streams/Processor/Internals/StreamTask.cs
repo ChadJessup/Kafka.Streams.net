@@ -20,15 +20,15 @@ using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
@@ -129,9 +129,10 @@ namespace Kafka.Streams.IProcessor.Internals
 
             ITimestampExtractor defaultTimestampExtractor = config.defaultTimestampExtractor();
             IDeserializationExceptionHandler defaultDeserializationExceptionHandler = config.defaultDeserializationExceptionHandler();
+
             foreach (TopicPartition partition in partitions)
             {
-                SourceNode source = topology.source(partition.Topic);
+                var source = topology.source(partition.Topic);
                 ITimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
                 RecordQueue queue = new RecordQueue(
                     partition,
@@ -139,8 +140,8 @@ namespace Kafka.Streams.IProcessor.Internals
                     sourceTimestampExtractor,
                     defaultDeserializationExceptionHandler,
                     processorContext,
-                    logContext
-                );
+                    logContext);
+
                 partitionQueues.Add(partition, queue);
             }
 
@@ -308,7 +309,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 // decreased to the threshold, we can then resume the consumption on this partition
                 if (recordInfo.queue.size() == maxBufferedSize)
                 {
-                    consumer.Resume(partition);
+                    consumer.Resume(new[] { partition });
                 }
             }
             catch (ProducerFencedException fatal)
@@ -323,7 +324,7 @@ namespace Kafka.Streams.IProcessor.Internals
                     id,
                     processorContext.currentNode().name,
                     record.Topic,
-                    record.partition(),
+                    record.partition,
                     record.offset(),
                     stackTrace
                 ), e);
@@ -369,10 +370,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
             updateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
-            if (log.isTraceEnabled())
-            {
-                log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
-            }
+            log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
 
             try
             {
@@ -802,17 +800,13 @@ namespace Kafka.Streams.IProcessor.Internals
         public void addRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
         {
             int newQueueSize = partitionGroup.addRawRecords(partition, records);
-
-            if (log.isTraceEnabled())
-            {
-                log.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
-            }
+            log.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
 
             // if after.Adding these records, its partition queue's buffered size has been
             // increased beyond the threshold, we can then pause the consumption for this partition
             if (newQueueSize > maxBufferedSize)
             {
-                consumer.pause(singleton(partition));
+                consumer.Pause(new[] { partition });
             }
         }
 
@@ -886,7 +880,7 @@ namespace Kafka.Streams.IProcessor.Internals
          */
         public bool maybePunctuateStreamTime()
         {
-            long streamTime = partitionGroup.streamTime();
+            long streamTime = partitionGroup.streamTime;
 
             // if the timestamp is not known yet, meaning there is not enough data accumulated
             // to reason stream partition time, then skip.

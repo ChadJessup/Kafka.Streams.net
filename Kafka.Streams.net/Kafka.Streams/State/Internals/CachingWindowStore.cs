@@ -16,7 +16,7 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Runtime.CompilerServices;
@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.Internals
         private static ILogger LOG = new LoggerFactory().CreateLogger<CachingWindowStore>();
 
         private long windowSize;
-        private SegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
+        private ISegmentedBytesStore.KeySchema keySchema = new WindowKeySchema();
 
         private string name;
         private ThreadCache cache;

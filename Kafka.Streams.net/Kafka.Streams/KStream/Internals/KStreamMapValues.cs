@@ -14,36 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamMapValues<K, V, V1> : IProcessorSupplier<K, V>
+    {
 
+        private IValueMapperWithKey<K, V, V1> mapper;
 
+        public KStreamMapValues(IValueMapperWithKey<K, V, V1> mapper)
+        {
+            this.mapper = mapper;
+        }
 
-
-
-
-
-class KStreamMapValues<K, V, V1> : IProcessorSupplier<K, V> {
-
-    private  IValueMapperWithKey<K, V, V1> mapper;
-
-    public KStreamMapValues( IValueMapperWithKey<K, V, V1> mapper)
-{
-        this.mapper = mapper;
-    }
-
-    
-    public IProcessor<K, V> get()
-{
-        return new KStreamMapProcessor();
-    }
-
-    private KStreamMapProcessor : AbstractProcessor<K, V> {
-        
-        public void process( K readOnlyKey,  V value)
-{
-             V1 newValue = mapper.apply(readOnlyKey, value);
-            context.forward(readOnlyKey, newValue);
+        public IProcessor<K, V> get()
+        {
+            return null; // new KStreamMapProcessor();
         }
     }
 }

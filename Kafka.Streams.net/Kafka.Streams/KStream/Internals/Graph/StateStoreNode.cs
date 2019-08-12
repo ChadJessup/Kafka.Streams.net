@@ -14,8 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using System;
 
@@ -24,9 +24,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class StateStoreNode<T> : StreamsGraphNode
         where T : IStateStore
     {
-        protected IStoreBuilder<T> storeBuilder;
+        protected T storeBuilder;
 
-        public StateStoreNode(IStoreBuilder<T> storeBuilder)
+        public StateStoreNode(T storeBuilder)
             : base(storeBuilder.name)
         {
             this.storeBuilder = storeBuilder;

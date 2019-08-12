@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -85,20 +85,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
             childNode.parentNodes.Add(this);
         }
 
-        public bool isKeyChangingOperation()
-        {
-            return keyChangingOperation;
-        }
-
-        public bool isValueChangingOperation()
-        {
-            return valueChangingOperation;
-        }
-
-        public bool isMergeNode()
-        {
-            return mergeNode;
-        }
+        public bool isKeyChangingOperation => keyChangingOperation;
+        public bool isValueChangingOperation => valueChangingOperation;
+        public bool isMergeNode => mergeNode;
 
         public void setMergeNode(bool mergeNode)
         {
@@ -125,14 +114,15 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             string[] parentNames = parentNodeNames();
-            return "StreamsGraphNode{" +
-                   "nodeName='" + nodeName + '\'' +
-                   ", buildPriority=" + buildPriority +
-                   ", hasWrittenToTopology=" + hasWrittenToTopology +
-                   ", keyChangingOperation=" + keyChangingOperation +
-                   ", valueChangingOperation=" + valueChangingOperation +
-                   ", mergeNode=" + mergeNode +
-                   ", parentNodes=" + Arrays.ToString(parentNames) + '}';
+
+            return $"StreamsGraphNode{{" +
+                   $"nodeName='{nodeName}'" +
+                   $", buildPriority={buildPriority}" +
+                   $", hasWrittenToTopology={hasWrittenToTopology}" +
+                   $", keyChangingOperation={keyChangingOperation}" +
+                   $", valueChangingOperation={valueChangingOperation}" +
+                   $", mergeNode={mergeNode}" +
+                   $", parentNodes={Arrays.ToString(parentNames)}}}";
         }
     }
 }

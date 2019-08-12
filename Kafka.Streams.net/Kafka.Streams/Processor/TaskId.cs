@@ -16,10 +16,10 @@
  */
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.IProcessor.Internals.Assignment;
+using Kafka.Streams.Processor.Internals.Assignment;
 using System;
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * The task ID representation composed as topic group ID plus the assigned partition ID.

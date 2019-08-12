@@ -14,11 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.IProcessor.Internals
+using Confluent.Kafka;
+using Kafka.Streams.Processor.Interfaces;
+using System.Collections.Generic;
+
+namespace Kafka.Streams.Processor.Internals
 {
     public interface ITask
     {
-
         /**
          * Initialize the task and return {@code true} if the task is ready to run, i.e, it has not state stores
          * @return true if this task has no state stores that may need restoring.
@@ -46,9 +49,9 @@ namespace Kafka.Streams.IProcessor.Internals
 
         IStateStore getStore(string name);
 
-        string applicationId();
+        string applicationId { get; }
 
-        ProcessorTopology topology();
+        ProcessorTopology topology { get; }
 
         IProcessorContext<K, V> context;
 
@@ -64,6 +67,5 @@ namespace Kafka.Streams.IProcessor.Internals
         bool hasStateStores();
 
         string ToString(string indent);
-
     }
 }

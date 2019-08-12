@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;

@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System;
 
 namespace Kafka.Streams
@@ -41,17 +41,17 @@ namespace Kafka.Streams
             long startingOffset,
             long endingOffset)
         {
-            if (globalStateRestoreListener != null)
-            {
-                try
-                {
-                    globalStateRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
-                }
-                catch (Exception fatalUserException)
-                {
-                    throwOnFatalException(fatalUserException, topicPartition, storeName);
-                }
-            }
+            //if (globalStateRestoreListener != null)
+            //{
+            //    try
+            //    {
+            //        globalStateRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            //    }
+            //    catch (Exception fatalUserException)
+            //    {
+            //        throwOnFatalException(fatalUserException, topicPartition, storeName);
+            //    }
+            //}
         }
 
         public void onBatchRestored(
@@ -60,32 +60,32 @@ namespace Kafka.Streams
             long batchEndOffset,
             long numRestored)
         {
-            if (globalStateRestoreListener != null)
-            {
-                try
-                {
-                    globalStateRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
-                }
-                catch (Exception fatalUserException)
-                {
-                    throwOnFatalException(fatalUserException, topicPartition, storeName);
-                }
-            }
+            //if (globalStateRestoreListener != null)
+            //{
+            //    try
+            //    {
+            //        globalStateRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            //    }
+            //    catch (Exception fatalUserException)
+            //    {
+            //        throwOnFatalException(fatalUserException, topicPartition, storeName);
+            //    }
+            //}
         }
 
         public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
         {
-            if (globalStateRestoreListener != null)
-            {
-                try
-                {
-                    globalStateRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
-                }
-                catch (Exception fatalUserException)
-                {
-                    throwOnFatalException(fatalUserException, topicPartition, storeName);
-                }
-            }
+            //if (globalStateRestoreListener != null)
+            //{
+            //    try
+            //    {
+            //        globalStateRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
+            //    }
+            //    catch (Exception fatalUserException)
+            //    {
+            //        throwOnFatalException(fatalUserException, topicPartition, storeName);
+            //    }
+            //}
         }
     }
 }

@@ -17,18 +17,21 @@
 
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class OptimizableRepartitionNode
     {
+        public static OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder<K, V>()
+        {
+            return new OptimizableRepartitionNodeBuilder<K, V>();
+        }
     }
 
     public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V>
     {
-
         public OptimizableRepartitionNode(
             string nodeName,
             string sourceName,
@@ -51,24 +54,33 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override ISerializer<V> getValueSerializer()
         {
-            return valueSerde != null ? valueSerde.Serializer : null;
+            return valueSerde != null
+                ? valueSerde.Serializer
+                : null;
         }
 
         public override IDeserializer<V> getValueDeserializer()
         {
-            return valueSerde != null ? valueSerde.Deserializer : null;
+            return valueSerde != null
+                ? valueSerde.Deserializer
+                : null;
         }
 
         public override string ToString()
         {
-            return "OptimizableRepartitionNode{ " + base.ToString() + " }";
+            return $"OptimizableRepartitionNode{{{base.ToString()}}}";
         }
 
 
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            ISerializer<K> keySerializer = keySerde != null ? keySerde.Serializer : null;
-            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.Deserializer : null;
+            ISerializer<K> keySerializer = keySerde != null
+                ? keySerde.Serializer
+                : null;
+
+            IDeserializer<K> keyDeserializer = keySerde != null
+                ? keySerde.Deserializer
+                : null;
 
             topologyBuilder.addInternalTopic(repartitionTopic);
 
@@ -86,17 +98,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 new[] { processorParameters.processorName });
 
             topologyBuilder.addSource(
-                AutoOffsetReset.UNKNOWN,
+                AutoOffsetReset.Error,
                 sourceName,
                 new FailOnInvalidTimestamp(),
                 keyDeserializer,
                 getValueDeserializer(),
                 new[] { repartitionTopic });
-        }
-
-        public static OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder()
-        {
-            return new OptimizableRepartitionNodeBuilder<K, V>();
         }
     }
 }

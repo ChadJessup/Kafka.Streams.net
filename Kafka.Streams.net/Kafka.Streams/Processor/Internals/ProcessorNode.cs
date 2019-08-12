@@ -2,16 +2,21 @@ using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public class ProcessorNode<K, V>
+    public class ProcessorNode
+    {
+
+    }
+
+    public class ProcessorNode<K, V> : ProcessorNode
     {
         // TODO: 'children' can be removed when #forward() via index is removed
         public List<ProcessorNode<K, V>> children { get; }
@@ -65,7 +70,7 @@ namespace Kafka.Streams.IProcessor.Internals
                     processor.init(context);
                 }
 
-                nodeMetrics.nodeCreationSensor.record(time.nanoseconds() - startNs);
+                //nodeMetrics.nodeCreationSensor.record(time.nanoseconds() - startNs);
             }
             catch (Exception e)
             {
@@ -77,13 +82,13 @@ namespace Kafka.Streams.IProcessor.Internals
         {
             try
             {
-
                 long startNs = time.nanoseconds();
                 if (processor != null)
                 {
                     processor.close();
                 }
-                nodeMetrics.nodeDestructionSensor.record(time.nanoseconds() - startNs);
+
+                //nodeMetrics.nodeDestructionSensor.record(time.nanoseconds() - startNs);
                 nodeMetrics.removeAllSensors();
             }
             catch (Exception e)
@@ -104,13 +109,12 @@ namespace Kafka.Streams.IProcessor.Internals
         {
             long startNs = time.nanoseconds();
             punctuator.punctuate(timestamp);
-            nodeMetrics.nodePunctuateTimeSensor.record(time.nanoseconds() - startNs);
+            //nodeMetrics.nodePunctuateTimeSensor.record(time.nanoseconds() - startNs);
         }
 
         /**
          * @return a string representation of this node, useful for debugging.
          */
-
         public override string ToString()
         {
             return ToString("");

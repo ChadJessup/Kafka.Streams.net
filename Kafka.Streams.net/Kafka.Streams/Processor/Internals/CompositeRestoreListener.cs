@@ -16,11 +16,11 @@
  */
 
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class CompositeRestoreListener : IRecordBatchingStateRestoreCallback, IStateRestoreListener
     {

@@ -16,9 +16,9 @@
  */
 using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class DefaultStreamPartitioner<K, V> : IStreamPartitioner<K, V>
     {

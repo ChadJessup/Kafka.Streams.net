@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System.Runtime.CompilerServices;
+
 namespace Kafka.Streams.State.Internals
 {
 
@@ -45,13 +47,15 @@ namespace Kafka.Streams.State.Internals
             return next.key;
         }
 
-        public override synchronized void close()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override void close()
         {
             underlying.close();
             open = false;
         }
 
-        public override synchronized bool hasNext()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override bool hasNext()
         {
             if (!open)
             {
@@ -71,7 +75,8 @@ namespace Kafka.Streams.State.Internals
             return true;
         }
 
-        public override synchronized KeyValue<K, V> next()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override KeyValue<K, V> next()
     {
             if (!hasNext())
             {

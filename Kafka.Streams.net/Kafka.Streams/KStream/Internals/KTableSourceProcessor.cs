@@ -1,8 +1,8 @@
 ﻿using Kafka.Common.Metrics;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.metrics;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +19,7 @@ namespace Kafka.Streams.KStream.Internals
         public void init(IProcessorContext<K, V> context)
         {
             base.init(context);
-            metrics = (StreamsMetricsImpl)context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics;
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
             if (queryableName != null)
             {

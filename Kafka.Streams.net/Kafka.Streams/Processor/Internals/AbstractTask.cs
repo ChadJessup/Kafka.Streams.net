@@ -16,21 +16,21 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AbstractTask<K, V> : ITask
     {
         public TaskId id { get; }
         public string applicationId { get; }
         protected ProcessorTopology<K, V> topology { get; }
-        public ProcessorStateManager stateMgr { get; }
+        public ProcessorStateManager<K, V> stateMgr { get; }
         public HashSet<TopicPartition> partitions { get; }
         public IConsumer<byte[], byte[]> consumer { get; }
         protected string logPrefix { get; }
@@ -39,11 +39,11 @@ namespace Kafka.Streams.IProcessor.Internals
         public LogContext logContext { get; }
         StateDirectory stateDirectory;
 
-        protected bool taskInitialized { get; }
-        protected bool taskClosed { get; }
-        protected bool commitNeeded { get; }
+        protected bool taskInitialized { get; set; }
+        protected bool taskClosed { get; set; }
+        protected bool commitNeeded { get; set; }
 
-        protected IInternalProcessorContext<K, V> processorContext { get; }
+        protected IInternalProcessorContext<K, V> processorContext { get; set; }
 
         /**
          * @throws ProcessorStateException if the state manager cannot be created
@@ -73,7 +73,7 @@ namespace Kafka.Streams.IProcessor.Internals
             try
             {
 
-                stateMgr = new ProcessorStateManager(
+                stateMgr = new ProcessorStateManager<K, V>(
                     id,
                     partitions,
                     isStandby,
@@ -85,11 +85,16 @@ namespace Kafka.Streams.IProcessor.Internals
             }
             catch (IOException e)
             {
-                throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
+//                throw new ProcessorStateException(string.Format("%sError while creating the state manager", logPrefix), e);
             }
         }
 
         public IProcessorContext<K, V> context => processorContext;
+
+        ProcessorTopology<K, V> topology { get; }
+
+        //      public ProcessorTopology topology { get; }
+
         public IStateStore getStore(string name)
         {
             return stateMgr.getStore(name);
@@ -158,15 +163,15 @@ namespace Kafka.Streams.IProcessor.Internals
                 try
                 {
 
-                    OffsetAndMetadata metadata = consumer.Committed(partition); // TODO: batch API?
-                    long offset = metadata != null ? metadata.offset : 0L;
-                    stateMgr.putOffsetLimit(partition, offset);
+    //                OffsetAndMetadata metadata = consumer.Committed(partition); // TODO: batch API?
+      //              long offset = metadata != null ? metadata.offset : 0L;
+        //            stateMgr.putOffsetLimit(partition, offset);
 
-                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
+//                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
                 }
                 catch (AuthorizationException e)
                 {
-                    throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
+  //                  throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
                 }
                 catch (WakeupException e)
                 {
@@ -174,7 +179,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 }
                 catch (KafkaException e)
                 {
-                    throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
+//                    throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
                 }
             }
         }
@@ -202,10 +207,10 @@ namespace Kafka.Streams.IProcessor.Internals
             try
             {
 
-                if (!stateDirectory.@lock(id))
-                {
-                    throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
-                }
+                //if (!stateDirectory.@lock(id))
+                //{
+                //    throw new LockException(string.Format("%sFailed to lock the state directory for task %s", logPrefix, id));
+                //}
             }
             catch (IOException e)
             {
@@ -213,6 +218,7 @@ namespace Kafka.Streams.IProcessor.Internals
                     string.Format("%sFatal error while trying to lock the state directory for task %s",
                     logPrefix, id));
             }
+
             log.LogTrace("Initializing state stores");
 
             // set initial offset limits
@@ -252,17 +258,17 @@ namespace Kafka.Streams.IProcessor.Internals
 
                 try
                 {
-
                     stateDirectory.unlock(id);
                 }
                 catch (IOException e)
                 {
                     if (exception == null)
                     {
-                        exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
+//                        exception = new ProcessorStateException(string.Format("%sFailed to release state dir lock", logPrefix), e);
                     }
                 }
             }
+
             if (exception != null)
             {
                 throw exception;
@@ -277,6 +283,55 @@ namespace Kafka.Streams.IProcessor.Internals
         public bool hasStateStores()
         {
             return topology.stateStores.Any();
+        }
+
+        public bool initializeStateStores()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void initializeTopology()
+        {
+        }
+
+        public void commit()
+        {
+        }
+
+        public void suspend()
+        {
+        }
+
+        public void resume()
+        {
+        }
+
+        public void closeSuspended(bool clean, bool isZombie, RuntimeException e)
+        {
+        }
+
+        public void close(bool clean, bool isZombie)
+        {
+        }
+
+        public List<TopicPartition> changelogPartitions()
+        {
+            return new List<TopicPartition>();
+        }
+
+        bool ITask.commitNeeded()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        TaskId ITask.id()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        HashSet<TopicPartition> ITask.partitions()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

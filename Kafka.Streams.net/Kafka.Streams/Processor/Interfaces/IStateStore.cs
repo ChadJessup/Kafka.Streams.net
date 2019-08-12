@@ -1,4 +1,4 @@
-namespace Kafka.Streams.IProcessor.Interfaces
+namespace Kafka.Streams.Processor.Interfaces
 {
     /**
      * A storage engine for managing state maintained by a stream processor.

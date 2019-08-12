@@ -1,5 +1,6 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.State.Internals;
+using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -15,7 +16,7 @@ namespace Kafka.Streams.State.Internals
         private ILogger log;
         private long maxCacheSizeBytes;
         private StreamsMetricsImpl metrics;
-        private Dictionary<string, NamedCache> caches = new Dictionary<>();
+        private Dictionary<string, NamedCache> caches = new Dictionary<string, NamedCache>();
 
         // internal stats
         private long numPuts = 0;
@@ -23,7 +24,10 @@ namespace Kafka.Streams.State.Internals
         private long numEvicts = 0;
         private long numFlushes = 0;
 
-        public ThreadCache(LogContext logContext, long maxCacheSizeBytes, StreamsMetricsImpl metrics)
+        public ThreadCache(
+            LogContext logContext,
+            long maxCacheSizeBytes,
+            StreamsMetricsImpl metrics)
         {
             this.maxCacheSizeBytes = maxCacheSizeBytes;
             this.metrics = metrics;
@@ -69,7 +73,7 @@ namespace Kafka.Streams.State.Internals
          */
         public static string taskIDfromCacheName(string cacheName)
         {
-            string[] tokens = cacheName.split("-", 2);
+            string[] tokens = cacheName.Split(new[] { '-' }, 2);
             return tokens[0];
         }
 
@@ -80,7 +84,7 @@ namespace Kafka.Streams.State.Internals
          */
         public static string underlyingStoreNamefromCacheName(string cacheName)
         {
-            string[] tokens = cacheName.split("-", 2);
+            string[] tokens = cacheName.Split(new[] { '-' }, 2);
             return tokens[1];
         }
 
@@ -91,7 +95,7 @@ namespace Kafka.Streams.State.Internals
          * @param @namespace
          * @param listener
          */
-        public void addDirtyEntryFlushListener(string @namespace, DirtyEntryFlushListener listener)
+        public void addDirtyEntryFlushListener(string @namespace, IDirtyEntryFlushListener listener)
         {
             NamedCache cache = getOrCreateCache(@namespace);
             cache.setListener(listener);
@@ -108,10 +112,7 @@ namespace Kafka.Streams.State.Internals
             }
             cache.flush();
 
-            if (log.isTraceEnabled())
-            {
-                log.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", puts(), gets(), evicts(), flushes());
-            }
+            log.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", puts(), gets(), evicts(), flushes());
         }
 
         public LRUCacheEntry get(string @namespace, Bytes key)
@@ -188,7 +189,7 @@ namespace Kafka.Streams.State.Internals
             NamedCache cache = getCache(@namespace);
             if (cache == null)
             {
-                return new MemoryLRUCacheBytesIterator(Collections.emptyIterator());
+                return new MemoryLRUCacheBytesIterator();
             }
             return new MemoryLRUCacheBytesIterator(cache.allIterator());
         }
@@ -255,10 +256,8 @@ namespace Kafka.Streams.State.Internals
                 numEvicts++;
                 numEvicted++;
             }
-            if (log.isTraceEnabled())
-            {
-                log.LogTrace("Evicted {} entries from cache {}", numEvicted, @namespace);
-            }
+
+            log.LogTrace("Evicted {} entries from cache {}", numEvicted, @namespace);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

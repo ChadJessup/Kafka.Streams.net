@@ -17,11 +17,11 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class SourceNode<K, V> : ProcessorNode<K, V>
     {

@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class TopicsInfo
     {

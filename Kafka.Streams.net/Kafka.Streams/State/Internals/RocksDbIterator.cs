@@ -22,9 +22,9 @@ using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>> : IKeyValueIterator<Bytes, byte[]>
+    public class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
+       , IKeyValueIterator<Bytes, byte[]>
     {
-
         private string storeName;
         private RocksIterator iter;
         private HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
 
         private KeyValue<Bytes, byte[]> next;
 
-        RocksDbIterator(string storeName,
+        public RocksDbIterator(string storeName,
                         RocksIterator iter,
                         HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators)
         {

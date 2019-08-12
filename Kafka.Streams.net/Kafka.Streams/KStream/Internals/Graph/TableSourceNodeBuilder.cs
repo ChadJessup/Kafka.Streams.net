@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {

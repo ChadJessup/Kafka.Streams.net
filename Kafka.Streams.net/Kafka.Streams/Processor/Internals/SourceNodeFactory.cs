@@ -22,12 +22,12 @@ using Kafka.Streams.KStream.Internals.Graph;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class SourceNodeFactory<K, V> : NodeFactory<K, V>
     {
-        private List<string> topics;
-        private Pattern pattern;
+        public List<string> topics { get; private set; }
+        public Regex pattern { get; }
         private IDeserializer<K> keyDeserializer;
         private IDeserializer<V> valDeserializer;
         private ITimestampExtractor timestampExtractor;
@@ -35,7 +35,7 @@ namespace Kafka.Streams.IProcessor.Internals
         public SourceNodeFactory(
             string name,
             string[] topics,
-            Pattern pattern,
+            Regex pattern,
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
@@ -99,7 +99,7 @@ namespace Kafka.Streams.IProcessor.Internals
             else
             {
 
-                return new SourceNode<>(name, maybeDecorateInternalSourceTopics(sourceTopics), timestampExtractor, keyDeserializer, valDeserializer);
+                return new SourceNode<K, V>(name, maybeDecorateInternalSourceTopics(sourceTopics), timestampExtractor, keyDeserializer, valDeserializer);
             }
         }
 
@@ -109,9 +109,9 @@ namespace Kafka.Streams.IProcessor.Internals
         }
 
 
-        Source describe()
+        public override Source describe()
         {
-            return new Source(name, topics.size() == 0 ? null : new HashSet<>(topics), pattern);
+            return new Source(name, topics.Count == 0 ? null : new HashSet<string>(topics), pattern);
         }
     }
 }

@@ -14,40 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamFilter<K, V> : IProcessorSupplier<K, V>
+    {
+        private IPredicate<K, V> predicate;
+        private bool filterNot;
+
+        public KStreamFilter(IPredicate<K, V> predicate, bool filterNot)
+        {
+            this.predicate = predicate;
+            this.filterNot = filterNot;
+        }
 
 
-
-
-
-
-
-class KStreamFilter<K, V> : IProcessorSupplier<K, V> {
-
-    private  IPredicate<K, V> predicate;
-    private  bool filterNot;
-
-    public KStreamFilter( IPredicate<K, V> predicate,  bool filterNot)
-{
-        this.predicate = predicate;
-        this.filterNot = filterNot;
-    }
-
-    
-    public IProcessor<K, V> get()
-{
-        return new KStreamFilterProcessor();
-    }
-
-    private KStreamFilterProcessor : AbstractProcessor<K, V> {
-        
-        public void process( K key,  V value)
-{
-            if (filterNot ^ predicate.test(key, value))
-{
-                context.forward(key, value);
-            }
+        public IProcessor<K, V> get()
+        {
+            return new KStreamFilterProcessor<K, V>();
         }
     }
 }

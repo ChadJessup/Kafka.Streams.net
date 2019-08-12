@@ -1,4 +1,4 @@
-using Kafka.Streams.IProcessor;
+using Kafka.Streams.Processor;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Microsoft.Extensions.Logging;

@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.IProcessor.Interfaces
+namespace Kafka.Streams.Processor.Interfaces
 {
     /**
      * Class for listening to various states of the restoration process of a IStateStore.

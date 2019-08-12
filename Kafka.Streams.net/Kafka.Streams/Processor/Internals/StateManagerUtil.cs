@@ -16,12 +16,14 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
 
     public class StateManagerUtil
@@ -31,23 +33,24 @@ namespace Kafka.Streams.IProcessor.Internals
 
         private StateManagerUtil() { }
 
-        static RecordConverter converterForStore(IStateStore store)
+        static IRecordConverter converterForStore(IStateStore store)
         {
             return isTimestamped(store) ? rawValueToTimestampedValue() : identity();
         }
 
-        public static void reinitializeStateStoresForPartitions(ILogger log,
-                                                                bool eosEnabled,
-                                                                FileInfo baseDir,
-                                                                FixedOrderMap<string, Optional<IStateStore>> stateStores,
-                                                                Dictionary<string, string> storeToChangelogTopic,
-                                                                List<TopicPartition> partitions,
-                                                                IInternalProcessorContext<K, V> processorContext,
-                                                                OffsetCheckpoint checkpointFile,
-                                                                Dictionary<TopicPartition, long> checkpointFileCache)
+        public static void reinitializeStateStoresForPartitions<K, V>(
+            ILogger log,
+            bool eosEnabled,
+            DirectoryInfo baseDir,
+            Dictionary<string, IStateStore?> stateStores,
+            Dictionary<string, string> storeToChangelogTopic,
+            List<TopicPartition> partitions,
+            IInternalProcessorContext<K, V> processorContext,
+            OffsetCheckpoint checkpointFile,
+            Dictionary<TopicPartition, long> checkpointFileCache)
         {
             Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
-            HashSet<string> storesToBeReinitialized = new HashSet<>();
+            HashSet<string> storesToBeReinitialized = new HashSet<string>();
 
             foreach (TopicPartition topicPartition in partitions)
             {
@@ -102,7 +105,8 @@ namespace Kafka.Streams.IProcessor.Internals
                 try
                 {
 
-                    Utils.delete(new FileInfo(baseDir + FileInfo.separator + "rocksdb" + FileInfo.separator + storeName));
+                    var di = new DirectoryInfo(Path.Combine(baseDir.FullName, "rocksdb", storeName));
+                    di.Delete(recursive: true);
                 }
                 catch (IOException fatalException)
                 {
@@ -113,7 +117,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 try
                 {
 
-                    Utils.delete(new FileInfo(baseDir + FileInfo.separator + storeName));
+                    //                    Utils.delete(new DirectoryInfo(Path.Combine(baseDir, storeName));
                 }
                 catch (IOException fatalException)
                 {
@@ -127,13 +131,12 @@ namespace Kafka.Streams.IProcessor.Internals
 
         private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
         {
-            Dictionary<string, string> reversedMap = new Dictionary<>();
+            Dictionary<string, string> reversedMap = new Dictionary<string, string>();
             foreach (KeyValuePair<string, string> entry in origin)
             {
                 reversedMap.Add(entry.Value, entry.Key);
             }
             return reversedMap;
         }
-
     }
 }

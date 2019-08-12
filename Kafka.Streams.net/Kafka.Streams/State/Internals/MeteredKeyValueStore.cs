@@ -50,7 +50,7 @@ namespace Kafka.Streams.State.Internals
         public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
         {
-            metrics = (StreamsMetricsImpl)context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics;
 
             taskName = context.taskId().ToString();
             string metricsGroup = "stream-" + metricScope + "-metrics";

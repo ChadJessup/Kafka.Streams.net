@@ -17,60 +17,59 @@
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using System;
+using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public partial class InternalTopologyBuilder
+    public class GlobalStore : IGlobalStore
     {
-        public class GlobalStore : IGlobalStore
+        public ISource source { get; }
+        public IProcessor processor { get; }
+        public int id { get; }
+
+        public GlobalStore(
+            string sourceName,
+            string processorName,
+            string storeName,
+            string topicName,
+            int id)
         {
+            source = new Source(sourceName, new HashSet<string>() { topicName }, null);
+            processor = new Processor(processorName, new HashSet<string>() { storeName });
+            source.successors.Add(processor);
+            processor.predecessors.Add(source);
 
-            private Source source;
-            private IProcessor processor;
-            private int id;
+            this.id = id;
+        }
 
-            public GlobalStore(string sourceName,
-                               string processorName,
-                               string storeName,
-                               string topicName,
-                               int id)
+        public override string ToString()
+        {
+            return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
+                    + "    " + source.ToString() + "\n"
+                    + "    " + processor.ToString() + "\n";
+        }
+
+
+        public override bool Equals(object o)
+        {
+            if (this == o)
             {
-                source = new Source(sourceName, Collections.singleton(topicName), null);
-                processor = new IProcessor(processorName, Collections.singleton(storeName));
-                source.successors.Add(processor);
-                processor.predecessors.Add(source);
-                this.id = id;
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
             }
 
-            public string ToString()
-            {
-                return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
-                        + "    " + source.ToString() + "\n"
-                        + "    " + processor.ToString() + "\n";
-            }
+            GlobalStore that = (GlobalStore)o;
+            return source.Equals(that.source)
+                && processor.Equals(that.processor);
+        }
 
 
-            public bool Equals(object o)
-            {
-                if (this == o)
-                {
-                    return true;
-                }
-                if (o == null || GetType() != o.GetType())
-                {
-                    return false;
-                }
-
-                GlobalStore that = (GlobalStore)o;
-                return source.Equals(that.source)
-                    && processor.Equals(that.processor);
-            }
-
-
-            public int GetHashCode()
-            {
-                return Objects.hash(source, processor);
-            }
+        public override int GetHashCode()
+        {
+            return (source, processor).GetHashCode();
         }
     }
 }

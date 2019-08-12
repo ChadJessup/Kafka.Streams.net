@@ -17,10 +17,10 @@
 using Kafka.Common;
 using Kafka.Common.Metrics;
 using Kafka.Common.Metrics.Stats;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class TaskMetrics
     {

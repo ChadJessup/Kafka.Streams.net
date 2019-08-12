@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -52,7 +52,7 @@ namespace Kafka.Streams.State.Internals
             topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), storeName);
             this.context = context;
             this.partition = partition;
-            this.collector = ((IRecordCollector.Supplier)context).recordCollector();
+            this.collector = ((IRecordCollector.ISupplier)context).recordCollector();
             keySerializer = serialization.keySerializer();
             valueSerializer = serialization.valueSerializer();
         }

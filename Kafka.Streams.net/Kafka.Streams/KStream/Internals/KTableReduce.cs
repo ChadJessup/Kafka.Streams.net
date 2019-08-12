@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.IProcessor;
+using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -27,7 +27,10 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool sendOldValues = false;
 
-        KTableReduce(string storeName, IReducer<V> addReducer, IReducer<V> removeReducer)
+        public KTableReduce(
+            string storeName,
+            IReducer<V> addReducer,
+            IReducer<V> removeReducer)
         {
             this.storeName = storeName;
             this.addReducer = addReducer;
@@ -40,10 +43,9 @@ namespace Kafka.Streams.KStream.Internals
             sendOldValues = true;
         }
 
-
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableReduceProcessor();
+            return new KTableReduceProcessor<K, V>();
         }
 
 

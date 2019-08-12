@@ -17,10 +17,11 @@
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Interfaces;
 using System;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class SinkNode<K, V> : ProcessorNode<K, V>
     {
@@ -36,9 +37,8 @@ namespace Kafka.Streams.IProcessor.Internals
                  ISerializer<K> keySerializer,
                  ISerializer<V> valSerializer,
                  IStreamPartitioner<K, V> partitioner)
+            : base(name)
         {
-            base(name);
-
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
             this.valSerializer = valSerializer;
@@ -49,14 +49,14 @@ namespace Kafka.Streams.IProcessor.Internals
          * @throws InvalidOperationException if this method.Adds a child to a sink node
          */
 
-        public void addChild(ProcessorNode<?, object> child)
+        public void addChild(ProcessorNode<object, object> child)
         {
             throw new InvalidOperationException("sink node does not allow.AddChild");
         }
 
 
 
-        public void init(IInternalProcessorContext<K, V>  context)
+        public override void init(IInternalProcessorContext<K, V>  context)
         {
             base.init(context);
             this.context = context;
@@ -81,7 +81,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public override void process(K key, V value)
         {
-            IRecordCollector collector = ((IRecordCollector.Supplier)context).recordCollector();
+            IRecordCollector collector = ((IRecordCollector.ISupplier)context).recordCollector();
 
             long timestamp = context.timestamp();
             if (timestamp < 0)

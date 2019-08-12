@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -23,8 +26,9 @@ namespace Kafka.Streams.State.Internals
         // RocksDb's JNI interface does not expose getters/setters that allow the
         // comparator to be pluggable, and the default is lexicographic, so it's
         // safe to just force lexicographic comparator here for now.
-        private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
-    private byte[] rawToKey;
+
+        //private Comparator<byte[]> comparator = sizeof(Bytes)_LEXICO_COMPARATOR;
+        private byte[] rawToKey;
 
         RocksDbRangeIterator(string storeName,
                              RocksIterator iter,
@@ -33,33 +37,33 @@ namespace Kafka.Streams.State.Internals
                              Bytes to)
             : base(storeName, iter, openIterators)
         {
-            iter.seek(from());
-            rawToKey = to[];
+//            iter.seek(from());
+            rawToKey = to.get();
             if (rawToKey == null)
             {
-                throw new NullPointerException("RocksDbRangeIterator: RawToKey is null for key " + to);
+                throw new ArgumentNullException("RocksDbRangeIterator: RawToKey is null for key " + to);
             }
         }
 
         public override KeyValue<Bytes, byte[]> makeNext()
         {
             KeyValue<Bytes, byte[]> next = base.makeNext();
-
-            if (next == null)
-            {
-                return allDone();
-            }
-            else
-            {
-                if (comparator.compare(next.key(), rawToKey) <= 0)
-                {
-                    return next;
-                }
-                else
-                {
-                    return allDone();
-                }
-            }
+            return next;
+            //if (next == null)
+            //{
+            //    return allDone();
+            //}
+            //else
+            //{
+            //    if (comparator.compare(next.key(), rawToKey) <= 0)
+            //    {
+            //        return next;
+            //    }
+            //    else
+            //    {
+            //        return allDone();
+            //    }
+            //}
         }
     }
 }

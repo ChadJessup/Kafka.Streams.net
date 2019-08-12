@@ -14,17 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
 
-using System;
-using System.Text.RegularExpressions;
-
-namespace Kafka.Common
+namespace Kafka.Streams.State.Internals
 {
-    public class Pattern : Regex
+    public class RocksDbSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
     {
-        public static Pattern compile(string v)
+        public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {
-            throw new NotImplementedException();
+            restoreAllInternal(records);
+        }
+
+        public override void onRestoreStart(
+            TopicPartition topicPartition,
+            string storeName,
+            long startingOffset,
+            long endingOffset)
+        {
+            toggleForBulkLoading(true);
+        }
+
+        public override void onRestoreEnd(
+            TopicPartition topicPartition,
+            string storeName,
+            long totalRestored)
+        {
+            toggleForBulkLoading(false);
         }
     }
 }

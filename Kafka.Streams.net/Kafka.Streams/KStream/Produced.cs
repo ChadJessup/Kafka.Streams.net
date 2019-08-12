@@ -17,8 +17,8 @@
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.KStream
 {

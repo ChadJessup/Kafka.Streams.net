@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * RepartitionTopicConfig captures the properties required for configuring
@@ -26,14 +26,14 @@ namespace Kafka.Streams.IProcessor.Internals
     {
         private static Dictionary<string, string> REPARTITION_TOPIC_DEFAULT_OVERRIDES;
 
-        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<>();
-        tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
-        tempTopicDefaultOverrides.Add(TopicConfig.SEGMENT_BYTES_CONFIG, "52428800");         // 50 MB
-        tempTopicDefaultOverrides.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(-1));  // Infinity
-        REPARTITION_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
+        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
+        //tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_DELETE);
+        //tempTopicDefaultOverrides.Add(TopicConfig.SEGMENT_BYTES_CONFIG, "52428800");         // 50 MB
+        //tempTopicDefaultOverrides.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(-1));  // Infinity
+        //REPARTITION_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
 
-    RepartitionTopicConfig(string name, Dictionary<string, string> topicConfigs)
-        : base(name, topicConfigs)
+        RepartitionTopicConfig(string name, Dictionary<string, string> topicConfigs)
+            : base(name, topicConfigs)
         {
         }
 
@@ -44,7 +44,7 @@ namespace Kafka.Streams.IProcessor.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs)
+        public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
             Dictionary<string, string> topicConfig = new Dictionary<>(REPARTITION_TOPIC_DEFAULT_OVERRIDES);

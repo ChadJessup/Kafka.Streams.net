@@ -18,12 +18,12 @@ using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>
     {
         private IProcessorSupplier<K, V> supplier;
-        protected HashSet<string> stateStoreNames { get; } = new HashSet<string>();
+        public HashSet<string> stateStoreNames { get; } = new HashSet<string>();
 
         public ProcessorNodeFactory(
             string name,

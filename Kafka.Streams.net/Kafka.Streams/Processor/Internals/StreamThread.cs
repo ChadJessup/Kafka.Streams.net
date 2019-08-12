@@ -4,12 +4,12 @@ using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class StreamThread //: Thread
     {
@@ -126,6 +126,11 @@ namespace Kafka.Streams.IProcessor.Internals
         }
 
         internal static string getSharedAdminClientId(string clientId)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal ThreadMetadata threadMetadata()
         {
             throw new NotImplementedException();
         }

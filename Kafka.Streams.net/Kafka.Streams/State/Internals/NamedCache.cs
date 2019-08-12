@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Kafka.Common.Utils;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.State.Internals
 {
-
-    class NamedCache
+    public class NamedCache
     {
-        private static ILogger log = new LoggerFactory().CreateLogger < NamedCache);
+        private static ILogger log = new LoggerFactory().CreateLogger<NamedCache>();
         private string name;
-        private NavigableMap<Bytes, LRUNode> cache = new ConcurrentSkipListMap<>();
-        private HashSet<Bytes> dirtyKeys = new HashSet<>();
-        private ThreadCache.IDirtyEntryFlushListener listener;
-        private LRUNode tail;
-        private LRUNode head;
+        private ConcurrentDictionary<Bytes, LRUNode> cache = new ConcurrentDictionary<Bytes, LRUNode>();
+        private HashSet<Bytes> dirtyKeys = new HashSet<Bytes>();
+        private IDirtyEntryFlushListener listener;
+        private LRUNode _tail;
+        private LRUNode _head;
         private long currentSizeBytes;
         private NamedCacheMetrics namedCacheMetrics;
 
@@ -36,17 +42,16 @@ namespace Kafka.Streams.State.Internals
         private long numOverwrites = 0;
         private long numFlushes = 0;
 
-        NamedCache(string name, StreamsMetricsImpl metrics)
+        public NamedCache(string name, StreamsMetricsImpl metrics)
+        {
+            this.name = name;
+            this.metrics = metrics;
+        }
+
+        public NamedCache(string name, StreamsMetricsImpl metrics)
         {
             this.name = name;
             this.namedCacheMetrics = new NamedCacheMetrics(metrics, name);
-        }
-
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        string name
-        {
-            return name;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -73,7 +78,8 @@ namespace Kafka.Streams.State.Internals
             return numFlushes;
         }
 
-        synchronized LRUCacheEntry get(Bytes key)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUCacheEntry get(Bytes key)
         {
             if (key == null)
             {
@@ -90,15 +96,20 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void setListener(ThreadCache.IDirtyEntryFlushListener listener)
+        void setListener(IDirtyEntryFlushListener listener)
         {
             this.listener = listener;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void flush()
+        public void flush()
         {
             flush(null);
+        }
+
+        internal void setListener(IDirtyEntryFlushListener listener)
+        {
+            throw new NotImplementedException();
         }
 
         private void flush(LRUNode evicted)
@@ -114,48 +125,48 @@ namespace Kafka.Streams.State.Internals
             if (listener == null)
             {
                 throw new System.ArgumentException("No listener for namespace " + name + " registered with cache")
-{
+                {
 
-            }
+                }
 
             if (dirtyKeys.isEmpty())
-            {
-                return;
-            }
-
-            List<ThreadCache.DirtyEntry> entries = new List<>();
-            List<Bytes> deleted = new List<>();
-
-            // evicted already been removed from the cache so.Add it to the list of
-            // flushed entries and Remove from dirtyKeys.
-            if (evicted != null)
-            {
-                entries.Add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
-                dirtyKeys.Remove(evicted.key);
-            }
-
-            foreach (Bytes key in dirtyKeys)
-            {
-                LRUNode node = getInternal(key);
-                if (node == null)
                 {
-                    throw new InvalidOperationException("Key = " + key + " found in dirty key set, but entry is null");
+                    return;
                 }
-                entries.Add(new ThreadCache.DirtyEntry(key, node.entry.value(), node.entry));
-                node.entry.markClean();
-                if (node.entry.value() == null)
+
+                List<ThreadCache.DirtyEntry> entries = new List<>();
+                List<Bytes> deleted = new List<>();
+
+                // evicted already been removed from the cache so.Add it to the list of
+                // flushed entries and Remove from dirtyKeys.
+                if (evicted != null)
                 {
-                    deleted.Add(node.key);
+                    entries.Add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
+                    dirtyKeys.Remove(evicted.key);
+                }
+
+                foreach (Bytes key in dirtyKeys)
+                {
+                    LRUNode node = getInternal(key);
+                    if (node == null)
+                    {
+                        throw new InvalidOperationException("Key = " + key + " found in dirty key set, but entry is null");
+                    }
+                    entries.Add(new ThreadCache.DirtyEntry(key, node.entry.value(), node.entry));
+                    node.entry.markClean();
+                    if (node.entry.value() == null)
+                    {
+                        deleted.Add(node.key);
+                    }
+                }
+                // clear dirtyKeys before the listener is applied as it may be re-entrant.
+                dirtyKeys.clear();
+                listener.apply(entries);
+                foreach (Bytes key in deleted)
+                {
+                    delete(key);
                 }
             }
-            // clear dirtyKeys before the listener is applied as it may be re-entrant.
-            dirtyKeys.clear();
-            listener.apply(entries);
-            foreach (Bytes key in deleted)
-            {
-                delete(key);
-            }
-        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         void put(Bytes key, LRUCacheEntry value)
@@ -195,7 +206,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        long sizeInBytes()
+        public long sizeInBytes()
         {
             return currentSizeBytes;
         }
@@ -232,7 +243,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                head = node.next;
+                _head = node.next;
             }
             if (node.next != null)
             {
@@ -240,33 +251,33 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                tail = node.previous;
+                _tail = node.previous;
             }
         }
 
         private void putHead(LRUNode node)
         {
-            node.next = head;
+            node.next = _head;
             node.previous = null;
-            if (head != null)
+            if (_head != null)
             {
-                head.previous = node;
+                _head.previous = node;
             }
-            head = node;
-            if (tail == null)
+            _head = node;
+            if (_tail == null)
             {
-                tail = head;
+                _tail = _head;
             }
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void evict()
+        public void evict()
         {
-            if (tail == null)
+            if (_tail == null)
             {
                 return;
             }
-            LRUNode eldest = tail;
+            LRUNode eldest = _tail;
             currentSizeBytes -= eldest.size();
             Remove(eldest);
             cache.Remove(eldest.key);
@@ -315,171 +326,59 @@ namespace Kafka.Streams.State.Internals
             return cache.size();
         }
 
-        synchronized IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
-    {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
+        {
             return cache.subMap(from, true, to, true).iterator();
         }
 
-        synchronized IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
-    {
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
+        {
             return cache.iterator();
         }
 
-        synchronized LRUCacheEntry first()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUCacheEntry first()
         {
-            if (head == null)
+            if (_head == null)
             {
                 return null;
             }
-            return head.entry;
-        }
-
-        synchronized LRUCacheEntry last()
-        {
-            if (tail == null)
-            {
-                return null;
-            }
-            return tail.entry;
-        }
-
-        synchronized LRUNode head()
-        {
-            return head;
-        }
-
-        synchronized LRUNode tail()
-        {
-            return tail;
+            return _head.entry;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void close()
+        LRUCacheEntry last()
         {
-            head = tail = null;
+            if (_tail == null)
+            {
+                return null;
+            }
+            return _tail.entry;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUNode head()
+        {
+            return _head;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUNode tail()
+        {
+            return _tail;
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void close()
+        {
+            _head = _tail = null;
             listener = null;
             currentSizeBytes = 0;
             dirtyKeys.clear();
             cache.clear();
             namedCacheMetrics.removeAllSensors();
-        }
-
-        /**
-         * A simple wrapper to implement a doubly-linked list around MemoryLRUCacheBytesEntry
-         */
-        static LRUNode
-{
-        private Bytes key;
-        private LRUCacheEntry entry;
-        private LRUNode previous;
-        private LRUNode next;
-
-        LRUNode(Bytes key, LRUCacheEntry entry)
-        {
-            this.key = key;
-            this.entry = entry;
-        }
-
-        LRUCacheEntry entry()
-        {
-            return entry;
-        }
-
-        Bytes key()
-        {
-            return key;
-        }
-
-        long size()
-        {
-            return key[].Length +
-                8 + // entry
-                8 + // previous
-                8 + // next
-                entry.size();
-        }
-
-        LRUNode next()
-        {
-            return next;
-        }
-
-        LRUNode previous()
-        {
-            return previous;
-        }
-
-        private void update(LRUCacheEntry entry)
-        {
-            this.entry = entry;
-        }
-    }
-
-    private static class NamedCacheMetrics
-    {
-        private StreamsMetricsImpl metrics;
-
-        private Sensor hitRatioSensor;
-        private string taskName;
-        private string cacheName;
-
-        private NamedCacheMetrics(StreamsMetricsImpl metrics, string cacheName)
-        {
-            taskName = ThreadCache.taskIDfromCacheName(cacheName);
-            this.cacheName = cacheName;
-            this.metrics = metrics;
-            string group = "stream-record-cache-metrics";
-
-            //.Add parent
-            Dictionary<string, string> allMetricTags = metrics.tagMap(
-                 "task-id", taskName,
-                "record-cache-id", "all"
-            );
-            Sensor taskLevelHitRatioSensor = metrics.taskLevelSensor(taskName, "hitRatio", RecordingLevel.DEBUG);
-            taskLevelHitRatioSensor.Add(
-                new MetricName("hitRatio-avg", group, "The average cache hit ratio.", allMetricTags),
-                new Avg()
-            );
-            taskLevelHitRatioSensor.Add(
-                new MetricName("hitRatio-min", group, "The minimum cache hit ratio.", allMetricTags),
-                new Min()
-            );
-            taskLevelHitRatioSensor.Add(
-                new MetricName("hitRatio-max", group, "The maximum cache hit ratio.", allMetricTags),
-                new Max()
-            );
-
-            //.Add child
-            Dictionary<string, string> metricTags = metrics.tagMap(
-                 "task-id", taskName,
-                "record-cache-id", ThreadCache.underlyingStoreNamefromCacheName(cacheName)
-            );
-
-            hitRatioSensor = metrics.cacheLevelSensor(
-                taskName,
-                cacheName,
-                "hitRatio",
-                RecordingLevel.DEBUG,
-                taskLevelHitRatioSensor
-            );
-            hitRatioSensor.Add(
-                new MetricName("hitRatio-avg", group, "The average cache hit ratio.", metricTags),
-                new Avg()
-            );
-            hitRatioSensor.Add(
-                new MetricName("hitRatio-min", group, "The minimum cache hit ratio.", metricTags),
-                new Min()
-            );
-            hitRatioSensor.Add(
-                new MetricName("hitRatio-max", group, "The maximum cache hit ratio.", metricTags),
-                new Max()
-            );
-
-        }
-
-        private void removeAllSensors()
-        {
-            metrics.removeAllCacheLevelSensors(taskName, cacheName);
         }
     }
 }

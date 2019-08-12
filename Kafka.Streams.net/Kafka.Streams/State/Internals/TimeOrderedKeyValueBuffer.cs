@@ -18,8 +18,8 @@ using Confluent.Kafka;
 using Kafka.Common.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.State.Internals
 {

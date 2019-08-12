@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 

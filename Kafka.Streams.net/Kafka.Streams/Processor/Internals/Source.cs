@@ -15,19 +15,21 @@
  * limitations under the License.
  */
 using Kafka.Common;
+using Kafka.Streams.Interfaces;
+using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public static class Source : AbstractNode, TopologyDescription.Source
+    public class Source : AbstractNode, ISource
     {
-
         private HashSet<string> topics;
-        private Pattern topicPattern;
+        private Regex topicPattern;
 
-        public Source(string name,
-                      HashSet<string> topics,
-                      Pattern pattern)
+        public Source(
+            string name,
+            HashSet<string> topics,
+            Regex pattern)
             : base(name)
         {
             if (topics == null && pattern == null)
@@ -43,27 +45,13 @@ namespace Kafka.Streams.IProcessor.Internals
             this.topicPattern = pattern;
         }
 
-        [System.Obsolete]
-
-        public string topics()
-        {
-            return topics.ToString();
-        }
-
-
         public HashSet<string> topicSet()
         {
             return topics;
         }
 
 
-        public Pattern topicPattern()
-        {
-            return topicPattern;
-        }
-
-
-        public void addPredecessor(INode predecessor)
+        public override void addPredecessor(INode predecessor)
         {
             throw new InvalidOperationException("Sources don't have predecessors.");
         }
@@ -91,16 +79,16 @@ namespace Kafka.Streams.IProcessor.Internals
             Source source = (Source)o;
             // omit successor to avoid infinite loops
             return name.Equals(source.name)
-                && Objects.Equals(topics, source.topics)
+                && topics.Equals(source.topics)
                 && (topicPattern == null ? source.topicPattern == null :
                     topicPattern.pattern().Equals(source.topicPattern.pattern()));
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             // omit successor as it might change and alter the hash code
-            return Objects.hash(name, topics, topicPattern);
+            return (name, topics, topicPattern).GetHashCode();
         }
     }
 }

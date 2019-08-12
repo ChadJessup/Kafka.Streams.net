@@ -1,5 +1,5 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State.Internals
@@ -47,7 +47,7 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = (IInternalProcessorContext)context;
 
-            StreamsMetricsImpl metrics = this.context.metrics();
+            StreamsMetricsImpl metrics = this.context.metrics;
             string taskName = context.taskId().ToString();
             expiredRecordSensor = metrics.storeLevelSensor(
                 taskName,

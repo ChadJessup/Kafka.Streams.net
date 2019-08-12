@@ -16,7 +16,7 @@
  */
 
 using Kafka.Common;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class StreamSourceNode<K, V> : StreamsGraphNode
     {
         private List<string> topicNames;
-        private Pattern topicPattern;
+        private Regex topicPattern;
         protected ConsumedInternal<K, V> consumedInternal;
 
         public StreamSourceNode(string nodeName,
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public StreamSourceNode(string nodeName,
-                                 Pattern topicPattern,
+                                 Regex topicPattern,
                                  ConsumedInternal<K, V> consumedInternal)
             : base(nodeName)
         {

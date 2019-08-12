@@ -43,7 +43,6 @@ namespace Kafka.Streams.State
 
     public class Stores
     {
-
         /**
          * Create a persistent {@link KeyValueBytesStoreSupplier}.
          * <p>

@@ -1,11 +1,11 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common.Utils.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AbstractTaskCreator<T>
         where T : ITask

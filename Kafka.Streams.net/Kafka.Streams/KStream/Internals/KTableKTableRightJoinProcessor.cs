@@ -15,10 +15,12 @@
  * limitations under the License.
  */
 using Kafka.Common.Metrics;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -34,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void init(IProcessorContext<K, V1> context)
+        public void init(IProcessorContext<K, Change<V1>> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics;
@@ -60,7 +62,7 @@ namespace Kafka.Streams.KStream.Internals
             long resultTimestamp;
             R oldValue = null;
 
-            ValueAndTimestamp<V2> valueAndTimestampLeft = valueGetter[key];
+            ValueAndTimestamp<V2> valueAndTimestampLeft = valueGetter.get(key);
             V2 valueLeft = getValueOrNull(valueAndTimestampLeft);
             if (valueLeft == null)
             {
@@ -78,11 +80,11 @@ namespace Kafka.Streams.KStream.Internals
                 oldValue = joiner.apply(change.oldValue, valueLeft);
             }
 
-            context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
+            context.forward(key, new Change<V1>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
         }
 
 
-        public void close()
+        public override void close()
         {
             valueGetter.close();
         }

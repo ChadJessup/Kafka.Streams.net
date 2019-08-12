@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals.Assignment
+namespace Kafka.Streams.Processor.Internals.Assignment
 {
     public class ClientState
     {

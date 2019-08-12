@@ -1,9 +1,9 @@
 ﻿using Kafka.Common.Metrics;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class NodeMetrics<K, V>
     {
@@ -76,7 +76,7 @@ namespace Kafka.Streams.IProcessor.Internals
             this.processorNodeName = processorNodeName;
         }
 
-        private void removeAllSensors()
+        public void removeAllSensors()
         {
             metrics.removeAllNodeLevelSensors(taskName, processorNodeName);
         }

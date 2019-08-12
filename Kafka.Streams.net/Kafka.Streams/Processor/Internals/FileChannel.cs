@@ -1,4 +1,4 @@
-﻿namespace Kafka.Streams.IProcessor.Internals
+﻿namespace Kafka.Streams.Processor.Internals
 {
     internal class FileChannel
     {

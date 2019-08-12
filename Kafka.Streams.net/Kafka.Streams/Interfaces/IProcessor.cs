@@ -11,6 +11,6 @@ namespace Kafka.Streams.Interfaces
          * The names of all connected stores.
          * @return set of store names
          */
-        HashSet<string> stores();
+        HashSet<string> stores { get; }
     }
 }

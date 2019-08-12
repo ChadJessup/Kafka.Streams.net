@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class StateRestorer
     {
@@ -27,7 +27,7 @@ namespace Kafka.Streams.IProcessor.Internals
         private string storeName;
         private TopicPartition partition;
         private CompositeRestoreListener compositeRestoreListener;
-        private RecordConverter recordConverter;
+        private IRecordConverter recordConverter;
 
         private long checkpointOffset;
         private long restoredOffset;
@@ -40,7 +40,7 @@ namespace Kafka.Streams.IProcessor.Internals
                       long offsetLimit,
                       bool persistent,
                       string storeName,
-                      RecordConverter recordConverter)
+                      IRecordConverter recordConverter)
         {
             this.partition = partition;
             this.compositeRestoreListener = compositeRestoreListener;

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 using Microsoft.Extensions.Logging;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Common.Utils;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals

@@ -20,9 +20,9 @@ using Kafka.Streams.State.Interfaces;
 namespace Kafka.Streams.State.Internals
 {
     public class RocksDbSessionStore
-        : WrappedStateStore<SegmentedBytesStore, object, object>, ISessionStore<Bytes, byte[]>
+        : WrappedStateStore<ISegmentedBytesStore, object, object>, ISessionStore<Bytes, byte[]>
     {
-        public RocksDbSessionStore(SegmentedBytesStore bytesStore)
+        public RocksDbSessionStore(ISegmentedBytesStore bytesStore)
             : base(bytesStore)
         {
         }

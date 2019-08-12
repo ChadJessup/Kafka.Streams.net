@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * Abstract implementation of the  {@link StateRestoreCallback} used for batch restoration operations.

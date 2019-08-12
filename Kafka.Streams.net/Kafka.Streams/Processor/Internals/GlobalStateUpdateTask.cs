@@ -16,11 +16,11 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Errors.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
 
     /**
@@ -68,7 +68,7 @@ namespace Kafka.Streams.IProcessor.Internals
                         source,
                         deserializationExceptionHandler,
                         logContext,
-                        ThreadMetrics.skipRecordSensor(processorContext.metrics())
+                        ThreadMetrics.skipRecordSensor(processorContext.metrics)
                     )
                 );
             }

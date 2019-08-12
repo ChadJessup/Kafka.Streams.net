@@ -15,31 +15,33 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Interfaces
 {
-
-    public interface IRecordCollector : AutoCloseable
+    public interface IRecordCollector<K, V> : AutoCloseable
     {
-        void send<K, V>(string topic,
-                         K key,
-                         V value,
-                         Headers headers,
-                         int partition,
-                         long timestamp,
-                         ISerializer<K> keySerializer,
-                         ISerializer<V> valueSerializer);
+        void send(
+            string topic,
+            K key,
+            V value,
+            Headers headers,
+            int partition,
+            long timestamp,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer);
 
-        void send(string topic,
-                         K key,
-                         V value,
-                         Headers headers,
-                         long timestamp,
-                         ISerializer<K> keySerializer,
-                         ISerializer<V> valueSerializer,
-                         IStreamPartitioner<K, V> partitioner);
+        void send(
+            string topic,
+            K key,
+            V value,
+            Headers headers,
+            long timestamp,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer,
+            IStreamPartitioner<K, V> partitioner);
 
         /**
          * Initialize the collector with a producer.
@@ -63,18 +65,5 @@ namespace Kafka.Streams.IProcessor.Internals
          * @return the map from TopicPartition to offset
          */
         Dictionary<TopicPartition, long> offsets();
-
-        /**
-         * A supplier of a {@link RecordCollectorImpl} instance.
-         */
-        interface Supplier
-        {
-
-            /**
-             * Get the record collector.
-             * @return the record collector
-             */
-            IRecordCollector recordCollector();
-        }
     }
 }

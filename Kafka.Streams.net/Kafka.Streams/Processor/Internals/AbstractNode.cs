@@ -17,7 +17,7 @@
 using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AbstractNode : INode
     {
@@ -26,7 +26,7 @@ namespace Kafka.Streams.IProcessor.Internals
         public HashSet<INode> successors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
 
         // size of the sub-topology rooted at this node, including the node itself
-        int size;
+        public int size { get; set; }
 
         public AbstractNode(string name)
         {
@@ -35,7 +35,7 @@ namespace Kafka.Streams.IProcessor.Internals
             this.size = 1;
         }
 
-        public void addPredecessor(INode predecessor)
+        public virtual void addPredecessor(INode predecessor)
         {
             predecessors.Add(predecessor);
         }

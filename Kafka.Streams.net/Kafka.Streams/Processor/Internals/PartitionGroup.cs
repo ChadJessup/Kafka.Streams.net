@@ -17,10 +17,11 @@
 
 using Confluent.Kafka;
 using Kafka.Common.Metrics;
+using RocksDbSharp;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * PartitionGroup is used to buffer all co-partitioned records for processing.
@@ -50,13 +51,13 @@ namespace Kafka.Streams.IProcessor.Internals
         private Sensor recordLatenessSensor;
         private PriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
-        private long streamTime;
+        public long streamTime { get; set; }
         private int totalBuffered;
         private bool allBuffered;
 
         PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
         {
-            nonEmptyQueuesByTime = new Queue<RecordQueue>(partitionQueues.size(), Comparator.comparingLong(RecordQueue.headRecordTimestamp));
+            nonEmptyQueuesByTime = new Queue<RecordQueue>(partitionQueues.Count, Comparator.comparingLong(RecordQueue.headRecordTimestamp));
             this.partitionQueues = partitionQueues;
             this.recordLatenessSensor = recordLatenessSensor;
             totalBuffered = 0;
@@ -148,7 +149,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public HashSet<TopicPartition> partitions()
         {
-            return Collections.unmodifiableSet(partitionQueues.Keys);
+            return new HashSet<TopicPartition>(partitionQueues.Keys);
         }
 
         /**
@@ -170,7 +171,7 @@ namespace Kafka.Streams.IProcessor.Internals
             return recordQueue.size();
         }
 
-        int numBuffered()
+        public int numBuffered()
         {
             return totalBuffered;
         }

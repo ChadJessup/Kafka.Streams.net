@@ -17,7 +17,7 @@
 using System;
 using Kafka.Common;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class DefaultPartitioner
     {

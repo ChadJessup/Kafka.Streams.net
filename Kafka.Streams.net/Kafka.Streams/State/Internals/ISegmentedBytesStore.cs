@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;
 
@@ -26,9 +26,8 @@ namespace Kafka.Streams.State.Internals
      * on time.
      * @see RocksDbSegmentedBytesStore
      */
-    public interface SegmentedBytesStore : IStateStore
+    public interface ISegmentedBytesStore : IStateStore
     {
-
         /**
          * Fetch all records from the segmented store with the provided key and time range
          * from all existing segments
@@ -65,7 +64,7 @@ namespace Kafka.Streams.State.Internals
          * @param to   the end of the time slot from which to search
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if null is used for any key
+         * @throws ArgumentNullException if null is used for any key
          */
         IKeyValueIterator<Bytes, byte[]> fetchAll(long from, long to);
 
@@ -94,8 +93,6 @@ namespace Kafka.Streams.State.Internals
          * @return
          */
         byte[] get(Bytes key);
-
-{
 
         /**
          * Given a range of record keys and a time, construct a Segmented key that represents
@@ -170,6 +167,7 @@ namespace Kafka.Streams.State.Internals
          * @param to
          * @return  List of segments to search
          */
-        List<S> segmentsToSearch<S>(Segments<S> segments, long from, long to);
+        List<S> segmentsToSearch<S>(Segments<S> segments, long from, long to)
+            where S : ISegment;
     }
 }

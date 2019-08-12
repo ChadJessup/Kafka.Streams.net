@@ -1,35 +1,38 @@
 using Confluent.Kafka;
 using Kafka.Streams;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Kafka.Common;
+using Kafka.Common.Extensions;
+using Kafka.Streams.State.Interfaces;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * This is responsible for the initialization, restoration, closing, flushing etc
      * of Global State Stores. There is only ever 1 instance of this per Application Instance.
      */
-    public class GlobalStateManagerImpl : IGlobalStateManager
+    public class GlobalStateManagerImpl<K, V> : IGlobalStateManager<K, V>
     {
         private ILogger log;
         private bool eosEnabled;
-        private ProcessorTopology topology;
+        private ProcessorTopology<K, V> topology;
         private IConsumer<byte[], byte[]> globalConsumer;
         private FileInfo baseDir;
         private StateDirectory stateDirectory;
         private HashSet<string> globalStoreNames = new HashSet<string>();
-        private FixedOrderMap<string, Optional<IStateStore>> globalStores = new FixedOrderMap<>();
+        private Dictionary<string, IStateStore?> globalStores = new Dictionary<string, IStateStore?>();
         private IStateRestoreListener stateRestoreListener;
-        private IInternalProcessorContext<K, V>  globalProcessorContext;
+        private IInternalProcessorContext<K, V> globalProcessorContext;
         private int retries;
         private long retryBackoffMs;
         private TimeSpan pollTime;
@@ -37,39 +40,42 @@ namespace Kafka.Streams.IProcessor.Internals
         private OffsetCheckpoint checkpointFile;
         private Dictionary<TopicPartition, long> checkpointFileCache;
 
-        public GlobalStateManagerImpl(LogContext logContext,
-                                      ProcessorTopology topology,
-                                      IConsumer<byte[], byte[]> globalConsumer,
-                                      StateDirectory stateDirectory,
-                                      IStateRestoreListener stateRestoreListener,
-                                      StreamsConfig config)
+        DirectoryInfo IStateManager.baseDir { get; }
+
+        public GlobalStateManagerImpl(
+            LogContext logContext,
+            ProcessorTopology<K, V> topology,
+            IConsumer<byte[], byte[]> globalConsumer,
+            StateDirectory stateDirectory,
+            IStateRestoreListener stateRestoreListener,
+            StreamsConfig config)
         {
             eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
             baseDir = stateDirectory.globalStateDir();
-            checkpointFile = new OffsetCheckpoint(new FileInfo(baseDir, CHECKPOINT_FILE_NAME));
+            //            checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir, CHECKPOINT_FILE_NAME)));
             checkpointFileCache = new Dictionary<TopicPartition, long>();
 
             // Find non persistent store's topics
-            Dictionary<string, string> storeToChangelogTopic = topology.storeToChangelogTopic();
-            foreach (IStateStore store in topology.globalStateStores())
-            {
-                if (!store.persistent())
-                {
-                    globalNonPersistentStoresTopics.Add(storeToChangelogTopic[store.name]);
-                }
-            }
+            //          Dictionary<string, string> storeToChangelogTopic = topology.storeToChangelogTopic();
+            //foreach (IStateStore store in topology.globalStateStores())
+            //{
+            //    if (!store.persistent())
+            //    {
+            //        globalNonPersistentStoresTopics.Add(storeToChangelogTopic[store.name]);
+            //    }
+            //}
 
-            log = logContext.logger(GlobalStateManagerImpl);
+            //            log = logContext.logger(GlobalStateManagerImpl);
             this.topology = topology;
             this.globalConsumer = globalConsumer;
             this.stateDirectory = stateDirectory;
             this.stateRestoreListener = stateRestoreListener;
-            retries = config.getInt(StreamsConfig.RETRIES_CONFIG);
-            retryBackoffMs = config.getLong(StreamsConfig.RETRY_BACKOFF_MS_CONFIG);
-            pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
+            //retries = config.GetInt(StreamsConfig.RETRIES_CONFIG);
+            //retryBackoffMs = config.getLong(StreamsConfig.RETRY_BACKOFF_MS_CONFIG);
+            //pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
         }
 
-        public void setGlobalProcessorContext(IInternalProcessorContext<K, V>  globalProcessorContext)
+        public void setGlobalProcessorContext(IInternalProcessorContext<K, V> globalProcessorContext)
         {
             this.globalProcessorContext = globalProcessorContext;
         }
@@ -86,13 +92,13 @@ namespace Kafka.Streams.IProcessor.Internals
             }
             catch (IOException e)
             {
-                throw new LockException(string.Format("Failed to lock the global state directory: %s", baseDir), e);
+                //                throw new LockException(string.Format("Failed to lock the global state directory: %s", baseDir), e);
             }
 
             try
             {
 
-                checkpointFileCache.putAll(checkpointFile.read());
+                //              checkpointFileCache.putAll(checkpointFile.read());
             }
             catch (IOException e)
             {
@@ -108,39 +114,40 @@ namespace Kafka.Streams.IProcessor.Internals
                 throw new StreamsException("Failed to read checkpoints for global state globalStores", e);
             }
 
-            List<IStateStore> stateStores = topology.globalStateStores();
-            foreach (IStateStore stateStore in stateStores)
-            {
-                globalStoreNames.Add(stateStore.name);
-                stateStore.init(globalProcessorContext, stateStore);
-            }
-            return Collections.unmodifiableSet(globalStoreNames);
+            //        List<IStateStore> stateStores = topology.globalStateStores();
+            //foreach (IStateStore stateStore in stateStores)
+            //{
+            //    globalStoreNames.Add(stateStore.name);
+            //    stateStore.init(globalProcessorContext, stateStore);
+            //}
+
+            return globalStoreNames;
         }
 
 
         public void reinitializeStateStoresForPartitions(List<TopicPartition> partitions,
-                                                         IInternalProcessorContext<K, V>  processorContext)
+                                                         IInternalProcessorContext<K, V> processorContext)
         {
             StateManagerUtil.reinitializeStateStoresForPartitions(
                 log,
                 eosEnabled,
-                baseDir,
+                null, //baseDir,
                 globalStores,
-                topology.storeToChangelogTopic(),
+                null, //topology.storeToChangelogTopic(),
                 partitions,
                 processorContext,
                 checkpointFile,
                 checkpointFileCache
             );
 
-            globalConsumer.assign(partitions);
-            globalConsumer.seekToBeginning(partitions);
+            //globalConsumer.assign(partitions);
+            //globalConsumer.seekToBeginning(partitions);
         }
 
 
         public IStateStore getGlobalStore(string name)
         {
-            return globalStores.getOrDefault(name, Optional.empty()).orElse(null);
+            return null; // globalStores.getOrDefault(name, Optional.empty()).orElse(null);
         }
 
 
@@ -149,13 +156,9 @@ namespace Kafka.Streams.IProcessor.Internals
             return getGlobalStore(name);
         }
 
-        public FileInfo baseDir()
-        {
-            return baseDir;
-        }
-
-        public void register(IStateStore store,
-                             IStateRestoreCallback stateRestoreCallback)
+        public void register(
+            IStateStore store,
+            IStateRestoreCallback stateRestoreCallback)
         {
 
             if (globalStores.ContainsKey(store.name))
@@ -183,7 +186,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 try
                 {
 
-                    highWatermarks = globalConsumer.endOffsets(topicPartitions);
+                    //                    highWatermarks = globalConsumer.endOffsets(topicPartitions);
                 }
                 catch (TimeoutException retryableException)
                 {
@@ -204,7 +207,7 @@ namespace Kafka.Streams.IProcessor.Internals
                         attempts,
                         retries,
                         retryableException);
-                    Utils.sleep(retryBackoffMs);
+                    //                  Utils.sleep(retryBackoffMs);
                 }
             }
             try
@@ -215,29 +218,29 @@ namespace Kafka.Streams.IProcessor.Internals
                     topicPartitions,
                     highWatermarks,
                     store.name,
-                    converterForStore(store)
+                    null //converterForStore(store)
                 );
-                globalStores.Add(store.name, Optional.of(store));
+                //                globalStores.Add(store.name, Optional.of(store));
             }
             finally
             {
 
-                globalConsumer.unsubscribe();
+                //              globalConsumer.unsubscribe();
             }
 
         }
 
         private List<TopicPartition> topicPartitionsForStore(IStateStore store)
         {
-            string sourceTopic = topology.storeToChangelogTopic()[store.name];
-            List<PartitionInfo> partitionInfos;
+            //string sourceTopic = topology.storeToChangelogTopic()[store.name];
+            //List<PartitionInfo> partitionInfos;
             int attempts = 0;
             while (true)
             {
                 try
                 {
 
-                    partitionInfos = globalConsumer.partitionsFor(sourceTopic);
+                    //partitionInfos = globalConsumer.partitionsFor(sourceTopic);
                     break;
                 }
                 catch (TimeoutException retryableException)
@@ -247,35 +250,36 @@ namespace Kafka.Streams.IProcessor.Internals
                         log.LogError("Failed to get partitions for topic {} after {} retry attempts due to timeout. " +
                                 "The broker may be transiently unavailable at the moment. " +
                                 "You can increase the number of retries via configuration parameter `retries`.",
-                            sourceTopic,
+                            null, //sourceTopic,
                             retries,
                             retryableException);
-                        throw new StreamsException(string.Format("Failed to get partitions for topic %s after %d retry attempts due to timeout. " +
-                            "The broker may be transiently unavailable at the moment. " +
-                            "You can increase the number of retries via configuration parameter `retries`.", sourceTopic, retries),
-                            retryableException);
+                        //throw new StreamsException(string.Format("Failed to get partitions for topic %s after %d retry attempts due to timeout. " +
+                        //    "The broker may be transiently unavailable at the moment. " +
+                        //    "You can increase the number of retries via configuration parameter `retries`.", sourceTopic, retries),
+                        //    retryableException);
                     }
                     log.LogDebug("Failed to get partitions for topic {} due to timeout. The broker may be transiently unavailable at the moment. " +
                             "Backing off for {} ms to retry (attempt {} of {})",
-                        sourceTopic,
+                        null, //sourceTopic,
                         retryBackoffMs,
                         attempts,
                         retries,
                         retryableException);
-                    Utils.sleep(retryBackoffMs);
+                    //                    Utils.sleep(retryBackoffMs);
                 }
             }
 
-            if (partitionInfos == null || !partitionInfos.Any())
-            {
-                throw new StreamsException(string.Format("There are no partitions available for topic %s when initializing global store %s", sourceTopic, store.name));
-            }
+            //if (partitionInfos == null || !partitionInfos.Any())
+            //{
+            //    throw new StreamsException(string.Format("There are no partitions available for topic %s when initializing global store %s", sourceTopic, store.name));
+            //}
 
             List<TopicPartition> topicPartitions = new List<TopicPartition>();
-            foreach (PartitionInfo partition in partitionInfos)
-            {
-                topicPartitions.Add(new TopicPartition(partition.Topic, partition.partition()));
-            }
+            //foreach (PartitionInfo partition in partitionInfos)
+            //{
+            //    topicPartitions.Add(new TopicPartition(partition.Topic, partition.partition()));
+            //}
+
             return topicPartitions;
         }
 
@@ -288,19 +292,19 @@ namespace Kafka.Streams.IProcessor.Internals
         {
             foreach (TopicPartition topicPartition in topicPartitions)
             {
-                globalConsumer.assign(Collections.singletonList(topicPartition));
+                globalConsumer.Assign(topicPartition);
                 long checkpoint = checkpointFileCache[topicPartition];
+
                 if (checkpoint != null)
                 {
-                    globalConsumer.seek(topicPartition, checkpoint);
+                    globalConsumer.Seek(new TopicPartitionOffset(topicPartition, checkpoint));
                 }
                 else
                 {
-
-                    globalConsumer.seekToBeginning(Collections.singletonList(topicPartition));
+                    globalConsumer.Seek(new TopicPartitionOffset(topicPartition, new Offset(0)));
                 }
 
-                long offset = globalConsumer.position(topicPartition);
+                long offset = globalConsumer.Position(topicPartition);
                 long highWatermark = highWatermarks[topicPartition];
                 IRecordBatchingStateRestoreCallback stateRestoreAdapter =
                     StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
@@ -312,46 +316,47 @@ namespace Kafka.Streams.IProcessor.Internals
                 {
                     try
                     {
-
                         ConsumerRecords<byte[], byte[]> records = globalConsumer.poll(pollTime);
-                        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<>();
-                        foreach (ConsumeResult<byte[], byte[]> record in records.records(topicPartition))
-                        {
-                            if (record.key() != null)
-                            {
-                                restoreRecords.Add(recordConverter.convert(record));
-                            }
-                        }
-                        offset = globalConsumer.position(topicPartition);
+                        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
+
+                        //foreach (ConsumeResult<byte[], byte[]> record in records.records(topicPartition))
+                        //{
+                        //    if (record.Key != null)
+                        //    {
+                        //        restoreRecords.Add(recordConverter.convert(record));
+                        //    }
+                        //}
+
+                        offset = globalConsumer.Position(topicPartition);
                         stateRestoreAdapter.restoreBatch(restoreRecords);
-                        stateRestoreListener.onBatchRestored(topicPartition, storeName, offset, restoreRecords.size());
-                        restoreCount += restoreRecords.size();
+                        stateRestoreListener.onBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
+                        restoreCount += restoreRecords.Count;
                     }
                     catch (Exception recoverableException) //InvalidOffsetException
                     {
                         log.LogWarning("Restoring GlobalStore {} failed due to: {}. Deleting global store to recreate from scratch.",
                             storeName,
                             recoverableException.ToString());
-                        reinitializeStateStoresForPartitions(recoverableException.partitions(), globalProcessorContext);
+                        //                        reinitializeStateStoresForPartitions(recoverableException.partitions(), globalProcessorContext);
 
                         stateRestoreListener.onRestoreStart(topicPartition, storeName, offset, highWatermark);
                         restoreCount = 0L;
                     }
                 }
+
                 stateRestoreListener.onRestoreEnd(topicPartition, storeName, restoreCount);
                 checkpointFileCache.Add(topicPartition, offset);
             }
         }
 
-
         public void flush()
         {
             log.LogDebug("Flushing all global globalStores registered in the state manager");
-            foreach (KeyValuePair<string, Optional<IStateStore>> entry in globalStores)
+            foreach (KeyValuePair<string, IStateStore?> entry in globalStores)
             {
-                if (entry.Value.isPresent())
+                if (entry.Value != null)
                 {
-                    IStateStore store = entry.Value[];
+                    IStateStore store = entry.Value;
                     try
                     {
 
@@ -360,10 +365,8 @@ namespace Kafka.Streams.IProcessor.Internals
                     }
                     catch (Exception e)
                     {
-                        throw new ProcessorStateException(
-                            string.Format("Failed to flush global state store %s", store.name),
-                            e
-                        );
+                        //throw new ProcessorStateException(
+                        //    string.Format("Failed to flush global state store %s", store.name), e);
                     }
                 }
                 else
@@ -379,32 +382,33 @@ namespace Kafka.Streams.IProcessor.Internals
             try
             {
 
-                if (globalStores.isEmpty())
+                if (!globalStores.Any())
                 {
                     return;
                 }
 
                 StringBuilder closeFailed = new StringBuilder();
-                foreach (KeyValuePair<string, Optional<IStateStore>> entry in globalStores)
+                foreach (KeyValuePair<string, IStateStore?> entry in globalStores)
                 {
-                    if (entry.Value.isPresent())
+                    if (true)//entry.Value.isPresent())
                     {
-                        log.LogDebug("Closing global storage engine {}", entry.Key);
-                        try
-                        {
+                        //    log.LogDebug("Closing global storage engine {}", entry.Key);
+                        //    try
+                        //    {
 
-                            entry.Value().close();
-                        }
-                        catch (RuntimeException e)
-                        {
-                            log.LogError("Failed to close global state store {}", entry.Key, e);
-                            closeFailed.Append("Failed to close global state store:")
-                                       .Append(entry.Key)
-                                       .Append(". Reason: ")
-                                       .Append(e)
-                                       .Append("\n");
-                        }
-                        globalStores.Add(entry.Key, Optional.empty());
+                        //        entry.Value().close();
+                        //    }
+                        //    catch (RuntimeException e)
+                        //    {
+                        //        log.LogError("Failed to close global state store {}", entry.Key, e);
+                        //        closeFailed.Append("Failed to close global state store:")
+                        //                   .Append(entry.Key)
+                        //                   .Append(". Reason: ")
+                        //                   .Append(e)
+                        //                   .Append("\n");
+                        //    }
+
+                        //    globalStores.Add(entry.Key, null);
                     }
                     else
                     {
@@ -412,22 +416,21 @@ namespace Kafka.Streams.IProcessor.Internals
                         log.LogInformation("Skipping to close non-initialized store {}", entry.Key);
                     }
                 }
-                if (closeFailed.Length > 0)
-                {
-                    throw new ProcessorStateException("Exceptions caught during close of 1 or more global state globalStores\n" + closeFailed);
-                }
+                //if (closeFailed.Length > 0)
+                //{
+                //    throw new ProcessorStateException("Exceptions caught during close of 1 or more global state globalStores\n" + closeFailed);
+                //}
             }
             finally
             {
 
-                stateDirectory.unlockGlobalState();
+                //stateDirectory.unlockGlobalState();
             }
         }
 
-
         public void checkpoint(Dictionary<TopicPartition, long> offsets)
         {
-            checkpointFileCache.putAll(offsets);
+            //checkpointFileCache.putAll(offsets);
 
             Dictionary<TopicPartition, long> filteredOffsets = new Dictionary<TopicPartition, long>();
 
@@ -452,12 +455,14 @@ namespace Kafka.Streams.IProcessor.Internals
             }
         }
 
-
         public Dictionary<TopicPartition, long> checkpointed()
         {
-            return Collections.unmodifiableMap(checkpointFileCache);
+            return checkpointFileCache;
         }
 
-
+        public void reinitializeStateStoresForPartitions<K, V>(List<TopicPartition> partitions, IInternalProcessorContext<K, V> processorContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

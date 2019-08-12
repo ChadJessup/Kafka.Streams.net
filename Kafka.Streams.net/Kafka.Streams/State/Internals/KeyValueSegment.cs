@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals
 
 
     using Kafka.Common.Utils.Utils;
-    using Kafka.Streams.IProcessor.IProcessorContext;
+    using Kafka.Streams.Processor.IProcessorContext;
 
 
 

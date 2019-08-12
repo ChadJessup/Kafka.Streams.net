@@ -24,7 +24,8 @@ namespace Kafka.Streams.KStream.Internals
     {
         private MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
 
-        public TimestampedKeyValueStoreMaterializer(MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        public TimestampedKeyValueStoreMaterializer(
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             this.materialized = materialized;
         }
@@ -38,27 +39,30 @@ namespace Kafka.Streams.KStream.Internals
             if (supplier == null)
             {
                 string name = materialized.storeName();
-                supplier = Stores.persistentTimestampedKeyValueStore(name);
-            }
-            StoreBuilder<TimestampedKeyValueStore<K, V>> builder = Stores.timestampedKeyValueStoreBuilder(
-               supplier,
-               materialized.keySerde,
-               materialized.valueSerde);
-
-            if (materialized.loggingEnabled)
-            {
-                builder.withLoggingEnabled(materialized.logConfig());
-            }
-            else
-            {
-
-                builder.withLoggingDisabled();
+                //                supplier = Stores.persistentTimestampedKeyValueStore(name);
             }
 
-            if (materialized.cachingEnabled())
-            {
-                builder.withCachingEnabled();
-            }
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> builder = null;
+            //    Stores.timestampedKeyValueStoreBuilder(
+            //   supplier,
+            //   materialized.keySerde,
+            //   materialized.valueSerde);
+
+            //if (materialized.loggingEnabled)
+            //{
+            //    builder.withLoggingEnabled(materialized.logConfig());
+            //}
+            //else
+            //{
+
+            //    builder.withLoggingDisabled();
+            //}
+
+            //if (materialized.cachingEnabled())
+            //{
+            //    builder.withCachingEnabled();
+            //}
             return builder;
         }
     }
+}

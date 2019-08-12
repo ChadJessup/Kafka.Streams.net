@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * Restoration logic for log-backed state stores upon restart,

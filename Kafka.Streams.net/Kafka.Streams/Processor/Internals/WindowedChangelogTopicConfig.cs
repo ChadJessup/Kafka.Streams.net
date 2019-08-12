@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * WindowedChangelogTopicConfig captures the properties required for configuring
@@ -24,15 +25,16 @@ namespace Kafka.Streams.IProcessor.Internals
      */
     public class WindowedChangelogTopicConfig : InternalTopicConfig
     {
-
         private static Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
-        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<>();
+        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
         //tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE);
         //WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
 
         private long retentionMs;
 
-        WindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
+        WindowedChangelogTopicConfig(
+            string name,
+            Dictionary<string, string> topicConfigs)
             : base(name, topicConfigs)
         {
         }
@@ -44,34 +46,34 @@ namespace Kafka.Streams.IProcessor.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs)
+        public override Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
-            Dictionary<string, string> topicConfig = new Dictionary<>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
+            Dictionary<string, string> topicConfig = new Dictionary<string, string>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
             topicConfig.putAll(defaultProperties);
-
             topicConfig.putAll(topicConfigs);
 
             if (retentionMs != null)
             {
                 long retentionValue;
+
                 try
                 {
-
-                    retentionValue = Math.AddExact(retentionMs,.AdditionalRetentionMs);
+                    retentionValue = retentionMs + additionalRetentionMs;
                 }
                 catch (ArithmeticException swallow)
                 {
                     retentionValue = long.MaxValue;
                 }
-                topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, string.valueOf(retentionValue));
+
+                topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, retentionValue.ToString());
             }
 
             return topicConfig;
         }
 
-        void setRetentionMs(long retentionMs)
+        public void setRetentionMs(long retentionMs)
         {
             if (!topicConfigs.ContainsKey(TopicConfig.RETENTION_MS_CONFIG))
             {
@@ -91,19 +93,18 @@ namespace Kafka.Streams.IProcessor.Internals
                 return false;
             }
             WindowedChangelogTopicConfig that = (WindowedChangelogTopicConfig)o;
-            return Objects.Equals(name, that.name) &&
-                    Objects.Equals(topicConfigs, that.topicConfigs) &&
-                    Objects.Equals(retentionMs, that.retentionMs);
+            return name.Equals(that.name) &&
+                    topicConfigs.Equals(that.topicConfigs) &&
+                    retentionMs.Equals(that.retentionMs);
         }
 
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
-            return Objects.hash(name, topicConfigs, retentionMs);
+            return (name, topicConfigs, retentionMs).GetHashCode();
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "WindowedChangelogTopicConfig(" +
                     "name=" + name +

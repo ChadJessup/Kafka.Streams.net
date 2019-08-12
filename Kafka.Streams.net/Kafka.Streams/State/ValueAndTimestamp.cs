@@ -26,7 +26,7 @@ namespace Kafka.Streams.State
         public V value { get; }
         public long timestamp { get; }
 
-        private ValueAndTimestamp(
+        public ValueAndTimestamp(
             V value,
             long timestamp)
         {
@@ -77,6 +77,7 @@ namespace Kafka.Streams.State
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;

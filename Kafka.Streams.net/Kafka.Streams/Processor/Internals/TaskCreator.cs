@@ -2,15 +2,15 @@
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.metrics;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     static class TaskCreator : AbstractTaskCreator<StreamTask>
     {
@@ -155,7 +155,7 @@ namespace Kafka.Streams.IProcessor.Internals
             ILogger log = logContext.logger<StreamThread>();
 
             log.LogInformation("Creating restore consumer client");
-            Dictionary<string, object> restoreConsumerConfigs = config.getRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
+            Dictionary<string, object> restoreConsumerConfigs = config.GetRestoreConsumerConfigs(getRestoreConsumerClientId(threadClientId));
             IConsumer<byte[], byte[]> restoreConsumer = clientSupplier.getRestoreConsumer(restoreConsumerConfigs);
             TimeSpan pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
             StoreChangelogReader changelogReader = new StoreChangelogReader(restoreConsumer, pollTime, userStateRestoreListener, logContext);
@@ -207,7 +207,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
             log.LogInformation("Creating consumer client");
             string applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
-            Dictionary<string, object> consumerConfigs = config.getMainConsumerConfigs(applicationId, getConsumerClientId(threadClientId), threadIdx);
+            Dictionary<string, object> consumerConfigs = config.GetMainConsumerConfigs(applicationId, getConsumerClientId(threadClientId), threadIdx);
             consumerConfigs.Add(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, taskManager);
             AtomicInteger assignmentErrorCode = new AtomicInteger();
             consumerConfigs.Add(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, assignmentErrorCode);
@@ -286,7 +286,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
             this.pollTime = Duration.ofMillis(config.getLong(StreamsConfig.POLL_MS_CONFIG));
             int dummyThreadIdx = 1;
-            this.maxPollTimeMs = new InternalConsumerConfig(config.getMainConsumerConfigs("dummyGroupId", "dummyClientId", dummyThreadIdx))
+            this.maxPollTimeMs = new InternalConsumerConfig(config.GetMainConsumerConfigs("dummyGroupId", "dummyClientId", dummyThreadIdx))
                     .getInt(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG);
             this.commitTimeMs = config.getLong(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG);
 
@@ -669,7 +669,7 @@ namespace Kafka.Streams.IProcessor.Internals
                         partition,
                         taskManager.ToString(">")
                     );
-                    throw new NullPointerException("Task was unexpectedly missing for partition " + partition);
+                    throw new ArgumentNullException("Task was unexpectedly missing for partition " + partition);
                 }
                 else if (task.isClosed())
                 {
@@ -1019,7 +1019,7 @@ namespace Kafka.Streams.IProcessor.Internals
             LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
             if (producer != null)
             {
-                Dictionary<MetricName, Metric> producerMetrics = producer.metrics();
+                Dictionary<MetricName, Metric> producerMetrics = producer.metrics;
                 if (producerMetrics != null)
                 {
                     result.putAll(producerMetrics);
@@ -1033,7 +1033,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 // all the active tasks and.Add their metrics to the output metrics map.
                 for (StreamTask task: taskManager.activeTasks().Values)
                 {
-                    Dictionary<MetricName, Metric> taskProducerMetrics = task.getProducer().metrics();
+                    Dictionary<MetricName, Metric> taskProducerMetrics = task.getProducer().metrics;
                     result.putAll(taskProducerMetrics);
                 }
             }
@@ -1042,8 +1042,8 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public Dictionary<MetricName, Metric> consumerMetrics()
         {
-            Dictionary<MetricName, Metric> consumerMetrics = consumer.metrics();
-            Dictionary<MetricName, Metric> restoreConsumerMetrics = restoreConsumer.metrics();
+            Dictionary<MetricName, Metric> consumerMetrics = consumer.metrics;
+            Dictionary<MetricName, Metric> restoreConsumerMetrics = restoreConsumer.metrics;
             LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
             result.putAll(consumerMetrics);
             result.putAll(restoreConsumerMetrics);
@@ -1052,7 +1052,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public Dictionary<MetricName, Metric> adminClientMetrics()
         {
-            Dictionary<MetricName, Metric> adminClientMetrics = taskManager.getAdminClient().metrics();
+            Dictionary<MetricName, Metric> adminClientMetrics = taskManager.getAdminClient().metrics;
             LinkedHashMap<MetricName, Metric> result = new LinkedHashMap<>();
             result.putAll(adminClientMetrics);
             return result;

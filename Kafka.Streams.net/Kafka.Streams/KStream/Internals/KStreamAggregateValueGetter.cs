@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.IProcessor.Interfaces;
+﻿using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals

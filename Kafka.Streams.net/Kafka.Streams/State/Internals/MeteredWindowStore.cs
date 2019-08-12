@@ -19,7 +19,7 @@ using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -61,7 +61,7 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = context;
             initStoreSerde(context);
-            metrics = (StreamsMetricsImpl)context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics;
 
             taskName = context.taskId().ToString();
             string metricsGroup = "stream-" + metricScope + "-metrics";

@@ -16,10 +16,9 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-
-
+    using global::Kafka.Streams.Processor.Internals;
     using Kafka.Common.header.Headers;
-    using Kafka.Streams.IProcessor.Internals.ProcessorRecordContext;
+    using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 
 
 
@@ -80,27 +79,28 @@ namespace Kafka.Streams.State.Internals
 
         public ProcessorRecordContext context
         {
-        return record.recordContext();
-    }
-
-    public override bool Equals(object o)
-    {
-        if (this == o)
-        {
-            return true;
+            get => record.recordContext();
         }
-        if (o == null || GetType() != o.GetType())
-        {
-            return false;
-        }
-        LRUCacheEntry that = (LRUCacheEntry)o;
-        return sizeBytes == that.sizeBytes &&
-            isDirty() == that.isDirty() &&
-            Objects.Equals(record, that.record);
-    }
 
-    public override int GetHashCode()
-    {
-        return Objects.hash(record, sizeBytes, isDirty());
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+            LRUCacheEntry that = (LRUCacheEntry)o;
+            return sizeBytes == that.sizeBytes &&
+                isDirty() == that.isDirty() &&
+                Objects.Equals(record, that.record);
+        }
+
+        public override int GetHashCode()
+        {
+            return Objects.hash(record, sizeBytes, isDirty());
+        }
     }
 }

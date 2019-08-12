@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class QuickUnion<T>
     {
@@ -75,6 +76,11 @@ namespace Kafka.Streams.IProcessor.Internals
             {
                 ids.Add(root1, root2);
             }
+        }
+
+        internal void unite(string name, string[] predecessorNames)
+        {
+            throw new NotImplementedException();
         }
     }
 }

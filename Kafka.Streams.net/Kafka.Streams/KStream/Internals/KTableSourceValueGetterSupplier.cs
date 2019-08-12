@@ -43,7 +43,7 @@ public class KTableSourceValueGetterSupplier<K, V> : IKTableValueGetterSupplier<
 
     private class KTableSourceValueGetter : IKTableValueGetter<K, V>
     {
-        private TimestampedKeyValueStore<K, V> store = null;
+        private ITimestampedKeyValueStore<K, V> store = null;
 
 
         public void init(IProcessorContext<K, V> context)

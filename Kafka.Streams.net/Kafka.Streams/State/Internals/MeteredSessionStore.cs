@@ -19,10 +19,10 @@ using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Interfaces;
 using Kafka.Common.Utils.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Common.Metrics;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 using Kafka.Streams.Errors;
 
@@ -68,7 +68,7 @@ namespace Kafka.Streams.State.Internals
                 ProcessorStateManager.storeChangelogTopic(context.applicationId(), name),
                 keySerde == null ? (ISerde<K>)context.keySerde : keySerde,
                 valueSerde == null ? (ISerde<V>)context.valueSerde : valueSerde);
-            metrics = (StreamsMetricsImpl)context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics;
 
             taskName = context.taskId().ToString();
             string metricsGroup = "stream-" + metricScope + "-metrics";

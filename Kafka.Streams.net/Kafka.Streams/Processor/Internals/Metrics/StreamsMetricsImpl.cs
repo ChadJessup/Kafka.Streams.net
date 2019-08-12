@@ -2,12 +2,12 @@ using Kafka.Common;
 using Kafka.Common.Interfaces;
 using Kafka.Common.Metrics;
 using Kafka.Common.Metrics.Stats;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.IProcessor.Internals.Metrics
+namespace Kafka.Streams.Processor.Internals.Metrics
 {
     public class StreamsMetricsImpl : IStreamsMetrics
     {

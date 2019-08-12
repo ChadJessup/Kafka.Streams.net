@@ -1,7 +1,7 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.State;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Internals
     {
         private static ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
 
-        private static Pattern SST_FILE_EXTENSION = Pattern.compile(".*\\.sst");
+        private static Regex SST_FILE_EXTENSION = Regex.compile(".*\\.sst");
 
         private static CompressionType COMPRESSION_TYPE = CompressionType.NO_COMPRESSION;
         private static CompactionStyle COMPACTION_STYLE = CompactionStyle.UNIVERSAL;

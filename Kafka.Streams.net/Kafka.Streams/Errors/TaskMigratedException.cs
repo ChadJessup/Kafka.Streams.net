@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.Errors
 {
@@ -36,6 +36,7 @@ namespace Kafka.Streams.Errors
         private static long serialVersionUID = 1L;
 
         private ITask task;
+        private ProducerFencedException fatal;
 
         // this is for unit test only
         public TaskMigratedException()
@@ -72,6 +73,11 @@ namespace Kafka.Streams.Errors
         {
 
             this.task = task;
+        }
+
+        public TaskMigratedException(ITask task, ProducerFencedException fatal) : this(task)
+        {
+            this.fatal = fatal;
         }
 
         public ITask migratedTask()

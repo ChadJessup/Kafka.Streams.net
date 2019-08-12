@@ -15,32 +15,33 @@
  * limitations under the License.
  */
 using System.Collections.Generic;
+using System.Linq;
 /**
- * Used to capture subscribed topic via Patterns discovered during the
- * partition assignment process.
- */
+* Used to capture subscribed topic via Patterns discovered during the
+* partition assignment process.
+*/
 public class SubscriptionUpdates
         {
-            private HashSet<string> updatedTopicSubscriptions = new HashSet<>();
+            private HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
 
-            private void updateTopics(List<string> topicNames)
+            public void updateTopics(List<string> topicNames)
             {
-                updatedTopicSubscriptions.clear();
-                updatedTopicSubscriptions.AddAll(topicNames);
+                updatedTopicSubscriptions.Clear();
+                updatedTopicSubscriptions.UnionWith(topicNames);
             }
 
             public List<string> getUpdates()
             {
-                return Collections.unmodifiableSet(updatedTopicSubscriptions);
+                return updatedTopicSubscriptions.ToList();
             }
 
-            bool hasUpdates()
+            public bool hasUpdates()
             {
-                return !updatedTopicSubscriptions.isEmpty();
+                return updatedTopicSubscriptions.Any();
             }
 
 
-            public string ToString()
+            public override string ToString()
             {
                 return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", updatedTopicSubscriptions);
             }

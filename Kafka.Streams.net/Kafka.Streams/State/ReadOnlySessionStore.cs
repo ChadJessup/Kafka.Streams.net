@@ -40,7 +40,7 @@ namespace Kafka.Streams.State
          *
          * @param    key record key to find aggregated session values for
          * @return   KeyValueIterator containing all sessions for the provided key.
-         * @throws   NullPointerException If null is used for key.
+         * @throws   ArgumentNullException If null is used for key.
          *
          */
         IKeyValueIterator<Windowed<K>, AGG> fetch(K key);
@@ -55,7 +55,7 @@ namespace Kafka.Streams.State
          * @param    from first key in the range to find aggregated session values for
          * @param    to last key in the range to find aggregated session values for
          * @return   KeyValueIterator containing all sessions for the provided key.
-         * @throws   NullPointerException If null is used for any of the keys.
+         * @throws   ArgumentNullException If null is used for any of the keys.
          */
         IKeyValueIterator<Windowed<K>, AGG> fetch(K from, K to);
     }

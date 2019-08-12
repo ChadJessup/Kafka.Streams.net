@@ -1,7 +1,7 @@
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * An abstract implementation of {@link IProcessor} that manages the {@link IProcessorContext} instance and provides default no-op
@@ -26,7 +26,7 @@ namespace Kafka.Streams.IProcessor
          * </p>
          */
 
-        public void close()
+        public virtual void close()
         {
             // do nothing
         }

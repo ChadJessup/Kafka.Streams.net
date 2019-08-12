@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.Internals
 
         public override void init(IProcessorContext<K, V> context, IStateStore root)
         {
-            StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics();
+            StreamsMetricsImpl metrics = ((IInternalProcessorContext)context).metrics;
             string taskName = context.taskId().ToString();
             expiredRecordSensor = metrics.storeLevelSensor(
                 taskName,

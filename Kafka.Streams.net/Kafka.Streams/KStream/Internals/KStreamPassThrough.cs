@@ -14,27 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-class KStreamPassThrough<K, V> : IProcessorSupplier<K, V> {
-
-    
-    public IProcessor<K, V> get()
-{
-        return new KStreamPassThroughProcessor<>();
-    }
-
-    private static  KStreamPassThroughProcessor<K, V> : AbstractProcessor<K, V> {
-        
-        public void process( K key,  V value)
-{
-            context.forward(key, value);
+    public class KStreamPassThrough<K, V> : IProcessorSupplier<K, V>
+    {
+        public IProcessor<K, V> get()
+        {
+            return new KStreamPassThroughProcessor<K, V>();
         }
     }
 }

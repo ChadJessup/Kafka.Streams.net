@@ -1,4 +1,5 @@
 ﻿using Kafka.Common.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -8,7 +9,7 @@ namespace Kafka.Streams.State.Internals
         private IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying;
         private KeyValue<Bytes, LRUCacheEntry> nextEntry;
 
-        MemoryLRUCacheBytesIterator(IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying)
+        public MemoryLRUCacheBytesIterator(IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying)
         {
             this.underlying = underlying;
         }
@@ -70,7 +71,7 @@ namespace Kafka.Streams.State.Internals
                 return;
             }
 
-            nextEntry = new KeyValue<>(cacheKey, entry);
+            nextEntry = new KeyValue<Bytes, LRUCacheEntry>(cacheKey, entry);
         }
 
 

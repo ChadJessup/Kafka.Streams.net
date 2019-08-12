@@ -17,7 +17,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     [Serializable]
     internal class ProducerFencedException : Exception

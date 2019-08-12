@@ -17,9 +17,17 @@
 
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class PriorityQueue<T> : Queue<T>
     {
+        private int v;
+        private object p;
+
+        public PriorityQueue(int v, object p)
+        {
+            this.v = v;
+            this.p = p;
+        }
     }
 }

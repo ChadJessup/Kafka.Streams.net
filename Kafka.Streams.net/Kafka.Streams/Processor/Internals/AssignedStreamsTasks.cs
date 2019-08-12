@@ -19,7 +19,7 @@ using Kafka.Streams.Errors;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
 
     public class AssignedStreamsTasks : AssignedTasks<StreamTask>, IRestoringTasks

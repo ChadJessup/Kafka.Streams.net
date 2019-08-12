@@ -23,7 +23,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class SessionKeySchema : SegmentedBytesStore.KeySchema
+    public class SessionKeySchema : ISegmentedBytesStore.KeySchema
     {
 
         private static int TIMESTAMP_SIZE = 8;

@@ -17,7 +17,7 @@
 
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.InvalidStateStoreException;
-using Kafka.Streams.IProcessor.IStateStore;
+using Kafka.Streams.Processor.IStateStore;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.IQueryableStoreType;
 using System.Collections.Generic;

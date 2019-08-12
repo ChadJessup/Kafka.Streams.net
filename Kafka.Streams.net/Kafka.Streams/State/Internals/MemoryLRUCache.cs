@@ -1,5 +1,5 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -176,33 +176,31 @@ namespace Kafka.Streams.State.Internals
             throw new System.NotImplementedException();
         }
 
-        string IStateStore.name
+        string IStateStore.name => throw new System.NotImplementedException();
+
+        public void init(IProcessorContext<Bytes, byte[]> context, IStateStore root)
         {
             throw new System.NotImplementedException();
         }
 
-    public void init(IProcessorContext<K, V> context, IStateStore root)
-    {
-        throw new System.NotImplementedException();
-    }
+        public void flush()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void flush()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void close()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void close()
-    {
-        throw new System.NotImplementedException();
-    }
+        public bool persistent()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public bool persistent()
-    {
-        throw new System.NotImplementedException();
-    }
-
-    public bool isOpen()
-    {
-        throw new System.NotImplementedException();
+        public bool isOpen()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

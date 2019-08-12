@@ -16,10 +16,11 @@
  */
 
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System;
+using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * Abstract implementation of the  {@link BatchingStateRestoreCallback} used for batch restoration operations.
@@ -86,6 +87,16 @@ namespace Kafka.Streams.IProcessor
                                  long totalRestored)
         {
 
+        }
+
+        public void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        {
+            throw new NotImplementedException();
         }
     }
 }

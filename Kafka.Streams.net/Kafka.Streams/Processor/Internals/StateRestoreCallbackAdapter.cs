@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class StateRestoreCallbackAdapter
     {

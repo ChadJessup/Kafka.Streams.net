@@ -14,15 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.IProcessor.Internals.assignment;
+using Kafka.Streams.Processor.Internals.assignment;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals.Assignment
+namespace Kafka.Streams.Processor.Internals.Assignment
 {
     public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId>
     {
-
         private static ILogger log = new LoggerFactory().CreateLogger<StickyTaskAssignor>();
         private Dictionary<ID, ClientState> clients;
         private HashSet<TaskId> taskIds;
@@ -288,86 +287,6 @@ namespace Kafka.Streams.IProcessor.Internals.Assignment
                 capacity += client.capacity();
             }
             return capacity;
-        }
-
-        private static TaskPairs
-{
-
-        private HashSet<Pair> pairs;
-        private int maxPairs;
-
-        TaskPairs(int maxPairs)
-        {
-            this.maxPairs = maxPairs;
-            this.pairs = new HashSet<>(maxPairs);
-        }
-
-        bool hasNewPair(TaskId task1,
-                           HashSet<TaskId> taskIds)
-        {
-            if (pairs.size() == maxPairs)
-            {
-                return false;
-            }
-            foreach (TaskId taskId in taskIds)
-            {
-                if (!pairs.Contains(pair(task1, taskId)))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        void addPairs(TaskId taskId, HashSet<TaskId> assigned)
-        {
-            foreach (TaskId id in assigned)
-            {
-                pairs.Add(pair(id, taskId));
-            }
-        }
-
-        Pair pair(TaskId task1, TaskId task2)
-        {
-            if (task1.CompareTo(task2) < 0)
-            {
-                return new Pair(task1, task2);
-            }
-            return new Pair(task2, task1);
-        }
-
-        private static Pair
-{
-
-            private TaskId task1;
-        private TaskId task2;
-
-        Pair(TaskId task1, TaskId task2)
-        {
-            this.task1 = task1;
-            this.task2 = task2;
-        }
-
-
-        public bool Equals(object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-            if (o == null || GetType() != o.GetType())
-            {
-                return false;
-            }
-            Pair pair = (Pair)o;
-            return Objects.Equals(task1, pair.task1) &&
-                    Objects.Equals(task2, pair.task2);
-        }
-
-
-        public int GetHashCode()
-        {
-            return Objects.hash(task1, task2);
         }
     }
 }

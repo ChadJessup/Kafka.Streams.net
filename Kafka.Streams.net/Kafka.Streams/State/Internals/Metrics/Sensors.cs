@@ -56,7 +56,7 @@ namespace Kafka.Streams.State.Internals.Metrics
                                                          IInternalProcessorContext<K, V>  context,
                                                          string property)
         {
-            StreamsMetricsImpl metrics = context.metrics();
+            StreamsMetricsImpl metrics = context.metrics;
 
             string sensorName = "suppression-buffer-" + property;
 

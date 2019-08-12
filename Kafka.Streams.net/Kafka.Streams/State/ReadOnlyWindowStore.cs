@@ -40,7 +40,7 @@ namespace Kafka.Streams.State
          * @param time      start timestamp (inclusive) of the window
          * @return The value or {@code null} if no value is found in the window
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException If {@code null} is used for any key.
+         * @throws ArgumentNullException If {@code null} is used for any key.
          */
         V fetch(K key, long time);
 
@@ -75,7 +75,7 @@ namespace Kafka.Streams.State
          * @param timeTo    time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          * @deprecated Use {@link #fetch(object, Instant, Instant)} instead
          */
         [System.Obsolete]
@@ -112,7 +112,7 @@ namespace Kafka.Streams.State
          * @param to        time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException If {@code null} is used for key.
+         * @throws ArgumentNullException If {@code null} is used for key.
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
         WindowStoreIterator<V> fetch(K key, DateTime from, DateTime to);
@@ -128,7 +128,7 @@ namespace Kafka.Streams.State
          * @param timeTo    time range end (inclusive)
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException If {@code null} is used for any key.
+         * @throws ArgumentNullException If {@code null} is used for any key.
          * @deprecated Use {@link #fetch(object, object, Instant, Instant)} instead
          */
         [System.Obsolete]
@@ -145,7 +145,7 @@ namespace Kafka.Streams.State
          * @param toTime    time range end (inclusive)
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException If {@code null} is used for any key.
+         * @throws ArgumentNullException If {@code null} is used for any key.
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
         IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, DateTime fromTime, DateTime toTime)
@@ -166,7 +166,7 @@ namespace Kafka.Streams.State
          * @param timeTo   the end of the time slot from which to search (inclusive)
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if {@code null} is used for any key
+         * @throws ArgumentNullException if {@code null} is used for any key
          * @deprecated Use {@link #fetchAll(Instant, Instant)} instead
          */
         [System.Obsolete]
@@ -179,7 +179,7 @@ namespace Kafka.Streams.State
          * @param to   the end of the time slot from which to search (inclusive)
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if {@code null} is used for any key
+         * @throws ArgumentNullException if {@code null} is used for any key
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
         IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from, DateTime to);

@@ -17,9 +17,9 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using System.Runtime.CompilerServices;
 
@@ -82,7 +82,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology addSource<K, V>(
             string name,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, null, null, null, topicPattern);
             return this;
@@ -131,7 +131,7 @@ namespace Kafka.Streams
         public Topology addSource<K, V>(
             AutoOffsetReset offsetReset,
             string name,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource<K, V>(offsetReset, name, null, null, null, topicPattern);
             return this;
@@ -180,7 +180,7 @@ namespace Kafka.Streams
         public Topology addSource<K, V>(
             ITimestampExtractor timestampExtractor,
             string name,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource<K, V>(AutoOffsetReset.UNKNOWN, name, timestampExtractor, null, null, topicPattern);
             return this;
@@ -235,7 +235,7 @@ namespace Kafka.Streams
             AutoOffsetReset offsetReset,
             ITimestampExtractor timestampExtractor,
             string name,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource<K, V>(offsetReset, name, timestampExtractor, null, null, topicPattern);
             return this;
@@ -290,7 +290,7 @@ namespace Kafka.Streams
             string name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource(AutoOffsetReset.UNKNOWN, name, null, keyDeserializer, valueDeserializer, topicPattern);
             return this;
@@ -352,7 +352,7 @@ namespace Kafka.Streams
             string name,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topicPattern);
             return this;
@@ -417,7 +417,7 @@ namespace Kafka.Streams
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer,
-            Pattern topicPattern)
+            Regex topicPattern)
         {
             internalTopologyBuilder.addSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topicPattern);
             return this;

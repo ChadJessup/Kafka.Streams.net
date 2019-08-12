@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 using Kafka.Common.Metrics;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals.Metrics;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals
@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
         public void init(IProcessorContext<K1, V1> context)
         {
             base.init(context);
-            metrics = (StreamsMetricsImpl)context.metrics();
+            metrics = (StreamsMetricsImpl)context.metrics;
             skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
             valueGetter.init(context);

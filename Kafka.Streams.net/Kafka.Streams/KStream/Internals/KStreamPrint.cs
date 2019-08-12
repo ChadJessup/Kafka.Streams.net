@@ -26,9 +26,9 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamPrint<K, V> : IProcessorSupplier<K, V>
     {
 
-        private ForeachAction<K, V> action;
+        private IForeachAction<K, V> action;
 
-        public KStreamPrint(ForeachAction<K, V> action)
+        public KStreamPrint(IForeachAction<K, V> action)
         {
             this.action = action;
         }

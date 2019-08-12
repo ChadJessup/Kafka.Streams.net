@@ -22,13 +22,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public abstract class BaseRepartitionNode<K, V> : StreamsGraphNode
     {
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
+        public ISerde<K> keySerde { get; protected set; }
+        public ISerde<V> valueSerde { get; protected set; }
+
         protected string sinkName;
         protected string sourceName;
         protected string repartitionTopic;
         protected ProcessorParameters<K, V> processorParameters;
-
 
         public BaseRepartitionNode(
             string nodeName,

@@ -17,7 +17,7 @@
 using Kafka.Common.Metrics;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals.Metrics
+namespace Kafka.Streams.Processor.Internals.Metrics
 {
     public class ThreadMetrics
     {

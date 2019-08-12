@@ -25,9 +25,9 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.IProcessor;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
@@ -305,7 +305,7 @@ namespace Kafka.Streams
                 //result.putAll(thread.producerMetrics());
                 //result.putAll(thread.consumerMetrics());
                 // admin client is shared, so we can actually move it
-                // to result.putAll(adminClient.metrics()).
+                // to result.putAll(adminClient.metrics).
                 // we did it intentionally just for flexibility.
                 //result.putAll(thread.adminClientMetrics());
             }
@@ -315,7 +315,7 @@ namespace Kafka.Streams
                 //result.putAll(globalStreamThread.consumerMetrics());
             }
             // self streams metrics
-            //            result.putAll(metrics.metrics());
+            //            result.putAll(metrics.metrics);
             return result;
         }
 
@@ -329,10 +329,9 @@ namespace Kafka.Streams
          * @param props    properties for {@link StreamsConfig}
          * @throws StreamsException if any fatal error occurs
          */
-        public KafkaStreams(Topology topology,
-                             Properties props)
+        public KafkaStreams(Topology topology, StreamsConfig config)
             : this(topology.internalTopologyBuilder,
-                  new StreamsConfig(props),
+                  config,
                   new DefaultKafkaClientSupplier())
         {
         }
@@ -349,13 +348,11 @@ namespace Kafka.Streams
          *                       for the new {@code KafkaStreams} instance
          * @throws StreamsException if any fatal error occurs
          */
-        public KafkaStreams(
-            Topology topology,
-            Properties props,
+        public KafkaStreams(Topology topology, StreamsConfig config,
             IKafkaClientSupplier clientSupplier)
             : this(
                   topology.internalTopologyBuilder,
-                  new StreamsConfig(props),
+                  config,
                   clientSupplier,
                   Time.SYSTEM)
         {
@@ -374,9 +371,13 @@ namespace Kafka.Streams
          */
         public KafkaStreams(
             Topology topology,
-            Properties props,
+            StreamsConfig config,
             Time time)
-            : this(topology.internalTopologyBuilder, new StreamsConfig(props), new DefaultKafkaClientSupplier(), time)
+            : this(
+                  topology.internalTopologyBuilder,
+                  config,
+                  new DefaultKafkaClientSupplier(),
+                  time)
         {
         }
 
@@ -395,10 +396,14 @@ namespace Kafka.Streams
          */
         public KafkaStreams(
             Topology topology,
-            Properties props,
+            StreamsConfig config,
             IKafkaClientSupplier clientSupplier,
             Time time)
-            : this(topology.internalTopologyBuilder, new StreamsConfig(props), clientSupplier, time)
+            : this(
+                  topology.internalTopologyBuilder,
+                  config,
+                  clientSupplier,
+                  time)
         {
         }
 
@@ -431,10 +436,15 @@ namespace Kafka.Streams
         //        this(topology.internalTopologyBuilder, config, new DefaultKafkaClientSupplier(), time);
         //    }
 
-        private KafkaStreams(InternalTopologyBuilder internalTopologyBuilder,
-                              StreamsConfig config,
-                              IKafkaClientSupplier clientSupplier)
-            : this(internalTopologyBuilder, config, clientSupplier, Time.SYSTEM)
+        private KafkaStreams(
+            InternalTopologyBuilder internalTopologyBuilder,
+            StreamsConfig config,
+            IKafkaClientSupplier clientSupplier)
+            : this(
+                  internalTopologyBuilder,
+                  config,
+                  clientSupplier,
+                  Time.SYSTEM)
         {
         }
 
@@ -450,8 +460,9 @@ namespace Kafka.Streams
             // The application ID is a required config and hence should always have value
             var processId = Guid.NewGuid();
 
-            string userClientId = config.getString(StreamsConfig.CLIENT_ID_CONFIG);
-            string applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
+            string userClientId = config.Get(StreamsConfigPropertyNames.ClientId);
+            string applicationId = config.Get(StreamsConfigPropertyNames.ApplicationId);
+
             if (userClientId.Length <= 0)
             {
                 clientId = applicationId + "-" + processId;
@@ -478,25 +489,26 @@ namespace Kafka.Streams
             internalTopologyBuilder.rewriteTopology(config);
 
             // sanity check to fail-fast in case we cannot build a ProcessorTopology due to an exception
-            ProcessorTopology taskTopology = internalTopologyBuilder.build();
+            var taskTopology = internalTopologyBuilder.build();
 
             streamsMetadataState = new StreamsMetadataState(
                     internalTopologyBuilder,
-                    parseHostInfo(config.getString(StreamsConfig.APPLICATION_SERVER_CONFIG)));
+                    parseHostInfo(config.Get(StreamsConfigPropertyNames.ApplicationServer)));
 
             // create the stream thread, global update thread, and cleanup thread
-            threads = new StreamThread[config.GetInt(StreamsConfig.NUM_STREAM_THREADS_CONFIG)];
+            threads = new StreamThread[config.GetInt(StreamsConfigPropertyNames.NUM_STREAM_THREADS_CONFIG).Value];
 
-            long totalCacheSize = config.getLong(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG);
+            long totalCacheSize = config.getLong(StreamsConfigPropertyNames.CACHE_MAX_BYTES_BUFFERING_CONFIG).Value;
             if (totalCacheSize < 0)
             {
                 totalCacheSize = 0;
                 log.LogWarning("Negative cache size passed in. Reverting to cache size of 0 bytes.");
             }
-            ProcessorTopology globalTaskTopology = internalTopologyBuilder.buildGlobalStateTopology();
+
+            var globalTaskTopology = internalTopologyBuilder.buildGlobalStateTopology();
             long cacheSizePerThread = totalCacheSize / (threads.Length + (globalTaskTopology == null ? 0 : 1));
-            bool createStateDirectory = taskTopology.hasPersistentLocalStore() ||
-                            (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
+            bool createStateDirectory = taskTopology.hasPersistentLocalStore()
+                || (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
 
             try
             {
@@ -512,17 +524,18 @@ namespace Kafka.Streams
             if (globalTaskTopology != null)
             {
                 string globalThreadId = clientId + "-GlobalStreamThread";
-                globalStreamThread = new GlobalStreamThread(
-                    globalTaskTopology,
-                    config,
-                    clientSupplier.getGlobalConsumer(config.getGlobalConsumerConfigs(clientId)),
-                    stateDirectory,
-                    cacheSizePerThread,
-                    metrics,
-                    time,
-                    globalThreadId,
-                    delegatingStateRestoreListener);
-                globalThreadState = globalStreamThread.state();
+                //globalStreamThread = new GlobalStreamThread(
+                //    globalTaskTopology,
+                //    config,
+                //    clientSupplier.getGlobalConsumer(config.GetGlobalConsumerConfigs(clientId)),
+                //    stateDirectory,
+                //    cacheSizePerThread,
+                //    metrics,
+                //    time,
+                //    globalThreadId,
+                //    delegatingStateRestoreListener);
+
+//                globalThreadState = globalStreamThread.state();
             }
 
             // use client id instead of thread client id since this admin client may be shared among threads
@@ -551,11 +564,11 @@ namespace Kafka.Streams
                 storeProviders.Add(new StreamThreadStateStoreProvider(threads[i]));
             }
 
-            StreamStateListener streamStateListener = new StreamStateListener(threadState, globalThreadState);
-            if (globalTaskTopology != null)
-            {
-                globalStreamThread.setStateListener(streamStateListener);
-            }
+            //StreamStateListener streamStateListener = new StreamStateListener(threadState, globalThreadState);
+            //if (globalTaskTopology != null)
+            //{
+            //    globalStreamThread.setStateListener(streamStateListener);
+            //}
             //        foreach (StreamThread thread in threads) {
             //            thread.setStateListener(streamStateListener);
             //        }
@@ -620,33 +633,33 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void start()
         {
-            if (setState(State.REBALANCING))
-            {
-                log.LogDebug("Starting Streams client");
+            //if (setState(State.REBALANCING))
+            //{
+            //    log.LogDebug("Starting Streams client");
 
-                if (globalStreamThread != null)
-                {
-                    globalStreamThread.start();
-                }
+            //    if (globalStreamThread != null)
+            //    {
+            //        globalStreamThread.start();
+            //    }
 
-                //foreach (StreamThread thread in threads)
-                //{
-                //    thread.start();
-                //}
+            //    //foreach (StreamThread thread in threads)
+            //    //{
+            //    //    thread.start();
+            //    //}
 
-                long cleanupDelay = config.getLong(StreamsConfig.STATE_CLEANUP_DELAY_MS_CONFIG);
-                //stateDirCleaner.scheduleAtFixedRate(()=> {
-                //    // we do not use lock here since we only read on the value and act on it
-                //    if (state == State.RUNNING)
-                //    {
-                //        stateDirectory.cleanRemovedTasks(cleanupDelay);
-                //    }
-                //}, cleanupDelay, cleanupDelay, TimeUnit.MILLISECONDS);
-            }
-            else
-            {
-                throw new Exception("The client is either already started or already stopped, cannot re-start");
-            }
+            //    long cleanupDelay = config.getLong(StreamConfigPropertyNames.STATE_CLEANUP_DELAY_MS_CONFIG).Value;
+            //    //stateDirCleaner.scheduleAtFixedRate(()=> {
+            //    //    // we do not use lock here since we only read on the value and act on it
+            //    //    if (state == State.RUNNING)
+            //    //    {
+            //    //        stateDirectory.cleanRemovedTasks(cleanupDelay);
+            //    //    }
+            //    //}, cleanupDelay, cleanupDelay, TimeUnit.MILLISECONDS);
+            //}
+            //else
+            //{
+            //    throw new Exception("The client is either already started or already stopped, cannot re-start");
+            //}
         }
 
         /**
@@ -673,7 +686,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool close(long timeout, TimeUnit timeUnit)
         {
-            long timeoutMs = timeUnit.toMillis(timeout);
+            long timeoutMs = 0; // timeUnit.toMillis(timeout);
 
             log.LogDebug("Stopping Streams client with timeoutMillis = {} ms. You are using deprecated method. " +
                 "Please, consider update your code.", timeoutMs);
@@ -787,7 +800,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool close(TimeSpan timeout)
         {
-            string msgPrefix = prepareMillisCheckFailMsgPrefix(timeout, "timeout");
+            string msgPrefix = ""; // prepareMillisCheckFailMsgPrefix(timeout, "timeout");
             long timeoutMs = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
 
             if (timeoutMs < 0)
@@ -896,7 +909,7 @@ namespace Kafka.Streams
             ISerializer<K> keySerializer)
         {
             validateIsRunning();
-            return streamsMetadataState.getMetadataWithKey(storeName, key, keySerializer);
+            return null;// streamsMetadataState.getMetadataWithKey(storeName, key, keySerializer);
         }
 
         /**
@@ -929,7 +942,7 @@ namespace Kafka.Streams
             IStreamPartitioner<K, V> partitioner)
         {
             validateIsRunning();
-            return streamsMetadataState.getMetadataWithKey(storeName, key, partitioner);
+            return null; // streamsMetadataState.getMetadataWithKey(storeName, key, partitioner);
         }
 
         /**

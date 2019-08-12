@@ -17,7 +17,7 @@
 namespace Kafka.Streams.KStream.Interfaces
 {
     /**
-     * The {@code ForeachAction} interface for performing an action on a {@link org.apache.kafka.streams.KeyValue key-value
+     * The {@code IForeachAction} interface for performing an action on a {@link org.apache.kafka.streams.KeyValue key-value
      * pair}.
      * This is a stateless record-by-record operation, i.e, {@link #apply(object, object)} is invoked individually for each
      * record of a stream.
@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Interfaces
      *
      * @param key type
      * @param value type
-     * @see KStream#foreach(ForeachAction)
+     * @see KStream#foreach(IForeachAction)
      */
     public interface IForeachAction<K, V>
     {

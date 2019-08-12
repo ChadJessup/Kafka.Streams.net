@@ -25,7 +25,7 @@ using System.Collections.ObjectModel;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class AbstractRocksDbSegmentedBytesStore<S> : SegmentedBytesStore
+    public class AbstractRocksDbSegmentedBytesStore<S> : ISegmentedBytesStore
         where S : ISegment
     {
         private static ILogger LOG = new LoggerFactory().CreateLogger<AbstractRocksDbSegmentedBytesStore<S>>();
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.Internals
         private AbstractSegments<S> segments;
         private string metricScope;
         private KeySchema keySchema;
-        private IInternalProcessorContext<K, V>  context;
+        private IInternalProcessorContext<K, V> context;
         private volatile bool open;
         private HashSet<S> bulkLoadSegments;
         private Sensor expiredRecordSensor;
@@ -164,7 +164,7 @@ namespace Kafka.Streams.State.Internals
         {
             this.context = (IInternalProcessorContext)context;
 
-            StreamsMetricsImpl metrics = this.context.metrics();
+            StreamsMetricsImpl metrics = this.context.metrics;
             string taskName = context.taskId().ToString();
 
             expiredRecordSensor = metrics.storeLevelSensor(
@@ -173,12 +173,12 @@ namespace Kafka.Streams.State.Internals
                 EXPIRED_WINDOW_RECORD_DROP,
                 RecordingLevel.INFO
             );
-           .AddInvocationRateAndCount(
-                expiredRecordSensor,
-                "stream-" + metricScope + "-metrics",
-                metrics.tagMap("task-id", taskName, metricScope + "-id", name),
-                EXPIRED_WINDOW_RECORD_DROP
-            );
+            addInvocationRateAndCount(
+                 expiredRecordSensor,
+                 "stream-" + metricScope + "-metrics",
+                 metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+                 EXPIRED_WINDOW_RECORD_DROP
+             );
 
             segments.openExisting(this.context, observedStreamTime);
 
@@ -269,7 +269,7 @@ namespace Kafka.Streams.State.Internals
                     }
                     try
                     {
-                        WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s=> new WriteBatch());
+                        WriteBatch batch = writeBatchMap.computeIfAbsent(segment, s => new WriteBatch());
                         segment.AddToBatch(record, batch);
                     }
                     catch (RocksDbException e)
@@ -287,30 +287,6 @@ namespace Kafka.Streams.State.Internals
             {
                 segment.toggleDbForBulkLoading(prepareForBulkload);
             }
-        }
-
-        private RocksDbSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
-        {
-            public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
-        {
-            restoreAllInternal(records);
-        }
-
-        public override void onRestoreStart(
-            TopicPartition topicPartition,
-            string storeName,
-            long startingOffset,
-            long endingOffset)
-        {
-            toggleForBulkLoading(true);
-        }
-
-        public override void onRestoreEnd(
-            TopicPartition topicPartition,
-            string storeName,
-            long totalRestored)
-        {
-            toggleForBulkLoading(false);
         }
     }
 }

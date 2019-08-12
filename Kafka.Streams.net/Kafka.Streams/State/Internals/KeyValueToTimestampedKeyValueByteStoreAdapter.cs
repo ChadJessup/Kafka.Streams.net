@@ -20,8 +20,8 @@ namespace Kafka.Streams.State.Internals
     using Kafka.Common.Utils;
     using Kafka.Common.Utils.Bytes;
     using Kafka.Streams.KeyValue;
-    using Kafka.Streams.IProcessor.IProcessorContext;
-    using Kafka.Streams.IProcessor.IStateStore;
+    using Kafka.Streams.Processor.IProcessorContext;
+    using Kafka.Streams.Processor.IStateStore;
     using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
     using Kafka.Streams.State.IKeyValueIterator;
     using Kafka.Streams.State.KeyValueStore;

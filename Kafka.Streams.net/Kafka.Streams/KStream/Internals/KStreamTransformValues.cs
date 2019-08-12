@@ -14,59 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    public class KStreamTransformValues<K, V, R> : IProcessorSupplier<K, V>
+    {
 
+        private IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
 
-
-
-
-
-
-
-
-public class KStreamTransformValues<K, V, R> : IProcessorSupplier<K, V> {
-
-    private  IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier;
-
-    KStreamTransformValues( IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier)
-{
-        this.valueTransformerSupplier = valueTransformerSupplier;
-    }
-
-
-    public IProcessor<K, V> get()
-{
-        return new KStreamTransformValuesProcessor<>(valueTransformerSupplier());
-    }
-
-    public static KStreamTransformValuesProcessor<K, V, R> : IProcessor<K, V> {
-
-        private  IValueTransformerWithKey<K, V, R> valueTransformer;
-        private IProcessorContext<K, V> context;
-
-        KStreamTransformValuesProcessor( IValueTransformerWithKey<K, V, R> valueTransformer)
-{
-            this.valueTransformer = valueTransformer;
+        KStreamTransformValues(IValueTransformerWithKeySupplier<K, V, R> valueTransformerSupplier)
+        {
+            this.valueTransformerSupplier = valueTransformerSupplier;
         }
 
 
-        public void init( IProcessorContext<K, V> context)
-{
-            valueTransformer.init(new ForwardingDisabledProcessorContext(context));
-            this.context = context;
-        }
-
-
-        public void process( K key,  V value)
-{
-            context.forward(key, valueTransformer.transform(key, value));
-        }
-
-
-        public void close()
-{
-            valueTransformer.close();
+        public IProcessor<K, V> get()
+        {
+            return null;// new KStreamTransformValuesProcessor<>(valueTransformerSupplier());
         }
     }
 }

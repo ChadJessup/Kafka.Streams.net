@@ -19,7 +19,7 @@ using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
 
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier

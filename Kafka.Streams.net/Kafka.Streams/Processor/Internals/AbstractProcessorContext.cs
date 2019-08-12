@@ -14,87 +14,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.IProcessor.Interfaces;
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.KStream;
+using Kafka.Streams.State.Internals;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class AbstractProcessorContext : IInternalProcessorContext
+    public abstract class AbstractProcessorContext<K, V> : IInternalProcessorContext<K, V>
     {
-
-
         public static string NONEXIST_TOPIC = "__null_topic__";
         private TaskId taskId;
         private string applicationId;
         private StreamsConfig config;
         private StreamsMetricsImpl metrics;
-        private Serde keySerde;
+        private ISerde<K> keySerde;
         private ThreadCache cache;
-        private Serde valueSerde;
+        private ISerde<V> valueSerde;
         private bool initialized;
         protected ProcessorRecordContext recordContext;
-        protected ProcessorNode currentNode;
+        protected ProcessorNode<K, V> currentNode;
         IStateManager stateManager;
 
-        public AbstractProcessorContext(TaskId taskId,
-                                        StreamsConfig config,
-                                        StreamsMetricsImpl metrics,
-                                        IStateManager stateManager,
-                                        ThreadCache cache)
+        public AbstractProcessorContext(
+            TaskId taskId,
+            StreamsConfig config,
+            StreamsMetricsImpl metrics,
+            IStateManager stateManager,
+            ThreadCache cache)
         {
             this.taskId = taskId;
             this.applicationId = config.getString(StreamsConfig.APPLICATION_ID_CONFIG);
             this.config = config;
             this.metrics = metrics;
             this.stateManager = stateManager;
-            valueSerde = config.defaultValueSerde();
-            keySerde = config.defaultKeySerde();
+            valueSerde = (ISerde<V>)config.defaultValueSerde();
+            keySerde = (ISerde<K>)config.defaultKeySerde();
             this.cache = cache;
         }
 
-
-        public string applicationId()
+        public DirectoryInfo stateDir()
         {
-            return applicationId;
+            return stateManager.baseDir;
         }
 
-
-        public TaskId taskId()
-        {
-            return taskId;
-        }
-
-
-        public ISerde<object> keySerde
-        {
-        return keySerde;
-        }
-
-
-        public ISerde<object> valueSerde
-        {
-        return valueSerde;
-        }
-
-
-        public FileInfo stateDir()
-        {
-            return stateManager.baseDir();
-        }
-
-
-        public StreamsMetricsImpl metrics()
-        {
-            return metrics;
-        }
-
-
-        public void register(IStateStore store,
-                             IStateRestoreCallback stateRestoreCallback)
+        public void register(
+            IStateStore store,
+            IStateRestoreCallback stateRestoreCallback)
         {
             if (initialized)
             {
                 throw new InvalidOperationException("Can only create state stores during initialization.");
             }
+
             store = store ?? throw new System.ArgumentNullException("store must not be null", nameof(store));
             stateManager.register(store, stateRestoreCallback);
         }
@@ -102,7 +79,6 @@ namespace Kafka.Streams.IProcessor.Internals
         /**
          * @throws InvalidOperationException if the task's record is null
          */
-
         public string Topic
         {
             get
@@ -123,32 +99,32 @@ namespace Kafka.Streams.IProcessor.Internals
             }
         }
 
+        IStreamsMetrics IProcessorContext<K, V>.metrics { get; }
+
         /**
          * @throws InvalidOperationException if partition is null
          */
-
         public int partition()
         {
             if (recordContext == null)
             {
                 throw new InvalidOperationException("This should not happen as partition() should only be called while a record is processed");
             }
-            return recordContext.partition();
+            return recordContext.partition;
         }
 
         /**
          * @throws InvalidOperationException if offset is null
          */
-
         public long offset()
         {
             if (recordContext == null)
             {
                 throw new InvalidOperationException("This should not happen as offset() should only be called while a record is processed");
             }
-            return recordContext.offset();
-        }
 
+            return recordContext.offset;
+        }
 
         public Headers headers()
         {
@@ -156,35 +132,33 @@ namespace Kafka.Streams.IProcessor.Internals
             {
                 throw new InvalidOperationException("This should not happen as headers() should only be called while a record is processed");
             }
-            return recordContext.headers();
+            return recordContext.headers;
         }
 
         /**
          * @throws InvalidOperationException if timestamp is null
          */
-
         public long timestamp()
         {
             if (recordContext == null)
             {
                 throw new InvalidOperationException("This should not happen as timestamp() should only be called while a record is processed");
             }
-            return recordContext.timestamp();
+            return recordContext.timestamp;
         }
-
 
         public Dictionary<string, object> appConfigs()
         {
-            Dictionary<string, object> combined = new Dictionary<>();
-            combined.putAll(config.originals());
-            combined.putAll(config.Values);
+            Dictionary<string, object> combined = new Dictionary<string, object>();
+            //combined.putAll(config.originals());
+            //combined.putAll(config.Values);
             return combined;
         }
 
 
         public Dictionary<string, object> appConfigsWithPrefix(string prefix)
         {
-            return config.originalsWithPrefix(prefix);
+            return null; // config.originalsWithPrefix(prefix);
         }
 
 
@@ -193,40 +167,84 @@ namespace Kafka.Streams.IProcessor.Internals
             this.recordContext = recordContext;
         }
 
-
-        public ProcessorRecordContext recordContext()
-        {
-            return recordContext;
-        }
-
-
         public void setCurrentNode(ProcessorNode currentNode)
         {
-            this.currentNode = currentNode;
+            this.currentNode = null; //currentNode;
         }
-
-
-        public ProcessorNode currentNode()
-        {
-            return currentNode;
-        }
-
 
         public ThreadCache getCache()
         {
             return cache;
         }
 
-
         public void initialize()
         {
             initialized = true;
         }
 
-
         public void uninitialize()
         {
             initialized = false;
+        }
+
+        ProcessorRecordContext IInternalProcessorContext<K, V>.recordContext()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void setCurrentNode(ProcessorNode<K, V> currentNode)
+        {
+            throw new NotImplementedException();
+        }
+
+        ProcessorNode<K, V> IInternalProcessorContext<K, V>.currentNode()
+        {
+            throw new NotImplementedException();
+        }
+
+        string IProcessorContext<K, V>.applicationId()
+        {
+            throw new NotImplementedException();
+        }
+
+        TaskId IProcessorContext<K, V>.taskId()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IStateStore getStateStore(string name)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void forward(K key, V value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void forward(K key, V value, To to)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void forward(K key, V value, string childName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void commit()
+        {
+            throw new NotImplementedException();
+        }
+
+        FileInfo IProcessorContext<K, V>.stateDir()
+        {
+            throw new NotImplementedException();
         }
     }
 }

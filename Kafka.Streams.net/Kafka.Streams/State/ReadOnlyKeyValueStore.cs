@@ -41,7 +41,7 @@ namespace Kafka.Streams.State
          *
          * @param key The key to fetch
          * @return The value or null if no value is found.
-         * @throws NullPointerException If null is used for key.
+         * @throws ArgumentNullException If null is used for key.
          * @throws InvalidStateStoreException if the store is not initialized
          */
         V get(K key);
@@ -53,7 +53,7 @@ namespace Kafka.Streams.State
          * @param from The first key that could be in the range
          * @param to The last key that could be in the range
          * @return The iterator for this range.
-         * @throws NullPointerException If null is used for from or to.
+         * @throws ArgumentNullException If null is used for from or to.
          * @throws InvalidStateStoreException if the store is not initialized
          */
         IKeyValueIterator<K, V> range(K from, K to);

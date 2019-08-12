@@ -16,7 +16,7 @@
  */
 using Kafka.Streams.Internals;
 using Kafka.Streams.KStream;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using System;
 
 namespace Kafka.Streams.State.Interfaces
@@ -41,7 +41,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param key The key to associate the value to
          * @param value The value to update, it can be null;
          *              if the serialized bytes are also null it is interpreted as deletes
-         * @throws NullPointerException if the given key is {@code null}
+         * @throws ArgumentNullException if the given key is {@code null}
          */
         void put(K key, V value);
 
@@ -50,7 +50,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param key The key to associate the value to
          * @param value The value; can be null
          * @param windowStartTimestamp The timestamp of the beginning of the window to put the key/value into
-         * @throws NullPointerException if the given key is {@code null}
+         * @throws ArgumentNullException if the given key is {@code null}
          */
         void put(K key, V value, long windowStartTimestamp);
 
@@ -85,7 +85,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param timeTo    time range end (inclusive)
          * @return an iterator over key-value pairs {@code <timestamp, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if the given key is {@code null}
+         * @throws ArgumentNullException if the given key is {@code null}
          */
 
         IWindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo);
@@ -113,7 +113,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param timeTo    time range end (inclusive)
          * @return an iterator over windowed key-value pairs {@code <Windowed<K>, value>}
          * @throws InvalidStateStoreException if the store is not initialized
-         * @throws NullPointerException if one of the given keys is {@code null}
+         * @throws ArgumentNullException if one of the given keys is {@code null}
          */
 
         IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);

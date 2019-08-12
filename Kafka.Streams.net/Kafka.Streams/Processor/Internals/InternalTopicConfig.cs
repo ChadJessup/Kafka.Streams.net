@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     /**
      * InternalTopicConfig captures the properties required for configuring
@@ -24,15 +24,15 @@ namespace Kafka.Streams.IProcessor.Internals
      */
     public abstract class InternalTopicConfig
     {
-        string name;
-        Dictionary<string, string> topicConfigs;
+        public string name { get; private set; }
+        public Dictionary<string, string> topicConfigs { get; }
 
         private int numberOfPartitions = StreamsPartitionAssignor.UNKNOWN;
 
-        InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
+        public InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
         {
             name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
-            Topic.validate(name);
+//            Topic.validate(name);
 
             this.name = name;
             this.topicConfigs = topicConfigs;
@@ -45,17 +45,7 @@ namespace Kafka.Streams.IProcessor.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        abstract public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long.AdditionalRetentionMs);
-
-        public string name
-        {
-            return name;
-        }
-
-        public int numberOfPartitions()
-        {
-            return numberOfPartitions;
-        }
+        abstract public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs);
 
         void setNumberOfPartitions(int numberOfPartitions)
         {
@@ -63,11 +53,11 @@ namespace Kafka.Streams.IProcessor.Internals
             {
                 throw new System.ArgumentException("Number of partitions must be at least 1.");
             }
+
             this.numberOfPartitions = numberOfPartitions;
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "InternalTopicConfig(" +
                     "name=" + name +

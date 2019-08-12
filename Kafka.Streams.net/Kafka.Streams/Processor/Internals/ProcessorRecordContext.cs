@@ -20,15 +20,15 @@ using System;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.IProcessor.Internals
+namespace Kafka.Streams.Processor.Internals
 {
     public class ProcessorRecordContext : IRecordContext
     {
-        private long timestamp;
-        private long offset;
-        private string topic;
-        private int partition;
-        private Headers headers;
+        public long timestamp { get; }
+        public long offset { get; }
+        public string Topic { get; }
+        public int partition { get; }
+        public Headers headers { get; }
 
         public ProcessorRecordContext(
             long timestamp,
@@ -39,14 +39,9 @@ namespace Kafka.Streams.IProcessor.Internals
         {
             this.timestamp = timestamp;
             this.offset = offset;
-            this.topic = topic;
+            this.Topic = topic;
             this.partition = partition;
             this.headers = headers;
-        }
-
-        public string Topic
-        {
-        return topic;
         }
 
         public long residentMemorySizeEstimate()
@@ -54,17 +49,17 @@ namespace Kafka.Streams.IProcessor.Internals
             long size = 0;
             size += sizeof(long); // value.context.timestamp
             size += sizeof(long); // value.context.offset
-            if (topic != null)
+            if (Topic != null)
             {
-                size += topic.toCharArray().Length;
+                size += Topic.ToCharArray().Length;
             }
             size += sizeof(int); // partition
             if (headers != null)
             {
                 foreach (Header header in headers)
                 {
-                    size += header.key().toCharArray().Length;
-                    byte[] value = header.value();
+                    size += header.Key.ToCharArray().Length;
+                    byte[] value = header.GetValueBytes();
                     if (value != null)
                     {
                         size += value.Length;
@@ -76,7 +71,7 @@ namespace Kafka.Streams.IProcessor.Internals
 
         public byte[] serialize()
         {
-            byte[] topicBytes = topic.getBytes(UTF_8);
+            byte[] topicBytes = Encoding.UTF8.GetBytes(Topic);
             byte[][] headerKeysBytes;
             byte[][] headerValuesBytes;
 
@@ -163,7 +158,7 @@ namespace Kafka.Streams.IProcessor.Internals
             {
                 // not handling the null topic condition, because we believe the topic will never be null when we serialize
                 byte[] topicBytes = new byte[topicSize];
-               // buffer[topicBytes];
+                buffer.get(topicBytes);
                 topic = new string(topicBytes.Cast<char>().ToArray());
             }
             int partition = buffer.getInt();
@@ -181,7 +176,7 @@ namespace Kafka.Streams.IProcessor.Internals
                 {
                     int keySize = buffer.getInt();
                     byte[] keyBytes = new byte[keySize];
-//                    buffer[keyBytes];
+                    buffer.get(keyBytes);
 
                     int valueSize = buffer.getInt();
                     byte[] valueBytes;
@@ -193,14 +188,14 @@ namespace Kafka.Streams.IProcessor.Internals
                     {
 
                         valueBytes = new byte[valueSize];
-  //                      buffer[valueBytes];
+                        buffer.get(valueBytes);
                     }
 
                     headerArr[i] = new Header(new string(keyBytes.Cast<char>().ToArray()), valueBytes);
                 }
 
                 headers = new Headers();
-                foreach(var header in headerArr)
+                foreach (var header in headerArr)
                 {
                     headers.Add(header);
                 }
@@ -226,24 +221,14 @@ namespace Kafka.Streams.IProcessor.Internals
             return timestamp == that.timestamp &&
                 offset == that.offset &&
                 partition == that.partition &&
-                topic.Equals(that.topic) &&
+                Topic.Equals(that.Topic) &&
                 headers.Equals(that.headers);
-        }
-
-        /**
-         * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
-         */
-        [System.Obsolete]
-
-        public override int GetHashCode()
-        {
-            throw new InvalidOperationException("ProcessorRecordContext is unsafe for use in Hash collections");
         }
 
         public override string ToString()
         {
             return "ProcessorRecordContext{" +
-                "topic='" + topic + '\'' +
+                "topic='" + Topic + '\'' +
                 ", partition=" + partition +
                 ", offset=" + offset +
                 ", timestamp=" + timestamp +

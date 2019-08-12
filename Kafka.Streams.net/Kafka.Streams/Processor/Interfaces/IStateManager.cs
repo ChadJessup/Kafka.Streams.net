@@ -15,16 +15,16 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.IProcessor.Interfaces;
-using Kafka.Streams.IProcessor.Internals;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.IProcessor.Interfaces
+namespace Kafka.Streams.Processor.Interfaces
 {
     public interface IStateManager : ICheckpointable
     {
-        FileInfo baseDir();
+        DirectoryInfo baseDir { get; }
 
         /**
          * @throws ArgumentException if the store name has already been registered or if it is not a valid name
@@ -35,7 +35,7 @@ namespace Kafka.Streams.IProcessor.Interfaces
 
         void flush();
 
-        void reinitializeStateStoresForPartitions(
+        void reinitializeStateStoresForPartitions<K, V>(
             List<TopicPartition> partitions,
             IInternalProcessorContext<K, V>  processorContext);
 

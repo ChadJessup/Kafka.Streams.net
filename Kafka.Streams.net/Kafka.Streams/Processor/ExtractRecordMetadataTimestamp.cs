@@ -17,7 +17,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * Retrieves embedded metadata timestamps from Kafka messages.

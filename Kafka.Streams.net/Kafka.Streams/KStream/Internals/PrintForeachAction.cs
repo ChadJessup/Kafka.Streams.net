@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processor.Internals;
+using System.IO;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -26,51 +30,53 @@ namespace Kafka.Streams.KStream.Internals
 
 
 
-public class PrintForeachAction<K, V> : ForeachAction<K, V> {
+    public class PrintForeachAction<K, V> : IForeachAction<K, V>
+    {
 
-    private  string label;
-    private  PrintWriter printWriter;
-    private  bool closable;
-    private  IKeyValueMapper<K, V, string> mapper;
+        private string label;
+        private PrintWriter printWriter;
+        private bool closable;
+        private IKeyValueMapper<K, V, string> mapper;
 
-    /**
-     * Print customized output with given writer. The {@link Stream} can be {@link System#out} or the others.
-     *
-     * @param outputStream The output stream to write to.
-     * @param mapper The mapper which can allow user to customize output will be printed.
-     * @param label The given name will be printed.
-     */
-    PrintForeachAction( Stream outputStream,
-                        IKeyValueMapper<K, V, string> mapper,
-                        string label)
-{
-        this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, System.Text.Encoding.UTF8));
-        this.closable = outputStream != System.out && outputStream != System.err;
-        this.mapper = mapper;
-        this.label = label;
-    }
+        /**
+         * Print customized output with given writer. The {@link Stream} can be {@link System#out} or the others.
+         *
+         * @param outputStream The output stream to write to.
+         * @param mapper The mapper which can allow user to customize output will be printed.
+         * @param label The given name will be printed.
+         */
+        PrintForeachAction(Stream outputStream,
+                            IKeyValueMapper<K, V, string> mapper,
+                            string label)
+        {
+            this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, System.Text.Encoding.UTF8));
+            //this.closable = outputStream != System.out && outputStream != System.err;
+            this.mapper = mapper;
+            this.label = label;
+        }
 
 
-    public void apply( K key,  V value)
-{
-         string data = string.Format("[%s]: %s", label, mapper.apply(key, value));
-        printWriter.println(data);
-        if (!closable)
-{
-            printWriter.flush();
+        public void apply(K key, V value)
+        {
+            string data = string.Format("[%s]: %s", label, mapper.apply(key, value));
+            //printWriter.println(data);
+            if (!closable)
+            {
+              //  printWriter.flush();
+            }
+        }
+
+        public void close()
+        {
+            if (closable)
+            {
+              //  printWriter.close();
+            }
+            else
+            {
+
+                //printWriter.flush();
+            }
         }
     }
-
-    public void close()
-{
-        if (closable)
-{
-            printWriter.close();
-        } else
-{
-
-            printWriter.flush();
-        }
-    }
-
 }

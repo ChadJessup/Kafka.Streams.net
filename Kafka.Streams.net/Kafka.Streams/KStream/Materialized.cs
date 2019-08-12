@@ -18,7 +18,7 @@ using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.KStream;
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream
     public class Materialized<K, V, S>
             where S : IStateStore
     {
-        protected IStoreSupplier<S> storeSupplier;
+        public IStoreSupplier<S> storeSupplier { get; set; }
         protected string storeName;
         public ISerde<V> valueSerde;
         public ISerde<K> keySerde;

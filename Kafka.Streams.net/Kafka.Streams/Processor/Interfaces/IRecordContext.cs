@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.IProcessor
+namespace Kafka.Streams.Processor
 {
     /**
      * The context associated with the current record being processed by
@@ -24,18 +24,17 @@ namespace Kafka.Streams.IProcessor
      */
     public interface IRecordContext
     {
-
         /**
          * @return  The offset of the original record received from Kafka;
          *          could be -1 if it is not available
          */
-        long offset();
+        long offset { get; }
 
         /**
          * @return  The timestamp extracted from the record received from Kafka;
          *          could be -1 if it is not available
          */
-        long timestamp();
+        long timestamp { get; }
 
         /**
          * @return  The topic the record was received on;
@@ -47,12 +46,12 @@ namespace Kafka.Streams.IProcessor
          * @return  The partition the record was received on;
          *          could be -1 if it is not available
          */
-        int partition();
+        int partition { get; }
 
         /**
          * @return  The headers from the record received from Kafka;
          *          could be null if it is not available
          */
-        Headers headers();
+        Headers headers { get; }
     }
 }

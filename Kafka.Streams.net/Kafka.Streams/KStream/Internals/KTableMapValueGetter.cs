@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.IProcessor.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMapValueGetter<K, V, K1, V1> : IKTableValueGetter<K, KeyValue<K1, V1>>
     {
-        private IKTableValueGetter<K, V> parentGetter;
-        private IProcessorContext<K, V> context;
+        private IKTableValueGetter<K, KeyValue<K1, V1>> parentGetter;
+        private IProcessorContext<K, KeyValue<K1, V1>> context;
 
-        public KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
+        public KTableMapValueGetter(IKTableValueGetter<K, KeyValue<K1, V1>> parentGetter)
         {
             this.parentGetter = parentGetter;
         }
 
 
-        public void init(IProcessorContext<K, V> context)
+        public void init(IProcessorContext<K, KeyValue<K1, V1>> context)
         {
             this.context = context;
             parentGetter.init(context);
@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public ValueAndTimestamp<KeyValue<K1, V1>> get(K key)
         {
-            ValueAndTimestamp<V> valueAndTimestamp = parentGetter.get(key);
-            return ValueAndTimestamp.make(
-                mapper.apply(key, getValueOrNull(valueAndTimestamp)),
+            ValueAndTimestamp<KeyValue<K1, V1>> valueAndTimestamp = parentGetter.get(key);
+            return ValueAndTimestamp<KeyValue<K1, V1>>.make(
+                mapper.apply(key, valueAndTimestamp),
                 valueAndTimestamp == null ? context.timestamp() : valueAndTimestamp.timestamp());
         }
 
