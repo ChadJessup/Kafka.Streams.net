@@ -1,5 +1,6 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -81,8 +82,8 @@ namespace Kafka.Streams.State.Internals
 
             //        return this.map[key];
             //    }
-
-            //    public override synchronized void put(Bytes key, byte[] value)
+            //[MethodImpl(MethodImplOptions.Synchronized)]
+            //    public override void put(Bytes key, byte[] value)
             //{
             //        Objects.requireNonNull(key);
             //        if (value == null)
@@ -93,8 +94,8 @@ namespace Kafka.Streams.State.Internals
             //            this.map.Add(key, value);
             //        }
             //    }
-
-            //    public override synchronized byte[] putIfAbsent(Bytes key, byte[] value)
+            //  [MethodImpl(MethodImplOptions.Synchronized)]
+            //    public override byte[] putIfAbsent(Bytes key, byte[] value)
             //{
             //        Objects.requireNonNull(key);
             //        byte[] originalValue = get(key);
@@ -112,8 +113,8 @@ namespace Kafka.Streams.State.Internals
             //            put(entry.key, entry.value);
             //        }
             //    }
-
-            //    public override synchronized byte[] delete(Bytes key)
+            //   [MethodImpl(MethodImplOptions.Synchronized)]
+            //    public override byte[] delete(Bytes key)
             //{
             //        Objects.requireNonNull(key);
             //        return this.map.Remove(key);
@@ -199,6 +200,31 @@ namespace Kafka.Streams.State.Internals
         }
 
         public bool isOpen()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public byte[] get(Bytes key)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IKeyValueIterator<Bytes, byte[]> all()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public long approximateNumEntries()
         {
             throw new System.NotImplementedException();
         }

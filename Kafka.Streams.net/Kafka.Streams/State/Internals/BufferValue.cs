@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Internals;
+
 namespace Kafka.Streams.State.Internals
 {
     public class BufferValue
     {
         private static int NULL_VALUE_SENTINEL = -1;
         private static int OLD_PREV_DUPLICATE_VALUE_SENTINEL = -2;
-        private byte[] priorValue;
-        private byte[] oldValue;
-        private byte[] newValue;
+        public byte[] priorValue { get; }
+        public byte[] oldValue { get; }
+        public byte[] newValue { get; }
         private ProcessorRecordContext recordContext;
 
-        BufferValue(byte[] priorValue,
+        public BufferValue(byte[] priorValue,
                     byte[] oldValue,
                     byte[] newValue,
                     ProcessorRecordContext recordContext)
@@ -47,25 +50,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        byte[] priorValue()
-        {
-            return priorValue;
-        }
-
-        byte[] oldValue()
-        {
-            return oldValue;
-        }
-
-        byte[] newValue()
-        {
-            return newValue;
-        }
-
-        ProcessorRecordContext context
-        {
-            return recordContext;
-        }
+        public ProcessorRecordContext context => recordContext;
 
         static BufferValue deserialize(ByteBuffer buffer)
         {
@@ -86,7 +71,7 @@ namespace Kafka.Streams.State.Internals
             else
             {
                 oldValue = new byte[oldValueLength];
-                buffer[oldValue];
+                buffer.get(oldValue);
             }
 
             byte[] newValue = extractValue(buffer);
@@ -109,7 +94,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        ByteBuffer serialize(int end.Adding)
+        ByteBuffer serialize(int endAdding)
         {
 
             int sizeOfValueLength = sizeof(int);
@@ -118,19 +103,19 @@ namespace Kafka.Streams.State.Internals
             int sizeOfOldValue = oldValue == null || priorValue == oldValue ? 0 : oldValue.Length;
             int sizeOfNewValue = newValue == null ? 0 : newValue.Length;
 
-            byte[] serializedContext = recordContext.Serialize();
+            byte[] serializedContext = recordContext.Serialize;
 
             ByteBuffer buffer = ByteBuffer.allocate(
                 serializedContext.Length
                     + sizeOfValueLength + sizeOfPriorValue
                     + sizeOfValueLength + sizeOfOldValue
                     + sizeOfValueLength + sizeOfNewValue
-                    + end.Adding
+                    + endAdding
             );
 
             buffer.Add(serializedContext);
 
-       .AddValue(buffer, priorValue);
+            addValue(buffer, priorValue);
 
             if (oldValue == null)
             {
@@ -146,7 +131,7 @@ namespace Kafka.Streams.State.Internals
                 buffer.Add(oldValue);
             }
 
-       .AddValue(buffer, newValue);
+            addValue(buffer, newValue);
 
             return buffer;
         }
@@ -164,7 +149,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        long residentMemorySizeEstimate()
+        public long residentMemorySizeEstimate()
         {
             return (priorValue == null ? 0 : priorValue.Length)
                 + (oldValue == null || priorValue == oldValue ? 0 : oldValue.Length)

@@ -14,7 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -30,7 +36,7 @@ namespace Kafka.Streams.State.Internals
         private static int SUFFIX_SIZE = TIMESTAMP_SIZE + SEQNUM_SIZE;
         private static byte[] MIN_SUFFIX = new byte[SUFFIX_SIZE];
 
-        public override Bytes upperRange(Bytes key, long to)
+        public Bytes upperRange(Bytes key, long to)
         {
             byte[] maxSuffix = ByteBuffer.allocate(SUFFIX_SIZE)
                 .putLong(to)
@@ -40,27 +46,27 @@ namespace Kafka.Streams.State.Internals
             return OrderedBytes.upperRange(key, maxSuffix);
         }
 
-        public override Bytes lowerRange(Bytes key, long from)
+        public Bytes lowerRange(Bytes key, long from)
         {
             return OrderedBytes.lowerRange(key, MIN_SUFFIX);
         }
 
-        public override Bytes lowerRangeFixedSize(Bytes key, long from)
+        public Bytes lowerRangeFixedSize(Bytes key, long from)
         {
             return WindowKeySchema.toStoreKeyBinary(key, Math.Max(0, from), 0);
         }
 
-        public override Bytes upperRangeFixedSize(Bytes key, long to)
+        public Bytes upperRangeFixedSize(Bytes key, long to)
         {
             return WindowKeySchema.toStoreKeyBinary(key, to, int.MaxValue);
         }
 
-        public override long segmentTimestamp(Bytes key)
+        public long segmentTimestamp(Bytes key)
         {
-            return WindowKeySchema.extractStoreTimestamp(key());
+            return WindowKeySchema.extractStoreTimestamp(key.get());
         }
 
-        public override HasNextCondition hasNextCondition(Bytes binaryKeyFrom,
+        public HasNextCondition hasNextCondition(Bytes binaryKeyFrom,
                                                  Bytes binaryKeyTo,
                                                  long from,
                                                  long to)
@@ -85,10 +91,11 @@ namespace Kafka.Streams.State.Internals
             //        };
         }
 
-        public override List<S> segmentsToSearch<S>(
+        public List<S> segmentsToSearch<S>(
             Segments<S> segments,
             long from,
             long to)
+            where S : ISegment
         {
             return segments.segments(from, to);
         }
@@ -112,19 +119,19 @@ namespace Kafka.Streams.State.Internals
 
         // for pipe serdes
 
-        public static byte[] toBinary(Windowed<K> timeKey,
+        public static byte[] toBinary<K>(Windowed<K> timeKey,
                                           ISerializer<K> serializer,
                                           string topic)
         {
-            byte[] bytes = serializer.Serialize(topic, timeKey.key());
+            byte[] bytes = serializer.Serialize(topic, timeKey.key);
             ByteBuffer buf = ByteBuffer.allocate(bytes.Length + TIMESTAMP_SIZE);
             buf.Add(bytes);
-            buf.putLong(timeKey.window().start());
+            buf.putLong(timeKey.window.start());
 
             return buf.array();
         }
 
-        public static Windowed<K> from(byte[] binaryKey,
+        public static Windowed<K> from<K>(byte[] binaryKey,
                                            long windowSize,
                                            IDeserializer<K> deserializer,
                                            string topic)
@@ -133,7 +140,7 @@ namespace Kafka.Streams.State.Internals
             System.arraycopy(binaryKey, 0, bytes, 0, bytes.Length);
             K key = deserializer.Deserialize(topic, bytes);
             Window window = extractWindow(binaryKey, windowSize);
-            return new Windowed<>(key, window);
+            return new Windowed<K>(key, window);
         }
 
         private static Window extractWindow(byte[] binaryKey,
@@ -150,11 +157,11 @@ namespace Kafka.Streams.State.Internals
                                              long timestamp,
                                              int seqnum)
         {
-            byte[] serializedKey = key[];
+            byte[] serializedKey = key.get();
             return toStoreKeyBinary(serializedKey, timestamp, seqnum);
         }
 
-        public static Bytes toStoreKeyBinary(K key,
+        public static Bytes toStoreKeyBinary<K>(K key,
                                                  long timestamp,
                                                  int seqnum,
                                                  StateSerdes<K, object> serdes)
@@ -166,16 +173,16 @@ namespace Kafka.Streams.State.Internals
         public static Bytes toStoreKeyBinary(Windowed<Bytes> timeKey,
                                              int seqnum)
         {
-            byte[] bytes = timeKey.key()[];
-            return toStoreKeyBinary(bytes, timeKey.window().start(), seqnum);
+            byte[] bytes = timeKey.key.get();
+            return toStoreKeyBinary(bytes, timeKey.window.start(), seqnum);
         }
 
-        public static Bytes toStoreKeyBinary(Windowed<K> timeKey,
+        public static Bytes toStoreKeyBinary<K>(Windowed<K> timeKey,
                                                  int seqnum,
                                                  StateSerdes<K, object> serdes)
         {
-            byte[] serializedKey = serdes.rawKey(timeKey.key());
-            return toStoreKeyBinary(serializedKey, timeKey.window().start(), seqnum);
+            byte[] serializedKey = serdes.rawKey(timeKey.key);
+            return toStoreKeyBinary(serializedKey, timeKey.window.start(), seqnum);
         }
 
         // package private for testing
@@ -198,7 +205,7 @@ namespace Kafka.Streams.State.Internals
             return bytes;
         }
 
-        static K extractStoreKey(byte[] binaryKey,
+        static K extractStoreKey<K>(byte[] binaryKey,
                                      StateSerdes<K, object> serdes)
         {
             byte[] bytes = new byte[binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE];
@@ -206,7 +213,7 @@ namespace Kafka.Streams.State.Internals
             return serdes.keyFrom(bytes);
         }
 
-        static long extractStoreTimestamp(byte[] binaryKey)
+        public static long extractStoreTimestamp(byte[] binaryKey)
         {
             return ByteBuffer.wrap(binaryKey).getLong(binaryKey.Length - TIMESTAMP_SIZE - SEQNUM_SIZE);
         }
@@ -216,7 +223,7 @@ namespace Kafka.Streams.State.Internals
             return ByteBuffer.wrap(binaryKey).getInt(binaryKey.Length - SEQNUM_SIZE);
         }
 
-        public static Windowed<K> fromStoreKey(byte[] binaryKey,
+        public static Windowed<K> fromStoreKey<K>(byte[] binaryKey,
                                                    long windowSize,
                                                    IDeserializer<K> deserializer,
                                                    string topic)
@@ -226,12 +233,13 @@ namespace Kafka.Streams.State.Internals
             return new Windowed<>(key, window);
         }
 
-        public static Windowed<K> fromStoreKey(Windowed<Bytes> windowedKey,
-                                                   IDeserializer<K> deserializer,
-                                                   string topic)
+        public static Windowed<K> fromStoreKey<K>(
+            Windowed<Bytes> windowedKey,
+            IDeserializer<K> deserializer,
+            string topic)
         {
-            K key = deserializer.Deserialize(topic, windowedKey.key()());
-            return new Windowed<>(key, windowedKey.window());
+            var key = deserializer.Deserialize(topic, windowedKey.key.get());
+            return new Windowed<K>(key, windowedKey.window);
         }
 
         public static Windowed<Bytes> fromStoreBytesKey(byte[] binaryKey,
@@ -239,7 +247,7 @@ namespace Kafka.Streams.State.Internals
         {
             Bytes key = Bytes.wrap(extractStoreKeyBytes(binaryKey));
             Window window = extractStoreWindow(binaryKey, windowSize);
-            return new Windowed<>(key, window);
+            return new Windowed<Bytes>(key, window);
         }
 
         static Window extractStoreWindow(byte[] binaryKey,

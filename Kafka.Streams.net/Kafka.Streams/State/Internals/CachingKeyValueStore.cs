@@ -19,6 +19,7 @@ using Kafka.Streams.Processor.Interfaces;
 using Kafka.Common.Utils;
 using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -26,23 +27,22 @@ namespace Kafka.Streams.State.Internals
         : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
         , IKeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
     {
-
         private static ILogger LOG = new LoggerFactory().CreateLogger<CachingKeyValueStore>();
 
         private ICacheFlushListener<byte[], byte[]> flushListener;
         private bool sendOldValues;
         private string cacheName;
         private ThreadCache cache;
-        private IInternalProcessorContext<K, V>  context;
+        private IInternalProcessorContext<Bytes, byte[]>  context;
         private Thread streamThread;
-        private ReadWriteLock @lock = new ReentrantReadWriteLock();
+        //private ReadWriteLock @lock = new ReentrantReadWriteLock();
 
-        CachingKeyValueStore(IKeyValueStore<Bytes, byte[]> underlying)
+        public CachingKeyValueStore(IKeyValueStore<Bytes, byte[]> underlying)
             : base(underlying)
         {
         }
 
-        public override void init(IProcessorContext<K, V> context,
+        public override void init(IProcessorContext<Bytes, byte[]> context,
                          IStateStore root)
         {
             initInternal(context);
@@ -53,9 +53,9 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        private void initInternal(IProcessorContext<K, V> context)
+        private void initInternal(IProcessorContext<Bytes, byte[]> context)
         {
-            this.context = (IInternalProcessorContext)context;
+            this.context = (IInternalProcessorContext<Bytes, byte[]>)context;
 
             this.cache = this.context.getCache();
             this.cacheName = ThreadCache.nameSpaceFromTaskIdAndStore(context.taskId().ToString(), name);
@@ -68,8 +68,9 @@ namespace Kafka.Streams.State.Internals
             //});
         }
 
-        private void putAndMaybeForward(DirtyEntry entry,
-                                        IInternalProcessorContext<K, V>  context)
+        private void putAndMaybeForward(
+            DirtyEntry entry,
+            IInternalProcessorContext<Bytes, byte[]> context)
         {
             if (flushListener != null)
             {

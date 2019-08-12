@@ -14,24 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+using Kafka.Common.Utils;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.State.Internals
 {
-
-    using Kafka.Common.Utils;
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Streams.KeyValue;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
-    using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
-    using Kafka.Streams.State.IKeyValueIterator;
-    using Kafka.Streams.State.KeyValueStore;
-    using System.Collections.Generic;
-
-
-
-
-
-
     /**
      * This is used to ensure backward compatibility at DSL level between
      * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and {@link KeyValueStore}.
@@ -55,21 +45,25 @@ namespace Kafka.Streams.State.Internals
             this.store = store;
         }
 
-        public override void put(Bytes key,
+        public void put(Bytes key,
                         byte[] valueWithTimestamp)
         {
-            store.Add(key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));
+            store.Add(key, valueWithTimestamp == null
+                ? null
+                : rawValue(valueWithTimestamp));
         }
 
-        public override byte[] putIfAbsent(Bytes key,
+        public byte[] putIfAbsent(Bytes key,
                                   byte[] valueWithTimestamp)
         {
             return convertToTimestampedFormat(store.putIfAbsent(
                 key,
-                valueWithTimestamp == null ? null : rawValue(valueWithTimestamp)));
+                valueWithTimestamp == null
+                ? null
+                : rawValue(valueWithTimestamp)));
         }
 
-        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
         {
             foreach (KeyValue<Bytes, byte[]> entry in entries)
             {
@@ -78,56 +72,51 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override byte[] delete(Bytes key)
+        public byte[] delete(Bytes key)
         {
             return convertToTimestampedFormat(store.delete(key));
         }
 
-        public override string name
-        {
-            return store.name;
-        }
-
-        public override void init(IProcessorContext<K, V> context,
+        public void init(IProcessorContext<Bytes, byte[]> context,
                          IStateStore root)
         {
             store.init(context, root);
         }
 
-        public override void flush()
+        public void flush()
         {
             store.flush();
         }
 
-        public override void close()
+        public void close()
         {
             store.close();
         }
 
-        public override bool persistent()
+        public bool persistent()
         {
             return true;
         }
 
-        public override bool isOpen()
+        public bool isOpen()
         {
             return store.isOpen();
         }
 
-        public override byte[] get(Bytes key)
+        public byte[] get(Bytes key)
         {
             return convertToTimestampedFormat(store[key]);
         }
 
-        public override IKeyValueIterator<Bytes, byte[]> range(Bytes from,
+        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
                                                      Bytes to)
         {
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.range(from, to));
         }
 
-        public override IKeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> all()
         {
-            return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.all());
+            return new KeyValueToTimestampedKeyValueIteratorAdapter<Bytes, byte[]>(store.all());
         }
 
         public override long approximateNumEntries()

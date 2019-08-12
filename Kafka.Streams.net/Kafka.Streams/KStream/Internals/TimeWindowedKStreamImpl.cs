@@ -17,8 +17,11 @@
 using Confluent.Kafka;
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
@@ -119,14 +122,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
+        public IKTable<Windowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
                                                        IAggregator<K, V, VR> aggregator)
         {
             return aggregate(initializer, aggregator, Materialized.with(keySerde, null));
         }
 
 
-        public IKTable<Windowed<K>, VR> aggregate(IInitializer<VR> initializer,
+        public IKTable<Windowed<K>, VR> aggregate<VR>(IInitializer<VR> initializer,
                                                        IAggregator<K, V, VR> aggregator,
                                                        Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
@@ -184,13 +187,13 @@ namespace Kafka.Streams.KStream.Internals
 
         private IStoreBuilder<ITimestampedWindowStore<K, VR>> materialize<VR>(MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materialized)
         {
-            IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier();
+            IWindowBytesStoreSupplier supplier = (IWindowBytesStoreSupplier)materialized.storeSupplier;
             if (supplier == null)
             {
                 if (materialized.retention != null)
                 {
                     // new style retention: use Materialized retention and default segmentInterval
-                    long retentionPeriod = materialized.retention().toMillis();
+                    long retentionPeriod = materialized.retention.toMillis();
 
                     if ((windows.size() + windows.gracePeriodMs()) > retentionPeriod)
                     {
@@ -198,7 +201,7 @@ namespace Kafka.Streams.KStream.Internals
                                                                + name + " must be no smaller than its window size plus the grace period."
                                                                + " Got size=[" + windows.size() + "],"
                                                                + " grace=[" + windows.gracePeriodMs() + "],"
-                                                               + " retention=[" + retentionPeriod + "]"];
+                                                               + " retention=[" + retentionPeriod + "]");
                     }
 
                     supplier = Stores.persistentTimestampedWindowStore(
@@ -260,6 +263,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private IAggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
-            return (aggKey, value, aggregate)=>aggregate == null ? value : reducer.apply(aggregate, value);
+            return null; // (aggKey, value, aggregate) => aggregate == null ? value : reducer.apply(aggregate, value);
         }
     }
+}

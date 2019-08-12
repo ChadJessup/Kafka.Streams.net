@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.Internals
          *
          * Assumes the minimum key.Length is one byte
          */
-        static Bytes upperRange(Bytes key, byte[] maxSuffix)
+        public static Bytes upperRange(Bytes key, byte[] maxSuffix)
         {
             byte[] bytes = key.get();
             ByteBuffer rangeEnd = ByteBuffer.allocate(bytes.Length + maxSuffix.Length);
@@ -51,9 +51,9 @@ namespace Kafka.Streams.State.Internals
             return Bytes.wrap(res);
         }
 
-        static Bytes lowerRange(Bytes key, byte[] minSuffix)
+        public static Bytes lowerRange(Bytes key, byte[] minSuffix)
         {
-            byte[] bytes = key[];
+            byte[] bytes = key.get();
             ByteBuffer rangeStart = ByteBuffer.allocate(bytes.Length + minSuffix.Length);
             // any key in the range would start at least with the given prefix to be
             // in the range, and have at least SUFFIX_SIZE number of trailing zero bytes.
@@ -63,8 +63,8 @@ namespace Kafka.Streams.State.Internals
             // KeySchema.toBinaryKey(keyFrom, from, 0) in byte order
             return Bytes.wrap(
                 rangeStart
-                    .Add(bytes)
-                    .Add(minSuffix)
+                    .add(bytes)
+                    .add(minSuffix)
                     .array()
             );
         }

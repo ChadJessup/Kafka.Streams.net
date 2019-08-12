@@ -24,28 +24,28 @@ namespace Kafka.Streams.State.Internals
      */
     public class LRUNode
     {
-        private Bytes key;
-        private LRUCacheEntry entry;
-        private LRUNode previous;
-        private LRUNode next;
+        public Bytes key { get; }
+        public LRUCacheEntry entry { get; private set; }
+        public LRUNode previous { get; set; }
+        public LRUNode next { get; set; }
         private StreamsMetricsImpl metrics;
 
-        LRUNode(Bytes key, LRUCacheEntry entry)
+        public LRUNode(Bytes key, LRUCacheEntry entry)
         {
             this.key = key;
             this.entry = entry;
         }
 
-        long size()
+        public long size()
         {
-            return key[].Length +
+            return key.get().Length +
                 8 + // entry
                 8 + // previous
                 8 + // next
                 entry.size();
         }
 
-        private void update(LRUCacheEntry entry)
+        public void update(LRUCacheEntry entry)
         {
             this.entry = entry;
         }

@@ -735,7 +735,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             KTableKTableJoinNode<K, V, VO, VR> kTableKTableJoinNode =
-               KTableKTableJoinNode.< K, V, VO, VR> kTableKTableJoinNodeBuilder()
+               KTableKTableJoinNode<K, V, VO, VR>.kTableKTableJoinNodeBuilder()
                     .withNodeName(joinMergeName)
                     .withJoinThisProcessorParameters(joinThisProcessorParameters)
                     .withJoinOtherProcessorParameters(joinOtherProcessorParameters)
@@ -748,19 +748,19 @@ namespace Kafka.Streams.KStream.Internals
                     .withQueryableStoreName(queryableStoreName)
                     .withStoreBuilder(storeBuilder)
                     .build();
+
             builder.addGraphNode(this.streamsGraphNode, kTableKTableJoinNode);
 
             // we can inherit parent key serde if user do not provide specific overrides
             return new KTableImpl<K, Change<VR>, VR>(
-                kTableKTableJoinNode.nodeName(),
+                kTableKTableJoinNode.nodeName,
                 kTableKTableJoinNode.keySerde,
                 kTableKTableJoinNode.valueSerde,
                 allSourceNodes,
                 kTableKTableJoinNode.queryableStoreName(),
                 kTableKTableJoinNode.joinMerger(),
                 kTableKTableJoinNode,
-                builder
-            );
+                builder);
         }
 
 
@@ -800,7 +800,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.addGraphNode(this.streamsGraphNode, groupByMapNode);
 
             this.enableSendingOldValues();
-            return new KGroupedTableImpl<>(
+            return new KGroupedTableImpl<K1, V1>(
                 builder,
                 selectName,
                 sourceNodes,
@@ -812,14 +812,14 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetterSupplier<K, V> valueGetterSupplier()
         {
-            if (IProcessorSupplier is KTableSource)
+            if (IProcessorSupplier is KTableSource<K, V>)
             {
                 KTableSource<K, V> source = (KTableSource<K, V>)IProcessorSupplier;
                 // whenever a source ktable is required for getter, it should be materialized
                 source.materialize();
-                return new KTableSourceValueGetterSupplier<>(source.queryableName());
+                return new KTableSourceValueGetterSupplier<K, V>(source.queryableName());
             }
-            else if (IProcessorSupplier is KStreamAggIIProcessorSupplier)
+            else if (IProcessorSupplier is IKStreamAggProcessorSupplier<K, V>)
             {
                 return ((KStreamAggIIProcessorSupplier<object, K, S, V>)IProcessorSupplier).view();
             }
@@ -834,9 +834,9 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!sendOldValues)
             {
-                if (IProcessorSupplier is KTableSource)
+                if (IProcessorSupplier is KTableSource<K, V>)
                 {
-                    KTableSource<K, object> source = (KTableSource<K, V>)IProcessorSupplier;
+                    KTableSource<K, object> source = (KTableSource<K, object>)IProcessorSupplier;
                     source.enableSendingOldValues();
                 }
                 else if (IProcessorSupplier is KStreamAggIIProcessorSupplier)

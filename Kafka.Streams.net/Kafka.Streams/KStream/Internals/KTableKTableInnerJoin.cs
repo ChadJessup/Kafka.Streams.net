@@ -25,8 +25,8 @@ namespace Kafka.Streams.KStream.Internals
 
         private IKeyValueMapper<K, V1, K> keyValueMapper = (key, value) => key;
 
-        KTableKTableInnerJoin(KTableImpl<K, ?, V1> table1,
-                               KTableImpl<K, ?, V2> table2,
+        KTableKTableInnerJoin(KTableImpl<K, object, V1> table1,
+                               KTableImpl<K, object, V2> table2,
                                IValueJoiner<V1, V2, R> joiner)
         {
             base(table1, table2, joiner);

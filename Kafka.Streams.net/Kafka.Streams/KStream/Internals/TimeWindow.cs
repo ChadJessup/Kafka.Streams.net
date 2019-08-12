@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
          * @throws ArgumentException if the {@code other} window has a different type than {@code this} window
          */
 
-        public bool overlap(Window other)
+        public override bool overlap(Window other)
         {
             if (GetType() != other.GetType())
             {
@@ -74,5 +74,5 @@ namespace Kafka.Streams.KStream.Internals
             TimeWindow otherWindow = (TimeWindow)other;
             return startMs < otherWindow.endMs && otherWindow.startMs < endMs;
         }
-
     }
+}

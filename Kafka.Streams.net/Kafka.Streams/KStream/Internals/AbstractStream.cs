@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream.Internals
             return allSourceNodes;
         }
 
-        static IValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
+        public static IValueJoiner<T2, T1, R> reverseJoiner<T1, T2, R>(IValueJoiner<T1, T2, R> joiner)
         {
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
@@ -104,7 +104,7 @@ namespace Kafka.Streams.KStream.Internals
             return default; // (readOnlyKey, value)=>valueMapper.apply(value);
         }
 
-        static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
+        public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
              IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
             valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));

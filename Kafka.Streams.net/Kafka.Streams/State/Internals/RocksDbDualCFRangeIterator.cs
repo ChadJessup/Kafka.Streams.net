@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.Internals
             base(storeName, iterWithTimestamp, iterNoTimestamp);
             iterWithTimestamp.seek(from());
             iterNoTimestamp.seek(from());
-            upperBoundKey = to[];
+            upperBoundKey = to.get();
             if (upperBoundKey == null)
             {
                 throw new ArgumentNullException("RocksDbDualCFRangeIterator: upperBoundKey is null for key " + to);

@@ -26,13 +26,13 @@ namespace Kafka.Streams
      */
     public class StreamStateListener : IStateListener
     {
-        private Dictionary<long, StreamThread.State> threadState;
+        private Dictionary<long, StreamThread.StreamThreadState> threadState;
         private GlobalStreamThread.State globalThreadState;
         // this lock should always be held before the state lock
         private object threadStatesLock;
 
         StreamStateListener(
-            Dictionary<long, StreamThread.State> threadState,
+            Dictionary<long, StreamThread.StreamThreadState> threadState,
             GlobalStreamThread.State globalThreadState)
         {
             this.threadState = threadState;

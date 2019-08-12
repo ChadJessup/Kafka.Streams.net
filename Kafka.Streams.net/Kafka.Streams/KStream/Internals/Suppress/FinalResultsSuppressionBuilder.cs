@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common;
+using Kafka.Streams.KStream.Interfaces;
+using System;
+
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
 
@@ -36,11 +40,11 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public SuppressedInternal<K> buildFinalResultsSuppression(TimeSpan gracePeriod)
         {
-            return new SuppressedInternal<>(
+            return new SuppressedInternal<K>(
                 name,
                 gracePeriod,
                 bufferConfig,
-                TimeDefinitions.WindowEndTimeDefinition.instance(),
+                ITimeDefinition.WindowEndTimeDefinition.instance(),
                 true
             );
         }
@@ -48,7 +52,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public ISuppressed<K> withName(string name)
         {
-            return new FinalResultsSuppressionBuilder<>(name, bufferConfig);
+            return new FinalResultsSuppressionBuilder<K>(name, bufferConfig);
         }
 
 
@@ -62,25 +66,18 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             {
                 return false;
             }
-            FinalResultsSuppressionBuilder <object> that = (FinalResultsSuppressionBuilder <object>) o;
-            return Objects.Equals(name, that.name) &&
-                Objects.Equals(bufferConfig, that.bufferConfig);
+
+            FinalResultsSuppressionBuilder<K> that = (FinalResultsSuppressionBuilder<K>) o;
+            return name.Equals(that.name) &&
+                bufferConfig.Equals(that.bufferConfig);
         }
-
-
-        public string name
-        {
-            return name;
-        }
-
 
         public int hashCode()
         {
-            return Objects.hash(name, bufferConfig);
+            return (name, bufferConfig).GetHashCode();
         }
 
-
-        public string ToString()
+        public override string ToString()
         {
             return "FinalResultsSuppressionBuilder{" +
                 "name='" + name + '\'' +

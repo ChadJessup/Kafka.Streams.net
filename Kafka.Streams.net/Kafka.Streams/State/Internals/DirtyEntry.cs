@@ -1,31 +1,27 @@
 ﻿using Kafka.Common.Utils;
 using Kafka.Streams.State.Internals;
 
-static class DirtyEntry
+namespace Kafka.Streams.State.Internals
 {
-    private Bytes key;
-    private byte[] newValue;
-    private LRUCacheEntry recordContext;
-
-    DirtyEntry(Bytes key, byte[] newValue, LRUCacheEntry recordContext)
+    public class DirtyEntry
     {
-        this.key = key;
-        this.newValue = newValue;
-        this.recordContext = recordContext;
-    }
+        private Bytes key;
+        private byte[] newValue;
+        private LRUCacheEntry recordContext;
 
-    public Bytes key()
-    {
-        return key;
-    }
+        public DirtyEntry(
+            Bytes key,
+            byte[] newValue,
+            LRUCacheEntry recordContext)
+        {
+            this.key = key;
+            this.newValue = newValue;
+            this.recordContext = recordContext;
+        }
 
-    public byte[] newValue()
-    {
-        return newValue;
-    }
-
-    public LRUCacheEntry entry()
-    {
-        return recordContext;
+        public LRUCacheEntry entry()
+        {
+            return recordContext;
+        }
     }
 }

@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public class PrintedInternal<K, V> : Printed<K, V>
@@ -25,12 +27,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessorSupplier<K, V> build(string processorName)
         {
-            return new KStreamPrint<>(new PrintForeachAction<>(outputStream, mapper, label != null ? label : processorName));
+            return new KStreamPrint<K, V>(new PrintForeachAction<K, V>(outputStream, mapper, label != null ? label : processorName));
         }
 
-        public string name
-        {
-            return processorName;
-        }
+        public string name => processorName;
     }
 }

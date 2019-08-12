@@ -16,47 +16,24 @@
  */
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
-
-public class KTableSourceValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, V> {
-    private string storeName;
-
-    KTableSourceValueGetterSupplier(string storeName)
+    public class KTableSourceValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, V>
     {
-        this.storeName = storeName;
-    }
+        private string storeName;
 
-    public IKTableValueGetter<K, V> get()
-    {
-        return new KTableSourceValueGetter();
-    }
-
-
-    public string[] storeNames()
-    {
-        return new string[] { storeName };
-    }
-
-    private class KTableSourceValueGetter : IKTableValueGetter<K, V>
-    {
-        private ITimestampedKeyValueStore<K, V> store = null;
-
-
-        public void init(IProcessorContext<K, V> context)
+        public KTableSourceValueGetterSupplier(string storeName)
         {
-            store = (TimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            this.storeName = storeName;
         }
 
-        public ValueAndTimestamp<V> get(K key)
+        public IKTableValueGetter<K, V> get()
         {
-            return store[key];
+            return new KTableSourceValueGetter<K, V>();
         }
 
 
-        public void close() { }
+        public string[] storeNames()
+        {
+            return new string[] { storeName };
+        }
     }
 }

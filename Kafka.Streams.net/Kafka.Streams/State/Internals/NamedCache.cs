@@ -116,57 +116,58 @@ namespace Kafka.Streams.State.Internals
         {
             numFlushes++;
 
-            if (log.isTraceEnabled())
-            {
-                log.LogTrace("Named cache {} stats on flush: #hits={}, #misses={}, #overwrites={}, #flushes={}",
-                    name, hits(), misses(), overwrites(), flushes());
-            }
+            //if (log.isTraceEnabled())
+            //{
+            //    log.LogTrace("Named cache {} stats on flush: #hits={}, #misses={}, #overwrites={}, #flushes={}",
+            //        name, hits(), misses(), overwrites(), flushes());
+            //}
 
-            if (listener == null)
-            {
-                throw new System.ArgumentException("No listener for namespace " + name + " registered with cache")
-                {
+            //if (listener == null)
+            //{
+            //    throw new System.ArgumentException("No listener for namespace " + name + " registered with cache")
+            //    {
 
-                }
+            //    }
 
-            if (dirtyKeys.isEmpty())
-                {
-                    return;
-                }
+            //if (dirtyKeys.isEmpty())
+            //    {
+            //        return;
+            //    }
 
-                List<ThreadCache.DirtyEntry> entries = new List<>();
-                List<Bytes> deleted = new List<>();
+            //    List<ThreadCache.DirtyEntry> entries = new List<>();
+            //    List<Bytes> deleted = new List<>();
 
-                // evicted already been removed from the cache so.Add it to the list of
-                // flushed entries and Remove from dirtyKeys.
-                if (evicted != null)
-                {
-                    entries.Add(new ThreadCache.DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
-                    dirtyKeys.Remove(evicted.key);
-                }
+            //    // evicted already been removed from the cache so.Add it to the list of
+            //    // flushed entries and Remove from dirtyKeys.
+            //    if (evicted != null)
+            //    {
+            //        entries.Add(new DirtyEntry(evicted.key, evicted.entry.value(), evicted.entry));
+            //        dirtyKeys.Remove(evicted.key);
+            //    }
 
-                foreach (Bytes key in dirtyKeys)
-                {
-                    LRUNode node = getInternal(key);
-                    if (node == null)
-                    {
-                        throw new InvalidOperationException("Key = " + key + " found in dirty key set, but entry is null");
-                    }
-                    entries.Add(new ThreadCache.DirtyEntry(key, node.entry.value(), node.entry));
-                    node.entry.markClean();
-                    if (node.entry.value() == null)
-                    {
-                        deleted.Add(node.key);
-                    }
-                }
-                // clear dirtyKeys before the listener is applied as it may be re-entrant.
-                dirtyKeys.clear();
-                listener.apply(entries);
-                foreach (Bytes key in deleted)
-                {
-                    delete(key);
-                }
-            }
+            //    foreach (Bytes key in dirtyKeys)
+            //    {
+            //        LRUNode node = getInternal(key);
+            //        if (node == null)
+            //        {
+            //            throw new InvalidOperationException("Key = " + key + " found in dirty key set, but entry is null");
+            //        }
+            //        entries.Add(new DirtyEntry(key, node.entry.value(), node.entry));
+            //        node.entry.markClean();
+            //        if (node.entry.value() == null)
+            //        {
+            //            deleted.Add(node.key);
+            //        }
+            //    }
+            //    // clear dirtyKeys before the listener is applied as it may be re-entrant.
+            //    dirtyKeys.clear();
+            //    listener.apply(entries);
+            //    foreach (Bytes key in deleted)
+            //    {
+            //        delete(key);
+            //    }
+        }
+
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         void put(Bytes key, LRUCacheEntry value)
@@ -223,7 +224,7 @@ namespace Kafka.Streams.State.Internals
             else
             {
                 numReadHits++;
-                namedCacheMetrics.hitRatioSensor.record((double)numReadHits / (double)(numReadHits + numReadMisses));
+                //namedCacheMetrics.hitRatioSensor.record((double)numReadHits / (double)(numReadHits + numReadMisses));
             }
             return node;
         }
@@ -287,7 +288,8 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        synchronized LRUCacheEntry putIfAbsent(Bytes key, LRUCacheEntry value)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUCacheEntry putIfAbsent(Bytes key, LRUCacheEntry value)
         {
             LRUCacheEntry originalValue = get(key);
             if (originalValue == null)
@@ -306,7 +308,8 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        synchronized LRUCacheEntry delete(Bytes key)
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        LRUCacheEntry delete(Bytes key)
         {
             LRUNode node = cache.Remove(key);
 
@@ -327,13 +330,13 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
+        public IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
         {
             return cache.subMap(from, true, to, true).iterator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
+        public IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
         {
             return cache.iterator();
         }
@@ -376,9 +379,9 @@ namespace Kafka.Streams.State.Internals
             _head = _tail = null;
             listener = null;
             currentSizeBytes = 0;
-            dirtyKeys.clear();
-            cache.clear();
-            namedCacheMetrics.removeAllSensors();
+            dirtyKeys.Clear();
+            cache.Clear();
+            //namedCacheMetrics.removeAllSensors();
         }
     }
 }

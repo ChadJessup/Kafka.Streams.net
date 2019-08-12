@@ -15,62 +15,26 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
-    class KeyValueIterators
+    public class EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<long, V>
+        , IWindowStoreIterator<V>
     {
+    }
 
-        private static class EmptyKeyValueIterator<K, V> : IKeyValueIterator<K, V>
-        {
+    private static IKeyValueIterator EMPTY_ITERATOR = new EmptyKeyValueIterator();
+    private static WindowStoreIterator EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
-
-            public void close()
-            {
-            }
-
-
-            public K peekNextKey()
-            {
-                throw new NoSuchElementException();
-            }
+    static IKeyValueIterator<K, V> emptyIterator()
+    {
+        return (IKeyValueIterator<K, V>)EMPTY_ITERATOR;
+    }
 
 
-            public bool hasNext()
-            {
-                return false;
-            }
-
-
-            public KeyValue<K, V> next()
-            {
-                throw new NoSuchElementException();
-            }
-
-
-            public void Remove()
-            {
-            }
-        }
-
-        private static class EmptyWindowStoreIterator<V> : EmptyKeyValueIterator<long, V>
-            , WindowStoreIterator<V>
-        {
-        }
-
-        private static IKeyValueIterator EMPTY_ITERATOR = new EmptyKeyValueIterator();
-        private static WindowStoreIterator EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
-
-
-
-        static IKeyValueIterator<K, V> emptyIterator()
-        {
-            return (IKeyValueIterator<K, V>)EMPTY_ITERATOR;
-        }
-
-
-        static WindowStoreIterator<V> emptyWindowStoreIterator()
-        {
-            return (WindowStoreIterator<V>)EMPTY_WINDOW_STORE_ITERATOR;
-        }
+    static WindowStoreIterator<V> emptyWindowStoreIterator()
+    {
+        return (WindowStoreIterator<V>)EMPTY_WINDOW_STORE_ITERATOR;
     }
 }

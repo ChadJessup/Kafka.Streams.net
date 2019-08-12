@@ -27,6 +27,6 @@ namespace Kafka.Streams.State.Interfaces
          *
          * @return retentionPeriod
          */
-        long retentionPeriod();
+        long retentionPeriod { get; }
     }
 }

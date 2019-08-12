@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;

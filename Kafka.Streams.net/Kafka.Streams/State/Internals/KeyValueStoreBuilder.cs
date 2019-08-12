@@ -14,21 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
-
-
-    using Kafka.Common.serialization.Serde;
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Common.Utils.Time;
-    using Kafka.Streams.State.IKeyValueBytesStoreSupplier;
-    using Kafka.Streams.State.KeyValueStore;
-
-
-
     public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
     {
-
         private IKeyValueBytesStoreSupplier storeSupplier;
 
         public KeyValueStoreBuilder(IKeyValueBytesStoreSupplier storeSupplier,
@@ -44,7 +37,7 @@ namespace Kafka.Streams.State.Internals
         public override IKeyValueStore<K, V> build()
         {
             return new MeteredKeyValueStore<>(
-                maybeWrapCaching(maybeWrapLogging(storeSupplier())],
+                maybeWrapCaching(maybeWrapLogging(storeSupplier)),
                 storeSupplier.metricsScope(),
                 time,
                 keySerde,

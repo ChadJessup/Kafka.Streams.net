@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals
             predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, KStreamImpl.FILTER_NAME);
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<>(predicate, false), name);
+            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, false), name);
             ProcessorGraphNode<K, V> filterProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             builder.addGraphNode(this.streamsGraphNode, filterProcessorNode);
 
@@ -143,9 +143,9 @@ namespace Kafka.Streams.KStream.Internals
             string name = named.orElseGenerateWithPrefix(builder, KStreamImpl.KEY_SELECT_NAME);
             //KStreamMap<K, V, KR, V> kStreamMap = new KStreamMap<>((key, value)=> new KeyValue<>(mapper.apply(key, value), value));
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(kStreamMap, name);
-
-            return new ProcessorGraphNode<K, V>(name, processorParameters);
+            //ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(kStreamMap, name);
+            return null;
+            //return new ProcessorGraphNode<K, V>(name, processorParameters);
         }
 
 
@@ -159,7 +159,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
-            string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, MAP_NAME);
+            string name = ""; // new NamedInternal(named).orElseGenerateWithPrefix(builder, MAP_NAME);
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamMap<K, V, KR, VR>(mapper), name);
 
             ProcessorGraphNode<K, V> mapProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
@@ -201,7 +201,7 @@ namespace Kafka.Streams.KStream.Internals
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             mapper = mapper ?? throw new System.ArgumentNullException("named can't be null", nameof(mapper));
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, KStreamImpl.MAPVALUES_NAME);
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamMapValues<K, V>(mapper), name);
+            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamMapValues<K, V, VR>(mapper), name);
             ProcessorGraphNode<K, V> mapValuesProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
             mapValuesProcessorNode.setValueChangingOperation(true);
@@ -244,7 +244,7 @@ namespace Kafka.Streams.KStream.Internals
             mapper = mapper ?? throw new System.ArgumentNullException("mapper can't be null", nameof(mapper));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
             string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, KStreamImpl.FLATMAP_NAME);
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMap<K, V>(mapper), name);
+            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMap<K, V, KR, VR>(mapper), name);
             ProcessorGraphNode<K, V> flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             //          flatMapNode.keyChangingOperation(true);
 
@@ -336,9 +336,9 @@ namespace Kafka.Streams.KStream.Internals
                 childNames[i] = named.suffixWithOrElseGet("-predicate-" + i, builder, KStreamImpl.BRANCHCHILD_NAME);
             }
 
-            var processorParameters = new ProcessorParameters<K, V>(new KStreamBranch(predicates.clone(), childNames), branchName);
-            var branchNode = new ProcessorGraphNode<K, V>(branchName, processorParameters);
-            builder.addGraphNode(this.streamsGraphNode, branchNode);
+            //var processorParameters = new ProcessorParameters<K, V>(new KStreamBranch(predicates.clone(), childNames), branchName);
+            //var branchNode = new ProcessorGraphNode<K, V>(branchName, processorParameters);
+            //builder.addGraphNode(this.streamsGraphNode, branchNode);
 
             IKStream<K, V>[] branchChildren = null; // (IKStream<K, V>[])Array.newInstance(KStream, predicates.Length);
 
@@ -386,7 +386,7 @@ namespace Kafka.Streams.KStream.Internals
 
             ProcessorGraphNode<K, V> mergeNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             mergeNode.setMergeNode(true);
-//            builder.addGraphNode(Arrays.asList(this.streamsGraphNode, streamImpl.streamsGraphNode), mergeNode);
+            //            builder.addGraphNode(Arrays.asList(this.streamsGraphNode, streamImpl.streamsGraphNode), mergeNode);
 
             // drop the serde as we cannot safely use either one to represent both streams
             return new KStreamImpl<K, V>(name, null, null, allSourceNodes, requireRepartitioning, mergeNode, builder);
@@ -422,24 +422,26 @@ namespace Kafka.Streams.KStream.Internals
         {
             action = action ?? throw new System.ArgumentNullException("action can't be null", nameof(action));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
-            string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, KStreamImpl.PEEK_NAME);
+            // string name = new NamedInternal(named).orElseGenerateWithPrefix(builder, KStreamImpl.PEEK_NAME);
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
-                   new KStreamPeek<K, V>(action, true),
-                   name
-           );
+            // ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
+            //        new KStreamPeek<K, V>(action, true),
+            //        name
+            //);
 
-            ProcessorGraphNode<K, V> peekNode = new ProcessorGraphNode<>(name, processorParameters);
+            // ProcessorGraphNode<K, V> peekNode = new ProcessorGraphNode<>(name, processorParameters);
 
-            builder.addGraphNode(this.streamsGraphNode, peekNode);
+            // builder.addGraphNode(this.streamsGraphNode, peekNode);
 
-            return new KStreamImpl<>(name, keySerde, valSerde, sourceNodes, repartitionRequired, peekNode, builder);
+            // return new KStreamImpl<>(name, keySerde, valSerde, sourceNodes, repartitionRequired, peekNode, builder);
+            return null;
         }
 
 
         public IKStream<K, V> through(string topic)
         {
-            return through(topic, Produced.with(keySerde, valSerde, null));
+            return null;
+            //return through(topic, Produced.with(keySerde, valSerde, null));
         }
 
 
@@ -447,7 +449,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             topic = topic ?? throw new System.ArgumentNullException("topic can't be null", nameof(topic));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
-            ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
+            ProducedInternal<K, V> producedInternal = new ProducedInternal<K, V>(produced);
             if (producedInternal.keySerde == null)
             {
                 producedInternal.withKeySerde(keySerde);
@@ -471,7 +473,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void to(string topic)
         {
-            to(topic, Produced.with(keySerde, valSerde, null));
+            //to(topic, Produced.with(keySerde, valSerde, null));
         }
 
 
@@ -494,7 +496,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void to(ITopicNameExtractor<K, V> topicExtractor)
         {
-            to(topicExtractor, Produced.with(keySerde, valSerde, null));
+            //to(topicExtractor, Produced.with(keySerde, valSerde, null));
         }
 
 
@@ -502,7 +504,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor can't be null", nameof(topicExtractor));
             produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
-            ProducedInternal<K, V> producedInternal = new ProducedInternal<>(produced);
+            ProducedInternal<K, V> producedInternal = new ProducedInternal<K, V>(produced);
             if (producedInternal.keySerde == null)
             {
                 producedInternal.withKeySerde(keySerde);
@@ -1027,61 +1029,63 @@ namespace Kafka.Streams.KStream.Internals
             Joined<K, V, VO> joined,
             bool leftJoin)
         {
-            other = other ?? throw new System.ArgumentNullException("other KTable can't be null", nameof(other));
-            joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+            // other = other ?? throw new System.ArgumentNullException("other KTable can't be null", nameof(other));
+            // joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
 
-            HashSet<string> allSourceNodes = ensureJoinableWith((AbstractStream<K, VO>)other);
+            // HashSet<string> allSourceNodes = ensureJoinableWith((AbstractStream<K, VO>)other);
 
-            JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<>(joined);
-            NamedInternal renamed = new NamedInternal(joinedInternal.name);
+            // JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<>(joined);
+            // NamedInternal renamed = new NamedInternal(joinedInternal.name);
 
-            string name = renamed.orElseGenerateWithPrefix(builder, leftJoin ? LEFTJOIN_NAME : JOIN_NAME);
-            IProcessorSupplier<K, V> IProcessorSupplier = new KStreamKTableJoin<>(
-               ((KTableImpl<K, object, VO>)other).valueGetterSupplier(),
-               joiner,
-               leftJoin
-            );
+            // string name = renamed.orElseGenerateWithPrefix(builder, leftJoin ? LEFTJOIN_NAME : JOIN_NAME);
+            // IProcessorSupplier<K, V> IProcessorSupplier = new KStreamKTableJoin<>(
+            //    ((KTableImpl<K, object, VO>)other).valueGetterSupplier(),
+            //    joiner,
+            //    leftJoin
+            // );
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(IProcessorSupplier, name);
-            StreamTableJoinNode<K, V> streamTableJoinNode = new StreamTableJoinNode<K, V>(
-               name,
-               processorParameters,
-               ((KTableImpl)other).valueGetterSupplier().storeNames(),
-               this.name
-           );
+            // ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(IProcessorSupplier, name);
+            // StreamTableJoinNode<K, V> streamTableJoinNode = new StreamTableJoinNode<K, V>(
+            //    name,
+            //    processorParameters,
+            //    ((KTableImpl)other).valueGetterSupplier().storeNames(),
+            //    this.name
+            //);
 
-            builder.addGraphNode(this.streamsGraphNode, streamTableJoinNode);
+            // builder.addGraphNode(this.streamsGraphNode, streamTableJoinNode);
 
             // do not have serde for joined result
-            return new KStreamImpl<>(name, joined.keySerde != null ? joined.keySerde : keySerde, null, allSourceNodes, false, streamTableJoinNode, builder);
+            return null;
+            //return new KStreamImpl<>(name, joined.keySerde != null ? joined.keySerde : keySerde, null, allSourceNodes, false, streamTableJoinNode, builder);
 
         }
 
 
         public IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector)
         {
-            return groupBy(selector, Grouped.with(null, valSerde));
+            return null;
+            //return groupBy(selector, Grouped.with(null, valSerde));
         }
 
         public IKGroupedStream<KR, V> groupBy<KR>(
             IKeyValueMapper<K, V, KR> selector,
             Grouped<KR, V> grouped)
         {
-            selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
-            grouped = grouped ?? throw new System.ArgumentNullException("grouped can't be null", nameof(grouped));
-            GroupedInternal<KR, V> groupedInternal = new GroupedInternal<KR, V>(grouped);
-            ProcessorGraphNode<K, V> selectKeyMapNode = internalSelectKey(selector, new NamedInternal(groupedInternal.name));
-            selectKeyMapNode.keyChangingOperation(true);
+            //selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
+            //grouped = grouped ?? throw new System.ArgumentNullException("grouped can't be null", nameof(grouped));
+            //GroupedInternal<KR, V> groupedInternal = new GroupedInternal<KR, V>(grouped);
+            //ProcessorGraphNode<K, V> selectKeyMapNode = internalSelectKey(selector, new NamedInternal(groupedInternal.name));
+            //selectKeyMapNode.keyChangingOperation(true);
 
-            builder.addGraphNode(this.streamsGraphNode, selectKeyMapNode);
-
-            return new KGroupedStreamImpl<>(
-                selectKeyMapNode.nodeName(),
-                sourceNodes,
-                groupedInternal,
-                true,
-                selectKeyMapNode,
-                builder);
+            //builder.addGraphNode(this.streamsGraphNode, selectKeyMapNode);
+            return null;
+            //return new KGroupedStreamImpl<>(
+            //    selectKeyMapNode.nodeName(),
+            //    sourceNodes,
+            //    groupedInternal,
+            //    true,
+            //    selectKeyMapNode,
+            //    builder);
         }
 
 
@@ -1093,14 +1097,14 @@ namespace Kafka.Streams.KStream.Internals
         public IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped)
         {
             GroupedInternal<K, V> groupedInternal = new GroupedInternal<K, V>(grouped);
-
-            return new KGroupedStreamImpl<>(
-                name,
-                sourceNodes,
-                groupedInternal,
-                repartitionRequired,
-                streamsGraphNode,
-                builder);
+            return null;
+            //return new KGroupedStreamImpl<>(
+            //    name,
+            //    sourceNodes,
+            //    groupedInternal,
+            //    repartitionRequired,
+            //    streamsGraphNode,
+            //    builder);
         }
 
         //
@@ -1110,16 +1114,17 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
-            return Stores.windowStoreBuilder(
-                Stores.persistentWindowStore(
-                    joinName + "-store",
-                    Duration.ofMillis(windows.size() + windows.gracePeriodMs()),
-                    Duration.ofMillis(windows.size()),
-                    true
-                ),
-                keySerde,
-                valueSerde
-            );
+            return null;
+            //return Stores.windowStoreBuilder(
+            //    Stores.persistentWindowStore(
+            //        joinName + "-store",
+            //        Duration.ofMillis(windows.size() + windows.gracePeriodMs()),
+            //        Duration.ofMillis(windows.size()),
+            //        true
+            //    ),
+            //    keySerde,
+            //    valueSerde
+            //);
         }
 
         public IKStream<K, V> peek(IForeachAction<K, V> action)
@@ -1216,113 +1221,5 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
-
-        private class KStreamImplJoin
-        {
-
-
-            private bool leftOuter;
-            private bool rightOuter;
-
-
-            KStreamImplJoin(bool leftOuter,
-                             bool rightOuter)
-            {
-                this.leftOuter = leftOuter;
-                this.rightOuter = rightOuter;
-            }
-
-            public IKStream<K1, R> join<K1, V1, V2, R>(
-                IKStream<K1, V1> lhs,
-                IKStream<K1, V2> other,
-                IValueJoiner<V1, V2, R> joiner,
-                JoinWindows windows,
-                Joined<K1, V1, V2> joined)
-            {
-
-                JoinedInternal<K1, V1, V2> joinedInternal = new JoinedInternal<K1, V1, V2>(joined);
-                NamedInternal renamed = new NamedInternal(joinedInternal.name);
-
-                string thisWindowStreamName = renamed.suffixWithOrElseGet(
-                       "-this-windowed", builder, WINDOWED_NAME);
-                string otherWindowStreamName = renamed.suffixWithOrElseGet(
-                       "-other-windowed", builder, WINDOWED_NAME);
-
-                string joinThisName = rightOuter ?
-                       renamed.suffixWithOrElseGet("-outer-this-join", builder, OUTERTHIS_NAME)
-                       : renamed.suffixWithOrElseGet("-this-join", builder, JOINTHIS_NAME);
-                string joinOtherName = leftOuter ?
-                       renamed.suffixWithOrElseGet("-outer-other-join", builder, OUTEROTHER_NAME)
-                       : renamed.suffixWithOrElseGet("-other-join", builder, JOINOTHER_NAME);
-                string joinMergeName = renamed.suffixWithOrElseGet(
-                       "-merge", builder, MERGE_NAME);
-                StreamsGraphNode thisStreamsGraphNode = ((AbstractStream)lhs).streamsGraphNode;
-                StreamsGraphNode otherStreamsGraphNode = ((AbstractStream)other).streamsGraphNode;
-
-
-                IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
-                   joinWindowStoreBuilder(joinThisName, windows, joined.keySerde, joined.valueSerde);
-                IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
-                   joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde, joined.otherValueSerde());
-
-                KStreamJoinWindow<K1, V1> thisWindowedStream = new KStreamJoinWindow<K1, V1>(thisWindowStore.name);
-
-                ProcessorParameters<K1, V1> thisWindowStreamProcessorParams = new ProcessorParameters<>(thisWindowedStream, thisWindowStreamName);
-                ProcessorGraphNode<K1, V1> thisWindowedStreamsNode = new ProcessorGraphNode<>(thisWindowStreamName, thisWindowStreamProcessorParams);
-                builder.addGraphNode(thisStreamsGraphNode, thisWindowedStreamsNode);
-
-                KStreamJoinWindow<K1, V2> otherWindowedStream = new KStreamJoinWindow<>(otherWindowStore.name);
-
-                ProcessorParameters<K1, V2> otherWindowStreamProcessorParams = new ProcessorParameters<>(otherWindowedStream, otherWindowStreamName);
-                ProcessorGraphNode<K1, V2> otherWindowedStreamsNode = new ProcessorGraphNode<>(otherWindowStreamName, otherWindowStreamProcessorParams);
-                builder.addGraphNode(otherStreamsGraphNode, otherWindowedStreamsNode);
-
-                KStreamKStreamJoin<K1, R, V1, V2> joinThis = new KStreamKStreamJoin<>(
-                   otherWindowStore.name,
-                   windows.beforeMs,
-                   windows.afterMs,
-                   joiner,
-                   leftOuter
-               );
-
-                KStreamKStreamJoin<K1, R, V2, V1> joinOther = new KStreamKStreamJoin<>(
-                   thisWindowStore.name,
-                   windows.afterMs,
-                   windows.beforeMs,
-                   reverseJoiner(joiner),
-                   rightOuter
-               );
-
-                KStreamPassThrough<K1, R> joinMerge = new KStreamPassThrough<>();
-
-                StreamStreamJoinNode.StreamStreamJoinNodeBuilder<K1, V1, V2, R> joinBuilder = StreamStreamJoinNode.streamStreamJoinNodeBuilder();
-
-                ProcessorParameters<K1, V1> joinThisProcessorParams = new ProcessorParameters<>(joinThis, joinThisName);
-                ProcessorParameters<K1, V2> joinOtherProcessorParams = new ProcessorParameters<>(joinOther, joinOtherName);
-                ProcessorParameters<K1, R> joinMergeProcessorParams = new ProcessorParameters<>(joinMerge, joinMergeName);
-
-                joinBuilder.withJoinMergeProcessorParameters(joinMergeProcessorParams)
-                           .withJoinThisProcessorParameters(joinThisProcessorParams)
-                           .withJoinOtherProcessorParameters(joinOtherProcessorParams)
-                           .withThisWindowStoreBuilder(thisWindowStore)
-                           .withOtherWindowStoreBuilder(otherWindowStore)
-                           .withThisWindowedStreamProcessorParameters(thisWindowStreamProcessorParams)
-                           .withOtherWindowedStreamProcessorParameters(otherWindowStreamProcessorParams)
-                           .withValueJoiner(joiner)
-                           .withNodeName(joinMergeName);
-
-                StreamsGraphNode joinGraphNode = joinBuilder.build();
-
-                builder.addGraphNode(Arrays.asList(thisStreamsGraphNode, otherStreamsGraphNode), joinGraphNode);
-
-                HashSet<string> allSourceNodes = new HashSet<>(((KStreamImpl<K1, V1>)lhs).sourceNodes);
-                allSourceNodes.AddAll(((KStreamImpl<K1, V2>)other).sourceNodes);
-
-                // do not have serde for joined result;
-                // also for key serde we do not inherit from either since we cannot tell if these two serdes are different
-                return new KStreamImpl<>(joinMergeName, joined.keySerde, null, allSourceNodes, false, joinGraphNode, builder);
-            }
-        }
-
     }
 }

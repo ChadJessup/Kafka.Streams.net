@@ -14,6 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
     public class InMemoryWindowBytesStoreSupplier : IWindowBytesStoreSupplier
@@ -34,51 +38,31 @@ namespace Kafka.Streams.State.Internals
             this.retainDuplicates = retainDuplicates;
         }
 
-        public override string name
+        public IWindowStore<Bytes, byte[]> get()
         {
-            return name;
+            return new InMemoryWindowStore(
+                name,
+                retentionPeriod,
+                windowSize,
+                retainDuplicates,
+                metricsScope());
         }
 
-        public override IWindowStore<Bytes, byte[]> get()
-        {
-            return new InMemoryWindowStore(name,
-                                           retentionPeriod,
-                                           windowSize,
-                                           retainDuplicates,
-                                           metricsScope());
-        }
-
-        public override string metricsScope()
+        public string metricsScope()
         {
             return "in-memory-window-state";
         }
 
         [System.Obsolete]
-        public override int segments()
+        public int segments()
         {
             throw new InvalidOperationException("Segments is deprecated and should not be called");
         }
 
-        public override long retentionPeriod()
-        {
-            return retentionPeriod;
-        }
-
-
-        public override long windowSize()
-        {
-            return windowSize;
-        }
-
         // In-memory window store is not *really* segmented, so just say size is 1 ms
-        public override long segmentIntervalMs()
+        public long segmentIntervalMs()
         {
             return 1;
-        }
-
-        public override bool retainDuplicates()
-        {
-            return retainDuplicates;
         }
     }
 }

@@ -38,7 +38,8 @@ namespace Kafka.Streams.State.Internals
             this.underlying = underlying;
         }
 
-        public override synchronized K peekNextKey()
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public override K peekNextKey()
         {
             if (!hasNext())
             {

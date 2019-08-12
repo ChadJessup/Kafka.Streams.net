@@ -36,7 +36,7 @@ namespace Kafka.Streams.State.Internals
 
         public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            if (streamThread.state() == StreamThread.State.DEAD)
+            if (streamThread.state() == StreamThread.StreamThreadState.DEAD)
             {
                 return new List<T>();
             }

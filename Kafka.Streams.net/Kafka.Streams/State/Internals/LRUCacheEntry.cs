@@ -32,9 +32,9 @@ namespace Kafka.Streams.State.Internals
         private bool isDirty;
 
 
-        LRUCacheEntry(byte[] value)
+        public LRUCacheEntry(byte[] value)
+            : this(value, null, false, -1, -1, -1, "")
         {
-            this(value, null, false, -1, -1, -1, "");
         }
 
         LRUCacheEntry(byte[] value,
@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Internals
                 record.residentMemorySizeEstimate();
         }
 
-        void markClean()
+        public void markClean()
         {
             isDirty = false;
         }
@@ -67,12 +67,12 @@ namespace Kafka.Streams.State.Internals
             return isDirty;
         }
 
-        long size()
+        public long size()
         {
             return sizeBytes;
         }
 
-        byte[] value()
+        public byte[] value()
         {
             return record.value();
         }

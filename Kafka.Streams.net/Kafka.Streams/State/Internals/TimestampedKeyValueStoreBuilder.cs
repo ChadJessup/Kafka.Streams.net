@@ -14,6 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
     public class TimestampedKeyValueStoreBuilder<K, V>
@@ -39,7 +44,7 @@ namespace Kafka.Streams.State.Internals
 
         public override ITimestampedKeyValueStore<K, V> build()
         {
-            IKeyValueStore<Bytes, byte[]> store = storeSupplier[];
+            IKeyValueStore<Bytes, byte[]> store = storeSupplier.get();
             if (!(store is ITimestampedBytesStore))
             {
                 if (store.persistent())
@@ -75,110 +80,6 @@ namespace Kafka.Streams.State.Internals
                 return inner;
             }
             return new ChangeLoggingTimestampedKeyValueBytesStore(inner);
-        }
-
-        private static class InMemoryTimestampedKeyValueStoreMarker
-        : IKeyValueStore<Bytes, byte[]>, ITimestampedBytesStore
-        {
-
-            IKeyValueStore<Bytes, byte[]> wrapped;
-
-            private InMemoryTimestampedKeyValueStoreMarker(IKeyValueStore<Bytes, byte[]> wrapped)
-            {
-                if (wrapped.persistent())
-                {
-                    throw new System.ArgumentException("Provided store must not be a persistent store, but it is.");
-                }
-                this.wrapped = wrapped;
-            }
-
-
-            public void init(IProcessorContext<K, V> context,
-                             IStateStore root)
-            {
-                wrapped.init(context, root);
-            }
-
-
-            public void put(Bytes key,
-                            byte[] value)
-            {
-                wrapped.Add(key, value);
-            }
-
-
-            public byte[] putIfAbsent(Bytes key,
-                                      byte[] value)
-            {
-                return wrapped.putIfAbsent(key, value);
-            }
-
-
-            public void putAll(List<KeyValue<Bytes, byte[]>> entries)
-            {
-                wrapped.putAll(entries);
-            }
-
-
-            public byte[] delete(Bytes key)
-            {
-                return wrapped.delete(key);
-            }
-
-
-            public byte[] get(Bytes key)
-            {
-                return wrapped[key];
-            }
-
-
-            public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
-                                                         Bytes to)
-            {
-                return wrapped.range(from, to);
-            }
-
-
-            public IKeyValueIterator<Bytes, byte[]> all()
-            {
-                return wrapped.all();
-            }
-
-
-            public long approximateNumEntries()
-            {
-                return wrapped.approximateNumEntries();
-            }
-
-
-            public void flush()
-            {
-                wrapped.flush();
-            }
-
-
-            public void close()
-            {
-                wrapped.close();
-            }
-
-
-            public bool isOpen()
-            {
-                return wrapped.isOpen();
-            }
-
-
-            public string name
-            {
-                return wrapped.name;
-            }
-
-
-            public bool persistent()
-            {
-                return false;
-            }
         }
     }
 }

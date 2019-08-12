@@ -110,34 +110,9 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-
-        private class KTableFilterValueGetter<K, V> : IKTableValueGetter<K, V>
+        public IKTableValueGetterSupplier<K, V> view()
         {
-            private IKTableValueGetter<K, V> parentGetter;
-
-            KTableFilterValueGetter(IKTableValueGetter<K, V> parentGetter)
-            {
-                this.parentGetter = parentGetter;
-            }
-
-
-
-            public void init(IProcessorContext<K, V> context)
-            {
-                parentGetter.init(context);
-            }
-
-
-            public ValueAndTimestamp<V> get(K key)
-            {
-                return computeValue(key, parentGetter[key]);
-            }
-
-
-            public void close()
-            {
-                parentGetter.close();
-            }
+            throw new System.NotImplementedException();
         }
     }
 }

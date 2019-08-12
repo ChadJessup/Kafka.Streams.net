@@ -35,11 +35,9 @@ namespace Kafka.Streams.KStream.Internals
         private StreamsGraphNode streamsGraphNode;
         private StreamsGraphNode repartitionNode;
 
-        IInitializer<long> countInitializer;// = () => 0L;
-
-        IAggregator<K, V, long> countAggregator;// = (aggKey, value, aggregate) => aggregate + 1;
-
-        IInitializer<V> reduceInitializer;// = () => null;
+        public IInitializer<long> countInitializer;// = () => 0L;
+        public IAggregator<K, V, long> countAggregator;// = (aggKey, value, aggregate) => aggregate + 1;
+        public IInitializer<V> reduceInitializer;// = () => null;
 
         public GroupedStreamAggregateBuilder(
             InternalStreamsBuilder builder,
@@ -59,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals
             this.userProvidedRepartitionTopicName = groupedInternal.name;
         }
 
-        IKTable<KR, VR> build<KR, VR>(
+        public IKTable<KR, VR> build<KR, VR>(
             string functionName,
             IStoreBuilder<IStateStore> storeBuilder,
             IKStreamAggProcessorSupplier<K, KR, V, VR> aggregateSupplier,

@@ -134,7 +134,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<Windowed<K>, T> aggregate(
+        public IKTable<Windowed<K>, T> aggregate<T>(
             IInitializer<T> initializer,
             IAggregator<K, V, T> aggregator,
             IMerger<K, T> sessionMerger)
@@ -143,7 +143,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<Windowed<K>, VR> aggregate(
+        public IKTable<Windowed<K>, VR> aggregate<VR>(
             IInitializer<VR> initializer,
             IAggregator<K, V, VR> aggregator,
             IMerger<K, VR> sessionMerger,
@@ -171,19 +171,19 @@ namespace Kafka.Streams.KStream.Internals
                     aggregator,
                     sessionMerger),
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde != null ? new WindowedSerdes.SessionWindowedSerde<>(materializedInternal.keySerde) : null,
+                materializedInternal.keySerde != null ? new SessionWindowedSerde<>(materializedInternal.keySerde) : null,
                 materializedInternal.valueSerde);
         }
 
 
-        private IStoreBuilder<ISessionStore<K, VR>> materialize(MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
+        private IStoreBuilder<ISessionStore<K, VR>> materialize<VR>(MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materialized)
         {
-            SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier)materialized.storeSupplier();
+            SessionBytesStoreSupplier supplier = (SessionBytesStoreSupplier)materialized.storeSupplier;
             if (supplier == null)
             {
                 // NOTE: in the future, when we Remove Windows#maintainMs(), we should set the default retention
                 // to be (windows.inactivityGap() + windows.grace()). This will yield the same default behavior.
-                long retentionPeriod = materialized.retention() != null ? materialized.retention().toMillis() : windows.maintainMs();
+                long retentionPeriod = materialized.retention != null ? materialized.retention.toMillis() : windows.maintainMs();
 
                 if ((windows.inactivityGap() + windows.gracePeriodMs()) > retentionPeriod)
                 {
@@ -193,14 +193,15 @@ namespace Kafka.Streams.KStream.Internals
                                                            + " grace period."
                                                            + " Got gap=[" + windows.inactivityGap() + "],"
                                                            + " grace=[" + windows.gracePeriodMs() + "],"
-                                                           + " retention=[" + retentionPeriod + "]"];
+                                                           + " retention=[" + retentionPeriod + "]");
                 }
+
                 supplier = Stores.persistentSessionStore(
                     materialized.storeName(),
                     Duration.ofMillis(retentionPeriod)
                 );
             }
-            StoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(
+            IStoreBuilder<ISessionStore<K, VR>> builder = Stores.sessionStoreBuilder(
                supplier,
                materialized.keySerde,
                materialized.valueSerde
@@ -216,21 +217,22 @@ namespace Kafka.Streams.KStream.Internals
                 builder.withLoggingDisabled();
             }
 
-            if (materialized.cachingEnabled())
+            if (materialized.cachingEnabled)
             {
                 builder.withCachingEnabled();
             }
+
             return builder;
         }
 
         private IMerger<K, V> mergerForAggregator(IAggregator<K, V, V> aggregator)
         {
-            return (aggKey, aggOne, aggTwo)=>aggregator.apply(aggKey, aggTwo, aggOne);
+            return null; // (aggKey, aggOne, aggTwo) => aggregator.apply(aggKey, aggTwo, aggOne);
         }
 
         private IAggregator<K, V, V> aggregatorForReducer(IReducer<V> reducer)
         {
-            return (aggKey, value, aggregate)=>aggregate == null ? value : reducer.apply(aggregate, value);
+            return null; // (aggKey, value, aggregate) => aggregate == null ? value : reducer.apply(aggregate, value);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream
 
         private static int MAX_NAME_LENGTH = 249;
 
-        protected string name;
+        public string name { get; }
 
         protected Named(Named named)
             : this(Objects.requireNonNull(named, "named can't be null").name)

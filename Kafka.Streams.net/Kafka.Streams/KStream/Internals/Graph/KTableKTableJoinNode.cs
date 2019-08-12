@@ -26,8 +26,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class KTableKTableJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, Change<V1>, Change<V2>, Change<VR>>
     {
-        private ISerde<K> keySerde;
-        private ISerde<VR> valueSerde;
+        public ISerde<K> keySerde { get; }
+        public ISerde<VR> valueSerde { get; }
         private string[] joinThisStoreNames;
         private string[] joinOtherStoreNames;
         private readonly IStoreBuilder<ITimestampedKeyValueStore<K, VR>> storeBuilder;

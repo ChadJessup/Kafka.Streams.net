@@ -33,11 +33,11 @@ namespace Kafka.Streams.State.Internals
         private string topic;
         private int partition;
         private IProcessorContext<K, V> context;
-        private IRecordCollector collector;
+        private IRecordCollector<K, V> collector;
         private ISerializer<K> keySerializer;
         private ISerializer<V> valueSerializer;
 
-        StoreChangeLogger(string storeName,
+        public StoreChangeLogger(string storeName,
                           IProcessorContext<K, V> context,
                           StateSerdes<K, V> serialization)
             : this(storeName, context, context.taskId().partition, serialization)
@@ -49,15 +49,15 @@ namespace Kafka.Streams.State.Internals
                                   int partition,
                                   StateSerdes<K, V> serialization)
         {
-            topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), storeName);
+            topic = ProcessorStateManager<K, V>.storeChangelogTopic(context.applicationId(), storeName);
             this.context = context;
             this.partition = partition;
-            this.collector = ((IRecordCollector.ISupplier)context).recordCollector();
+            this.collector = ((ISupplier)context).recordCollector();
             keySerializer = serialization.keySerializer();
             valueSerializer = serialization.valueSerializer();
         }
 
-        void logChange(K key,
+        public void logChange(K key,
                        V value)
         {
             logChange(key, value, context.timestamp());

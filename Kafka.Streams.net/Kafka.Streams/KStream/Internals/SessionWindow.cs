@@ -63,5 +63,5 @@ namespace Kafka.Streams.KStream.Internals
             SessionWindow otherWindow = (SessionWindow)other;
             return !(otherWindow.endMs < startMs || endMs < otherWindow.startMs);
         }
-
     }
+}

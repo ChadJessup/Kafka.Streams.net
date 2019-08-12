@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor;
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableOuterJoin<K, R, V1, V2> : KTableKTableAbstractJoin<K, R, V1, V2>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableOuterJoin>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableOuterJoin<K, R, V1, V2>>();
 
-        KTableKTableOuterJoin(KTableImpl<K, ?, V1> table1,
-                               KTableImpl<K, ?, V2> table2,
+        KTableKTableOuterJoin(KTableImpl<K, object, V1> table1,
+                               KTableImpl<K, object, V2> table2,
                                IValueJoiner<V1, V2, R> joiner)
             : base(table1, table2, joiner)
         {
@@ -30,13 +33,13 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V1>> get()
         {
-            return new KTableKTableOuterJoinProcessor(valueGetterSupplier2());
+            return null; // new KTableKTableOuterJoinProcessor(valueGetterSupplier2());
         }
 
 
         public IKTableValueGetterSupplier<K, R> view()
         {
-            return new KTableKTableOuterJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
+            return null; // new KTableKTableOuterJoinValueGetterSupplier(valueGetterSupplier1, valueGetterSupplier2);
         }
     }
 }

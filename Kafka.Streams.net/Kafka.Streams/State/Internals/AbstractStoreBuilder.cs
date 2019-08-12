@@ -28,11 +28,11 @@ namespace Kafka.Streams.State.Internals
         public string name { get; }
         public bool loggingEnabled { get; }
 
-        ISerde<K> keySerde;
-        ISerde<V> valueSerde;
-        ITime time;
-        bool enableCaching;
-        bool enableLogging = true;
+        public ISerde<K> keySerde { get; }
+        public ISerde<V> valueSerde { get; }
+        public ITime time { get; }
+        public bool enableCaching { get; }
+        public bool enableLogging { get; } = true;
 
         public AbstractStoreBuilder(
             string name,
@@ -73,11 +73,6 @@ namespace Kafka.Streams.State.Internals
             enableLogging = false;
             logConfig.Clear();
             return this;
-        }
-
-        public bool loggingEnabled
-        {
-            return enableLogging;
         }
 
         public abstract T build();

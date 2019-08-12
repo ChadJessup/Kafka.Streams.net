@@ -14,53 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
-
-
-    using Kafka.Common.serialization.Serdes;
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Streams.KStream.Windowed;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
-    using Kafka.Streams.Processor.Internals.ProcessorStateManager;
-    using Kafka.Streams.State.IKeyValueIterator;
-    using Kafka.Streams.State.StateSerdes;
-    using Kafka.Streams.State.IWindowStore;
-    using Kafka.Streams.State.WindowStoreIterator;
-
     /**
      * Simple wrapper around a {@link WindowStore} to support writing
      * updates to a changelog
      */
-    class ChangeLoggingWindowBytesStore
+    public class ChangeLoggingWindowBytesStore
         : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
-    : IWindowStore<Bytes, byte[]>
+    , IWindowStore<Bytes, byte[]>
     {
-
         private bool retainDuplicates;
-        private IProcessorContext<K, V> context;
+        private IProcessorContext<Bytes, byte[]> context;
         private int seqnum = 0;
 
         StoreChangeLogger<Bytes, byte[]> changeLogger;
 
-        ChangeLoggingWindowBytesStore(IWindowStore<Bytes, byte[]> bytesStore,
+        public ChangeLoggingWindowBytesStore(IWindowStore<Bytes, byte[]> bytesStore,
                                       bool retainDuplicates)
+            : base(bytesStore)
         {
-            base(bytesStore);
             this.retainDuplicates = retainDuplicates;
         }
 
-        public override void init(IProcessorContext<K, V> context,
+        public override void init(IProcessorContext<Bytes, byte[]> context,
                          IStateStore root)
         {
             this.context = context;
             base.init(context, root);
-            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name);
-            changeLogger = new StoreChangeLogger<>(
+            string topic = ProcessorStateManager<Bytes, byte[]>.storeChangelogTopic(context.applicationId(), name);
+            changeLogger = new StoreChangeLogger<Bytes, byte[]>(
                 name,
                 context,
-                new StateSerdes<>(topic, Serdes.Bytes(), Serdes.ByteArray()));
+                new StateSerdes<Bytes, byte[]>(topic, Serdes.Bytes(), Serdes.ByteArray()));
         }
 
         public override byte[] fetch(Bytes key,
@@ -70,7 +62,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public override WindowStoreIterator<byte[]> fetch(Bytes key,
+        public override IWindowStoreIterator<byte[]> fetch(Bytes key,
                                                  long from,
                                                  long to)
         {

@@ -14,42 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.Processor.Interfaces;
+using Microsoft.Extensions.Logging;
+
 namespace Kafka.Streams.State.Internals
 {
-
-
-
-
-
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Streams.KeyValue;
-    using Kafka.Streams.Processor.IProcessorContext;
-    using Kafka.Streams.Processor.IStateStore;
-    using Kafka.Streams.State.IKeyValueIterator;
-    using Kafka.Streams.State.KeyValueStore;
-
-
-
-
-
-
-    public class InMemoryKeyValueStore : IKeyValueStore<Bytes, byte[]>
+    public class InMemoryKeyValueStore<K, V> : IKeyValueStore<Bytes, byte[]>
     {
         private string name;
         private ConcurrentNavigableMap<Bytes, byte[]> map = new ConcurrentSkipListMap<>();
         private volatile bool open = false;
 
-        private static ILogger LOG = new LoggerFactory().CreateLogger < InMemoryKeyValueStore);
+        private static ILogger LOG = new LoggerFactory().CreateLogger<InMemoryKeyValueStore>();
 
         public InMemoryKeyValueStore(string name)
         {
             this.name = name;
         }
 
-        public override string name
-        {
-            return name;
-        }
+        public override string name { get; }
 
         public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
@@ -162,47 +146,6 @@ namespace Kafka.Streams.State.Internals
         {
             map.clear();
             open = false;
-        }
-
-        private static class InMemoryKeyValueIterator : IKeyValueIterator<Bytes, byte[]>
-        {
-            private IEnumerator<KeyValuePair<Bytes, byte[]>> iter;
-
-            private InMemoryKeyValueIterator(IEnumerator<KeyValuePair<Bytes, byte[]>> iter)
-            {
-                this.iter = iter;
-            }
-
-
-            public bool hasNext()
-            {
-                return iter.hasNext();
-            }
-
-
-            public KeyValue<Bytes, byte[]> next()
-            {
-                KeyValuePair<Bytes, byte[]> entry = iter.next();
-                return new KeyValue<>(entry.Key, entry.Value);
-            }
-
-
-            public void Remove()
-            {
-                iter.Remove();
-            }
-
-
-            public void close()
-            {
-                // do nothing
-            }
-
-
-            public Bytes peekNextKey()
-            {
-                throw new InvalidOperationException("peekNextKey() not supported in " + GetType().getName());
-            }
         }
     }
 }

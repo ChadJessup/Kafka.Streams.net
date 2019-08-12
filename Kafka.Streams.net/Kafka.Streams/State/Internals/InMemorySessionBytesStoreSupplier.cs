@@ -14,9 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
-    public class InMemorySessionBytesStoreSupplier : SessionBytesStoreSupplier
+    public class InMemorySessionBytesStoreSupplier : ISessionBytesStoreSupplier
     {
         private string name;
         private long retentionPeriod;
@@ -28,17 +31,12 @@ namespace Kafka.Streams.State.Internals
             this.retentionPeriod = retentionPeriod;
         }
 
-        public override string name
-        {
-            return name;
-        }
-
-        public override ISessionStore<Bytes, byte[]> get()
+        public ISessionStore<Bytes, byte[]> get()
         {
             return new InMemorySessionStore(name, retentionPeriod, metricsScope());
         }
 
-        public override string metricsScope()
+        public string metricsScope()
         {
             return "in-memory-session-state";
         }
@@ -47,11 +45,6 @@ namespace Kafka.Streams.State.Internals
         public override long segmentIntervalMs()
         {
             return 1;
-        }
-
-        public override long retentionPeriod()
-        {
-            return retentionPeriod;
         }
     }
 }

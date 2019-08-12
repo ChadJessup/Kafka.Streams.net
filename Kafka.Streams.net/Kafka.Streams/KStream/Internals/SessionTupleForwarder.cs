@@ -14,48 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Internals;
+
 namespace Kafka.Streams.KStream.Internals
 {
+    /**
+     * This is used to determine if a processor should forward values to child nodes.
+     * Forwarding by this only occurs when caching is not enabled. If caching is enabled,
+     * forwarding occurs in the flush listener when the cached store flushes.
+     *
+     * @param <K>
+     * @param <V>
+     */
+    public class SessionTupleForwarder<K, V>
+    {
+        private IProcessorContext<K, V> context;
+        private bool sendOldValues;
+        private bool cachingEnabled;
 
 
+        SessionTupleForwarder(IStateStore store,
+                               IProcessorContext<K, V> context,
+                               ICacheFlushListener<Windowed<K>, V> flushListener,
+                               bool sendOldValues)
+        {
+            this.context = context;
+            this.sendOldValues = sendOldValues;
+            cachingEnabled = ((WrappedStateStore)store).setFlushListener(flushListener, sendOldValues);
+        }
 
-
-
-
-
-
-
-/**
- * This is used to determine if a processor should forward values to child nodes.
- * Forwarding by this only occurs when caching is not enabled. If caching is enabled,
- * forwarding occurs in the flush listener when the cached store flushes.
- *
- * @param <K>
- * @param <V>
- */
-class SessionTupleForwarder<K, V> {
-    private  IProcessorContext<K, V> context;
-    private  bool sendOldValues;
-    private  bool cachingEnabled;
-
-    
-    SessionTupleForwarder( IStateStore store,
-                           IProcessorContext<K, V> context,
-                           CacheFlushListener<Windowed<K>, V> flushListener,
-                           bool sendOldValues)
-{
-        this.context = context;
-        this.sendOldValues = sendOldValues;
-        cachingEnabled = ((WrappedStateStore) store).setFlushListener(flushListener, sendOldValues);
-    }
-
-    public void maybeForward( Windowed<K> key,
-                              V newValue,
-                              V oldValue)
-{
-        if (!cachingEnabled)
-{
-            context.forward(key, new Change<>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(key.window().end()));
+        public void maybeForward(Windowed<K> key,
+                                  V newValue,
+                                  V oldValue)
+        {
+            if (!cachingEnabled)
+            {
+                context.forward(key, new Change<>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(key.window.end()));
+            }
         }
     }
 }

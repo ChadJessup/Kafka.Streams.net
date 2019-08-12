@@ -14,13 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
     public class WindowToTimestampedWindowByteStoreAdapter : IWindowStore<Bytes, byte[]>
     {
         IWindowStore<Bytes, byte[]> store;
 
-        WindowToTimestampedWindowByteStoreAdapter(IWindowStore<Bytes, byte[]> store)
+        public WindowToTimestampedWindowByteStoreAdapter(IWindowStore<Bytes, byte[]> store)
         {
             if (!store.persistent())
             {
@@ -50,14 +56,14 @@ namespace Kafka.Streams.State.Internals
 
 
 
-        public WindowStoreIterator<byte[]> fetch(Bytes key,
+        public IWindowStoreIterator<byte[]> fetch(Bytes key,
                                                  long timeFrom,
                                                  long timeTo)
         {
             return new WindowToTimestampedWindowIteratorAdapter(store.fetch(key, timeFrom, timeTo));
         }
 
-        public override WindowStoreIterator<byte[]> fetch(Bytes key,
+        public override IWindowStoreIterator<byte[]> fetch(Bytes key,
                                                  DateTime from,
                                                  DateTime to)
         {
@@ -101,10 +107,7 @@ namespace Kafka.Streams.State.Internals
             return new KeyValueToTimestampedKeyValueIteratorAdapter<>(store.fetchAll(from, to));
         }
 
-        public override string name
-        {
-            return store.name;
-        }
+        public string name => store.name;
 
         public override void init(IProcessorContext<K, V> context,
                          IStateStore root)
@@ -131,18 +134,5 @@ namespace Kafka.Streams.State.Internals
         {
             return store.isOpen();
         }
-
-
-        private static class WindowToTimestampedWindowIteratorAdapter
-        : KeyValueToTimestampedKeyValueIteratorAdapter<long>
-        : WindowStoreIterator<byte[]>
-        {
-
-            WindowToTimestampedWindowIteratorAdapter(IKeyValueIterator<long, byte[]> innerIterator)
-            {
-                base(innerIterator);
-            }
-        }
-
     }
 }

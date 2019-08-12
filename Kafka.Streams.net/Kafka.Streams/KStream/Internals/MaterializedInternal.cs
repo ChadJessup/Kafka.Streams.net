@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals
             return _storeName;
         }
 
-        Dictionary<string, string> logConfig()
+        public Dictionary<string, string> logConfig()
         {
             return topicConfig;
         }

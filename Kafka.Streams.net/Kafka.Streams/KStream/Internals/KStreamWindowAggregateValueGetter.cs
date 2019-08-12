@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    private class KStreamWindowAggregateValueGetter : IKTableValueGetter<Windowed<K>, Agg>
+    public class KStreamWindowAggregateValueGetter<K, V, Agg> : IKTableValueGetter<Windowed<K>, Agg>
     {
-        private TimestampedWindowStore<K, Agg> windowStore;
+        private ITimestampedWindowStore<K, Agg> windowStore;
 
-
-
-        public void init(IProcessorContext<K, V> context)
+        public void init(IProcessorContext<Windowed<K>, Agg> context)
         {
-            windowStore = (TimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
+//            windowStore = (ITimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
         }
-
-
 
         public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
         {
-            K key = windowedKey.key();
-            W window = (W)windowedKey.window();
+            K key = windowedKey.key;
+            var window = windowedKey.window;
+
             return windowStore.fetch(key, window.start());
         }
 

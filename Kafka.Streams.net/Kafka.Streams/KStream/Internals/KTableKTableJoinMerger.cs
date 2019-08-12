@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableKTableJoinMergeProcessor();
+            return new KTableKTableJoinMergeProcessor<K, Change<V>>();
         }
 
 
@@ -53,11 +53,11 @@ namespace Kafka.Streams.KStream.Internals
             // otherwise rely on the parent getter and apply join on-the-fly
             if (queryableName != null)
             {
-                return new KTableMaterializedValueGetterSupplier<>(queryableName);
+                return new KTableMaterializedValueGetterSupplier<K, V>(queryableName);
             }
             else
             {
-
+                return null;
                 //    return new KTableValueGetterSupplier<K, V>()
                 //    {
 
@@ -88,15 +88,17 @@ namespace Kafka.Streams.KStream.Internals
             sendOldValues = true;
         }
 
-        public static KTableKTableJoinMerger<K, V> of(IKTableProcessorSupplier<K, ?, V> parent1,
-                                                              IKTableProcessorSupplier<K, ?, V> parent2)
+        public static KTableKTableJoinMerger<K, V> of(
+            IKTableProcessorSupplier<K, object, V> parent1,
+            IKTableProcessorSupplier<K, object, V> parent2)
         {
             return of(parent1, parent2, null);
         }
 
-        public static KTableKTableJoinMerger<K, V> of(IKTableProcessorSupplier<K, object, V> parent1,
-                                                              IKTableProcessorSupplier<K, object, V> parent2,
-                                                              string queryableName)
+        public static KTableKTableJoinMerger<K, V> of(
+            IKTableProcessorSupplier<K, object, V> parent1,
+            IKTableProcessorSupplier<K, object, V> parent2,
+            string queryableName)
         {
             return new KTableKTableJoinMerger<K, V>(parent1, parent2, queryableName);
         }

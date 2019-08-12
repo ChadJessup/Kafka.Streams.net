@@ -14,14 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.KStream.Internals.Metrics;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
-    public class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer<K, V>
+    public partial class InMemoryTimeOrderedKeyValueBuffer<K, V> : TimeOrderedKeyValueBuffer<K, V>
     {
         private static BytesSerializer KEY_SERIALIZER = new BytesSerializer();
         private static ByteArraySerializer VALUE_SERIALIZER = new ByteArraySerializer();
@@ -51,85 +57,6 @@ namespace Kafka.Streams.State.Internals
 
         private int partition;
 
-        public static class Builder<K, V> : IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>>
-        {
-
-            private string storeName;
-            private ISerde<K> keySerde;
-            private ISerde<V> valSerde;
-            private bool loggingEnabled = true;
-
-            public Builder(string storeName, ISerde<K> keySerde, ISerde<V> valSerde)
-            {
-                this.storeName = storeName;
-                this.keySerde = keySerde;
-                this.valSerde = valSerde;
-            }
-
-            /**
-             * As of 2.1, there's no way for users to directly interact with the buffer,
-             * so this method is implemented solely to be called by Streams (which
-             * it will do based on the {@code cache.max.bytes.buffering} config.
-             * <p>
-             * It's currently a no-op.
-             */
-
-            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingEnabled()
-            {
-                return this;
-            }
-
-            /**
-             * As of 2.1, there's no way for users to directly interact with the buffer,
-             * so this method is implemented solely to be called by Streams (which
-             * it will do based on the {@code cache.max.bytes.buffering} config.
-             * <p>
-             * It's currently a no-op.
-             */
-
-            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withCachingDisabled()
-            {
-                return this;
-            }
-
-
-            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingEnabled(Dictionary<string, string> config)
-            {
-                throw new InvalidOperationException();
-            }
-
-
-            public IStoreBuilder<InMemoryTimeOrderedKeyValueBuffer<K, V>> withLoggingDisabled()
-            {
-                loggingEnabled = false;
-                return this;
-            }
-
-
-            public InMemoryTimeOrderedKeyValueBuffer<K, V> build()
-            {
-                return new InMemoryTimeOrderedKeyValueBuffer<>(storeName, loggingEnabled, keySerde, valSerde);
-            }
-
-
-            public Dictionary<string, string> logConfig()
-            {
-                return Collections.emptyMap();
-            }
-
-
-            public bool loggingEnabled
-            {
-                return loggingEnabled;
-            }
-
-
-            public string name
-            {
-                return storeName;
-            }
-        }
-
         private InMemoryTimeOrderedKeyValueBuffer(string storeName,
                                                   bool loggingEnabled,
                                                   ISerde<K> keySerde,
@@ -141,11 +68,7 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = FullChangeSerde.wrap(valueSerde);
         }
 
-        public override string name
-        {
-            return storeName;
-        }
-
+        public override string name => storeName;
 
         public override bool persistent()
         {
@@ -158,14 +81,14 @@ namespace Kafka.Streams.State.Internals
             this.valueSerde = this.valueSerde == null ? FullChangeSerde.wrap(valueSerde) : this.valueSerde;
         }
 
-        public override void init(IProcessorContext<K, V> context, IStateStore root)
+        public void init(IProcessorContext<K, V> context, IStateStore root)
         {
-            IInternalProcessorContext<K, V>  internalProcessorContext = (IInternalProcessorContext)context;
+            IInternalProcessorContext<K, V> internalProcessorContext = (IInternalProcessorContext)context;
 
             bufferSizeSensor = Sensors.createBufferSizeSensor(this, internalProcessorContext);
             bufferCountSensor = Sensors.createBufferCountSensor(this, internalProcessorContext);
 
-            context.register(root, (RecordBatchingStateRestoreCallback)this::restoreBatch);
+            context.register(root, (RecordBatchingStateRestoreCallback)this.restoreBatch);
             if (loggingEnabled)
             {
                 collector = ((RecordCollector.Supplier)context).recordCollector();
@@ -176,7 +99,7 @@ namespace Kafka.Streams.State.Internals
             partition = context.taskId().partition;
         }
 
-        public override bool isOpen()
+        public bool isOpen()
         {
             return open;
         }
@@ -223,7 +146,7 @@ namespace Kafka.Streams.State.Internals
 
             int sizeOfBufferTime = sizeof(long);
             ByteBuffer buffer = value.Serialize(sizeOfBufferTime);
-            buffer.putLong(bufferKey.time());
+            buffer.putLong(bufferKey.time);
 
             collector.send(
                 changelogTopic,
@@ -264,9 +187,9 @@ namespace Kafka.Streams.State.Internals
                         BufferValue removed = sortedMap.Remove(bufferKey);
                         if (removed != null)
                         {
-                            memBufferSize -= computeRecordSize(bufferKey.key(), removed);
+                            memBufferSize -= computeRecordSize(bufferKey.key, removed);
                         }
-                        if (bufferKey.time() == minTimestamp)
+                        if (bufferKey.time == minTimestamp)
                         {
                             minTimestamp = sortedMap.isEmpty() ? long.MaxValue : sortedMap.firstKey().time();
                         }
@@ -368,50 +291,50 @@ namespace Kafka.Streams.State.Internals
             updateBufferMetrics();
         }
 
-        public override void evictWhile(Supplier<Boolean> predicate,
-                               IConsumer<Eviction<K, V>> callback)
+        public override void evictWhile(Supplier<bool> predicate,
+                               IConsumer<K, Eviction<K, V>> callback)
         {
-            IEnumerator < KeyValuePair < BufferKey, BufferValue >> delegate = sortedMap.iterator();
+            IEnumerator<KeyValuePair<BufferKey, BufferValue>> @delegate = sortedMap.iterator();
             int evictions = 0;
 
             if (predicate())
             {
                 KeyValuePair<BufferKey, BufferValue> next = null;
-                if (delegate.hasNext())
+                if (@delegate.hasNext())
                 {
-                    next = delegate.next();
+                    next = @delegate.next();
                 }
 
                 // predicate being true means we read one record, call the callback, and then Remove it
                 while (next != null && predicate())
                 {
-                    if (next.Key.time() != minTimestamp)
+                    if (next.Key.time != minTimestamp)
                     {
                         throw new InvalidOperationException(
                             "minTimestamp [" + minTimestamp + "] did not match the actual min timestamp [" +
-                                next.Key.time() + "]"
+                                next.Key.time + "]"
                         );
                     }
-                    K key = keySerde.Deserializer().Deserialize(changelogTopic, next.Key.key()());
+                    K key = keySerde.Deserializer.Deserialize(changelogTopic, next.Key.key.get());
                     BufferValue bufferValue = next.Value;
                     Change<V> value = valueSerde.deserializeParts(
                         changelogTopic,
-                        new Change<>(bufferValue.newValue(), bufferValue.oldValue())
+                        new Change<>(bufferValue.newValue, bufferValue.oldValue)
                     );
                     callback.accept(new Eviction<>(key, value, bufferValue.context));
 
-                    delegate.Remove();
-                    index.Remove(next.Key.key());
+                    @delegate.Remove();
+                    index.Remove(next.Key.key);
 
-                    dirtyKeys.Add(next.Key.key());
+                    dirtyKeys.Add(next.Key.key);
 
-                    memBufferSize -= computeRecordSize(next.Key.key(), bufferValue);
+                    memBufferSize -= computeRecordSize(next.Key.key, bufferValue);
 
                     // peek at the next record so we can update the minTimestamp
-                    if (delegate.hasNext())
+                    if (@delegate.hasNext())
                     {
-                        next = delegate.next();
-                        minTimestamp = next == null ? long.MaxValue : next.Key.time();
+                        next = @delegate.next();
+                        minTimestamp = next == null ? long.MaxValue : next.Key.time;
                     }
                     else
                     {
@@ -430,12 +353,12 @@ namespace Kafka.Streams.State.Internals
 
         public override Maybe<ValueAndTimestamp<V>> priorValueForBuffered(K key)
         {
-            Bytes serializedKey = Bytes.wrap(keySerde.Serializer().Serialize(changelogTopic, key));
+            Bytes serializedKey = Bytes.wrap(keySerde.Serializer.Serialize(changelogTopic, key));
             if (index.ContainsKey(serializedKey))
             {
                 byte[] serializedValue = internalPriorValueForBuffered(serializedKey);
 
-                V deserializedValue = valueSerde.innerSerde().Deserializer().Deserialize(
+                V deserializedValue = valueSerde.innerSerde().Deserializer.Deserialize(
                     changelogTopic,
                     serializedValue
                 );
@@ -461,7 +384,7 @@ namespace Kafka.Streams.State.Internals
             else
             {
                 BufferValue bufferValue = sortedMap[bufferKey];
-                return bufferValue.priorValue();
+                return bufferValue.priorValue;
             }
         }
 
@@ -473,7 +396,7 @@ namespace Kafka.Streams.State.Internals
             requireNonNull(value, "value cannot be null");
             requireNonNull(recordContext, "recordContext cannot be null");
 
-            Bytes serializedKey = Bytes.wrap(keySerde.Serializer().Serialize(changelogTopic, key));
+            Bytes serializedKey = Bytes.wrap(keySerde.Serializer.Serialize(changelogTopic, key));
             Change<byte[]> serialChange = valueSerde.serializeParts(changelogTopic, value);
 
             BufferValue buffered = getBuffered(serializedKey);
@@ -481,11 +404,11 @@ namespace Kafka.Streams.State.Internals
             if (buffered == null)
             {
                 V priorValue = value.oldValue;
-                serializedPriorValue = valueSerde.innerSerde().Serializer().Serialize(changelogTopic, priorValue);
+                serializedPriorValue = valueSerde.innerSerde().Serializer.Serialize(changelogTopic, priorValue);
             }
             else
             {
-                serializedPriorValue = buffered.priorValue();
+                serializedPriorValue = buffered.priorValue;
             }
 
             cleanPut(
@@ -538,16 +461,11 @@ namespace Kafka.Streams.State.Internals
             return memBufferSize;
         }
 
-        public override long minTimestamp()
-        {
-            return minTimestamp;
-        }
-
         private static long computeRecordSize(Bytes key, BufferValue value)
         {
             long size = 0L;
             size += 8; // buffer time
-            size += key[].Length;
+            size += key.get().Length;
             if (value != null)
             {
                 size += value.residentMemorySizeEstimate();
@@ -576,3 +494,4 @@ namespace Kafka.Streams.State.Internals
                 '}';
         }
     }
+}

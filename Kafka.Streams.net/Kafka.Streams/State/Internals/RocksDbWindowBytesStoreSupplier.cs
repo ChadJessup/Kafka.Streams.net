@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
     public class RocksDbWindowBytesStoreSupplier : IWindowBytesStoreSupplier
@@ -25,12 +28,13 @@ namespace Kafka.Streams.State.Internals
         private bool retainDuplicates;
         private bool returnTimestampedStore;
 
-        public RocksDbWindowBytesStoreSupplier(string name,
-                                               long retentionPeriod,
-                                               long segmentInterval,
-                                               long windowSize,
-                                               bool retainDuplicates,
-                                               bool returnTimestampedStore)
+        public RocksDbWindowBytesStoreSupplier(
+            string name,
+            long retentionPeriod,
+            long segmentInterval,
+            long windowSize,
+            bool retainDuplicates,
+            bool returnTimestampedStore)
         {
             this.name = name;
             this.retentionPeriod = retentionPeriod;
@@ -40,12 +44,7 @@ namespace Kafka.Streams.State.Internals
             this.returnTimestampedStore = returnTimestampedStore;
         }
 
-        public override string name
-        {
-            return name;
-        }
-
-        public override IWindowStore<Bytes, byte[]> get()
+        public IWindowStore<Bytes, byte[]> get()
         {
             if (!returnTimestampedStore)
             {
@@ -73,35 +72,14 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override string metricsScope()
+        public string metricsScope()
         {
             return "rocksdb-window-state";
         }
 
-        [System.Obsolete]
-        public override int segments()
-        {
-            return (int)(retentionPeriod / segmentInterval) + 1;
-        }
-
-        public override long segmentIntervalMs()
+        public long segmentIntervalMs()
         {
             return segmentInterval;
-        }
-
-        public override long windowSize()
-        {
-            return windowSize;
-        }
-
-        public override bool retainDuplicates()
-        {
-            return retainDuplicates;
-        }
-
-        public override long retentionPeriod()
-        {
-            return retentionPeriod;
         }
     }
 }

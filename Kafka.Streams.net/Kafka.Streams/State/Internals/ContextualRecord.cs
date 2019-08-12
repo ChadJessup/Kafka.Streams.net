@@ -16,8 +16,7 @@
  */
 namespace Kafka.Streams.State.Internals
 {
-
-
+    using global::Kafka.Streams.KStream.Internals;
     using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
 
 
@@ -45,12 +44,12 @@ namespace Kafka.Streams.State.Internals
             return value;
         }
 
-        long residentMemorySizeEstimate()
+        public long residentMemorySizeEstimate()
         {
             return (value == null ? 0 : value.Length) + recordContext.residentMemorySizeEstimate();
         }
 
-        ByteBuffer serialize(int end.Adding)
+        ByteBuffer serialize(int value)
         {
             byte[] serializedContext = recordContext.Serialize();
 

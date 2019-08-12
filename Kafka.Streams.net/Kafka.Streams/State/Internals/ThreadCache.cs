@@ -228,7 +228,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void close(string @namespace)
+        public void close(string @namespace)
         {
             NamedCache removed = caches.Remove(@namespace);
             if (removed != null)

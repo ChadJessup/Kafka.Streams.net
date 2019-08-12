@@ -1,4 +1,5 @@
-using Kafka.Streams.State;
+using Kafka.Streams.Errors;
+using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -12,7 +13,6 @@ namespace Kafka.Streams.State.Internals
      */
     public class CompositeReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore<K, V>
     {
-
         private IStateStoreProvider storeProvider;
         private IQueryableStoreType<IReadOnlyKeyValueStore<K, V>> storeType;
         private string storeName;
@@ -35,7 +35,8 @@ namespace Kafka.Streams.State.Internals
             {
                 try
                 {
-                    V result = store[key];
+                    V result = store.get(key);
+
                     if (result != null)
                     {
                         return result;
@@ -110,3 +111,4 @@ namespace Kafka.Streams.State.Internals
             return total;
         }
     }
+}

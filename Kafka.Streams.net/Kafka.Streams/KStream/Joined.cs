@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream
         public ISerde<K> keySerde { get; }
         public ISerde<V> valueSerde { get; }
         public ISerde<VO> otherValueSerde { get; }
-        protected string name;
+        public string name { get; }
 
         private Joined(
             ISerde<K> keySerde,

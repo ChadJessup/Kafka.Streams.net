@@ -11,7 +11,7 @@ namespace Kafka.Streams.State.Internals
     {
         private ColumnFamilyHandle columnFamily;
 
-        SingleColumnFamilyAccessor(ColumnFamilyHandle columnFamily)
+        public SingleColumnFamilyAccessor(ColumnFamilyHandle columnFamily)
         {
             this.columnFamily = columnFamily;
         }
@@ -53,7 +53,7 @@ namespace Kafka.Streams.State.Internals
             foreach (KeyValue<Bytes, byte[]> entry in entries)
             {
                 entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
-               .AddToBatch(entry.key(), entry.value, batch);
+                addToBatch(entry.key, entry.value, batch);
             }
         }
 
@@ -107,7 +107,7 @@ namespace Kafka.Streams.State.Internals
         {
             foreach (KeyValue<byte[], byte[]> record in records)
             {
-               .AddToBatch(record.key, record.value, batch);
+                addToBatch(record.key, record.value, batch);
             }
         }
 
@@ -118,7 +118,7 @@ namespace Kafka.Streams.State.Internals
         {
             if (value == null)
             {
-                batch.delete(columnFamily, key);
+                batch.Delete(columnFamily, key);
             }
             else
             {

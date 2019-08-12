@@ -24,6 +24,8 @@ namespace Kafka.Streams.KStream
     {
         public static Serde<T> serdeFrom<T>()
             => Activator.CreateInstance<Serde<T>>();
+        public static object serdeFrom(Type type)
+            => Activator.CreateInstance(type);
 
         public static ISerde<string> String()
             => new Serde<string>(Serializers.Utf8, Deserializers.Utf8);

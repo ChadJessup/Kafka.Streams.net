@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Confluent.Kafka;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.State.Internals
 {
     /**

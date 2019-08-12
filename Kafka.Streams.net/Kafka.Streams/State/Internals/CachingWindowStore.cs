@@ -16,15 +16,16 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.Internals
 {
-
-    class CachingWindowStore
+    public class CachingWindowStore
         : WrappedStateStore<IWindowStore<Bytes, byte[]>, byte[], byte[]>
     , IWindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]>
     {
@@ -36,7 +37,7 @@ namespace Kafka.Streams.State.Internals
         private string name;
         private ThreadCache cache;
         private bool sendOldValues;
-        private IInternalProcessorContext<K, V>  context;
+        private IInternalProcessorContext<K, V> context;
         private StateSerdes<Bytes, byte[]> bytesSerdes;
         private ICacheFlushListener<byte[], byte[]> flushListener;
 
@@ -44,9 +45,10 @@ namespace Kafka.Streams.State.Internals
 
         private SegmentedCacheFunction cacheFunction;
 
-        CachingWindowStore(IWindowStore<Bytes, byte[]> underlying,
-                           long windowSize,
-                           long segmentInterval)
+        public CachingWindowStore(
+            IWindowStore<Bytes, byte[]> underlying,
+            long windowSize,
+            long segmentInterval)
         {
             base(underlying);
             this.windowSize = windowSize;
@@ -61,7 +63,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        private void initInternal(IInternalProcessorContext<K, V>  context)
+        private void initInternal(IInternalProcessorContext<K, V> context)
         {
             this.context = context;
             string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId(), name);
@@ -73,22 +75,22 @@ namespace Kafka.Streams.State.Internals
             name = context.taskId() + "-" + name;
             cache = this.context.getCache();
 
-            cache.AddDirtyEntryFlushListener(name, entries=>
+            cache.AddDirtyEntryFlushListener(name, entries =>
     {
-                foreach (DirtyEntry entry in entries)
-                {
-                    putAndMaybeForward(entry, context);
-                }
-            });
+        foreach (DirtyEntry entry in entries)
+        {
+            putAndMaybeForward(entry, context);
+        }
+    });
         }
 
         private void putAndMaybeForward(DirtyEntry entry,
-                                        IInternalProcessorContext<K, V>  context)
+                                        IInternalProcessorContext<K, V> context)
         {
-            byte[] binaryWindowKey = cacheFunction.key(entry.key())[];
+            byte[] binaryWindowKey = cacheFunction.key(entry.key()).get();
             Windowed<Bytes> windowedKeyBytes = WindowKeySchema.fromStoreBytesKey(binaryWindowKey, windowSize);
-            long windowStartTimestamp = windowedKeyBytes.window().start();
-            Bytes binaryKey = windowedKeyBytes.key();
+            long windowStartTimestamp = windowedKeyBytes.window.start();
+            Bytes binaryKey = windowedKeyBytes.key;
             if (flushListener != null)
             {
                 byte[] rawNewValue = entry.newValue();
@@ -194,7 +196,7 @@ namespace Kafka.Streams.State.Internals
             // if store is open outside as well.
             validateStoreOpen();
 
-            WindowStoreIterator<byte[]> underlyingIterator = wrapped.fetch(key, timeFrom, timeTo);
+            IWindowStoreIterator<byte[]> underlyingIterator = wrapped.fetch(key, timeFrom, timeTo);
             if (cache == null)
             {
                 return underlyingIterator;
@@ -308,162 +310,5 @@ namespace Kafka.Streams.State.Internals
             cache.close(name);
             wrapped.close();
         }
-
-        private class CacheIteratorWrapper : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
-        {
-
-            private long segmentInterval;
-
-            private Bytes keyFrom;
-            private Bytes keyTo;
-            private long timeTo;
-            private long lastSegmentId;
-
-            private long currentSegmentId;
-            private Bytes cacheKeyFrom;
-            private Bytes cacheKeyTo;
-
-            private MemoryLRUCacheBytesIterator current;
-
-            private CacheIteratorWrapper(Bytes key,
-                                         long timeFrom,
-                                         long timeTo)
-                : this(key, key, timeFrom, timeTo)
-            {
-            }
-
-            private CacheIteratorWrapper(Bytes keyFrom,
-                                         Bytes keyTo,
-                                         long timeFrom,
-                                         long timeTo)
-            {
-                this.keyFrom = keyFrom;
-                this.keyTo = keyTo;
-                this.timeTo = timeTo;
-                this.lastSegmentId = cacheFunction.segmentId(Math.Min(timeTo, maxObservedTimestamp));
-
-                this.segmentInterval = cacheFunction.getSegmentInterval();
-                this.currentSegmentId = cacheFunction.segmentId(timeFrom);
-
-                setCacheKeyRange(timeFrom, currentSegmentLastTime());
-
-                this.current = cache.range(name, cacheKeyFrom, cacheKeyTo);
-            }
-
-
-            public bool hasNext()
-            {
-                if (current == null)
-                {
-                    return false;
-                }
-
-                if (current.hasNext())
-                {
-                    return true;
-                }
-
-                while (!current.hasNext())
-                {
-                    getNextSegmentIterator();
-                    if (current == null)
-                    {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-
-            public Bytes peekNextKey()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-                return current.peekNextKey();
-            }
-
-
-            public KeyValue<Bytes, LRUCacheEntry> peekNext()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-                return current.peekNext();
-            }
-
-
-            public KeyValue<Bytes, LRUCacheEntry> next()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-                return current.next();
-            }
-
-
-            public void close()
-            {
-                current.close();
-            }
-
-            private long currentSegmentBeginTime()
-            {
-                return currentSegmentId * segmentInterval;
-            }
-
-            private long currentSegmentLastTime()
-            {
-                return Math.Min(timeTo, currentSegmentBeginTime() + segmentInterval - 1);
-            }
-
-            private void getNextSegmentIterator()
-            {
-                ++currentSegmentId;
-                lastSegmentId = cacheFunction.segmentId(Math.Min(timeTo, maxObservedTimestamp));
-
-                if (currentSegmentId > lastSegmentId)
-                {
-                    current = default;
-                    return;
-                }
-
-                setCacheKeyRange(currentSegmentBeginTime(), currentSegmentLastTime());
-
-                current.close();
-                current = cache.range(name, cacheKeyFrom, cacheKeyTo);
-            }
-
-            private void setCacheKeyRange(long lowerRangeEndTime, long upperRangeEndTime)
-            {
-                if (cacheFunction.segmentId(lowerRangeEndTime) != cacheFunction.segmentId(upperRangeEndTime))
-                {
-                    throw new InvalidOperationException("Error iterating over segments: segment interval has changed");
-                }
-
-                if (keyFrom == keyTo)
-                {
-                    cacheKeyFrom = cacheFunction.cacheKey(segmentLowerRangeFixedSize(keyFrom, lowerRangeEndTime));
-                    cacheKeyTo = cacheFunction.cacheKey(segmentUpperRangeFixedSize(keyTo, upperRangeEndTime));
-                }
-                else
-                {
-                    cacheKeyFrom = cacheFunction.cacheKey(keySchema.lowerRange(keyFrom, lowerRangeEndTime), currentSegmentId);
-                    cacheKeyTo = cacheFunction.cacheKey(keySchema.upperRange(keyTo, timeTo), currentSegmentId);
-                }
-            }
-
-            private Bytes segmentLowerRangeFixedSize(Bytes key, long segmentBeginTime)
-            {
-                return WindowKeySchema.toStoreKeyBinary(key, Math.Max(0, segmentBeginTime), 0);
-            }
-
-            private Bytes segmentUpperRangeFixedSize(Bytes key, long segmentEndTime)
-            {
-                return WindowKeySchema.toStoreKeyBinary(key, segmentEndTime, int.MaxValue);
-            }
-        }
     }
+}

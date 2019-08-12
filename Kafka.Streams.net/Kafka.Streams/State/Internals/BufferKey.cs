@@ -14,27 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
-    public class BufferKey : Comparable<BufferKey>
+    public class BufferKey : IComparable<BufferKey>
     {
-        private long time;
-        private Bytes key;
+        public long time { get; }
+        public Bytes key { get; }
 
-        BufferKey(long time, Bytes key)
+        public BufferKey(long time, Bytes key)
         {
             this.time = time;
             this.key = key;
-        }
-
-        long time()
-        {
-            return time;
-        }
-
-        Bytes key()
-        {
-            return key;
         }
 
         public override bool Equals(object o)
@@ -49,18 +42,18 @@ namespace Kafka.Streams.State.Internals
             }
             BufferKey bufferKey = (BufferKey)o;
             return time == bufferKey.time &&
-                Objects.Equals(key, bufferKey.key);
+                key.Equals(bufferKey.key);
         }
 
         public override int GetHashCode()
         {
-            return Objects.hash(time, key);
+            return (time, key).GetHashCode();
         }
 
         public override int CompareTo(BufferKey o)
         {
             // ordering of keys within a time uses GetHashCode().
-            int timeComparison = long.compare(time, o.time);
+            int timeComparison = time.CompareTo(o.time);
             return timeComparison == 0 ? key.CompareTo(o.key) : timeComparison;
         }
 

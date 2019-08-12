@@ -242,3 +242,4 @@ namespace Kafka.Streams.KStream
                 '}';
         }
     }
+}

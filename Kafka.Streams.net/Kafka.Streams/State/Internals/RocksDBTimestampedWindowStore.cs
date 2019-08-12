@@ -22,7 +22,7 @@ namespace Kafka.Streams.State.Internals
     public class RocksDbTimestampedWindowStore : RocksDbWindowStore, ITimestampedBytesStore
     {
 
-        RocksDbTimestampedWindowStore(ISegmentedBytesStore bytesStore,
+        public RocksDbTimestampedWindowStore(ISegmentedBytesStore bytesStore,
                                       bool retainDuplicates,
                                       long windowSize)
             : base(bytesStore, retainDuplicates, windowSize)

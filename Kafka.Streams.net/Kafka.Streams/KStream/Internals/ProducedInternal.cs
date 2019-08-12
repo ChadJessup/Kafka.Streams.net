@@ -14,6 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -30,25 +33,15 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
-        public ISerde<K> keySerde
-        {
-            return keySerde;
-        }
+        public ISerde<K> keySerde { get; }
 
-        public ISerde<V> valueSerde
-        {
-            return valueSerde;
-        }
+        public ISerde<V> valueSerde { get; }
 
-        public StreamPartitioner<K, V> streamPartitioner()
+        public IStreamPartitioner<K, V> streamPartitioner()
         {
             return partitioner;
         }
 
-        public string name
-        {
-            return processorName;
-        }
-
+        public string name => processorName;
     }
 }

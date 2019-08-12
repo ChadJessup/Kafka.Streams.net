@@ -15,25 +15,27 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.Processor.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
     public class WindowEndTimeDefinition<K> : ITimeDefinition<K>
-        where K : Windowed
+        where K : Windowed<K>
     {
-        private static WindowEndTimeDefinition INSTANCE = new WindowEndTimeDefinition();
+        private static WindowEndTimeDefinition<K> INSTANCE = new WindowEndTimeDefinition<K>();
 
         private WindowEndTimeDefinition() { }
 
 
-        public static K WindowEndTimeDefinition<K> instance()
-            {
-            return WindowEndTimeDefinition.INSTANCE;
+        public static WindowEndTimeDefinition<K> instance()
+        {
+            return WindowEndTimeDefinition<K>.INSTANCE;
         }
 
 
         public long time(IProcessorContext<K, V> context, K key)
         {
-            return key.window().end();
+            return key.window.end();
         }
 
 

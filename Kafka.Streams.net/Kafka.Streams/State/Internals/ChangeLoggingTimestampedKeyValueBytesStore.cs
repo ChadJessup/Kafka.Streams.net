@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
     public class ChangeLoggingTimestampedKeyValueBytesStore : ChangeLoggingKeyValueBytesStore
     {
 
-        ChangeLoggingTimestampedKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
+        public ChangeLoggingTimestampedKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
             : base(inner)
         {
         }

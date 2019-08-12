@@ -14,47 +14,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.kafka.streams.state.Internals;
+using Kafka.Streams.State.Interfaces;
 
-using Kafka.Streams.KeyValue;
-using Kafka.Streams.State.KeyValueIterator;
-
-
-
-/**
- * This is used to ensure backward compatibility at DSL level between
- * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and
- * {@link org.apache.kafka.streams.state.KeyValueStore}.
- *
- * @see KeyValueToTimestampedKeyValueByteStoreAdapter
- */
-class KeyValueToTimestampedKeyValueIteratorAdapter<K> : KeyValueIterator<K, byte[]>
+namespace Kafka.Streams.State.Internals
 {
-    private KeyValueIterator<K, byte[]> innerIterator;
+    /**
+     * This is used to ensure backward compatibility at DSL level between
+     * {@link org.apache.kafka.streams.state.TimestampedKeyValueStore} and
+     * {@link org.apache.kafka.streams.state.KeyValueStore}.
+     *
+     * @see KeyValueToTimestampedKeyValueByteStoreAdapter
+     */
+    public class KeyValueToTimestampedKeyValueIteratorAdapter<K> : IKeyValueIterator<K, byte[]>
+    {
+        private IKeyValueIterator<K, byte[]> innerIterator;
 
-    KeyValueToTimestampedKeyValueIteratorAdapter(KeyValueIterator<K, byte[]> innerIterator)
-{
-        this.innerIterator = innerIterator;
-    }
+        KeyValueToTimestampedKeyValueIteratorAdapter(IKeyValueIterator<K, byte[]> innerIterator)
+        {
+            this.innerIterator = innerIterator;
+        }
 
-    public override void close()
-{
-        innerIterator.close();
-    }
+        public void close()
+        {
+            innerIterator.close();
+        }
 
-    public override K peekNextKey()
-{
-        return innerIterator.peekNextKey();
-    }
+        public K peekNextKey()
+        {
+            return innerIterator.peekNextKey();
+        }
 
-    public override bool hasNext()
-{
-        return innerIterator.hasNext();
-    }
+        public bool hasNext()
+        {
+            return innerIterator.hasNext();
+        }
 
-    public override KeyValue<K, byte[]> next()
-{
-        KeyValue<K, byte[]> plainKeyValue = innerIterator.next();
-        return KeyValue.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
+        public KeyValue<K, byte[]> next()
+        {
+            KeyValue<K, byte[]> plainKeyValue = innerIterator.next();
+            return KeyValue<K, byte[]>.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
+        }
     }
 }

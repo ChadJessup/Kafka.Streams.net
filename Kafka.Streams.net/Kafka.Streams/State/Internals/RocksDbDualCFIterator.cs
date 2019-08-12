@@ -1,11 +1,12 @@
 ﻿using Kafka.Common.Utils;
 using Kafka.Streams.Errors;
+using Kafka.Streams.State.Interfaces;
 using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.Internals
 {
     public class RocksDbDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
-        : IKeyValueIterator<Bytes, byte[]>
+        , IKeyValueIterator<Bytes, byte[]>
     {
 
         // RocksDb's JNI interface does not expose getters/setters that allow the
@@ -41,13 +42,6 @@ namespace Kafka.Streams.State.Internals
             }
             return base.hasNext();
         }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public KeyValue<Bytes, byte[]> next()
-        {
-            return base.next();
-        }
-
 
         public KeyValue<Bytes, byte[]> makeNext()
         {

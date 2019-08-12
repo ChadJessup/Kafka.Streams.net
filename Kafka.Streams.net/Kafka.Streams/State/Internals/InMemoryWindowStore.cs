@@ -1,6 +1,14 @@
+using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
@@ -11,7 +19,7 @@ namespace Kafka.Streams.State.Internals
 
         private string name;
         private string metricScope;
-        private IInternalProcessorContext<K, V>  context;
+        private IInternalProcessorContext<K, V> context;
         private Sensor expiredRecordSensor;
         private int seqnum = 0;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
@@ -25,22 +33,18 @@ namespace Kafka.Streams.State.Internals
 
         private volatile bool open = false;
 
-        InMemoryWindowStore(string name,
-                            long retentionPeriod,
-                            long windowSize,
-                            bool retainDuplicates,
-                            string metricScope)
+        public InMemoryWindowStore(
+            string name,
+            long retentionPeriod,
+            long windowSize,
+            bool retainDuplicates,
+            string metricScope)
         {
             this.name = name;
             this.retentionPeriod = retentionPeriod;
             this.windowSize = windowSize;
             this.retainDuplicates = retainDuplicates;
             this.metricScope = metricScope;
-        }
-
-        public override string name
-        {
-            return name;
         }
 
         public override void init(IProcessorContext<K, V> context, IStateStore root)
@@ -55,29 +59,29 @@ namespace Kafka.Streams.State.Internals
                 EXPIRED_WINDOW_RECORD_DROP,
                 RecordingLevel.INFO
             );
-       .AddInvocationRateAndCount(
-            expiredRecordSensor,
-            "stream-" + metricScope + "-metrics",
-            metrics.tagMap("task-id", taskName, metricScope + "-id", name),
-            EXPIRED_WINDOW_RECORD_DROP
-        );
+            addInvocationRateAndCount(
+                 expiredRecordSensor,
+                 "stream-" + metricScope + "-metrics",
+                 metrics.tagMap("task-id", taskName, metricScope + "-id", name),
+                 EXPIRED_WINDOW_RECORD_DROP
+             );
 
             if (root != null)
             {
-                context.register(root, (key, value)=>
-    {
-                    put(Bytes.wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
-                });
+    //            context.register(root, (key, value) =>
+    //{
+    //    put(Bytes.wrap(extractStoreKeyBytes(key)), value, extractStoreTimestamp(key));
+    //});
             }
             open = true;
         }
 
-        public override void put(Bytes key, byte[] value)
+        public void put(Bytes key, byte[] value)
         {
             put(key, value, context.timestamp());
         }
 
-        public override void put(Bytes key, byte[] value, long windowStartTimestamp)
+        public void put(Bytes key, byte[] value, long windowStartTimestamp)
         {
             removeExpiredSegments();
             maybeUpdateSeqnumForDups();
@@ -94,25 +98,25 @@ namespace Kafka.Streams.State.Internals
             {
                 if (value != null)
                 {
-                    segmentMap.computeIfAbsent(windowStartTimestamp, t=> new ConcurrentSkipListMap<>());
+                    segmentMap.computeIfAbsent(windowStartTimestamp, t => new ConcurrentSkipListMap<>());
                     segmentMap[windowStartTimestamp].Add(keyBytes, value);
                 }
                 else
                 {
-                    segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap)=>
-  {
-                        kvMap.Remove(keyBytes);
-                        if (kvMap.isEmpty())
-                        {
-                            segmentMap.Remove(windowStartTimestamp);
-                        }
-                        return kvMap;
-                    });
+                    //                  segmentMap.computeIfPresent(windowStartTimestamp, (t, kvMap) =>
+                    //{
+                    //    kvMap.Remove(keyBytes);
+                    //    if (kvMap.isEmpty())
+                    //    {
+                    //        segmentMap.Remove(windowStartTimestamp);
+                    //    }
+                    //    return kvMap;
+                    //});
                 }
             }
         }
 
-        public override byte[] fetch(Bytes key, long windowStartTimestamp)
+        public byte[] fetch(Bytes key, long windowStartTimestamp)
         {
 
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
@@ -136,7 +140,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override WindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
+        public IWindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
         {
 
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
@@ -156,7 +160,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
                                                                Bytes to,
                                                                long timeFrom,
                                                                long timeTo)
@@ -187,7 +191,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [System.Obsolete]
-        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetchAll(long timeFrom, long timeTo)
         {
             removeExpiredSegments();
 
@@ -203,7 +207,7 @@ namespace Kafka.Streams.State.Internals
                 null, null, segmentMap.subMap(minTime, true, timeTo, true).iterator());
         }
 
-        public override IKeyValueIterator<Windowed<Bytes>, byte[]> all()
+        public IKeyValueIterator<Windowed<Bytes>, byte[]> all()
         {
             removeExpiredSegments();
 
@@ -213,24 +217,24 @@ namespace Kafka.Streams.State.Internals
                 null, null, segmentMap.tailMap(minTime, false).iterator());
         }
 
-        public override bool persistent()
+        public bool persistent()
         {
             return false;
         }
 
-        public override bool isOpen()
+        public bool isOpen()
         {
             return open;
         }
 
-        public override void flush()
+        public void flush()
         {
             // do-nothing since it is in-memory
         }
 
-        public override void close()
+        public void close()
         {
-            if (openIterators.size() != 0)
+            if (openIterators.Count != 0)
             {
                 LOG.LogWarning("Closing {} open iterators for store {}", openIterators.size(), name);
                 foreach (InMemoryWindowStoreIteratorWrapper it in openIterators)
@@ -263,8 +267,8 @@ namespace Kafka.Streams.State.Internals
 
         private static Bytes wrapForDups(Bytes key, int seqnum)
         {
-            ByteBuffer buf = ByteBuffer.allocate(key().Length + SEQNUM_SIZE);
-            buf.Add(key());
+            ByteBuffer buf = ByteBuffer.allocate(key.get().Length + SEQNUM_SIZE);
+            buf.Add(key.get());
             buf.putInt(seqnum);
 
             return Bytes.wrap(buf.array());
@@ -272,8 +276,8 @@ namespace Kafka.Streams.State.Internals
 
         private static Bytes getKey(Bytes keyBytes)
         {
-            byte[] bytes = new byte[keyBytes[].Length - SEQNUM_SIZE];
-            System.arraycopy(keyBytes(), 0, bytes, 0, bytes.Length);
+            byte[] bytes = new byte[keyBytes.get().Length - SEQNUM_SIZE];
+            System.arraycopy(keyBytes.get(), 0, bytes, 0, bytes.Length);
             return Bytes.wrap(bytes);
 
         }
@@ -424,103 +428,10 @@ namespace Kafka.Streams.State.Internals
                 }
             }
 
-            long minTime()
+            public long minTime()
             {
                 return currentTime;
             }
         }
-
-        private static class WrappedInMemoryWindowStoreIterator : InMemoryWindowStoreIteratorWrapper, WindowStoreIterator<byte[]>
-        {
-
-            WrappedInMemoryWindowStoreIterator(Bytes keyFrom,
-                                               Bytes keyTo,
-                                               IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
-                                               ClosingCallback callback,
-                                               bool retainDuplicates)
-            {
-                base(keyFrom, keyTo, segmentIterator, callback, retainDuplicates);
-            }
-
-
-            public long peekNextKey()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-                return base.currentTime;
-            }
-
-
-            public KeyValue<long, byte[]> next()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-
-                KeyValue<long, byte[]> result = new KeyValue<>(base.currentTime, base.next.value);
-                base.next = null;
-                return result;
-            }
-
-            public static WrappedInMemoryWindowStoreIterator emptyIterator()
-            {
-                return new WrappedInMemoryWindowStoreIterator(null, null, null, it=> { }, false);
-            }
-        }
-
-        private static class WrappedWindowedKeyValueIterator : InMemoryWindowStoreIteratorWrapper, IKeyValueIterator<Windowed<Bytes>, byte[]>
-        {
-
-            private long windowSize;
-
-            WrappedWindowedKeyValueIterator(Bytes keyFrom,
-                                            Bytes keyTo,
-                                            IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator,
-                                            ClosingCallback callback,
-                                            bool retainDuplicates,
-                                            long windowSize)
-            {
-                base(keyFrom, keyTo, segmentIterator, callback, retainDuplicates);
-                this.windowSize = windowSize;
-            }
-
-            public Windowed<Bytes> peekNextKey()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-                return getWindowedKey();
-            }
-
-            public KeyValue<Windowed<Bytes>, byte[]> next()
-            {
-                if (!hasNext())
-                {
-                    throw new NoSuchElementException();
-                }
-
-                KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), base.next.value);
-                base.next = null;
-                return result;
-            }
-
-            private Windowed<Bytes> getWindowedKey()
-            {
-                Bytes key = base.retainDuplicates ? getKey(base.next.key) : base.next.key;
-                long endTime = base.currentTime + windowSize;
-
-                if (endTime < 0)
-                {
-                    LOG.LogWarning("Warning: window end time was truncated to long.MAX");
-                    endTime = long.MaxValue;
-                }
-
-                TimeWindow timeWindow = new TimeWindow(base.currentTime, endTime);
-                return new Windowed<>(key, timeWindow);
-            }
-        }
     }
+}

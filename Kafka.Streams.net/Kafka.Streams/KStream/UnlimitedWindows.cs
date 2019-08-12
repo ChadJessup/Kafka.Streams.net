@@ -14,6 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Internals.Kafka.Streams.Internals;
+using Kafka.Streams.KStream.Internals;
+using System;
+using System.Collections.Generic;
+
 namespace Kafka.Streams.KStream
 {
 
@@ -103,7 +108,7 @@ namespace Kafka.Streams.KStream
             // always return the single unlimited window
 
             // we cannot use Collections.singleMap since it does not support Remove()
-            Dictionary<long, UnlimitedWindow> windows = new Dictionary<>();
+            Dictionary<long, UnlimitedWindow> windows = new Dictionary<long, UnlimitedWindow>();
             if (timestamp >= startMs)
             {
                 windows.Add(startMs, new UnlimitedWindow(startMs));
@@ -190,3 +195,4 @@ namespace Kafka.Streams.KStream
                 '}';
         }
     }
+}

@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+using System;
+
 namespace Kafka.Streams.State.Internals
 {
-    public class RocksDbSessionBytesStoreSupplier : SessionBytesStoreSupplier
+    public class RocksDbSessionBytesStoreSupplier : ISessionBytesStoreSupplier
     {
         private string name;
-        private long retentionPeriod;
+        public long retentionPeriod { get; }
 
         public RocksDbSessionBytesStoreSupplier(string name,
                                                 long retentionPeriod)
@@ -28,12 +32,7 @@ namespace Kafka.Streams.State.Internals
             this.retentionPeriod = retentionPeriod;
         }
 
-        public override string name
-        {
-            return name;
-        }
-
-        public override ISessionStore<Bytes, byte[]> get()
+        public ISessionStore<Bytes, byte[]> get()
         {
             RocksDbSegmentedBytesStore segmented = new RocksDbSegmentedBytesStore(
                 name,
@@ -44,20 +43,15 @@ namespace Kafka.Streams.State.Internals
             return new RocksDbSessionStore(segmented);
         }
 
-        public override string metricsScope()
+        public string metricsScope()
         {
             return "rocksdb-session-state";
         }
 
-        public override long segmentIntervalMs()
+        public long segmentIntervalMs()
         {
             // Selected somewhat arbitrarily. Profiling may reveal a different value is preferable.
             return Math.Max(retentionPeriod / 2, 60_000L);
-        }
-
-        public override long retentionPeriod()
-        {
-            return retentionPeriod;
         }
     }
 }

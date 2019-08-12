@@ -21,14 +21,14 @@ namespace Kafka.Streams.State.Internals
 {
     public class ChangeLoggingKeyValueBytesStore
         : WrappedStateStore<IKeyValueStore<Bytes, byte[]>, byte[], byte[]>
-    : IKeyValueStore<Bytes, byte[]>
+    , IKeyValueStore<Bytes, byte[]>
     {
 
-        StoreChangeLogger<Bytes, byte[]> changeLogger;
+        public StoreChangeLogger<Bytes, byte[]> changeLogger { get; }
 
-        ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
+        public ChangeLoggingKeyValueBytesStore(IKeyValueStore<Bytes, byte[]> inner)
+            : base(inner)
         {
-            base(inner);
         }
 
         public override void init(IProcessorContext<K, V> context,

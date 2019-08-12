@@ -61,7 +61,7 @@ namespace Kafka.Streams.State.Internals
             return wrapped.isOpen();
         }
 
-        void validateStoreOpen()
+        protected void validateStoreOpen()
         {
             if (!wrapped.isOpen())
             {

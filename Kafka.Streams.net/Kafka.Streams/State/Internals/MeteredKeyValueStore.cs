@@ -1,7 +1,10 @@
 using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -72,13 +75,13 @@ namespace Kafka.Streams.State.Internals
             // register and possibly restore the state from the logs
             if (restoreTime.shouldRecord())
             {
-                measureLatency(
-                    ()=>
-    {
-                    base.init(context, root);
-                    return null;
-                },
-                restoreTime);
+                //            measureLatency(
+                //                () =>
+                //{
+                //    base.init(context, root);
+                //    return null;
+                //},
+                //            restoreTime);
             }
             else
             {
@@ -102,14 +105,15 @@ namespace Kafka.Streams.State.Internals
             IKeyValueStore<Bytes, byte[]> wrapped = wrapped;
             if (wrapped is CachedStateStore)
             {
-                return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
-                   (rawKey, rawNewValue, rawOldValue, timestamp)=>listener.apply(
-                       serdes.keyFrom(rawKey),
-                       rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
-                       rawOldValue != null ? serdes.valueFrom(rawOldValue) : null,
-                       timestamp
-                   ),
-                   sendOldValues);
+                return null;
+                //return ((CachedStateStore<byte[], byte[]>)wrapped].setFlushListener(
+                //   (rawKey, rawNewValue, rawOldValue, timestamp) => listener.apply(
+                //       serdes.keyFrom(rawKey),
+                //       rawNewValue != null ? serdes.valueFrom(rawNewValue) : null,
+                //       rawOldValue != null ? serdes.valueFrom(rawOldValue) : null,
+                //       timestamp
+                //   ),
+                //   sendOldValues);
             }
             return false;
         }
@@ -120,7 +124,7 @@ namespace Kafka.Streams.State.Internals
             {
                 if (getTime.shouldRecord())
                 {
-                    return measureLatency(()=>outerValue(wrapped[keyBytes(key)]), getTime);
+                    return measureLatency(() => outerValue(wrapped[keyBytes(key)]), getTime);
                 }
                 else
                 {
@@ -141,11 +145,11 @@ namespace Kafka.Streams.State.Internals
             {
                 if (putTime.shouldRecord())
                 {
-                    measureLatency(()=>
-    {
-                        wrapped.Add(keyBytes(key), serdes.rawValue(value));
-                        return null;
-                    }, putTime);
+                    //                measureLatency(() =>
+                    //{
+                    //    wrapped.Add(keyBytes(key), serdes.rawValue(value));
+                    //    return null;
+                    //}, putTime);
                 }
                 else
                 {
@@ -165,7 +169,7 @@ namespace Kafka.Streams.State.Internals
             if (putIfAbsentTime.shouldRecord())
             {
                 return measureLatency(
-                    ()=>outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value))),
+                    () => outerValue(wrapped.putIfAbsent(keyBytes(key), serdes.rawValue(value))),
                     putIfAbsentTime);
             }
             else
@@ -178,13 +182,13 @@ namespace Kafka.Streams.State.Internals
         {
             if (putAllTime.shouldRecord())
             {
-                measureLatency(
-                    ()=>
-    {
-                    wrapped.putAll(innerEntries(entries));
-                    return null;
-                },
-                putAllTime);
+                //            measureLatency(
+                //                () =>
+                //{
+                //    wrapped.putAll(innerEntries(entries));
+                //    return null;
+                //},
+                //            putAllTime);
             }
             else
             {
@@ -198,7 +202,7 @@ namespace Kafka.Streams.State.Internals
             {
                 if (deleteTime.shouldRecord())
                 {
-                    return measureLatency(()=>outerValue(wrapped.delete(keyBytes(key))), deleteTime);
+                    return measureLatency(() => outerValue(wrapped.delete(keyBytes(key))), deleteTime);
                 }
                 else
                 {
@@ -229,13 +233,13 @@ namespace Kafka.Streams.State.Internals
         {
             if (flushTime.shouldRecord())
             {
-                measureLatency(
-                    ()=>
-    {
-                    base.flush();
-                    return null;
-                },
-                flushTime);
+                //            measureLatency(
+                //                () =>
+                //{
+                //    base.flush();
+                //    return null;
+                //},
+                //            flushTime);
             }
             else
             {
@@ -292,60 +296,5 @@ namespace Kafka.Streams.State.Internals
             }
             return byteEntries;
         }
-
-        private class MeteredKeyValueIterator : IKeyValueIterator<K, V>
-        {
-
-            private IKeyValueIterator<Bytes, byte[]> iter;
-            private Sensor sensor;
-            private long startNs;
-
-            private MeteredKeyValueIterator(IKeyValueIterator<Bytes, byte[]> iter,
-                                            Sensor sensor)
-            {
-                this.iter = iter;
-                this.sensor = sensor;
-                this.startNs = time.nanoseconds();
-            }
-
-
-            public bool hasNext()
-            {
-                return iter.hasNext();
-            }
-
-
-            public KeyValue<K, V> next()
-            {
-                KeyValue<Bytes, byte[]> keyValue = iter.next();
-                return KeyValue.pair(
-                    serdes.keyFrom(keyValue.key()],
-                    outerValue(keyValue.value));
-            }
-
-
-            public void Remove()
-            {
-                iter.Remove();
-            }
-
-
-            public void close()
-            {
-                try
-                {
-                    iter.close();
-                }
-                finally
-                {
-                    metrics.recordLatency(sensor, startNs, time.nanoseconds());
-                }
-            }
-
-
-            public K peekNextKey()
-            {
-                return serdes.keyFrom(iter.peekNextKey()());
-            }
-        }
     }
+}

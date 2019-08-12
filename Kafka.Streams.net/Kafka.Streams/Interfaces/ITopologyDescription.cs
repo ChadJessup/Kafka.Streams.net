@@ -27,7 +27,7 @@ namespace Kafka.Streams.Interfaces
      * {@link Topology.AddSource(string, string...) reads} from the same topic.
      * <p>
      * When {@link KafkaStreams#start()} is called, different sub-topologies will be constructed and executed as independent
-     * {@link StreamTask tasks}.
+     * {@link StreamTask<K, V> tasks}.
      */
     public interface ITopologyDescription
     {

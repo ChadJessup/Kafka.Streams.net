@@ -12,13 +12,15 @@ using Kafka.Common;
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using System;
+using System.Text.RegularExpressions;
+using Kafka.Streams.Temp;
 
 namespace Kafka.Streams.State.Internals
 {
     /**
      * A persistent key-value store based on RocksDb.
      */
-    public class RocksDbStore<K, V> : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
+    public class RocksDbStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
         private static ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
 
@@ -32,13 +34,13 @@ namespace Kafka.Streams.State.Internals
         private static int MAX_WRITE_BUFFERS = 3;
         private static string DB_FILE_DIR = "rocksdb";
 
-        string name;
+        public string name { get; }
         private string parentDir;
         HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
 
-        FileInfo dbDir;
+        DirectoryInfo dbDir;
         RocksDb db;
-        IRocksDbAccessor dbAccessor;
+        public IRocksDbAccessor dbAccessor { get; }
 
         // the following option objects will be created in openDB and closed in the close() method
         private RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter userSpecifiedOptions;
@@ -50,13 +52,13 @@ namespace Kafka.Streams.State.Internals
         private RocksDbConfigSetter configSetter;
 
         private bool prepareForBulkload = false;
-        public IProcessorContext<K, V> internalProcessorContext { get; private set; }
+        public IProcessorContext<Bytes, byte[]> internalProcessorContext { get; private set; }
         // visible for testing
         IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
 
         protected volatile bool open = false;
 
-        RocksDbStore(string name)
+        public RocksDbStore(string name)
             : this(name, DB_FILE_DIR)
         {
         }
@@ -70,7 +72,7 @@ namespace Kafka.Streams.State.Internals
 
 
 
-        void openDB(IProcessorContext<K, V> context)
+        void openDB(IProcessorContext<Bytes, byte[]> context)
         {
             // initialize the default rocksdb options
 
@@ -125,7 +127,7 @@ namespace Kafka.Streams.State.Internals
                 userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            dbDir = new FileInfo(Path.Combine(Path.Combine(context.stateDir(), parentDir), name));
+            dbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir().FullName, parentDir), name));
 
             try
             {
@@ -134,7 +136,7 @@ namespace Kafka.Streams.State.Internals
             }
             catch (IOException fatal)
             {
-                throw new ProcessorStateException(fatal);
+                throw new ProcessorStateException(fatal.ToString());
             }
 
             openRocksDb(dbOptions, columnFamilyOptions);
@@ -159,7 +161,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public void init(IProcessorContext<K, V> context,
+        public void init(IProcessorContext<Bytes, byte[]> context,
                          IStateStore root)
         {
             // open the DB dir
@@ -203,7 +205,7 @@ namespace Kafka.Streams.State.Internals
         {
             key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
             validateStoreOpen();
-            dbAccessor.Add(key(), value);
+            dbAccessor.Add(key, value);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -241,7 +243,7 @@ namespace Kafka.Streams.State.Internals
             validateStoreOpen();
             try
             {
-                return dbAccessor[key];
+                return dbAccessor.get(key.get());
             }
             catch (RocksDbException e)
             {
@@ -257,7 +259,7 @@ namespace Kafka.Streams.State.Internals
             byte[] oldValue;
             try
             {
-                oldValue = dbAccessor.getOnly(key);
+                oldValue = dbAccessor.getOnly(key.get());
             }
             catch (RocksDbException e)
             {
@@ -311,7 +313,7 @@ namespace Kafka.Streams.State.Internals
          *
          * @return an approximate count of key-value mappings in the store.
          */
-        public override long approximateNumEntries()
+        public long approximateNumEntries()
         {
             validateStoreOpen();
             long numEntries;
@@ -338,7 +340,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override void flush()
+        public void flush()
         {
             if (db == null)
             {
@@ -354,7 +356,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public override void toggleDbForBulkLoading(bool prepareForBulkload)
+        public void toggleDbForBulkLoading(bool prepareForBulkload)
         {
             if (prepareForBulkload)
             {
@@ -372,19 +374,19 @@ namespace Kafka.Streams.State.Internals
             openDB(internalProcessorContext);
         }
 
-        public override void addToBatch(KeyValue<byte[], byte[]> record,
+        public void addToBatch(KeyValue<byte[], byte[]> record,
                                WriteBatch batch)
         {
-            dbAccessor.AddToBatch(record.key, record.value, batch);
+            dbAccessor.addToBatch(record.key, record.value, batch);
         }
 
-        public override void write(WriteBatch batch)
+        public void write(WriteBatch batch)
         {
-            db.write(wOptions, batch);
+            db.Write(wOptions, batch);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public override void close()
+        public void close()
         {
             if (!open)
             {
@@ -438,12 +440,11 @@ namespace Kafka.Streams.State.Internals
     }
 
     // not private for testing
-    public static class RocksDbBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
+    public class RocksDbBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
     {
-
         private RocksDbStore rocksDBStore;
 
-        RocksDbBatchingRestoreCallback(RocksDbStore rocksDBStore)
+        public RocksDbBatchingRestoreCallback(RocksDbStore rocksDBStore)
         {
             this.rocksDBStore = rocksDBStore;
         }
@@ -451,16 +452,19 @@ namespace Kafka.Streams.State.Internals
 
         public void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {
-            try (WriteBatch batch = new WriteBatch())
-{
-                rocksDBStore.dbAccessor.prepareBatchForRestore(records, batch);
-                rocksDBStore.write(batch);
-            } catch (RocksDbException e)
+            try
+            {
+                using (WriteBatch batch = new WriteBatch())
+                {
+                    rocksDBStore.dbAccessor.prepareBatchForRestore(records, batch);
+                    rocksDBStore.write(batch);
+                }
+            }
+            catch (RocksDbException e)
             {
                 throw new ProcessorStateException("Error restoring batch to store " + rocksDBStore.name, e);
             }
         }
-
 
         public void onRestoreStart(TopicPartition topicPartition,
                                    string storeName,

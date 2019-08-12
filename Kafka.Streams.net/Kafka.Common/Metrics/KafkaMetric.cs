@@ -38,7 +38,7 @@ namespace Kafka.Common.Metrics
         public MetricName metricName { get; }
 
         /**
-         * See {@link Metric#value()} for the details on why this is deprecated.
+         * See {@link IMetric#value()} for the details on why this is deprecated.
          */
         [Obsolete]
         public double value()

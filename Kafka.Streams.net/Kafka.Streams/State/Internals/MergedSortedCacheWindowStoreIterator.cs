@@ -14,32 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Interfaces;
+
 namespace Kafka.Streams.State.Internals
 {
-
-
-    using Kafka.Common.Utils.Bytes;
-    using Kafka.Streams.KeyValue;
-    using Kafka.Streams.State.IKeyValueIterator;
-    using Kafka.Streams.State.WindowStoreIterator;
-
-
-
     /**
      * Merges two iterators. Assumes each of them is sorted by key
      *
      */
-    class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<long, long, byte[], byte[]> : WindowStoreIterator<byte[]>
+    public class MergedSortedCacheWindowStoreIterator : AbstractMergedSortedCacheStoreIterator<long, long, byte[], byte[]>
+        , IWindowStoreIterator<byte[]>
     {
-
-
-        MergedSortedCacheWindowStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
+        public MergedSortedCacheWindowStoreIterator(IPeekingKeyValueIterator<Bytes, LRUCacheEntry> cacheIterator,
                                              IKeyValueIterator<long, byte[]> storeIterator)
+            : base(cacheIterator, storeIterator)
         {
-            base(cacheIterator, storeIterator);
         }
 
-        public override KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
+        public KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
         {
             return pair;
         }
@@ -57,12 +50,12 @@ namespace Kafka.Streams.State.Internals
             return cacheEntry.value();
         }
 
-        public override long deserializeStoreKey(long key)
+        public long deserializeStoreKey(long key)
         {
             return key;
         }
 
-        public override int compare(Bytes cacheKey, long storeKey)
+        public int compare(Bytes cacheKey, long storeKey)
         {
             byte[] binaryKey = bytesFromCacheKey(cacheKey);
 

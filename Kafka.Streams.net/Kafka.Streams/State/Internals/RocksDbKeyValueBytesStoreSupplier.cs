@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Common.Utils;
+
 namespace Kafka.Streams.State.Internals
 {
 
@@ -30,17 +32,14 @@ namespace Kafka.Streams.State.Internals
             this.returnTimestampedStore = returnTimestampedStore;
         }
 
-        public override string name
+        public IKeyValueStore<Bytes, byte[]> get()
         {
-            return name;
+            return returnTimestampedStore
+                ? new RocksDbTimestampedStore(name)
+                : new RocksDbStore<Bytes, byte[]>(name);
         }
 
-        public override IKeyValueStore<Bytes, byte[]> get()
-        {
-            return returnTimestampedStore ? new RocksDbTimestampedStore(name) : new RocksDbStore(name);
-        }
-
-        public override string metricsScope()
+        public string metricsScope()
         {
             return "rocksdb-state";
         }

@@ -541,7 +541,7 @@ namespace Kafka.Streams
             // use client id instead of thread client id since this admin client may be shared among threads
             adminClient = clientSupplier.getAdminClient(config.getAdminConfigs(StreamThread.getSharedAdminClientId(clientId)));
 
-            Dictionary<long, StreamThread.State> threadState = new Dictionary<long, StreamThread.State>(threads.Length);
+            Dictionary<long, StreamThread.StreamThreadState> threadState = new Dictionary<long, StreamThread.StreamThreadState>(threads.Length);
             List<IStateStoreProvider> storeProviders = new List<IStateStoreProvider>();
             for (int i = 0; i < threads.Length; i++)
             {

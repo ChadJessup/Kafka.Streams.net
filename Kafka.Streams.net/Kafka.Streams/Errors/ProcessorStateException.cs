@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.Errors
 {
     /**
@@ -23,22 +25,18 @@ namespace Kafka.Streams.Errors
      */
     public class ProcessorStateException : StreamsException
     {
-
-
-        private static long serialVersionUID = 1L;
-
         public ProcessorStateException(string message)
             : base(message)
         {
         }
 
-        public ProcessorStateException(string message, Throwable throwable)
-            : base(message, throwable)
+        public ProcessorStateException(string message, Exception innerException)
+            : base(message, innerException)
         {
         }
 
-        public ProcessorStateException(Throwable throwable)
-            : base(throwable)
+        public ProcessorStateException(Exception innerException)
+            : base(innerException)
         {
         }
     }

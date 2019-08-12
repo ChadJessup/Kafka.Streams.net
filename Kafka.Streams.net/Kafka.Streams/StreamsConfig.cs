@@ -646,7 +646,7 @@ namespace Kafka.Streams
                 StreamsConfigPropertyNames.DefaultDeserializationExceptionHandlerClass);
         }
 
-        private T getConfiguredInstance<T>(string key)
+        public T getConfiguredInstance<T>(string key)
         {
 
             return default;

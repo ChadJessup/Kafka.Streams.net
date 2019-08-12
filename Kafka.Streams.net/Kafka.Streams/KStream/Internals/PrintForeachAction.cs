@@ -45,9 +45,10 @@ namespace Kafka.Streams.KStream.Internals
          * @param mapper The mapper which can allow user to customize output will be printed.
          * @param label The given name will be printed.
          */
-        PrintForeachAction(Stream outputStream,
-                            IKeyValueMapper<K, V, string> mapper,
-                            string label)
+        public PrintForeachAction(
+            Stream outputStream,
+            IKeyValueMapper<K, V, string> mapper,
+            string label)
         {
             this.printWriter = new PrintWriter(new OutputStreamWriter(outputStream, System.Text.Encoding.UTF8));
             //this.closable = outputStream != System.out && outputStream != System.err;
