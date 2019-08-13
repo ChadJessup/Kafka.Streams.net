@@ -85,7 +85,7 @@ namespace Kafka.Streams
             string name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, null, null, null, topicPattern);
+//            internalTopologyBuilder.addSource<K, V>(null, name, null, null, null, topicPattern);
             return this;
         }
 
@@ -183,7 +183,7 @@ namespace Kafka.Streams
             string name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, timestampExtractor, null, null, topicPattern);
+            //internalTopologyBuilder.addSource<K, V>(null, name, timestampExtractor, null, null, topicPattern);
             return this;
         }
 
@@ -293,13 +293,14 @@ namespace Kafka.Streams
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource(
-                null,
-                name,
-                null,
-                keyDeserializer,
-                valueDeserializer,
-                topicPattern);
+            //internalTopologyBuilder.addSource(
+            //    null,
+            //    name,
+            //    null,
+            //    keyDeserializer,
+            //    valueDeserializer,
+            //    topicPattern);
+
             return this;
         }
 
@@ -726,10 +727,10 @@ namespace Kafka.Streams
             string[] processorNames)
             where T : IStateStore
         {
-            internalTopologyBuilder.addStateStore<T>(
-                storeBuilder,
-                allowOverride: false,
-                processorNames);
+            //internalTopologyBuilder.addStateStore<T>(
+            //    storeBuilder,
+            //    allowOverride: false,
+            //    processorNames);
 
             return this;
         }

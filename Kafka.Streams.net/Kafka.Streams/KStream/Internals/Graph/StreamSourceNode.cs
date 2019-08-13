@@ -71,12 +71,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (topicPattern != null)
             {
-                topologyBuilder.addSource(consumedInternal.offsetResetPolicy(),
-                                          nodeName,
-                                          consumedInternal.timestampExtractor,
-                                          consumedInternal.keyDeserializer(),
-                                          consumedInternal.valueDeserializer(),
-                                          topicPattern);
+                //topologyBuilder.addSource(consumedInternal.offsetResetPolicy(),
+                //                          nodeName,
+                //                          consumedInternal.timestampExtractor,
+                //                          consumedInternal.keyDeserializer(),
+                //                          consumedInternal.valueDeserializer(),
+                //                          topicPattern);
             }
             else
             {

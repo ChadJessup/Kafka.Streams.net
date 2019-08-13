@@ -47,8 +47,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            ISerializer<K> keySerializer = producedInternal.keySerde == null ? null : producedInternal.keySerde.Serializer();
-            ISerializer<V> valSerializer = producedInternal.valueSerde == null ? null : producedInternal.valueSerde.Serializer();
+            ISerializer<K> keySerializer = producedInternal.keySerde == null ? null : producedInternal.keySerde.Serializer;
+            ISerializer<V> valSerializer = producedInternal.valueSerde == null ? null : producedInternal.valueSerde.Serializer;
             IStreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
             string[] parentNames = parentNodeNames();
 

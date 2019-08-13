@@ -19,23 +19,26 @@ using Kafka.Streams.Interfaces;
 using System;
 using System.Collections.Generic;
 
-[Serializable]
-public class GlobalStoreComparator : IComparer<IGlobalStore>
+namespace Kafka.Streams.Processor.Internals
 {
-    public int compare(
-        IGlobalStore globalStore1,
-        IGlobalStore globalStore2)
+    [Serializable]
+    public class GlobalStoreComparator : IComparer<IGlobalStore>
     {
-        if (globalStore1.Equals(globalStore2))
+        public int compare(
+            IGlobalStore globalStore1,
+            IGlobalStore globalStore2)
         {
-            return 0;
+            if (globalStore1.Equals(globalStore2))
+            {
+                return 0;
+            }
+
+            return globalStore1.id - globalStore2.id;
         }
 
-        return globalStore1.id - globalStore2.id;
-    }
-
-    public int Compare(IGlobalStore x, IGlobalStore y)
-    {
-        return compare(x, y);
+        public int Compare(IGlobalStore x, IGlobalStore y)
+        {
+            return compare(x, y);
+        }
     }
 }

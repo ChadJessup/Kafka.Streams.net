@@ -35,20 +35,20 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             // if the value is null, we do not need to forward its selected key-value further
-            KeyValue<K, V> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
-            KeyValue<K, V> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
+            //KeyValue<K, V> newPair = change.newValue == null ? null : mapper.apply(key, change.newValue);
+            //KeyValue<K, V> oldPair = change.oldValue == null ? null : mapper.apply(key, change.oldValue);
 
             // if the selected repartition key or value is null, skip
             // forward oldPair first, to be consistent with reduce and aggregate
-            if (oldPair != null && oldPair.key != null && oldPair.value != null)
+//            if (oldPair != null && oldPair.key != null && oldPair.value != null)
             {
-                context.forward(oldPair.key, new Change<K>(null, oldPair.value));
+                //context.forward(oldPair.key, new Change<K>(null, oldPair.value));
             }
 
-            if (newPair != null && newPair.key != null && newPair.value != null)
-            {
-                context.forward(newPair.key, new Change<K>(newPair.value, null));
-            }
+            //if (newPair != null && newPair.key != null && newPair.value != null)
+            //{
+            //    context.forward(newPair.key, new Change<K>(newPair.value, null));
+            //}
 
         }
     }

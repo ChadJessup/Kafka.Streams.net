@@ -246,31 +246,33 @@ namespace Kafka.Streams.Processor.Internals
 
         private void rebuildMetadata(Dictionary<HostInfo, HashSet<TopicPartition>> currentState)
         {
-            allMetadata.clear();
-            if (currentState.isEmpty())
+            //allMetadata.clear();
+            if (!currentState.Any())
             {
                 return;
             }
+
             Dictionary<string, List<string>> stores = builder.stateStoreNameToSourceTopics();
             foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in currentState)
             {
                 HostInfo key = entry.Key;
-                HashSet<TopicPartition> partitionsForHost = new HashSet<>(entry.Value);
-                HashSet<string> storesOnHost = new HashSet<>();
+                HashSet<TopicPartition> partitionsForHost = new HashSet<TopicPartition>(entry.Value);
+//                HashSet<string> storesOnHost = new HashSet<>();
                 foreach (KeyValuePair<string, List<string>> storeTopicEntry in stores)
                 {
                     List<string> topicsForStore = storeTopicEntry.Value;
                     if (hasPartitionsForAnyTopics(topicsForStore, partitionsForHost))
                     {
-                        storesOnHost.Add(storeTopicEntry.Key);
+  //                      storesOnHost.Add(storeTopicEntry.Key);
                     }
                 }
-                storesOnHost.AddAll(globalStores);
-                StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
-                allMetadata.Add(metadata);
+
+                //storesOnHost.AddAll(globalStores);
+                //StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
+                //allMetadata.Add(metadata);
                 if (key.Equals(thisHost))
                 {
-                    myMetadata = metadata;
+                    //myMetadata = metadata;
                 }
             }
         }
@@ -282,22 +284,22 @@ namespace Kafka.Streams.Processor.Internals
         {
 
             int partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, null, sourceTopicsInfo.maxPartitions);
-            HashSet<TopicPartition> matchingPartitions = new HashSet<>();
-            foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
-            {
-                matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
-            }
+            //HashSet<TopicPartition> matchingPartitions = new HashSet<>();
+            //foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
+            //{
+            //    matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
+            //}
 
             foreach (StreamsMetadata streamsMetadata in allMetadata)
             {
-                HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames();
-                HashSet<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
-                topicPartitions.retainAll(matchingPartitions);
-                if (stateStoreNames.Contains(storeName)
-                        && topicPartitions.Any())
-                {
-                    return streamsMetadata;
-                }
+                //HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames();
+                //HashSet<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
+                //topicPartitions.retainAll(matchingPartitions);
+                //if (stateStoreNames.Contains(storeName)
+                //        && topicPartitions.Any())
+                //{
+                //    return streamsMetadata;
+                //}
             }
             return null;
         }
@@ -305,7 +307,7 @@ namespace Kafka.Streams.Processor.Internals
         private SourceTopicsInfo getSourceTopicsInfo(string storeName)
         {
             List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
-            if (sourceTopics == null || sourceTopics.isEmpty())
+            if (sourceTopics == null || !sourceTopics.Any())
             {
                 return null;
             }
@@ -314,7 +316,7 @@ namespace Kafka.Streams.Processor.Internals
 
         private bool isInitialized()
         {
-            return clusterMetadata != null && !clusterMetadata.topics().isEmpty();
+            return clusterMetadata != null && clusterMetadata.topics().Any();
         }
     }
 }

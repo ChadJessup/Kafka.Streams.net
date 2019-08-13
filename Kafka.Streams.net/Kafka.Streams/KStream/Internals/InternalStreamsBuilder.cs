@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
         private AtomicInteger index = new AtomicInteger(0);
 
         private AtomicInteger buildPriorityIndex = new AtomicInteger(0);
-        private Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes = new Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>();
+        //private Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes = new Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>();
         private HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNode>();
         private HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNode>();
 
@@ -66,8 +66,8 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed)
         {
 
-            string name = new NamedInternal(consumed.name).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
-            StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
+           // string name = new NamedInternal(consumed.name).orElseGenerateWithPrefix(this, KStreamImpl.SOURCE_NAME);
+            //StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
 
             //addGraphNode(root, streamSourceNode);
 
@@ -84,7 +84,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKStream<K, V> stream<K, V>(Regex topicPattern,
                                             ConsumedInternal<K, V> consumed)
         {
-            string name = newProcessorName(KStreamImpl.SOURCE_NAME);
+            //string name = newProcessorName(KStreamImpl.SOURCE_NAME);
             //            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
             //addGraphNode(root, streamPatternSourceNode);
@@ -100,73 +100,73 @@ namespace Kafka.Streams.KStream.Internals
                 //this);
         }
 
-        public IKTable<K, V> table<K, V>(
-            string topic,
-            ConsumedInternal<K, V> consumed,
-            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            //string sourceName = new NamedInternal(consumed.name)
-            //       .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SOURCE_NAME);
+//        public IKTable<K, V> table<K, V>(
+//            string topic,
+//            ConsumedInternal<K, V> consumed,
+//            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+//        {
+//            //string sourceName = new NamedInternal(consumed.name)
+//            //       .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SOURCE_NAME);
 
-            //string tableSourceName = new NamedInternal(consumed.name)
-            //       .suffixWithOrElseGet("-table-source", this, KTableImpl.SOURCE_NAME);
+//            //string tableSourceName = new NamedInternal(consumed.name)
+//            //       .suffixWithOrElseGet("-table-source", this, KTableImpl.SOURCE_NAME);
 
-  //          KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());
+//  //          KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());
 
-//            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
+////            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
-            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
-            //     .withTopic(topic)
-            //     .withSourceName(sourceName)
-            //     .withNodeName(tableSourceName)
-            //     .withConsumedInternal(consumed)
-            //     .withMaterializedInternal(materialized)
-            //     .withProcessorParameters(processorParameters)
-            //     .build();
+//            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
+//            //     .withTopic(topic)
+//            //     .withSourceName(sourceName)
+//            //     .withNodeName(tableSourceName)
+//            //     .withConsumedInternal(consumed)
+//            //     .withMaterializedInternal(materialized)
+//            //     .withProcessorParameters(processorParameters)
+//            //     .build();
 
-            //addGraphNode(root, tableSourceNode);
+//            //addGraphNode(root, tableSourceNode);
 
-            return null;
-            //new KTableImpl<K, V>(tableSourceName,
-            //                        consumed.keySerde,
-            //                        consumed.valueSerde,
-            //                        sourceName,
-            //                        materialized.queryableStoreName(),
-            //                        tableSource,
-            //                        tableSourceNode,
-            //                        this);
-        }
+//            return null;
+//            //new KTableImpl<K, V>(tableSourceName,
+//            //                        consumed.keySerde,
+//            //                        consumed.valueSerde,
+//            //                        sourceName,
+//            //                        materialized.queryableStoreName(),
+//            //                        tableSource,
+//            //                        tableSourceNode,
+//            //                        this);
+//        }
 
-        public IGlobalKTable<K, V> globalTable<K, V>(
-            string topic,
-            ConsumedInternal<K, V> consumed,
-            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            consumed = consumed ?? throw new System.ArgumentNullException("consumed can't be null", nameof(consumed));
-            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
-            // explicitly disable logging for global stores
-            //materialized.withLoggingDisabled();
-            //string sourceName = newProcessorName(KTableImpl.SOURCE_NAME);
-            //string processorName = newProcessorName(KTableImpl.SOURCE_NAME);
-            //// enforce store name as queryable name to always materialize global table stores
-            //string storeName = materialized.storeName();
-            //KTableSource<K, V> tableSource = new KTableSource<K, V>(storeName, storeName);
+//        public IGlobalKTable<K, V> globalTable<K, V>(
+//            string topic,
+//            ConsumedInternal<K, V> consumed,
+//            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+//        {
+//            consumed = consumed ?? throw new System.ArgumentNullException("consumed can't be null", nameof(consumed));
+//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            // explicitly disable logging for global stores
+//            //materialized.withLoggingDisabled();
+//            //string sourceName = newProcessorName(KTableImpl.SOURCE_NAME);
+//            //string processorName = newProcessorName(KTableImpl.SOURCE_NAME);
+//            //// enforce store name as queryable name to always materialize global table stores
+//            //string storeName = materialized.storeName();
+//            //KTableSource<K, V> tableSource = new KTableSource<K, V>(storeName, storeName);
 
-            //ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
+//            //ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
-            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
-            //      .withTopic(topic)
-            //      .isGlobalKTable(true)
-            //      .withSourceName(sourceName)
-            //      .withConsumedInternal(consumed)
-            //      .withMaterializedInternal(materialized)
-            //      .withProcessorParameters(processorParameters)
-            //      .build();
+//            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
+//            //      .withTopic(topic)
+//            //      .isGlobalKTable(true)
+//            //      .withSourceName(sourceName)
+//            //      .withConsumedInternal(consumed)
+//            //      .withMaterializedInternal(materialized)
+//            //      .withProcessorParameters(processorParameters)
+//            //      .build();
 
-            //addGraphNode(root, tableSourceNode);
+//            //addGraphNode(root, tableSourceNode);
 
-            return null; // new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
-        }
+//            return null; // new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
+//        }
 
 
         public string newProcessorName(string prefix)
@@ -209,14 +209,14 @@ namespace Kafka.Streams.KStream.Internals
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void addGlobalStore<K, V>(
-            IStoreBuilder<IKeyValueStore<K, V>> storeBuilder,
+//            IStoreBuilder<IKeyValueStore<K, V>> storeBuilder,
             string topic,
             ConsumedInternal<K, V> consumed,
             IProcessorSupplier<K, V> stateUpdateSupplier)
         {
             // explicitly disable logging for global stores
-            storeBuilder.withLoggingDisabled();
-            string sourceName = newProcessorName(KStreamImpl.SOURCE_NAME);
+            //storeBuilder.withLoggingDisabled();
+            //string sourceName = newProcessorName(KStreamImpl.SOURCE_NAME);
             //string processorName = newProcessorName(KTableImpl<K, V>.SOURCE_NAME);
             //addGlobalStore(storeBuilder,
             //                sourceName,
@@ -433,42 +433,42 @@ namespace Kafka.Streams.KStream.Internals
             {
                 StreamsGraphNode mergeKey = entry.Key;
                 List<StreamsGraphNode> keyChangingParents = entry.Value.ToList();
-                var repartitionNodes = new HashSet<OptimizableRepartitionNode>();
+                //var repartitionNodes = new HashSet<OptimizableRepartitionNode>();
 
                 foreach (StreamsGraphNode keyChangingParent in keyChangingParents)
                 {
-                    repartitionNodes.UnionWith(keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent]);
-                    keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
+                  //  repartitionNodes.UnionWith(keyChangingOperationsToOptimizableRepartitionNodes[keyChangingParent]);
+                  //  keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
                 }
 
-                keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
+                //keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
             }
         }
 
 
-        private OptimizableRepartitionNode<K, V> createRepartitionNode<K, V>(
-            string repartitionTopicName,
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
-        {
-            OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
-                OptimizableRepartitionNode.optimizableRepartitionNodeBuilder<K, V>();
+        //private OptimizableRepartitionNode<K, V> createRepartitionNode<K, V>(
+        //    string repartitionTopicName,
+        //    ISerde<K> keySerde,
+        //    ISerde<V> valueSerde)
+        //{
+        //    OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
+        //        OptimizableRepartitionNode.optimizableRepartitionNodeBuilder<K, V>();
 
-            KStreamImpl<K, V>.createRepartitionedSource(
-                this,
-                keySerde,
-                valueSerde,
-                repartitionTopicName,
-                repartitionNodeBuilder);
+        //    KStreamImpl<K, V>.createRepartitionedSource(
+        //        this,
+        //        keySerde,
+        //        valueSerde,
+        //        repartitionTopicName,
+        //        repartitionNodeBuilder);
 
-            // ensures setting the repartition topic to the name of the
-            // first repartition topic to get merged
-            // this may be an auto-generated name or a user specified name
-            repartitionNodeBuilder.withRepartitionTopic(repartitionTopicName);
+        //    // ensures setting the repartition topic to the name of the
+        //    // first repartition topic to get merged
+        //    // this may be an auto-generated name or a user specified name
+        //    repartitionNodeBuilder.withRepartitionTopic(repartitionTopicName);
 
-            return repartitionNodeBuilder.build();
+        //    return repartitionNodeBuilder.build();
 
-        }
+        //}
 
         private StreamsGraphNode getKeyChangingParentNode(StreamsGraphNode repartitionNode)
         {
@@ -482,40 +482,40 @@ namespace Kafka.Streams.KStream.Internals
             return null;
         }
 
-        private string getFirstRepartitionTopicName(List<OptimizableRepartitionNode> repartitionNodes)
-        {
-            //.repartitionTopic()
-            return ""; // repartitionNodes.First();
-        }
+        //private string getFirstRepartitionTopicName(List<OptimizableRepartitionNode> repartitionNodes)
+        //{
+        //    //.repartitionTopic()
+        //    return ""; // repartitionNodes.First();
+        //}
 
 
-        private GroupedInternal<K, V> getRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
-        {
-            ISerde<K> keySerde = null;
-            ISerde<V> valueSerde = null;
+        //private GroupedInternal<K, V> getRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
+        //{
+        //    ISerde<K> keySerde = null;
+        //    ISerde<V> valueSerde = null;
 
-            foreach (var repartitionNode in repartitionNodes)
-            {
-                if (keySerde == null && repartitionNode.keySerde != null)
-                {
-                    keySerde = repartitionNode.keySerde;
-                }
+        //    foreach (var repartitionNode in repartitionNodes)
+        //    {
+        //        if (keySerde == null && repartitionNode.keySerde != null)
+        //        {
+        //            keySerde = repartitionNode.keySerde;
+        //        }
 
-                if (valueSerde == null && repartitionNode.valueSerde != null)
-                {
-                    valueSerde = repartitionNode.valueSerde;
-                }
+        //        if (valueSerde == null && repartitionNode.valueSerde != null)
+        //        {
+        //            valueSerde = repartitionNode.valueSerde;
+        //        }
 
-                if (keySerde != null && valueSerde != null)
-                {
-                    break;
-                }
-            }
+        //        if (keySerde != null && valueSerde != null)
+        //        {
+        //            break;
+        //        }
+        //    }
 
-            return null;
-                //new GroupedInternal<K, V>(Grouped<K, V>
-                //.with(keySerde, valueSerde));
-        }
+        //    return null;
+        //        //new GroupedInternal<K, V>(Grouped<K, V>
+        //        //.with(keySerde, valueSerde));
+        //}
 
         private StreamsGraphNode findParentNodeMatching(
             StreamsGraphNode startSeekingNode,

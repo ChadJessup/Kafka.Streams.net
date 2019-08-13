@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class GlobalStore : IGlobalStore
     {
-        public ISource source { get; }
+        //public ISource source { get; }
         public IProcessor processor { get; }
         public int id { get; }
 
@@ -34,42 +34,41 @@ namespace Kafka.Streams.Processor.Internals
             string topicName,
             int id)
         {
-            source = new Source(sourceName, new HashSet<string>() { topicName }, null);
+            //source = new Source(sourceName, new HashSet<string>() { topicName }, null);
             processor = new Processor(processorName, new HashSet<string>() { storeName });
-            source.successors.Add(processor);
-            processor.predecessors.Add(source);
+            //source.successors.Add(processor);
+            //processor.predecessors.Add(source);
 
             this.id = id;
         }
 
-        public override string ToString()
-        {
-            return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
-                    + "    " + source.ToString() + "\n"
-                    + "    " + processor.ToString() + "\n";
-        }
+        //public override string ToString()
+        //{
+        //    return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
+        //            + "    " + source.ToString() + "\n"
+        //            + "    " + processor.ToString() + "\n";
+        //}
+        
+        //public override bool Equals(object o)
+        //{
+        //    if (this == o)
+        //    {
+        //        return true;
+        //    }
+        //    if (o == null || GetType() != o.GetType())
+        //    {
+        //        return false;
+        //    }
+
+        //    GlobalStore that = (GlobalStore)o;
+        //    return source.Equals(that.source)
+        //        && processor.Equals(that.processor);
+        //}
 
 
-        public override bool Equals(object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-            if (o == null || GetType() != o.GetType())
-            {
-                return false;
-            }
-
-            GlobalStore that = (GlobalStore)o;
-            return source.Equals(that.source)
-                && processor.Equals(that.processor);
-        }
-
-
-        public override int GetHashCode()
-        {
-            return (source, processor).GetHashCode();
-        }
+        //public override int GetHashCode()
+        //{
+        //    return (source, processor).GetHashCode();
+        //}
     }
 }

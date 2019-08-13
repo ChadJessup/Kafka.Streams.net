@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.Processor
 {
 
@@ -38,8 +40,8 @@ namespace Kafka.Streams.Processor
         }
 
         protected To(To to)
+            : this(to.childName, to.timestamp)
         {
-            this(to.childName, to.timestamp);
         }
 
         protected void update(To to)
@@ -91,7 +93,7 @@ namespace Kafka.Streams.Processor
             }
             To to = (To)o;
             return timestamp == to.timestamp &&
-                Objects.Equals(childName, to.childName);
+                childName.Equals(to.childName);
         }
 
         /**

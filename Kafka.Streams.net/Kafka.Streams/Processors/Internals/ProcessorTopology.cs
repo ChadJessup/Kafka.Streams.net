@@ -25,7 +25,7 @@ namespace Kafka.Streams.Processor.Internals
     {
         private List<ProcessorNode<K, V>> processorNodes;
         private Dictionary<string, SourceNode<K, V>> sourcesByTopic;
-        private Dictionary<string, SinkNode<K, V>> sinksByTopic;
+        //private Dictionary<string, SinkNode<K, V>> sinksByTopic;
         public List<IStateStore> stateStores { get; }
         public List<IStateStore> globalStateStores { get; }
         public Dictionary<string, string> storeToChangelogTopic { get; }
@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processor.Internals
         public ProcessorTopology(
             List<ProcessorNode<K, V>> processorNodes,
             Dictionary<string, SourceNode<K, V>> sourcesByTopic,
-            Dictionary<string, SinkNode<K, V>> sinksByTopic,
+            //Dictionary<string, SinkNode<K, V>> sinksByTopic,
             List<IStateStore> stateStores,
             List<IStateStore> globalStateStores,
             Dictionary<string, string> storeToChangelogTopic,
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.processorNodes = processorNodes;
             this.sourcesByTopic = sourcesByTopic;
-            this.sinksByTopic = sinksByTopic;
+            //this.sinksByTopic = sinksByTopic;
             this.stateStores = stateStores;
             this.globalStateStores = globalStateStores;
             this.storeToChangelogTopic = storeToChangelogTopic;
@@ -64,15 +64,15 @@ namespace Kafka.Streams.Processor.Internals
             return new HashSet<SourceNode<K, V>>(sourcesByTopic.Values);
         }
 
-        public HashSet<string> sinkTopics()
-        {
-            return new HashSet<string>(sinksByTopic.Keys);
-        }
+        //public HashSet<string> sinkTopics()
+        //{
+        //    return new HashSet<string>(sinksByTopic.Keys);
+        //}
 
-        public SinkNode<K, V> sink(string topic)
-        {
-            return sinksByTopic[topic];
-        }
+        //public SinkNode<K, V> sink(string topic)
+        //{
+        //    return sinksByTopic[topic];
+        //}
 
         public List<ProcessorNode<K, V>> processors()
         {

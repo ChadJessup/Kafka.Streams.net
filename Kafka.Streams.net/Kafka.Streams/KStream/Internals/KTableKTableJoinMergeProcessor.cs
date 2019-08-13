@@ -22,44 +22,44 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, Change<V>>
     {
-        private ITimestampedKeyValueStore<K, V> store;
+        //private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
 
         public void init(IProcessorContext<K, V> context)
         {
-            base.init(context);
-            if (queryableName != null)
-            {
-                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<K, V>(
-                    store,
-                    context,
-                    new TimestampedCacheFlushListener<K, V>(context),
-                    sendOldValues);
-            }
+            //base.init(context);
+            //if (queryableName != null)
+            //{
+            //    store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+            //    tupleForwarder = new TimestampedTupleForwarder<K, V>(
+            //        store,
+            //        context,
+            //        new TimestampedCacheFlushListener<K, V>(context),
+            //        sendOldValues);
+            //}
         }
 
 
         public override void process(K key, Change<V> value)
         {
-            if (queryableName != null)
-            {
-                store.Add(key, ValueAndTimestamp<V>.make(value.newValue, context.timestamp()));
-                tupleForwarder.maybeForward(key, value.newValue, sendOldValues ? value.oldValue : null);
-            }
-            else
-            {
+            //if (queryableName != null)
+            //{
+            //    store.Add(key, ValueAndTimestamp<V>.make(value.newValue, context.timestamp()));
+            //    tupleForwarder.maybeForward(key, value.newValue, sendOldValues ? value.oldValue : null);
+            //}
+            //else
+            //{
 
-                if (sendOldValues)
-                {
-                    context.forward(key, value);
-                }
-                else
-                {
+            //    if (sendOldValues)
+            //    {
+            //        context.forward(key, value);
+            //    }
+            //    else
+            //    {
 
-                    context.forward(key, new Change<V>(value.newValue, default));
-                }
-            }
+            //        context.forward(key, new Change<V>(value.newValue, default));
+            //    }
+            //}
         }
     }
 }

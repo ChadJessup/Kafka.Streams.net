@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processor.Internals
         public string name { get; private set; }
         public Dictionary<string, string> topicConfigs { get; }
 
-        public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
+        //public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
 
         public InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
         {
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processor.Internals
                 throw new System.ArgumentException("Number of partitions must be at least 1.");
             }
 
-            this.numberOfPartitions = numberOfPartitions;
+            //this.numberOfPartitions = numberOfPartitions;
         }
 
         public override string ToString()

@@ -36,11 +36,11 @@ namespace Kafka.Streams.Processor.Internals
             string group = "stream-task-metrics";
 
             // first.Add the global operation metrics if not yet, with the global tags only
-            Sensor parent = ThreadMetrics.commitOverTasksSensor(metrics);
+            //Sensor parent = ThreadMetrics.commitOverTasksSensor(metrics);
 
             //.Add the operation metrics with.Additional tags
             Dictionary<string, string> tagMap = metrics.tagMap("task-id", taskName);
-            taskCommitTimeSensor = metrics.taskLevelSensor(taskName, "commit", RecordingLevel.DEBUG, parent);
+            //taskCommitTimeSensor = metrics.taskLevelSensor(taskName, "commit", RecordingLevel.DEBUG, parent);
             taskCommitTimeSensor.Add(
                 new MetricName("commit-latency-avg", group, "The average latency of commit operation.", tagMap),
                 new Avg()
@@ -59,7 +59,7 @@ namespace Kafka.Streams.Processor.Internals
             );
 
             //.Add the metrics for enforced processing
-            taskEnforcedProcessSensor = metrics.taskLevelSensor(taskName, "enforced-processing", RecordingLevel.DEBUG, parent);
+//            taskEnforcedProcessSensor = metrics.taskLevelSensor(taskName, "enforced-processing", RecordingLevel.DEBUG, parent);
             taskEnforcedProcessSensor.Add(
                     new MetricName("enforced-processing-rate", group, "The average number of occurrence of enforced-processing operation per second.", tagMap),
                     new Rate(TimeUnit.SECONDS, new WindowedCount())

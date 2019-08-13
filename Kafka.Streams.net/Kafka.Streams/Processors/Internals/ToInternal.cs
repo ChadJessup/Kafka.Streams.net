@@ -24,8 +24,8 @@ namespace Kafka.Streams.Processor.Internals
     {
 
         public ToInternal()
+            : base(To.all())
         {
-            base(To.all());
         }
 
         public void update(To to)
@@ -36,11 +36,6 @@ namespace Kafka.Streams.Processor.Internals
         public bool hasTimestamp()
         {
             return timestamp != -1;
-        }
-
-        public long timestamp()
-        {
-            return timestamp;
         }
 
         public string child()

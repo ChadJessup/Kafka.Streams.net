@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableReduceProcessor<K, V>();
+            return null;// new KTableReduceProcessor<K, V>();
         }
 
 

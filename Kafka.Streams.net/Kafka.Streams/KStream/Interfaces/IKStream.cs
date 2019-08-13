@@ -707,7 +707,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param printed options for printing
          */
-        void print(Printed<K, V> printed);
+        //void print(Printed<K, V> printed);
 
         /**
          * Perform an action on each record of {@code KStream}.
@@ -1374,9 +1374,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(
-            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-            string[] stateStoreNames);
+        //IKStream<K, VR> transformValues<VR>(
+        //    IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+        //    string[] stateStoreNames);
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
          * A {@link ValueTransformer} (provided by the given {@link ValueTransformerSupplier}) is applied to each input
@@ -1457,10 +1457,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(
-            IValueTransformerSupplier<V, VR> valueTransformerSupplier,
-            Named named,
-            string[] stateStoreNames);
+        //IKStream<K, VR> transformValues<VR>(
+        //    IValueTransformerSupplier<V, VR> valueTransformerSupplier,
+        //    Named named,
+        //    string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1723,8 +1723,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
-                                                 string[] stateStoreNames);
+        //IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+        //                                         string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1817,9 +1817,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
-                                                 Named named,
-                                                 string[] stateStoreNames);
+        //IKStream<K, VR> flatTransformValues<VR>(IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
+        //                                         Named named,
+        //                                         string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -2170,7 +2170,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-        IKGroupedStream<K, V> groupByKey();
+//        IKGroupedStream<K, V> groupByKey();
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2199,8 +2199,8 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupByKey(Grouped)} instead
          */
-        [System.Obsolete]
-        IKGroupedStream<K, V> groupByKey(Serialized<K, V> serialized);
+        //[System.Obsolete]
+        //IKGroupedStream<K, V> groupByKey(Serialized<K, V> serialized);
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2230,7 +2230,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-        IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped);
+        //IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2259,7 +2259,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector);
+        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2289,9 +2289,9 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupBy(KeyValueMapper, Grouped)} instead
          */
-        [System.Obsolete]
-        IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
-                                            Serialized<KR, V> serialized);
+        //[System.Obsolete]
+        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
+        //                                    Serialized<KR, V> serialized);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2322,8 +2322,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
-                                            Grouped<KR, V> grouped);
+        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
+        //                                    Grouped<KR, V> grouped);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed inner equi join with default
@@ -2397,9 +2397,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
          */
-        IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
-                                      IValueJoiner<V, VO, VR> joiner,
-                                      JoinWindows windows);
+        //IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
+        //                              IValueJoiner<V, VO, VR> joiner,
+        //                              JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed inner equi join using the
@@ -2476,10 +2476,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
-                                      IValueJoiner<V, VO, VR> joiner,
-                                      JoinWindows windows,
-                                      Joined<K, V, VO> joined);
+        //IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
+        //                              IValueJoiner<V, VO, VR> joiner,
+        //                              JoinWindows windows,
+        //                              Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join with default
@@ -2557,9 +2557,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
          */
-        IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
-                                          IValueJoiner<V, VO, VR> joiner,
-                                          JoinWindows windows);
+        //IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
+        //                                  IValueJoiner<V, VO, VR> joiner,
+        //                                  JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join using the
@@ -2640,10 +2640,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
-                                          IValueJoiner<V, VO, VR> joiner,
-                                          JoinWindows windows,
-                                          Joined<K, V, VO> joined);
+        //IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
+        //                                  IValueJoiner<V, VO, VR> joiner,
+        //                                  JoinWindows windows,
+        //                                  Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed outer equi join with default
@@ -2722,9 +2722,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
          */
-        IKStream<K, VR> outerJoin<VR, VO>(IKStream<K, VO> otherStream,
-                                           IValueJoiner<V, VO, VR> joiner,
-                                           JoinWindows windows);
+        //IKStream<K, VR> outerJoin<VR, VO>(IKStream<K, VO> otherStream,
+        //                                   IValueJoiner<V, VO, VR> joiner,
+        //                                   JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed outer equi join using the
@@ -2806,11 +2806,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        IKStream<K, VR> outerJoin<VR, VO>(
-            IKStream<K, VO> otherStream,
-            IValueJoiner<V, VO, VR> joiner,
-            JoinWindows windows,
-            Joined<K, V, VO> joined);
+        //IKStream<K, VR> outerJoin<VR, VO>(
+        //    IKStream<K, VO> otherStream,
+        //    IValueJoiner<V, VO, VR> joiner,
+        //    JoinWindows windows,
+        //    Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2884,9 +2884,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, VR> join<VR, VT>(
-            IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner);
+        //IKStream<K, VR> join<VR, VT>(
+        //    IKTable<K, VT> table,
+        //    IValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2962,9 +2962,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Joined)
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, VR> join<VR, VT>(IKTable<K, VT> table,
-                                      IValueJoiner<V, VT, VR> joiner,
-                                      Joined<K, V, VT> joined);
+        //IKStream<K, VR> join<VR, VT>(IKTable<K, VT> table,
+        //                              IValueJoiner<V, VT, VR> joiner,
+        //                              Joined<K, V, VT> joined);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3041,9 +3041,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, VR> leftJoin<VR, VT>(
-            IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner);
+        //IKStream<K, VR> leftJoin<VR, VT>(
+        //    IKTable<K, VT> table,
+        //    IValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3122,10 +3122,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner, Joined)
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, VR> leftJoin<VR, VT>(
-            IKTable<K, VT> table,
-            IValueJoiner<V, VT, VR> joiner,
-            Joined<K, V, VT> joined);
+        //IKStream<K, VR> leftJoin<VR, VT>(
+        //    IKTable<K, VT> table,
+        //    IValueJoiner<V, VT, VR> joiner,
+        //    Joined<K, V, VT> joined);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed inner equi join.

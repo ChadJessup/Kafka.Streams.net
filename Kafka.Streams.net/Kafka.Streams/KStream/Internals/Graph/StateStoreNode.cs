@@ -34,16 +34,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            topologyBuilder.addStateStore<T>(storeBuilder, false, Array.Empty<string>());
+            //topologyBuilder.addStateStore<T>(storeBuilder, false, Array.Empty<string>());
         }
 
         public override string ToString()
         {
-            return "StateStoreNode{" +
-                   " name='" + storeBuilder.name + '\'' +
-                   ", logConfig=" + storeBuilder.logConfig +
-                   ", loggingEnabled='" + storeBuilder.loggingEnabled + '\'' +
-                   "} ";
+            return "";
+                //"StateStoreNode{" +
+                //   " name='" + storeBuilder.name + '\'' +
+                //   ", logConfig=" + storeBuilder.logConfig +
+                //   ", loggingEnabled='" + storeBuilder.loggingEnabled + '\'' +
+                //   "} ";
         }
     }
 }

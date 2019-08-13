@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamPrintProcessor();
+            return null;// new KStreamPrintProcessor();
         }
     }
 }

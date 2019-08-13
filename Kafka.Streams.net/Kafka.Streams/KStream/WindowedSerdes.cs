@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream
          */
         static public ISerde<Windowed<T>> timeWindowedSerdeFrom<T>()
         {
-            return new TimeWindowedSerde<T>(Serdes.serdeFrom<T>());
+            return null;// new TimeWindowedSerde<T>(Serdes.serdeFrom<T>());
         }
 
         /**
@@ -37,7 +37,7 @@ namespace Kafka.Streams.KStream
          */
         public static Serde<Windowed<T>> timeWindowedSerdeFrom<T>(long windowSize)
         {
-            return new TimeWindowedSerde<T>(Serdes.serdeFrom<T>(), windowSize);
+            return null;// new TimeWindowedSerde<T>(Serdes.serdeFrom<T>(), windowSize);
         }
 
         /**
@@ -45,7 +45,7 @@ namespace Kafka.Streams.KStream
          */
         public static Serde<Windowed<T>> sessionWindowedSerdeFrom<T>()
         {
-            return new SessionWindowedSerde<T>(Serdes.serdeFrom<T>());
+            return null; // new SessionWindowedSerde<T>(Serdes.serdeFrom<T>());
         }
 
         public static void verifyInnerSerializerNotNull<T>(

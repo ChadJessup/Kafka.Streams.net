@@ -46,8 +46,8 @@ namespace Kafka.Streams.KStream
         {
             if (inner == null)
             {
-                string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-                string value = (string)configs[propertyName];
+                //string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
+                //string value = (string)configs[propertyName];
                 try
                 {
 //                    inner = Utils.newInstance(value, ISerde).Serializer();
@@ -56,21 +56,21 @@ namespace Kafka.Streams.KStream
                 catch (System.TypeAccessException e)
                 {
                     //throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
-                    throw new Exception($"{propertyName}, {value}, Serde {value} could not be found.");
+                    //throw new Exception($"{propertyName}, {value}, Serde {value} could not be found.");
                 }
             }
         }
 
         public byte[] serialize(string topic, Windowed<T> data)
         {
-            WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
+            //WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
             if (data == null)
             {
                 return null;
             }
 
-            return WindowKeySchema.toBinary(data, inner, topic);
+            return null; // WindowKeySchema.toBinary(data, inner, topic);
         }
 
 
@@ -78,16 +78,17 @@ namespace Kafka.Streams.KStream
         {
             if (inner != null)
             {
-                inner.close();
+                //inner.close();
             }
         }
 
 
         public byte[] serializeBaseKey(string topic, Windowed<T> data)
         {
-            WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
+            return null;
+            //WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
-            return inner.Serialize(topic, data.key);
+            //return inner.Serialize(topic, data.key);
         }
 
         // Only for testing

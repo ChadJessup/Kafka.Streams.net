@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamJoinWindowProcessor<K, V>(this.windowName);
+            return null;//new KStreamJoinWindowProcessor<K, V>(this.windowName);
         }
     }
 }

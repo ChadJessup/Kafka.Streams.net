@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKTableJoinProcessor>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKTableJoinProcessor<K1, K2, V1, V2, R>>();
 
         private IKTableValueGetter<K2, V2> valueGetter;
         private IKeyValueMapper<K1, V1, K2> keyMapper;
@@ -50,9 +50,9 @@ namespace Kafka.Streams.KStream.Internals
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics;
-            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
+            //skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
-            valueGetter.init(context);
+            //valueGetter.init(context);
         }
 
         public override void process(K1 key, V1 value)
@@ -75,13 +75,12 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-
-                K2 mappedKey = keyMapper.apply(key, value);
-                V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey]);
-                if (leftJoin || value2 != null)
-                {
-                    context.forward(key, joiner.apply(value, value2));
-                }
+                //K2 mappedKey = keyMapper.apply(key, value);
+                //V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey]);
+                //if (leftJoin || value2 != null)
+                //{
+                //    context.forward(key, joiner.apply(value, value2));
+                //}
             }
         }
 

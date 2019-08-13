@@ -44,31 +44,33 @@ namespace Kafka.Streams.Processor.Internals
 
         long retentionPeriod<K, V>()
         {
-            if (builder is WindowStoreBuilder<K, V>)
-            {
-                return ((WindowStoreBuilder<K, V>)builder).retentionPeriod();
-            }
-            else if (builder is TimestampedWindowStoreBuilder<K, V>)
-            {
-                return ((TimestampedWindowStoreBuilder<K, V>)builder).retentionPeriod();
-            }
-            else if (builder is SessionStoreBuilder<K, V>)
-            {
-                return ((SessionStoreBuilder<K, V>)builder).retentionPeriod();
-            }
-            else
-            {
-                throw new InvalidOperationException("retentionPeriod is not supported when not a window store");
-            }
+            return 0;
+            //if (builder is WindowStoreBuilder<K, V>)
+            //{
+            //    return ((WindowStoreBuilder<K, V>)builder).retentionPeriod();
+            //}
+            //else if (builder is TimestampedWindowStoreBuilder<K, V>)
+            //{
+            //    return ((TimestampedWindowStoreBuilder<K, V>)builder).retentionPeriod();
+            //}
+            //else if (builder is SessionStoreBuilder<K, V>)
+            //{
+            //    return ((SessionStoreBuilder<K, V>)builder).retentionPeriod();
+            //}
+            //else
+            //{
+            //    throw new InvalidOperationException("retentionPeriod is not supported when not a window store");
+            //}
         }
 
         public string name => builder.name;
 
         private bool isWindowStore<K, V>()
         {
-            return builder is WindowStoreBuilder<K, V>
-                || builder is TimestampedWindowStoreBuilder<K, V>
-                || builder is SessionStoreBuilder<K, V>;
+            return false;
+            //builder is WindowStoreBuilder<K, V>
+            //    || builder is TimestampedWindowStoreBuilder<K, V>
+            //    || builder is SessionStoreBuilder<K, V>;
         }
     }
 }

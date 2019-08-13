@@ -33,19 +33,19 @@ namespace Kafka.Streams.Processor.Internals
 
         public object key()
         {
-            return value.key();
+            return null;// value.key();
         }
 
-        public object value => value.value;
+        //public object value => value.value;
 
         public long offset()
         {
-            return value.offset();
+            return 0;// value.offset();
         }
 
         public Headers headers()
         {
-            return value.headers();
+            return null; // value.headers();
         }
 
 

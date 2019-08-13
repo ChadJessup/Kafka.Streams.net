@@ -49,13 +49,13 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableAggregateProcessor();
+            return null;// new KTableAggregateProcessor();
         }
 
 
         public IKTableValueGetterSupplier<K, T> view()
         {
-            return new KTableMaterializedValueGetterSupplier<>(storeName);
+            return null;// new KTableMaterializedValueGetterSupplier<>(storeName);
         }
     }
 }

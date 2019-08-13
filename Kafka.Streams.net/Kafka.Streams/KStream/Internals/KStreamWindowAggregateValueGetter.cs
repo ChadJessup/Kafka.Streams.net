@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamWindowAggregateValueGetter<K, V, Agg> : IKTableValueGetter<Windowed<K>, Agg>
     {
-        private ITimestampedWindowStore<K, Agg> windowStore;
+        //private ITimestampedWindowStore<K, Agg> windowStore;
 
         public void init(IProcessorContext<Windowed<K>, Agg> context)
         {
@@ -33,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
             K key = windowedKey.key;
             var window = windowedKey.window;
 
-            return windowStore.fetch(key, window.start());
+            return null; // windowStore.fetch(key, window.start());
         }
 
 

@@ -3,7 +3,7 @@ using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.State.Interfaces
 {
-    public interface ISegment : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
+    public interface ISegment //: IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
         void destroy();//;
 

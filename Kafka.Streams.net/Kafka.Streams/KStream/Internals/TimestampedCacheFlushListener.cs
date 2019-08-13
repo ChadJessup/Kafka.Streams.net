@@ -43,10 +43,10 @@ namespace Kafka.Streams.KStream.Internals
             context.setCurrentNode(myNode);
             try
             {
-                context.forward(
-                    key,
-                    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
-                    To.all().withTimestamp(newValue != null ? newValue.timestamp : timestamp));
+                //context.forward(
+                //    key,
+                //    new Change<ValueAndTimestamp<V>>(newValue, oldValue),
+                //    To.all().withTimestamp(newValue != null ? newValue.timestamp : timestamp));
             }
             finally
             {

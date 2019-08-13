@@ -40,9 +40,11 @@ namespace Kafka.Streams.KStream.Internals
         public ValueAndTimestamp<KeyValue<K1, V1>> get(K key)
         {
             ValueAndTimestamp<KeyValue<K1, V1>> valueAndTimestamp = parentGetter.get(key);
-            return ValueAndTimestamp<KeyValue<K1, V1>>.make(
-                mapper.apply(key, valueAndTimestamp),
-                valueAndTimestamp == null ? context.timestamp() : valueAndTimestamp.timestamp());
+            //return ValueAndTimestamp<KeyValue<K1, V1>>.make(
+            //    mapper.apply(key, valueAndTimestamp),
+            //    valueAndTimestamp == null ? context.timestamp() : valueAndTimestamp.timestamp());
+
+            return null;
         }
 
 

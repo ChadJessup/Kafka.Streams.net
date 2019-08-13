@@ -99,7 +99,7 @@ namespace Kafka.Streams
         //private QueryableStoreProvider queryableStoreProvider;
         private IAdminClient adminClient;
 
-        private GlobalStreamThread globalStreamThread;
+        //private GlobalStreamThread globalStreamThread;
         private IStateListener stateListener;
         private IStateRestoreListener globalStateRestoreListener;
 
@@ -516,12 +516,12 @@ namespace Kafka.Streams
             {
                 if (state.CurrentState == KafkaStreamsStates.CREATED)
                 {
-                    foreach (StreamThread thread in threads)
+                    //foreach (StreamThread thread in threads)
                     {
                         // thread.setUncaughtExceptionHandler(eh);
                     }
 
-                    if (globalStreamThread != null)
+                    //if (globalStreamThread != null)
                     {
                         //                        globalStreamThread.setUncaughtExceptionHandler(eh);
                     }
@@ -567,7 +567,7 @@ namespace Kafka.Streams
         {
             var result = new Dictionary<MetricName, IMetric>();
             // producer and consumer clients are per-thread
-            foreach (StreamThread thread in threads)
+//            foreach (StreamThread thread in threads)
             {
                 //result.putAll(thread.producerMetrics());
                 //result.putAll(thread.consumerMetrics());
@@ -577,10 +577,10 @@ namespace Kafka.Streams
                 //result.putAll(thread.adminClientMetrics());
             }
             // global thread's consumer client
-            if (globalStreamThread != null)
-            {
-                //result.putAll(globalStreamThread.consumerMetrics());
-            }
+            //if (globalStreamThread != null)
+            //{
+            //    //result.putAll(globalStreamThread.consumerMetrics());
+            //}
             // self streams metrics
             //            result.putAll(metrics.metrics);
             return result;
@@ -961,30 +961,29 @@ namespace Kafka.Streams
          * @throws InvalidStateStoreException if Kafka Streams is (re-)initializing or a store with {@code storeName} and
          * {@code queryableStoreType} doesn't exist
          */
-        public T store<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
-        {
-            validateIsRunning();
-            return queryableStoreProvider.getStore(storeName, queryableStoreType);
-        }
+        //public T store<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
+        //{
+        //    validateIsRunning();
+        //    return queryableStoreProvider.getStore(storeName, queryableStoreType);
+        //}
 
         /**
          * Returns runtime information about the local threads of this {@link KafkaStreams} instance.
          *
          * @return the set of {@link ThreadMetadata}.
          */
-        public HashSet<ThreadMetadata> localThreadsMetadata()
-        {
-            validateIsRunning();
-            HashSet<ThreadMetadata> threadMetadata = new HashSet<ThreadMetadata>();
-            foreach (StreamThread thread in threads)
-            {
-                //  threadMetadata.Add(thread.threadMetadata());
-            }
+        //public HashSet<ThreadMetadata> localThreadsMetadata()
+        //{
+        //    validateIsRunning();
+        //    HashSet<ThreadMetadata> threadMetadata = new HashSet<ThreadMetadata>();
+        //    foreach (StreamThread thread in threads)
+        //    {
+        //        //  threadMetadata.Add(thread.threadMetadata());
+        //    }
 
-            return threadMetadata;
-        }
+        //    return threadMetadata;
+        //}
 
-        #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
@@ -1018,6 +1017,5 @@ namespace Kafka.Streams
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
         }
-        #endregion
     }
 }

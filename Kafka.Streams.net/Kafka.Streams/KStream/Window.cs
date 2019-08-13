@@ -31,8 +31,8 @@ namespace Kafka.Streams.KStream
             this.startMs = startMs;
             this.endMs = endMs;
 
-            this.startTime = DateTime.ofEpochMilli(startMs);
-            this.endTime = DateTime.ofEpochMilli(endMs);
+            //this.startTime = DateTime.ofEpochMilli(startMs);
+            //this.endTime = DateTime.ofEpochMilli(endMs);
         }
 
         /**

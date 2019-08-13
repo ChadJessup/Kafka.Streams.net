@@ -22,16 +22,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         public override void process(K key, V value)
         {
-            action.apply(key, value);
+            //action.apply(key, value);
         }
 
 
         public void close()
         {
-            if (action is PrintForeachAction)
-            {
-                ((PrintForeachAction)action).close();
-            }
+            //if (action is PrintForeachAction)
+            //{
+            //    ((PrintForeachAction)action).close();
+            //}
         }
     }
 }

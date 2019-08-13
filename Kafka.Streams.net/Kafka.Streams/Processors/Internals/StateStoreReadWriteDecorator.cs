@@ -11,9 +11,9 @@ namespace Kafka.Streams.Processor.Internals
 
         static string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
 
-        private StateStoreReadWriteDecorator(T inner)
+        public StateStoreReadWriteDecorator(T inner)
+            : base(inner)
         {
-            base(inner);
         }
 
 

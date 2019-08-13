@@ -32,14 +32,14 @@ namespace Kafka.Streams.KStream.Internals
 
         public void init(IProcessorContext<K, V> context)
         {
-            valueTransformer.init(new ForwardingDisabledProcessorContext(context));
+            //valueTransformer.init(new ForwardingDisabledProcessorContext(context));
             this.context = context;
         }
 
 
         public void process(K key, V value)
         {
-            context.forward(key, valueTransformer.transform(key, value));
+            //context.forward(key, valueTransformer.transform(key, value));
         }
 
 

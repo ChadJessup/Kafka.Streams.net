@@ -25,12 +25,12 @@ namespace Kafka.Streams.Processor.Internals
 
         public ProcessorNode<K, V> node<K, V>()
         {
-            return queue.source();
+            return null; // queue.source();
         }
 
         public TopicPartition partition()
         {
-            return queue.partition();
+            return null; // queue.partition();
         }
     }
 }

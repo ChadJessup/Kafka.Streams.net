@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.context = context;
             this.sendOldValues = sendOldValues;
-            cachingEnabled = ((WrappedStateStore<S, K, V>)store).setFlushListener(flushListener, sendOldValues);
+            //cachingEnabled = ((WrappedStateStore<S, K, V>)store).setFlushListener(flushListener, sendOldValues);
         }
 
         public void maybeForward(
@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null));
+                //context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null));
             }
         }
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(timestamp));
+              //  context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(timestamp));
             }
         }
     }

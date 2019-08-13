@@ -50,27 +50,27 @@ namespace Kafka.Streams.State.Internals
 
         public IStoreBuilder<T> withCachingEnabled()
         {
-            enableCaching = true;
+//            enableCaching = true;
             return this;
         }
 
         public IStoreBuilder<T> withCachingDisabled()
         {
-            enableCaching = false;
+            //enableCaching = false;
             return this;
         }
 
         public IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
         {
             config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
-            enableLogging = true;
+            //enableLogging = true;
             logConfig = config;
             return this;
         }
 
         public IStoreBuilder<T> withLoggingDisabled()
         {
-            enableLogging = false;
+            //enableLogging = false;
             logConfig.Clear();
             return this;
         }

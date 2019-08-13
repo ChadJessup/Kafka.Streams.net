@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V1> get()
         {
-            return new KStreamKStreamJoinProcessor();
+            return null;// new KStreamKStreamJoinProcessor();
         }
     }
 }

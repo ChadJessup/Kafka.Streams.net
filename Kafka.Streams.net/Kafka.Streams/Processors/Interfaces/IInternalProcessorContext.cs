@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * Get the thread-global cache
          */
-        ThreadCache getCache();
+        //ThreadCache getCache();
 
         /**
          * Mark this context as being initialized

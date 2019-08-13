@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream.Internals
             return valueSerde?.Deserializer;
         }
 
-        public AutoOffsetReset offsetResetPolicy()
+        public AutoOffsetReset? offsetResetPolicy()
         {
             return resetPolicy;
         }

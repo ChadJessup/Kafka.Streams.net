@@ -174,7 +174,7 @@ namespace Kafka.Streams.Processor.Internals
                 sourceTopicNames.Add(topic);
             }
 
-            nodeFactories.Add(name, new SourceNodeFactory<K, V>(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
+            // nodeFactories.Add(name, new SourceNodeFactory<K, V>(name, topics, null, timestampExtractor, keyDeserializer, valDeserializer));
             nodeToSourceTopics.Add(name, topics.ToList());
             nodeGrouper.add(name);
             _nodeGroups = null;
@@ -299,7 +299,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
             }
 
-            nodeFactories.Add(name, new SinkNodeFactory<K, V>(name, predecessorNames, topicExtractor, keySerializer, valSerializer, partitioner));
+            //nodeFactories.Add(name, new SinkNodeFactory<K, V>(name, predecessorNames, topicExtractor, keySerializer, valSerializer, partitioner));
             nodeGrouper.add(name);
             nodeGrouper.unite(name, predecessorNames);
             _nodeGroups = null;
@@ -350,7 +350,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
             }
 
-            nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(name, predecessorNames, supplier));
+            //nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(name, predecessorNames, supplier));
             //            nodeGrouper.Add(name);
             nodeGrouper.unite(name, predecessorNames);
             _nodeGroups = null;
@@ -420,22 +420,22 @@ namespace Kafka.Streams.Processor.Internals
             string[] topics = { topic };
             string[] predecessors = { sourceName };
 
-            ProcessorNodeFactory<K, V> nodeFactory = new ProcessorNodeFactory<K, V>(processorName,
-                predecessors,
-                stateUpdateSupplier);
+            //ProcessorNodeFactory<K, V> nodeFactory = new ProcessorNodeFactory<K, V>(processorName,
+            //    predecessors,
+            //    stateUpdateSupplier);
 
             globalTopics.Add(topic);
-            nodeFactories.Add(sourceName, new SourceNodeFactory<K, V>(sourceName,
-                topics,
-                null,
-                timestampExtractor,
-                keyDeserializer,
-                valueDeserializer));
+            //nodeFactories.Add(sourceName, new SourceNodeFactory<K, V>(sourceName,
+            //    topics,
+            //    null,
+            //    timestampExtractor,
+            //    keyDeserializer,
+            //    valueDeserializer));
 
             nodeToSourceTopics.Add(sourceName, topics.ToList());
             nodeGrouper.add(sourceName);
-            nodeFactory.addStateStore(storeBuilder.name);
-            nodeFactories.Add(processorName, nodeFactory);
+            //nodeFactory.addStateStore(storeBuilder.name);
+            //nodeFactories.Add(processorName, nodeFactory);
             nodeGrouper.add(processorName);
             nodeGrouper.unite(processorName, predecessors);
             globalStateBuilders.Add(storeBuilder.name, storeBuilder);
@@ -563,85 +563,85 @@ namespace Kafka.Streams.Processor.Internals
             //stateStoreFactory.users().Add(processorName);
 
             NodeFactory nodeFactory = nodeFactories[processorName];
-            if (nodeFactory is ProcessorNodeFactory<K, V>)
-            {
-                ProcessorNodeFactory<K, V> processorNodeFactory = (ProcessorNodeFactory<K, V>)nodeFactory;
-                processorNodeFactory.addStateStore(stateStoreName);
-                connectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
-            }
-            else
-            {
-                throw new TopologyException("cannot connect a state store " + stateStoreName + " to a source node or a sink node.");
-            }
+            //if (nodeFactory is ProcessorNodeFactory<K, V>)
+            //{
+            //    ProcessorNodeFactory<K, V> processorNodeFactory = (ProcessorNodeFactory<K, V>)nodeFactory;
+            //    processorNodeFactory.addStateStore(stateStoreName);
+            //    connectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
+            //}
+            //else
+            //{
+            //    throw new TopologyException("cannot connect a state store " + stateStoreName + " to a source node or a sink node.");
+            //}
         }
 
-        private HashSet<SourceNodeFactory<K, V>> findSourcesForProcessorPredecessors<K, V>(string[] predecessors)
-        {
-            HashSet<SourceNodeFactory<K, V>> sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
-            foreach (string predecessor in predecessors)
-            {
-                NodeFactory nodeFactory = nodeFactories[predecessor];
-                if (nodeFactory is SourceNodeFactory<K, V>)
-                {
-                    sourceNodes.Add((SourceNodeFactory<K, V>)nodeFactory);
-                }
-                else if (nodeFactory is ProcessorNodeFactory<K, V>)
-                {
-                    //        sourceNodes.AddAll(findSourcesForProcessorPredecessors(((ProcessorNodeFactory)nodeFactory).predecessors));
-                }
-            }
-            return sourceNodes;
-        }
+        //private HashSet<SourceNodeFactory<K, V>> findSourcesForProcessorPredecessors<K, V>(string[] predecessors)
+        //{
+        //    HashSet<SourceNodeFactory<K, V>> sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
+        //    foreach (string predecessor in predecessors)
+        //    {
+        //        NodeFactory nodeFactory = nodeFactories[predecessor];
+        //        if (nodeFactory is SourceNodeFactory<K, V>)
+        //        {
+        //            sourceNodes.Add((SourceNodeFactory<K, V>)nodeFactory);
+        //        }
+        //        else if (nodeFactory is ProcessorNodeFactory<K, V>)
+        //        {
+        //            //        sourceNodes.AddAll(findSourcesForProcessorPredecessors(((ProcessorNodeFactory)nodeFactory).predecessors));
+        //        }
+        //    }
+        //    return sourceNodes;
+        //}
 
-        private void connectStateStoreNameToSourceTopicsOrPattern<K, V>(
-            string stateStoreName,
-            ProcessorNodeFactory<K, V> processorNodeFactory)
-        {
-            // we should never update the mapping from state store names to source topics if the store name already exists
-            // in the map; this scenario is possible, for example, that a state store underlying a source KTable is
-            // connecting to a join operator whose source topic is not the original KTable's source topic but an internal repartition topic.
-            if (_stateStoreNameToSourceTopics.ContainsKey(stateStoreName)
-                || stateStoreNameToSourceRegex.ContainsKey(stateStoreName))
-            {
-                return;
-            }
+        //private void connectStateStoreNameToSourceTopicsOrPattern<K, V>(
+        //    string stateStoreName,
+        //    ProcessorNodeFactory<K, V> processorNodeFactory)
+        //{
+        //    // we should never update the mapping from state store names to source topics if the store name already exists
+        //    // in the map; this scenario is possible, for example, that a state store underlying a source KTable is
+        //    // connecting to a join operator whose source topic is not the original KTable's source topic but an internal repartition topic.
+        //    if (_stateStoreNameToSourceTopics.ContainsKey(stateStoreName)
+        //        || stateStoreNameToSourceRegex.ContainsKey(stateStoreName))
+        //    {
+        //        return;
+        //    }
 
-            HashSet<string> sourceTopics = new HashSet<string>();
-            HashSet<Regex> sourcePatterns = new HashSet<Regex>();
-            HashSet<SourceNodeFactory<K, V>> sourceNodesForPredecessor =
-                findSourcesForProcessorPredecessors<K, V>(processorNodeFactory.predecessors);
+        //    HashSet<string> sourceTopics = new HashSet<string>();
+        //    HashSet<Regex> sourcePatterns = new HashSet<Regex>();
+        //    //HashSet<SourceNodeFactory<K, V>> sourceNodesForPredecessor =
+        //    //    findSourcesForProcessorPredecessors<K, V>(processorNodeFactory.predecessors);
 
-            foreach (var sourceNodeFactory in sourceNodesForPredecessor)
-            {
-                if (sourceNodeFactory.pattern != null)
-                {
-                    sourcePatterns.Add(sourceNodeFactory.pattern);
-                }
-                else
-                {
-                    //sourceTopics.AddAll(sourceNodeFactory.topics);
-                }
-            }
+        //    foreach (var sourceNodeFactory in sourceNodesForPredecessor)
+        //    {
+        //        if (sourceNodeFactory.pattern != null)
+        //        {
+        //            sourcePatterns.Add(sourceNodeFactory.pattern);
+        //        }
+        //        else
+        //        {
+        //            //sourceTopics.AddAll(sourceNodeFactory.topics);
+        //        }
+        //    }
 
-            if (sourceTopics.Any())
-            {
-                _stateStoreNameToSourceTopics.Add(stateStoreName,
-                        sourceTopics);
-            }
+        //    if (sourceTopics.Any())
+        //    {
+        //        _stateStoreNameToSourceTopics.Add(stateStoreName,
+        //                sourceTopics);
+        //    }
 
-            if (sourcePatterns.Any())
-            {
-                stateStoreNameToSourceRegex.Add(
-                    stateStoreName,
-                    sourcePatterns);
-            }
+        //    if (sourcePatterns.Any())
+        //    {
+        //        stateStoreNameToSourceRegex.Add(
+        //            stateStoreName,
+        //            sourcePatterns);
+        //    }
 
-        }
+        //}
 
         private void maybeAddToResetList<T>(
             ICollection<T> earliestResets,
             ICollection<T> latestResets,
-            AutoOffsetReset offsetReset,
+            AutoOffsetReset? offsetReset,
             T item)
         {
             switch (offsetReset)
@@ -788,7 +788,7 @@ namespace Kafka.Streams.Processor.Internals
 
             Dictionary<string, ProcessorNode<K, V>> processorMap = new Dictionary<string, ProcessorNode<K, V>>();
             Dictionary<string, SourceNode<K, V>> topicSourceMap = new Dictionary<string, SourceNode<K, V>>();
-            Dictionary<string, SinkNode<K, V>> topicSinkMap = new Dictionary<string, SinkNode<K, V>>();
+            //Dictionary<string, SinkNode<K, V>> topicSinkMap = new Dictionary<string, SinkNode<K, V>>();
             Dictionary<string, IStateStore> stateStoreMap = new Dictionary<string, IStateStore>();
             HashSet<string> repartitionTopics = new HashSet<string>();
 
@@ -801,33 +801,33 @@ namespace Kafka.Streams.Processor.Internals
                     //                    ProcessorNode node = factory.build();
                     //                  processorMap.Add(node.name, node);
 
-                    if (factory is ProcessorNodeFactory<K, V>)
-                    {
-                        //buildProcessorNode(
-                        //    processorMap,
-                        //    stateStoreMap,
-                        //    (ProcessorNodeFactory<K, V>)factory,
-                        //    node);
-                    }
-                    else if (factory is SourceNodeFactory<K, V>)
-                    {
-                        //buildSourceNode(topicSourceMap,
-                        //                repartitionTopics,
-                        //                (SourceNodeFactory<K, V>)factory,
-                        //                (SourceNode<K, V>)node);
-                    }
-                    else if (factory is SinkNodeFactory<K, V>)
-                    {
-                        //buildSinkNode(processorMap,
-                        //              topicSinkMap,
-                        //              repartitionTopics,
-                        //              (SinkNodeFactory<K, V>)factory,
-                        //              (SinkNode<K, V>)node);
-                    }
-                    else
-                    {
-                        throw new TopologyException("Unknown definition: " + factory.GetType().FullName);
-                    }
+                    //if (factory is ProcessorNodeFactory<K, V>)
+                    //{
+                    //    //buildProcessorNode(
+                    //    //    processorMap,
+                    //    //    stateStoreMap,
+                    //    //    (ProcessorNodeFactory<K, V>)factory,
+                    //    //    node);
+                    //}
+                    //else if (factory is SourceNodeFactory<K, V>)
+                    //{
+                    //    //buildSourceNode(topicSourceMap,
+                    //    //                repartitionTopics,
+                    //    //                (SourceNodeFactory<K, V>)factory,
+                    //    //                (SourceNode<K, V>)node);
+                    //}
+                    //else if (factory is SinkNodeFactory<K, V>)
+                    //{
+                    //    //buildSinkNode(processorMap,
+                    //    //              topicSinkMap,
+                    //    //              repartitionTopics,
+                    //    //              (SinkNodeFactory<K, V>)factory,
+                    //    //              (SinkNode<K, V>)node);
+                    //}
+                    //else
+                    //{
+                    //    throw new TopologyException("Unknown definition: " + factory.GetType().FullName);
+                    //}
                 }
             }
 
@@ -842,102 +842,102 @@ namespace Kafka.Streams.Processor.Internals
             //    repartitionTopics);
         }
 
-        private void buildSinkNode<K, V>(
-            Dictionary<string, ProcessorNode<K, V>> processorMap,
-            Dictionary<string, SinkNode<K, V>> topicSinkMap,
-            HashSet<string> repartitionTopics,
-            SinkNodeFactory<K, V> sinkNodeFactory,
-            SinkNode<K, V> node)
-        {
+        //private void buildSinkNode<K, V>(
+        //    Dictionary<string, ProcessorNode<K, V>> processorMap,
+        //    Dictionary<string, SinkNode<K, V>> topicSinkMap,
+        //    HashSet<string> repartitionTopics,
+        //    SinkNodeFactory<K, V> sinkNodeFactory,
+        //    SinkNode<K, V> node)
+        //{
 
-            foreach (string predecessor in sinkNodeFactory.predecessors)
-            {
-                //processorMap[predecessor].AddChild(node);
-                if (sinkNodeFactory.topicExtractor is StaticTopicNameExtractor<K, V>)
-                {
-                    string topic = ((StaticTopicNameExtractor<K, V>)sinkNodeFactory.topicExtractor).topicName;
+        //    foreach (string predecessor in sinkNodeFactory.predecessors)
+        //    {
+        //        //processorMap[predecessor].AddChild(node);
+        //        if (sinkNodeFactory.topicExtractor is StaticTopicNameExtractor<K, V>)
+        //        {
+        //            string topic = ((StaticTopicNameExtractor<K, V>)sinkNodeFactory.topicExtractor).topicName;
 
-                    if (internalTopicNames.Contains(topic))
-                    {
-                        // prefix the internal topic name with the application id
-                        string decoratedTopic = decorateTopic(topic);
-                        topicSinkMap.Add(decoratedTopic, node);
-                        repartitionTopics.Add(decoratedTopic);
-                    }
-                    else
-                    {
+        //            if (internalTopicNames.Contains(topic))
+        //            {
+        //                // prefix the internal topic name with the application id
+        //                string decoratedTopic = decorateTopic(topic);
+        //                topicSinkMap.Add(decoratedTopic, node);
+        //                repartitionTopics.Add(decoratedTopic);
+        //            }
+        //            else
+        //            {
 
-                        topicSinkMap.Add(topic, node);
-                    }
+        //                topicSinkMap.Add(topic, node);
+        //            }
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
-        private void buildSourceNode<K, V>(
-            Dictionary<string, SourceNode<K, V>> topicSourceMap,
-            HashSet<string> repartitionTopics,
-            SourceNodeFactory<K, V> sourceNodeFactory,
-            SourceNode<K, V> node)
-        {
+        //private void buildSourceNode<K, V>(
+        //    Dictionary<string, SourceNode<K, V>> topicSourceMap,
+        //    HashSet<string> repartitionTopics,
+        //    SourceNodeFactory<K, V> sourceNodeFactory,
+        //    SourceNode<K, V> node)
+        //{
 
-            List<string> topics = (sourceNodeFactory.pattern != null)
-                ? null //sourceNodeFactory.getTopics(subscriptionUpdates.getUpdates())
-                : sourceNodeFactory.topics;
+        //    List<string> topics = (sourceNodeFactory.pattern != null)
+        //        ? null //sourceNodeFactory.getTopics(subscriptionUpdates.getUpdates())
+        //        : sourceNodeFactory.topics;
 
-            foreach (string topic in topics)
-            {
-                if (internalTopicNames.Contains(topic))
-                {
-                    // prefix the internal topic name with the application id
-                    string decoratedTopic = decorateTopic(topic);
-                    topicSourceMap.Add(decoratedTopic, node);
-                    repartitionTopics.Add(decoratedTopic);
-                }
-                else
-                {
+        //    foreach (string topic in topics)
+        //    {
+        //        if (internalTopicNames.Contains(topic))
+        //        {
+        //            // prefix the internal topic name with the application id
+        //            string decoratedTopic = decorateTopic(topic);
+        //            topicSourceMap.Add(decoratedTopic, node);
+        //            repartitionTopics.Add(decoratedTopic);
+        //        }
+        //        else
+        //        {
 
-                    topicSourceMap.Add(topic, node);
-                }
-            }
-        }
+        //            topicSourceMap.Add(topic, node);
+        //        }
+        //    }
+        //}
 
-        private void buildProcessorNode<K, V>(
-            Dictionary<string, ProcessorNode<K, V>> processorMap,
-            Dictionary<string, IStateStore> stateStoreMap,
-            ProcessorNodeFactory<K, V> factory,
-            ProcessorNode<K, V> node)
-        {
+        //private void buildProcessorNode<K, V>(
+        //    Dictionary<string, ProcessorNode<K, V>> processorMap,
+        //    Dictionary<string, IStateStore> stateStoreMap,
+        //    ProcessorNodeFactory<K, V> factory,
+        //    ProcessorNode<K, V> node)
+        //{
 
-            foreach (string predecessor in factory.predecessors)
-            {
-                ProcessorNode<K, V> predecessorNode = processorMap[predecessor];
-                //                predecessorNode.AddChild(node);
-            }
+        //    foreach (string predecessor in factory.predecessors)
+        //    {
+        //        ProcessorNode<K, V> predecessorNode = processorMap[predecessor];
+        //        //                predecessorNode.AddChild(node);
+        //    }
 
-            foreach (string stateStoreName in factory.stateStoreNames)
-            {
-                if (!stateStoreMap.ContainsKey(stateStoreName))
-                {
-                    if (stateFactories.ContainsKey(stateStoreName))
-                    {
-                        StateStoreFactory stateStoreFactory = stateFactories[stateStoreName];
+        //    foreach (string stateStoreName in factory.stateStoreNames)
+        //    {
+        //        if (!stateStoreMap.ContainsKey(stateStoreName))
+        //        {
+        //            if (stateFactories.ContainsKey(stateStoreName))
+        //            {
+        //                StateStoreFactory stateStoreFactory = stateFactories[stateStoreName];
 
-                        // remember the changelog topic if this state store is change-logging enabled
-                        //if (/*stateStoreFactory.loggingEnabled && */!storeToChangelogTopic.ContainsKey(stateStoreName))
-                        //{
-                        //    string changelogTopic = ProcessorStateManager<K, V>.storeChangelogTopic(applicationId, stateStoreName);
-                        //    storeToChangelogTopic.Add(stateStoreName, changelogTopic);
-                        //}
-                        //stateStoreMap.Add(stateStoreName, stateStoreFactory.build());
-                    }
-                    else
-                    {
-                        //                        stateStoreMap.Add(stateStoreName, globalStateStores[stateStoreName]);
-                    }
-                }
-            }
-        }
+        //                // remember the changelog topic if this state store is change-logging enabled
+        //                //if (/*stateStoreFactory.loggingEnabled && */!storeToChangelogTopic.ContainsKey(stateStoreName))
+        //                //{
+        //                //    string changelogTopic = ProcessorStateManager<K, V>.storeChangelogTopic(applicationId, stateStoreName);
+        //                //    storeToChangelogTopic.Add(stateStoreName, changelogTopic);
+        //                //}
+        //                //stateStoreMap.Add(stateStoreName, stateStoreFactory.build());
+        //            }
+        //            else
+        //            {
+        //                //                        stateStoreMap.Add(stateStoreName, globalStateStores[stateStoreName]);
+        //            }
+        //        }
+        //    }
+        //}
 
         /**
          * Get any global {@link IStateStore}s that are part of the
@@ -1289,12 +1289,12 @@ namespace Kafka.Streams.Processor.Internals
         {
             NodeFactory nodeFactory = nodeFactories[nodeName];
 
-            if (nodeFactory is SourceNodeFactory<K, V>)
-            {
-                List<string> topics = ((SourceNodeFactory<K, V>)nodeFactory).topics;
+            //if (nodeFactory is SourceNodeFactory<K, V>)
+            //{
+            //    List<string> topics = ((SourceNodeFactory<K, V>)nodeFactory).topics;
 
-                return topics != null && topics.Count == 1 && globalTopics.Contains(topics[0]);
-            }
+            //    return topics != null && topics.Count == 1 && globalTopics.Contains(topics[0]);
+            //}
             return false;
         }
 
@@ -1337,12 +1337,12 @@ namespace Kafka.Streams.Processor.Internals
                     //                    it.Remove(); // Remove sourceNode from group
                     string processorNode = nodes.GetEnumerator().Current; // get remaining processorNode
 
-                    description.addGlobalStore(new GlobalStore(
-                        node,
-                        processorNode,
-                        ((ProcessorNodeFactory<K, V>)nodeFactories[processorNode]).stateStoreNames.GetEnumerator().Current,
-                        nodeToSourceTopics[node][0],
-                        id));
+                    //description.addGlobalStore(new GlobalStore(
+                    //    node,
+                    //    processorNode,
+                    //    ((ProcessorNodeFactory<K, V>)nodeFactories[processorNode]).stateStoreNames.GetEnumerator().Current,
+                    //    nodeToSourceTopics[node][0],
+                    //    id));
 
                     break;
                 }

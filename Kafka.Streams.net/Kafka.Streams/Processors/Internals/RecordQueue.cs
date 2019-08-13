@@ -24,6 +24,7 @@ using Kafka.Streams.Processor.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -65,7 +66,7 @@ namespace Kafka.Streams.Processor.Internals
         private TopicPartition partition;
         private IProcessorContext<K, V> processorContext;
         private ITimestampExtractor timestampExtractor;
-        private RecordDeserializer<K, V> recordDeserializer;
+        //private RecordDeserializer<K, V> recordDeserializer;
         private Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
 
         private StampedRecord headRecord = null;
@@ -91,13 +92,13 @@ namespace Kafka.Streams.Processor.Internals
             this.fifoQueue = new Queue<ConsumeResult<byte[], byte[]>>();
             this.timestampExtractor = timestampExtractor;
             this.processorContext = processorContext;
-            skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics);
-            recordDeserializer = new RecordDeserializer<K, V>(
-                source,
-                deserializationExceptionHandler,
-                logContext,
-                skipRecordsSensor
-            );
+            //skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics);
+            //recordDeserializer = new RecordDeserializer<K, V>(
+            //    source,
+            //    deserializationExceptionHandler,
+            //    logContext,
+            //    skipRecordsSensor
+            //);
             this.log = logContext.logger<RecordQueue>();
         }
 
@@ -133,7 +134,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             foreach (ConsumeResult<byte[], byte[]> rawRecord in rawRecords)
             {
-                fifoQueue.AddLast(rawRecord);
+                //fifoQueue.AddLast(rawRecord);
             }
 
             updateHead();
@@ -164,7 +165,7 @@ namespace Kafka.Streams.Processor.Internals
         public int size()
         {
             // plus one deserialized head record for timestamp tracking
-            return fifoQueue.size() + (headRecord == null ? 0 : 1);
+            return fifoQueue.Count + (headRecord == null ? 0 : 1);
         }
 
         /**
@@ -174,7 +175,7 @@ namespace Kafka.Streams.Processor.Internals
          */
         public bool isEmpty()
         {
-            return fifoQueue.isEmpty() && headRecord == null;
+            return !fifoQueue.Any() && headRecord == null;
         }
 
         /**
@@ -184,7 +185,7 @@ namespace Kafka.Streams.Processor.Internals
          */
         public long headRecordTimestamp()
         {
-            return headRecord == null ? UNKNOWN : headRecord.timestamp;
+            return 0; // headRecord == null ? UNKNOWN : headRecord.timestamp;
         }
 
         /**
@@ -198,19 +199,19 @@ namespace Kafka.Streams.Processor.Internals
          */
         public void clear()
         {
-            fifoQueue.clear();
+            //fifoQueue.clear();
             headRecord = null;
             partitionTime = RecordQueue.UNKNOWN;
         }
 
         private void updateHead()
         {
-            while (headRecord == null && !fifoQueue.isEmpty())
+            while (headRecord == null && fifoQueue.Any())
             {
-                ConsumeResult<byte[], byte[]> raw = fifoQueue.pollFirst();
-                ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize(processorContext, raw);
+                //ConsumeResult<byte[], byte[]> raw = fifoQueue.pollFirst();
+                //ConsumeResult<object, object> deserialized = recordDeserializer.Deserialize(processorContext, raw);
 
-                if (deserialized == null)
+                //if (deserialized == null)
                 {
                     // this only happens if the deserializer decides to skip. It has already logged the reason.
                     continue;
@@ -219,7 +220,7 @@ namespace Kafka.Streams.Processor.Internals
                 long timestamp;
                 try
                 {
-                    timestamp = timestampExtractor.Extract(deserialized, partitionTime);
+                  //  timestamp = timestampExtractor.Extract(deserialized, partitionTime);
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
@@ -227,24 +228,24 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 catch (Exception fatalUserException)
                 {
-                    throw new StreamsException(
-                            string.Format("Fatal user code error in ITimestampExtractor callback for record %s.", deserialized),
-                            fatalUserException);
+                    //throw new StreamsException(
+                    //        string.Format("Fatal user code error in ITimestampExtractor callback for record %s.", deserialized),
+                    //        fatalUserException);
                 }
-                log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name, timestamp, deserialized);
+                //log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name, timestamp, deserialized);
 
                 // drop message if TS is invalid, i.e., negative
                 if (timestamp < 0)
                 {
-                    log.LogWarning(
-                            "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
-                            deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
+                    //log.LogWarning(
+                    //        "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
+                    //        deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
 
-                    skipRecordsSensor.record();
+                    //skipRecordsSensor.record();
                     continue;
                 }
 
-                headRecord = new StampedRecord(deserialized, timestamp);
+              //  headRecord = new StampedRecord(deserialized, timestamp);
 
                 partitionTime = Math.Max(partitionTime, timestamp);
             }

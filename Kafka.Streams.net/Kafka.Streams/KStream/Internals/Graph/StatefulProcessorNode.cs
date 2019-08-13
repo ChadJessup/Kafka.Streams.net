@@ -82,7 +82,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeBuilder != null)
             {
-                topologyBuilder.addStateStore(storeBuilder, processorName);
+                //topologyBuilder.addStateStore(storeBuilder, processorName);
             }
         }
     }

@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
         private TaskId task1;
         private TaskId task2;
 
-        Pair(TaskId task1, TaskId task2)
+        public Pair(TaskId task1, TaskId task2)
         {
             this.task1 = task1;
             this.task2 = task2;
@@ -41,14 +41,14 @@ namespace Kafka.Streams.Processor.Internals.Assignment
                 return false;
             }
             Pair pair = (Pair)o;
-            return Objects.Equals(task1, pair.task1) &&
-                    Objects.Equals(task2, pair.task2);
+            return (task1.Equals(pair.task1) &&
+                    task2.Equals(pair.task2));
         }
 
 
         public int GetHashCode()
         {
-            return Objects.hash(task1, task2);
+            return (task1, task2).GetHashCode();
         }
     }
 }

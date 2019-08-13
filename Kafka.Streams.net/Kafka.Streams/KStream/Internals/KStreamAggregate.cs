@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamAggregateProcessor();
+            return null;//new KStreamAggregateProcessor();
         }
 
 
@@ -36,6 +36,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetterSupplier<K, T> view()
         {
+            return null;
             //    return new KTableValueGetterSupplier<K, T>()
             //    {
 

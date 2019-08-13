@@ -40,15 +40,15 @@ namespace Kafka.Streams.State.Internals
                 || (bytes[i] & 0xFF) >= (maxSuffix[0] & 0xFF)
                 ))
             {
-                rangeEnd.Add(bytes[i++]);
+                //rangeEnd.Add(bytes[i++]);
             }
 
             rangeEnd.Add(maxSuffix);
-            rangeEnd.flip();
+            //rangeEnd.flip();
 
-            byte[] res = new byte[rangeEnd.remaining()];
-            ByteBuffer.wrap(res).Add(rangeEnd);
-            return Bytes.wrap(res);
+            //byte[] res = new byte[rangeEnd.remaining()];
+            //ByteBuffer.wrap(res).Add(rangeEnd);
+            return null; // Bytes.wrap(res);
         }
 
         public static Bytes lowerRange(Bytes key, byte[] minSuffix)
@@ -61,12 +61,13 @@ namespace Kafka.Streams.State.Internals
             // unless there is a maximum key.Length, you can keep appending more zero bytes
             // to keyFrom to create a key that will match the range, yet that would precede
             // KeySchema.toBinaryKey(keyFrom, from, 0) in byte order
-            return Bytes.wrap(
-                rangeStart
-                    .add(bytes)
-                    .add(minSuffix)
-                    .array()
-            );
+            return null;
+            //Bytes.wrap(
+            //    rangeStart
+            //        .add(bytes)
+            //        .add(minSuffix)
+            //        .array()
+            //);
         }
     }
 }

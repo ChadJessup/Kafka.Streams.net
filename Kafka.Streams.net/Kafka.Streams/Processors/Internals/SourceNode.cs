@@ -83,11 +83,11 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
-            if (this.valDeserializer is ChangedDeserializer<V> &&
-                    ((ChangedDeserializer<V>)this.valDeserializer).inner() == null)
-            {
-                ((ChangedDeserializer<V>)this.valDeserializer).setInner(context.valueSerde.Deserializer);
-            }
+            //if (this.valDeserializer is ChangedDeserializer<V> &&
+            //        ((ChangedDeserializer<V>)this.valDeserializer).inner() == null)
+            //{
+            //    ((ChangedDeserializer<V>)this.valDeserializer).setInner(context.valueSerde.Deserializer);
+            //}
         }
 
 

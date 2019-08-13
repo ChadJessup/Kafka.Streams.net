@@ -29,12 +29,12 @@ namespace Kafka.Streams.Processor.Internals
             this.sourceTopics = sourceTopics;
             foreach (string topic in sourceTopics)
             {
-                List<PartitionInfo> partitions = clusterMetadata.partitionsForTopic(topic);
-                if (partitions.Count > maxPartitions)
-                {
-                    maxPartitions = partitions.Count;
-                    topicWithMostPartitions = partitions[0].Topic;
-                }
+                //List<PartitionInfo> partitions = clusterMetadata.partitionsForTopic(topic);
+                //if (partitions.Count > maxPartitions)
+                //{
+                //    maxPartitions = partitions.Count;
+                //    topicWithMostPartitions = partitions[0].Topic;
+                //}
             }
         }
     }

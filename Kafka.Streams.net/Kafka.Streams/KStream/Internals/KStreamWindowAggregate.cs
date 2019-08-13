@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamWindowAggregateProcessor();
+            return null;// new KStreamWindowAggregateProcessor();
         }
 
         public void enableSendingOldValues()
@@ -58,6 +58,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTableValueGetterSupplier<Windowed<K>, Agg> view()
         {
+            return null;
             //return new KTableValueGetterSupplier<Windowed<K>, Agg>()
             //{
 

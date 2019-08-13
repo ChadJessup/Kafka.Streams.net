@@ -51,8 +51,8 @@ namespace Kafka.Streams.Processor.Internals
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
             Dictionary<string, string> topicConfig = new Dictionary<string, string>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
-            topicConfig.putAll(defaultProperties);
-            topicConfig.putAll(topicConfigs);
+            //topicConfig.putAll(defaultProperties);
+            //topicConfig.putAll(topicConfigs);
 
             if (retentionMs != null)
             {
@@ -67,7 +67,7 @@ namespace Kafka.Streams.Processor.Internals
                     retentionValue = long.MaxValue;
                 }
 
-                topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, retentionValue.ToString());
+                //topicConfig.Add(TopicConfig.RETENTION_MS_CONFIG, retentionValue.ToString());
             }
 
             return topicConfig;
@@ -75,9 +75,9 @@ namespace Kafka.Streams.Processor.Internals
 
         public void setRetentionMs(long retentionMs)
         {
-            if (!topicConfigs.ContainsKey(TopicConfig.RETENTION_MS_CONFIG))
+            //if (!topicConfigs.ContainsKey(TopicConfig.RETENTION_MS_CONFIG))
             {
-                this.retentionMs = retentionMs;
+              //  this.retentionMs = retentionMs;
             }
         }
 

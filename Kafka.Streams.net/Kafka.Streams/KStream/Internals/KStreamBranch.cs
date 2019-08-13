@@ -34,7 +34,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamBranchProcessor();
+            return null;//new KStreamBranchProcessor();
         }
     }
 }

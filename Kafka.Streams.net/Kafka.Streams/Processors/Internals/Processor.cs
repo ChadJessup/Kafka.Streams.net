@@ -34,8 +34,9 @@ namespace Kafka.Streams.Processor.Internals
 
         public override string ToString()
         {
-            return "IProcessor: " + name + " (stores: " + stores + ")\n      -=> "
-                + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
+            return "";
+            //"IProcessor: " + name + " (stores: " + stores + ")\n      -=> "
+            //    + nodeNames(successors) + "\n      <-- " + nodeNames(predecessors);
         }
 
 

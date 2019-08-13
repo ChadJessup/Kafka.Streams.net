@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return new KStreamReduceProcessor();
+            return null;// new KStreamReduceProcessor();
         }
 
 

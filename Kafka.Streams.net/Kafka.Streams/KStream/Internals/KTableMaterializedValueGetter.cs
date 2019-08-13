@@ -21,16 +21,16 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMaterializedValueGetter<K, V> : IKTableValueGetter<K, V>
     {
-        private ITimestampedKeyValueStore<K, V> store;
+        //private ITimestampedKeyValueStore<K, V> store;
 
         public void init(IProcessorContext<K, V> context)
         {
-            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            //store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }
 
         public ValueAndTimestamp<V> get(K key)
         {
-            return store[key];
+            return null; // store[key];
         }
 
         public void close() { }
