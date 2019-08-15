@@ -36,7 +36,6 @@ namespace Kafka.Streams.Processor.Internals
             this.@delegate = @delegate = @delegate ?? throw new System.ArgumentNullException("@delegate", nameof(@delegate));
         }
 
-
         public string applicationId()
         {
             return @delegate.applicationId();
@@ -93,7 +92,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public void forward(K key, V value)
+        public void forward<V1>(K key, V1 value)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }

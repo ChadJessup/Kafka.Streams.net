@@ -21,9 +21,8 @@ namespace Kafka.Streams.Processor.Internals
     /**
      * Static topic name extractor
      */
-    public class StaticTopicNameExtractor<K, V> : ITopicNameExtractor<K, V>
+    public class StaticTopicNameExtractor : ITopicNameExtractor
     {
-
         public string topicName;
 
         public StaticTopicNameExtractor(string topicName)
@@ -31,7 +30,7 @@ namespace Kafka.Streams.Processor.Internals
             this.topicName = topicName;
         }
 
-        public string extract(K key, V value, IRecordContext recordContext)
+        public string Extract<K, V>(K key, V value, IRecordContext recordContext)
         {
             return topicName;
         }

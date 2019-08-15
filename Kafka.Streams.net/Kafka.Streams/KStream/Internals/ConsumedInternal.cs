@@ -31,8 +31,8 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<K> keySerde,
             ISerde<V> valSerde,
             ITimestampExtractor timestampExtractor,
-            AutoOffsetReset offsetReset)
-            : this(Consumed<K, V>.with(keySerde, valSerde, timestampExtractor, offsetReset))
+            AutoOffsetReset? offsetReset)
+            : this(with(keySerde, valSerde, timestampExtractor, offsetReset))
         {
         }
 

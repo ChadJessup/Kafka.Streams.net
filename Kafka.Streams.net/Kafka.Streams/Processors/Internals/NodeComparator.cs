@@ -32,8 +32,8 @@ namespace Kafka.Streams.Processor.Internals
                 return 0;
             }
 
-            int size1 = ((AbstractNode)node1).size;
-            int size2 = ((AbstractNode)node2).size;
+            int size1 = ((AbstractNode)node1).Size;
+            int size2 = ((AbstractNode)node2).Size;
 
             // it is possible that two nodes have the same sub-tree size (think two nodes connected via state stores)
             // in this case default to processor name string
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Processor.Internals
             else
             {
 
-                return node1.name.CompareTo(node2.name);
+                return node1.Name.CompareTo(node2.Name);
             }
         }
     }

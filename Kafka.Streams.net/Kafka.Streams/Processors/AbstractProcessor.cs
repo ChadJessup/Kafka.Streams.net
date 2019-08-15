@@ -25,7 +25,6 @@ namespace Kafka.Streams.Processor
          * This method does nothing by default; if desired, sues should override it with custom functionality.
          * </p>
          */
-
         public virtual void close()
         {
             // do nothing

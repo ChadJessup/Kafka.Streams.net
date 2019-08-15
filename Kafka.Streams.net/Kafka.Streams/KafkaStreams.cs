@@ -31,6 +31,7 @@ using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -251,8 +252,8 @@ namespace Kafka.Streams
             // The application ID is a required config and hence should always have value
             var processId = Guid.NewGuid();
 
-            string userClientId = config.Get(StreamsConfigPropertyNames.ClientId);
-            string applicationId = config.Get(StreamsConfigPropertyNames.ApplicationId);
+            string userClientId = config.Get(StreamsConfigPropertyNames.ClientId) ?? "";
+            string applicationId = config.Get(StreamsConfigPropertyNames.ApplicationId) ?? "";
 
             if (userClientId.Length <= 0)
             {

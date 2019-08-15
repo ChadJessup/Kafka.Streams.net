@@ -23,6 +23,10 @@ using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.Topologies;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -38,13 +42,51 @@ namespace Kafka.Streams
         /// </summary>
         public class StreamsBuilder
         {
+            private readonly IConfiguration configuration;
+            private readonly IServiceCollection serviceCollection;
+            private readonly ServiceProvider services;
+
             /** The actual topology that is constructed by this StreamsBuilder. */
-            private Topology topology = new Topology();
+            private Topology topology;
 
-            /** The topology's internal builder. */
-            //private InternalTopologyBuilder internalTopologyBuilder => topology.internalTopologyBuilder;
+            private InternalTopologyBuilder internalTopologyBuilder => topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
+            private InternalStreamsBuilder internalStreamsBuilder;
 
-            //private InternalStreamsBuilder internalStreamsBuilder = new InternalStreamsBuilder(internalTopologyBuilder);
+            public StreamsBuilder(
+                IConfiguration configuration,
+                IServiceCollection serviceCollection)
+            {
+                this.configuration = configuration ?? new ConfigurationBuilder().Build();
+                this.serviceCollection = serviceCollection ?? new ServiceCollection();
+
+                this.BuildDependencyTree(this.configuration, this.serviceCollection);
+
+                this.services = this.serviceCollection.BuildServiceProvider();
+
+                this.topology = this.services.GetRequiredService<Topology>();
+                this.internalStreamsBuilder = this.services.GetRequiredService<InternalStreamsBuilder>();
+            }
+
+            public StreamsBuilder(IServiceCollection serviceCollection)
+                : this(new ConfigurationBuilder().Build(), serviceCollection)
+            { }
+
+            public StreamsBuilder(IConfiguration configuration)
+                : this(configuration, new ServiceCollection())
+            { }
+
+            public StreamsBuilder()
+                : this(new ConfigurationBuilder().Build(), new ServiceCollection())
+            { }
+
+            private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
+            {
+                serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
+                serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
+                serviceCollection.TryAddSingleton<Topology>();
+                serviceCollection.TryAddSingleton(configuration);
+                serviceCollection.TryAddSingleton(serviceCollection);
+            }
 
             /**
              * Create a {@link KStream} from the specified topic.
@@ -132,7 +174,7 @@ namespace Kafka.Streams
                 topics = topics ?? throw new ArgumentNullException("topics can't be null", nameof(topics));
                 consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
 
-                return null; // internalStreamsBuilder.stream(topics, new ConsumedInternal<K, V>(consumed));
+                return internalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
             }
 
             /**

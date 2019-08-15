@@ -18,6 +18,7 @@
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -48,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.stateUpdateSupplier = stateUpdateSupplier;
         }
 
-        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             //storeBuilder.withLoggingDisabled();
             //topologyBuilder.addGlobalStore(storeBuilder,

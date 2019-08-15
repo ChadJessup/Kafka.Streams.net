@@ -27,13 +27,13 @@
 //    {
 //        private ISerializer<K> keySerializer;
 //        private ISerializer<V> valSerializer;
-//        private ITopicNameExtractor<K, V> topicExtractor;
+//        private ITopicNameExtractor topicExtractor;
 //        private IStreamPartitioner<K, V> partitioner;
 
 //        private IInternalProcessorContext<K, V>  context;
 
 //        SinkNode(string name,
-//                 ITopicNameExtractor<K, V> topicExtractor,
+//                 ITopicNameExtractor topicExtractor,
 //                 ISerializer<K> keySerializer,
 //                 ISerializer<V> valSerializer,
 //                 IStreamPartitioner<K, V> partitioner)

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 
@@ -48,20 +47,18 @@ namespace Kafka.Streams.KStream.Internals.Graph
             this.processorParameters = processorParameters;
         }
 
-        public abstract ISerializer<V> getValueSerializer();
+        public abstract ISerializer<V>? GetValueSerializer();
 
-        public abstract IDeserializer<V> getValueDeserializer();
+        public abstract IDeserializer<V>? GetValueDeserializer();
 
         public override string ToString()
-        {
-            return "BaseRepartitionNode{" +
-                   "keySerde=" + keySerde +
-                   ", valueSerde=" + valueSerde +
-                   ", sinkName='" + sinkName + '\'' +
-                   ", sourceName='" + sourceName + '\'' +
-                   ", repartitionTopic='" + repartitionTopic + '\'' +
-                   ", processorParameters=" + processorParameters +
-                   "} " + base.ToString();
-        }
+            => "BaseRepartitionNode{" +
+                    $"keySerde={keySerde}" +
+                    $", valueSerde={valueSerde}" +
+                    $", sinkName='{sinkName}'" +
+                    $", sourceName='{sourceName}'" +
+                    $", repartitionTopic='{repartitionTopic}'" +
+                    $", processorParameters={processorParameters}" +
+                    $"}} {base.ToString()}";
     }
 }

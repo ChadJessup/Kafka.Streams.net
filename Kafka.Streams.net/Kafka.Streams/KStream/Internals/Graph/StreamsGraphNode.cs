@@ -16,42 +16,48 @@
  */
 
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-    public abstract class StreamsGraphNode
+    public class StreamsGraphNode
     {
         private HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
-        public HashSet<StreamsGraphNode> parentNodes { get; } = new HashSet<StreamsGraphNode>();
-        public string nodeName { get; }
-        private bool keyChangingOperation;
         private bool valueChangingOperation;
         private bool mergeNode;
-        public int buildPriority { get; private set; }
-        public bool hasWrittenToTopology { get; private set; } = false;
 
         public StreamsGraphNode(string nodeName)
         {
-            this.nodeName = nodeName;
+            this.NodeName = nodeName;
         }
 
-        public string[] parentNodeNames()
+        public HashSet<StreamsGraphNode> ParentNodes { get; } = new HashSet<StreamsGraphNode>();
+        public string NodeName { get; }
+        public int BuildPriority { get; private set; }
+        public bool HasWrittenToTopology { get; private set; } = false;
+        public bool IsKeyChangingOperation { get; internal set; }
+        public bool IsValueChangingOperation { get; internal set; }
+        public bool IsMergeNode { get; }
+
+        public string[] ParentNodeNames()
         {
-            string[] parentNames = new string[parentNodes.Count];
+            string[] parentNames = new string[ParentNodes.Count];
             int index = 0;
-            foreach (StreamsGraphNode parentNode in parentNodes)
+
+            foreach (StreamsGraphNode parentNode in ParentNodes)
             {
-                parentNames[index++] = parentNode.nodeName;
+                parentNames[index++] = parentNode.NodeName;
             }
+
             return parentNames;
         }
 
-        public bool allParentsWrittenToTopology()
+        public bool AllParentsWrittenToTopology()
         {
-            foreach (StreamsGraphNode parentNode in parentNodes)
+            foreach (StreamsGraphNode parentNode in ParentNodes)
             {
-                if (!parentNode.hasWrittenToTopology)
+                if (!parentNode.HasWrittenToTopology)
                 {
                     return false;
                 }
@@ -59,67 +65,65 @@ namespace Kafka.Streams.KStream.Internals.Graph
             return true;
         }
 
-        public HashSet<StreamsGraphNode> children()
+        public HashSet<StreamsGraphNode> Children()
         {
             return new HashSet<StreamsGraphNode>(childNodes);
         }
 
-        public void clearChildren()
+        public void ClearChildren()
         {
             foreach (StreamsGraphNode childNode in childNodes)
             {
-                childNode.parentNodes.Remove(this);
+                childNode.ParentNodes.Remove(this);
             }
 
             childNodes.Clear();
         }
 
-        public bool removeChild(StreamsGraphNode child)
+        public bool RemoveChild(StreamsGraphNode child)
         {
-            return childNodes.Remove(child) && child.parentNodes.Remove(this);
+            return childNodes.Remove(child) && child.ParentNodes.Remove(this);
         }
 
-        public void addChild(StreamsGraphNode childNode)
+        public void AddChild(StreamsGraphNode childNode)
         {
             this.childNodes.Add(childNode);
-            childNode.parentNodes.Add(this);
+            childNode.ParentNodes.Add(this);
         }
 
-        public bool isKeyChangingOperation => keyChangingOperation;
-        public bool isValueChangingOperation => valueChangingOperation;
-        public bool isMergeNode => mergeNode;
-
-        public void setMergeNode(bool mergeNode)
+        public void SetMergeNode(bool mergeNode)
         {
             this.mergeNode = mergeNode;
         }
 
-        public void setValueChangingOperation(bool valueChangingOperation)
+        public void SetValueChangingOperation(bool valueChangingOperation)
         {
             this.valueChangingOperation = valueChangingOperation;
         }
 
-        public void setBuildPriority(int buildPriority)
+        public void SetBuildPriority(int buildPriority)
         {
-            this.buildPriority = buildPriority;
+            this.BuildPriority = buildPriority;
         }
 
-        public abstract void writeToTopology(InternalTopologyBuilder topologyBuilder);
-
-        public void setHasWrittenToTopology(bool hasWrittenToTopology)
+        public virtual void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            this.hasWrittenToTopology = hasWrittenToTopology;
+        }
+
+        public void SetHasWrittenToTopology(bool hasWrittenToTopology)
+        {
+            this.HasWrittenToTopology = hasWrittenToTopology;
         }
 
         public override string ToString()
         {
-            string[] parentNames = parentNodeNames();
+            string[] parentNames = ParentNodeNames();
 
             return $"StreamsGraphNode{{" +
-                   $"nodeName='{nodeName}'" +
-                   $", buildPriority={buildPriority}" +
-                   $", hasWrittenToTopology={hasWrittenToTopology}" +
-                   $", keyChangingOperation={keyChangingOperation}" +
+                   $"nodeName='{this.NodeName}'" +
+                   $", buildPriority={this.BuildPriority}" +
+                   $", hasWrittenToTopology={this.HasWrittenToTopology}" +
+                   $", keyChangingOperation={this.IsKeyChangingOperation}" +
                    $", valueChangingOperation={valueChangingOperation}" +
                    $", mergeNode={mergeNode}" +
                    $", parentNodes={Arrays.ToString(parentNames)}}}";

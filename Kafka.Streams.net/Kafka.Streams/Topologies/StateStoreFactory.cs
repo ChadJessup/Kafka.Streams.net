@@ -20,7 +20,7 @@ using Kafka.Streams.State.Internals;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Topologies
 {
     public class StateStoreFactory
     {

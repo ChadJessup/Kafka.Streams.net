@@ -17,55 +17,59 @@
 
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Topologies;
+using System;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class Sink : AbstractNode
+    public class Sink : AbstractNode, ISink
     {
-        public Sink(string name)
-            : base(name)
-        {
-        }
-    }
-
-    public class Sink<K, V> : Sink, ISink<K, V>
-    {
-        private ITopicNameExtractor<K, V> _topicNameExtractor;
+        private ITopicNameExtractor topicNameExtractor;
 
         public Sink(
             string name,
-            ITopicNameExtractor<K, V> topicNameExtractor)
+            ITopicNameExtractor topicNameExtractor)
             : base(name)
         {
-            this._topicNameExtractor = topicNameExtractor;
+            this.topicNameExtractor = topicNameExtractor;
         }
 
-        public Sink(
-            string name,
-            string topic)
-            : base(name)
-        {
-            this._topicNameExtractor = new StaticTopicNameExtractor<K, V>(topic);
-        }
+        public ITopicNameExtractor TopicNameExtractor
+            => this.topicNameExtractor;
 
-        public string Topic
+        public string? Topic
+             => this.topicNameExtractor is StaticTopicNameExtractor
+                    ? ((StaticTopicNameExtractor)this.topicNameExtractor).topicName
+                    : null;
+
+
+        public override string ToString()
+            => this.topicNameExtractor is StaticTopicNameExtractor
+                ? $"Sink: {this.Name} (topic: {this.Topic}){Environment.NewLine}      <-- {InternalTopologyBuilder.GetNodeNames(this.Predecessors)}"
+                : $"Sink: {this.Name} (extractor: {this.topicNameExtractor}){Environment.NewLine}      <-- {InternalTopologyBuilder.GetNodeNames(this.Predecessors)}";
+
+        public override bool Equals(object other)
         {
-            get
+            if (this == other)
             {
-                if (_topicNameExtractor is StaticTopicNameExtractor<K, V>)
-                {
-                    return ((StaticTopicNameExtractor<K, V>)_topicNameExtractor).topicName;
-                }
-                else
-                {
-                    return null;
-                }
+                return true;
             }
+
+            if (other == null || this.GetType() != other.GetType())
+            {
+                return false;
+            }
+
+            Sink sink = (Sink)other;
+
+            return this.Name.Equals(sink.Name)
+                && this.TopicNameExtractor.Equals(sink.TopicNameExtractor)
+                && this.Predecessors.Equals(sink.Predecessors);
         }
 
-        public ITopicNameExtractor<K, V> topicNameExtractor()
-        {
-            return this._topicNameExtractor;
-        }
+
+        public override int GetHashCode()
+            // omit predecessors as it might change and alter the hash code
+            => (this.Name, this.topicNameExtractor).GetHashCode();
     }
 }

@@ -19,13 +19,15 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Kafka.Streams.KStream.Internals
 {
     /*
-     * Anyes (KTable, KStream, etc) extending this should follow the serde specification precedence ordering as:
+     * Anyone (KTable, KStream, etc) extending this should follow the serde specification precedence ordering as:
      *
      * 1) Overridden values via control objects (e.g. Materialized, Serialized, Consumed, etc)
      * 2) Serdes that can be inferred from the operator itself (e.g. groupBy().count(), where value serde can default to `LongSerde`).
@@ -34,7 +36,6 @@ namespace Kafka.Streams.KStream.Internals
      */
     public abstract class AbstractStream<K, V>
     {
-
         protected string name;
         protected ISerde<K> keySerde;
         protected ISerde<V> valSerde;
@@ -64,7 +65,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (sourceNodes == null || !sourceNodes.Any())
             {
-                throw new System.ArgumentException("parameter <sourceNodes> must not be null or empty");
+                throw new ArgumentException("parameter <sourceNodes> must not be null or empty");
             }
 
             this.name = name;
@@ -76,11 +77,9 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         // This method allows to expose the InternalTopologyBuilder instance
-        // to sues that extend AbstractStream.
+        // to uses that extend AbstractStream.
         protected InternalTopologyBuilder internalTopologyBuilder()
-        {
-            return builder.internalTopologyBuilder;
-        }
+            => builder.InternalTopologyBuilder;
 
         public HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
         {
@@ -88,7 +87,7 @@ namespace Kafka.Streams.KStream.Internals
             allSourceNodes.UnionWith(sourceNodes);
             allSourceNodes.UnionWith(other.sourceNodes);
 
-            builder.internalTopologyBuilder.copartitionSources(allSourceNodes);
+            builder.InternalTopologyBuilder.copartitionSources(allSourceNodes);
 
             return allSourceNodes;
         }

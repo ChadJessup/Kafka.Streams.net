@@ -14,15 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.KStream.Internals
+namespace Kafka.Streams.KStream.Interfaces
 {
-
-
-    public interface InternalNameProvider
+    public interface IInternalNameProvider
     {
+        string NewProcessorName(string prefix);
 
-        string newProcessorName(string prefix);
-
-        string newStoreName(string prefix);
+        string NewStoreName(string prefix);
     }
 }

@@ -18,6 +18,7 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -32,7 +33,6 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class StreamsMetadataState
     {
-
         public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
         private InternalTopologyBuilder builder;
         private List<StreamsMetadata> allMetadata = new List<StreamsMetadata>();

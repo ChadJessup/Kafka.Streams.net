@@ -24,8 +24,9 @@ namespace Kafka.Streams.KStream.Internals
         private IPredicate<K, V>[] predicates;
         private string[] childNodes;
 
-        KStreamBranch(IPredicate<K, V>[] predicates,
-                       string[] childNodes)
+        public KStreamBranch(
+            IPredicate<K, V>[] predicates,
+            string[] childNodes)
         {
             this.predicates = predicates;
             this.childNodes = childNodes;
@@ -34,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return null;//new KStreamBranchProcessor();
+            return new KStreamBranchProcessor<K, V>();
         }
     }
 }

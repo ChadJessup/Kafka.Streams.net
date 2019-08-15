@@ -11,7 +11,7 @@ namespace Kafka.Streams.Interfaces
          * The name of the node. Will never be {@code null}.
          * @return the name of the node
          */
-        string name { get; }
+        string Name { get; }
 
         /**
          * The predecessors of this node within a sub-topology.
@@ -19,13 +19,13 @@ namespace Kafka.Streams.Interfaces
          * Will never be {@code null}.
          * @return set of all predecessors
          */
-        HashSet<INode> predecessors { get; }
+        HashSet<INode> Predecessors { get; }
         /**
          * The successor of this node within a sub-topology.
          * Note, sinks do not have any successors.
          * Will never be {@code null}.
          * @return set of all successor
          */
-        HashSet<INode> successors { get; }
+        HashSet<INode> Successors { get; }
     }
 }

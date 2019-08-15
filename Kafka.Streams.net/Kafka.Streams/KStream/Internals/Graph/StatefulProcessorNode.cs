@@ -19,6 +19,7 @@ using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -68,12 +69,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
             var IProcessorSupplier = processorParameters.IProcessorSupplier;
 
-            topologyBuilder.addProcessor(processorName, IProcessorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorName, IProcessorSupplier, ParentNodeNames());
 
             if (storeNames != null && storeNames.Length > 0)
             {

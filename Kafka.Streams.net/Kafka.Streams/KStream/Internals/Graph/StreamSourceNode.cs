@@ -15,10 +15,8 @@
  * limitations under the License.
  */
 
-using Kafka.Common;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -26,47 +24,43 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StreamSourceNode<K, V> : StreamsGraphNode
     {
-        private List<string> topicNames;
+        private IEnumerable<string> topicNames;
         private Regex topicPattern;
         protected ConsumedInternal<K, V> consumedInternal;
 
-        public StreamSourceNode(string nodeName,
-                                 List<string> topicNames,
-                                 ConsumedInternal<K, V> consumedInternal)
+        public StreamSourceNode(
+            string nodeName,
+            IEnumerable<string> topicNames,
+            ConsumedInternal<K, V> consumedInternal)
             : base(nodeName)
         {
-
             this.topicNames = topicNames;
             this.consumedInternal = consumedInternal;
         }
 
-        public StreamSourceNode(string nodeName,
-                                 Regex topicPattern,
-                                 ConsumedInternal<K, V> consumedInternal)
+        public StreamSourceNode(
+            string nodeName,
+            Regex topicPattern,
+            ConsumedInternal<K, V> consumedInternal)
             : base(nodeName)
         {
-
-
             this.topicPattern = topicPattern;
             this.consumedInternal = consumedInternal;
         }
 
-        public List<string> getTopicNames()
+        public List<string> GetTopicNames()
         {
             return new List<string>(topicNames);
         }
 
         public override string ToString()
-        {
-            return "StreamSourceNode{" +
-                   "topicNames=" + topicNames +
-                   ", topicPattern=" + topicPattern +
-                   ", consumedInternal=" + consumedInternal +
-                   "} " + base.ToString();
-        }
+            => "StreamSourceNode{" +
+                   $"topicNames={topicNames}" +
+                   $", topicPattern={topicPattern}" +
+                   $", consumedInternal={consumedInternal}" +
+                   $"}} {base.ToString()}";
 
-
-        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
 
             if (topicPattern != null)
@@ -83,7 +77,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
                 topologyBuilder.addSource(
                     consumedInternal.offsetResetPolicy(),
-                    nodeName,
+                    NodeName,
                     consumedInternal.timestampExtractor,
                     consumedInternal.keyDeserializer(),
                     consumedInternal.valueDeserializer(),

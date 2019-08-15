@@ -58,9 +58,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 }
             }
 
-            string newChain = chain.Equals("") ? streamsGraphNode.nodeName : streamsGraphNode.nodeName + "=>" + chain;
+            string newChain = chain.Equals("") ? streamsGraphNode.NodeName : streamsGraphNode.NodeName + "=>" + chain;
 
-            if (!streamsGraphNode.parentNodes.Any())
+            if (!streamsGraphNode.ParentNodes.Any())
             {
                 // error base case: we traversed to the end of the graph without finding a window definition
                 throw new TopologyException(
@@ -70,7 +70,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             // recursive case: all parents must define a grace period, and we use the max of our parents' graces.
             long inheritedGrace = -1;
-            foreach (StreamsGraphNode parentNode in streamsGraphNode.parentNodes)
+            foreach (StreamsGraphNode parentNode in streamsGraphNode.ParentNodes)
             {
                 long parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
                 inheritedGrace = Math.Max(inheritedGrace, parentGrace);

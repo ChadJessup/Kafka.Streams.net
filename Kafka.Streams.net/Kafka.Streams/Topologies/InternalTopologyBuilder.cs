@@ -18,7 +18,9 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
@@ -28,13 +30,23 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Topologies
 {
     public class InternalTopologyBuilder
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<InternalTopologyBuilder>();
+        private readonly ILogger logger;
+        private readonly IServiceProvider services;
+
         private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("", RegexOptions.Compiled);
         private static string[] NO_PREDECESSORS = { };
+
+        public InternalTopologyBuilder(
+            ILogger<InternalTopologyBuilder> logger,
+            IServiceProvider services)
+        {
+            this.logger = logger;
+            this.services = services;
+        }
 
         // node factories in a topological order
         private Dictionary<string, NodeFactory> nodeFactories = new Dictionary<string, NodeFactory>();
@@ -247,7 +259,7 @@ namespace Kafka.Streams.Processor.Internals
 
             addSink(
                 name,
-                new StaticTopicNameExtractor<K, V>(topic),
+                new StaticTopicNameExtractor(topic),
                 keySerializer,
                 valSerializer,
                 partitioner,
@@ -259,7 +271,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public void addSink<K, V>(
             string name,
-            ITopicNameExtractor<K, V> topicExtractor,
+            ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
             IStreamPartitioner<K, V> partitioner,
@@ -407,7 +419,7 @@ namespace Kafka.Streams.Processor.Internals
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("store builder must not be null", nameof(storeBuilder));
+            storeBuilder = storeBuilder ?? throw new ArgumentNullException("store builder must not be null", nameof(storeBuilder));
             validateGlobalStoreArguments(
                 sourceName,
                 topic,
@@ -1077,7 +1089,7 @@ namespace Kafka.Streams.Processor.Internals
                     //nodeToSourceTopics.Add(
                     //    stringPatternEntry.Key,
                     //    sourceNode.getTopics(subscriptionUpdates.getUpdates()));
-                    log.LogDebug("nodeToSourceTopics {}", nodeToSourceTopics);
+                    logger.LogDebug($"nodeToSourceTopics {nodeToSourceTopics}");
                 }
             }
         }
@@ -1278,7 +1290,7 @@ namespace Kafka.Streams.Processor.Internals
             SubscriptionUpdates subscriptionUpdates,
             string logPrefix)
         {
-            log.LogDebug("{}updating builder with {} topic(s) with possible matching regex subscription(s)",
+            logger.LogDebug("{}updating builder with {} topic(s) with possible matching regex subscription(s)",
                     logPrefix, subscriptionUpdates);
 //            this.subscriptionUpdates = subscriptionUpdates;
             setRegexMatchedTopicsToSourceNodes();
@@ -1366,9 +1378,9 @@ namespace Kafka.Streams.Processor.Internals
         private static void updateSize(AbstractNode node,
                                        int delta)
         {
-            node.size += delta;
+            node.Size += delta;
 
-            foreach (INode predecessor in node.predecessors)
+            foreach (INode predecessor in node.Predecessors)
             {
                 updateSize((AbstractNode)predecessor, delta);
             }
@@ -1391,12 +1403,12 @@ namespace Kafka.Streams.Processor.Internals
             // connect each node to its predecessors and successors
             foreach (AbstractNode node in nodesByName.Values)
             {
-                foreach (string predecessorName in nodeFactories[node.name].predecessors)
+                foreach (string predecessorName in nodeFactories[node.Name].predecessors)
                 {
                     AbstractNode predecessor = nodesByName[predecessorName];
-                    node.addPredecessor(predecessor);
-                    predecessor.addSuccessor(node);
-                    updateSize(predecessor, node.size);
+                    node.AddPredecessor(predecessor);
+                    predecessor.AddSuccessor(node);
+                    updateSize(predecessor, node.Size);
                 }
             }
 
@@ -1405,75 +1417,23 @@ namespace Kafka.Streams.Processor.Internals
                     new HashSet<INode>(nodesByName.Values)));
         }
 
-        public ITopicNameExtractor<K, V> topicNameExtractor<K, V>()
-        {
-            if (true) //_topicNameExtractor is StaticTopicNameExtractor<K, V>)
-            {
-                return null;
-            }
-            else
-            {
-                return null; // _topicNameExtractor;
-            }
-        }
-
-
         public void addSuccessor(INode successor)
         {
             throw new InvalidOperationException("Sinks don't have successors.");
-        }
-
-
-        public override string ToString()
-        {
-            return "commented out";
-            //if (_topicNameExtractor is StaticTopicNameExtractor)
-            //{
-            //    return "Sink: " + name + " (topic: " + Topic + ")\n      <-- " + nodeNames(predecessors);
-            //}
-
-            //return "Sink: " + name + " (extractor: " + _topicNameExtractor + ")\n      <-- "
-            //    + nodeNames(predecessors);
-        }
-
-
-        public override bool Equals(object o)
-        {
-            if (this == o)
-            {
-                return true;
-            }
-            if (o == null || GetType() != o.GetType())
-            {
-                return false;
-            }
-
-            Sink sink = (Sink)o;
-            return false;
-            //name.Equals(sink.name)
-            //    && _topicNameExtractor.Equals(sink.topicNameExtractor)
-            //    && predecessors.Equals(sink.predecessors);
-        }
-
-
-        public override int GetHashCode()
-        {
-            // omit predecessors as it might change and alter the hash code
-            return 0;// (name, _topicNameExtractor).GetHashCode();
         }
 
         private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
 
         private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
 
-        private static string nodeNames(HashSet<INode> nodes)
+        internal static string GetNodeNames(HashSet<INode> nodes)
         {
             StringBuilder sb = new StringBuilder();
             if (nodes.Any())
             {
                 foreach (INode n in nodes)
                 {
-                    sb.Append(n.name);
+                    sb.Append(n.Name);
                     sb.Append(", ");
                 }
 
@@ -1482,7 +1442,6 @@ namespace Kafka.Streams.Processor.Internals
             }
             else
             {
-
                 return "none";
             }
 
@@ -1494,7 +1453,7 @@ namespace Kafka.Streams.Processor.Internals
             string logPrefix)
         {
             SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
-            log.LogDebug("{}found {} topics possibly matching regex", logPrefix, topics);
+            logger.LogDebug($"{logPrefix}found {topics.Count} topics possibly matching regex");
             // update the topic groups with the returned subscription set for regex pattern subscriptions
             subscriptionUpdates.updateTopics(topics.ToList());
 

@@ -25,12 +25,12 @@
 //        private ISerializer<K> keySerializer;
 //        private ISerializer<V> valSerializer;
 //        private IStreamPartitioner<K, V> partitioner;
-//        public ITopicNameExtractor<K, V> topicExtractor { get; }
+//        public ITopicNameExtractor topicExtractor { get; }
 
 //        public SinkNodeFactory(
 //            string name,
 //            string[] predecessors,
-//            ITopicNameExtractor<K, V> topicExtractor,
+//            ITopicNameExtractor topicExtractor,
 //            ISerializer<K> keySerializer,
 //            ISerializer<V> valSerializer,
 //            IStreamPartitioner<K, V> partitioner)

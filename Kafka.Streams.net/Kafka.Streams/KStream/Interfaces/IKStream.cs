@@ -68,7 +68,6 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         IKStream<K, V> filter(IPredicate<K, V> predicate, Named named);
 
-
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
          * predicate.
@@ -542,7 +541,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper)
+            where VR : IEnumerable<VR>;
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -587,9 +587,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(
-            IValueMapper<V, IEnumerable<VR>> mapper,
-            Named named);
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named)
+            where VR : IEnumerable<VR>;
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -642,7 +641,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper);
+        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
+            where VR : IEnumerable<VR>;
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -696,9 +696,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(
-            IValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
-            Named named);
+        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper, Named named)
+            where VR : IEnumerable<VR>;
 
         /**
          * Print the records of this KStream using the options provided by {@link Printed}
@@ -884,7 +883,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
          */
-        void to(ITopicNameExtractor<K, V> topicExtractor);
+        void to(ITopicNameExtractor topicExtractor);
 
         /**
          * Dynamically materialize this stream to topics using the provided {@link Produced} instance.
@@ -893,7 +892,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
          * @param produced          the options to use when producing to the topic
          */
-        void to(ITopicNameExtractor<K, V> topicExtractor, Produced<K, V> produced);
+        void to(ITopicNameExtractor topicExtractor, Produced<K, V> produced);
 
         /**
          * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -2073,8 +2072,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #foreach(IForeachAction)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process<K, V>(IProcessorSupplier<K, V> IProcessorSupplier,
-                      string[] stateStoreNames);
+        void process(
+            IProcessorSupplier<K, V> IProcessorSupplier,
+            string[] stateStoreNames);
 
         /**
          * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
@@ -2139,9 +2139,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #foreach(IForeachAction)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process<K, V>(IProcessorSupplier<K, V> IProcessorSupplier,
-                      Named named,
-                      string[] stateStoreNames);
+        void process(
+            IProcessorSupplier<K, V> IProcessorSupplier,
+            Named named,
+            string[] stateStoreNames);
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values

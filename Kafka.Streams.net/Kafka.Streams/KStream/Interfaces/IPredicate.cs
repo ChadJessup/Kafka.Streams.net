@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.KStream.Interfaces
 {
     /**
@@ -38,6 +40,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param value the value of the record
          * @return {@code true} if the {@link KeyValue} pair satisfies the predicate&mdash;{@code false} otherwise
          */
-        bool test(K key, V value);
+        Func<K, V, bool> test(K key, V value);
     }
 }

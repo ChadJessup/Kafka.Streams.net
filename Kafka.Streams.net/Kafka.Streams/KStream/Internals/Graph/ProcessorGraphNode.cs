@@ -16,6 +16,7 @@
  */
 
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -43,10 +44,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-
-            topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.IProcessorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.IProcessorSupplier, ParentNodeNames());
         }
     }
 }

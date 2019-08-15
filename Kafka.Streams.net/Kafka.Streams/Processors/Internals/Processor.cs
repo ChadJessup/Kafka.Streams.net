@@ -53,16 +53,16 @@ namespace Kafka.Streams.Processor.Internals
 
             IProcessor processor = (IProcessor)o;
             // omit successor to avoid infinite loops
-            return name.Equals(processor.name)
+            return Name.Equals(processor.Name)
                 && stores.Equals(processor.stores)
-                && predecessors.Equals(processor.predecessors);
+                && Predecessors.Equals(processor.Predecessors);
         }
 
 
         public override int GetHashCode()
         {
             // omit successor as it might change and alter the hash code
-            return (name, stores).GetHashCode();
+            return (Name, stores).GetHashCode();
         }
     }
 }

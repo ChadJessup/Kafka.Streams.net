@@ -15,34 +15,30 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Internals
 {
     public abstract class AbstractNode : INode
     {
-        public string name { get; }
-        public HashSet<INode> predecessors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
-        public HashSet<INode> successors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
+        public string Name { get; }
+        public HashSet<INode> Predecessors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
+        public HashSet<INode> Successors { get; } = new HashSet<INode>(/*NODE_COMPARATOR*/);
 
         // size of the sub-topology rooted at this node, including the node itself
-        public int size { get; set; }
+        public int Size { get; set; }
 
         public AbstractNode(string name)
         {
-            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-            this.name = name;
-            this.size = 1;
+            this.Name = name ?? throw new ArgumentNullException(nameof(name));
+            this.Size = 1;
         }
 
-        public virtual void addPredecessor(INode predecessor)
-        {
-            predecessors.Add(predecessor);
-        }
+        public virtual void AddPredecessor(INode predecessor)
+            => Predecessors.Add(predecessor);
 
-        public void addSuccessor(INode successor)
-        {
-            successors.Add(successor);
-        }
+        public void AddSuccessor(INode successor)
+            => Successors.Add(successor);
     }
 }

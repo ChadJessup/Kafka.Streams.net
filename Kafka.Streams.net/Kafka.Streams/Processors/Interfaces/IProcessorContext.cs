@@ -109,23 +109,23 @@ namespace Kafka.Streams.Processor.Interfaces
             PunctuationType type,
             Punctuator callback);
 
-    /**
-     * Forwards a key/value pair to all downstream processors.
-     * Used the input record's timestamp as timestamp for the output record.
-     *
-     * @param key key
-     * @param value value
-     */
-    void forward(K key, V value);
+        /**
+         * Forwards a key/value pair to all downstream processors.
+         * Used the input record's timestamp as timestamp for the output record.
+         *
+         * @param key key
+         * @param value value
+         */
+        void forward<V1>(K key, V1 value);
 
-    /**
-     * Forwards a key/value pair to the specified downstream processors.
-     * Can be used to set the timestamp of the output record.
-     *
-     * @param key key
-     * @param value value
-     * @param to the options to use when forwarding
-     */
+        /**
+         * Forwards a key/value pair to the specified downstream processors.
+         * Can be used to set the timestamp of the output record.
+         *
+         * @param key key
+         * @param value value
+         * @param to the options to use when forwarding
+         */
         void forward(K key, V value, To to);
 
         /**

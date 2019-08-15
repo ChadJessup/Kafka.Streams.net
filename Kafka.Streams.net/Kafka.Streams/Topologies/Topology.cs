@@ -21,10 +21,11 @@ using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
+using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
-namespace Kafka.Streams
+namespace Kafka.Streams.Topologies
 {
     /**
      * A logical representation of a {@link ProcessorTopology}.
@@ -41,8 +42,17 @@ namespace Kafka.Streams
      */
     public class Topology
     {
+        private readonly ILogger<Topology> logger;
+
         public InternalTopologyBuilder internalTopologyBuilder { get; }
-            = new InternalTopologyBuilder();
+
+        public Topology(
+            ILogger<Topology> logger,
+            InternalTopologyBuilder internalTopologyBuilder)
+        {
+            this.logger = logger;
+            this.internalTopologyBuilder = internalTopologyBuilder;
+        }
 
         /**
          * Add a new source that consumes the named topics and forward the records to child processor and/or sink nodes.
@@ -579,10 +589,10 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology addSink<K, V>(
             string name,
-            ITopicNameExtractor<K, V> topicExtractor,
+            ITopicNameExtractor topicExtractor,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topicExtractor, null, null, null, parentNames);
+            internalTopologyBuilder.addSink<K, V>(name, topicExtractor, null, null, null, parentNames);
             return this;
         }
 
@@ -615,7 +625,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology addSink<K, V>(
             string name,
-            ITopicNameExtractor<K, V> topicExtractor,
+            ITopicNameExtractor topicExtractor,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
@@ -647,7 +657,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology addSink<K, V>(
             string name,
-            ITopicNameExtractor<K, V> topicExtractor,
+            ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             string[] parentNames)
@@ -681,7 +691,7 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public Topology addSink<K, V>(
             string name,
-            ITopicNameExtractor<K, V> topicExtractor,
+            ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer,
             IStreamPartitioner<K, V> partitioner,

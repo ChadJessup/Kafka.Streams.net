@@ -17,6 +17,7 @@
 
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -53,13 +54,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
 
-        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
             IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.IProcessorSupplier;
 
             // Stream - Table join (Global or KTable)
-            topologyBuilder.addProcessor(processorName, IProcessorSupplier, parentNodeNames());
+            topologyBuilder.addProcessor(processorName, IProcessorSupplier, ParentNodeNames());
 
             // Steam - KTable join only
             if (otherJoinSideNodeName != null)
