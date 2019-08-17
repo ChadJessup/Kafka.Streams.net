@@ -328,7 +328,7 @@ namespace Kafka.Streams.Topologies
         public void addProcessor<K, V>(
             string name,
             IProcessorSupplier<K, V> supplier,
-            string[] predecessorNames)
+            params string[] predecessorNames)
         {
             name = name ?? throw new ArgumentNullException("name must not be null", nameof(name));
             supplier = supplier ?? throw new ArgumentNullException("supplier must not be null", nameof(supplier));

@@ -36,7 +36,7 @@ namespace Kafka.Streams.Internals
                 * @param messagePrefix Prefix text for an error message.
                 * @return Milliseconds from {@code duration}.
                 */
-            public static long validateMillisecondDuration(TimeSpan duration, string messagePrefix)
+            public static TimeSpan validateMillisecondDuration(TimeSpan duration, string messagePrefix)
             {
                 try
                 {
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Internals
                         throw new ArgumentException(messagePrefix + VALIDATE_MILLISECOND_NULL_SUFFIX);
                     }
 
-                    return (long)duration.TotalMilliseconds;
+                    return duration;
                 }
                 catch (ArithmeticException e)
                 {

@@ -24,25 +24,26 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class TableProcessorNode<K, V> : StreamsGraphNode
     {
         private ProcessorParameters<K, V> processorParameters;
-        //private IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
+        private IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
         private string[] storeNames;
 
-        //public TableProcessorNode(
-        //    string nodeName,
-        //    ProcessorParameters<K, V> processorParameters)//,
-        //    IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder)
-        //    : this(nodeName, processorParameters, storeBuilder, null)
-        //{
-        //}
+        public TableProcessorNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters,
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder)
+            : this(nodeName, processorParameters, storeBuilder, null)
+        {
+        }
 
-        public TableProcessorNode(string nodeName,
-                                   ProcessorParameters<K, V> processorParameters,
-//                                   IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder,
-                                   string[] storeNames)
+        public TableProcessorNode(
+            string nodeName,
+            ProcessorParameters<K, V> processorParameters,
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder,
+            string[] storeNames)
             : base(nodeName)
         {
             this.processorParameters = processorParameters;
-//            this.storeBuilder = storeBuilder;
+            this.storeBuilder = storeBuilder;
             this.storeNames = storeNames != null ? storeNames : new string[] { };
         }
 
@@ -59,7 +60,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
-            topologyBuilder.addProcessor(processorName, processorParameters.IProcessorSupplier, ParentNodeNames());
+            topologyBuilder.addProcessor(processorName, processorParameters.ProcessorSupplier, ParentNodeNames());
 
             if (storeNames.Length > 0)
             {

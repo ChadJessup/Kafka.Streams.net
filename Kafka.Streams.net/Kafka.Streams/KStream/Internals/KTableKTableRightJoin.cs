@@ -24,8 +24,8 @@
 //        private static ILogger LOG = new LoggerFactory().CreateLogger<KTableKTableRightJoin<K, R, V1, V2>>();
 
 //        public KTableKTableRightJoin(
-//            KTableImpl<K, object, V1> table1,
-//            KTableImpl<K, object, V2> table2,
+//            KTable<K, object, V1> table1,
+//            KTable<K, object, V2> table2,
 //            IValueJoiner<V1, V2, R> joiner)
 //            : base(table1, table2, joiner)
 //        {

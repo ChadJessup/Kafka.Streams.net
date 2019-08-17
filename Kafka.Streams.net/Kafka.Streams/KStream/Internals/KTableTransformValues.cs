@@ -20,13 +20,13 @@
 //{
 //    public class KTableTransformValues<K, V, V1> : IKTableProcessorSupplier<K, V, V1>
 //    {
-//        private KTableImpl<K, object, V> parent;
+//        private KTable<K, object, V> parent;
 //        private IValueTransformerWithKeySupplier<K, V, V1> transformerSupplier;
 //        private string queryableName;
 //        private bool sendOldValues = false;
 
 //        public KTableTransformValues(
-//            KTableImpl<K, object, V> parent,
+//            KTable<K, object, V> parent,
 //            IValueTransformerWithKeySupplier<K, V, V1> transformerSupplier,
 //            string queryableName)
 //        {

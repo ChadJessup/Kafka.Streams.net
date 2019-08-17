@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public override int GetHashCode()
         {
-            return Objects.hash(newValue, oldValue);
+            return (newValue, oldValue).GetHashCode();
         }
     }
 }

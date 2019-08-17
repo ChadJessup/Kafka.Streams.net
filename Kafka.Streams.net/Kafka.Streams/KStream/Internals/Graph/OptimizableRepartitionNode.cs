@@ -61,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             => $"OptimizableRepartitionNode{{{base.ToString()}}}";
 
 
-        //        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+        //        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         //        {
         //            ISerializer<K> keySerializer = keySerde != null
         //                ? keySerde.Serializer

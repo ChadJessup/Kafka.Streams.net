@@ -87,9 +87,10 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> With(string name,
-                                                ISerde<K> keySerde,
-                                                ISerde<V> valueSerde)
+        public static Grouped<K, V> With(
+            string name,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }
@@ -106,8 +107,9 @@ namespace Kafka.Streams.KStream
          * @see KStream#groupBy(KeyValueMapper, Grouped)
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
-        public static Grouped<K, V> With(ISerde<K> keySerde,
-                                                ISerde<V> valueSerde)
+        public static Grouped<K, V> With(
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
         {
             return new Grouped<K, V>(null, keySerde, valueSerde);
         }
@@ -131,7 +133,6 @@ namespace Kafka.Streams.KStream
          * @return a new {@link Grouped} instance configured with the keySerde
          */
         public Grouped<K, V> WithKeySerde(ISerde<K> keySerde)
-
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }
@@ -143,10 +144,8 @@ namespace Kafka.Streams.KStream
          * @return a new {@link Grouped} instance configured with the valueSerde
          */
         public Grouped<K, V> WithValueSerde(ISerde<V> valueSerde)
-
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }
-
     }
 }

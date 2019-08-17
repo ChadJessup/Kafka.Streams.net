@@ -76,7 +76,7 @@
 //        }
 
 
-//        public void writeToTopology(InternalTopologyBuilder topologyBuilder)
+//        public void WriteToTopology(InternalTopologyBuilder topologyBuilder)
 //        {
 //            ISerializer<K> keySerializer = keySerde != null ? keySerde.Serializer() : null;
 //            IDeserializer<K> keyDeserializer = keySerde != null ? keySerde.Deserializer() : null;

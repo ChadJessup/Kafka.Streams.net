@@ -70,7 +70,7 @@
 
 //            }
 
-//            string aggFunctionName = builder.newProcessorName(functionName);
+//            string aggFunctionName = builder.NewProcessorName(functionName);
 
 //            string sourceName = this.name;
 //            StreamsGraphNode parentNode = streamsGraphNode;
@@ -102,7 +102,7 @@
 
 //            builder.addGraphNode(parentNode, statefulProcessorNode);
 
-//            return new KTableImpl<>(aggFunctionName,
+//            return new KTable<>(aggFunctionName,
 //                                    keySerde,
 //                                    valSerde,
 //                                    sourceName.Equals(this.name) ? sourceNodes : Collections.singleton(sourceName),

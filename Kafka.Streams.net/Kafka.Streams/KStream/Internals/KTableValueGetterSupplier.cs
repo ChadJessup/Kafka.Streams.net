@@ -18,13 +18,13 @@ using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableValueGetterSupplier<K, T> : IKTableValueGetterSupplier<K, KeyValue<object, object>>
+    public class KTableValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, KeyValue<object, object>>
     {
+        KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
         public IKTableValueGetter<K, KeyValue<object, object>> get()
         {
-            return null; // new KTableMapValueGetter(parentValueGetterSupplier());
+            return new KTableMapValueGetter(parentValueGetterSupplier());
         }
-
 
         public string[] storeNames()
         {

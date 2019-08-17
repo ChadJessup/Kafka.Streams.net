@@ -16,6 +16,7 @@
  */
 using Kafka.Streams.Processor;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -24,13 +25,18 @@ namespace Kafka.Streams.KStream.Internals
         private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKStreamJoin<K, R, V1, V2>>();
 
         private string otherWindowName;
-        private long joinBeforeMs;
-        private long joinAfterMs;
+        private TimeSpan joinBeforeMs;
+        private TimeSpan joinAfterMs;
 
         private IValueJoiner<V1, V2, R> joiner;
         private bool outer;
 
-        public KStreamKStreamJoin(string otherWindowName, long joinBeforeMs, long joinAfterMs, IValueJoiner<V1, V2, R> joiner, bool outer)
+        public KStreamKStreamJoin(
+            string otherWindowName,
+            TimeSpan joinBeforeMs,
+            TimeSpan joinAfterMs,
+            IValueJoiner<V1, V2, R> joiner,
+            bool outer)
         {
             this.otherWindowName = otherWindowName;
             this.joinBeforeMs = joinBeforeMs;

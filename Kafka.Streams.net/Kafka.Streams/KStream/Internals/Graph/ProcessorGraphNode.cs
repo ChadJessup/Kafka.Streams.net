@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.IProcessorSupplier, ParentNodeNames());
+            topologyBuilder.addProcessor(processorParameters.processorName, processorParameters.ProcessorSupplier, ParentNodeNames());
         }
     }
 }

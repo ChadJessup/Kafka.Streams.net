@@ -82,9 +82,9 @@
 //        {
 //            return null;
 
-//            string sinkName = builder.newProcessorName(KStreamImpl.SINK_NAME);
-//            string sourceName = builder.newProcessorName(KStreamImpl.SourceName);
-//            string funcName = builder.newProcessorName(functionName);
+//            string sinkName = builder.NewProcessorName(KStreamImpl.SINK_NAME);
+//            string sourceName = builder.NewProcessorName(KStreamImpl.SourceName);
+//            string funcName = builder.NewProcessorName(functionName);
 //            string repartitionTopic = (userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : materialized.storeName())
 //               + KStreamImpl.RepartitionTopicSuffix;
 
@@ -107,7 +107,7 @@
 //           // builder.addGraphNode(repartitionGraphNode, statefulProcessorNode);
 
 //           // // return the KTable representation with the intermediate topic as the sources
-//           // return new KTableImpl<>(funcName,
+//           // return new KTable<>(funcName,
 //           //                         materialized.keySerde,
 //           //                         materialized.valueSerde,
 //           //                         Collections.singleton(sourceName),

@@ -78,7 +78,7 @@
 
 
 
-//        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+//        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
 //        {
 //            string topicName = getTopicNames().GetEnumerator().Current;
 

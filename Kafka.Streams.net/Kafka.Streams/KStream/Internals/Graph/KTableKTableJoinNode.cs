@@ -72,7 +72,7 @@
 //            return (KTableKTableJoinMerger<K, VR>)mergeProcessorParameters().IProcessorSupplier;
 //        }
 
-//        public override void writeToTopology(InternalTopologyBuilder topologyBuilder)
+//        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
 //        {
 //            string thisProcessorName = thisProcessorParameters().processorName;
 //            string otherProcessorName = otherProcessorParameters().processorName;

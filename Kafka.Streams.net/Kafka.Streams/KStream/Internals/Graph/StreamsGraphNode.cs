@@ -62,6 +62,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                     return false;
                 }
             }
+
             return true;
         }
 

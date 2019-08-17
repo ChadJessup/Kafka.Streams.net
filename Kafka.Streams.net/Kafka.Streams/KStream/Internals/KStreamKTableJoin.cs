@@ -18,7 +18,7 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KStreamKTableJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
+    public class KStreamKTableJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
     {
 
         //    private IKeyValueMapper<K, V1, K> keyValueMapper = new IKeyValueMapper<K, V1, K>()
@@ -33,7 +33,10 @@ namespace Kafka.Streams.KStream.Internals
         private IValueJoiner<V1, V2, R> joiner;
         private bool leftJoin;
 
-        KStreamKTableJoin(IKTableValueGetterSupplier<K, V2> valueGetterSupplier, IValueJoiner<V1, V2, R> joiner, bool leftJoin)
+        public KStreamKTableJoin(
+            IKTableValueGetterSupplier<K, V2> valueGetterSupplier,
+            IValueJoiner<V1, V2, R> joiner,
+            bool leftJoin)
         {
             this.valueGetterSupplier = valueGetterSupplier;
             this.joiner = joiner;

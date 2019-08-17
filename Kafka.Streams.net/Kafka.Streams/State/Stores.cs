@@ -1,4 +1,10 @@
+using Kafka.Common.Utils;
+using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
 using System;
 
 namespace Kafka.Streams.State
@@ -155,70 +161,77 @@ namespace Kafka.Streams.State
         //    };
         //}
 
-        ///**
-        // * Create a persistent {@link WindowBytesStoreSupplier}.
-        // *
-        // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
-        // *                              (note that the retention period must be at least long enough to contain the
-        // *                              windowed data's entire life cycle, from window-start through window-end,
-        // *                              and for the entire grace period)
-        // * @param numSegments           number of db segments (cannot be zero or negative)
-        // * @param windowSize            size of the windows that are stored (cannot be negative). Note: the window size
-        // *                              is not stored with the records, so this value is used to compute the keys that
-        // *                              the store returns. No effort is made to validate this parameter, so you must be
-        // *                              careful to set it the same as the windowed keys you're actually storing.
-        // * @param retainDuplicates      whether or not to retain duplicates.
-        // * @return an instance of {@link WindowBytesStoreSupplier}
-        // * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, bool)} instead
-        // */
-        //[System.Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-        //public static WindowBytesStoreSupplier persistentWindowStore(string name,
-        //                                                             long retentionPeriod,
-        //                                                             int numSegments,
-        //                                                             long windowSize,
-        //                                                             bool retainDuplicates)
-        //{
-        //    if (numSegments < 2)
-        //    {
-        //        throw new System.ArgumentException("numSegments cannot be smaller than 2");
-        //    }
+        /**
+         * Create a persistent {@link WindowBytesStoreSupplier}.
+         *
+         * @param name                  name of the store (cannot be {@code null})
+         * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
+         *                              (note that the retention period must be at least long enough to contain the
+         *                              windowed data's entire life cycle, from window-start through window-end,
+         *                              and for the entire grace period)
+         * @param numSegments           number of db segments (cannot be zero or negative)
+         * @param windowSize            size of the windows that are stored (cannot be negative). Note: the window size
+         *                              is not stored with the records, so this value is used to compute the keys that
+         *                              the store returns. No effort is made to validate this parameter, so you must be
+         *                              careful to set it the same as the windowed keys you're actually storing.
+         * @param retainDuplicates      whether or not to retain duplicates.
+         * @return an instance of {@link WindowBytesStoreSupplier}
+         * @deprecated since 2.1 Use {@link Stores#persistentWindowStore(string, Duration, Duration, bool)} instead
+         */
+        [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+        public static IWindowBytesStoreSupplier persistentWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            int numSegments,
+            TimeSpan windowSize,
+            bool retainDuplicates)
+        {
+            if (numSegments < 2)
+            {
+                throw new ArgumentException("numSegments cannot be smaller than 2");
+            }
 
-        //    long legacySegmentInterval = Math.Max(retentionPeriod / (numSegments - 1), 60_000L);
+            TimeSpan legacySegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionPeriod.TotalMilliseconds / (numSegments - 1), 60_000L));
 
-        //    return persistentWindowStore(
-        //        name,
-        //        retentionPeriod,
-        //        windowSize,
-        //        retainDuplicates,
-        //        legacySegmentInterval,
-        //        false);
-        //}
+            return persistentWindowStore(
+                name,
+                retentionPeriod,
+                windowSize,
+                retainDuplicates,
+                legacySegmentInterval,
+                false);
+        }
 
-        ///**
-        // * Create a persistent {@link WindowBytesStoreSupplier}.
-        // * <p>
-        // * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
-        // * If you want to create a {@link TimestampedWindowStore} you should use
-        // * {@link #persistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
-        // *
-        // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
-        // *                              (note that the retention period must be at least long enough to contain the
-        // *                              windowed data's entire life cycle, from window-start through window-end,
-        // *                              and for the entire grace period)
-        // * @param windowSize            size of the windows (cannot be negative)
-        // * @param retainDuplicates      whether or not to retain duplicates.
-        // * @return an instance of {@link WindowBytesStoreSupplier}
-        // * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
-        // */
-        //public static WindowBytesStoreSupplier persistentWindowStore(string name,
-        //                                                             TimeSpan retentionPeriod,
-        //                                                             TimeSpan windowSize,
-        //                                                             bool retainDuplicates)
-        //{
-        //        return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, false);
-        //}
+        /**
+         * Create a persistent {@link WindowBytesStoreSupplier}.
+         * <p>
+         * This store supplier can be passed into a {@link #windowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
+         * If you want to create a {@link TimestampedWindowStore} you should use
+         * {@link #persistentTimestampedWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         *
+         * @param name                  name of the store (cannot be {@code null})
+         * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
+         *                              (note that the retention period must be at least long enough to contain the
+         *                              windowed data's entire life cycle, from window-start through window-end,
+         *                              and for the entire grace period)
+         * @param windowSize            size of the windows (cannot be negative)
+         * @param retainDuplicates      whether or not to retain duplicates.
+         * @return an instance of {@link WindowBytesStoreSupplier}
+         * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+         */
+        public static IWindowBytesStoreSupplier persistentWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan windowSize,
+            bool retainDuplicates)
+        {
+            return persistentWindowStore(
+                name,
+                retentionPeriod,
+                windowSize,
+                retainDuplicates,
+                false);
+        }
 
         ///**
         // * Create a persistent {@link WindowBytesStoreSupplier}.
@@ -246,58 +259,73 @@ namespace Kafka.Streams.State
         //        return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, true);
         //}
 
-        //private static WindowBytesStoreSupplier persistentWindowStore(string name,
-        //                                                              TimeSpan retentionPeriod,
-        //                                                              TimeSpan windowSize,
-        //                                                              bool retainDuplicates,
-        //                                                              bool timestampedStore)
-        //{
-        //    name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        //    string rpMsgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-        //    long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
-        //    string wsMsgPrefix = prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
-        //    long windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, wsMsgPrefix);
+        private static IWindowBytesStoreSupplier persistentWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan windowSize,
+            bool retainDuplicates,
+            bool timestampedStore)
+        {
+            name = name ?? throw new ArgumentNullException("name cannot be null", nameof(name));
 
-        //    long defaultSegmentInterval = Math.Max(retentionMs / 2, 60_000L);
+            string rpMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
+            string wsMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
+            var windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, wsMsgPrefix);
 
-        //    return persistentWindowStore(name, retentionMs, windowSizeMs, retainDuplicates, defaultSegmentInterval, timestampedStore);
-        //}
+            var defaultSegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionMs.TotalMilliseconds / 2, 60_000L));
 
-        //private static WindowBytesStoreSupplier persistentWindowStore(string name,
-        //                                                              long retentionPeriod,
-        //                                                              long windowSize,
-        //                                                              bool retainDuplicates,
-        //                                                              long segmentInterval,
-        //                                                              bool timestampedStore)
-        //{
-        //    name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        //    if (retentionPeriod < 0L)
-        //    {
-        //        throw new System.ArgumentException("retentionPeriod cannot be negative");
-        //    }
-        //    if (windowSize < 0L)
-        //    {
-        //        throw new System.ArgumentException("windowSize cannot be negative");
-        //    }
-        //    if (segmentInterval < 1L)
-        //    {
-        //        throw new System.ArgumentException("segmentInterval cannot be zero or negative");
-        //    }
-        //    if (windowSize > retentionPeriod)
-        //    {
-        //        throw new System.ArgumentException("The retention period of the window store "
-        //            + name + " must be no smaller than its window size. Got size=["
-        //            + windowSize + "], retention=[" + retentionPeriod + "]"];
-        //    }
+            return persistentWindowStore(
+                name,
+                retentionMs,
+                windowSizeMs,
+                retainDuplicates,
+                defaultSegmentInterval,
+                timestampedStore);
+        }
 
-        //    return new RocksDbWindowBytesStoreSupplier(
-        //        name,
-        //        retentionPeriod,
-        //        segmentInterval,
-        //        windowSize,
-        //        retainDuplicates,
-        //        timestampedStore);
-        //}
+        private static IWindowBytesStoreSupplier persistentWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan windowSize,
+            bool retainDuplicates,
+            TimeSpan segmentInterval,
+            bool timestampedStore)
+        {
+            name = name ?? throw new ArgumentNullException("name cannot be null", nameof(name));
+
+            if (retentionPeriod.TotalMilliseconds < 0L)
+            {
+                throw new ArgumentException("retentionPeriod cannot be negative");
+            }
+
+            if (windowSize < TimeSpan.Zero)
+            {
+                throw new ArgumentException("windowSize cannot be negative");
+            }
+
+            if (segmentInterval.TotalMilliseconds < 1L)
+            {
+                throw new ArgumentException("segmentInterval cannot be zero or negative");
+            }
+
+            if (windowSize > retentionPeriod)
+            {
+                throw new ArgumentException(
+                    $"The retention period of the window store " +
+                    $"{name} must be no smaller than its window size. " +
+                    $"Got size=[{windowSize}], retention=[{retentionPeriod}]");
+            }
+
+            return null;
+            //new RocksDbWindowBytesStoreSupplier(
+            //    name,
+            //    retentionPeriod,
+            //    segmentInterval,
+            //    windowSize,
+            //    retainDuplicates,
+            //    timestampedStore);
+        }
 
         ///**
         // * Create an in-memory {@link WindowBytesStoreSupplier}.
@@ -454,27 +482,29 @@ namespace Kafka.Streams.State
         //    return new TimestampedKeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
         //}
 
-        ///**
-        // * Creates a {@link StoreBuilder} that can be used to build a {@link WindowStore}.
-        // * <p>
-        // * The provided supplier should <strong>not</strong> be a supplier for
-        // * {@link TimestampedWindowStore TimestampedWindowStores}.
-        // *
-        // * @param supplier      a {@link WindowBytesStoreSupplier} (cannot be {@code null})
-        // * @param keySerde      the key serde to use
-        // * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
-        // *                      it is treated as delete
-        // * @param           key type
-        // * @param           value type
-        // * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
-        // */
-        //public staticStoreBuilder<WindowStore<K, V>> windowStoreBuilder(WindowBytesStoreSupplier supplier,
-        //                                                                        ISerde<K> keySerde,
-        //                                                                        ISerde<V> valueSerde)
-        //{
-        //    supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
-        //    return new WindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
-        //}
+        /**
+         * Creates a {@link StoreBuilder} that can be used to build a {@link WindowStore}.
+         * <p>
+         * The provided supplier should <strong>not</strong> be a supplier for
+         * {@link TimestampedWindowStore TimestampedWindowStores}.
+         *
+         * @param supplier      a {@link WindowBytesStoreSupplier} (cannot be {@code null})
+         * @param keySerde      the key serde to use
+         * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
+         *                      it is treated as delete
+         * @param           key type
+         * @param           value type
+         * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
+         */
+        public static IStoreBuilder<IWindowStore<K, V>> windowStoreBuilder<K, V>(
+            IWindowBytesStoreSupplier supplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            supplier = supplier ?? throw new ArgumentNullException("supplier cannot be null", nameof(supplier));
+
+            return new WindowStoreBuilder<K, V>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        }
 
         ///**
         // * Creates a {@link StoreBuilder} that can be used to build a {@link TimestampedWindowStore}.

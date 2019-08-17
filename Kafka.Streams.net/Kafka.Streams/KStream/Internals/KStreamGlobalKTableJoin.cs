@@ -18,18 +18,18 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : IProcessorSupplier<K1, V1>
+    public class KStreamGlobalKTableJoin<K1, K2, R, V1, V2> : IProcessorSupplier<K1, V1>
     {
-
         private IKTableValueGetterSupplier<K2, V2> valueGetterSupplier;
         private IValueJoiner<V1, V2, R> joiner;
         private IKeyValueMapper<K1, V1, K2> mapper;
         private bool leftJoin;
 
-        KStreamGlobalKTableJoin(IKTableValueGetterSupplier<K2, V2> valueGetterSupplier,
-                                 IValueJoiner<V1, V2, R> joiner,
-                                 IKeyValueMapper<K1, V1, K2> mapper,
-                                 bool leftJoin)
+        public KStreamGlobalKTableJoin(
+            IKTableValueGetterSupplier<K2, V2> valueGetterSupplier,
+            IValueJoiner<V1, V2, R> joiner,
+            IKeyValueMapper<K1, V1, K2> mapper,
+            bool leftJoin)
         {
             this.valueGetterSupplier = valueGetterSupplier;
             this.joiner = joiner;
@@ -40,7 +40,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K1, V1> get()
         {
-            return null;//new KStreamKTableJoinProcessor<>(valueGetterSupplier(), mapper, joiner, leftJoin);
+            return new KStreamKTableJoinProcessor<K1, K2, V1, V2, R>(
+                valueGetterSupplier.get(),
+                mapper,
+                joiner,
+                leftJoin);
         }
     }
 }

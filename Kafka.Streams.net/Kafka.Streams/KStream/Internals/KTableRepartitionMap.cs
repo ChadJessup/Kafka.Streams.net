@@ -27,10 +27,10 @@
 //     */
 //    public class KTableRepartitionMap<K, V, K1, V1> : IKTableProcessorSupplier<K, V, KeyValue<K1, V1>>
 //    {
-//        private KTableImpl<K, object, V> parent;
+//        private KTable<K, object, V> parent;
 //        private IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
-//        KTableRepartitionMap(KTableImpl<K, object, V> parent, IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper)
+//        KTableRepartitionMap(KTable<K, object, V> parent, IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper)
 //        {
 //            this.parent = parent;
 //            this.mapper = mapper;

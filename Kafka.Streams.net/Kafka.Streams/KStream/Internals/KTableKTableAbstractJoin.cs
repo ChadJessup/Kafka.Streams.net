@@ -18,8 +18,8 @@
 //{
 //    public abstract class KTableKTableAbstractJoin<K, R, V1, V2> : IKTableProcessorSupplier<K, V1, R>
 //    {
-//        private KTableImpl<K, object, V1> table1;
-//        private KTableImpl<K, object, V2> table2;
+//        private KTable<K, object, V1> table1;
+//        private KTable<K, object, V2> table2;
 //        protected IKTableValueGetterSupplier<K, V1> valueGetterSupplier1 { get; }
 //        protected IKTableValueGetterSupplier<K, V2> valueGetterSupplier2 { get; }
 //        IValueJoiner<V1, V2, R> joiner;
@@ -27,8 +27,8 @@
 //        bool sendOldValues = false;
 
 //        public KTableKTableAbstractJoin(
-//            KTableImpl<K, object, V1> table1,
-//            KTableImpl<K, object, V2> table2,
+//            KTable<K, object, V1> table1,
+//            KTable<K, object, V2> table2,
 //            IValueJoiner<V1, V2, R> joiner)
 //        {
 //            this.table1 = table1;

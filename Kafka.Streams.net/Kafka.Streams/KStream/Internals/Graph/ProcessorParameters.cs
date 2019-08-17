@@ -28,21 +28,21 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class ProcessorParameters<K, V>
     {
-        public IProcessorSupplier<K, V> IProcessorSupplier { get; }
+        public IProcessorSupplier<K, V> ProcessorSupplier { get; }
         public string processorName { get; }
 
         public ProcessorParameters(
-            IProcessorSupplier<K, V> IProcessorSupplier,
+            IProcessorSupplier<K, V> processorSupplier,
             string processorName)
         {
-            this.IProcessorSupplier = IProcessorSupplier;
+            this.ProcessorSupplier = processorSupplier;
             this.processorName = processorName;
         }
 
         public override string ToString()
         {
             return "ProcessorParameters{" +
-                "processor=" + IProcessorSupplier.GetType() +
+                "processor=" + ProcessorSupplier.GetType() +
                 ", processor name='" + processorName + '\'' +
                 '}';
         }

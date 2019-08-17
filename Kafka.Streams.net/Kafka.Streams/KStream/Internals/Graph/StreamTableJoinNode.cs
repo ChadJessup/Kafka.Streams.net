@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             string processorName = processorParameters.processorName;
-            IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.IProcessorSupplier;
+            IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.ProcessorSupplier;
 
             // Stream - Table join (Global or KTable)
             topologyBuilder.addProcessor(processorName, IProcessorSupplier, ParentNodeNames());

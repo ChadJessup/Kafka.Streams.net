@@ -39,9 +39,9 @@ namespace Kafka.Streams.KStream.Internals
         protected string name;
         protected ISerde<K> keySerde;
         protected ISerde<V> valSerde;
-        protected HashSet<string> sourceNodes;
-        protected StreamsGraphNode streamsGraphNode;
-        protected InternalStreamsBuilder builder;
+        public HashSet<string> sourceNodes { get; set; }
+        public StreamsGraphNode streamsGraphNode { get; set; }
+        protected InternalStreamsBuilder builder { get; private set; }
 
         // This copy-constructor will allow to extend KStream
         // and KTable APIs with new methods without impacting the public interface.
@@ -81,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
         protected InternalTopologyBuilder internalTopologyBuilder()
             => builder.InternalTopologyBuilder;
 
-        public HashSet<string> ensureJoinableWith(AbstractStream<K, object> other)
+        public HashSet<string> ensureJoinableWith<VO>(AbstractStream<K, VO> other)
         {
             HashSet<string> allSourceNodes = new HashSet<string>();
             allSourceNodes.UnionWith(sourceNodes);
@@ -106,7 +106,8 @@ namespace Kafka.Streams.KStream.Internals
         public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
              IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+
             return null;
             //    return ()=> {
             //        ValueTransformer<V, VR> valueTransformer = valueTransformerSupplier[];

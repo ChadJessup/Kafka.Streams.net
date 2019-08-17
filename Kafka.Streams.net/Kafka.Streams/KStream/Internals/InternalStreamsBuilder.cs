@@ -96,7 +96,7 @@ namespace Kafka.Streams.KStream.Internals
             Regex topicPattern,
             ConsumedInternal<K, V> consumed)
         {
-            //string name = newProcessorName(KStreamImpl.SourceName);
+            //string name = NewProcessorName(KStreamImpl.SourceName);
             //            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
             //addGraphNode(root, streamPatternSourceNode);
@@ -121,7 +121,7 @@ namespace Kafka.Streams.KStream.Internals
         //            //       .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SourceName);
 
         //            //string tableSourceName = new NamedInternal(consumed.name)
-        //            //       .suffixWithOrElseGet("-table-source", this, KTableImpl.SourceName);
+        //            //       .suffixWithOrElseGet("-table-source", this, KTable.SourceName);
 
         //  //          KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());
 
@@ -139,7 +139,7 @@ namespace Kafka.Streams.KStream.Internals
         //            //addGraphNode(root, tableSourceNode);
 
         //            return null;
-        //            //new KTableImpl<K, V>(tableSourceName,
+        //            //new KTable<K, V>(tableSourceName,
         //            //                        consumed.keySerde,
         //            //                        consumed.valueSerde,
         //            //                        sourceName,
@@ -158,8 +158,8 @@ namespace Kafka.Streams.KStream.Internals
         //            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
         //            // explicitly disable logging for global stores
         //            //materialized.withLoggingDisabled();
-        //            //string sourceName = newProcessorName(KTableImpl.SourceName);
-        //            //string processorName = newProcessorName(KTableImpl.SourceName);
+        //            //string sourceName = NewProcessorName(KTable.SourceName);
+        //            //string processorName = NewProcessorName(KTable.SourceName);
         //            //// enforce store name as queryable name to always materialize global table stores
         //            //string storeName = materialized.storeName();
         //            //KTableSource<K, V> tableSource = new KTableSource<K, V>(storeName, storeName);
@@ -185,7 +185,7 @@ namespace Kafka.Streams.KStream.Internals
             => $"{prefix}{index++,3:D3}";
 
         public string NewStoreName(string prefix)
-            => $"{prefix}{KTableImpl.StateStoreName}{index++,3:D3}";
+            => $"{prefix}{KTable.StateStoreName}{index++,3:D3}";
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddStateStore(IStoreBuilder builder)
@@ -223,8 +223,8 @@ namespace Kafka.Streams.KStream.Internals
         {
             // explicitly disable logging for global stores
             //storeBuilder.withLoggingDisabled();
-            //string sourceName = newProcessorName(KStreamImpl.SourceName);
-            //string processorName = newProcessorName(KTableImpl<K, V>.SourceName);
+            //string sourceName = NewProcessorName(KStreamImpl.SourceName);
+            //string processorName = NewProcessorName(KTable<K, V>.SourceName);
             //addGlobalStore(storeBuilder,
             //                sourceName,
             //                topic,
@@ -318,7 +318,7 @@ namespace Kafka.Streams.KStream.Internals
 
             //                if (streamGraphNode.allParentsWrittenToTopology() && !streamGraphNode.hasWrittenToTopology)
             //                {
-            //                    streamGraphNode.writeToTopology(internalTopologyBuilder);
+            //                    streamGraphNode.WriteToTopology(internalTopologyBuilder);
             //                    streamGraphNode.setHasWrittenToTopology(true);
             //                }
 

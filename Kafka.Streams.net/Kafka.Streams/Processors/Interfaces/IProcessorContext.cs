@@ -62,8 +62,9 @@ namespace Kafka.Streams.Processor.Interfaces
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void register(IStateStore store,
-                      IStateRestoreCallback stateRestoreCallback);
+        void register(
+            IStateStore store,
+            IStateRestoreCallback stateRestoreCallback);
 
         /**
          * Get the state store given the store name.
