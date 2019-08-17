@@ -92,13 +92,13 @@ namespace Kafka.Streams.State.Interfaces
             long timeFrom,
             long timeTo);
 
-        public IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to)
-        {
-            return fetch(
-                key,
-                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
-        }
+        //public IWindowStoreIterator<V> fetch(K key, DateTime from, DateTime to)
+        //{
+        //    return fetch(
+        //        key,
+        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
+        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+        //}
 
         /**
          * Get all the key-value pairs in the given key range and time range from all the existing windows.
@@ -116,18 +116,18 @@ namespace Kafka.Streams.State.Interfaces
 
         IKeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo);
 
-        public IKeyValueIterator<Windowed<K>, V> fetch(
-            K from,
-            K to,
-            DateTime fromTime,
-            DateTime toTime)
-        {
-            return fetch(
-                from,
-                to,
-                ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
-                ApiUtils.validateMillisecondInstant(toTime, ApiUtils.prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
-        }
+        //public IKeyValueIterator<Windowed<K>, V> fetch(
+        //    K from,
+        //    K to,
+        //    DateTime fromTime,
+        //    DateTime toTime)
+        //{
+        //    return fetch(
+        //        from,
+        //        to,
+        //        ApiUtils.validateMillisecondInstant(fromTime, ApiUtils.prepareMillisCheckFailMsgPrefix(fromTime, "fromTime")),
+        //        ApiUtils.validateMillisecondInstant(toTime, ApiUtils.prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
+        //}
 
         /**
          * Gets all the key-value pairs that belong to the windows within in the given time range.
@@ -141,13 +141,13 @@ namespace Kafka.Streams.State.Interfaces
             long timeFrom,
             long timeTo);
 
-        public IKeyValueIterator<Windowed<K>, V> fetchAll(
-            DateTime from,
-            DateTime to)
-        {
-            return fetchAll(
-                ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
-                ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
-        }
+        //public IKeyValueIterator<Windowed<K>, V> fetchAll(
+        //    DateTime from,
+        //    DateTime to)
+        //{
+        //    return fetchAll(
+        //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
+        //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
+        //}
     }
 }

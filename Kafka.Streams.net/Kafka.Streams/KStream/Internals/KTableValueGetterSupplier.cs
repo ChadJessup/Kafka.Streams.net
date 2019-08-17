@@ -20,10 +20,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, KeyValue<object, object>>
     {
-        KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
+        //KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
         public IKTableValueGetter<K, KeyValue<object, object>> get()
         {
-            return new KTableMapValueGetter(parentValueGetterSupplier());
+            return null; // new KTableMapValueGetter(parentValueGetterSupplier());
         }
 
         public string[] storeNames()

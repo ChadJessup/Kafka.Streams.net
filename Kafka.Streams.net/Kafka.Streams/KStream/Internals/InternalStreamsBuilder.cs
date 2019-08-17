@@ -96,13 +96,13 @@ namespace Kafka.Streams.KStream.Internals
             Regex topicPattern,
             ConsumedInternal<K, V> consumed)
         {
-            //string name = NewProcessorName(KStreamImpl.SourceName);
+            //string name = NewProcessorName(KStream.SourceName);
             //            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
             //addGraphNode(root, streamPatternSourceNode);
 
             return null;
-            //new KStreamImpl<K, V>(
+            //new KStream<K, V>(
             //name,
             //consumed.keySerde,
             //consumed.valueSerde,
@@ -118,7 +118,7 @@ namespace Kafka.Streams.KStream.Internals
         //            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         //        {
         //            //string sourceName = new NamedInternal(consumed.name)
-        //            //       .orElseGenerateWithPrefix(this, KStreamImpl<K, V>.SourceName);
+        //            //       .orElseGenerateWithPrefix(this, KStream<K, V>.SourceName);
 
         //            //string tableSourceName = new NamedInternal(consumed.name)
         //            //       .suffixWithOrElseGet("-table-source", this, KTable.SourceName);
@@ -223,7 +223,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             // explicitly disable logging for global stores
             //storeBuilder.withLoggingDisabled();
-            //string sourceName = NewProcessorName(KStreamImpl.SourceName);
+            //string sourceName = NewProcessorName(KStream.SourceName);
             //string processorName = NewProcessorName(KTable<K, V>.SourceName);
             //addGlobalStore(storeBuilder,
             //                sourceName,
@@ -464,7 +464,7 @@ namespace Kafka.Streams.KStream.Internals
         //    OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
         //        OptimizableRepartitionNode.optimizableRepartitionNodeBuilder<K, V>();
 
-        //    KStreamImpl<K, V>.createRepartitionedSource(
+        //    KStream<K, V>.createRepartitionedSource(
         //        this,
         //        keySerde,
         //        valueSerde,

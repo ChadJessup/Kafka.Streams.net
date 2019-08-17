@@ -41,11 +41,11 @@ namespace Kafka.Streams.KStream.Internals
             {
                 store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
 
-                tupleForwarder = new TimestampedTupleForwarder<K, V1>(
-                    store,
-                    context,
-                    new TimestampedCacheFlushListener<K, V1>(context),
-                    sendOldValues);
+                //tupleForwarder = new TimestampedTupleForwarder<K, V1>(
+                //    store,
+                //    context,
+                //    new TimestampedCacheFlushListener<K, V1>(context),
+                //    sendOldValues);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                store.Add(key, ValueAndTimestamp<V>.make(newValue, context.timestamp()));
+                //store.Add(key, ValueAndTimestamp<V>.make(newValue, context.timestamp()));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
             }
             else

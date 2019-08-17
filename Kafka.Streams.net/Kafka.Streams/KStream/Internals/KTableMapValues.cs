@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableMapValuesProcessor<K, V, Change<V>>(this.mapper);
+            return new KTableMapValuesProcessor<K, V, Change<V>>(null);// this.mapper);
         }
 
 
@@ -100,7 +100,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (valueAndTimestamp != null)
             {
-                newValue = mapper.apply(key, valueAndTimestamp.value);
+                newValue = default;// mapper.apply(key, valueAndTimestamp.value);
                 timestamp = valueAndTimestamp.timestamp;
             }
 

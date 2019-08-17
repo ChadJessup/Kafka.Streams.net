@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream.Interfaces
     public interface IValueMapperWithKey<K, V, VR>
     {
         /**
-         * Map the given [key and ]value to a new value.
+         * Map the given [key and value] to a new value.
          *
          * @param readOnlyKey the read-only key
          * @param value       the value to be mapped

@@ -14,7 +14,7 @@ namespace Kafka.Streams.Processor.Internals
 
         internal ILogger logger(Type type)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         internal ILogger logger<T>()

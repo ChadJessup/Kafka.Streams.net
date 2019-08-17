@@ -248,7 +248,7 @@ namespace Kafka.Streams.KStream.Internals
         //{
         //    printed = printed ?? throw new System.ArgumentNullException("printed can't be null", nameof(printed));
         //    PrintedInternal<K, V> printedInternal = new PrintedInternal<K, V>(printed);
-        //    //            string name = new NamedInternal(printedInternal.name).OrElseGenerateWithPrefix(builder, KStreamImpl.PRINTING_NAME);
+        //    //            string name = new NamedInternal(printedInternal.name).OrElseGenerateWithPrefix(builder, KStream.PRINTING_NAME);
         //    ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(printedInternal.build(this.name), name);
         //    ProcessorGraphNode<K, V> printNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
@@ -467,7 +467,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             action = action ?? throw new System.ArgumentNullException("action can't be null", nameof(action));
             named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
-            // string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStreamImpl.PEEK_NAME);
+            // string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.PEEK_NAME);
 
             // ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
             //        new KStreamPeek<K, V>(action, true),
@@ -478,7 +478,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // builder.AddGraphNode(this.streamsGraphNode, peekNode);
 
-            // return new KStreamImpl<>(name, keySerde, valSerde, sourceNodes, repartitionRequired, peekNode, builder);
+            // return new KStream<>(name, keySerde, valSerde, sourceNodes, repartitionRequired, peekNode, builder);
             return null;
         }
 
@@ -956,67 +956,68 @@ namespace Kafka.Streams.KStream.Internals
             return sourceName;
         }
 
-        //public IKStream<K, VR> leftJoin<VO, VR>(
-        //    IKStream<K, VO> other,
-        //    IValueJoiner<V, VO, VR> joiner,
-        //    JoinWindows windows)
-        //{
-        //    return leftJoin(other, joiner, windows, Joined.with(null, null, null));
-        //}
+        public IKStream<K, VR> leftJoin<VO, VR>(
+            IKStream<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows)
+        {
+            return leftJoin(other, joiner, windows, Joined<K, V, VO>.with(null, null, null));
+        }
 
-        //public IKStream<K, VR> leftJoin<VO, VR>(
-        //    IKStream<K, VO> other,
-        //    IValueJoiner<V, VO, VR> joiner,
-        //    JoinWindows windows,
-        //    Joined<K, V, VO> joined)
-        //{
-        //    //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
-        //    return doJoin(
-        //        other,
-        //        joiner,
-        //        windows,
-        //        joined,
-        //        new KStreamImplJoin(true, false));
-        //}
+        public IKStream<K, VR> leftJoin<VO, VR>(
+            IKStream<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows,
+            Joined<K, V, VO> joined)
+        {
+            joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
 
-        //public IKStream<K, VR> join<VO, VR>(
-        //    IKTable<K, VO> other,
-        //    IValueJoiner<V, VO, VR> joiner)
-        //{
-        //    return join(other, joiner, Joined.with(null, null, null));
-        //}
+            return doJoin(
+                other,
+                joiner,
+                windows,
+                joined,
+                new KStreamJoin(this.builder, true, false));
+        }
 
-        //public IKStream<K, VR> join<VO, VR>(
-        //    IKTable<K, VO> other,
-        //    IValueJoiner<V, VO, VR> joiner,
-        //    Joined<K, V, VO> joined)
-        //{
-        //    //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
-        //    //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
-        //    //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
+        public IKStream<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner)
+        {
+            return null; // join(other, joiner, Joined<K, V, VO>.with(null, null, null));
+        }
 
-        //    JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<K, V, VO>(joined);
-        //    string name = joinedInternal.name;
-        //    if (repartitionRequired)
-        //    {
-        //        KStreamImpl<K, V> thisStreamRepartitioned = repartitionForJoin(
-        //           name != null ? name : this.name,
-        //           joined.keySerde,
-        //           joined.valueSerde
-        //       );
-        //        return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, false);
-        //    }
-        //    else
-        //    {
+        public IKStream<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Joined<K, V, VO> joined)
+        {
+            //other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
+            //joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
+            //joined = joined ?? throw new System.ArgumentNullException("joined can't be null", nameof(joined));
 
-        //        return doStreamTableJoin(other, joiner, joined, false);
-        //    }
-        //}
+            JoinedInternal<K, V, VO> joinedInternal = new JoinedInternal<K, V, VO>(joined);
+            string name = joinedInternal.name;
+            if (repartitionRequired)
+            {
+                KStream<K, V> thisStreamRepartitioned = repartitionForJoin(
+                   name != null ? name : this.name,
+                   joined.keySerde,
+                   joined.valueSerde
+               );
+                return thisStreamRepartitioned.doStreamTableJoin(other, joiner, joined, false);
+            }
+            else
+            {
 
-        //public IKStream<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other, IValueJoiner<V, VO, VR> joiner)
-        //{
-        //    return leftJoin(other, joiner, Joined.with(null, null, null));
-        //}
+                return doStreamTableJoin(other, joiner, joined, false);
+            }
+        }
+
+        public IKStream<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other, IValueJoiner<V, VO, VR> joiner)
+        {
+            return leftJoin(other, joiner, Joined<K, V, VO>.with(null, null, null));
+        }
 
         public IKStream<K, VR> leftJoin<VO, VR>(
             IKTable<K, VO> other,
@@ -1133,30 +1134,52 @@ namespace Kafka.Streams.KStream.Internals
             NamedInternal renamed = new NamedInternal(joinedInternal.name);
 
             string name = renamed.OrElseGenerateWithPrefix(builder, leftJoin ? KStream.LEFTJOIN_NAME : KStream.JOIN_NAME);
-            IProcessorSupplier<K, V> IProcessorSupplier = new KStreamKTableJoin<K, VR, V, VO>(
-               ((KTable<K, V, VO>)other).valueGetterSupplier(),
-               joiner,
-               leftJoin);
+            // IProcessorSupplier<K, V> IProcessorSupplier = new KStreamKTableJoin<K, VR, V, VO>(
+            //    ((KTable<K, V, VO>)other).valueGetterSupplier(),
+            //    joiner,
+            //    leftJoin);
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(IProcessorSupplier, name);
-            StreamTableJoinNode<K, V> streamTableJoinNode = new StreamTableJoinNode<K, V>(
-               name,
-               processorParameters,
-               ((KTable)other).valueGetterSupplier.storeNames(),
-               this.name
-           );
+            // ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(IProcessorSupplier, name);
+            // StreamTableJoinNode<K, V> streamTableJoinNode = new StreamTableJoinNode<K, V>(
+            //    name,
+            //    processorParameters,
+            //    ((KTable)other).valueGetterSupplier.storeNames(),
+            //    this.name
+            //);
 
-            builder.AddGraphNode(this.streamsGraphNode, streamTableJoinNode);
+            // builder.AddGraphNode(this.streamsGraphNode, streamTableJoinNode);
 
-            // do not have serde for joined result
-            return new KStream<K, VR>(
-                name,
-                joined.keySerde != null ? joined.keySerde : keySerde,
-                null,
-                allSourceNodes,
-                false,
-                streamTableJoinNode,
-                builder);
+            // // do not have serde for joined result
+            // return new KStream<K, VR>(
+            //     name,
+            //     joined.keySerde != null ? joined.keySerde : keySerde,
+            //     null,
+            //     allSourceNodes,
+            //     false,
+            //     streamTableJoinNode,
+            //     builder);
+
+            return null;
+        }
+
+        public IKStream<K, RV> join<RV, GK, GV>(IGlobalKTable<GK, GV> globalKTable, IKeyValueMapper<K, V, GK> keyValueMapper, IValueJoiner<V, GV, RV> joiner)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKStream<K, RV> join<RV, GK, GV>(IGlobalKTable<GK, GV> globalKTable, IKeyValueMapper<K, V, GK> keyValueMapper, IValueJoiner<V, GV, RV> joiner, Named named)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKStream<K, RV> leftJoin<RV, GK, GV>(IGlobalKTable<GK, GV> globalKTable, IKeyValueMapper<K, V, GK> keyValueMapper, IValueJoiner<V, GV, RV> valueJoiner)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IKStream<K, RV> leftJoin<RV, GK, GV>(IGlobalKTable<GK, GV> globalKTable, IKeyValueMapper<K, V, GK> keyValueMapper, IValueJoiner<V, GV, RV> valueJoiner, Named named)
+        {
+            throw new NotImplementedException();
         }
 
 

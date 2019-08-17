@@ -149,7 +149,7 @@ namespace Kafka.Streams.Topologies
             // build global state stores
             foreach (var storeBuilder in globalStateBuilders.Values)
             {
-                //            _globalStateStores.Add(storeBuilder.name, storeBuilder.build());
+                //_globalStateStores.Add(storeBuilder.name, storeBuilder.build());
             }
 
             return this;

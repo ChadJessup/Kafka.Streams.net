@@ -42,19 +42,19 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         private Sensor suppressionEmitSensor;
         private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
 
-        public KTableSuppressProcessor(SuppressedInternal<K, V> suppress, string storeName)
-        {
-            this.storeName = storeName;
-            //requireNonNull(suppress);
-            maxRecords = suppress.bufferConfig.maxRecords();
-            maxBytes = suppress.bufferConfig.maxBytes();
-            suppressDurationMillis = suppress.timeToWaitForMoreEvents().toMillis();
-            bufferTimeDefinition = suppress.timeDefinition;
-            bufferFullStrategy = suppress.bufferConfig.bufferFullStrategy();
-            safeToDropTombstones = suppress.safeToDropTombstones;
-        }
+        //public KTableSuppressProcessor(SuppressedInternal<K, V> suppress, string storeName)
+        //{
+        //    this.storeName = storeName;
+        //    //requireNonNull(suppress);
+        //    maxRecords = suppress.bufferConfig.maxRecords();
+        //    maxBytes = suppress.bufferConfig.maxBytes();
+        //    suppressDurationMillis = suppress.timeToWaitForMoreEvents().toMillis();
+        //    bufferTimeDefinition = suppress.timeDefinition;
+        //    bufferFullStrategy = suppress.bufferConfig.bufferFullStrategy();
+        //    safeToDropTombstones = suppress.safeToDropTombstones;
+        //}
 
-        public void init(IProcessorContext<K, V> context)
+        public void init(IProcessorContext<K, Change<V>> context)
         {
             internalProcessorContext = (IInternalProcessorContext<K, V>)context;
 //            suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);

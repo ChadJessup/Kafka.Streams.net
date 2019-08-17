@@ -82,11 +82,11 @@
 //        {
 //            return null;
 
-//            string sinkName = builder.NewProcessorName(KStreamImpl.SINK_NAME);
-//            string sourceName = builder.NewProcessorName(KStreamImpl.SourceName);
+//            string sinkName = builder.NewProcessorName(KStream.SINK_NAME);
+//            string sourceName = builder.NewProcessorName(KStream.SourceName);
 //            string funcName = builder.NewProcessorName(functionName);
 //            string repartitionTopic = (userProvidedRepartitionTopicName != null ? userProvidedRepartitionTopicName : materialized.storeName())
-//               + KStreamImpl.RepartitionTopicSuffix;
+//               + KStream.RepartitionTopicSuffix;
 
 //            if (repartitionGraphNode == null || userProvidedRepartitionTopicName == null)
 //            {

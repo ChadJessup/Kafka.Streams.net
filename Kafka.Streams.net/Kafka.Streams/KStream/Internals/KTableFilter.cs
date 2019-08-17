@@ -21,7 +21,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableFilter<K, V, S> : IKTableProcessorSupplier<K, V, V>
+    public class KTableFilter<K, S, V> : IKTableProcessorSupplier<K, V, V>
     {
         private KTable<K, S, V> parent;
         private IPredicate<K, V> predicate;
@@ -44,7 +44,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, Change<V>> get()
         {
-            return new KTableFilterProcessor();
+            return null; // new KTableFilterProcessor();
         }
 
 
@@ -58,7 +58,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             V newValue = default;
 
-            if (value != null && (filterNot ^ predicate.test(key, value)))
+            if (value != null && (filterNot))// ^ predicate.test(key, value)))
             {
                 newValue = value;
             }
@@ -72,8 +72,8 @@ namespace Kafka.Streams.KStream.Internals
 
             if (valueAndTimestamp != null)
             {
-                V value = valueAndTimestamp.value();
-                if (filterNot ^ predicate.test(key, value))
+                V value = default;// valueAndTimestamp.value();
+                if (filterNot)// ^ predicate.test(key, value))
                 {
                     newValueAndTimestamp = valueAndTimestamp;
                 }
@@ -92,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-                return new KTableValueGetterSupplier<K, V>();
+                return null;// new KTableValueGetterSupplier<K, V>();
                 //{
                 //                 KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parent.valueGetterSupplier();
 

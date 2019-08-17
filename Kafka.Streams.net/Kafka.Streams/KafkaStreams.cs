@@ -805,9 +805,9 @@ namespace Kafka.Streams
         public bool close(TimeSpan timeout)
         {
             string msgPrefix = ""; // prepareMillisCheckFailMsgPrefix(timeout, "timeout");
-            long timeoutMs = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
+            var timeoutMs = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
 
-            if (timeoutMs < 0)
+            if (timeoutMs < TimeSpan.Zero)
             {
                 throw new ArgumentException("Timeout can't be negative.");
             }

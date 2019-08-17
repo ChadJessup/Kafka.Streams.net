@@ -120,7 +120,7 @@
 //                                                OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
 //        {
 
-//            return KStreamImpl<K, V>.createRepartitionedSource(
+//            return KStream<K, V>.createRepartitionedSource(
 //                builder,
 //                keySerde,
 //                valueSerde,
