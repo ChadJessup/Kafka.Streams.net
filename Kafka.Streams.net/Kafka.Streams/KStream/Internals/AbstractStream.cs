@@ -97,10 +97,25 @@ namespace Kafka.Streams.KStream.Internals
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
+        protected static Func<K, V, VR> withKey<VR>(Func<V, VR> valueMapper)
+        {
+            valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
+
+            return (readOnlyKey, value) => valueMapper(value);
+        }
+
+        protected static Func<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
+        {
+            valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
+
+            return (readOnlyKey, value) => valueMapper.apply(value);
+        }
+
         protected static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
         {
-            valueMapper = valueMapper ?? throw new System.ArgumentNullException("valueMapper can't be null", nameof(valueMapper));
-            return default; // (readOnlyKey, value)=>valueMapper.apply(value);
+            valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
+
+            return null; // (readOnlyKey, value) => valueMapper.apply(value);
         }
 
         public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(

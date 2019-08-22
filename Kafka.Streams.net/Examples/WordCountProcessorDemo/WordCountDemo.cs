@@ -1,14 +1,17 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams;
-using Kafka.Streams.Interfaces;
+using Kafka.Common.Extensions;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Linq;
 
 namespace WordCountProcessorDemo
 {
@@ -85,15 +88,14 @@ namespace WordCountProcessorDemo
             IKStream<string, string> textLines = builder
                 .stream<string, string>("TextLinesTopic");
 
-            //IKTable<string, long> wordCounts = textLines
-            //    .flatMapValues<long>(textLine => textLine.ToLowerCase().Split("\\W+"))
-            //    .groupBy((key, word) => word)
-            //    .count("Counts");
+            IKTable<string, long> wordCounts = textLines
+                .flatMapValues<string>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList())
+                .groupBy((key, word) => word)
+                .count("Counts");
 
             //wordCounts.to(Serdes.String(), Serdes.Long(), "WordsWithCountsTopic");
 
             using KafkaStreams streams = new KafkaStreams(builder.build(), streamsConfig);
-            streams.start();
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>

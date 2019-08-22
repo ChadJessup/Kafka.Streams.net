@@ -204,7 +204,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper)
         {
-            return mapValues(withKey(mapper));
+            return mapValues(withKey<VR>(mapper));
         }
 
         public IKStream<K, VR> mapValues<VR>(IValueMapper<V, VR> mapper, Named named)
@@ -301,6 +301,11 @@ namespace Kafka.Streams.KStream.Internals
             return flatMapValues(withKey(mapper), named);
         }
 
+        public IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
+            where VR : IEnumerable<VR>
+        {
+            return flatMapValues<VR>(withKey<IEnumerable<VR>>(mapper));
+        }
 
         public IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
             where VR : IEnumerable<VR>
@@ -1181,7 +1186,6 @@ namespace Kafka.Streams.KStream.Internals
         {
             throw new NotImplementedException();
         }
-
 
         //public IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector)
         //{
