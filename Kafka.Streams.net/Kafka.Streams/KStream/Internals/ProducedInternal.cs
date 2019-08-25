@@ -27,15 +27,10 @@ namespace Kafka.Streams.KStream.Internals
 
     public class ProducedInternal<K, V> : Produced<K, V>
     {
-
         public ProducedInternal(Produced<K, V> produced)
             : base(produced)
         {
         }
-
-        public ISerde<K> keySerde { get; }
-
-        public ISerde<V> valueSerde { get; }
 
         public IStreamPartitioner<K, V> streamPartitioner()
         {

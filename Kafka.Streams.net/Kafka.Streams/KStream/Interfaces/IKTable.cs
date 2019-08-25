@@ -137,8 +137,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate, Materialized)
          */
-        IKTable<K, V> filter(IPredicate<K, V> predicate,
-                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, V> filter(
+            IPredicate<K, V> predicate,
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -261,8 +262,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate, Materialized)
          */
-        IKTable<K, V> filterNot(IPredicate<K, V> predicate,
-                                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, V> filterNot(
+            IPredicate<K, V> predicate,
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -300,9 +302,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate, Materialized)
          */
-        IKTable<K, V> filterNot(IPredicate<K, V> predicate,
-                                Named named,
-                                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, V> filterNot(
+            IPredicate<K, V> predicate,
+            Named named,
+            Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value

@@ -38,7 +38,7 @@ namespace Kafka.Streams.Processor
             this.partition = partition;
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return topicGroupId + "_" + partition;
         }

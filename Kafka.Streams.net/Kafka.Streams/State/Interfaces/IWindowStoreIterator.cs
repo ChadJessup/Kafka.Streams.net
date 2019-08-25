@@ -29,6 +29,5 @@ namespace Kafka.Streams.State.Interfaces
      */
     public interface IWindowStoreIterator<V> : IKeyValueIterator<long, V>, IDisposable
     {
-        void close();
     }
 }

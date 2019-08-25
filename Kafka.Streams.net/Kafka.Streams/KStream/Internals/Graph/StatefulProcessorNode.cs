@@ -55,12 +55,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
             : base(nodeName, processorParameters)
         {
 
-            this.storeNames = null;
+            this.storeNames = default;
             this.storeBuilder = materializedKTableStoreBuilder;
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             return "StatefulProcessorNode{" +
                 "storeNames=" + Arrays.ToString(storeNames) +

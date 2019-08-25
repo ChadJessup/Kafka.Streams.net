@@ -33,7 +33,6 @@ namespace Kafka.Streams.KStream.Internals
             sendOldValues = true;
         }
 
-
         public IKTableValueGetterSupplier<K, T> view()
         {
             return null;

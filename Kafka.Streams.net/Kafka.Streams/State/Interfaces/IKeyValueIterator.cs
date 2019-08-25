@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Interfaces
      */
     public interface IKeyValueIterator<K, V> : IEnumerator<KeyValue<K, V>>, IDisposable
     {
-        void close();
+        abstract void close();
 
         /**
          * Peek at the next key without advancing the iterator

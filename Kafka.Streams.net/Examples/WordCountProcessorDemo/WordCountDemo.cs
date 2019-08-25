@@ -12,6 +12,10 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Linq;
+using Kafka.Streams.KStream.Mappers;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Common.Utils;
+using Kafka.Streams.State.Internals;
 
 namespace WordCountProcessorDemo
 {
@@ -85,17 +89,25 @@ namespace WordCountProcessorDemo
 
             StreamsBuilder builder = new StreamsBuilder(services);
 
-            IKStream<string, string> textLines = builder
-                .stream<string, string>("TextLinesTopic");
+            IKStream<string, string> textLines = builder.stream<string, string>("TextLinesTopic");
 
-            IKTable<string, long> wordCounts = textLines
-                .flatMapValues<string>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList())
-                .groupBy((key, word) => word)
-                .count("Counts");
+            IKStream<string, string> flatMappedValues =
+                textLines.flatMapValues<string>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList());
 
-            //wordCounts.to(Serdes.String(), Serdes.Long(), "WordsWithCountsTopic");
+            IKGroupedStream<string, string> groupedByValues = flatMappedValues.groupBy<string>((key, word) => word);
 
-            using KafkaStreams streams = new KafkaStreams(builder.build(), streamsConfig);
+            IKTable<string, long> wordCounts = groupedByValues.count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
+
+            IKStream<string, long> wordCountsStream = wordCounts.toStream();
+
+            wordCountsStream.to(
+                "WordsWithCountsTopic",
+                Produced<string, long>.with(
+                Serdes.String(), 
+                Serdes.Long()));
+
+            using KafkaStreams streams =
+                new KafkaStreams(builder.build(), streamsConfig);
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>

@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public string ToString()
+        public override string ToString()
         {
             return ToString("");
         }

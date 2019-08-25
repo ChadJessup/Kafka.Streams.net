@@ -22,7 +22,6 @@ namespace Kafka.Streams.KStream
 {
     public class Named : INamedOperation<Named>
     {
-
         private static int MAX_NAME_LENGTH = 249;
 
         public string name { get; }
@@ -55,7 +54,7 @@ namespace Kafka.Streams.KStream
             return new Named(name);
         }
 
-        public Named withName(string name)
+        public virtual Named withName(string name)
         {
             return new Named(name);
         }

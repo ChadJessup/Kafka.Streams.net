@@ -29,24 +29,25 @@ namespace Kafka.Streams.Processor.Internals.Assignment
             this.task2 = task2;
         }
 
-
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
+
             Pair pair = (Pair)o;
+
             return (task1.Equals(pair.task1) &&
                     task2.Equals(pair.task2));
         }
 
-
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             return (task1, task2).GetHashCode();
         }

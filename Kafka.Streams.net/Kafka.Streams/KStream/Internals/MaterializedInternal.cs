@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             // if storeName is not provided, the corresponding KTable would never be queryable;
             // but we still need to provide an internal name for it in case we materialize.
-            queriable = storeName() != null;
+            queriable = storeName != null;
             if (!queriable && nameProvider != null)
             {
                 _storeName = nameProvider.NewStoreName(generatedStorePrefix);
@@ -50,18 +50,21 @@ namespace Kafka.Streams.KStream.Internals
         public string queryableStoreName()
         {
             return queriable
-                ? storeName()
+                ? storeName
                 : null;
         }
 
-        public string storeName()
+        public override string storeName
         {
-            if (storeSupplier != null)
+            get
             {
-                return storeSupplier.name;
-            }
+                if (storeSupplier != null)
+                {
+                    return storeSupplier.name;
+                }
 
-            return _storeName;
+                return _storeName;
+            }
         }
 
         public Dictionary<string, string> logConfig()

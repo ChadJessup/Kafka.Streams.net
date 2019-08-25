@@ -19,9 +19,10 @@ using Kafka.Streams.Interfaces;
 namespace Kafka.Streams.KStream.Internals
 {
     [System.Obsolete]
-    public class SerializedInternal<K, V> : ISerialized<K, V>
+    public class SerializedInternal<K, V> : Serialized<K, V>
     {
         public SerializedInternal(ISerialized<K, V> serialized)
+            : base(serialized)
         {
         }
     }

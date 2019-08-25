@@ -17,20 +17,17 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public void flush()
+        public override void flush()
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-
-        public void init(IProcessorContext<K, V> context,
-                         IStateStore root)
+        public override void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-
-        public void close()
+        public override void close()
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }

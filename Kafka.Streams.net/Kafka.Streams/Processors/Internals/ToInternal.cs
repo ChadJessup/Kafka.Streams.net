@@ -16,10 +16,6 @@
  */
 namespace Kafka.Streams.Processor.Internals
 {
-
-
-
-
     public class ToInternal : To
     {
 
@@ -28,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-        public void update(To to)
+        public override void update(To to)
         {
             base.update(to);
         }

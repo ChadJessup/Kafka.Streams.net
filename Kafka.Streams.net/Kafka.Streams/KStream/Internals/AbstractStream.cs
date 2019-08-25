@@ -17,6 +17,7 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.Topologies;
@@ -97,25 +98,18 @@ namespace Kafka.Streams.KStream.Internals
             return null;// (value2, value1)=>joiner.apply(value1, value2);
         }
 
-        protected static Func<K, V, VR> withKey<VR>(Func<V, VR> valueMapper)
+        protected static IValueMapperWithKey<K, V, VR> withKey<VR>(Func<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
-            return (readOnlyKey, value) => valueMapper(value);
-        }
-
-        protected static Func<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
-        {
-            valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
-
-            return (readOnlyKey, value) => valueMapper.apply(value);
+            return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper(value));
         }
 
         protected static IValueMapperWithKey<K, V, VR> withKey<VR>(IValueMapper<V, VR> valueMapper)
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
-            return null; // (readOnlyKey, value) => valueMapper.apply(value);
+            return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper.apply(value));
         }
 
         public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(

@@ -33,9 +33,7 @@ namespace Kafka.Streams.State.Internals
             this.wrapped = wrapped;
         }
 
-        public void init<K, V>(
-            IProcessorContext<K, V> context,
-            IStateStore root)
+        public virtual void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
         {
             wrapped.init(context, root);
         }
@@ -69,12 +67,12 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public void flush()
+        public virtual void flush()
         {
             wrapped.flush();
         }
 
-        public void close()
+        public virtual void close()
         {
             wrapped.close();
         }

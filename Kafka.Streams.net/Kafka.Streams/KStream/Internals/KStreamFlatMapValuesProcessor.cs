@@ -5,18 +5,18 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamFlatMapValuesProcessor<K, V, V1> : AbstractProcessor<K, V>
-        where V1 : IEnumerable<V1>
+    public class KStreamFlatMapValuesProcessor<K, V, VR> : AbstractProcessor<K, V>
+        where VR : IEnumerable<VR>
     {
-        private IValueMapperWithKey<K, V, IEnumerable<V1>> mapper;
+        private IValueMapperWithKey<K, V, VR> mapper;
 
-        public KStreamFlatMapValuesProcessor(IValueMapperWithKey<K, V, IEnumerable<V1>> mapper)
+        public KStreamFlatMapValuesProcessor(IValueMapperWithKey<K, V, VR> mapper)
             => this.mapper = mapper;
 
         public override void process(K key, V value)
         {
             var newValues = this.mapper.apply(key, value);
-            foreach (V1 newValue in newValues)
+            foreach (VR newValue in newValues)
             {
                 context.forward(key, newValue);
             }

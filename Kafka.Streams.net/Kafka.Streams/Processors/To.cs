@@ -28,7 +28,6 @@ namespace Kafka.Streams.Processor
      */
     public class To
     {
-
         protected string childName;
         protected long timestamp;
 
@@ -44,7 +43,7 @@ namespace Kafka.Streams.Processor
         {
         }
 
-        protected void update(To to)
+        public virtual void update(To to)
         {
             childName = to.childName;
             timestamp = to.timestamp;
@@ -81,7 +80,7 @@ namespace Kafka.Streams.Processor
         }
 
 
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
@@ -100,7 +99,7 @@ namespace Kafka.Streams.Processor
          * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
          */
 
-        public int GetHashCode()
+        public override int GetHashCode()
         {
             throw new InvalidOperationException("To is unsafe for use in Hash collections");
         }

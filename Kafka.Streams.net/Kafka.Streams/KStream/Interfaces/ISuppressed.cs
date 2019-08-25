@@ -15,14 +15,11 @@
  * limitations under the License.
  */
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals.Suppress;
-using System;
 
 namespace Kafka.Streams.KStream
 {
     public interface ISuppressed<K> : INamedOperation<ISuppressed<K>>
     {
-
         /**
          * Configure the suppression to emit only the " results" from the window.
          *

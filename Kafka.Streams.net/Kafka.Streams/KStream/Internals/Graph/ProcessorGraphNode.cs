@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return "ProcessorNode{" +
                    "processorParameters=" + processorParameters +

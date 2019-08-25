@@ -115,7 +115,7 @@ namespace Kafka.Streams
             set => this.SetObject(StreamsConfigPropertyNames.ApplicationId, value);
         }
 
-        public string ClientId
+        public new string ClientId
         {
             get => Get(StreamsConfigPropertyNames.ClientId);
             set => this.SetObject(StreamsConfigPropertyNames.ClientId, value);

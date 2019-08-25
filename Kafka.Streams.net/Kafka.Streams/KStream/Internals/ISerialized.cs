@@ -14,9 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
+
 namespace Kafka.Streams.KStream.Internals
 {
     public interface ISerialized<K, V>
     {
+        ISerde<K> keySerde { get; }
+        ISerde<V> valueSerde { get; }
     }
 }

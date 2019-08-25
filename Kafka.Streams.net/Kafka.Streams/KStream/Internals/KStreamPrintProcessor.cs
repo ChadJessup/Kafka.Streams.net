@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void close()
+        public override void close()
         {
             //if (action is PrintForeachAction)
             //{

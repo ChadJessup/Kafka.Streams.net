@@ -81,18 +81,20 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-
-        public bool Equals(object o)
+        public override bool Equals(object o)
         {
             if (this == o)
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
+
             WindowedChangelogTopicConfig that = (WindowedChangelogTopicConfig)o;
+
             return name.Equals(that.name) &&
                     topicConfigs.Equals(that.topicConfigs) &&
                     retentionMs.Equals(that.retentionMs);

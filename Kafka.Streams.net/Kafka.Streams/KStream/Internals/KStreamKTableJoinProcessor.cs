@@ -46,7 +46,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void init(IProcessorContext<K1, V1> context)
+        public override void init(IProcessorContext<K1, V1> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics;
@@ -85,7 +85,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public void close()
+        public override void close()
         {
             valueGetter.close();
         }

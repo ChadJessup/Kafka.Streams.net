@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Common;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 
 namespace Kafka.Streams.KStream
@@ -30,8 +28,8 @@ namespace Kafka.Streams.KStream
      */
     public class Produced<K, V> : INamedOperation<Produced<K, V>>
     {
-        protected ISerde<K> _keySerde;
-        protected ISerde<V> _valueSerde;
+        public ISerde<K> keySerde { get; private set; }
+        public ISerde<V> valueSerde { get; private set; }
         protected IStreamPartitioner<K, V> partitioner;
         protected string processorName;
 
@@ -41,16 +39,16 @@ namespace Kafka.Streams.KStream
             IStreamPartitioner<K, V> partitioner,
             string processorName)
         {
-            this._keySerde = keySerde;
-            this._valueSerde = valueSerde;
+            this.keySerde = keySerde;
+            this.valueSerde = valueSerde;
             this.partitioner = partitioner;
             this.processorName = processorName;
         }
 
         protected Produced(Produced<K, V> produced)
         {
-            this._keySerde = produced._keySerde;
-            this._valueSerde = produced._valueSerde;
+            this.keySerde = produced.keySerde;
+            this.valueSerde = produced.valueSerde;
             this.partitioner = produced.partitioner;
             this.processorName = produced.processorName;
         }
@@ -128,8 +126,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> keySerde(
-            ISerde<K> keySerde)
+        public static Produced<K, V> GetKeySerde(ISerde<K> keySerde)
         {
             return new Produced<K, V>(
                 keySerde, null, null, null);
@@ -144,7 +141,7 @@ namespace Kafka.Streams.KStream
          * @see KStream#through(string, Produced)
          * @see KStream#to(string, Produced)
          */
-        public static Produced<K, V> valueSerde(ISerde<V> valueSerde)
+        public static Produced<K, V> GetValueSerde(ISerde<V> valueSerde)
         {
             return new Produced<K, V>(
                 null,
@@ -189,7 +186,7 @@ namespace Kafka.Streams.KStream
          */
         public Produced<K, V> withValueSerde(ISerde<V> valueSerde)
         {
-            this._valueSerde = valueSerde;
+            this.valueSerde = valueSerde;
 
             return this;
         }
@@ -201,7 +198,8 @@ namespace Kafka.Streams.KStream
          */
         public Produced<K, V> withKeySerde(ISerde<K> keySerde)
         {
-            this._keySerde = keySerde;
+            this.keySerde = keySerde;
+
             return this;
         }
 
@@ -219,17 +217,15 @@ namespace Kafka.Streams.KStream
             }
 
             var produced = (Produced<object, object>)o;
-            return Objects.Equals(_keySerde, produced._keySerde)
-                && Objects.Equals(_valueSerde, produced._valueSerde)
-                && Objects.Equals(partitioner, produced.partitioner);
-        }
 
+            return keySerde.Equals(produced.keySerde)
+                && valueSerde.Equals(produced.valueSerde)
+                && partitioner.Equals(produced.partitioner);
+        }
 
         public override int GetHashCode()
-        {
-            return (_keySerde, _valueSerde, partitioner).GetHashCode();
-        }
-
+            => (this.keySerde, this.valueSerde, partitioner)
+                .GetHashCode();
 
         public Produced<K, V> withName(string name)
         {

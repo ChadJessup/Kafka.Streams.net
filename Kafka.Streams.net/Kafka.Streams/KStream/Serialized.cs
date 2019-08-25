@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
 
 namespace Kafka.Streams.KStream
 {
@@ -28,11 +29,10 @@ namespace Kafka.Streams.KStream
      *  @deprecated since 2.1. Use {@link  org.apache.kafka.streams.kstream.Grouped} instead
      */
     [System.Obsolete]
-    public class Serialized<K, V>
+    public class Serialized<K, V> : ISerialized<K, V>
     {
-
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valueSerde;
+        public ISerde<K> keySerde { get; }
+        public ISerde<V> valueSerde { get; }
 
         private Serialized(ISerde<K> keySerde,
                             ISerde<V> valueSerde)
@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream
             this.valueSerde = valueSerde;
         }
 
-        protected Serialized(Serialized<K, V> serialized)
+        protected Serialized(ISerialized<K, V> serialized)
             : this(serialized.keySerde, serialized.valueSerde)
         {
         }

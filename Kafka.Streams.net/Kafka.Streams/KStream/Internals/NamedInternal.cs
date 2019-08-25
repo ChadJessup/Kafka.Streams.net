@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
-        public NamedInternal withName(string name)
+        public override Named withName(string name)
         {
             return new NamedInternal(name);
         }

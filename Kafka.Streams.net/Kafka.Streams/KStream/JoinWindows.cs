@@ -232,7 +232,7 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1. Use {@link JoinWindows#grace(Duration)} instead.
          */
         [Obsolete]
-        public JoinWindows until(TimeSpan durationMs)
+        public new JoinWindows until(TimeSpan durationMs)
         {
             if (durationMs < size())
             {

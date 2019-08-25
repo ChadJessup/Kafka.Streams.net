@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using System;
@@ -68,6 +69,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #filterNot(Predicate)
          */
         IKStream<K, V> filter(IPredicate<K, V> predicate, Named named);
+        IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -542,11 +544,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper)
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, VR> mapper)
             where VR : IEnumerable<VR>;
 
-        IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
-            where VR : IEnumerable<VR>;
+        //IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
+        //    where VR : IEnumerable<VR>;
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -591,7 +593,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named)
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, VR> mapper, Named named)
             where VR : IEnumerable<VR>;
 
         /**
@@ -645,7 +647,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
+        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
             where VR : IEnumerable<VR>;
 
         /**
@@ -700,7 +702,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper, Named named)
+        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, VR> mapper, Named named)
             where VR : IEnumerable<VR>;
 
         /**
@@ -2175,7 +2177,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-//        IKGroupedStream<K, V> groupByKey();
+        IKGroupedStream<K, V> groupByKey();
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2204,8 +2206,8 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupByKey(Grouped)} instead
          */
-        //[System.Obsolete]
-        //IKGroupedStream<K, V> groupByKey(Serialized<K, V> serialized);
+        [Obsolete]
+        IKGroupedStream<K, V> groupByKey(ISerialized<K, V> serialized);
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2235,7 +2237,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-        //IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped);
+        IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2264,7 +2266,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector);
+        IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector);
+
+        IKGroupedStream<KR, V> groupBy<KR>(Func<K, V, KR> selector);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2294,9 +2298,10 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupBy(KeyValueMapper, Grouped)} instead
          */
-        //[System.Obsolete]
-        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
-        //                                    Serialized<KR, V> serialized);
+        [Obsolete]
+        IKGroupedStream<KR, V> groupBy<KR>(
+            IKeyValueMapper<K, V, KR> selector,
+            ISerialized<KR, V> serialized);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2327,8 +2332,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        //IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector,
-        //                                    Grouped<KR, V> grouped);
+        IKGroupedStream<KR, V> groupBy<KR>(
+            IKeyValueMapper<K, V, KR> selector,
+            Grouped<KR, V> grouped);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed inner equi join with default

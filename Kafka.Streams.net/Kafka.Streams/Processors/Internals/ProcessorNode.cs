@@ -34,7 +34,6 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-
         public ProcessorNode(
             string name,
             IProcessor<K, V> processor,
@@ -59,7 +58,7 @@ namespace Kafka.Streams.Processor.Internals
             childByName.Add(child.name, child);
         }
 
-        public void init(IInternalProcessorContext<K, V> context)
+        public virtual void init(IInternalProcessorContext<K, V> context)
         {
             try
             {
@@ -98,7 +97,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public void process(K key, V value)
+        public virtual void process(K key, V value)
         {
             long startNs = time.nanoseconds();
             processor.process(key, value);
@@ -123,7 +122,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @return a string representation of this node starting with the given indent, useful for debugging.
          */
-        public string ToString(string indent)
+        public virtual string ToString(string indent)
         {
             StringBuilder sb = new StringBuilder(indent + name + ":\n");
             if (stateStores != null && stateStores.Any())

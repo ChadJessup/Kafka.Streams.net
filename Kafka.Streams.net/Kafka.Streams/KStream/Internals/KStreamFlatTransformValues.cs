@@ -15,13 +15,11 @@
  * limitations under the License.
  */
 using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamFlatTransformValues<KIn, VIn, VOut> : IProcessorSupplier<KIn, VIn>
+    public partial class KStreamFlatTransformValues<KIn, VIn, VOut> : IProcessorSupplier<KIn, VIn>
     {
         private IValueTransformerWithKeySupplier<KIn, VIn, IEnumerable<VOut>> valueTransformerSupplier;
 
@@ -33,40 +31,6 @@ namespace Kafka.Streams.KStream.Internals
         public IProcessor<KIn, VIn> get()
         {
             return new KStreamFlatTransformValuesProcessor<KIn, VIn, VOut>(this.valueTransformerSupplier.get());
-        }
-
-        public class KStreamFlatTransformValuesProcessor<KIn, VIn, VOut> : IProcessor<KIn, VIn>
-        {
-            private IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer;
-            private IProcessorContext<KIn, VOut> context;
-
-            public KStreamFlatTransformValuesProcessor(IValueTransformerWithKey<KIn, VIn, IEnumerable<VOut>> valueTransformer)
-            {
-                this.valueTransformer = valueTransformer;
-            }
-
-            public void init(IProcessorContext<KIn, VIn> context)
-            {
-                valueTransformer.init(new ForwardingDisabledProcessorContext<KIn, VIn>(context));
-                this.context = (IProcessorContext<KIn, VOut>)context;
-            }
-
-            public void process(KIn key, VIn value)
-            {
-                IEnumerable<VOut> transformedValues = valueTransformer.transform(key, value);
-                if (transformedValues != null)
-                {
-                    foreach (VOut transformedValue in transformedValues)
-                    {
-                        context.forward(key, transformedValue);
-                    }
-                }
-            }
-
-            public void close()
-            {
-                valueTransformer.close();
-            }
         }
     }
 }

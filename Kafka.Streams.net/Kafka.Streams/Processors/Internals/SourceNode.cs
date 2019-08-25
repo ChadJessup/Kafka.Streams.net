@@ -65,9 +65,7 @@ namespace Kafka.Streams.Processor.Internals
             return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
-
-
-        public void init(IInternalProcessorContext<K, V> context)
+        public override void init(IInternalProcessorContext<K, V> context)
         {
             base.init(context);
             this.context = context;
@@ -90,8 +88,7 @@ namespace Kafka.Streams.Processor.Internals
             //}
         }
 
-
-        public void process(K key, V value)
+        public override void process(K key, V value)
         {
             context.forward(key, value);
             //sourceNodeForwardSensor.record();
@@ -101,7 +98,7 @@ namespace Kafka.Streams.Processor.Internals
          * @return a string representation of this node, useful for debugging.
          */
 
-        public string ToString()
+        public override string ToString()
         {
             return ToString("");
         }
@@ -109,7 +106,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @return a string representation of this node starting with the given indent, useful for debugging.
          */
-        public string ToString(string indent)
+        public override string ToString(string indent)
         {
             StringBuilder sb = new StringBuilder(base.ToString(indent));
             sb.Append(indent).Append("\ttopics:\t\t[");
