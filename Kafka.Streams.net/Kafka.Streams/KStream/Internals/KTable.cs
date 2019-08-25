@@ -34,9 +34,9 @@ namespace Kafka.Streams.KStream.Internals
         public static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
     }
 
-    public class KTable<K, V, VR> : AbstractStream<K, V>, IKTable<K, V>
+    public class KTable<K, V> : AbstractStream<K, V>, IKTable<K, V>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, V, VR>>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, V>>();
         private IProcessorSupplier<K, V> IProcessorSupplier;
         private string queryableStoreName;
         private bool sendOldValues = false;
@@ -79,7 +79,7 @@ namespace Kafka.Streams.KStream.Internals
                 // we can inherit parent key and value serde if user do not provide specific overrides, more specifically:
                 // we preserve the key following the order of 1) materialized, 2) parent
                 keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
-                
+
                 // we preserve the value following the order of 1) materialized, 2) parent
                 valueSerde = materializedInternal.valueSerde != null ? materializedInternal.valueSerde : this.valSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
@@ -560,22 +560,24 @@ namespace Kafka.Streams.KStream.Internals
         //    }
         //}
 
-        public IKTable<K, R> join<R, V1>(IKTable<K, V1> other,
-                                          IValueJoiner<V, V1, R> joiner)
+        public IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner)
         {
             return null; // doJoin(other, joiner, NamedInternal.empty(), null, false, false);
         }
 
 
-        public IKTable<K, R> join<R, V1>(IKTable<K, V1> other,
-                                          IValueJoiner<V, V1, R> joiner,
-                                          Named named)
+        public IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named)
         {
             return null;// doJoin(other, joiner, named, null, false, false);
         }
 
 
-        public IKTable<K, VR> join<VO>(
+        public IKTable<K, VR> join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -584,13 +586,14 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, VR> join<VO>(
+        public IKTable<K, VR> join<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
 
@@ -598,32 +601,31 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, R> outerJoin<R, V1>(
-            IKTable<K, V1> other,
-            IValueJoiner<V, V1, R> joiner)
+        public IKTable<K, VR> outerJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner)
         {
-            return null;// outerJoin(other, joiner, NamedInternal.empty());
+            return outerJoin(other, joiner, NamedInternal.empty());
         }
 
-
-        public IKTable<K, R> outerJoin<R, V1>(IKTable<K, V1> other,
-                                               IValueJoiner<V, V1, R> joiner,
-                                               Named named)
+        public IKTable<K, VR> outerJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named)
         {
-            return null; // doJoin(other, joiner, named, null, true, true);
+            return doJoin(other, joiner, named, null, true, true);
         }
 
-
-        public IKTable<K, VR> outerJoin<VO>(
+        public IKTable<K, VR> outerJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return null;// outerJoin(other, joiner, NamedInternal.empty(), materialized);
+            return outerJoin(other, joiner, NamedInternal.empty(), materialized);
         }
 
 
-        public IKTable<K, VR> outerJoin<VO>(
+        public IKTable<K, VR> outerJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named,
@@ -637,33 +639,31 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKTable<K, R> leftJoin<R, V1>(
-            IKTable<K, V1> other,
-            IValueJoiner<V, V1, R> joiner)
+        public IKTable<K, VR> leftJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner)
         {
-            return null;// leftJoin(other, joiner, NamedInternal.empty());
+            return leftJoin(other, joiner, NamedInternal.empty());
         }
 
-
-        public IKTable<K, R> leftJoin<R, V1>(
-            IKTable<K, V1> other,
-            IValueJoiner<V, V1, R> joiner,
+        public IKTable<K, VR> leftJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
             Named named)
         {
-            return null;// doJoin(other, joiner, named, null, true, false);
+            return doJoin(other, joiner, named, null, true, false);
         }
 
-
-        public IKTable<K, VR> leftJoin<VO>(
+        public IKTable<K, VR> leftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            return null;// leftJoin(other, joiner, NamedInternal.empty(), materialized);
+            return leftJoin(other, joiner, NamedInternal.empty(), materialized);
         }
 
 
-        public IKTable<K, VR> leftJoin<VO>(
+        public IKTable<K, VR> leftJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named named,
@@ -677,7 +677,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        private IKTable<K, VR> doJoin<VO>(
+        private IKTable<K, VR> doJoin<VO, VR>(
             IKTable<K, VO> other,
             IValueJoiner<V, VO, VR> joiner,
             Named joinName,
@@ -685,9 +685,9 @@ namespace Kafka.Streams.KStream.Internals
             bool leftOuter,
             bool rightOuter)
         {
-            other = other ?? throw new System.ArgumentNullException("other can't be null", nameof(other));
-            joiner = joiner ?? throw new System.ArgumentNullException("joiner can't be null", nameof(joiner));
-            joinName = joinName ?? throw new System.ArgumentNullException("joinName can't be null", nameof(joinName));
+            other = other ?? throw new ArgumentNullException(nameof(other));
+            joiner = joiner ?? throw new ArgumentNullException(nameof(joiner));
+            joinName = joinName ?? throw new ArgumentNullException(nameof(joinName));
 
             NamedInternal renamed = new NamedInternal(joinName);
             string joinMergeName = renamed.OrElseGenerateWithPrefix(builder, KTable.MERGE_NAME);
@@ -697,6 +697,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 enableSendingOldValues();
             }
+
             if (rightOuter)
             {
                 //((KTable)other).enableSendingOldValues();
@@ -778,14 +779,13 @@ namespace Kafka.Streams.KStream.Internals
             return null;
         }
 
-
-        public IKGroupedTable<K1, V1> groupBy<K1, V1>(IKeyValueMapper<K, V, KeyValue<K1, V1>> selector)
+        public IKGroupedTable<KR, VR> groupBy<KR, VR>(
+            IKeyValueMapper<K, V, KeyValue<KR, VR>> selector)
         {
-            return groupBy(selector, Grouped<K1, V1>.With(null, null));
+            return groupBy(selector, Grouped<KR, VR>.With(null, null));
         }
 
-
-        [System.Obsolete]
+        [Obsolete]
         public IKGroupedTable<K1, V1> groupBy<K1, V1>(
             IKeyValueMapper<K, V, KeyValue<K1, V1>> selector,
             ISerialized<K1, V1> serialized)
@@ -797,13 +797,13 @@ namespace Kafka.Streams.KStream.Internals
             return groupBy(selector, Grouped<K1, V1>.With(null/*serializedInternal.keySerde*/, null/*serializedInternal.valueSerde*/));
         }
 
-
         public IKGroupedTable<K1, V1> groupBy<K1, V1>(
             IKeyValueMapper<K, V, KeyValue<K1, V1>> selector,
             Grouped<K1, V1> grouped)
         {
-            selector = selector ?? throw new System.ArgumentNullException("selector can't be null", nameof(selector));
-            grouped = grouped ?? throw new System.ArgumentNullException("grouped can't be null", nameof(grouped));
+            selector = selector ?? throw new ArgumentNullException(nameof(selector));
+            grouped = grouped ?? throw new ArgumentNullException(nameof(grouped));
+
             GroupedInternal<K1, V1> groupedInternal = new GroupedInternal<K1, V1>(grouped);
             string selectName = new NamedInternal(groupedInternal.name).OrElseGenerateWithPrefix(builder, KTable.SELECT_NAME);
 
@@ -826,8 +826,7 @@ namespace Kafka.Streams.KStream.Internals
             //);
         }
 
-
-        public IKTableValueGetterSupplier<K, V> valueGetterSupplier()
+        public IKTableValueGetterSupplier<K, V> valueGetterSupplier<VR>()
         {
             //if (IProcessorSupplier is KTableSource<K, V>)
             //{
@@ -880,71 +879,6 @@ namespace Kafka.Streams.KStream.Internals
         private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType<VR>(ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
         {
             return null;// (ProcessorParameters<K, VR>)kObjectProcessorParameters;
-        }
-
-        public IKGroupedTable<KR, VR1> groupBy<KR, VR1>(IKeyValueMapper<K, V, KeyValue<KR, VR1>> selector, Serialized<KR, VR1> serialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> join<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> join<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> join<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> join<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> leftJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> leftJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> leftJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> leftJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> outerJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> outerJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> outerJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IKTable<K, VR1> outerJoin<VO, VR1>(IKTable<K, VO> other, IValueJoiner<V, VO, VR1> joiner, Named named, Materialized<K, VR1, IKeyValueStore<Bytes, byte[]>> materialized)
-        {
-            throw new NotImplementedException();
         }
 
         string IKTable<K, V>.queryableStoreName()

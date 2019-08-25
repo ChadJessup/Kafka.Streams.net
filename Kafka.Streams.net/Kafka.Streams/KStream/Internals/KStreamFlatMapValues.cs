@@ -22,11 +22,10 @@ using System.Collections.Generic;
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamFlatMapValues<K, V, VR> : IProcessorSupplier<K, V>
-        where VR : IEnumerable<VR>
     {
-        private IValueMapperWithKey<K, V, VR> mapper;
+        private IValueMapperWithKey<K, V, IEnumerable<VR>> mapper;
 
-        public KStreamFlatMapValues(IValueMapperWithKey<K, V, VR> mapper)
+        public KStreamFlatMapValues(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
         {
             this.mapper = mapper;
         }

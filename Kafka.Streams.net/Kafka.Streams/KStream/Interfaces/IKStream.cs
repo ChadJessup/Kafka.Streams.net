@@ -69,7 +69,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #filterNot(Predicate)
          */
         IKStream<K, V> filter(IPredicate<K, V> predicate, Named named);
-        IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -544,8 +543,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, VR> mapper)
-            where VR : IEnumerable<VR>;
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper);
 
         //IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
         //    where VR : IEnumerable<VR>;
@@ -593,8 +591,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, VR> mapper, Named named)
-            where VR : IEnumerable<VR>;
+        IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper, Named named);
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -647,8 +644,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
-            where VR : IEnumerable<VR>;
+        //IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
+        //    where VR : IEnumerable<VR>;
 
         /**
          * Create a new {@code KStream} by transforming the value of each record in this stream into zero or more values
@@ -702,8 +699,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, VR> mapper, Named named)
-            where VR : IEnumerable<VR>;
+        //IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper, Named named)
+        //    where VR : IEnumerable<VR>;
 
         /**
          * Print the records of this KStream using the options provided by {@link Printed}

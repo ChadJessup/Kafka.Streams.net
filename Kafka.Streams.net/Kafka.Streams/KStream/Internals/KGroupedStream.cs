@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream.Internals
         static string REDUCE_NAME = "KSTREAM-REDUCE-";
         static string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
 
-        //private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
+        private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
         public KGroupedStream(
             string name,
@@ -132,14 +132,13 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.withValueSerde(Serdes.Long());
             }
 
-            return null;
-            //doAggregate(
-            //    new KStreamAggregate<>(
-            //        materializedInternal.storeName,
-            //        aggregateBuilder.countInitializer,
-            //        aggregateBuilder.countAggregator),
-            //    AGGREGATE_NAME,
-            //    materializedInternal);
+            return doAggregate(
+                new KStreamAggregate<K, long, IKeyValueStore<Bytes, byte[]>>(
+                    materializedInternal.storeName,
+                    aggregateBuilder.countInitializer,
+                    aggregateBuilder.countAggregator),
+                AGGREGATE_NAME,
+                materializedInternal);
         }
 
         //public ITimeWindowedKStream<K, V> windowedBy<W>(Windows<W> windows)
@@ -169,18 +168,20 @@ namespace Kafka.Streams.KStream.Internals
         //        streamsGraphNode);
         //}
 
-        //private IKTable<K, T> doAggregate(
-        //    KStreamAggIProcessorSupplier<K, K, V, T> aggregateSupplier,
-        //    string functionName,
-        //    MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
-        //{
-        //    return aggregateBuilder.build(
-        //        functionName,
-        //        new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize(),
-        //        aggregateSupplier,
-        //        materializedInternal.queryableStoreName(),
-        //        materializedInternal.keySerde,
-        //        materializedInternal.valueSerde);
-        //}
+        private IKTable<K, T> doAggregate<T>(
+            IKStreamAggProcessorSupplier<K, K, V, T> aggregateSupplier,
+            string functionName,
+            MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
+        {
+            var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(materializedInternal);
+
+            return aggregateBuilder.build(
+                functionName,
+                tkvsm.materialize(),
+                aggregateSupplier,
+                materializedInternal.queryableStoreName(),
+                materializedInternal.keySerde,
+                materializedInternal.valueSerde);
+        }
     }
 }

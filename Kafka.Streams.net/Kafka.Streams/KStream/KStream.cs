@@ -234,7 +234,6 @@ namespace Kafka.Streams.KStream.Internals
                     builder);
         }
 
-
         //public void print(Printed<K, V> printed)
         //{
         //    printed = printed ?? throw new System.ArgumentNullException("printed can't be null", nameof(printed));
@@ -275,28 +274,30 @@ namespace Kafka.Streams.KStream.Internals
                 builder);
         }
 
-        public IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, VR> mapper)
-            where VR : IEnumerable<VR>
-            => flatMapValues(withKey(mapper));
+        public IKStream<K, VR> flatMapValues<VR>(IValueMapper<V, IEnumerable<VR>> mapper)
+            => flatMapValues<VR>(withKey<IEnumerable<VR>>(mapper));
 
         public IKStream<K, VR> flatMapValues<VR>(
-            IValueMapper<V, VR> mapper,
-            Named named)
-            where VR : IEnumerable<VR>
+            IValueMapper<V, IEnumerable<VR>> mapper, Named named)
             => flatMapValues(withKey(mapper), named);
 
-        public IKStream<K, VR> flatMapValues<VR>(Func<V, VR> mapper)
-            where VR : IEnumerable<VR>
-            => flatMapValues(withKey(mapper));
+        //public IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
+        //    => flatMapValues(withKey(mapper));
 
-        public IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
-            where VR : IEnumerable<VR>
+        public IKStream<K, VR> flatMapValues<VR>(IValueMapperWithKey<K, V, IEnumerable<VR>> mapper)
             => flatMapValues(mapper, NamedInternal.empty());
 
+        //public IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
+        //    where VR : IEnumerable<VR>
+        //{
+        //    var vm = new ValueMapper<V, IEnumerable<VR>>(mapper);
+
+        //    return flatMapValues(vm);
+        //}
+
         public IKStream<K, VR> flatMapValues<VR>(
-            IValueMapperWithKey<K, V, VR> mapper,
+            IValueMapperWithKey<K, V, IEnumerable<VR>> mapper,
             Named named)
-            where VR : IEnumerable<VR>
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             named = named ?? throw new ArgumentNullException(nameof(named));
@@ -525,8 +526,9 @@ namespace Kafka.Streams.KStream.Internals
 
         public void to(ITopicNameExtractor topicExtractor, Produced<K, V> produced)
         {
-            topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor can't be null", nameof(topicExtractor));
-            produced = produced ?? throw new System.ArgumentNullException("Produced can't be null", nameof(produced));
+            topicExtractor = topicExtractor ?? throw new ArgumentNullException(nameof(topicExtractor));
+            produced = produced ?? throw new ArgumentNullException(nameof(produced));
+
             ProducedInternal<K, V> producedInternal = new ProducedInternal<K, V>(produced);
 
             if (producedInternal.keySerde == null)
@@ -590,7 +592,7 @@ namespace Kafka.Streams.KStream.Internals
             string[] stateStoreNames)
         {
             transformerSupplier = transformerSupplier ?? throw new ArgumentNullException(nameof(transformerSupplier));
-            named = named ?? throw new System.ArgumentNullException(nameof(named));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
             string name = new NamedInternal(named).name;
 
@@ -1215,11 +1217,6 @@ namespace Kafka.Streams.KStream.Internals
                 repartitionRequired,
                 streamsGraphNode,
                 builder);
-        }
-
-        public IKStream<K, VR> flatMapValues<VR>(Func<V, IEnumerable<VR>> mapper)
-        {
-            throw new NotImplementedException();
         }
     }
 }

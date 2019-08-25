@@ -92,7 +92,7 @@ namespace WordCountProcessorDemo
             IKStream<string, string> textLines = builder.stream<string, string>("TextLinesTopic");
 
             IKStream<string, string> flatMappedValues =
-                textLines.flatMapValues<string>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList());
+                textLines.flatMapValues<string>(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
 
             IKGroupedStream<string, string> groupedByValues = flatMappedValues.groupBy<string>((key, word) => word);
 

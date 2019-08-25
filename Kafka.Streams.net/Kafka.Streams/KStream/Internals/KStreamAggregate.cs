@@ -14,7 +14,10 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool sendOldValues = false;
 
-        KStreamAggregate(string storeName, IInitializer<T> initializer, IAggregator<K, V, T> aggregator)
+        public KStreamAggregate(
+            string storeName,
+            IInitializer<T> initializer,
+            IAggregator<K, V, T> aggregator)
         {
             this.storeName = storeName;
             this.initializer = initializer;
@@ -24,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IProcessor<K, V> get()
         {
-            return null;//new KStreamAggregateProcessor();
+            return null; // new KStreamAggregateProcessor();
         }
 
 

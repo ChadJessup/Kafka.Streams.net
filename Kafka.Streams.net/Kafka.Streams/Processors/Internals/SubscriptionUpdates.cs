@@ -21,28 +21,28 @@ using System.Linq;
 * partition assignment process.
 */
 public class SubscriptionUpdates
-        {
-            private HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
+{
+    private HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
 
-            public void updateTopics(List<string> topicNames)
-            {
-                updatedTopicSubscriptions.Clear();
-                updatedTopicSubscriptions.UnionWith(topicNames);
-            }
+    public void updateTopics(List<string> topicNames)
+    {
+        updatedTopicSubscriptions.Clear();
+        updatedTopicSubscriptions.UnionWith(topicNames);
+    }
 
-            public List<string> getUpdates()
-            {
-                return updatedTopicSubscriptions.ToList();
-            }
+    public List<string> getUpdates()
+    {
+        return updatedTopicSubscriptions.ToList();
+    }
 
-            public bool hasUpdates()
-            {
-                return updatedTopicSubscriptions.Any();
-            }
+    public bool hasUpdates()
+    {
+        return updatedTopicSubscriptions.Any();
+    }
 
 
-            public override string ToString()
-            {
-                return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", updatedTopicSubscriptions);
-            }
-        }
+    public override string ToString()
+    {
+        return string.Format("SubscriptionUpdates{updatedTopicSubscriptions=%s}", updatedTopicSubscriptions);
+    }
+}

@@ -16,7 +16,9 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.State.Internals;
+using System;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
@@ -1114,9 +1116,10 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KTable#groupBy(KeyValueMapper, Grouped)} instead
          */
-        [System.Obsolete]
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
-                                                Serialized<KR, VR> serialized);
+        [Obsolete]
+        IKGroupedTable<KR, VR> groupBy<KR, VR>(
+            IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
+            ISerialized<KR, VR> serialized);
 
         /**
          * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
@@ -1223,8 +1226,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> join<VO, VR>(IKTable<K, VO> other,
-                                     IValueJoiner<V, VO, VR> joiner);
+        IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner);
 
         /**
          * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1299,9 +1303,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> join<VO, VR>(IKTable<K, VO> other,
-                                     IValueJoiner<V, VO, VR> joiner,
-                                     Named named);
+        IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named);
 
         /**
          * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1378,9 +1383,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> join<VO, VR>(IKTable<K, VO> other,
-                                     IValueJoiner<V, VO, VR> joiner,
-                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Join records of this {@code KTable} with another {@code KTable}'s records using non-windowed inner equi join,
@@ -1458,10 +1464,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> join<VO, VR>(IKTable<K, VO> other,
-                                     IValueJoiner<V, VO, VR> joiner,
-                                     Named named,
-                                     Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, VR> join<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named,
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1542,8 +1549,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other,
-                                         IValueJoiner<V, VO, VR> joiner);
+        IKTable<K, VR> leftJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner);
 
         /**
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1625,9 +1633,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #outerJoin(KTable, ValueJoiner)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other,
-                                         IValueJoiner<V, VO, VR> joiner,
-                                         Named named);
+        IKTable<K, VR> leftJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Named named);
 
         /**
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
@@ -1711,9 +1720,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner, Materialized)
          * @see #outerJoin(KTable, ValueJoiner, Materialized)
          */
-        IKTable<K, VR> leftJoin<VO, VR>(IKTable<K, VO> other,
-                                         IValueJoiner<V, VO, VR> joiner,
-                                         Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, VR> leftJoin<VO, VR>(
+            IKTable<K, VO> other,
+            IValueJoiner<V, VO, VR> joiner,
+            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Join records of this {@code KTable} (left input) with another {@code KTable}'s (right input) records using
