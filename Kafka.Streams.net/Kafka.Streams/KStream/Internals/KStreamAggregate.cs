@@ -24,12 +24,10 @@ namespace Kafka.Streams.KStream.Internals
             this.aggregator = aggregator;
         }
 
-
         public IProcessor<K, V> get()
         {
             return null; // new KStreamAggregateProcessor();
         }
-
 
         public void enableSendingOldValues()
         {
@@ -53,6 +51,11 @@ namespace Kafka.Streams.KStream.Internals
             //        return new string[] { storeName };
             //    }
             //};
+        }
+
+        public IProcessorSupplier<K, T> GetSwappedProcessorSupplier()
+        {
+            return null;
         }
     }
 }

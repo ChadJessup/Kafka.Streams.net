@@ -65,7 +65,7 @@ namespace Kafka.Streams.KStream.Internals
                 serializedKey = inner.Serialize(data.oldValue, context);
             }
 
-            ByteBuffer buf = ByteBuffer.allocate(serializedKey.Length + NEWFLAG_SIZE);
+            ByteBuffer buf = new ByteBuffer().allocate(serializedKey.Length + NEWFLAG_SIZE);
             buf.add(serializedKey);
             buf.add((byte)(data.newValue != null ? 1 : 0));
 

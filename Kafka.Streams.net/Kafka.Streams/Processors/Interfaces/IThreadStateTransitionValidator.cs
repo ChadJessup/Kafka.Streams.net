@@ -19,8 +19,8 @@ namespace Kafka.Streams.Processor.Interfaces
     /**
      * Basic interface for keeping track of the state of a thread.
      */
-    public interface IThreadStateTransitionValidator
+    public interface IThreadStateTransitionValidator<States>
     {
-        bool isValidTransition(IThreadStateTransitionValidator newState);
+        bool isValidTransition(States newState);
     }
 }

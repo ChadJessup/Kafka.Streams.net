@@ -18,8 +18,8 @@ using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.Processor.Interfaces
 {
-    public interface IProcessorNodePunctuator
+    public interface IProcessorNodePunctuator<K, V>
     {
-        void punctuate<K, V>(ProcessorNode<K, V> node, long streamTime, PunctuationType type, Punctuator punctuator);
+        void punctuate(ProcessorNode<K, V> node, long streamTime, PunctuationType type, Punctuator punctuator);
     }
 }

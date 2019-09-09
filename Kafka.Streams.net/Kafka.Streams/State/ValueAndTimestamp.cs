@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.State
 {
     /**
@@ -30,7 +32,8 @@ namespace Kafka.Streams.State
             V value,
             long timestamp)
         {
-            value = value ?? throw new System.ArgumentNullException(nameof(value));
+            value = value ?? throw new ArgumentNullException(nameof(value));
+
             this.value = value;
             this.timestamp = timestamp;
         }
@@ -63,13 +66,13 @@ namespace Kafka.Streams.State
          */
         public static V getValueOrNull(ValueAndTimestamp<V> valueAndTimestamp)
         {
-            return valueAndTimestamp == null ? default : valueAndTimestamp.value;
+            return valueAndTimestamp == null
+                ? default
+                : valueAndTimestamp.value;
         }
 
         public override string ToString()
-        {
-            return "<" + value + "," + timestamp + ">";
-        }
+            => "<" + value + "," + timestamp + ">";
 
         public override bool Equals(object o)
         {

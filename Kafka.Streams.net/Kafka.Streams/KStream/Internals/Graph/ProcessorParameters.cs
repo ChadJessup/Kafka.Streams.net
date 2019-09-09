@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using System;
 using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -40,11 +41,15 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public override string ToString()
-        {
-            return "ProcessorParameters{" +
-                "processor=" + ProcessorSupplier.GetType() +
-                ", processor name='" + processorName + '\'' +
-                '}';
-        }
+            => $"ProcessorParameters{{processor={ProcessorSupplier.GetType()}, " +
+            $"processor name='{processorName}'}}";
+
+        //public static ProcessorParameters<K, VR> ConvertFrom<VR>(
+        //    ProcessorParameters<K, Change<V>> processorParameters)
+        //{
+        //    var pp = new ProcessorParameters<K, VR>(
+        //        processorParameters.ProcessorSupplier,
+        //        processorParameters.processorName);
+        //}
     }
 }

@@ -19,9 +19,9 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Interfaces
 {
-    public interface IGlobalStateManager<K, V> : IStateManager
+    public interface IGlobalStateManager : IStateManager
     {
-        void setGlobalProcessorContext(IInternalProcessorContext<K, V>  processorContext);
+        void setGlobalProcessorContext<K, V>(IInternalProcessorContext<K, V>  processorContext);
 
         /**
          * @throws InvalidOperationException If store gets registered after initialized is already finished

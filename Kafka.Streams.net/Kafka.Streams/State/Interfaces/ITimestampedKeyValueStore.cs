@@ -18,7 +18,6 @@ using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.State
 {
-
     /**
      * A key-(value/timestamp) store that supports put/get/delete and range queries.
      *

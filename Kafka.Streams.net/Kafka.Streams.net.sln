@@ -16,7 +16,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Streams.App", "Kafka.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Common", "Kafka.Common\Kafka.Common.csproj", "{0E948A33-616D-438A-A61B-A8B8769AEDF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordCountProcessorDemo", "Examples\WordCountProcessorDemo\WordCountProcessorDemo.csproj", "{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCountProcessorDemo", "Examples\WordCountProcessorDemo\WordCountProcessorDemo.csproj", "{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kafka.Connect", "Kafka.Connect\Kafka.Connect.csproj", "{2AF62237-FF15-4643-A48F-92CF93629795}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +46,10 @@ Global
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AF62237-FF15-4643-A48F-92CF93629795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AF62237-FF15-4643-A48F-92CF93629795}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AF62237-FF15-4643-A48F-92CF93629795}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AF62237-FF15-4643-A48F-92CF93629795}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

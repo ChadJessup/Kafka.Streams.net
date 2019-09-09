@@ -34,12 +34,13 @@ namespace Kafka.Streams.KStream.Internals
         public static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
     }
 
-    public class KTable<K, V> : AbstractStream<K, V>, IKTable<K, V>
+    public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, V>>();
+        private static ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
         private IProcessorSupplier<K, V> IProcessorSupplier;
         private string queryableStoreName;
         private bool sendOldValues = false;
+        private StatefulProcessorNode<K, V> statefulProcessorNode;
 
         public KTable(
             string name,
@@ -85,7 +86,9 @@ namespace Kafka.Streams.KStream.Internals
                 queryableStoreName = materializedInternal.queryableStoreName();
 
                 // only materialize if materialized is specified and it has queryable name
-                // storeBuilder = queryableStoreName != null ? (new TimestampedKeyValueStoreMaterializer<K, V>(materializedInternal)).materialize() : null;
+                storeBuilder = queryableStoreName != null
+                    ? (new TimestampedKeyValueStoreMaterializer<K, V>(materializedInternal)).materialize()
+                    : null;
             }
             else
             {
@@ -160,6 +163,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKTable<K, V> filterNot(IPredicate<K, V> predicate)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
+
             return doFilter(predicate, NamedInternal.empty(), null, true);
         }
 
@@ -277,14 +281,12 @@ namespace Kafka.Streams.KStream.Internals
             return doMapValues(withKey(mapper), named, null);
         }
 
-
         public IKTable<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper)
         {
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             return doMapValues(mapper, NamedInternal.empty(), null);
         }
-
 
         public IKTable<K, VR> mapValues<VR>(
             IValueMapperWithKey<K, V, VR> mapper,
@@ -295,14 +297,12 @@ namespace Kafka.Streams.KStream.Internals
             return doMapValues(mapper, named, null);
         }
 
-
         public IKTable<K, VR> mapValues<VR>(
             IValueMapper<V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return mapValues(mapper, NamedInternal.empty(), materialized);
         }
-
 
         public IKTable<K, VR> mapValues<VR>(
             IValueMapper<V, VR> mapper,
@@ -317,14 +317,12 @@ namespace Kafka.Streams.KStream.Internals
             return doMapValues(withKey(mapper), named, materializedInternal);
         }
 
-
         public IKTable<K, VR> mapValues<VR>(
             IValueMapperWithKey<K, V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             return mapValues(mapper, NamedInternal.empty(), materialized);
         }
-
 
         public IKTable<K, VR> mapValues<VR>(
             IValueMapperWithKey<K, V, VR> mapper,
@@ -339,14 +337,12 @@ namespace Kafka.Streams.KStream.Internals
             return doMapValues(mapper, named, materializedInternal);
         }
 
-
         public IKTable<K, VR> transformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
             string[] stateStoreNames)
         {
             return doTransformValues(transformerSupplier, null, NamedInternal.empty(), stateStoreNames);
         }
-
 
         public IKTable<K, VR> transformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
@@ -358,7 +354,6 @@ namespace Kafka.Streams.KStream.Internals
             return doTransformValues(transformerSupplier, null, new NamedInternal(named), stateStoreNames);
         }
 
-
         public IKTable<K, VR> transformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized,
@@ -366,7 +361,6 @@ namespace Kafka.Streams.KStream.Internals
         {
             return transformValues(transformerSupplier, materialized, NamedInternal.empty(), stateStoreNames);
         }
-
 
         public IKTable<K, VR> transformValues<VR>(
             IValueTransformerWithKeySupplier<K, V, VR> transformerSupplier,
@@ -452,24 +446,35 @@ namespace Kafka.Streams.KStream.Internals
             return toStream(NamedInternal.empty());
         }
 
-
         public IKStream<K, V> toStream(Named named)
         {
-            named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
-            string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KTable.TOSTREAM_NAME);
-            //IProcessorSupplier<K, Change<V>> kStreamMapValues = new KStreamMapValues<K, V, Change<V>>(null);// (key, change) => change.newValue);
-            //ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType<V>(
-            //   new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
+            string name = new NamedInternal(named)
+                .OrElseGenerateWithPrefix(builder, KTable.TOSTREAM_NAME);
 
-            //ProcessorGraphNode<K, V> toStreamNode = new ProcessorGraphNode<K, V>(
-            //   name,
-            //   processorParameters);
+            IProcessorSupplier<K, Change<V>> kStreamMapValues =
+                new KStreamMapValues<K, Change<V>, V>(
+                    (key, change) => change.newValue);
 
-            //builder.AddGraphNode(this.streamsGraphNode, toStreamNode);
+            ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType<V>(
+               new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
+
+            ProcessorGraphNode<K, V> toStreamNode = new ProcessorGraphNode<K, V>(
+               name,
+               processorParameters);
+
+            builder.AddGraphNode(this.streamsGraphNode, toStreamNode);
 
             // we can inherit parent key and value serde
-            return null;// new KStream<K, V>(name, keySerde, valSerde, sourceNodes, false, toStreamNode, builder);
+            return new KStream<K, V>(
+                name,
+                keySerde,
+                valSerde,
+                sourceNodes,
+                repartitionRequired: false,
+                toStreamNode,
+                builder);
         }
 
 
@@ -876,9 +881,12 @@ namespace Kafka.Streams.KStream.Internals
          * We conflate V with Change<V> in many places. It might be nice to fix that eventually.
          * For now, I'm just explicitly lying about the parameterized type.
          */
-        private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType<VR>(ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
+        private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType<VR>(
+            ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
         {
-            return null;// (ProcessorParameters<K, VR>)kObjectProcessorParameters;
+            return null;// return ProcessorParameters<K, VR>.ConvertFrom(kObjectProcessorParameters);
+
+            //return pp;
         }
 
         string IKTable<K, V>.queryableStoreName()

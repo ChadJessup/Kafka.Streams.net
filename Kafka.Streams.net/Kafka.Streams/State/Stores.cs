@@ -1,8 +1,7 @@
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Internals.Kafka.Streams.Internals;
-using Kafka.Streams.State;
+using Kafka.Streams.Internals;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using System;
@@ -60,29 +59,31 @@ namespace Kafka.Streams.State
          * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used
          * to build a persistent key-value store
          */
-        //        public static KeyValueBytesStoreSupplier persistentKeyValueStore(string name)
-        //        {
-        //            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        //            return new RocksDbKeyValueBytesStoreSupplier(name, false);
-        //        }
+        public static IKeyValueBytesStoreSupplier persistentKeyValueStore(string name)
+        {
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
-        //        /**
-        //         * Create a persistent {@link KeyValueBytesStoreSupplier}.
-        //         * <p>
-        //         * This store supplier can be passed into a
-        //         * {@link #timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
-        //         * If you want to create a {@link KeyValueStore} you should use
-        //         * {@link #persistentKeyValueStore(string)} to create a store supplier instead.
-        //         *
-        //         * @param name  name of the store (cannot be {@code null})
-        //         * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used
-        //         * to build a persistent key-(timestamp/value) store
-        //         */
-        //        public static KeyValueBytesStoreSupplier persistentTimestampedKeyValueStore(string name)
-        //        {
-        //            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        //            return new RocksDbKeyValueBytesStoreSupplier(name, true);
-        //        }
+            return null;// new RocksDbKeyValueBytesStoreSupplier(name, false);
+        }
+
+        /**
+         * Create a persistent {@link KeyValueBytesStoreSupplier}.
+         * <p>
+         * This store supplier can be passed into a
+         * {@link #timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier, Serde, Serde)}.
+         * If you want to create a {@link KeyValueStore} you should use
+         * {@link #persistentKeyValueStore(string)} to create a store supplier instead.
+         *
+         * @param name  name of the store (cannot be {@code null})
+         * @return an instance of a {@link KeyValueBytesStoreSupplier} that can be used
+         * to build a persistent key-(timestamp/value) store
+         */
+        public static IKeyValueBytesStoreSupplier persistentTimestampedKeyValueStore(string name)
+        {
+            name = name ?? throw new ArgumentNullException(nameof(name));
+
+            return new RocksDbKeyValueBytesStoreSupplier(name, true);
+        }
 
         //        /**
         //         * Create an in-memory {@link KeyValueBytesStoreSupplier}.
@@ -233,31 +234,35 @@ namespace Kafka.Streams.State
                 false);
         }
 
-        ///**
-        // * Create a persistent {@link WindowBytesStoreSupplier}.
-        // * <p>
-        // * This store supplier can be passed into a
-        // * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
-        // * If you want to create a {@link WindowStore} you should use
-        // * {@link #persistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
-        // *
-        // * @param name                  name of the store (cannot be {@code null})
-        // * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
-        // *                              (note that the retention period must be at least long enough to contain the
-        // *                              windowed data's entire life cycle, from window-start through window-end,
-        // *                              and for the entire grace period)
-        // * @param windowSize            size of the windows (cannot be negative)
-        // * @param retainDuplicates      whether or not to retain duplicates.
-        // * @return an instance of {@link WindowBytesStoreSupplier}
-        // * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
-        // */
-        //public static WindowBytesStoreSupplier persistentTimestampedWindowStore(string name,
-        //                                                                        TimeSpan retentionPeriod,
-        //                                                                        TimeSpan windowSize,
-        //                                                                        bool retainDuplicates)
-        //{
-        //        return persistentWindowStore(name, retentionPeriod, windowSize, retainDuplicates, true);
-        //}
+        /**
+         * Create a persistent {@link WindowBytesStoreSupplier}.
+         * <p>
+         * This store supplier can be passed into a
+         * {@link #timestampedWindowStoreBuilder(WindowBytesStoreSupplier, Serde, Serde)}.
+         * If you want to create a {@link WindowStore} you should use
+         * {@link #persistentWindowStore(string, Duration, Duration, bool)} to create a store supplier instead.
+         *
+         * @param name                  name of the store (cannot be {@code null})
+         * @param retentionPeriod      .Length of time to retain data in the store (cannot be negative)
+         *                              (note that the retention period must be at least long enough to contain the
+         *                              windowed data's entire life cycle, from window-start through window-end,
+         *                              and for the entire grace period)
+         * @param windowSize            size of the windows (cannot be negative)
+         * @param retainDuplicates      whether or not to retain duplicates.
+         * @return an instance of {@link WindowBytesStoreSupplier}
+         * @throws ArgumentException if {@code retentionPeriod} or {@code windowSize} can't be represented as {@code long milliseconds}
+         */
+        public static IWindowBytesStoreSupplier persistentTimestampedWindowStore(
+            string name,
+            TimeSpan retentionPeriod,
+            TimeSpan windowSize,
+            bool retainDuplicates)
+            => persistentWindowStore(
+                name,
+                retentionPeriod,
+                windowSize,
+                retainDuplicates,
+                timestampedStore: true);
 
         private static IWindowBytesStoreSupplier persistentWindowStore(
             string name,
@@ -373,114 +378,133 @@ namespace Kafka.Streams.State
         //        return new InMemoryWindowBytesStoreSupplier(name, retentionMs, windowSizeMs, retainDuplicates);
         //    }
 
-        //    /**
-        //     * Create a persistent {@link SessionBytesStoreSupplier}.
-        //     *
-        //     * @param name              name of the store (cannot be {@code null})
-        //     * @param retentionPeriodMs.Length ot time to retain data in the store (cannot be negative)
-        //     *                          (note that the retention period must be at least long enough to contain the
-        //     *                          windowed data's entire life cycle, from window-start through window-end,
-        //     *                          and for the entire grace period)
-        //     * @return an instance of a {@link  SessionBytesStoreSupplier}
-        //     * @deprecated since 2.1 Use {@link Stores#persistentSessionStore(string, Duration)} instead
-        //     */
-        //    [System.Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
-        //public static SessionBytesStoreSupplier persistentSessionStore(string name,
-        //                                                                   long retentionPeriodMs)
-        //{
-        //    name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-        //    if (retentionPeriodMs < 0)
-        //    {
-        //        throw new System.ArgumentException("retentionPeriod cannot be negative");
-        //    }
-        //    return new RocksDbSessionBytesStoreSupplier(name, retentionPeriodMs);
-        //}
+        /**
+         * Create a persistent {@link SessionBytesStoreSupplier}.
+         *
+         * @param name              name of the store (cannot be {@code null})
+         * @param retentionPeriodMs.Length ot time to retain data in the store (cannot be negative)
+         *                          (note that the retention period must be at least long enough to contain the
+         *                          windowed data's entire life cycle, from window-start through window-end,
+         *                          and for the entire grace period)
+         * @return an instance of a {@link  SessionBytesStoreSupplier}
+         * @deprecated since 2.1 Use {@link Stores#persistentSessionStore(string, Duration)} instead
+         */
+        [Obsolete] // continuing to support Windows#maintainMs/segmentInterval in fallback mode
+        public static ISessionBytesStoreSupplier persistentSessionStore(
+            string name,
+            long retentionPeriodMs)
+        {
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
-        ///**
-        // * Create a persistent {@link SessionBytesStoreSupplier}.
-        // *
-        // * @param name              name of the store (cannot be {@code null})
-        // * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
-        // *                          Note that the retention period must be at least long enough to contain the
-        // *                          windowed data's entire life cycle, from window-start through window-end,
-        // *                          and for the entire grace period.
-        // * @return an instance of a {@link  SessionBytesStoreSupplier}
-        // */
+            if (retentionPeriodMs < 0)
+            {
+                throw new ArgumentException("retentionPeriod cannot be negative");
+            }
 
-        //public static SessionBytesStoreSupplier persistentSessionStore(string name,
-        //                                                               TimeSpan retentionPeriod)
-        //{
-        //    string msgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-        //    return persistentSessionStore(name, ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix));
-        //}
+            return null;// new RocksDbSessionBytesStoreSupplier(name, retentionPeriodMs);
+        }
 
-        ///**
-        // * Create an in-memory {@link SessionBytesStoreSupplier}.
-        // *
-        // * @param name              name of the store (cannot be {@code null})
-        // * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
-        // *                          Note that the retention period must be at least long enough to contain the
-        // *                          windowed data's entire life cycle, from window-start through window-end,
-        // *                          and for the entire grace period.
-        // * @return an instance of a {@link  SessionBytesStoreSupplier}
-        // */
-        //public static SessionBytesStoreSupplier inMemorySessionStore(string name, TimeSpan retentionPeriod)
-        //{
-        //    name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+        /**
+         * Create a persistent {@link SessionBytesStoreSupplier}.
+         *
+         * @param name              name of the store (cannot be {@code null})
+         * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
+         *                          Note that the retention period must be at least long enough to contain the
+         *                          windowed data's entire life cycle, from window-start through window-end,
+         *                          and for the entire grace period.
+         * @return an instance of a {@link  SessionBytesStoreSupplier}
+         */
+        public static ISessionBytesStoreSupplier persistentSessionStore(
+            string name,
+            TimeSpan retentionPeriod)
+        {
+            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
 
-        //    string msgPrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
-        //    long retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
-        //    if (retentionPeriodMs < 0)
-        //    {
-        //        throw new System.ArgumentException("retentionPeriod cannot be negative");
-        //    }
-        //    return new InMemorySessionBytesStoreSupplier(name, retentionPeriodMs);
-        //}
+            return persistentSessionStore(name, ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix));
+        }
 
-        ///**
-        // * Creates a {@link StoreBuilder} that can be used to build a {@link KeyValueStore}.
-        // * <p>
-        // * The provided supplier should <strong>not</strong> be a supplier for
-        // * {@link TimestampedKeyValueStore TimestampedKeyValueStores}.
-        // *
-        // * @param supplier      a {@link KeyValueBytesStoreSupplier} (cannot be {@code null})
-        // * @param keySerde      the key serde to use
-        // * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
-        // *                      it is treated as delete
-        // * @param           key type
-        // * @param           value type
-        // * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
-        // */
-        //public staticStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
-        //                                                                            ISerde<K> keySerde,
-        //                                                                            ISerde<V> valueSerde)
-        //{
-        //    supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
-        //    return new KeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
-        //}
+        /**
+         * Create an in-memory {@link SessionBytesStoreSupplier}.
+         *
+         * @param name              name of the store (cannot be {@code null})
+         * @param retentionPeriod  .Length ot time to retain data in the store (cannot be negative)
+         *                          Note that the retention period must be at least long enough to contain the
+         *                          windowed data's entire life cycle, from window-start through window-end,
+         *                          and for the entire grace period.
+         * @return an instance of a {@link  SessionBytesStoreSupplier}
+         */
+        public static ISessionBytesStoreSupplier inMemorySessionStore(string name, TimeSpan retentionPeriod)
+        {
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
-        ///**
-        // * Creates a {@link StoreBuilder} that can be used to build a {@link TimestampedKeyValueStore}.
-        // * <p>
-        // * The provided supplier should <strong>not</strong> be a supplier for
-        // * {@link KeyValueStore KeyValueStores}. For this case, passed in timestamps will be dropped and not stored in the
-        // * key-value-store. On read, no valid timestamp but a dummy timestamp will be returned.
-        // *
-        // * @param supplier      a {@link KeyValueBytesStoreSupplier} (cannot be {@code null})
-        // * @param keySerde      the key serde to use
-        // * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
-        // *                      it is treated as delete
-        // * @param           key type
-        // * @param           value type
-        // * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
-        // */
-        //public staticStoreBuilder<TimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder(KeyValueBytesStoreSupplier supplier,
-        //                                                                                                  ISerde<K> keySerde,
-        //                                                                                                  ISerde<V> valueSerde)
-        //{
-        //    supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
-        //    return new TimestampedKeyValueStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
-        //}
+            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
+
+            if (retentionPeriodMs < TimeSpan.Zero)
+            {
+                throw new ArgumentException("retentionPeriod cannot be negative");
+            }
+
+            return null;// new InMemorySessionBytesStoreSupplier(name, retentionPeriodMs);
+        }
+
+        /**
+         * Creates a {@link StoreBuilder} that can be used to build a {@link KeyValueStore}.
+         * <p>
+         * The provided supplier should <strong>not</strong> be a supplier for
+         * {@link TimestampedKeyValueStore TimestampedKeyValueStores}.
+         *
+         * @param supplier      a {@link KeyValueBytesStoreSupplier} (cannot be {@code null})
+         * @param keySerde      the key serde to use
+         * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
+         *                      it is treated as delete
+         * @param           key type
+         * @param           value type
+         * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
+         */
+        public static IStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder<K, V>(
+            IKeyValueBytesStoreSupplier supplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
+
+            return null;
+                //new KeyValueStoreBuilder<K, V>(
+                //supplier,
+                //keySerde,
+                //valueSerde,
+                //Time.SYSTEM);
+        }
+
+        /**
+         * Creates a {@link StoreBuilder} that can be used to build a {@link TimestampedKeyValueStore}.
+         * <p>
+         * The provided supplier should <strong>not</strong> be a supplier for
+         * {@link KeyValueStore KeyValueStores}. For this case, passed in timestamps will be dropped and not stored in the
+         * key-value-store. On read, no valid timestamp but a dummy timestamp will be returned.
+         *
+         * @param supplier      a {@link KeyValueBytesStoreSupplier} (cannot be {@code null})
+         * @param keySerde      the key serde to use
+         * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
+         *                      it is treated as delete
+         * @param           key type
+         * @param           value type
+         * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
+         */
+        public static IStoreBuilder<ITimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder<K, V>(
+            IKeyValueBytesStoreSupplier supplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
+
+            return new TimestampedKeyValueStoreBuilder<K, V>(
+                supplier,
+                keySerde,
+                valueSerde,
+                Time.SYSTEM);
+        }
 
         /**
          * Creates a {@link StoreBuilder} that can be used to build a {@link WindowStore}.
@@ -503,49 +527,57 @@ namespace Kafka.Streams.State
         {
             supplier = supplier ?? throw new ArgumentNullException("supplier cannot be null", nameof(supplier));
 
-            return new WindowStoreBuilder<K, V>(supplier, keySerde, valueSerde, Time.SYSTEM);
+            return new WindowStoreBuilder<K, V>(
+                supplier,
+                keySerde,
+                valueSerde,
+                Time.SYSTEM);
         }
 
-        ///**
-        // * Creates a {@link StoreBuilder} that can be used to build a {@link TimestampedWindowStore}.
-        // * <p>
-        // * The provided supplier should <strong>not</strong> be a supplier for
-        // * {@link WindowStore WindowStores}. For this case, passed in timestamps will be dropped and not stored in the
-        // * windows-store. On read, no valid timestamp but a dummy timestamp will be returned.
-        // *
-        // * @param supplier      a {@link WindowBytesStoreSupplier} (cannot be {@code null})
-        // * @param keySerde      the key serde to use
-        // * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
-        // *                      it is treated as delete
-        // * @param           key type
-        // * @param           value type
-        // * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
-        // */
-        //public staticStoreBuilder<TimestampedWindowStore<K, V>> timestampedWindowStoreBuilder(WindowBytesStoreSupplier supplier,
-        //                                                                                              ISerde<K> keySerde,
-        //                                                                                              ISerde<V> valueSerde)
-        //{
-        //    supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
-        //    return new TimestampedWindowStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
-        //}
+        /**
+         * Creates a {@link StoreBuilder} that can be used to build a {@link TimestampedWindowStore}.
+         * <p>
+         * The provided supplier should <strong>not</strong> be a supplier for
+         * {@link WindowStore WindowStores}. For this case, passed in timestamps will be dropped and not stored in the
+         * windows-store. On read, no valid timestamp but a dummy timestamp will be returned.
+         *
+         * @param supplier      a {@link WindowBytesStoreSupplier} (cannot be {@code null})
+         * @param keySerde      the key serde to use
+         * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
+         *                      it is treated as delete
+         * @param           key type
+         * @param           value type
+         * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
+         */
+        public static IStoreBuilder<ITimestampedWindowStore<K, V>> timestampedWindowStoreBuilder<K, V>(
+            IWindowBytesStoreSupplier supplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
-        ///**
-        // * Creates a {@link StoreBuilder} that can be used to build a {@link ISessionStore}.
-        // *
-        // * @param supplier      a {@link SessionBytesStoreSupplier} (cannot be {@code null})
-        // * @param keySerde      the key serde to use
-        // * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
-        // *                      it is treated as delete
-        // * @param           key type
-        // * @param           value type
-        // * @return an instance of {@link StoreBuilder} than can build a {@link ISessionStore}
-        // */
-        //public staticStoreBuilder<ISessionStore<K, V>> sessionStoreBuilder(SessionBytesStoreSupplier supplier,
-        //                                                                          ISerde<K> keySerde,
-        //                                                                          ISerde<V> valueSerde)
-        //{
-        //    supplier = supplier ?? throw new System.ArgumentNullException("supplier cannot be null", nameof(supplier));
-        //    return new SessionStoreBuilder<>(supplier, keySerde, valueSerde, ITime.SYSTEM);
-        //}
+            return new TimestampedWindowStoreBuilder<K, V>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        }
+
+        /**
+         * Creates a {@link StoreBuilder} that can be used to build a {@link ISessionStore}.
+         *
+         * @param supplier      a {@link SessionBytesStoreSupplier} (cannot be {@code null})
+         * @param keySerde      the key serde to use
+         * @param valueSerde    the value serde to use; if the serialized bytes is {@code null} for put operations,
+         *                      it is treated as delete
+         * @param           key type
+         * @param           value type
+         * @return an instance of {@link StoreBuilder} than can build a {@link ISessionStore}
+         */
+        public static IStoreBuilder<ISessionStore<K, V>> sessionStoreBuilder<K, V>(
+            ISessionBytesStoreSupplier supplier,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
+
+            return null; // new SessionStoreBuilder<>(supplier, keySerde, valueSerde, Time.SYSTEM);
+        }
     }
 }

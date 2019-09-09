@@ -18,19 +18,18 @@ using Confluent.Kafka;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
     public class RecordInfo
     {
-        public RecordQueue queue { get; }
+        public RecordQueue queue { get; set; }
 
-        public ProcessorNode<K, V> node<K, V>()
+        public ProcessorNode node()
         {
-            return null; // queue.source();
+            return queue.source();
         }
 
         public TopicPartition partition()
         {
-            return null; // queue.partition();
+            return queue.partition();
         }
     }
 }

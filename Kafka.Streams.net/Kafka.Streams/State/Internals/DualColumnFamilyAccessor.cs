@@ -1,212 +1,234 @@
-﻿//using Kafka.Common.Utils;
-//using Kafka.Streams.Errors;
-//using RocksDbSharp;
-//using System.Collections.Generic;
+﻿using Kafka.Common.Utils;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Internals;
+using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.State.Interfaces;
+using RocksDbSharp;
+using System;
+using System.Collections.Generic;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class DualColumnFamilyAccessor : IRocksDbAccessor
-//    {
-//        private ColumnFamilyHandle oldColumnFamily;
-//        private ColumnFamilyHandle newColumnFamily;
+namespace Kafka.Streams.State.Internals
+{
+    public class DualColumnFamilyAccessor : IRocksDbAccessor
+    {
+        private ColumnFamilyHandle oldColumnFamily;
+        private ColumnFamilyHandle newColumnFamily;
+        private readonly RocksDb db;
+        private readonly WriteOptions wOptions;
+        private readonly string name;
+        private readonly HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
 
-//        private DualColumnFamilyAccessor(ColumnFamilyHandle oldColumnFamily,
-//                                         ColumnFamilyHandle newColumnFamily)
-//        {
-//            this.oldColumnFamily = oldColumnFamily;
-//            this.newColumnFamily = newColumnFamily;
-//        }
+        public DualColumnFamilyAccessor(
+            string name,
+            RocksDb db,
+            WriteOptions writeOptions,
+            ColumnFamilyHandle oldColumnFamily,
+            ColumnFamilyHandle newColumnFamily)
+        {
+            this.db = db;
+            this.wOptions = writeOptions;
 
+            this.oldColumnFamily = oldColumnFamily;
+            this.newColumnFamily = newColumnFamily;
+        }
 
-//        public void put(byte[] key,
-//                        byte[] valueWithTimestamp)
-//        {
-//            if (valueWithTimestamp == null)
-//            {
-//                try
-//                {
-//                    db.delete(oldColumnFamily, wOptions, key);
-//                }
-//                catch (RocksDbException e)
-//                {
-//                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-//                    throw new ProcessorStateException("Error while removing key from store " + name, e);
-//                }
-//                try
-//                {
-//                    db.delete(newColumnFamily, wOptions, key);
-//                }
-//                catch (RocksDbException e)
-//                {
-//                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-//                    throw new ProcessorStateException("Error while removing key from store " + name, e);
-//                }
-//            }
-//            else
-//            {
-//                try
-//                {
-//                    db.delete(oldColumnFamily, wOptions, key);
-//                }
-//                catch (RocksDbException e)
-//                {
-//                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-//                    throw new ProcessorStateException("Error while removing key from store " + name, e);
-//                }
-//                try
-//                {
-//                    db.Add(newColumnFamily, wOptions, key, valueWithTimestamp);
-//                }
-//                catch (RocksDbException e)
-//                {
-//                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
-//                    throw new ProcessorStateException("Error while putting key/value into store " + name, e);
-//                }
-//            }
-//        }
+        public void put(
+            byte[] key,
+            byte[] valueWithTimestamp)
+        {
+            if (valueWithTimestamp == null)
+            {
+                try
+                {
+                    db.Remove(key, oldColumnFamily, wOptions);
+                }
+                catch (RocksDbException e)
+                {
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                }
 
+                try
+                {
+                    db.Remove(key, newColumnFamily, wOptions);
+                }
+                catch (RocksDbException e)
+                {
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                }
+            }
+            else
+            {
+                try
+                {
+                    db.Remove(key, oldColumnFamily, wOptions);
+                }
+                catch (RocksDbException e)
+                {
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    throw new ProcessorStateException("Error while removing key from store " + name, e);
+                }
 
-//        public void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
-//                                 WriteBatch batch)
-//        {
-//            foreach (KeyValue<Bytes, byte[]> entry in entries)
-//            {
-//                entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
-//                addToBatch(entry.key(), entry.value, batch);
-//            }
-//        }
+                try
+                {
+                    db.Put(key, valueWithTimestamp, newColumnFamily, wOptions);
+                }
+                catch (RocksDbException e)
+                {
+                    // string string.Format is happening in wrapping stores. So formatted message is thrown from wrapping stores.
+                    throw new ProcessorStateException("Error while putting key/value into store " + name, e);
+                }
+            }
+        }
 
+        public void prepareBatch(
+            List<KeyValue<Bytes, byte[]>> entries,
+            WriteBatch batch)
+        {
+            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            {
+                entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
 
-//        public byte[] get(byte[] key)
-//        {
-//            byte[] valueWithTimestamp = db[newColumnFamily, key];
-//            if (valueWithTimestamp != null)
-//            {
-//                return valueWithTimestamp;
-//            }
-
-//            byte[] plainValue = db[oldColumnFamily, key];
-//            if (plainValue != null)
-//            {
-//                byte[] valueWithUnknownTimestamp = convertToTimestampedFormat(plainValue);
-//                // this does only work, because the changelog topic contains correct data already
-//                // for other string.Format changes, we cannot take this short cut and can only migrate data
-//                // from old to new store on put()
-//                put(key, valueWithUnknownTimestamp);
-//                return valueWithUnknownTimestamp;
-//            }
-
-//            return null;
-//        }
+                addToBatch(entry.key.get(), entry.value, batch);
+            }
+        }
 
 
-//        public byte[] getOnly(byte[] key)
-//        {
-//            byte[] valueWithTimestamp = db[newColumnFamily, key];
-//            if (valueWithTimestamp != null)
-//            {
-//                return valueWithTimestamp;
-//            }
+        public byte[] get(byte[] key)
+        {
+            byte[] valueWithTimestamp = db.Get(key, newColumnFamily);
 
-//            byte[] plainValue = db[oldColumnFamily, key];
-//            if (plainValue != null)
-//            {
-//                return convertToTimestampedFormat(plainValue);
-//            }
+            if (valueWithTimestamp != null)
+            {
+                return valueWithTimestamp;
+            }
 
-//            return null;
-//        }
+            byte[] plainValue = db.Get(key, oldColumnFamily);
 
+            if (plainValue != null)
+            {
+                byte[] valueWithUnknownTimestamp = ApiUtils.convertToTimestampedFormat(plainValue);
+                // this does only work, because the changelog topic contains correct data already
+                // for other string.Format changes, we cannot take this short cut and can only migrate data
+                // from old to new store on put()
+                put(key, valueWithUnknownTimestamp);
+                return valueWithUnknownTimestamp;
+            }
 
-//        public IKeyValueIterator<Bytes, byte[]> range(Bytes from,
-//                                                     Bytes to)
-//        {
-//            return new RocksDbDualCFRangeIterator(
-//                name,
-//                db.newIterator(newColumnFamily),
-//                db.newIterator(oldColumnFamily),
-//                from,
-//                to);
-//        }
+            return null;
+        }
 
 
-//        public IKeyValueIterator<Bytes, byte[]> all()
-//        {
-//            RocksIterator innerIterWithTimestamp = db.newIterator(newColumnFamily);
-//            innerIterWithTimestamp.seekToFirst();
-//            RocksIterator innerIterNoTimestamp = db.newIterator(oldColumnFamily);
-//            innerIterNoTimestamp.seekToFirst();
-//            return new RocksDbDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
-//        }
+        public byte[] getOnly(byte[] key)
+        {
+            byte[] valueWithTimestamp = db.Get(key, newColumnFamily);
+
+            if (valueWithTimestamp != null)
+            {
+                return valueWithTimestamp;
+            }
+
+            byte[] plainValue = db.Get(key, oldColumnFamily);
+
+            if (plainValue != null)
+            {
+                return ApiUtils.convertToTimestampedFormat(plainValue);
+            }
+
+            return null;
+        }
 
 
-//        public long approximateNumEntries()
-//        {
-//            return db.getLongProperty(oldColumnFamily, "rocksdb.estimate-num-keys")
-//                + db.getLongProperty(newColumnFamily, "rocksdb.estimate-num-keys");
-//        }
+        public IKeyValueIterator<Bytes, byte[]> range(
+            Bytes from,
+            Bytes to)
+        {
+            return new RocksDbDualCFRangeIterator(
+                name,
+                db.NewIterator(newColumnFamily),
+                db.NewIterator(oldColumnFamily),
+                from,
+                to);
+        }
+
+        public IKeyValueIterator<Bytes, byte[]> all()
+        {
+            Iterator innerIterWithTimestamp = db.NewIterator(newColumnFamily);
+            innerIterWithTimestamp.SeekToFirst();
+            Iterator innerIterNoTimestamp = db.NewIterator(oldColumnFamily);
+            innerIterNoTimestamp.SeekToFirst();
+            return new RocksDbDualCFIterator(name, innerIterWithTimestamp, innerIterNoTimestamp);
+        }
 
 
-//        public void flush()
-//        {
-//            db.flush(fOptions, oldColumnFamily);
-//            db.flush(fOptions, newColumnFamily);
-//        }
+        public long approximateNumEntries()
+        {
+            return long.Parse(db.GetProperty("rocksdb.estimate-num-keys", oldColumnFamily))
+                + long.Parse(db.GetProperty("rocksdb.estimate-num-keys", newColumnFamily));
+        }
 
 
-//        public void prepareBatchForRestore(List<KeyValue<byte[], byte[]>> records,
-//                                           WriteBatch batch)
-//        {
-//            foreach (KeyValue<byte[], byte[]> record in records)
-//            {
-//                addToBatch(record.key, record.value, batch);
-//            }
-//        }
+        public void flush()
+        {
+            // db.Flush(fOptions, oldColumnFamily);
+            // db.Flush(fOptions, newColumnFamily);
+        }
+
+        public void prepareBatchForRestore(
+            List<KeyValue<byte[], byte[]>> records,
+            WriteBatch batch)
+        {
+            foreach (KeyValue<byte[], byte[]> record in records)
+            {
+                addToBatch(record.key, record.value, batch);
+            }
+        }
 
 
-//        public void addToBatch(byte[] key,
-//                               byte[] value,
-//                               WriteBatch batch)
-//        {
-//            if (value == null)
-//            {
-//                batch.delete(oldColumnFamily, key);
-//                batch.delete(newColumnFamily, key);
-//            }
-//            else
-//            {
-//                batch.delete(oldColumnFamily, key);
-//                batch.Add(newColumnFamily, key, value);
-//            }
-//        }
+        public void addToBatch(
+            byte[] key,
+            byte[] value,
+            WriteBatch batch)
+        {
+            if (value == null)
+            {
+                batch.Delete(key, oldColumnFamily);
+                batch.Delete(key, newColumnFamily);
+            }
+            else
+            {
+                batch.Delete(key, oldColumnFamily);
+                batch.Put(key, value, newColumnFamily);
+            }
+        }
 
 
-//        public void close()
-//        {
-//            oldColumnFamily.close();
-//            newColumnFamily.close();
-//        }
+        public void close()
+        {
+            // oldColumnFamily.close();
+            // newColumnFamily.close();
+        }
 
+        public void toggleDbForBulkLoading()
+        {
+            try
+            {
+                //db.CompactRange(1, 0, oldColumnFamily);
+            }
+            catch (RocksDbException e)
+            {
+                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
+            }
 
-
-//        public void toggleDbForBulkLoading()
-//        {
-//            try
-//            {
-//                db.compactRange(oldColumnFamily, true, 1, 0);
-//            }
-//            catch (RocksDbException e)
-//            {
-//                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
-//            }
-//            try
-//            {
-//                db.compactRange(newColumnFamily, true, 1, 0);
-//            }
-//            catch (RocksDbException e)
-//            {
-//                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
-//            }
-//        }
-//    }
-//}
+            try
+            {
+                //db.CompactRange(newColumnFamily, true, 1, 0);
+            }
+            catch (RocksDbException e)
+            {
+                throw new ProcessorStateException("Error while range compacting during restoring  store " + name, e);
+            }
+        }
+    }
+}

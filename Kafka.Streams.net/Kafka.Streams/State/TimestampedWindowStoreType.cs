@@ -1,26 +1,4 @@
-﻿
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//namespace Kafka.Streams.State
+﻿//namespace Kafka.Streams.State
 //{
 
 //    public static class TimestampedWindowStoreType<K, V>

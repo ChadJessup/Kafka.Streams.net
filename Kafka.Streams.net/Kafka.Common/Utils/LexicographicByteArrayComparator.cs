@@ -3,7 +3,7 @@ using Kafka.Common.Utils.Interfaces;
 
 namespace Kafka.Common.Utils
 {
-    internal class LexicographicByteArrayComparator : IByteArrayComparator
+    public class LexicographicByteArrayComparator : IByteArrayComparator
     {
         public int Compare(byte[] buffer1, byte[] buffer2)
         {
@@ -34,6 +34,7 @@ namespace Kafka.Common.Utils
                     return a - b;
                 }
             }
+
             return Length1 - Length2;
         }
 

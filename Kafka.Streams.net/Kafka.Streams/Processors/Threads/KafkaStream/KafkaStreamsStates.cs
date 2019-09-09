@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 
-using System.Collections.Generic;
-
 namespace Kafka.Streams
 {
     // container states
@@ -72,28 +70,5 @@ namespace Kafka.Streams
         NOT_RUNNING,
         ERROR, //(3);
         DEAD,
-    }
-
-    public class KafkaStreamsState
-    {
-        private HashSet<KafkaStreamsStates> validTransitions = new HashSet<KafkaStreamsStates>();
-
-        public KafkaStreamsState(params KafkaStreamsStates[] validTransitions)
-        {
-            this.validTransitions = new HashSet<KafkaStreamsStates>(validTransitions);
-        }
-
-        public KafkaStreamsStates CurrentState { get; set; } = KafkaStreamsStates.UNKNOWN;
-
-        public bool isRunning()
-        {
-            return CurrentState.HasFlag(KafkaStreamsStates.RUNNING)
-                || CurrentState.HasFlag(KafkaStreamsStates.REBALANCING);
-        }
-
-        public bool isValidTransition(KafkaStreamsStates newState)
-        {
-            return validTransitions.Contains(newState);
-        }
     }
 }

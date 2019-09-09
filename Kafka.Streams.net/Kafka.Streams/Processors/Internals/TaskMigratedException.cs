@@ -14,9 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+using System.Runtime.Serialization;
+
 namespace Kafka.Streams.Processor.Internals
 {
-    internal class ArrayDeque<T>
+    [Serializable]
+    internal class TaskMigratedException : Exception
     {
+        private StreamTask streamTask;
+        private ProducerFencedException fatal;
+
+        public TaskMigratedException()
+        {
+        }
+
+        public TaskMigratedException(string message) : base(message)
+        {
+        }
+
+        public TaskMigratedException(StreamTask streamTask, ProducerFencedException fatal)
+        {
+            this.streamTask = streamTask;
+            this.fatal = fatal;
+        }
+
+        public TaskMigratedException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected TaskMigratedException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

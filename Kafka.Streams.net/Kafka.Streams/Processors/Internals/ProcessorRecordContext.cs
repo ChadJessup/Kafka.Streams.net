@@ -69,7 +69,7 @@ namespace Kafka.Streams.Processor.Internals
             return size;
         }
 
-        public byte[] serialize()
+        public byte[] Serialize()
         {
             byte[] topicBytes = Encoding.UTF8.GetBytes(Topic);
             byte[][] headerKeysBytes;
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
             }
 
-            ByteBuffer buffer = ByteBuffer.allocate(size);
+            ByteBuffer buffer = new ByteBuffer().allocate(size);
             buffer.putLong(timestamp);
             buffer.putLong(offset);
 
@@ -149,7 +149,7 @@ namespace Kafka.Streams.Processor.Internals
             return buffer.array();
         }
 
-        public static ProcessorRecordContext deserialize(ByteBuffer buffer)
+        public static ProcessorRecordContext Deserialize(ByteBuffer buffer)
         {
             long timestamp = buffer.getLong();
             long offset = buffer.getLong();

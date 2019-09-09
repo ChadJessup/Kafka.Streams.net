@@ -21,68 +21,34 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class ProcessorTopology<K, V>
+    public class ProcessorTopology
     {
-        private List<ProcessorNode<K, V>> processorNodes;
-        private Dictionary<string, SourceNode<K, V>> sourcesByTopic;
-        //private Dictionary<string, SinkNode<K, V>> sinksByTopic;
-        public List<IStateStore> stateStores { get; }
-        public List<IStateStore> globalStateStores { get; }
-        public Dictionary<string, string> storeToChangelogTopic { get; }
-        private HashSet<string> repartitionTopics;
+        private List<ProcessorNode> processorNodes;
+        private Dictionary<string, SourceNode> sourcesByTopic;
+        private Dictionary<string, ISinkNode> sinksByTopic;
 
         public ProcessorTopology(
-            List<ProcessorNode<K, V>> processorNodes,
-            Dictionary<string, SourceNode<K, V>> sourcesByTopic,
-            //Dictionary<string, SinkNode<K, V>> sinksByTopic,
-            List<IStateStore> stateStores,
-            List<IStateStore> globalStateStores,
+            IEnumerable<ProcessorNode> processorNodes,
+            Dictionary<string, SourceNode> sourcesByTopic,
+            Dictionary<string, ISinkNode> sinksByTopic,
+            IEnumerable<IStateStore> stateStores,
+            IEnumerable<IStateStore> globalStateStores,
             Dictionary<string, string> storeToChangelogTopic,
             HashSet<string> repartitionTopics)
         {
-            this.processorNodes = processorNodes;
+            this.processorNodes = processorNodes.ToList();
             this.sourcesByTopic = sourcesByTopic;
-            //this.sinksByTopic = sinksByTopic;
-            this.stateStores = stateStores;
-            this.globalStateStores = globalStateStores;
+            this.sinksByTopic = sinksByTopic;
+            this.stateStores = stateStores.ToList();
+            this.globalStateStores = globalStateStores.ToList();
             this.storeToChangelogTopic = storeToChangelogTopic;
             this.repartitionTopics = repartitionTopics;
         }
 
-        public HashSet<string> sourceTopics()
-        {
-            return new HashSet<string>(sourcesByTopic.Keys);
-        }
-
-        public SourceNode<K, V> source(string topic)
-        {
-            return sourcesByTopic[topic];
-        }
-
-        public HashSet<SourceNode<K, V>> sources()
-        {
-            return new HashSet<SourceNode<K, V>>(sourcesByTopic.Values);
-        }
-
-        //public HashSet<string> sinkTopics()
-        //{
-        //    return new HashSet<string>(sinksByTopic.Keys);
-        //}
-
-        //public SinkNode<K, V> sink(string topic)
-        //{
-        //    return sinksByTopic[topic];
-        //}
-
-        public List<ProcessorNode<K, V>> processors()
-        {
-            return processorNodes;
-        }
-
-        public bool isRepartitionTopic(string topic)
-        {
-            return repartitionTopics.Contains(topic);
-        }
+        public List<IStateStore> stateStores { get; }
+        public List<IStateStore> globalStateStores { get; }
+        public Dictionary<string, string> storeToChangelogTopic { get; }
+        protected HashSet<string> repartitionTopics { get; }
 
         public bool hasPersistentLocalStore()
         {
@@ -110,7 +76,29 @@ namespace Kafka.Streams.Processor.Internals
             return false;
         }
 
-        private string childrenToString(string indent, List<ProcessorNode<K, V>> children)
+        public SourceNode source(string topic)
+            => sourcesByTopic[topic];
+
+        public HashSet<SourceNode> sources()
+            => new HashSet<SourceNode>(sourcesByTopic.Values);
+
+        public HashSet<string> sinkTopics()
+        {
+            return new HashSet<string>(sinksByTopic.Keys);
+        }
+
+        public ISinkNode sink(string topic)
+        {
+            return sinksByTopic[topic];
+        }
+
+        public List<ProcessorNode> processors()
+            => processorNodes;
+
+        public bool isRepartitionTopic(string topic)
+            => repartitionTopics.Contains(topic);
+
+        private string childrenToString(string indent, List<ProcessorNode> children)
         {
             if (children == null || !children.Any())
             {
@@ -127,7 +115,7 @@ namespace Kafka.Streams.Processor.Internals
             sb.Append("]\n");
 
             // recursively print children
-            foreach (ProcessorNode<K, V> child in children)
+            foreach (ProcessorNode child in children)
             {
                 sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children));
             }
@@ -141,9 +129,7 @@ namespace Kafka.Streams.Processor.Internals
          */
 
         public override string ToString()
-        {
-            return ToString("");
-        }
+            => ToString("");
 
         /**
          * Produces a string representation containing useful information this topology.
@@ -166,7 +152,7 @@ namespace Kafka.Streams.Processor.Internals
         // for testing only
         public HashSet<string> processorConnectedStateStores(string processorName)
         {
-            foreach (ProcessorNode<K, V> node in processorNodes)
+            foreach (ProcessorNode node in processorNodes)
             {
                 if (node.name.Equals(processorName))
                 {

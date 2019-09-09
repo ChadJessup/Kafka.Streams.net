@@ -80,12 +80,12 @@ namespace Kafka.Streams.KStream.Internals
             this.repartitionRequired = repartitionRequired;
         }
 
-        public IKStream<K, V> filter(IPredicate<K, V> predicate)
+        public IKStream<K, V> filter(Func<K, V, bool> predicate)
         {
             return filter(predicate, NamedInternal.empty());
         }
 
-        public IKStream<K, V> filter(IPredicate<K, V> predicate, Named named)
+        public IKStream<K, V> filter(Func<K, V, bool> predicate, Named named)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
             named = named ?? throw new ArgumentNullException(nameof(named));
@@ -107,13 +107,13 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKStream<K, V> filterNot(IPredicate<K, V> predicate)
+        public IKStream<K, V> filterNot(Func<K, V, bool> predicate)
         {
             return filterNot(predicate, NamedInternal.empty());
         }
 
 
-        public IKStream<K, V> filterNot(IPredicate<K, V> predicate, Named named)
+        public IKStream<K, V> filterNot(Func<K, V, bool> predicate, Named named)
         {
             predicate = predicate ?? throw new ArgumentNullException("predicate can't be null", nameof(predicate));
             named = named ?? throw new ArgumentNullException("named can't be null", nameof(named));
@@ -907,7 +907,7 @@ namespace Kafka.Streams.KStream.Internals
             string nullKeyFilterProcessorName = builder.NewProcessorName(KStream.FilterName);
             string sourceName = builder.NewProcessorName(KStream.SourceName);
 
-            IPredicate<K1, V1> notNullKeyPredicate = null; // (k, v) => k != null;
+            Func<K1, V1, bool> notNullKeyPredicate = (k, v) => k != null;
 
             var processorParameters = new ProcessorParameters<K1, V1>(
                new KStreamFilter<K1, V1>(notNullKeyPredicate, false),

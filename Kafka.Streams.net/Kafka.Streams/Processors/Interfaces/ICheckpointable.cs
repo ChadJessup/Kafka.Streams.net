@@ -22,7 +22,7 @@ namespace Kafka.Streams.Processor.Interfaces
     // Interface to indicate that an object has associated partition offsets that can be checkpointed
     public interface ICheckpointable
     {
-        void checkpoint(Dictionary<TopicPartition, long> offsets);
-        Dictionary<TopicPartition, long> checkpointed();
+        void checkpoint(Dictionary<TopicPartition, long?> offsets);
+        Dictionary<TopicPartition, long?> checkpointed();
     }
 }

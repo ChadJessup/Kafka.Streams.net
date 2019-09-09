@@ -17,13 +17,28 @@
 using Confluent.Kafka;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processor.Interfaces
 {
-    public interface IRecordCollector<K, V> : AutoCloseable
+    /**
+     * A supplier of a {@link RecordCollectorImpl} instance.
+     */
+    public interface ISupplier
     {
-        void send(
+        /**
+         * Get the record collector.
+         * @return the record collector
+         */
+        IRecordCollector recordCollector();
+    }
+
+    public interface IRecordCollector : IDisposable
+    {
+        ISupplier Supplier { get; }
+
+        void send<K, V>(
             string topic,
             K key,
             V value,
@@ -33,7 +48,7 @@ namespace Kafka.Streams.Processor.Interfaces
             ISerializer<K> keySerializer,
             ISerializer<V> valueSerializer);
 
-        void send(
+        void send<K, V>(
             string topic,
             K key,
             V value,

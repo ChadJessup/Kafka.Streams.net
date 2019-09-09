@@ -21,7 +21,6 @@ using System.Linq;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
         public IAdminClient getAdminClient(Dictionary<string, object> config)
@@ -33,7 +32,6 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-
         public IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
@@ -41,7 +39,6 @@ namespace Kafka.Streams.Processor.Internals
             return new ProducerBuilder<byte[], byte[]>(convertedConfig)
                 .Build();
         }
-
 
         public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
         {
@@ -51,7 +48,6 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-
         public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
@@ -59,7 +55,6 @@ namespace Kafka.Streams.Processor.Internals
             return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
                 .Build();
         }
-
 
         public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
         {

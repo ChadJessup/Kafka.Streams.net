@@ -44,23 +44,22 @@ namespace Kafka.Streams.Topologies
 
         long retentionPeriod<K, V>()
         {
-            return 0;
-            //if (builder is WindowStoreBuilder<K, V>)
-            //{
-            //    return ((WindowStoreBuilder<K, V>)builder).retentionPeriod();
-            //}
-            //else if (builder is TimestampedWindowStoreBuilder<K, V>)
-            //{
-            //    return ((TimestampedWindowStoreBuilder<K, V>)builder).retentionPeriod();
-            //}
+            if (builder is WindowStoreBuilder<K, V>)
+            {
+                return ((WindowStoreBuilder<K, V>)builder).retentionPeriod();
+            }
+            else if (builder is TimestampedWindowStoreBuilder<K, V>)
+            {
+                return ((TimestampedWindowStoreBuilder<K, V>)builder).retentionPeriod();
+            }
             //else if (builder is SessionStoreBuilder<K, V>)
             //{
             //    return ((SessionStoreBuilder<K, V>)builder).retentionPeriod();
             //}
-            //else
-            //{
-            //    throw new InvalidOperationException("retentionPeriod is not supported when not a window store");
-            //}
+            else
+            {
+                throw new InvalidOperationException("retentionPeriod is not supported when not a window store");
+            }
         }
 
         public string name => builder.name;

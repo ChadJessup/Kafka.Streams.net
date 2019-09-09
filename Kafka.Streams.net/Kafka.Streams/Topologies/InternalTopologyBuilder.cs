@@ -133,7 +133,7 @@ namespace Kafka.Streams.Topologies
             setApplicationId(config.Get(StreamsConfigPropertyNames.ApplicationId));
 
             // maybe strip out caching layers
-            if (config.getLong(StreamsConfigPropertyNames.CACHE_MAX_BYTES_BUFFERING_CONFIG) == 0L)
+            if (config.getLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering) == 0L)
             {
                 foreach (var storeFactory in stateFactories.Values)
                 {
@@ -671,17 +671,17 @@ namespace Kafka.Streams.Topologies
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Dictionary<int, HashSet<string>> nodeGroups()
+        public Dictionary<int, HashSet<string>> GetNodeGroups()
         {
             if (_nodeGroups == null)
             {
-                _nodeGroups = makeNodeGroups();
+                _nodeGroups = MakeNodeGroups();
             }
 
             return _nodeGroups;
         }
 
-        private Dictionary<int, HashSet<string>> makeNodeGroups()
+        private Dictionary<int, HashSet<string>> MakeNodeGroups()
         {
             Dictionary<int, HashSet<string>> nodeGroups = new Dictionary<int, HashSet<string>>();
             Dictionary<string, HashSet<string>> rootToNodeGroup = new Dictionary<string, HashSet<string>>();
@@ -729,34 +729,35 @@ namespace Kafka.Streams.Topologies
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public ProcessorTopology<K, V> build<K, V>()
+        public ProcessorTopology build()
         {
-            return build<K, V>((int?)null);
+            return build((int?)null);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public ProcessorTopology<K, V> build<K, V>(int? topicGroupId)
+        public ProcessorTopology build(int? topicGroupId)
         {
             HashSet<string> nodeGroup;
             if (topicGroupId != null)
             {
-                nodeGroup = nodeGroups()[topicGroupId.Value];
+                nodeGroup = GetNodeGroups()[topicGroupId.Value];
             }
             else
             {
-
                 // when topicGroupId is null, we build the full topology minus the global groups
-                HashSet<string> globalNodeGroups = new HashSet<string>(); // globalNodeGroups();
-                var values = nodeGroups().Values;
+                HashSet<string> globalNodeGroups = GetGlobalNodeGroups();
+                var values = GetNodeGroups().Values;
                 nodeGroup = new HashSet<string>();
+
                 foreach (HashSet<string> value in values)
                 {
-                    //                    nodeGroup.AddAll(value);
+                    nodeGroup.UnionWith(value);
                 }
-                //              nodeGroup.removeAll(globalNodeGroups);
+
+                nodeGroup = new HashSet<string>(nodeGroup.Except(globalNodeGroups));
             }
 
-            return build<K, V>(nodeGroup);
+            return build(nodeGroup);
         }
 
         /**
@@ -764,23 +765,23 @@ namespace Kafka.Streams.Topologies
          * @return ProcessorTopology
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public ProcessorTopology<K, V> buildGlobalStateTopology<K, V>()
+        public ProcessorTopology buildGlobalStateTopology()
         {
-            applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
-            HashSet<string> globalGroups = globalNodeGroups();
+            HashSet<string> globalGroups = GetGlobalNodeGroups();
             if (!globalGroups.Any())
             {
                 return null;
             }
 
-            return build<K, V>(globalGroups);
+            return build(globalGroups);
         }
 
-        private HashSet<string> globalNodeGroups()
+        private HashSet<string> GetGlobalNodeGroups()
         {
             HashSet<string> globalGroups = new HashSet<string>();
-            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in nodeGroups())
+            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in GetNodeGroups())
             {
                 HashSet<string> nodes = nodeGroup.Value;
                 foreach (string node in nodes)
@@ -794,13 +795,13 @@ namespace Kafka.Streams.Topologies
             return globalGroups;
         }
 
-        private ProcessorTopology<K, V> build<K, V>(HashSet<string> nodeGroup)
+        private ProcessorTopology build(HashSet<string> nodeGroup)
         {
-            applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException("topology has not completed optimization", nameof(applicationId));
 
-            Dictionary<string, ProcessorNode<K, V>> processorMap = new Dictionary<string, ProcessorNode<K, V>>();
-            Dictionary<string, SourceNode<K, V>> topicSourceMap = new Dictionary<string, SourceNode<K, V>>();
-            //Dictionary<string, SinkNode<K, V>> topicSinkMap = new Dictionary<string, SinkNode<K, V>>();
+            Dictionary<string, ProcessorNode> processorMap = new Dictionary<string, ProcessorNode>();
+            Dictionary<string, SourceNode> topicSourceMap = new Dictionary<string, SourceNode>();
+            Dictionary<string, ISinkNode> topicSinkMap = new Dictionary<string, ISinkNode>();
             Dictionary<string, IStateStore> stateStoreMap = new Dictionary<string, IStateStore>();
             HashSet<string> repartitionTopics = new HashSet<string>();
 
@@ -843,15 +844,14 @@ namespace Kafka.Streams.Topologies
                 }
             }
 
-            return null;
-            //new ProcessorTopology<K, V>(
-            //    processorMap.Values,
-            //    topicSourceMap,
-            //    topicSinkMap,
-            //    stateStoreMap.Values,
-            //    _globalStateStores.Values,
-            //    storeToChangelogTopic,
-            //    repartitionTopics);
+            return new ProcessorTopology(
+                processorMap.Values,
+                topicSourceMap,
+                topicSinkMap,
+                stateStoreMap.Values,
+                _globalStateStores.Values,
+                storeToChangelogTopic,
+                repartitionTopics);
         }
 
         //private void buildSinkNode<K, V>(
@@ -987,7 +987,7 @@ namespace Kafka.Streams.Topologies
 
             if (_nodeGroups == null)
             {
-                _nodeGroups = makeNodeGroups();
+                _nodeGroups = MakeNodeGroups();
             }
 
             foreach (KeyValuePair<int, HashSet<string>> entry in _nodeGroups)
@@ -1314,7 +1314,7 @@ namespace Kafka.Streams.Topologies
         {
             TopologyDescription description = new TopologyDescription();
 
-            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in makeNodeGroups())
+            foreach (KeyValuePair<int, HashSet<string>> nodeGroup in MakeNodeGroups())
             {
 
                 HashSet<string> allNodesOfGroups = nodeGroup.Value;

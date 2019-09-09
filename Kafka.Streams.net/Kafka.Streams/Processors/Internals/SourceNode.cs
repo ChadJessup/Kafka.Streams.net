@@ -23,6 +23,14 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
+    public class SourceNode : ProcessorNode
+    {
+        public SourceNode(string name, HashSet<string> stateStores)
+            : base(name, stateStores)
+        {
+        }
+    }
+
     public class SourceNode<K, V> : ProcessorNode<K, V>
     {
         private List<string> topics;
@@ -73,11 +81,11 @@ namespace Kafka.Streams.Processor.Internals
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                this.keyDeserializer = (IDeserializer<K>)context.keySerde.Deserializer;
+                this.keyDeserializer = context.keySerde.Deserializer;
             }
             if (this.valDeserializer == null)
             {
-                this.valDeserializer = (IDeserializer<V>)context.valueSerde.Deserializer;
+                this.valDeserializer = context.valueSerde.Deserializer;
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
@@ -106,19 +114,19 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @return a string representation of this node starting with the given indent, useful for debugging.
          */
-        public override string ToString(string indent)
-        {
-            StringBuilder sb = new StringBuilder(base.ToString(indent));
-            sb.Append(indent).Append("\ttopics:\t\t[");
-            foreach (string topic in topics)
-            {
-                sb.Append(topic);
-                sb.Append(", ");
-            }
-            sb.Length = sb.Length - 2;  // Remove the last comma
-            sb.Append("]\n");
-            return sb.ToString();
-        }
+        //public override string ToString(string indent)
+        //{
+        //    StringBuilder sb = new StringBuilder(base.ToString(indent));
+        //    sb.Append(indent).Append("\ttopics:\t\t[");
+        //    foreach (string topic in topics)
+        //    {
+        //        sb.Append(topic);
+        //        sb.Append(", ");
+        //    }
+        //    sb.Length = sb.Length - 2;  // Remove the last comma
+        //    sb.Append("]\n");
+        //    return sb.ToString();
+        //}
 
         public ITimestampExtractor getTimestampExtractor()
         {

@@ -31,7 +31,6 @@ namespace Kafka.Streams.State.Interfaces
      */
     public interface IReadOnlyKeyValueStore<K, V>
     {
-
         /**
          * Get the value corresponding to this key.
          *

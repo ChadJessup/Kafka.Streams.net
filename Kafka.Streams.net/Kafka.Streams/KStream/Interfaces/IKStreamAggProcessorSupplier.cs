@@ -19,10 +19,11 @@ using Kafka.Streams.Processor;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
-    public interface IKStreamAggProcessorSupplier<K, RK, V, T> : IProcessorSupplier<K, V>
+    public interface IKStreamAggProcessorSupplier<K, KR, V, VR> : IProcessorSupplier<K, V>
     {
-        IKTableValueGetterSupplier<RK, T> view();
+        IKTableValueGetterSupplier<KR, VR> view();
 
+        IProcessorSupplier<KR, VR> GetSwappedProcessorSupplier();
         void enableSendingOldValues();
     }
 }

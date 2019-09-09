@@ -1,6 +1,8 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using System;
 using System.Collections.Generic;
@@ -23,13 +25,13 @@ namespace Kafka.Streams.KStream.Internals
             InternalStreamsBuilder builder)
             : base(name, groupedInternal.keySerde, groupedInternal.valueSerde, sourceNodes, streamsGraphNode, builder)
         {
-            //this.aggregateBuilder = new GroupedStreamAggregateBuilder<>(
-            //    builder,
-            //    groupedInternal,
-            //    repartitionRequired,
-            //    sourceNodes,
-            //    name,
-            //    streamsGraphNode);
+            this.aggregateBuilder = new GroupedStreamAggregateBuilder<K, V>(
+                builder,
+                groupedInternal,
+                repartitionRequired,
+                sourceNodes,
+                name,
+                streamsGraphNode);
         }
 
         public IKTable<K, V> reduce(IReducer<V> reducer)
@@ -132,11 +134,13 @@ namespace Kafka.Streams.KStream.Internals
                 materializedInternal.withValueSerde(Serdes.Long());
             }
 
-            return doAggregate(
-                new KStreamAggregate<K, long, IKeyValueStore<Bytes, byte[]>>(
+            var kstreamAggregate = new KStreamAggregate<K, V, long>(
                     materializedInternal.storeName,
                     aggregateBuilder.countInitializer,
-                    aggregateBuilder.countAggregator),
+                    aggregateBuilder.countAggregator);
+
+            return doAggregate(
+                kstreamAggregate,
                 AGGREGATE_NAME,
                 materializedInternal);
         }
@@ -174,10 +178,11 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
             var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(materializedInternal);
+            var materialized = tkvsm.materialize();
 
             return aggregateBuilder.build(
                 functionName,
-                tkvsm.materialize(),
+                materialized,
                 aggregateSupplier,
                 materializedInternal.queryableStoreName(),
                 materializedInternal.keySerde,

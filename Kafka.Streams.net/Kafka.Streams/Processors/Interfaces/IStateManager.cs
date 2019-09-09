@@ -41,8 +41,8 @@ namespace Kafka.Streams.Processor.Interfaces
 
         void close(bool clean);
 
-        IStateStore getGlobalStore(string name);
+        IStateStore? getGlobalStore(string name);
 
-        IStateStore getStore(string name);
+        IStateStore? getStore(string name);
     }
 }

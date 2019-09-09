@@ -26,6 +26,10 @@ namespace Kafka.Streams.Processor
      * @param the type of keys
      * @param the type of values
      */
+    public interface ISwappedProccessorSupplier<K, V> : IProcessorSupplier<K, V>
+    {
+    }
+
     public interface IProcessorSupplier<K, V>
     {
         /**

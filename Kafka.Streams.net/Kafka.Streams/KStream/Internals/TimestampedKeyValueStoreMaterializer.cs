@@ -40,14 +40,14 @@ namespace Kafka.Streams.KStream.Internals
             if (supplier == null)
             {
                 string name = materialized.storeName;
-                //supplier = Stores.persistentTimestampedKeyValueStore(name);
+                supplier = Stores.persistentTimestampedKeyValueStore(name);
             }
 
-            IStoreBuilder<ITimestampedKeyValueStore<K, V>> builder = null;
-            //    Stores.timestampedKeyValueStoreBuilder(
-            //   supplier,
-            //   materialized.keySerde,
-            //   materialized.valueSerde);
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>> builder =
+                Stores.timestampedKeyValueStoreBuilder(
+                   supplier,
+                   materialized.keySerde,
+                   materialized.valueSerde);
 
             if (materialized.loggingEnabled)
             {

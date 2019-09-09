@@ -1,53 +1,28 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 
 namespace Kafka.Streams.Processor.Internals
 {
-
-    public class StampedRecord : Stamped<ConsumeResult<object, object>>
+    public class StampedRecord<K, V> : Stamped<ConsumeResult<K, V>>
     {
+        private ConsumeResult<K, V> record;
 
-        public StampedRecord(ConsumeResult<object, object> record, long timestamp)
+        public StampedRecord(ConsumeResult<K, V> record, long timestamp)
             : base(record, timestamp)
         {
+            this.record = record;
         }
 
-        public string Topic => value.Topic;
+        public string Topic => this.record.Topic;
 
-        public int partition => value.Partition;
+        public int partition => this.record.Partition;
 
-        public object key()
-        {
-            return null;// value.key();
-        }
+        public K Key => this.record.Key;
 
-        //public object value => value.value;
+        public V Value => this.record.Value;
 
-        public long offset()
-        {
-            return 0;// value.offset();
-        }
+        public long offset => this.record.Offset;
 
-        public Headers headers()
-        {
-            return null; // value.headers();
-        }
-
+        public Headers Headers => this.record.Headers;
 
         public override string ToString()
         {

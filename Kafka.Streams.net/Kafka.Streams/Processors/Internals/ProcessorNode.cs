@@ -13,21 +13,62 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class ProcessorNode
     {
+        public ProcessorNode(string name, HashSet<string> stateStores)
+        {
+            this.name = name;
+            this.stateStores = stateStores;
+            this.time = new SystemTime();
+            this.children = new List<ProcessorNode>();
+            this.childByName = new Dictionary<string, ProcessorNode>();
+        }
 
+        public string name { get; }
+        protected ITime time { get; }
+
+        public HashSet<string> stateStores { get; protected set; } = new HashSet<string>();
+
+        // TODO: 'children' can be removed when #forward() via index is removed
+        public List<ProcessorNode> children { get; }
+        protected Dictionary<string, ProcessorNode> childByName { get; }
+
+        public void punctuate(long timestamp, Punctuator punctuator)
+        {
+            long startNs = time.nanoseconds();
+            punctuator.punctuate(timestamp);
+            //nodeMetrics.nodePunctuateTimeSensor.record(time.nanoseconds() - startNs);
+        }
+
+        /**
+         * @return a string representation of this node, useful for debugging.
+         */
+        public override string ToString()
+        {
+            return ToString("");
+        }
+
+        /**
+         * @return a string representation of this node starting with the given indent, useful for debugging.
+         */
+        public virtual string ToString(string indent)
+        {
+            StringBuilder sb = new StringBuilder($"{indent}{name}:\n");
+
+            if (this.stateStores.Any())
+            {
+                sb.Append(indent)
+                  .Append("\tstates:\t\t[")
+                  .Append(string.Join(",", this.stateStores))
+                  .Append("]\n");
+            }
+
+            return sb.ToString();
+        }
     }
 
     public class ProcessorNode<K, V> : ProcessorNode
     {
-        // TODO: 'children' can be removed when #forward() via index is removed
-        public List<ProcessorNode<K, V>> children { get; }
-        private Dictionary<string, ProcessorNode<K, V>> childByName;
-
         public NodeMetrics<K, V> nodeMetrics { get; private set; }
         private IProcessor<K, V> processor;
-        public string name { get; }
-        private ITime time;
-
-        public HashSet<string> stateStores;
 
         public ProcessorNode(string name)
             : this(name, null, null)
@@ -38,18 +79,14 @@ namespace Kafka.Streams.Processor.Internals
             string name,
             IProcessor<K, V> processor,
             HashSet<string> stateStores)
+            : base(name, stateStores)
         {
-            this.name = name;
             this.processor = processor;
-            this.children = new List<ProcessorNode<K, V>>();
-            this.childByName = new Dictionary<string, ProcessorNode<K, V>>();
-            this.stateStores = stateStores;
-            this.time = new SystemTime();
         }
 
         ProcessorNode<K, V> getChild(string childName)
         {
-            return childByName[childName];
+            return (ProcessorNode<K, V>)childByName[childName];
         }
 
         public void addChild(ProcessorNode<K, V> child)
@@ -102,42 +139,6 @@ namespace Kafka.Streams.Processor.Internals
             long startNs = time.nanoseconds();
             processor.process(key, value);
             nodeMetrics.nodeProcessTimeSensor.record(time.nanoseconds() - startNs);
-        }
-
-        public void punctuate(long timestamp, Punctuator punctuator)
-        {
-            long startNs = time.nanoseconds();
-            punctuator.punctuate(timestamp);
-            //nodeMetrics.nodePunctuateTimeSensor.record(time.nanoseconds() - startNs);
-        }
-
-        /**
-         * @return a string representation of this node, useful for debugging.
-         */
-        public override string ToString()
-        {
-            return ToString("");
-        }
-
-        /**
-         * @return a string representation of this node starting with the given indent, useful for debugging.
-         */
-        public virtual string ToString(string indent)
-        {
-            StringBuilder sb = new StringBuilder(indent + name + ":\n");
-            if (stateStores != null && stateStores.Any())
-            {
-                sb.Append(indent).Append("\tstates:\t\t[");
-                foreach (string store in stateStores)
-                {
-                    sb.Append(store);
-                    sb.Append(", ");
-                }
-
-                sb.Length -= 2;  // Remove the last comma
-                sb.Append("]\n");
-            }
-            return sb.ToString();
         }
     }
 }

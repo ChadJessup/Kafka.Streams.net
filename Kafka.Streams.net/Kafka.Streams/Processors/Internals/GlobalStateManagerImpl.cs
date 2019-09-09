@@ -52,7 +52,7 @@
 //        {
 //            eosEnabled = StreamsConfig.EXACTLY_ONCE.Equals(config.getString(StreamsConfig.PROCESSING_GUARANTEE_CONFIG));
 //            baseDir = stateDirectory.globalStateDir();
-//            //            checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir, CHECKPOINT_FILE_NAME)));
+//            //            checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir, StateManagerUtil.CHECKPOINT_FILE_NAME)));
 //            checkpointFileCache = new Dictionary<TopicPartition, long>();
 
 //            // Find non persistent store's topics

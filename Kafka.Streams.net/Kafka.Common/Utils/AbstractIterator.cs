@@ -42,7 +42,7 @@ namespace Kafka.Common.Utils
         public T Current { get; }
         object IEnumerator.Current { get; }
 
-        public bool hasNext()
+        public virtual bool hasNext()
         {
             return state switch
             {
@@ -53,35 +53,41 @@ namespace Kafka.Common.Utils
             };
         }
 
-        public T next()
+        public virtual T next()
         {
             if (!hasNext())
-                throw new KeyNotFoundException();
+            {
+                throw new IndexOutOfRangeException();
+            }
+
             state = State.NOT_READY;
             if (_next == null)
                 throw new InvalidOperationException("Expected item but none found.");
             return _next;
         }
 
-        public void remove()
+        public virtual void remove()
         {
             throw new InvalidOperationException("Removal not supported");
         }
 
-        public T peek()
+        public virtual T peek()
         {
             if (!hasNext())
-                throw new KeyNotFoundException();
+            {
+                throw new IndexOutOfRangeException();
+            }
+
             return _next;
         }
 
-        protected T allDone()
+        protected virtual T allDone()
         {
             state = State.DONE;
             return default;
         }
 
-        protected abstract T makeNext();
+        public abstract T makeNext();
 
         private bool maybeComputeNext()
         {
@@ -98,7 +104,7 @@ namespace Kafka.Common.Utils
             }
         }
 
-        public bool MoveNext()
+        public virtual bool MoveNext()
         {
             throw new NotImplementedException();
         }

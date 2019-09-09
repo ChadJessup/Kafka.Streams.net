@@ -1,101 +1,99 @@
-///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements. See the NOTICE file distributed with
-// * this work for.Additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License. You may obtain a copy of the License at
-// *
-// *    http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//namespace Kafka.Streams.State.Internals
-//{
-//    using global::Kafka.Streams.Processor.Internals;
-//    using Kafka.Common.header.Headers;
-//    using Kafka.Streams.Processor.Internals.ProcessorRecordContext;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for.Additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using Confluent.Kafka;
+using Kafka.Streams.Processor.Internals;
 
+namespace Kafka.Streams.State.Internals
+{
+    /**
+     * A cache entry
+     */
+    public class LRUCacheEntry
+    {
+        private ContextualRecord record;
+        private long sizeBytes;
+        public bool isDirty { get; private set; }
 
+        public LRUCacheEntry(byte[] value)
+            : this(value, null, false, -1, -1, -1, "")
+        {
+        }
 
-//    /**
-//     * A cache entry
-//     */
-//    public class LRUCacheEntry
-//    {
-//        private ContextualRecord record;
-//        private long sizeBytes;
-//        private bool isDirty;
+        LRUCacheEntry(byte[] value,
+                      Headers headers,
+                      bool isDirty,
+                      long offset,
+                      long timestamp,
+                      int partition,
+                      string topic)
+        {
+            ProcessorRecordContext context = new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
 
+            this.record = new ContextualRecord(
+                value,
+                context
+            );
 
-//        public LRUCacheEntry(byte[] value)
-//            : this(value, null, false, -1, -1, -1, "")
-//        {
-//        }
+            this.isDirty = isDirty;
+            this.sizeBytes = 1 + // isDirty
+                record.residentMemorySizeEstimate();
+        }
 
-//        LRUCacheEntry(byte[] value,
-//                      Headers headers,
-//                      bool isDirty,
-//                      long offset,
-//                      long timestamp,
-//                      int partition,
-//                      string topic)
-//        {
-//            ProcessorRecordContext context = new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
+        public void markClean()
+        {
+            isDirty = false;
+        }
 
-//            this.record = new ContextualRecord(
-//                value,
-//                context
-//            );
+        public long size()
+        {
+            return sizeBytes;
+        }
 
-//            this.isDirty = isDirty;
-//            this.sizeBytes = 1 + // isDirty
-//                record.residentMemorySizeEstimate();
-//        }
+        public byte[] value()
+        {
+            return record.value;
+        }
 
-//        public void markClean()
-//        {
-//            isDirty = false;
-//        }
+        public ProcessorRecordContext context
+        {
+            get => record.recordContext;
+        }
 
-//        public long size()
-//        {
-//            return sizeBytes;
-//        }
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
 
-//        public byte[] value()
-//        {
-//            return record.value();
-//        }
+            LRUCacheEntry that = (LRUCacheEntry)o;
 
-//        public ProcessorRecordContext context
-//        {
-//            get => record.recordContext();
-//        }
+            return sizeBytes == that.sizeBytes
+                && isDirty == that.isDirty
+                && record.Equals(that.record);
+        }
 
-//        public override bool Equals(object o)
-//        {
-//            if (this == o)
-//            {
-//                return true;
-//            }
-//            if (o == null || GetType() != o.GetType())
-//            {
-//                return false;
-//            }
-//            LRUCacheEntry that = (LRUCacheEntry)o;
-//            return sizeBytes == that.sizeBytes &&
-//                isDirty() == that.isDirty() &&
-//                Objects.Equals(record, that.record);
-//        }
-
-//        public override int GetHashCode()
-//        {
-//            return Objects.hash(record, sizeBytes, isDirty());
-//        }
-//    }
-//}
+        public override int GetHashCode()
+        {
+            return (record, sizeBytes, isDirty).GetHashCode();
+        }
+    }
+}

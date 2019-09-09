@@ -133,7 +133,7 @@
         /// <summary>
         /// {@code cache.max.bytes.buffering}
         /// </summary>
-        public static string CACHE_MAX_BYTES_BUFFERING_CONFIG = "cache.max.bytes.buffering";
+        public static string CacheMaxBytesBuffering = "cache.max.bytes.buffering";
         // private static string CACHE_MAX_BYTES_BUFFERING_DOC = "Maximum number of memory bytes to be used for buffering across all threads";
 
         /// <summary>
@@ -234,7 +234,7 @@
         /// <summary>
         /// {@code num.stream.threads}
         /// </summary>
-        public static string NUM_STREAM_THREADS_CONFIG = "num.stream.threads";
+        public static string NumberOfStreamThreads = "num.stream.threads";
         // private static string NUM_STREAM_THREADS_DOC = "The number of threads to execute stream processing.";
 
         /// <summary>

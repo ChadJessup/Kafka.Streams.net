@@ -84,7 +84,7 @@ namespace Kafka.Streams
      */
     public class StreamsConfig : ConsumerConfig
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<StreamsConfig>();
+        private static ILogger logger = new LoggerFactory().CreateLogger<StreamsConfig>();
 
         /// <summary>
         /// Initialize a new empty <see cref="StreamsConfig" /> instance.
@@ -115,11 +115,11 @@ namespace Kafka.Streams
             set => this.SetObject(StreamsConfigPropertyNames.ApplicationId, value);
         }
 
-        public new string ClientId
-        {
-            get => Get(StreamsConfigPropertyNames.ClientId);
-            set => this.SetObject(StreamsConfigPropertyNames.ClientId, value);
-        }
+        //public string ClientId
+        //{
+        //    get => Get(StreamsConfigPropertyNames.ClientId);
+        //    set => this.SetObject(StreamsConfigPropertyNames.ClientId, value);
+        //}
 
         public Type DefaultKeySerde
         {
@@ -131,6 +131,18 @@ namespace Kafka.Streams
         {
             get => Type.GetType(Get(StreamsConfigPropertyNames.DefaultValueSerdeClass));
             set => this.SetObject(StreamsConfigPropertyNames.DefaultValueSerdeClass, value);
+        }
+
+        public int NumberOfStreamThreads
+        {
+            get => this.GetInt(StreamsConfigPropertyNames.NumberOfStreamThreads) ?? 1;
+            set => this.Set(StreamsConfigPropertyNames.NumberOfStreamThreads, value.ToString());
+        }
+
+        public long CacheMaxBytesBuffering
+        {
+            get => this.getLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering) ?? 10485760L;
+            set => this.Set(StreamsConfigPropertyNames.CacheMaxBytesBuffering, value.ToString());
         }
 
         /**
@@ -427,6 +439,8 @@ namespace Kafka.Streams
         public new int? GetInt(string key)
             => base.GetInt(key);
 
+        public string? getString(string key)
+            => base.Get(key);
         /**
          * Get the configs for the {@link KafkaConsumer restore-consumer}.
          * Properties using the prefix {@link #RESTORE_CONSUMER_PREFIX} will be used in favor over

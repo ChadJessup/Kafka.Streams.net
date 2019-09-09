@@ -21,6 +21,75 @@ namespace WordCountProcessorDemo
 {
     public class Program
     {
+        public static int Main(string[] args)
+        {
+            var streamsConfig = new StreamsConfig
+            {
+                ApplicationId = "streams-wordcount",
+                BootstrapServers = "localhost:9092",
+                DefaultKeySerde = Serdes.String().GetType(),
+                DefaultValueSerde = Serdes.String().GetType(),
+                NumberOfStreamThreads = 1,
+                CacheMaxBytesBuffering = 10485760L,
+                // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
+                // Note: To re-run the demo, you need to use the offset reset tool:
+                // https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
+                AutoOffsetReset = AutoOffsetReset.Earliest
+
+                // streamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG = 0;
+            };
+
+            var services = new ServiceCollection()
+                .AddSingleton(streamsConfig)
+                .AddLogging();
+
+            var latch = new ManualResetEvent(initialState: false);
+
+            StreamsBuilder builder = new StreamsBuilder(services);
+
+            IKStream<string, string> textLines = builder.stream<string, string>("TextLinesTopic");
+
+            IKStream<string, string> flatMappedValues =
+                textLines.flatMapValues<string>(
+                    new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
+
+            IKGroupedStream<string, string> groupedByValues = flatMappedValues.groupBy<string>((key, word) => word);
+
+            IKTable<string, long> wordCounts = groupedByValues.count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
+
+            IKStream<string, long> wordCountsStream = wordCounts.toStream();
+
+            wordCountsStream.to(
+                "WordsWithCountsTopic",
+                Produced<string, long>.with(
+                Serdes.String(),
+                Serdes.Long()));
+
+            // Make the topology injectable
+            var topology = builder.build();
+            services.AddSingleton(topology);
+
+            using KafkaStreams streams = builder.BuildKafkaStreams(); 
+
+            // attach shutdown handler to catch control-c
+            Console.CancelKeyPress += (o, e) =>
+            {
+                latch.Set();
+            };
+
+            try
+            {
+                streams.start();
+                latch.WaitOne();
+            }
+            catch (Exception e)
+            {
+                return 1;
+            }
+
+            return 0;
+        }
+
         public void test()
         {
             //// Serializers/deserializers (serde) for String and Long types
@@ -63,69 +132,6 @@ namespace WordCountProcessorDemo
             //    .with(Serdes.String(), Serdes.Long()));
 
             //KafkaStreams streams2 = new KafkaStreams(builder.build(), streamsConfig);
-        }
-
-        public static int Main(string[] args)
-        {
-            var streamsConfig = new StreamsConfig
-            {
-                ApplicationId = "streams-wordcount",
-                BootstrapServers = "localhost:9092",
-                DefaultKeySerde = Serdes.String().GetType(),
-                DefaultValueSerde = Serdes.String().GetType(),
-
-                // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
-                // Note: To re-run the demo, you need to use the offset reset tool:
-                // https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
-                AutoOffsetReset = AutoOffsetReset.Earliest
-
-                //            streamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG = 0;
-            };
-            var services = new ServiceCollection()
-                .AddSingleton(streamsConfig)
-                .AddLogging();
-
-            var latch = new ManualResetEvent(initialState: false);
-
-            StreamsBuilder builder = new StreamsBuilder(services);
-
-            IKStream<string, string> textLines = builder.stream<string, string>("TextLinesTopic");
-
-            IKStream<string, string> flatMappedValues =
-                textLines.flatMapValues<string>(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
-
-            IKGroupedStream<string, string> groupedByValues = flatMappedValues.groupBy<string>((key, word) => word);
-
-            IKTable<string, long> wordCounts = groupedByValues.count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
-
-            IKStream<string, long> wordCountsStream = wordCounts.toStream();
-
-            wordCountsStream.to(
-                "WordsWithCountsTopic",
-                Produced<string, long>.with(
-                Serdes.String(), 
-                Serdes.Long()));
-
-            using KafkaStreams streams =
-                new KafkaStreams(builder.build(), streamsConfig);
-
-            // attach shutdown handler to catch control-c
-            Console.CancelKeyPress += (o, e) =>
-            {
-                latch.Set();
-            };
-
-            try
-            {
-                streams.start();
-                latch.WaitOne();
-            }
-            catch (Exception e)
-            {
-                return 1;
-            }
-
-            return 0;
         }
     }
 }

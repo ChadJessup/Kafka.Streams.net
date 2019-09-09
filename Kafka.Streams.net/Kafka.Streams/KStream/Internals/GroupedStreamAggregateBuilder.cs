@@ -17,9 +17,12 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
+using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -65,9 +68,9 @@ namespace Kafka.Streams.KStream.Internals
             ISerde<KR> keySerde,
             ISerde<VR> valSerde)
         {
-            if (queryableStoreName == null || queryableStoreName.Equals(storeBuilder.name))
+            if (queryableStoreName != null && !queryableStoreName.Equals(storeBuilder.name))
             {
-
+                throw new ArgumentException($"{nameof(queryableStoreName)} must match {nameof(storeBuilder.name)}");
             }
 
             string aggFunctionName = builder.NewProcessorName(functionName);
@@ -78,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
             if (repartitionRequired)
             {
                 OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder
-                    = optimizableRepartitionNodeBuilder();
+                    = OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
                 string repartitionTopicPrefix = userProvidedRepartitionTopicName != null
                     ? userProvidedRepartitionTopicName
@@ -107,13 +110,13 @@ namespace Kafka.Streams.KStream.Internals
 
             builder.AddGraphNode(parentNode, statefulProcessorNode);
 
-            return new KTable<KR, VR>(
+            return new KTable<KR, object, VR>(
                 aggFunctionName,
                 keySerde,
                 valSerde,
                 sourceName.Equals(this.name) ? sourceNodes : new HashSet<string> { sourceName },
                 queryableStoreName,
-                aggregateSupplier,
+                aggregateSupplier.GetSwappedProcessorSupplier(),
                 statefulProcessorNode,
                 builder);
         }
@@ -124,14 +127,11 @@ namespace Kafka.Streams.KStream.Internals
         private string createRepartitionSource(
             string repartitionTopicNamePrefix,
             OptimizableRepartitionNodeBuilder<K, V> optimizableRepartitionNodeBuilder)
-        {
-
-            return KStream<K, V>.createRepartitionedSource(
+            => KStream<K, V>.CreateRepartitionedSource(
                 builder,
                 keySerde,
                 valueSerde,
                 repartitionTopicNamePrefix,
                 optimizableRepartitionNodeBuilder);
-        }
     }
 }

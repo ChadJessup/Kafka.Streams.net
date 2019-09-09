@@ -1,84 +1,100 @@
-///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements. See the NOTICE file distributed with
-// * this work for.Additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License. You may obtain a copy of the License at
-// *
-// *    http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//using Confluent.Kafka;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with
+ * this work for.Additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+using Confluent.Kafka;
+using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Internals;
+using System;
+using System.Collections.Generic;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
-//    {
-//        private static LongDeserializer LONG_DESERIALIZER = new LongDeserializer();
+namespace Kafka.Streams.State.Internals
+{
+    public class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
+    {
+        private static IDeserializer<long> LONG_DESERIALIZER = Serdes.Long().Deserializer;
 
-//        public IDeserializer<V> valueDeserializer;
-//        private IDeserializer<long> timestampDeserializer;
+        public IDeserializer<V> valueDeserializer;
+        private IDeserializer<long> timestampDeserializer;
 
-//        ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
-//        {
-//            Objects.requireNonNull(valueDeserializer);
-//            this.valueDeserializer = valueDeserializer;
-//            timestampDeserializer = new LongDeserializer();
-//        }
+        public ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
+        {
+            valueDeserializer = valueDeserializer ?? throw new ArgumentNullException(nameof(valueDeserializer));
 
-//        public override void configure(Dictionary<string, object> configs,
-//                              bool isKey)
-//        {
-//            valueDeserializer.configure(configs, isKey);
-//            timestampDeserializer.configure(configs, isKey);
-//        }
+            this.valueDeserializer = valueDeserializer;
+            timestampDeserializer = Serdes.Long().Deserializer;
+        }
 
-//        public override ValueAndTimestamp<V> deserialize(string topic,
-//                                                byte[] valueAndTimestamp)
-//        {
-//            if (valueAndTimestamp == null)
-//            {
-//                return null;
-//            }
+        public void Configure(
+            Dictionary<string, object> configs,
+            bool isKey)
+        {
+            // valueDeserializer.configure(configs, isKey);
+            // timestampDeserializer.configure(configs, isKey);
+        }
 
-//            long timestamp = timestampDeserializer.Deserialize(topic, rawTimestamp(valueAndTimestamp));
-//            V value = valueDeserializer.Deserialize(topic, rawValue(valueAndTimestamp));
-//            return ValueAndTimestamp.make(value, timestamp);
-//        }
+        public ValueAndTimestamp<V> Deserialize(
+            string topic,
+            byte[] valueAndTimestamp)
+        {
+            if (valueAndTimestamp == null)
+            {
+                return null;
+            }
 
-//        public override void close()
-//        {
-//            valueDeserializer.close();
-//            timestampDeserializer.close();
-//        }
+            long timestamp = timestampDeserializer.Deserialize(rawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
+            V value = valueDeserializer.Deserialize(rawValue(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
 
-//        static byte[] rawValue(byte[] rawValueAndTimestamp)
-//        {
-//            int rawValueLength = rawValueAndTimestamp.Length - 8;
+            return ValueAndTimestamp<V>.make(value, timestamp);
+        }
 
-//            return ByteBuffer
-//                .allocate(rawValueLength)
-//                .Add(rawValueAndTimestamp, 8, rawValueLength)
-//                .array();
-//        }
+        public void Close()
+        {
+            // valueDeserializer.close();
+            // timestampDeserializer.close();
+        }
 
-//        private static byte[] rawTimestamp(byte[] rawValueAndTimestamp)
-//        {
-//            return ByteBuffer
-//                .allocate(8)
-//                .Add(rawValueAndTimestamp, 0, 8)
-//                .array();
-//        }
+        static byte[] rawValue(byte[] rawValueAndTimestamp)
+        {
+            int rawValueLength = rawValueAndTimestamp.Length - 8;
 
-//        static long timestamp(byte[] rawValueAndTimestamp)
-//        {
-//            return LONG_DESERIALIZER.Deserialize(null, rawTimestamp(rawValueAndTimestamp));
-//        }
-//    }
-//}
+            return new ByteBuffer()
+                .allocate(rawValueLength)
+                .Add(rawValueAndTimestamp)//, 8, rawValueLength)
+                .array();
+        }
+
+        private static byte[] rawTimestamp(byte[] rawValueAndTimestamp)
+        {
+            return new ByteBuffer()
+                .allocate(8)
+                .add(rawValueAndTimestamp)//.UnionWith(, 0, 8 })
+                .array();
+        }
+
+        static long timestamp(byte[] rawValueAndTimestamp)
+        {
+            return LONG_DESERIALIZER.Deserialize(rawTimestamp(rawValueAndTimestamp), false, new SerializationContext());
+        }
+
+        public ValueAndTimestamp<V> Deserialize(
+            ReadOnlySpan<byte> data,
+            bool isNull,
+            SerializationContext context)
+        {
+            return Deserialize(context.Topic, data.ToArray());
+        }
+    }
+}

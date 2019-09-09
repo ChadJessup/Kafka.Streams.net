@@ -15,6 +15,9 @@
  * limitations under the License.
  */
 
+using Kafka.Streams.KStream.Interfaces;
+using System;
+
 namespace Kafka.Streams.Interfaces
 {
     /**
@@ -28,6 +31,10 @@ namespace Kafka.Streams.Interfaces
          * @param newState new state
          * @param oldState previous state
          */
-        void onChange(KafkaStreamsStates newState, KafkaStreamsStates oldState);
+        void onChange<States>(
+            IThread<States> thread, 
+            States newState,
+            States oldState)
+            where States : Enum;
     }
 }

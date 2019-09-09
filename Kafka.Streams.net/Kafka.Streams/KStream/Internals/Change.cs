@@ -30,9 +30,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public override string ToString()
-        {
-            return "(" + newValue + "<-" + oldValue + ")";
-        }
+            => $"({newValue}<-{oldValue})";
 
         public override bool Equals(object o)
         {
@@ -47,7 +45,8 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             Change<object> change = (Change<object>)o;
-            return newValue.Equals(change.newValue)
+
+            return newValue?.Equals(change.newValue) ?? false
                 && oldValue.Equals(change.oldValue);
         }
 

@@ -21,12 +21,14 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -79,8 +81,32 @@ namespace Kafka.Streams
                 : this(new ConfigurationBuilder().Build(), new ServiceCollection())
             { }
 
+            public KafkaStreams BuildKafkaStreams()
+                => this.services.GetRequiredService<KafkaStreams>();
+
             private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
             {
+                serviceCollection.TryAddSingleton<KafkaStreams>(sp =>
+                {
+                    var ks = ActivatorUtilities.CreateInstance<KafkaStreams>(sp,
+                        sp.GetRequiredService<ILogger<KafkaStreams>>(),
+                        sp.GetRequiredService<KafkaStreamsState>(),
+                        this.build(),
+                        sp.GetRequiredService<StreamsConfig>(),
+                        sp);
+
+                    return ks;
+                });
+                serviceCollection.TryAddSingleton<KafkaStreamsState>();
+
+                serviceCollection.TryAddSingleton<GlobalStreamThread>();
+                serviceCollection.TryAddSingleton<GlobalStreamThreadState>();
+
+                serviceCollection.TryAddScoped<StreamThread>();
+                serviceCollection.TryAddScoped<StreamThreadState>();
+
+                serviceCollection.TryAddSingleton<StreamStateListener>();
+
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
                 serviceCollection.TryAddSingleton<Topology>();
@@ -222,8 +248,8 @@ namespace Kafka.Streams
                 topicPattern = topicPattern ?? throw new ArgumentNullException("topic can't be null", nameof(topicPattern));
                 consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
 
-                return null; 
-                    //internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
+                return null;
+                //internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
             }
 
             /**

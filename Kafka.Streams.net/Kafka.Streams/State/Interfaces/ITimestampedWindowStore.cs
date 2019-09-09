@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.State.Internals
+using Kafka.Streams.State.Interfaces;
+
+namespace Kafka.Streams.State
 {
-
-
-    public interface CachedStateStore<K, V>
+    /**
+     * Interface for storing the aggregated values of fixed-size time windows.
+     * <p>
+     * Note, that the stores's physical key type is {@link Windowed Windowed&lt;K&gt;}.
+     * In contrast to a {@link WindowStore} that stores plain windowedKeys-value pairs,
+     * a {@code TimestampedWindowStore} stores windowedKeys-(value/timestamp) pairs.
+     * <p>
+     * While the window start- and end-timestamp are fixed per window, the value-side timestamp is used
+     * to store the last update timestamp of the corresponding window.
+     *
+     * @param Type of keys
+     * @param Type of values
+     */
+    public interface ITimestampedWindowStore<K, V> : IWindowStore<K, ValueAndTimestamp<V>>
     {
-        /**
-         * Set the {@link CacheFlushListener} to be notified when entries are flushed from the
-         * cache to the underlying {@link org.apache.kafka.streams.processor.IStateStore}
-         * @param listener
-         * @param sendOldValues
-         */
-        bool setFlushListener(ICacheFlushListener<K, V> listener,
-                                 bool sendOldValues);
     }
 }

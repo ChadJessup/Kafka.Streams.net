@@ -25,7 +25,6 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StatefulProcessorNode<K, V> : ProcessorGraphNode<K, V>
     {
-
         private string[] storeNames;
         private IStoreBuilder<IStateStore> storeBuilder;
 

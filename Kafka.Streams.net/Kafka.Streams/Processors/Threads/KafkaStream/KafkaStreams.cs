@@ -18,26 +18,24 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Common.Interfaces;
 using Kafka.Common.Metrics;
-using Kafka.Common.Metrics.Interfaces;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Internals.Kafka.Streams.Internals;
-using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor;
+using Kafka.Streams.Internals;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Threading;
 
 namespace Kafka.Streams
 {
@@ -82,49 +80,31 @@ namespace Kafka.Streams
      */
     public class KafkaStreams : IDisposable
     {
-        private static string JMX_PREFIX = "kafka.streams";
+        // private static string JMX_PREFIX = "kafka.streams";
 
         // processId is expected to be unique across JVMs and to be used
         // in userData of the subscription request to allow assignor be aware
         // of the co-location of stream thread's consumers. It is for internal
         // usage only and should not be exposed to users at all.
         private ITime time;
-        private ILogger log;
-        private string clientId;
+        private readonly IServiceProvider services;
+        private readonly ILogger<KafkaStreams> logger;
+        private readonly string clientId;
+        private readonly StreamsConfig config;
         private MetricsRegistry metrics;
-        private StreamsConfig config;
-        //protected StreamThread[] threads;
+        protected StreamThread[] threads;
         //private StateDirectory stateDirectory;
         private StreamsMetadataState streamsMetadataState;
         //        private ScheduledExecutorService stateDirCleaner;
         //private QueryableStoreProvider queryableStoreProvider;
-        private IAdminClient adminClient;
+        private readonly IAdminClient adminClient;
 
-        //private GlobalStreamThread globalStreamThread;
+        private readonly GlobalStreamThread globalStreamThread;
         private IStateListener stateListener;
         private IStateRestoreListener globalStateRestoreListener;
 
         private object stateLock = new object();
-        protected KafkaStreamsState state = new KafkaStreamsState(KafkaStreamsStates.CREATED);
-
-        /**
- * Create a {@code KafkaStreams} instance.
- * <p>
- * Note: even if you never call {@link #start()} on a {@code KafkaStreams} instance,
- * you still must {@link #close()} it to avoid resource leaks.
- *
- * @param topology the topology specifying the computational logic
- * @param props    properties for {@link StreamsConfig}
- * @throws StreamsException if any fatal error occurs
- */
-        public KafkaStreams(
-            Topology topology,
-            StreamsConfig config)
-            : this(topology.internalTopologyBuilder,
-                  config,
-                  new DefaultKafkaClientSupplier())
-        {
-        }
+        protected KafkaStreamsState state = null;
 
         /**
          * Create a {@code KafkaStreams} instance.
@@ -132,44 +112,82 @@ namespace Kafka.Streams
          * Note: even if you never call {@link #start()} on a {@code KafkaStreams} instance,
          * you still must {@link #close()} it to avoid resource leaks.
          *
-         * @param topology       the topology specifying the computational logic
-         * @param props          properties for {@link StreamsConfig}
-         * @param clientSupplier the Kafka clients supplier which provides underlying producer and consumer clients
-         *                       for the new {@code KafkaStreams} instance
+         * @param topology the topology specifying the computational logic
+         * @param props    properties for {@link StreamsConfig}
          * @throws StreamsException if any fatal error occurs
          */
         public KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
             Topology topology,
             StreamsConfig config,
-            IKafkaClientSupplier clientSupplier)
+            IServiceProvider serviceProvider)
             : this(
-                  topology.internalTopologyBuilder,
-                  config,
-                  clientSupplier,
-                  Time.SYSTEM)
-        {
-        }
-
-        /**
-         * Create a {@code KafkaStreams} instance.
-         * <p>
-         * Note: even if you never call {@link #start()} on a {@code KafkaStreams} instance,
-         * you still must {@link #close()} it to avoid resource leaks.
-         *
-         * @param topology       the topology specifying the computational logic
-         * @param props          properties for {@link StreamsConfig}
-         * @param time           {@code Time} implementation; cannot be null
-         * @throws StreamsException if any fatal error occurs
-         */
-        public KafkaStreams(
-            Topology topology,
-            StreamsConfig config,
-            Time time)
-            : this(
+                  logger,
+                  state,
                   topology.internalTopologyBuilder,
                   config,
                   new DefaultKafkaClientSupplier(),
-                  time)
+                  serviceProvider)
+        {
+        }
+
+        /**
+         * Create a {@code KafkaStreams} instance.
+         * <p>
+         * Note: even if you never call {@link #start()} on a {@code KafkaStreams} instance,
+         * you still must {@link #close()} it to avoid resource leaks.
+         *
+         * @param topology       the topology specifying the computational logic
+         * @param props          properties for {@link StreamsConfig}
+         * @param clientSupplier the Kafka clients supplier which provides underlying producer and consumer clients
+         *                       for the new {@code KafkaStreams} instance
+         * @throws StreamsException if any fatal error occurs
+         */
+        public KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
+            Topology topology,
+            StreamsConfig config,
+            IKafkaClientSupplier clientSupplier,
+            IServiceProvider serviceProvider)
+            : this(
+                  logger,
+                  state,
+                  topology.internalTopologyBuilder,
+                  config,
+                  clientSupplier,
+                  Time.SYSTEM,
+                  serviceProvider)
+        {
+        }
+
+        /**
+         * Create a {@code KafkaStreams} instance.
+         * <p>
+         * Note: even if you never call {@link #start()} on a {@code KafkaStreams} instance,
+         * you still must {@link #close()} it to avoid resource leaks.
+         *
+         * @param topology       the topology specifying the computational logic
+         * @param props          properties for {@link StreamsConfig}
+         * @param time           {@code Time} implementation; cannot be null
+         * @throws StreamsException if any fatal error occurs
+         */
+        public KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
+            Topology topology,
+            StreamsConfig config,
+            Time time,
+            IServiceProvider serviceProvider)
+            : this(
+                  logger,
+                  state,
+                  topology.internalTopologyBuilder,
+                  config,
+                  new DefaultKafkaClientSupplier(),
+                  time,
+                  serviceProvider)
         {
         }
 
@@ -187,15 +205,21 @@ namespace Kafka.Streams
          * @throws StreamsException if any fatal error occurs
          */
         public KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
             Topology topology,
             StreamsConfig config,
             IKafkaClientSupplier clientSupplier,
-            Time time)
+            Time time,
+            IServiceProvider serviceProvider)
             : this(
+                  logger,
+                  state,
                   topology.internalTopologyBuilder,
                   config,
                   clientSupplier,
-                  time)
+                  time,
+                  serviceProvider)
         {
         }
 
@@ -229,23 +253,35 @@ namespace Kafka.Streams
         //    }
 
         private KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
             InternalTopologyBuilder internalTopologyBuilder,
             StreamsConfig config,
-            IKafkaClientSupplier clientSupplier)
+            IKafkaClientSupplier clientSupplier,
+            IServiceProvider serviceProvider)
             : this(
+                  logger,
+                  state,
                   internalTopologyBuilder,
                   config,
                   clientSupplier,
-                  Time.SYSTEM)
+                  Time.SYSTEM,
+                  serviceProvider)
         {
         }
 
         private KafkaStreams(
+            ILogger<KafkaStreams> logger,
+            KafkaStreamsState state,
             InternalTopologyBuilder internalTopologyBuilder,
             StreamsConfig config,
             IKafkaClientSupplier clientSupplier,
-            ITime time)
+            ITime time,
+            IServiceProvider serviceProvider)
         {
+            this.logger = logger;
+            this.services = serviceProvider;
+            this.state = state;
             this.config = config;
             this.time = time;
 
@@ -264,8 +300,7 @@ namespace Kafka.Streams
                 clientId = userClientId;
             }
 
-            LogContext logContext = new LogContext(string.Format("stream-client [%s] ", clientId));
-            this.log = logContext.logger(GetType());
+//            LogContext logContext = new LogContext(string.Format("stream-client [%s] ", clientId));
 
             //MetricConfig metricConfig = new MetricConfig()
             //    .samples(config.GetInt(StreamsConfig.METRICS_NUM_SAMPLES_CONFIG))
@@ -281,98 +316,110 @@ namespace Kafka.Streams
             internalTopologyBuilder.rewriteTopology(config);
 
             // sanity check to fail-fast in case we cannot build a ProcessorTopology due to an exception
-            //            var taskTopology = internalTopologyBuilder.build();
+            var taskTopology = internalTopologyBuilder.build();
 
-            //            streamsMetadataState = new StreamsMetadataState(
-            //                    internalTopologyBuilder,
-            //                    parseHostInfo(config.Get(StreamsConfigPropertyNames.ApplicationServer)));
+            streamsMetadataState = new StreamsMetadataState(
+                    internalTopologyBuilder,
+                    parseHostInfo(config.Get(StreamsConfigPropertyNames.ApplicationServer)));
 
-            //            // create the stream thread, global update thread, and cleanup thread
-            //            threads = new StreamThread[config.GetInt(StreamsConfigPropertyNames.NUM_STREAM_THREADS_CONFIG).Value];
+            //create the stream thread, global update thread, and cleanup thread
+            threads = new StreamThread[config.GetInt(StreamsConfigPropertyNames.NumberOfStreamThreads).Value];
 
-            //            long totalCacheSize = config.getLong(StreamsConfigPropertyNames.CACHE_MAX_BYTES_BUFFERING_CONFIG).Value;
-            //            if (totalCacheSize < 0)
-            //            {
-            //                totalCacheSize = 0;
-            //                log.LogWarning("Negative cache size passed in. Reverting to cache size of 0 bytes.");
-            //            }
+            long totalCacheSize = config.getLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering).Value;
+            if (totalCacheSize < 0)
+            {
+                totalCacheSize = 0;
+                logger.LogWarning("Negative cache size passed in. Reverting to cache size of 0 bytes.");
+            }
 
-            //            var globalTaskTopology = internalTopologyBuilder.buildGlobalStateTopology();
-            //            long cacheSizePerThread = totalCacheSize / (threads.Length + (globalTaskTopology == null ? 0 : 1));
-            //            bool createStateDirectory = taskTopology.hasPersistentLocalStore()
-            //                || (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
+            var globalTaskTopology = internalTopologyBuilder.buildGlobalStateTopology();
+            long cacheSizePerThread = totalCacheSize / (threads.Length + (globalTaskTopology == null ? 0 : 1));
+            bool createStateDirectory = taskTopology.hasPersistentLocalStore()
+                || (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
 
-            //            try
-            //            {
-            //                stateDirectory = new StateDirectory(config, time, createStateDirectory);
-            //            }
-            //            catch (ProcessorStateException fatal)
-            //            {
-            //                throw new StreamsException(fatal);
-            //            }
+            try
+            {
+                // stateDirectory = new StateDirectory(config, time, createStateDirectory);
+            }
+            catch (ProcessorStateException fatal)
+            {
+                throw new StreamsException(fatal);
+            }
 
-            //            IStateRestoreListener delegatingStateRestoreListener = new DelegatingStateRestoreListener();
-            //            //GlobalStreamThread.State globalThreadState = null;
-            //            if (globalTaskTopology != null)
-            //            {
-            //                string globalThreadId = clientId + "-GlobalStreamThread";
-            //                //globalStreamThread = new GlobalStreamThread(
-            //                //    globalTaskTopology,
-            //                //    config,
-            //                //    clientSupplier.getGlobalConsumer(config.GetGlobalConsumerConfigs(clientId)),
-            //                //    stateDirectory,
-            //                //    cacheSizePerThread,
-            //                //    metrics,
-            //                //    time,
-            //                //    globalThreadId,
-            //                //    delegatingStateRestoreListener);
+            IStateRestoreListener delegatingStateRestoreListener = new DelegatingStateRestoreListener();
+            GlobalStreamThreadState globalThreadState = null;
+            if (globalTaskTopology != null)
+            {
+                string globalThreadId = $"{clientId}-GlobalStreamThread";
 
-            ////                globalThreadState = globalStreamThread.state();
-            //            }
+                globalStreamThread = ActivatorUtilities.CreateInstance<GlobalStreamThread>(
+                    this.services,
+                    globalTaskTopology,
+                    config,
+                    clientSupplier.getGlobalConsumer(config.GetGlobalConsumerConfigs(clientId)),
+                    //stateDirectory,
+                    cacheSizePerThread,
+                    metrics,
+                    time,
+                    globalThreadId//,
+                    //delegatingStateRestoreListener);
+                    );
+
+                globalThreadState = globalStreamThread.State as GlobalStreamThreadState
+                    ?? throw new ArgumentException($"Expected a {nameof(GlobalStreamThreadState)} got {globalStreamThread.State.GetType()}");
+            }
+
 
             // use client id instead of thread client id since this admin client may be shared among threads
-            //            adminClient = clientSupplier.getAdminClient(config.getAdminConfigs(StreamThread.getSharedAdminClientId(clientId)));
+            this.adminClient = clientSupplier.getAdminClient(config.getAdminConfigs(StreamThread.getSharedAdminClientId(clientId)));
 
-            //Dictionary<long, StreamThread.StreamThreadState> threadState = new Dictionary<long, StreamThread.StreamThreadState>(threads.Length);
-            //List<IStateStoreProvider> storeProviders = new List<IStateStoreProvider>();
-            //for (int i = 0; i < threads.Length; i++)
-            //{
-            //    threads[i] = StreamThread.create(
-            //        internalTopologyBuilder,
-            //        config,
-            //        clientSupplier,
-            //        adminClient,
-            //        processId,
-            //        clientId,
-            //        metrics,
-            //        time,
-            //        streamsMetadataState,
-            //        cacheSizePerThread,
-            //        stateDirectory,
-            //        delegatingStateRestoreListener,
-            //        i + 1);
+            Dictionary<long, StreamThreadState> threadState = new Dictionary<long, StreamThreadState>(threads.Length);
+            List<IStateStoreProvider> storeProviders = new List<IStateStoreProvider>();
+            for (int i = 0; i < threads.Length; i++)
+            {
+                threads[i] = StreamThread.create(
+                    internalTopologyBuilder,
+                    config,
+                    clientSupplier,
+                    adminClient,
+                    processId,
+                    clientId,
+                    metrics,
+                    time,
+                    streamsMetadataState,
+                    cacheSizePerThread,
+                    //stateDirectory,
+                    delegatingStateRestoreListener,
+                    i + 1);
 
-            //    threadState.Add(threads[i].getId(), threads[i].state());
-            //    storeProviders.Add(new StreamThreadStateStoreProvider(threads[i]));
-            //}
+                threadState.Add(threads[i].Thread.ManagedThreadId, threads[i].State as StreamThreadState);
+                storeProviders.Add(new StreamThreadStateStoreProvider(threads[i]));
+            }
 
-            //StreamStateListener streamStateListener = new StreamStateListener(threadState, globalThreadState);
-            //if (globalTaskTopology != null)
-            //{
-            //    globalStreamThread.setStateListener(streamStateListener);
-            //}
-            //        foreach (StreamThread thread in threads) {
-            //            thread.setStateListener(streamStateListener);
-            //        }
+            StreamStateListener streamStateListener = new StreamStateListener(
+                null,
+                threadState,
+                globalThreadState,
+                this.state);
 
-            //        GlobalStateStoreProvider globalStateStoreProvider = new GlobalStateStoreProvider(internalTopologyBuilder.globalStateStores());
+            if (globalTaskTopology != null)
+            {
+                globalStreamThread.setStateListener(streamStateListener);
+            }
+            foreach (StreamThread thread in threads)
+            {
+                thread.setStateListener(streamStateListener);
+            }
+
+            //GlobalStateStoreProvider globalStateStoreProvider = new GlobalStateStoreProvider(internalTopologyBuilder.globalStateStores());
             //queryableStoreProvider = new QueryableStoreProvider(storeProviders, globalStateStoreProvider);
 
-            //stateDirCleaner = Executors.newSingleThreadScheduledExecutor(r => {
-            //            Thread thread = new Thread(r, clientId + "-CleanupThread");
-            //thread.setDaemon(true);
-            //            return thread;
-            //        });
+            //stateDirCleaner = Executors.newSingleThreadScheduledExecutor(r =>
+            //{
+            //    Thread thread = new Thread(r, clientId + "-CleanupThread");
+            //    thread.setDaemon(true);
+            //    return thread;
+            //});
         }
         private bool waitOnState(KafkaStreamsStates targetState, long waitMs)
         {
@@ -396,7 +443,7 @@ namespace Kafka.Streams
                     }
                     else
                     {
-                        log.LogDebug("Cannot transit to {} within {}ms", targetState, waitMs);
+                        logger.LogDebug("Cannot transit to {} within {}ms", targetState, waitMs);
                         return false;
                     }
 
@@ -451,17 +498,17 @@ namespace Kafka.Streams
                 }
                 else
                 {
-                    log.LogInformation("State transition from {} to {}", oldState, newState);
+                    logger.LogInformation("State transition from {} to {}", oldState, newState);
                 }
 
-                state.CurrentState = newState;
+                this.state.setState(newState);
                 //stateLock.notifyAll();
             }
 
             // we need to call the user customized state listener outside the state lock to avoid potential deadlocks
             if (stateListener != null)
             {
-                stateListener.onChange(newState, oldState);
+                stateListener.onChange(null, newState, oldState);
             }
 
             return true;
@@ -597,7 +644,7 @@ namespace Kafka.Streams
             string host = getHost(endPoint);
             int port = getPort(endPoint);
 
-            if (host == null || port == null)
+            if (host == null)
             {
                 throw new Exception(string.Format("Error parsing host address %s. Expected string.Format host:port.", endPoint));
             }
@@ -637,33 +684,33 @@ namespace Kafka.Streams
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void start()
         {
-            //if (setState(State.REBALANCING))
-            //{
-            //    log.LogDebug("Starting Streams client");
+            if (setState(KafkaStreamsStates.REBALANCING))
+            {
+                logger.LogDebug("Starting Streams client");
 
-            //    if (globalStreamThread != null)
-            //    {
-            //        globalStreamThread.start();
-            //    }
+                if (globalStreamThread != null)
+                {
+                    globalStreamThread.start();
+                }
 
-            //    //foreach (StreamThread thread in threads)
-            //    //{
-            //    //    thread.start();
-            //    //}
+                //foreach (StreamThread thread in threads)
+                //{
+                //    thread.start();
+                //}
 
-            //    long cleanupDelay = config.getLong(StreamConfigPropertyNames.STATE_CLEANUP_DELAY_MS_CONFIG).Value;
-            //    //stateDirCleaner.scheduleAtFixedRate(()=> {
-            //    //    // we do not use lock here since we only read on the value and act on it
-            //    //    if (state == State.RUNNING)
-            //    //    {
-            //    //        stateDirectory.cleanRemovedTasks(cleanupDelay);
-            //    //    }
-            //    //}, cleanupDelay, cleanupDelay, TimeUnit.MILLISECONDS);
-            //}
-            //else
-            //{
-            //    throw new Exception("The client is either already started or already stopped, cannot re-start");
-            //}
+                long cleanupDelay = config.getLong(StreamsConfigPropertyNames.STATE_CLEANUP_DELAY_MS_CONFIG).Value;
+                //stateDirCleaner.scheduleAtFixedRate(()=> {
+                //    // we do not use lock here since we only read on the value and act on it
+                //    if (state == State.RUNNING)
+                //    {
+                //        stateDirectory.cleanRemovedTasks(cleanupDelay);
+                //    }
+                //}, cleanupDelay, cleanupDelay, TimeUnit.MILLISECONDS);
+            }
+            else
+            {
+                throw new Exception("The client is either already started or already stopped, cannot re-start");
+            }
         }
 
         /**
@@ -692,7 +739,7 @@ namespace Kafka.Streams
         {
             long timeoutMs = 0; // timeUnit.toMillis(timeout);
 
-            log.LogDebug("Stopping Streams client with timeoutMillis = {} ms. You are using deprecated method. " +
+            logger.LogDebug("Stopping Streams client with timeoutMillis = {} ms. You are using deprecated method. " +
                 "Please, consider update your code.", timeoutMs);
 
             if (timeoutMs < 0)
@@ -812,7 +859,7 @@ namespace Kafka.Streams
                 throw new ArgumentException("Timeout can't be negative.");
             }
 
-            log.LogDebug("Stopping Streams client with timeoutMillis = {} ms.", timeoutMs);
+            logger.LogDebug("Stopping Streams client with timeoutMillis = {} ms.", timeoutMs);
 
             return close(timeoutMs);
         }

@@ -16,8 +16,7 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Internals.Kafka.Streams.Internals;
-using Kafka.Streams.KStream;
+using Kafka.Streams.Internals;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
@@ -261,7 +260,8 @@ namespace Kafka.Streams.KStream
          */
         public static Materialized<K, V, IKeyValueStore<Bytes, byte[]>> As(IKeyValueBytesStoreSupplier supplier)
         {
-            supplier = supplier ?? throw new ArgumentNullException("supplier can't be null", nameof(supplier));
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
+
             return new Materialized<K, V, IKeyValueStore<Bytes, byte[]>>(supplier);
         }
 
@@ -277,6 +277,7 @@ namespace Kafka.Streams.KStream
         {
             loggingEnabled = true;
             this.topicConfig = config;
+
             return this;
         }
 
@@ -288,6 +289,7 @@ namespace Kafka.Streams.KStream
         {
             loggingEnabled = false;
             this.topicConfig.Clear();
+
             return this;
         }
 
@@ -298,6 +300,7 @@ namespace Kafka.Streams.KStream
         public Materialized<K, V, S> withCachingEnabled()
         {
             cachingEnabled = true;
+
             return this;
         }
 
@@ -308,6 +311,7 @@ namespace Kafka.Streams.KStream
         public Materialized<K, V, S> withCachingDisabled()
         {
             cachingEnabled = false;
+
             return this;
         }
 

@@ -32,7 +32,7 @@ namespace Kafka.Streams.State.Internals
         public static Bytes upperRange(Bytes key, byte[] maxSuffix)
         {
             byte[] bytes = key.get();
-            ByteBuffer rangeEnd = ByteBuffer.allocate(bytes.Length + maxSuffix.Length);
+            ByteBuffer rangeEnd = new ByteBuffer().allocate(bytes.Length + maxSuffix.Length);
 
             int i = 0;
             while (i < bytes.Length && (
@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.Internals
         public static Bytes lowerRange(Bytes key, byte[] minSuffix)
         {
             byte[] bytes = key.get();
-            ByteBuffer rangeStart = ByteBuffer.allocate(bytes.Length + minSuffix.Length);
+            ByteBuffer rangeStart = new ByteBuffer().allocate(bytes.Length + minSuffix.Length);
             // any key in the range would start at least with the given prefix to be
             // in the range, and have at least SUFFIX_SIZE number of trailing zero bytes.
 

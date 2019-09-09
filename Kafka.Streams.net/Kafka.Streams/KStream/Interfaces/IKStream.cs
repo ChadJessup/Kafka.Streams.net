@@ -56,7 +56,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> filter(IPredicate<K, V> predicate);
+        IKStream<K, V> filter(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KStream} that consists of all records of this stream which satisfy the given predicate.
@@ -68,7 +68,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKStream<K, V> filter(IPredicate<K, V> predicate, Named named);
+        IKStream<K, V> filter(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -80,7 +80,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> filterNot(IPredicate<K, V> predicate);
+        IKStream<K, V> filterNot(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KStream} that consists all records of this stream which do <em>not</em> satisfy the given
@@ -93,7 +93,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KStream} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKStream<K, V> filterNot(IPredicate<K, V> predicate, Named named);
+        IKStream<K, V> filterNot(Func<K, V, bool> predicate, Named named);
 
         /**
          * Set a new key (with possibly new type) for each input record.
@@ -241,8 +241,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper,
-                                      Named named);
+        IKStream<KR, VR> map<KR, VR>(
+            IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper,
+            Named named);
 
         /**
          * Transform the value of each input record into a new value (with possible new type) of the output record.
@@ -389,8 +390,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper,
-                                       Named named);
+        IKStream<K, VR> mapValues<VR>(
+            IValueMapperWithKey<K, V, VR> mapper,
+            Named named);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type

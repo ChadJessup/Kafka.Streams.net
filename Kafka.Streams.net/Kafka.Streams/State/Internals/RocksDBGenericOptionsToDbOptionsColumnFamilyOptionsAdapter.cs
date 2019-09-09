@@ -15,6 +15,9 @@
 // * limitations under the License.
 // */
 //using Confluent.Kafka;
+//using Microsoft.Extensions.Logging;
+//using Microsoft.Extensions.Options;
+//using RocksDbSharp;
 //using System.Collections.Generic;
 
 //namespace Kafka.Streams.State.Internals
@@ -26,50 +29,54 @@
 //     *
 //     * This do the translation between generic {@link Options} into {@link DBOptions} and {@link ColumnFamilyOptions}.
 //     */
-//    public class RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter : Options
+//    public class RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter
 //    {
-//        private DBOptions dbOptions;
+//        private DbOptions dbOptions;
 //        private ColumnFamilyOptions columnFamilyOptions;
 
-//        private static org.slf4j.ILogger LOG = new LoggerFactory().CreateLogger < RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter);
+//        private ILogger<RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter> logger;
 
-//        RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(DBOptions dbOptions,
-//                                                                   ColumnFamilyOptions columnFamilyOptions)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(
+//            DbOptions dbOptions,
+//            ColumnFamilyOptions columnFamilyOptions)
 //        {
 //            this.dbOptions = dbOptions;
 //            this.columnFamilyOptions = columnFamilyOptions;
 //        }
 
-//        public override Options setIncreaseParallelism(int totalThreads)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setIncreaseParallelism(int totalThreads)
 //        {
-//            dbOptions.setIncreaseParallelism(totalThreads);
+//            dbOptions.IncreaseParallelism(totalThreads);
+
 //            return this;
 //        }
 
-//        public override Options setCreateIfMissing(bool flag)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCreateIfMissing(bool flag)
 //        {
-//            dbOptions.setCreateIfMissing(flag);
+//            dbOptions.SetCreateIfMissing(flag);
 //            return this;
 //        }
 
-//        public override Options setCreateMissingColumnFamilies(bool flag)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCreateMissingColumnFamilies(bool flag)
 //        {
-//            dbOptions.setCreateMissingColumnFamilies(flag);
+//            dbOptions.SetCreateMissingColumnFamilies(flag);
+
 //            return this;
 //        }
 
-//        public override Options setEnv(Env env)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setEnv(Env env)
 //        {
-//            dbOptions.setEnv(env);
+//            dbOptions.SetEnv(env.Handle);
+
 //            return this;
 //        }
 
-//        public override Env getEnv()
+//        public Env getEnv()
 //        {
-//            return dbOptions.getEnv();
+//            return dbOptions.GetEnv();
 //        }
 
-//        public override Options prepareForBulkLoad()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter prepareForBulkLoad()
 //        {
 //            /* From https://github.com/facebook/rocksdb/wiki/RocksDb-FAQ
 //             *
@@ -93,225 +100,241 @@
 //            // (1) not in our control
 //            // (2) is done via bulk-loading API
 //            // (3) skipping because, not done in actual PrepareForBulkLoad() code in https://github.com/facebook/rocksdb/blob/master/options/options.cc
-//            //columnFamilyOptions.setMemTableConfig(new VectorMemTableConfig());
+//            //columnFamilyOptions.SetMemTableConfig(new VectorMemTableConfig());
 //            // (4-5) below:
-//            dbOptions.setMaxBackgroundFlushes(4);
-//            columnFamilyOptions.setDisableAutoCompactions(true);
-//            columnFamilyOptions.setLevel0FileNumCompactionTrigger(1 << 30);
-//            columnFamilyOptions.setLevel0SlowdownWritesTrigger(1 << 30);
-//            columnFamilyOptions.setLevel0StopWritesTrigger(1 << 30);
+//            dbOptions.SetMaxBackgroundFlushes(4);
+//            columnFamilyOptions.SetDisableAutoCompactions(1);
+//            columnFamilyOptions.SetLevel0FileNumCompactionTrigger(1 << 30);
+//            columnFamilyOptions.SetLevel0SlowdownWritesTrigger(1 << 30);
+//            columnFamilyOptions.SetLevel0StopWritesTrigger(1 << 30);
+
 //            return this;
 //        }
 
-//        public override bool createIfMissing()
-//        {
-//            return dbOptions.createIfMissing();
-//        }
+//        //public bool createIfMissing()
+//        //{
+//        //    return dbOptions.SetCreateIfMissing(true);
+//        //}
 
-//        public override bool createMissingColumnFamilies()
-//        {
-//            return dbOptions.createMissingColumnFamilies();
-//        }
+//        //public bool createMissingColumnFamilies()
+//        //{
+//        //    return dbOptions.createMissingColumnFamilies();
+//        //}
 
-//        public override Options optimizeForSmallDb()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeForSmallDb()
 //        {
-//            dbOptions.optimizeForSmallDb();
-//            columnFamilyOptions.optimizeForSmallDb();
+//            //dbOptions.optimizeForSmallDb();
+//            //columnFamilyOptions.optimizeForSmallDb();
+
 //            return this;
 //        }
 
-//        public override Options optimizeForPointLookup(long blockCacheSizeMb)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeForPointLookup(ulong blockCacheSizeMb)
 //        {
-//            columnFamilyOptions.optimizeForPointLookup(blockCacheSizeMb);
+//            columnFamilyOptions.OptimizeForPointLookup(blockCacheSizeMb);
+
 //            return this;
 //        }
 
-//        public override Options optimizeLevelStyleCompaction()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeLevelStyleCompaction()
 //        {
-//            columnFamilyOptions.optimizeLevelStyleCompaction();
+//            // Default from source.
+//            columnFamilyOptions.OptimizeLevelStyleCompaction(512 * 1024 * 1024);
+
 //            return this;
 //        }
 
-//        public override Options optimizeLevelStyleCompaction(long memtableMemoryBudget)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeLevelStyleCompaction(ulong memtableMemoryBudget)
 //        {
-//            columnFamilyOptions.optimizeLevelStyleCompaction(memtableMemoryBudget);
+//            columnFamilyOptions.OptimizeLevelStyleCompaction(memtableMemoryBudget);
+
 //            return this;
 //        }
 
-//        public override Options optimizeUniversalStyleCompaction()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeUniversalStyleCompaction()
 //        {
-//            columnFamilyOptions.optimizeUniversalStyleCompaction();
+//            columnFamilyOptions.OptimizeUniversalStyleCompaction(512 * 1024 * 1024);
+
 //            return this;
 //        }
 
-//        public override Options optimizeUniversalStyleCompaction(long memtableMemoryBudget)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optimizeUniversalStyleCompaction(ulong memtableMemoryBudget)
 //        {
-//            columnFamilyOptions.optimizeUniversalStyleCompaction(memtableMemoryBudget);
+//            columnFamilyOptions.OptimizeUniversalStyleCompaction(memtableMemoryBudget);
+
 //            return this;
 //        }
 
-//        public override Options setComparator(BuiltinComparator builtinComparator)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setComparator(Comparator builtinComparator)
 //        {
-//            columnFamilyOptions.setComparator(builtinComparator);
+//            columnFamilyOptions.SetComparator(builtinComparator);
+
 //            return this;
 //        }
 
-//        public override Options setComparator(AbstractComparator<AbstractSlice<object>> comparator)
+//        //public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setComparator(AbstractComparator<AbstractSlice<object>> comparator)
+//        //{
+//        //    columnFamilyOptions.SetComparator(comparator);
+//        //    return this;
+//        //}
+
+//        //public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMergeOperatorName(string name)
+//        //{
+//        //    columnFamilyOptions.SetMergeOperatorName(name);
+
+//        //    return this;
+//        //}
+
+//        //public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMergeOperator(MergeOperator mergeOperator)
+//        //{
+//        //    columnFamilyOptions.SetMergeOperator(mergeOperator);
+
+//        //    return this;
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWriteBufferSize(ulong writeBufferSize)
 //        {
-//            columnFamilyOptions.setComparator(comparator);
+//            columnFamilyOptions.SetWriteBufferSize(writeBufferSize);
+
 //            return this;
 //        }
 
-//        public override Options setMergeOperatorName(string name)
+//        //public override long writeBufferSize()
+//        //{
+//        //    return columnFamilyOptions.SetWriteBufferSize();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxWriteBufferNumber(int maxWriteBufferNumber)
 //        {
-//            columnFamilyOptions.setMergeOperatorName(name);
+//            columnFamilyOptions.SetMaxWriteBufferNumber(maxWriteBufferNumber);
+
 //            return this;
 //        }
 
-//        public override Options setMergeOperator(MergeOperator mergeOperator)
+//        //public override int maxWriteBufferNumber()
+//        //{
+//        //    return columnFamilyOptions..maxWriteBufferNumber();
+//        //}
+
+//        //public bool errorIfExists()
+//        //{
+//        //    return dbOptions.errorIfExists();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setErrorIfExists(bool errorIfExists)
 //        {
-//            columnFamilyOptions.setMergeOperator(mergeOperator);
+//            dbOptions.SetErrorIfExists(errorIfExists);
+
 //            return this;
 //        }
 
-//        public override Options setWriteBufferSize(long writeBufferSize)
+//        //public bool paranoidChecks()
+//        //{
+//        //    bool columnFamilyParanoidFileChecks = columnFamilyOptions.paranoidFileChecks();
+//        //    bool dbOptionsParanoidChecks = dbOptions.paranoidChecks();
+
+//        //    if (columnFamilyParanoidFileChecks != dbOptionsParanoidChecks)
+//        //    {
+//        //        throw new InvalidOperationException("Config for paranoid checks for RockDB and ColumnFamilies should be the same.");
+//        //    }
+
+//        //    return dbOptionsParanoidChecks;
+//        //}
+
+//        //public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setParanoidChecks(bool paranoidChecks)
+//        //{
+//        //    columnFamilyOptions.paranoidFileChecks();
+//        //    dbOptions.SetParanoidChecks(paranoidChecks);
+//        //    return this;
+//        //}
+
+//        //public override int maxOpenFiles()
+//        //{
+//        //    return dbOptions.maxOpenFiles();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxFileOpeningThreads(int maxFileOpeningThreads)
 //        {
-//            columnFamilyOptions.setWriteBufferSize(writeBufferSize);
+//            dbOptions.SetMaxFileOpeningThreads(maxFileOpeningThreads);
+
 //            return this;
 //        }
 
-//        public override long writeBufferSize()
-//        {
-//            return columnFamilyOptions.writeBufferSize();
-//        }
+//        //public override int maxFileOpeningThreads()
+//        //{
+//        //    return dbOptions.maxFileOpeningThreads();
+//        //}
 
-//        public override Options setMaxWriteBufferNumber(int maxWriteBufferNumber)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxTotalWalSize(ulong maxTotalWalSize)
 //        {
-//            columnFamilyOptions.setMaxWriteBufferNumber(maxWriteBufferNumber);
+//            dbOptions.SetMaxTotalWalSize(maxTotalWalSize);
+
 //            return this;
 //        }
 
-//        public override int maxWriteBufferNumber()
-//        {
-//            return columnFamilyOptions.maxWriteBufferNumber();
-//        }
+//        //public override long maxTotalWalSize()
+//        //{
+//        //    return dbOptions.maxTotalWalSize();
+//        //}
 
-//        public override bool errorIfExists()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxOpenFiles(int maxOpenFiles)
 //        {
-//            return dbOptions.errorIfExists();
-//        }
-
-//        public override Options setErrorIfExists(bool errorIfExists)
-//        {
-//            dbOptions.setErrorIfExists(errorIfExists);
+//            dbOptions.SetMaxOpenFiles(maxOpenFiles);
 //            return this;
 //        }
 
-//        public override bool paranoidChecks()
+//        //public override bool useFsync()
+//        //{
+//        //    return dbOptions.useFsync();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setUseFsync(bool useFsync)
 //        {
-//            bool columnFamilyParanoidFileChecks = columnFamilyOptions.paranoidFileChecks();
-//            bool dbOptionsParanoidChecks = dbOptions.paranoidChecks();
-
-//            if (columnFamilyParanoidFileChecks != dbOptionsParanoidChecks)
-//            {
-//                throw new InvalidOperationException("Config for paranoid checks for RockDB and ColumnFamilies should be the same.");
-//            }
-
-//            return dbOptionsParanoidChecks;
-//        }
-
-//        public override Options setParanoidChecks(bool paranoidChecks)
-//        {
-//            columnFamilyOptions.paranoidFileChecks();
-//            dbOptions.setParanoidChecks(paranoidChecks);
+//            dbOptions.SetUseFsync(useFsync ? 1 : 0);
 //            return this;
 //        }
 
-//        public override int maxOpenFiles()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDbPaths(List<DbPath> dbPaths)
 //        {
-//            return dbOptions.maxOpenFiles();
-//        }
-
-//        public override Options setMaxFileOpeningThreads(int maxFileOpeningThreads)
-//        {
-//            dbOptions.setMaxFileOpeningThreads(maxFileOpeningThreads);
+//            dbOptions.SetDbLogDir(dbPaths);
 //            return this;
 //        }
 
-//        public override int maxFileOpeningThreads()
-//        {
-//            return dbOptions.maxFileOpeningThreads();
-//        }
+//        //public override List<DbPath> dbPaths()
+//        //{
+//        //    return dbOptions.dbPaths();
+//        //}
 
-//        public override Options setMaxTotalWalSize(long maxTotalWalSize)
+//        //public override string dbLogDir()
+//        //{
+//        //    return dbOptions.dbLogDir();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDbLogDir(string dbLogDir)
 //        {
-//            dbOptions.setMaxTotalWalSize(maxTotalWalSize);
+//            dbOptions.SetDbLogDir(dbLogDir);
 //            return this;
 //        }
 
-//        public override long maxTotalWalSize()
-//        {
-//            return dbOptions.maxTotalWalSize();
-//        }
+//        //public override string walDir()
+//        //{
+//        //    return dbOptions.walDir();
+//        //}
 
-//        public override Options setMaxOpenFiles(int maxOpenFiles)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWalDir(string walDir)
 //        {
-//            dbOptions.setMaxOpenFiles(maxOpenFiles);
+//            dbOptions.SetWalDir(walDir);
 //            return this;
 //        }
 
-//        public override bool useFsync()
-//        {
-//            return dbOptions.useFsync();
-//        }
+//        //public override long deleteObsoleteFilesPeriodMicros()
+//        //{
+//        //    return dbOptions.deleteObsoleteFilesPeriodMicros();
+//        //}
 
-//        public override Options setUseFsync(bool useFsync)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDeleteObsoleteFilesPeriodMicros(long micros)
 //        {
-//            dbOptions.setUseFsync(useFsync);
-//            return this;
-//        }
-
-//        public override Options setDbPaths(List<DbPath> dbPaths)
-//        {
-//            dbOptions.setDbPaths(dbPaths);
-//            return this;
-//        }
-
-//        public override List<DbPath> dbPaths()
-//        {
-//            return dbOptions.dbPaths();
-//        }
-
-//        public override string dbLogDir()
-//        {
-//            return dbOptions.dbLogDir();
-//        }
-
-//        public override Options setDbLogDir(string dbLogDir)
-//        {
-//            dbOptions.setDbLogDir(dbLogDir);
-//            return this;
-//        }
-
-//        public override string walDir()
-//        {
-//            return dbOptions.walDir();
-//        }
-
-//        public override Options setWalDir(string walDir)
-//        {
-//            dbOptions.setWalDir(walDir);
-//            return this;
-//        }
-
-//        public override long deleteObsoleteFilesPeriodMicros()
-//        {
-//            return dbOptions.deleteObsoleteFilesPeriodMicros();
-//        }
-
-//        public override Options setDeleteObsoleteFilesPeriodMicros(long micros)
-//        {
-//            dbOptions.setDeleteObsoleteFilesPeriodMicros(micros);
+//            dbOptions.SetDeleteObsoleteFilesPeriodMicros(micros);
 //            return this;
 //        }
 
@@ -320,123 +343,128 @@
 //            return dbOptions.maxBackgroundCompactions();
 //        }
 
-//        public override Options setStatistics(Statistics statistics)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setStatistics()
 //        {
-//            dbOptions.setStatistics(statistics);
+//            dbOptions.EnableStatistics();
 //            return this;
 //        }
 
-//        public override Statistics statistics()
-//        {
-//            return dbOptions.statistics();
-//        }
+//        //public override Statistics statistics()
+//        //{
+//        //    return dbOptions.statistics();
+//        //}
 
-//        public override void setBaseBackgroundCompactions(int baseBackgroundCompactions)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setBaseBackgroundCompactions(int baseBackgroundCompactions)
 //        {
-//            dbOptions.setBaseBackgroundCompactions(baseBackgroundCompactions);
-//        }
+//            dbOptions.SetBaseBackgroundCompactions(baseBackgroundCompactions);
 
-//        public override int baseBackgroundCompactions()
-//        {
-//            return dbOptions.baseBackgroundCompactions();
-//        }
-
-//        public override Options setMaxBackgroundCompactions(int maxBackgroundCompactions)
-//        {
-//            dbOptions.setMaxBackgroundCompactions(maxBackgroundCompactions);
 //            return this;
 //        }
 
-//        public override void setMaxSubcompactions(int maxSubcompactions)
-//        {
-//            dbOptions.setMaxSubcompactions(maxSubcompactions);
-//        }
+//        //public override int baseBackgroundCompactions()
+//        //{
+//        //    return dbOptions.base.baseBackgroundCompactions();
+//        //}
 
-//        public override int maxSubcompactions()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBackgroundCompactions(int maxBackgroundCompactions)
 //        {
-//            return dbOptions.maxSubcompactions();
-//        }
-
-//        public override int maxBackgroundFlushes()
-//        {
-//            return dbOptions.maxBackgroundFlushes();
-//        }
-
-//        public override Options setMaxBackgroundFlushes(int maxBackgroundFlushes)
-//        {
-//            dbOptions.setMaxBackgroundFlushes(maxBackgroundFlushes);
+//            dbOptions.SetMaxBackgroundCompactions(maxBackgroundCompactions);
 //            return this;
 //        }
 
-//        public override int maxBackgroundJobs()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxSubcompactions(int maxSubcompactions)
 //        {
-//            return dbOptions.maxBackgroundJobs();
-//        }
+//            dbOptions.SetMaxBackgroundCompactions(maxSubcompactions);
 
-//        public override Options setMaxBackgroundJobs(int maxBackgroundJobs)
-//        {
-//            dbOptions.setMaxBackgroundJobs(maxBackgroundJobs);
 //            return this;
 //        }
 
-//        public override long maxLogFileSize()
-//        {
-//            return dbOptions.maxLogFileSize();
-//        }
+//        //public override int maxSubcompactions()
+//        //{
+//        //    return dbOptions.maxSubcompactions();
+//        //}
 
-//        public override Options setMaxLogFileSize(long maxLogFileSize)
+//        //public override int maxBackgroundFlushes()
+//        //{
+//        //    return dbOptions.maxBackgroundFlushes();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBackgroundFlushes(int maxBackgroundFlushes)
 //        {
-//            dbOptions.setMaxLogFileSize(maxLogFileSize);
+//            dbOptions.SetMaxBackgroundFlushes(maxBackgroundFlushes);
 //            return this;
 //        }
 
-//        public override long logFileTimeToRoll()
-//        {
-//            return dbOptions.logFileTimeToRoll();
-//        }
+//        //public override int maxBackgroundJobs()
+//        //{
+//        //    return dbOptions.maxBackgroundJobs();
+//        //}
 
-//        public override Options setLogFileTimeToRoll(long logFileTimeToRoll)
+//        //public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBackgroundJobs(int maxBackgroundJobs)
+//        //{
+//        //    dbOptions.SetMaxBackgroundJobs(maxBackgroundJobs);
+//        //    return this;
+//        //}
+
+//        //public override long maxLogFileSize()
+//        //{
+//        //    return dbOptions.maxLogFileSize();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxLogFileSize(ulong maxLogFileSize)
 //        {
-//            dbOptions.setLogFileTimeToRoll(logFileTimeToRoll);
+//            dbOptions.SetMaxLogFileSize(maxLogFileSize);
 //            return this;
 //        }
 
-//        public override long keepLogFileNum()
-//        {
-//            return dbOptions.keepLogFileNum();
-//        }
+//        //public override long logFileTimeToRoll()
+//        //{
+//        //    return dbOptions.logFileTimeToRoll();
+//        //}
 
-//        public override Options setKeepLogFileNum(long keepLogFileNum)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLogFileTimeToRoll(ulong logFileTimeToRoll)
 //        {
-//            dbOptions.setKeepLogFileNum(keepLogFileNum);
+//            dbOptions.SetLogFileTimeToRoll(logFileTimeToRoll);
 //            return this;
 //        }
 
-//        public override Options setRecycleLogFileNum(long recycleLogFileNum)
+//        //public override long keepLogFileNum()
+//        //{
+//        //    return dbOptions.keepLogFileNum();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setKeepLogFileNum(ulong keepLogFileNum)
 //        {
-//            dbOptions.setRecycleLogFileNum(recycleLogFileNum);
+//            dbOptions.SetKeepLogFileNum(keepLogFileNum);
+
 //            return this;
 //        }
 
-//        public override long recycleLogFileNum()
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setRecycleLogFileNum(ulong recycleLogFileNum)
 //        {
-//            return dbOptions.recycleLogFileNum();
-//        }
-
-//        public override long maxManifestFileSize()
-//        {
-//            return dbOptions.maxManifestFileSize();
-//        }
-
-//        public override Options setMaxManifestFileSize(long maxManifestFileSize)
-//        {
-//            dbOptions.setMaxManifestFileSize(maxManifestFileSize);
+//            dbOptions.SetRecycleLogFileNum(recycleLogFileNum);
 //            return this;
 //        }
 
-//        public override Options setMaxTableFilesSizeFIFO(long maxTableFilesSize)
+//        //public override long recycleLogFileNum()
+//        //{
+//        //    return dbOptions.recycleLogFileNum();
+//        //}
+
+//        //public override long maxManifestFileSize()
+//        //{
+//        //    return dbOptions.maxManifestFileSize();
+//        //}
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxManifestFileSize(ulong maxManifestFileSize)
 //        {
-//            columnFamilyOptions.setMaxTableFilesSizeFIFO(maxTableFilesSize);
+//            dbOptions.SetMaxManifestFileSize(maxManifestFileSize);
+//            return this;
+//        }
+
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxTableFilesSizeFIFO(long maxTableFilesSize)
+//        {
+//            columnFamilyOptions.SetMaxTableFilesSizeFIFO(maxTableFilesSize);
 //            return this;
 //        }
 
@@ -450,9 +478,9 @@
 //            return dbOptions.tableCacheNumshardbits();
 //        }
 
-//        public override Options setTableCacheNumshardbits(int tableCacheNumshardbits)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setTableCacheNumshardbits(int tableCacheNumshardbits)
 //        {
-//            dbOptions.setTableCacheNumshardbits(tableCacheNumshardbits);
+//            dbOptions.SetTableCacheNumshardbits(tableCacheNumshardbits);
 //            return this;
 //        }
 
@@ -461,10 +489,10 @@
 //            return dbOptions.walTtlSeconds();
 //        }
 
-//        public override Options setWalTtlSeconds(long walTtlSeconds)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWalTtlSeconds(long walTtlSeconds)
 //        {
 //            LOG.LogWarning("option walTtlSeconds will be ignored: Streams does not expose RocksDb ttl functionality");
-//            dbOptions.setWalTtlSeconds(walTtlSeconds);
+//            dbOptions.SetWalTtlSeconds(walTtlSeconds);
 //            return this;
 //        }
 
@@ -473,9 +501,9 @@
 //            return dbOptions.walSizeLimitMB();
 //        }
 
-//        public override Options setWalSizeLimitMB(long sizeLimitMB)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWalSizeLimitMB(long sizeLimitMB)
 //        {
-//            dbOptions.setWalSizeLimitMB(sizeLimitMB);
+//            dbOptions.SetWalSizeLimitMB(sizeLimitMB);
 //            return this;
 //        }
 
@@ -484,15 +512,15 @@
 //            return dbOptions.manifestPreallocationSize();
 //        }
 
-//        public override Options setManifestPreallocationSize(long size)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setManifestPreallocationSize(long size)
 //        {
-//            dbOptions.setManifestPreallocationSize(size);
+//            dbOptions.SetManifestPreallocationSize(size);
 //            return this;
 //        }
 
-//        public override Options setUseDirectReads(bool useDirectReads)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setUseDirectReads(bool useDirectReads)
 //        {
-//            dbOptions.setUseDirectReads(useDirectReads);
+//            dbOptions.SetUseDirectReads(useDirectReads);
 //            return this;
 //        }
 
@@ -501,9 +529,9 @@
 //            return dbOptions.useDirectReads();
 //        }
 
-//        public override Options setUseDirectIoForFlushAndCompaction(bool useDirectIoForFlushAndCompaction)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setUseDirectIoForFlushAndCompaction(bool useDirectIoForFlushAndCompaction)
 //        {
-//            dbOptions.setUseDirectIoForFlushAndCompaction(useDirectIoForFlushAndCompaction);
+//            dbOptions.SetUseDirectIoForFlushAndCompaction(useDirectIoForFlushAndCompaction);
 //            return this;
 //        }
 
@@ -512,9 +540,9 @@
 //            return dbOptions.useDirectIoForFlushAndCompaction();
 //        }
 
-//        public override Options setAllowFAllocate(bool allowFAllocate)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAllowFAllocate(bool allowFAllocate)
 //        {
-//            dbOptions.setAllowFAllocate(allowFAllocate);
+//            dbOptions.SetAllowFAllocate(allowFAllocate);
 //            return this;
 //        }
 
@@ -528,9 +556,9 @@
 //            return dbOptions.allowMmapReads();
 //        }
 
-//        public override Options setAllowMmapReads(bool allowMmapReads)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAllowMmapReads(bool allowMmapReads)
 //        {
-//            dbOptions.setAllowMmapReads(allowMmapReads);
+//            dbOptions.SetAllowMmapReads(allowMmapReads);
 //            return this;
 //        }
 
@@ -539,9 +567,9 @@
 //            return dbOptions.allowMmapWrites();
 //        }
 
-//        public override Options setAllowMmapWrites(bool allowMmapWrites)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAllowMmapWrites(bool allowMmapWrites)
 //        {
-//            dbOptions.setAllowMmapWrites(allowMmapWrites);
+//            dbOptions.SetAllowMmapWrites(allowMmapWrites);
 //            return this;
 //        }
 
@@ -550,9 +578,9 @@
 //            return dbOptions.isFdCloseOnExec();
 //        }
 
-//        public override Options setIsFdCloseOnExec(bool isFdCloseOnExec)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setIsFdCloseOnExec(bool isFdCloseOnExec)
 //        {
-//            dbOptions.setIsFdCloseOnExec(isFdCloseOnExec);
+//            dbOptions.SetIsFdCloseOnExec(isFdCloseOnExec);
 //            return this;
 //        }
 
@@ -561,9 +589,9 @@
 //            return dbOptions.statsDumpPeriodSec();
 //        }
 
-//        public override Options setStatsDumpPeriodSec(int statsDumpPeriodSec)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setStatsDumpPeriodSec(int statsDumpPeriodSec)
 //        {
-//            dbOptions.setStatsDumpPeriodSec(statsDumpPeriodSec);
+//            dbOptions.SetStatsDumpPeriodSec(statsDumpPeriodSec);
 //            return this;
 //        }
 
@@ -572,15 +600,15 @@
 //            return dbOptions.adviseRandomOnOpen();
 //        }
 
-//        public override Options setAdviseRandomOnOpen(bool adviseRandomOnOpen)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAdviseRandomOnOpen(bool adviseRandomOnOpen)
 //        {
-//            dbOptions.setAdviseRandomOnOpen(adviseRandomOnOpen);
+//            dbOptions.SetAdviseRandomOnOpen(adviseRandomOnOpen);
 //            return this;
 //        }
 
-//        public override Options setDbWriteBufferSize(long dbWriteBufferSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDbWriteBufferSize(long dbWriteBufferSize)
 //        {
-//            dbOptions.setDbWriteBufferSize(dbWriteBufferSize);
+//            dbOptions.SetDbWriteBufferSize(dbWriteBufferSize);
 //            return this;
 //        }
 
@@ -589,9 +617,9 @@
 //            return dbOptions.dbWriteBufferSize();
 //        }
 
-//        public override Options setAccessHintOnCompactionStart(AccessHint accessHint)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAccessHintOnCompactionStart(AccessHint accessHint)
 //        {
-//            dbOptions.setAccessHintOnCompactionStart(accessHint);
+//            dbOptions.SetAccessHintOnCompactionStart(accessHint);
 //            return this;
 //        }
 
@@ -600,9 +628,9 @@
 //            return dbOptions.accessHintOnCompactionStart();
 //        }
 
-//        public override Options setNewTableReaderForCompactionInputs(bool newTableReaderForCompactionInputs)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setNewTableReaderForCompactionInputs(bool newTableReaderForCompactionInputs)
 //        {
-//            dbOptions.setNewTableReaderForCompactionInputs(newTableReaderForCompactionInputs);
+//            dbOptions.SetNewTableReaderForCompactionInputs(newTableReaderForCompactionInputs);
 //            return this;
 //        }
 
@@ -611,9 +639,9 @@
 //            return dbOptions.newTableReaderForCompactionInputs();
 //        }
 
-//        public override Options setCompactionReadaheadSize(long compactionReadaheadSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompactionReadaheadSize(long compactionReadaheadSize)
 //        {
-//            dbOptions.setCompactionReadaheadSize(compactionReadaheadSize);
+//            dbOptions.SetCompactionReadaheadSize(compactionReadaheadSize);
 //            return this;
 //        }
 
@@ -622,9 +650,9 @@
 //            return dbOptions.compactionReadaheadSize();
 //        }
 
-//        public override Options setRandomAccessMaxBufferSize(long randomAccessMaxBufferSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setRandomAccessMaxBufferSize(long randomAccessMaxBufferSize)
 //        {
-//            dbOptions.setRandomAccessMaxBufferSize(randomAccessMaxBufferSize);
+//            dbOptions.SetRandomAccessMaxBufferSize(randomAccessMaxBufferSize);
 //            return this;
 //        }
 
@@ -633,9 +661,9 @@
 //            return dbOptions.randomAccessMaxBufferSize();
 //        }
 
-//        public override Options setWritableFileMaxBufferSize(long writableFileMaxBufferSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWritableFileMaxBufferSize(long writableFileMaxBufferSize)
 //        {
-//            dbOptions.setWritableFileMaxBufferSize(writableFileMaxBufferSize);
+//            dbOptions.SetWritableFileMaxBufferSize(writableFileMaxBufferSize);
 //            return this;
 //        }
 
@@ -649,9 +677,9 @@
 //            return dbOptions.useAdaptiveMutex();
 //        }
 
-//        public override Options setUseAdaptiveMutex(bool useAdaptiveMutex)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setUseAdaptiveMutex(bool useAdaptiveMutex)
 //        {
-//            dbOptions.setUseAdaptiveMutex(useAdaptiveMutex);
+//            dbOptions.SetUseAdaptiveMutex(useAdaptiveMutex);
 //            return this;
 //        }
 
@@ -660,15 +688,15 @@
 //            return dbOptions.bytesPerSync();
 //        }
 
-//        public override Options setBytesPerSync(long bytesPerSync)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setBytesPerSync(long bytesPerSync)
 //        {
-//            dbOptions.setBytesPerSync(bytesPerSync);
+//            dbOptions.SetBytesPerSync(bytesPerSync);
 //            return this;
 //        }
 
-//        public override Options setWalBytesPerSync(long walBytesPerSync)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWalBytesPerSync(long walBytesPerSync)
 //        {
-//            dbOptions.setWalBytesPerSync(walBytesPerSync);
+//            dbOptions.SetWalBytesPerSync(walBytesPerSync);
 //            return this;
 //        }
 
@@ -677,9 +705,9 @@
 //            return dbOptions.walBytesPerSync();
 //        }
 
-//        public override Options setEnableThreadTracking(bool enableThreadTracking)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setEnableThreadTracking(bool enableThreadTracking)
 //        {
-//            dbOptions.setEnableThreadTracking(enableThreadTracking);
+//            dbOptions.SetEnableThreadTracking(enableThreadTracking);
 //            return this;
 //        }
 
@@ -688,9 +716,9 @@
 //            return dbOptions.enableThreadTracking();
 //        }
 
-//        public override Options setDelayedWriteRate(long delayedWriteRate)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDelayedWriteRate(long delayedWriteRate)
 //        {
-//            dbOptions.setDelayedWriteRate(delayedWriteRate);
+//            dbOptions.SetDelayedWriteRate(delayedWriteRate);
 //            return this;
 //        }
 
@@ -699,9 +727,9 @@
 //            return dbOptions.delayedWriteRate();
 //        }
 
-//        public override Options setAllowConcurrentMemtableWrite(bool allowConcurrentMemtableWrite)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAllowConcurrentMemtableWrite(bool allowConcurrentMemtableWrite)
 //        {
-//            dbOptions.setAllowConcurrentMemtableWrite(allowConcurrentMemtableWrite);
+//            dbOptions.SetAllowConcurrentMemtableWrite(allowConcurrentMemtableWrite);
 //            return this;
 //        }
 
@@ -710,9 +738,9 @@
 //            return dbOptions.allowConcurrentMemtableWrite();
 //        }
 
-//        public override Options setEnableWriteThreadAdaptiveYield(bool enableWriteThreadAdaptiveYield)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setEnableWriteThreadAdaptiveYield(bool enableWriteThreadAdaptiveYield)
 //        {
-//            dbOptions.setEnableWriteThreadAdaptiveYield(enableWriteThreadAdaptiveYield);
+//            dbOptions.SetEnableWriteThreadAdaptiveYield(enableWriteThreadAdaptiveYield);
 //            return this;
 //        }
 
@@ -721,9 +749,9 @@
 //            return dbOptions.enableWriteThreadAdaptiveYield();
 //        }
 
-//        public override Options setWriteThreadMaxYieldUsec(long writeThreadMaxYieldUsec)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWriteThreadMaxYieldUsec(long writeThreadMaxYieldUsec)
 //        {
-//            dbOptions.setWriteThreadMaxYieldUsec(writeThreadMaxYieldUsec);
+//            dbOptions.SetWriteThreadMaxYieldUsec(writeThreadMaxYieldUsec);
 //            return this;
 //        }
 
@@ -732,9 +760,9 @@
 //            return dbOptions.writeThreadMaxYieldUsec();
 //        }
 
-//        public override Options setWriteThreadSlowYieldUsec(long writeThreadSlowYieldUsec)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWriteThreadSlowYieldUsec(long writeThreadSlowYieldUsec)
 //        {
-//            dbOptions.setWriteThreadSlowYieldUsec(writeThreadSlowYieldUsec);
+//            dbOptions.SetWriteThreadSlowYieldUsec(writeThreadSlowYieldUsec);
 //            return this;
 //        }
 
@@ -743,9 +771,9 @@
 //            return dbOptions.writeThreadSlowYieldUsec();
 //        }
 
-//        public override Options setSkipStatsUpdateOnDbOpen(bool skipStatsUpdateOnDbOpen)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setSkipStatsUpdateOnDbOpen(bool skipStatsUpdateOnDbOpen)
 //        {
-//            dbOptions.setSkipStatsUpdateOnDbOpen(skipStatsUpdateOnDbOpen);
+//            dbOptions.SetSkipStatsUpdateOnDbOpen(skipStatsUpdateOnDbOpen);
 //            return this;
 //        }
 
@@ -754,9 +782,9 @@
 //            return dbOptions.skipStatsUpdateOnDbOpen();
 //        }
 
-//        public override Options setWalRecoveryMode(WALRecoveryMode walRecoveryMode)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWalRecoveryMode(WALRecoveryMode walRecoveryMode)
 //        {
-//            dbOptions.setWalRecoveryMode(walRecoveryMode);
+//            dbOptions.SetWalRecoveryMode(walRecoveryMode);
 //            return this;
 //        }
 
@@ -765,9 +793,9 @@
 //            return dbOptions.walRecoveryMode();
 //        }
 
-//        public override Options setAllow2pc(bool allow2pc)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAllow2pc(bool allow2pc)
 //        {
-//            dbOptions.setAllow2pc(allow2pc);
+//            dbOptions.SetAllow2pc(allow2pc);
 //            return this;
 //        }
 
@@ -776,9 +804,9 @@
 //            return dbOptions.allow2pc();
 //        }
 
-//        public override Options setRowCache(Cache rowCache)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setRowCache(Cache rowCache)
 //        {
-//            dbOptions.setRowCache(rowCache);
+//            dbOptions.SetRowCache(rowCache);
 //            return this;
 //        }
 
@@ -787,9 +815,9 @@
 //            return dbOptions.rowCache();
 //        }
 
-//        public override Options setFailIfOptionsFileError(bool failIfOptionsFileError)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setFailIfOptionsFileError(bool failIfOptionsFileError)
 //        {
-//            dbOptions.setFailIfOptionsFileError(failIfOptionsFileError);
+//            dbOptions.SetFailIfOptionsFileError(failIfOptionsFileError);
 //            return this;
 //        }
 
@@ -798,9 +826,9 @@
 //            return dbOptions.failIfOptionsFileError();
 //        }
 
-//        public override Options setDumpMallocStats(bool dumpMallocStats)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDumpMallocStats(bool dumpMallocStats)
 //        {
-//            dbOptions.setDumpMallocStats(dumpMallocStats);
+//            dbOptions.SetDumpMallocStats(dumpMallocStats);
 //            return this;
 //        }
 
@@ -809,9 +837,9 @@
 //            return dbOptions.dumpMallocStats();
 //        }
 
-//        public override Options setAvoidFlushDuringRecovery(bool avoidFlushDuringRecovery)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAvoidFlushDuringRecovery(bool avoidFlushDuringRecovery)
 //        {
-//            dbOptions.setAvoidFlushDuringRecovery(avoidFlushDuringRecovery);
+//            dbOptions.SetAvoidFlushDuringRecovery(avoidFlushDuringRecovery);
 //            return this;
 //        }
 
@@ -820,9 +848,9 @@
 //            return dbOptions.avoidFlushDuringRecovery();
 //        }
 
-//        public override Options setAvoidFlushDuringShutdown(bool avoidFlushDuringShutdown)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setAvoidFlushDuringShutdown(bool avoidFlushDuringShutdown)
 //        {
-//            dbOptions.setAvoidFlushDuringShutdown(avoidFlushDuringShutdown);
+//            dbOptions.SetAvoidFlushDuringShutdown(avoidFlushDuringShutdown);
 //            return this;
 //        }
 
@@ -836,33 +864,33 @@
 //            return columnFamilyOptions.memTableConfig();
 //        }
 
-//        public override Options setMemTableConfig(MemTableConfig config)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMemTableConfig(MemTableConfig config)
 //        {
-//            columnFamilyOptions.setMemTableConfig(config);
+//            columnFamilyOptions.SetMemTableConfig(config);
 //            return this;
 //        }
 
-//        public override Options setRateLimiter(RateLimiter rateLimiter)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setRateLimiter(RateLimiter rateLimiter)
 //        {
-//            dbOptions.setRateLimiter(rateLimiter);
+//            dbOptions.SetRateLimiter(rateLimiter);
 //            return this;
 //        }
 
-//        public override Options setSstFileManager(SstFileManager sstFileManager)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setSstFileManager(SstFileManager sstFileManager)
 //        {
-//            dbOptions.setSstFileManager(sstFileManager);
+//            dbOptions.SetSstFileManager(sstFileManager);
 //            return this;
 //        }
 
-//        public override Options setLogger(ILogger logger)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLogger(ILogger logger)
 //        {
-//            dbOptions.setLogger(logger);
+//            dbOptions.SetLogger(logger);
 //            return this;
 //        }
 
-//        public override Options setInfoLogLevel(InfoLogLevel infoLogLevel)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setInfoLogLevel(InfoLogLevel infoLogLevel)
 //        {
-//            dbOptions.setInfoLogLevel(infoLogLevel);
+//            dbOptions.SetInfoLogLevel(infoLogLevel);
 //            return this;
 //        }
 
@@ -881,9 +909,9 @@
 //            return columnFamilyOptions.tableFormatConfig();
 //        }
 
-//        public override Options setTableFormatConfig(TableFormatConfig config)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setTableFormatConfig(TableFormatConfig config)
 //        {
-//            columnFamilyOptions.setTableFormatConfig(config);
+//            columnFamilyOptions.SetTableFormatConfig(config);
 //            return this;
 //        }
 
@@ -892,13 +920,13 @@
 //            return columnFamilyOptions.tableFactoryName();
 //        }
 
-//        public override Options useFixedLengthPrefixExtractor(int n)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter useFixedLengthPrefixExtractor(int n)
 //        {
 //            columnFamilyOptions.useFixedLengthPrefixExtractor(n);
 //            return this;
 //        }
 
-//        public override Options useCappedPrefixExtractor(int n)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter useCappedPrefixExtractor(int n)
 //        {
 //            columnFamilyOptions.useCappedPrefixExtractor(n);
 //            return this;
@@ -909,9 +937,9 @@
 //            return columnFamilyOptions.compressionType();
 //        }
 
-//        public override Options setCompressionPerLevel(List<CompressionType> compressionLevels)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompressionPerLevel(List<CompressionType> compressionLevels)
 //        {
-//            columnFamilyOptions.setCompressionPerLevel(compressionLevels);
+//            columnFamilyOptions.SetCompressionPerLevel(compressionLevels);
 //            return this;
 //        }
 
@@ -920,16 +948,16 @@
 //            return columnFamilyOptions.compressionPerLevel();
 //        }
 
-//        public override Options setCompressionType(CompressionType compressionType)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompressionType(CompressionType compressionType)
 //        {
-//            columnFamilyOptions.setCompressionType(compressionType);
+//            columnFamilyOptions.SetCompressionType(compressionType);
 //            return this;
 //        }
 
 
-//        public override Options setBottommostCompressionType(CompressionType bottommostCompressionType)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setBottommostCompressionType(CompressionType bottommostCompressionType)
 //        {
-//            columnFamilyOptions.setBottommostCompressionType(bottommostCompressionType);
+//            columnFamilyOptions.SetBottommostCompressionType(bottommostCompressionType);
 //            return this;
 //        }
 
@@ -938,9 +966,9 @@
 //            return columnFamilyOptions.bottommostCompressionType();
 //        }
 
-//        public override Options setCompressionOptions(CompressionOptions compressionOptions)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompressionOptions(CompressionOptions compressionOptions)
 //        {
-//            columnFamilyOptions.setCompressionOptions(compressionOptions);
+//            columnFamilyOptions.SetCompressionOptions(compressionOptions);
 //            return this;
 //        }
 
@@ -954,9 +982,9 @@
 //            return columnFamilyOptions.compactionStyle();
 //        }
 
-//        public override Options setCompactionStyle(CompactionStyle compactionStyle)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompactionStyle(CompactionStyle compactionStyle)
 //        {
-//            columnFamilyOptions.setCompactionStyle(compactionStyle);
+//            columnFamilyOptions.SetCompactionStyle(compactionStyle);
 //            return this;
 //        }
 
@@ -965,9 +993,9 @@
 //            return columnFamilyOptions.numLevels();
 //        }
 
-//        public override Options setNumLevels(int numLevels)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setNumLevels(int numLevels)
 //        {
-//            columnFamilyOptions.setNumLevels(numLevels);
+//            columnFamilyOptions.SetNumLevels(numLevels);
 //            return this;
 //        }
 
@@ -976,9 +1004,9 @@
 //            return columnFamilyOptions.levelZeroFileNumCompactionTrigger();
 //        }
 
-//        public override Options setLevelZeroFileNumCompactionTrigger(int numFiles)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevelZeroFileNumCompactionTrigger(int numFiles)
 //        {
-//            columnFamilyOptions.setLevelZeroFileNumCompactionTrigger(numFiles);
+//            columnFamilyOptions.SetLevelZeroFileNumCompactionTrigger(numFiles);
 //            return this;
 //        }
 
@@ -987,9 +1015,9 @@
 //            return columnFamilyOptions.levelZeroSlowdownWritesTrigger();
 //        }
 
-//        public override Options setLevelZeroSlowdownWritesTrigger(int numFiles)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevelZeroSlowdownWritesTrigger(int numFiles)
 //        {
-//            columnFamilyOptions.setLevelZeroSlowdownWritesTrigger(numFiles);
+//            columnFamilyOptions.SetLevelZeroSlowdownWritesTrigger(numFiles);
 //            return this;
 //        }
 
@@ -998,9 +1026,9 @@
 //            return columnFamilyOptions.levelZeroStopWritesTrigger();
 //        }
 
-//        public override Options setLevelZeroStopWritesTrigger(int numFiles)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevelZeroStopWritesTrigger(int numFiles)
 //        {
-//            columnFamilyOptions.setLevelZeroStopWritesTrigger(numFiles);
+//            columnFamilyOptions.SetLevelZeroStopWritesTrigger(numFiles);
 //            return this;
 //        }
 
@@ -1009,9 +1037,9 @@
 //            return columnFamilyOptions.targetFileSizeBase();
 //        }
 
-//        public override Options setTargetFileSizeBase(long targetFileSizeBase)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setTargetFileSizeBase(long targetFileSizeBase)
 //        {
-//            columnFamilyOptions.setTargetFileSizeBase(targetFileSizeBase);
+//            columnFamilyOptions.SetTargetFileSizeBase(targetFileSizeBase);
 //            return this;
 //        }
 
@@ -1020,15 +1048,15 @@
 //            return columnFamilyOptions.targetFileSizeMultiplier();
 //        }
 
-//        public override Options setTargetFileSizeMultiplier(int multiplier)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setTargetFileSizeMultiplier(int multiplier)
 //        {
-//            columnFamilyOptions.setTargetFileSizeMultiplier(multiplier);
+//            columnFamilyOptions.SetTargetFileSizeMultiplier(multiplier);
 //            return this;
 //        }
 
-//        public override Options setMaxBytesForLevelBase(long maxBytesForLevelBase)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBytesForLevelBase(long maxBytesForLevelBase)
 //        {
-//            columnFamilyOptions.setMaxBytesForLevelBase(maxBytesForLevelBase);
+//            columnFamilyOptions.SetMaxBytesForLevelBase(maxBytesForLevelBase);
 //            return this;
 //        }
 
@@ -1037,9 +1065,9 @@
 //            return columnFamilyOptions.maxBytesForLevelBase();
 //        }
 
-//        public override Options setLevelCompactionDynamicLevelBytes(bool enableLevelCompactionDynamicLevelBytes)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevelCompactionDynamicLevelBytes(bool enableLevelCompactionDynamicLevelBytes)
 //        {
-//            columnFamilyOptions.setLevelCompactionDynamicLevelBytes(enableLevelCompactionDynamicLevelBytes);
+//            columnFamilyOptions.SetLevelCompactionDynamicLevelBytes(enableLevelCompactionDynamicLevelBytes);
 //            return this;
 //        }
 
@@ -1053,9 +1081,9 @@
 //            return columnFamilyOptions.maxBytesForLevelMultiplier();
 //        }
 
-//        public override Options setMaxBytesForLevelMultiplier(double multiplier)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBytesForLevelMultiplier(double multiplier)
 //        {
-//            columnFamilyOptions.setMaxBytesForLevelMultiplier(multiplier);
+//            columnFamilyOptions.SetMaxBytesForLevelMultiplier(multiplier);
 //            return this;
 //        }
 
@@ -1064,9 +1092,9 @@
 //            return columnFamilyOptions.maxCompactionBytes();
 //        }
 
-//        public override Options setMaxCompactionBytes(long maxCompactionBytes)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxCompactionBytes(long maxCompactionBytes)
 //        {
-//            columnFamilyOptions.setMaxCompactionBytes(maxCompactionBytes);
+//            columnFamilyOptions.SetMaxCompactionBytes(maxCompactionBytes);
 //            return this;
 //        }
 
@@ -1075,9 +1103,9 @@
 //            return columnFamilyOptions.arenaBlockSize();
 //        }
 
-//        public override Options setArenaBlockSize(long arenaBlockSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setArenaBlockSize(long arenaBlockSize)
 //        {
-//            columnFamilyOptions.setArenaBlockSize(arenaBlockSize);
+//            columnFamilyOptions.SetArenaBlockSize(arenaBlockSize);
 //            return this;
 //        }
 
@@ -1086,9 +1114,9 @@
 //            return columnFamilyOptions.disableAutoCompactions();
 //        }
 
-//        public override Options setDisableAutoCompactions(bool disableAutoCompactions)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setDisableAutoCompactions(bool disableAutoCompactions)
 //        {
-//            columnFamilyOptions.setDisableAutoCompactions(disableAutoCompactions);
+//            columnFamilyOptions.SetDisableAutoCompactions(disableAutoCompactions);
 //            return this;
 //        }
 
@@ -1097,9 +1125,9 @@
 //            return columnFamilyOptions.maxSequentialSkipInIterations();
 //        }
 
-//        public override Options setMaxSequentialSkipInIterations(long maxSequentialSkipInIterations)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxSequentialSkipInIterations(long maxSequentialSkipInIterations)
 //        {
-//            columnFamilyOptions.setMaxSequentialSkipInIterations(maxSequentialSkipInIterations);
+//            columnFamilyOptions.SetMaxSequentialSkipInIterations(maxSequentialSkipInIterations);
 //            return this;
 //        }
 
@@ -1108,9 +1136,9 @@
 //            return columnFamilyOptions.inplaceUpdateSupport();
 //        }
 
-//        public override Options setInplaceUpdateSupport(bool inplaceUpdateSupport)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setInplaceUpdateSupport(bool inplaceUpdateSupport)
 //        {
-//            columnFamilyOptions.setInplaceUpdateSupport(inplaceUpdateSupport);
+//            columnFamilyOptions.SetInplaceUpdateSupport(inplaceUpdateSupport);
 //            return this;
 //        }
 
@@ -1119,9 +1147,9 @@
 //            return columnFamilyOptions.inplaceUpdateNumLocks();
 //        }
 
-//        public override Options setInplaceUpdateNumLocks(long inplaceUpdateNumLocks)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setInplaceUpdateNumLocks(long inplaceUpdateNumLocks)
 //        {
-//            columnFamilyOptions.setInplaceUpdateNumLocks(inplaceUpdateNumLocks);
+//            columnFamilyOptions.SetInplaceUpdateNumLocks(inplaceUpdateNumLocks);
 //            return this;
 //        }
 
@@ -1130,9 +1158,9 @@
 //            return columnFamilyOptions.memtablePrefixBloomSizeRatio();
 //        }
 
-//        public override Options setMemtablePrefixBloomSizeRatio(double memtablePrefixBloomSizeRatio)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMemtablePrefixBloomSizeRatio(double memtablePrefixBloomSizeRatio)
 //        {
-//            columnFamilyOptions.setMemtablePrefixBloomSizeRatio(memtablePrefixBloomSizeRatio);
+//            columnFamilyOptions.SetMemtablePrefixBloomSizeRatio(memtablePrefixBloomSizeRatio);
 //            return this;
 //        }
 
@@ -1141,9 +1169,9 @@
 //            return columnFamilyOptions.bloomLocality();
 //        }
 
-//        public override Options setBloomLocality(int bloomLocality)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setBloomLocality(int bloomLocality)
 //        {
-//            columnFamilyOptions.setBloomLocality(bloomLocality);
+//            columnFamilyOptions.SetBloomLocality(bloomLocality);
 //            return this;
 //        }
 
@@ -1152,9 +1180,9 @@
 //            return columnFamilyOptions.maxSuccessiveMerges();
 //        }
 
-//        public override Options setMaxSuccessiveMerges(long maxSuccessiveMerges)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxSuccessiveMerges(long maxSuccessiveMerges)
 //        {
-//            columnFamilyOptions.setMaxSuccessiveMerges(maxSuccessiveMerges);
+//            columnFamilyOptions.SetMaxSuccessiveMerges(maxSuccessiveMerges);
 //            return this;
 //        }
 
@@ -1163,15 +1191,15 @@
 //            return columnFamilyOptions.minWriteBufferNumberToMerge();
 //        }
 
-//        public override Options setMinWriteBufferNumberToMerge(int minWriteBufferNumberToMerge)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMinWriteBufferNumberToMerge(int minWriteBufferNumberToMerge)
 //        {
-//            columnFamilyOptions.setMinWriteBufferNumberToMerge(minWriteBufferNumberToMerge);
+//            columnFamilyOptions.SetMinWriteBufferNumberToMerge(minWriteBufferNumberToMerge);
 //            return this;
 //        }
 
-//        public override Options setOptimizeFiltersForHits(bool optimizeFiltersForHits)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setOptimizeFiltersForHits(bool optimizeFiltersForHits)
 //        {
-//            columnFamilyOptions.setOptimizeFiltersForHits(optimizeFiltersForHits);
+//            columnFamilyOptions.SetOptimizeFiltersForHits(optimizeFiltersForHits);
 //            return this;
 //        }
 
@@ -1180,9 +1208,9 @@
 //            return columnFamilyOptions.optimizeFiltersForHits();
 //        }
 
-//        public override Options setMemtableHugePageSize(long memtableHugePageSize)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMemtableHugePageSize(long memtableHugePageSize)
 //        {
-//            columnFamilyOptions.setMemtableHugePageSize(memtableHugePageSize);
+//            columnFamilyOptions.SetMemtableHugePageSize(memtableHugePageSize);
 //            return this;
 //        }
 
@@ -1191,9 +1219,9 @@
 //            return columnFamilyOptions.memtableHugePageSize();
 //        }
 
-//        public override Options setSoftPendingCompactionBytesLimit(long softPendingCompactionBytesLimit)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setSoftPendingCompactionBytesLimit(long softPendingCompactionBytesLimit)
 //        {
-//            columnFamilyOptions.setSoftPendingCompactionBytesLimit(softPendingCompactionBytesLimit);
+//            columnFamilyOptions.SetSoftPendingCompactionBytesLimit(softPendingCompactionBytesLimit);
 //            return this;
 //        }
 
@@ -1202,9 +1230,9 @@
 //            return columnFamilyOptions.softPendingCompactionBytesLimit();
 //        }
 
-//        public override Options setHardPendingCompactionBytesLimit(long hardPendingCompactionBytesLimit)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setHardPendingCompactionBytesLimit(long hardPendingCompactionBytesLimit)
 //        {
-//            columnFamilyOptions.setHardPendingCompactionBytesLimit(hardPendingCompactionBytesLimit);
+//            columnFamilyOptions.SetHardPendingCompactionBytesLimit(hardPendingCompactionBytesLimit);
 //            return this;
 //        }
 
@@ -1213,9 +1241,9 @@
 //            return columnFamilyOptions.hardPendingCompactionBytesLimit();
 //        }
 
-//        public override Options setLevel0FileNumCompactionTrigger(int level0FileNumCompactionTrigger)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevel0FileNumCompactionTrigger(int level0FileNumCompactionTrigger)
 //        {
-//            columnFamilyOptions.setLevel0FileNumCompactionTrigger(level0FileNumCompactionTrigger);
+//            columnFamilyOptions.SetLevel0FileNumCompactionTrigger(level0FileNumCompactionTrigger);
 //            return this;
 //        }
 
@@ -1224,9 +1252,9 @@
 //            return columnFamilyOptions.level0FileNumCompactionTrigger();
 //        }
 
-//        public override Options setLevel0SlowdownWritesTrigger(int level0SlowdownWritesTrigger)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevel0SlowdownWritesTrigger(int level0SlowdownWritesTrigger)
 //        {
-//            columnFamilyOptions.setLevel0SlowdownWritesTrigger(level0SlowdownWritesTrigger);
+//            columnFamilyOptions.SetLevel0SlowdownWritesTrigger(level0SlowdownWritesTrigger);
 //            return this;
 //        }
 
@@ -1235,9 +1263,9 @@
 //            return columnFamilyOptions.level0SlowdownWritesTrigger();
 //        }
 
-//        public override Options setLevel0StopWritesTrigger(int level0StopWritesTrigger)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setLevel0StopWritesTrigger(int level0StopWritesTrigger)
 //        {
-//            columnFamilyOptions.setLevel0StopWritesTrigger(level0StopWritesTrigger);
+//            columnFamilyOptions.SetLevel0StopWritesTrigger(level0StopWritesTrigger);
 //            return this;
 //        }
 
@@ -1246,9 +1274,9 @@
 //            return columnFamilyOptions.level0StopWritesTrigger();
 //        }
 
-//        public override Options setMaxBytesForLevelMultiplierAdditional(int[] maxBytesForLevelMultiplierAdditional)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxBytesForLevelMultiplierAdditional(int[] maxBytesForLevelMultiplierAdditional)
 //        {
-//            columnFamilyOptions.setMaxBytesForLevelMultiplierAdditional(maxBytesForLevelMultiplierAdditional);
+//            columnFamilyOptions.SetMaxBytesForLevelMultiplierAdditional(maxBytesForLevelMultiplierAdditional);
 //            return this;
 //        }
 
@@ -1257,9 +1285,9 @@
 //            return columnFamilyOptions.maxBytesForLevelMultiplierAdditional();
 //        }
 
-//        public override Options setParanoidFileChecks(bool paranoidFileChecks)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setParanoidFileChecks(bool paranoidFileChecks)
 //        {
-//            columnFamilyOptions.setParanoidFileChecks(paranoidFileChecks);
+//            columnFamilyOptions.SetParanoidFileChecks(paranoidFileChecks);
 //            return this;
 //        }
 
@@ -1268,9 +1296,9 @@
 //            return columnFamilyOptions.paranoidFileChecks();
 //        }
 
-//        public override Options setMaxWriteBufferNumberToMaintain(int maxWriteBufferNumberToMaintain)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setMaxWriteBufferNumberToMaintain(int maxWriteBufferNumberToMaintain)
 //        {
-//            columnFamilyOptions.setMaxWriteBufferNumberToMaintain(maxWriteBufferNumberToMaintain);
+//            columnFamilyOptions.SetMaxWriteBufferNumberToMaintain(maxWriteBufferNumberToMaintain);
 //            return this;
 //        }
 
@@ -1279,9 +1307,9 @@
 //            return columnFamilyOptions.maxWriteBufferNumberToMaintain();
 //        }
 
-//        public override Options setCompactionPriority(CompactionPriority compactionPriority)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompactionPriority(CompactionPriority compactionPriority)
 //        {
-//            columnFamilyOptions.setCompactionPriority(compactionPriority);
+//            columnFamilyOptions.SetCompactionPriority(compactionPriority);
 //            return this;
 //        }
 
@@ -1290,9 +1318,9 @@
 //            return columnFamilyOptions.compactionPriority();
 //        }
 
-//        public override Options setReportBgIoStats(bool reportBgIoStats)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setReportBgIoStats(bool reportBgIoStats)
 //        {
-//            columnFamilyOptions.setReportBgIoStats(reportBgIoStats);
+//            columnFamilyOptions.SetReportBgIoStats(reportBgIoStats);
 //            return this;
 //        }
 
@@ -1301,9 +1329,9 @@
 //            return columnFamilyOptions.reportBgIoStats();
 //        }
 
-//        public override Options setCompactionOptionsUniversal(CompactionOptionsUniversal compactionOptionsUniversal)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompactionOptionsUniversal(CompactionOptionsUniversal compactionOptionsUniversal)
 //        {
-//            columnFamilyOptions.setCompactionOptionsUniversal(compactionOptionsUniversal);
+//            columnFamilyOptions.SetCompactionOptionsUniversal(compactionOptionsUniversal);
 //            return this;
 //        }
 
@@ -1312,9 +1340,9 @@
 //            return columnFamilyOptions.compactionOptionsUniversal();
 //        }
 
-//        public override Options setCompactionOptionsFIFO(CompactionOptionsFIFO compactionOptionsFIFO)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setCompactionOptionsFIFO(CompactionOptionsFIFO compactionOptionsFIFO)
 //        {
-//            columnFamilyOptions.setCompactionOptionsFIFO(compactionOptionsFIFO);
+//            columnFamilyOptions.SetCompactionOptionsFIFO(compactionOptionsFIFO);
 //            return this;
 //        }
 
@@ -1323,9 +1351,9 @@
 //            return columnFamilyOptions.compactionOptionsFIFO();
 //        }
 
-//        public override Options setForceConsistencyChecks(bool forceConsistencyChecks)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setForceConsistencyChecks(bool forceConsistencyChecks)
 //        {
-//            columnFamilyOptions.setForceConsistencyChecks(forceConsistencyChecks);
+//            columnFamilyOptions.SetForceConsistencyChecks(forceConsistencyChecks);
 //            return this;
 //        }
 
@@ -1334,9 +1362,9 @@
 //            return columnFamilyOptions.forceConsistencyChecks();
 //        }
 
-//        public override Options setWriteBufferManager(WriteBufferManager writeBufferManager)
+//        public RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter setWriteBufferManager(WriteBufferManager writeBufferManager)
 //        {
-//            dbOptions.setWriteBufferManager(writeBufferManager);
+//            dbOptions.SetWriteBufferManager(writeBufferManager);
 //            return this;
 //        }
 
@@ -1347,13 +1375,14 @@
 
 //        public Options setCompactionFilter(AbstractCompactionFilter<AbstractSlice<object>> compactionFilter)
 //        {
-//            columnFamilyOptions.setCompactionFilter(compactionFilter);
+//            columnFamilyOptions.SetCompactionFilter(compactionFilter);
 //            return this;
 //        }
 
-//        public Options setCompactionFilterFactory(AbstractCompactionFilterFactory<AbstractCompactionFilter<object>> compactionFilterFactory)
+//        public DbOptions setCompactionFilterFactory(AbstractCompactionFilterFactory<AbstractCompactionFilter<object>> compactionFilterFactory)
 //        {
-//            columnFamilyOptions.setCompactionFilterFactory(compactionFilterFactory);
+//            columnFamilyOptions.SetCompactionFilterFactory(compactionFilterFactory);
+
 //            return this;
 //        }
 

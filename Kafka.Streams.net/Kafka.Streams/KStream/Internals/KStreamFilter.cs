@@ -16,20 +16,20 @@
  */
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processor;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamFilter<K, V> : IProcessorSupplier<K, V>
     {
-        private IPredicate<K, V> predicate;
+        private Func<K, V, bool> predicate;
         private bool filterNot;
 
-        public KStreamFilter(IPredicate<K, V> predicate, bool filterNot)
+        public KStreamFilter(Func<K, V, bool> predicate, bool filterNot)
         {
             this.predicate = predicate;
             this.filterNot = filterNot;
         }
-
 
         public IProcessor<K, V> get()
         {

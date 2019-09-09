@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Internals.Kafka.Streams.Internals;
 using Kafka.Streams.KStream;
 using Kafka.Streams.Processor.Interfaces;
-using System;
 
 namespace Kafka.Streams.State.Interfaces
 {

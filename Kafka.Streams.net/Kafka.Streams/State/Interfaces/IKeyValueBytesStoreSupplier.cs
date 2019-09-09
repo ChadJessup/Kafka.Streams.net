@@ -30,6 +30,5 @@ namespace Kafka.Streams.State
      */
     public interface IKeyValueBytesStoreSupplier : IStoreSupplier<IKeyValueStore<Bytes, byte[]>>
     {
-
     }
 }

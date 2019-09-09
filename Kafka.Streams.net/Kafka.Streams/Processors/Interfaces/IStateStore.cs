@@ -72,5 +72,6 @@ namespace Kafka.Streams.Processor.Interfaces
          * @return {@code true} if the store is open
          */
         bool isOpen();
+        bool isPresent();
     }
 }

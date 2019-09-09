@@ -29,14 +29,14 @@ namespace Kafka.Streams.KStream
             this.Deserializer = deserializer;
         }
 
-        public void Configure(Dictionary<string, object> configs, bool isKey)
+        public virtual void Configure(Dictionary<string, object> configs, bool isKey)
         {
         }
 
         public ISerializer<T> Serializer { get; }
         public IDeserializer<T> Deserializer { get; }
 
-        public void Close()
+        public virtual void Close()
         {
         }
 

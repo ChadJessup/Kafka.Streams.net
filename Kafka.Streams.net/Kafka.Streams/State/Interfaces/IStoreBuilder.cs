@@ -19,8 +19,6 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State
 {
-
-
     /**
      * Build a {@link IStateStore} wrapped with optional caching and logging.
      * @param  the type of store to build
@@ -51,7 +49,7 @@ namespace Kafka.Streams.State
         string name { get; }
     }
 
-    public interface IStoreBuilder<T> : IStoreBuilder
+    public interface IStoreBuilder<out T> : IStoreBuilder
         where T : IStateStore
     {
         /**

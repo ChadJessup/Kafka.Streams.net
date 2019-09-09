@@ -14,9 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Internals
+
+namespace Kafka.Streams.KStream.Internals.Graph
 {
-    public interface AutoCloseable
+    public interface IValueConverter<V>
     {
+        public VR ConvertValueTo<VR>();
     }
 }

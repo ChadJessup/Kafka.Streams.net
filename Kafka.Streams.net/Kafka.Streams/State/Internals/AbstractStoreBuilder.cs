@@ -17,6 +17,7 @@
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -31,8 +32,8 @@ namespace Kafka.Streams.State.Internals
         public ISerde<K> keySerde { get; }
         public ISerde<V> valueSerde { get; }
         public ITime time { get; }
-        public bool enableCaching { get; }
-        public bool enableLogging { get; } = true;
+        public bool enableCaching { get; private set; }
+        public bool enableLogging { get; private set; } = true;
 
         public AbstractStoreBuilder(
             string name,
@@ -40,8 +41,9 @@ namespace Kafka.Streams.State.Internals
             ISerde<V> valueSerde,
             ITime time)
         {
-            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
-            time = time ?? throw new System.ArgumentNullException("time cannot be null", nameof(time));
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            time = time ?? throw new ArgumentNullException(nameof(time));
+
             this.name = name;
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
@@ -50,28 +52,34 @@ namespace Kafka.Streams.State.Internals
 
         public IStoreBuilder<T> withCachingEnabled()
         {
-//            enableCaching = true;
+            enableCaching = true;
+
             return this;
         }
 
         public IStoreBuilder<T> withCachingDisabled()
         {
-            //enableCaching = false;
+            enableCaching = false;
+
             return this;
         }
 
         public IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
         {
-            config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
-            //enableLogging = true;
+            config = config ?? throw new ArgumentNullException(nameof(config));
+
+            enableLogging = true;
             logConfig = config;
+
+
             return this;
         }
 
         public IStoreBuilder<T> withLoggingDisabled()
         {
-            //enableLogging = false;
+            enableLogging = false;
             logConfig.Clear();
+
             return this;
         }
 
