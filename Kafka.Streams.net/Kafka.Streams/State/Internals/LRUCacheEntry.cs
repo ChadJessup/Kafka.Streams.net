@@ -24,8 +24,8 @@ namespace Kafka.Streams.State.Internals
      */
     public class LRUCacheEntry
     {
-        private ContextualRecord record;
-        private long sizeBytes;
+        private readonly ContextualRecord record;
+        private readonly long sizeBytes;
         public bool isDirty { get; private set; }
 
         public LRUCacheEntry(byte[] value)

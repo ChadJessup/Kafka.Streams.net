@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class RocksDbBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
     {
-        private RocksDbStore rocksDBStore;
+        private readonly RocksDbStore rocksDBStore;
 
         public RocksDbBatchingRestoreCallback(RocksDbStore rocksDBStore)
         {

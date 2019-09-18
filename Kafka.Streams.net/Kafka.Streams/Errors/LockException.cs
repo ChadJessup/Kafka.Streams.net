@@ -28,7 +28,7 @@ namespace Kafka.Streams.Errors
     {
 
 
-        private static long serialVersionUID = 1L;
+        private static readonly long serialVersionUID = 1L;
 
         public LockException(string message)
             : base(message)

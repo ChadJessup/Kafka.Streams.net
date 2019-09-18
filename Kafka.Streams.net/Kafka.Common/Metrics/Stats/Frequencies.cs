@@ -56,8 +56,8 @@ namespace Kafka.Common.Metrics.Stats
             return new Frequencies(2, 0.0, 1.0, frequencies);
         }
 
-        private List<Frequency> frequencies;
-        private IBinScheme binScheme;
+        private readonly List<Frequency> frequencies;
+        private readonly IBinScheme binScheme;
 
         /**
          * Create a Frequencies that captures the values in the specified range into the given number of buckets,

@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using System.Collections.Generic;
 using Confluent.Kafka;
 using System;
@@ -21,21 +5,23 @@ using Microsoft.Extensions.Logging;
 using Kafka.Streams.Processor.Interfaces;
 using System.Linq;
 using Kafka.Streams.Extensions;
+using Kafka.Common;
+using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.Processor.Internals
 {
     public class StoreChangelogReader : IChangelogReader
     {
-        private ILogger log;
-        private IConsumer<byte[], byte[]> restoreConsumer;
-        private IStateRestoreListener userStateRestoreListener;
-        private Dictionary<TopicPartition, long> endOffsets = new Dictionary<TopicPartition, long>();
-        private Dictionary<string, List<Partition>> partitionInfo = new Dictionary<string, List<Partition>>();
-        private Dictionary<TopicPartition, StateRestorer> stateRestorers = new Dictionary<TopicPartition, StateRestorer>();
-        private HashSet<TopicPartition> needsRestoring = new HashSet<TopicPartition>();
-        private HashSet<TopicPartition> needsInitializing = new HashSet<TopicPartition>();
-        private HashSet<TopicPartition> completedRestorers = new HashSet<TopicPartition>();
-        private TimeSpan pollTime;
+        private readonly ILogger log;
+        private readonly IConsumer<byte[], byte[]> restoreConsumer;
+        private readonly IStateRestoreListener userStateRestoreListener;
+        private Dictionary<TopicPartition, TopicPartitionOffset> endOffsets = new Dictionary<TopicPartition, TopicPartitionOffset>();
+        private readonly Dictionary<string, List<Partition>> partitionInfo = new Dictionary<string, List<Partition>>();
+        private readonly Dictionary<TopicPartition, StateRestorer> stateRestorers = new Dictionary<TopicPartition, StateRestorer>();
+        private readonly HashSet<TopicPartition> needsRestoring = new HashSet<TopicPartition>();
+        private readonly HashSet<TopicPartition> needsInitializing = new HashSet<TopicPartition>();
+        private readonly HashSet<TopicPartition> completedRestorers = new HashSet<TopicPartition>();
+        private readonly TimeSpan pollTime;
 
         public StoreChangelogReader(
             IConsumer<byte[], byte[]> restoreConsumer,
@@ -78,15 +64,16 @@ namespace Kafka.Streams.Processor.Internals
 
             try
             {
-
-                ConsumerRecords<byte[], byte[]> records = restoreConsumer.poll(pollTime);
+                ConsumeResult<byte[], byte[]> records = restoreConsumer.Consume(pollTime);
 
                 foreach (TopicPartition partition in needsRestoring)
                 {
                     StateRestorer restorer = stateRestorers[partition];
-                    long pos = processNext(records.records(partition), restorer, endOffsets[partition]);
+                    long pos = 0;// processNext(records.records(partition), restorer, endOffsets[partition]);
+
                     restorer.setRestoredOffset(pos);
-                    if (restorer.hasCompleted(pos, endOffsets[partition]))
+
+                    if (restorer.hasCompleted(pos, endOffsets[partition].Offset))
                     {
                         restorer.restoreDone();
                         endOffsets.Remove(partition);
@@ -94,13 +81,14 @@ namespace Kafka.Streams.Processor.Internals
                     }
                 }
             }
-            catch (InvalidOffsetException recoverableException)
+            catch (TopicPartitionOffsetException recoverableException)
             {
                 log.LogWarning("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
-                HashSet<TopicPartition> partitions = recoverableException.partitions();
+                HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(recoverableException.Results.Select(tpo => tpo.TopicPartition));
+
                 foreach (TopicPartition partition in partitions)
                 {
-                    StreamTask<K, V> task = active.restoringTaskFor(partition);
+                    var task = active.restoringTaskFor(partition);
                     log.LogInformation("Reinitializing StreamTask<K, V> {} for changelog {}", task, partition);
 
                     needsInitializing.Remove(partition);
@@ -108,13 +96,13 @@ namespace Kafka.Streams.Processor.Internals
 
                     StateRestorer restorer = stateRestorers[partition];
                     restorer.setCheckpointOffset(StateRestorer.NO_CHECKPOINT);
-                    task.reinitializeStateStoresForPartitions(recoverableException.partitions());
+                    task.reinitializeStateStoresForPartitions(recoverableException.Results.Select(tpo => tpo.TopicPartition).ToList());
                 }
 
                 restoreConsumer.SeekToBeginning(partitions);
             }
 
-            needsRestoring.removeAll(completedRestorers);
+            needsRestoring.RemoveWhere(tp => completedRestorers.Contains(tp));
 
             if (!needsRestoring.Any())
             {
@@ -126,16 +114,16 @@ namespace Kafka.Streams.Processor.Internals
 
         private void initialize(IRestoringTasks active)
         {
-            if (!restoreConsumer.subscription().isEmpty())
+            if (restoreConsumer.Subscription.Any())
             {
-                throw new StreamsException("Restore consumer should not be subscribed to any topics (" + restoreConsumer.subscription() + ")");
+                throw new StreamsException($"Restore consumer should not be subscribed to any topics ({restoreConsumer.Subscription})");
             }
 
             // first refresh the changelog partition information from brokers, since initialize is only called when
             // the needsInitializing map is not empty, meaning we do not know the metadata for some of them yet
             refreshChangelogInfo();
 
-            HashSet<TopicPartition> initializable = new HashSet<>();
+            HashSet<TopicPartition> initializable = new HashSet<TopicPartition>();
             foreach (TopicPartition topicPartition in needsInitializing)
             {
                 if (hasPartition(topicPartition))
@@ -148,69 +136,73 @@ namespace Kafka.Streams.Processor.Internals
             // where we already have all of the data
             try
             {
-
-                endOffsets.putAll(restoreConsumer.endOffsets(initializable));
+                endOffsets = restoreConsumer.Committed(initializable, TimeSpan.FromSeconds(5.0))
+                    .ToDictionary(k => k.TopicPartition, v => v);
             }
             catch (TimeoutException e)
             {
                 // if timeout exception gets thrown we just give up this time and retry in the next run loop
-                log.LogDebug("Could not fetch end offset for {}; will fall back to partition by partition fetching", initializable);
+                log.LogDebug($"Could not fetch end offset for {initializable}; will fall back to partition by partition fetching");
+
                 return;
             }
 
-            IEnumerator<TopicPartition> iter = initializable.iterator();
-            while (iter.hasNext())
+            IEnumerator<TopicPartition> iter = initializable.GetEnumerator();
+            while (iter.MoveNext())
             {
-                TopicPartition topicPartition = iter.next();
-                long endOffset = endOffsets[topicPartition];
+                TopicPartition topicPartition = iter.Current;
+                long endOffset = endOffsets[topicPartition].Offset;
 
                 // offset should not be null; but since the consumer API does not guarantee it
-                // we.Add this check just in case
+                // we add this check just in case
                 if (endOffset != null)
                 {
                     StateRestorer restorer = stateRestorers[topicPartition];
                     if (restorer.checkpoint() >= endOffset)
                     {
                         restorer.setRestoredOffset(restorer.checkpoint());
-                        iter.Remove();
+                        // iter.Current.Remove();
+
                         completedRestorers.Add(topicPartition);
                     }
                     else if (restorer.offsetLimit == 0 || endOffset == 0)
                     {
                         restorer.setRestoredOffset(0);
-                        iter.Remove();
+                        // iter.Remove();
                         completedRestorers.Add(topicPartition);
                     }
                     else
                     {
-
                         restorer.setEndingOffset(endOffset);
                     }
+
                     needsInitializing.Remove(topicPartition);
                 }
                 else
                 {
 
                     log.LogInformation("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
-                    iter.Remove();
+                    // iter.Remove();
                 }
             }
 
             // set up restorer for those initializable
-            if (!initializable.isEmpty())
+            if (initializable.Any())
             {
                 startRestoration(initializable, active);
             }
         }
 
-        private void startRestoration(HashSet<TopicPartition> initialized,
-                                      IRestoringTasks active)
+        private void startRestoration(
+            HashSet<TopicPartition> initialized,
+            IRestoringTasks active)
         {
             log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 
-            HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(restoreConsumer.assignment());
-            assignment.addAll(initialized);
-            restoreConsumer.assign(assignment);
+            HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(restoreConsumer.Assignment);
+            assignment.UnionWith(initialized);
+
+            restoreConsumer.Assign(assignment);
 
             List<StateRestorer> needsPositionUpdate = new List<StateRestorer>();
 
@@ -219,22 +211,23 @@ namespace Kafka.Streams.Processor.Internals
                 StateRestorer restorer = stateRestorers[partition];
                 if (restorer.checkpoint() != StateRestorer.NO_CHECKPOINT)
                 {
-                    log.LogTrace("Found checkpoint {} from changelog {} for store {}.", restorer.checkpoint(), partition, restorer.storeName);
+                    log.LogTrace($"Found checkpoint {restorer.checkpoint()} from changelog {partition} for store {restorer.storeName}.");
 
-                    restoreConsumer.seek(partition, restorer.checkpoint());
-                    logRestoreOffsets(partition,
-                            restorer.checkpoint(),
-                            endOffsets[partition]);
+                    restoreConsumer.Seek(new TopicPartitionOffset(partition, restorer.checkpoint()));
 
-                    restorer.setStartingOffset(restoreConsumer.position(partition));
+                    logRestoreOffsets(
+                        partition,
+                        restorer.checkpoint(),
+                        endOffsets[partition].Offset);
+
+                    restorer.setStartingOffset(restoreConsumer.Position(partition));
                     restorer.restoreStarted();
                 }
                 else
                 {
+                    log.LogTrace($"Did not find checkpoint from changelog {partition} for store {restorer.storeName}, rewinding to beginning.");
 
-                    log.LogTrace("Did not find checkpoint from changelog {} for store {}, rewinding to beginning.", partition, restorer.storeName);
-
-                    restoreConsumer.seekToBeginning(Collections.singletonList(partition));
+                    restoreConsumer.SeekToBeginning(new List<TopicPartition> { partition });
                     needsPositionUpdate.Add(restorer);
                 }
             }
@@ -244,8 +237,9 @@ namespace Kafka.Streams.Processor.Internals
                 TopicPartition partition = restorer.partition;
 
                 // If checkpoint does not exist it means the task was not shutdown gracefully before;
-                // and in this case if EOS is turned on we should wipe out the state and re-initialize the task
-                StreamTask<K, V> task = active.restoringTaskFor(partition);
+                // and in this case if EOS is turned on we should wipe out the state and re-initialize the task.
+                var task = active.restoringTaskFor(partition);
+
                 if (task.isEosEnabled())
                 {
                     log.LogInformation("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
@@ -253,30 +247,31 @@ namespace Kafka.Streams.Processor.Internals
 
                     needsInitializing.Remove(partition);
                     initialized.Remove(partition);
-                    restorer.setCheckpointOffset(restoreConsumer.position(partition));
+                    restorer.setCheckpointOffset(restoreConsumer.Position(partition));
 
-                    task.reinitializeStateStoresForPartitions(Collections.singleton(partition));
+                    task.reinitializeStateStoresForPartitions(new List<TopicPartition> { partition });
                 }
                 else
                 {
+                    log.LogInformation($"Restoring task {task.id}'s state store {restorer.storeName} from beginning of the changelog {partition} ");
 
-                    log.LogInformation("Restoring task {}'s state store {} from beginning of the changelog {} ", task.id, restorer.storeName, partition);
-
-                    long position = restoreConsumer.position(restorer.partition);
-                    logRestoreOffsets(restorer.partition,
-                            position,
-                            endOffsets[restorer.partition]);
+                    long position = restoreConsumer.Position(restorer.partition);
+                    logRestoreOffsets(
+                        restorer.partition,
+                        position,
+                        endOffsets[restorer.partition].Offset);
                     restorer.setStartingOffset(position);
                     restorer.restoreStarted();
                 }
             }
 
-            needsRestoring.AddAll(initialized);
+            needsRestoring.UnionWith(initialized);
         }
 
-        private void logRestoreOffsets(TopicPartition partition,
-                                       long startingOffset,
-                                       long endOffset)
+        private void logRestoreOffsets(
+            TopicPartition partition,
+            long startingOffset,
+            long endOffset)
         {
             log.LogDebug("Restoring partition {} from offset {} to endOffset {}",
                       partition,
@@ -285,16 +280,13 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         private List<TopicPartition> completed()
-        {
-            return completedRestorers;
-        }
+            => completedRestorers.ToList();
 
         private void refreshChangelogInfo()
         {
             try
             {
-
-                partitionInfo.putAll(restoreConsumer.listTopics());
+                //partitionInfo.putAll(restoreConsumer..listTopics());
             }
             catch (TimeoutException e)
             {
@@ -305,7 +297,8 @@ namespace Kafka.Streams.Processor.Internals
 
         public Dictionary<TopicPartition, long> restoredOffsets()
         {
-            Dictionary<TopicPartition, long> restoredOffsets = new Dictionary<>();
+            Dictionary<TopicPartition, long> restoredOffsets = new Dictionary<TopicPartition, long>();
+
             foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers)
             {
                 StateRestorer restorer = entry.Value;
@@ -314,58 +307,62 @@ namespace Kafka.Streams.Processor.Internals
                     restoredOffsets.Add(entry.Key, restorer.restoredOffset);
                 }
             }
+
             return restoredOffsets;
         }
-
 
         public void reset()
         {
             partitionInfo.Clear();
-            stateRestorers.clear();
+            stateRestorers.Clear();
             needsRestoring.Clear();
             endOffsets.Clear();
             needsInitializing.Clear();
             completedRestorers.Clear();
         }
 
-        private long processNext(List<ConsumeResult<byte[], byte[]>> records,
-                                 StateRestorer restorer,
-                                 long endOffset)
+        private long processNext(
+            List<ConsumeResult<byte[], byte[]>> records,
+            StateRestorer restorer,
+            long endOffset)
         {
-            List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<>();
+            List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
             long nextPosition = -1;
-            int numberRecords = records.size();
+            int numberRecords = records.Count;
             int numberRestored = 0;
             long lastRestoredOffset = -1;
+
             foreach (ConsumeResult<byte[], byte[]> record in records)
             {
-                long offset = record.offset();
+                long offset = record.Offset;
+
                 if (restorer.hasCompleted(offset, endOffset))
                 {
-                    nextPosition = record.offset();
+                    nextPosition = record.Offset;
                     break;
                 }
+
                 lastRestoredOffset = offset;
                 numberRestored++;
-                if (record.key() != null)
+
+                if (record.Key != null)
                 {
                     restoreRecords.Add(record);
                 }
             }
-
 
             // if we have changelog topic then we should have restored all records in the list
             // otherwise if we did not fully restore to that point we need to set nextPosition
             // to the position of the restoreConsumer and we'll cause a TaskMigratedException exception
             if (nextPosition == -1 || (restorer.offsetLimit == long.MaxValue && numberRecords != numberRestored))
             {
-                nextPosition = restoreConsumer.position(restorer.partition);
+                nextPosition = restoreConsumer.Position(restorer.partition);
             }
 
-            if (!restoreRecords.isEmpty())
+            if (restoreRecords.Any())
             {
                 restorer.restore(restoreRecords);
-                restorer.restoreBatchCompleted(lastRestoredOffset, records.size());
+                restorer.restoreBatchCompleted(lastRestoredOffset, records.Count);
 
                 log.LogTrace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
                         restorer.partition, restorer.storeName, records.Count, lastRestoredOffset, nextPosition);
@@ -373,8 +370,6 @@ namespace Kafka.Streams.Processor.Internals
 
             return nextPosition;
         }
-
-
 
         private bool hasPartition(TopicPartition topicPartition)
         {
@@ -387,7 +382,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (var partition in partitions)
             {
-                if (partition.partition == topicPartition.partition)
+                if (partition == topicPartition.Partition)
                 {
                     return true;
                 }

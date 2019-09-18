@@ -19,21 +19,21 @@ namespace Kafka.Streams.State.Internals
      */
     public class RocksDbStore : IKeyValueStore<Bytes, byte[]>, IBulkLoadingStore
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
+        private static readonly ILogger log = new LoggerFactory().CreateLogger<RocksDbStore>();
 
-        private static Regex SST_FILE_EXTENSION = new Regex(".*\\.sst", RegexOptions.Compiled);
+        private static readonly Regex SST_FILE_EXTENSION = new Regex(".*\\.sst", RegexOptions.Compiled);
 
-        private static Compression COMPRESSION_TYPE = Compression.No;
-        private static Compaction COMPACTION_STYLE = Compaction.Universal;
+        private static readonly Compression COMPRESSION_TYPE = Compression.No;
+        private static readonly Compaction COMPACTION_STYLE = Compaction.Universal;
 
-        private static ulong WRITE_BUFFER_SIZE = 16 * 1024 * 1024L;
-        private static ulong BLOCK_CACHE_SIZE = 50 * 1024 * 1024L;
-        private static ulong BLOCK_SIZE = 4096L;
-        private static int MAX_WRITE_BUFFERS = 3;
-        private static string DB_FILE_DIR = "rocksdb";
+        private static readonly ulong WRITE_BUFFER_SIZE = 16 * 1024 * 1024L;
+        private static readonly ulong BLOCK_CACHE_SIZE = 50 * 1024 * 1024L;
+        private static readonly ulong BLOCK_SIZE = 4096L;
+        private static readonly int MAX_WRITE_BUFFERS = 3;
+        private static readonly string DB_FILE_DIR = "rocksdb";
 
         public string name { get; }
-        private string parentDir;
+        private readonly string parentDir;
         protected HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators { get; } = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
 
         protected DirectoryInfo dbDir { get; private set; }
@@ -56,9 +56,9 @@ namespace Kafka.Streams.State.Internals
 
         // visible for testing
         IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
-        private DbOptions dbOptions = new DbOptions();
-        private ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
-        private BlockBasedTableOptions tableConfig = new BlockBasedTableOptions();
+        private readonly DbOptions dbOptions = new DbOptions();
+        private readonly ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
+        private readonly BlockBasedTableOptions tableConfig = new BlockBasedTableOptions();
 
         protected volatile bool open = false;
 
@@ -123,7 +123,7 @@ namespace Kafka.Streams.State.Internals
                 //userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            dbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir().FullName, parentDir), name));
+            dbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir.FullName, parentDir), name));
 
             try
             {
@@ -166,9 +166,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public void init<K, V>(
-            IProcessorContext<K, V> context,
-            IStateStore root)
+        public void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
         {
             // open the DB dir
             internalProcessorContext = (IProcessorContext<Bytes, byte[]>)context;
@@ -449,6 +447,21 @@ namespace Kafka.Streams.State.Internals
                     iterator.close();
                 }
             }
+        }
+
+        public void Add<K, V>(K key, V value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool isPresent()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Add(Bytes key, byte[] value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

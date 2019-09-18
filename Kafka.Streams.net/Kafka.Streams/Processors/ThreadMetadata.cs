@@ -23,17 +23,17 @@ namespace Kafka.Streams.Processor
      */
     public class ThreadMetadata
     {
-        private string threadName;
-        private string threadState;
-        private HashSet<TaskMetadata> activeTasks;
-        private HashSet<TaskMetadata> standbyTasks;
-        private string mainConsumerClientId;
-        private string restoreConsumerClientId;
-        private HashSet<string> producerClientIds;
+        private readonly string threadName;
+        private readonly string threadState;
+        private readonly HashSet<TaskMetadata> activeTasks;
+        private readonly HashSet<TaskMetadata> standbyTasks;
+        private readonly string mainConsumerClientId;
+        private readonly string restoreConsumerClientId;
+        private readonly HashSet<string> producerClientIds;
 
         // the admin client should be shared among all threads, so the client id should be the same;
         // we keep it at the thread-level for user's convenience and possible extensions in the future
-        private string adminClientId;
+        private readonly string adminClientId;
 
         public ThreadMetadata(
             string threadName,

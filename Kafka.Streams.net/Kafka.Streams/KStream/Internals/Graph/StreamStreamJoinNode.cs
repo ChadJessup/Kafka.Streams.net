@@ -17,11 +17,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
     public class StreamStreamJoinNode<K, V1, V2, VR> : BaseJoinProcessorNode<K, V1, V2, VR>
     {
-        private ProcessorParameters<K, V1> thisWindowedStreamProcessorParameters;
-        private ProcessorParameters<K, V2> otherWindowedStreamProcessorParameters;
-        private IStoreBuilder<IWindowStore<K, V1>> thisWindowStoreBuilder;
-        private IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder;
-        private Joined<K, V1, V2> joined;
+        private readonly ProcessorParameters<K, V1> thisWindowedStreamProcessorParameters;
+        private readonly ProcessorParameters<K, V2> otherWindowedStreamProcessorParameters;
+        private readonly IStoreBuilder<IWindowStore<K, V1>> thisWindowStoreBuilder;
+        private readonly IStoreBuilder<IWindowStore<K, V2>> otherWindowStoreBuilder;
+        private readonly Joined<K, V1, V2> joined;
 
         public StreamStreamJoinNode(
             string nodeName,

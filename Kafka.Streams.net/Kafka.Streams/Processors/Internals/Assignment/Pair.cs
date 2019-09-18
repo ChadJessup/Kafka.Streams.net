@@ -20,8 +20,8 @@ namespace Kafka.Streams.Processor.Internals.Assignment
     public class Pair
     {
 
-        private TaskId task1;
-        private TaskId task2;
+        private readonly TaskId task1;
+        private readonly TaskId task2;
 
         public Pair(TaskId task1, TaskId task2)
         {

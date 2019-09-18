@@ -27,7 +27,7 @@ namespace Kafka.Streams
     {
         private readonly ILogger<KafkaStreamsState> logger;
         private Dictionary<KafkaStreamsStates, StateTransition<KafkaStreamsStates>> validTransitions = new Dictionary<KafkaStreamsStates, StateTransition<KafkaStreamsStates>>();
-        private object stateLock = new object();
+        private readonly object stateLock = new object();
 
         public KafkaStreamsState(
             ILogger<KafkaStreamsState> logger)

@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
     public class RocksDbKeyValueBytesStoreSupplier : IKeyValueBytesStoreSupplier
     {
         public string name { get; }
-        private bool returnTimestampedStore;
+        private readonly bool returnTimestampedStore;
 
         public RocksDbKeyValueBytesStoreSupplier(
             string name,

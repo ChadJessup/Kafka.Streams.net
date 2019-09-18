@@ -11,11 +11,11 @@ namespace Kafka.Common.Metrics.Stats
     {
         public int bins { get; private set; }
 
-        private static int MIN_BIN_NUMBER = 0;
-        private double min;
-        private double max;
-        private double bucketWidth;
-        private int maxBinNumber;
+        private static readonly int MIN_BIN_NUMBER = 0;
+        private readonly double min;
+        private readonly double max;
+        private readonly double bucketWidth;
+        private readonly int maxBinNumber;
 
         /**
          * Create a bin scheme with the specified number of bins that all have the same width.

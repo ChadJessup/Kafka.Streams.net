@@ -25,8 +25,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StreamSinkNode<K, V> : StreamsGraphNode
     {
-        private ITopicNameExtractor topicNameExtractor;
-        private ProducedInternal<K, V> producedInternal;
+        private readonly ITopicNameExtractor topicNameExtractor;
+        private readonly ProducedInternal<K, V> producedInternal;
 
         public StreamSinkNode(
             string nodeName,

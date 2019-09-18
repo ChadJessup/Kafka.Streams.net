@@ -4,7 +4,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class StampedRecord<K, V> : Stamped<ConsumeResult<K, V>>
     {
-        private ConsumeResult<K, V> record;
+        private readonly ConsumeResult<K, V> record;
 
         public StampedRecord(ConsumeResult<K, V> record, long timestamp)
             : base(record, timestamp)

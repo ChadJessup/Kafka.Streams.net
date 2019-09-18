@@ -20,7 +20,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     internal class PrintWriter
     {
-        private StringWriter stringWriter;
+        private readonly StringWriter stringWriter;
 
         public PrintWriter(StringWriter stringWriter)
         {

@@ -22,44 +22,51 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableKTableJoinMergeProcessor<K, V> : AbstractProcessor<K, Change<V>>
     {
-        //private ITimestampedKeyValueStore<K, V> store;
+        private readonly string queryableName;
+        private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
+        private readonly bool sendOldValues;
 
-        public void init(IProcessorContext<K, V> context)
+        public KTableKTableJoinMergeProcessor(string queryableName)
         {
-            //base.init(context);
-            //if (queryableName != null)
-            //{
-            //    store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
-            //    tupleForwarder = new TimestampedTupleForwarder<K, V>(
-            //        store,
-            //        context,
-            //        new TimestampedCacheFlushListener<K, V>(context),
-            //        sendOldValues);
-            //}
+            this.queryableName = queryableName;
         }
 
+        public override void init(IProcessorContext<K, Change<V>> context)
+        {
+            base.init(context);
+            if (queryableName != null)
+            {
+                store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
+                tupleForwarder = new TimestampedTupleForwarder<K, Change<V>>(
+                    store,
+                    context,
+                    new TimestampedCacheFlushListener<K, Change<V>>(context),
+                    sendOldValues);
+            }
+        }
 
         public override void process(K key, Change<V> value)
         {
-            //if (queryableName != null)
-            //{
-            //    store.Add(key, ValueAndTimestamp<V>.make(value.newValue, context.timestamp()));
-            //    tupleForwarder.maybeForward(key, value.newValue, sendOldValues ? value.oldValue : null);
-            //}
-            //else
-            //{
+            if (queryableName != null)
+            {
+                store.Add(key, ValueAndTimestamp<V>.make(value.newValue, context.timestamp));
 
-            //    if (sendOldValues)
-            //    {
-            //        context.forward(key, value);
-            //    }
-            //    else
-            //    {
-
-            //        context.forward(key, new Change<V>(value.newValue, default));
-            //    }
-            //}
+                tupleForwarder.maybeForward(key, value.newValue, sendOldValues
+                    ? value.oldValue
+                    : default);
+            }
+            else
+            {
+                if (sendOldValues)
+                {
+                    context.forward(key, value);
+                }
+                else
+                {
+                    context.forward(key, new Change<V>(value.newValue, default));
+                }
+            }
         }
     }
 }

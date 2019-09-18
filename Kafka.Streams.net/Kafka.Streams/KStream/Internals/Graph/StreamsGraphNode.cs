@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StreamsGraphNode
     {
-        private HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
+        private readonly HashSet<StreamsGraphNode> childNodes = new HashSet<StreamsGraphNode>();
         private bool valueChangingOperation;
         private bool mergeNode;
 

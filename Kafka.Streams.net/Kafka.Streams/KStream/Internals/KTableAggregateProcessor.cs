@@ -26,7 +26,7 @@
 //        private ITimestampedKeyValueStore<K, T> store;
 //        private TimestampedTupleForwarder<K, T> tupleForwarder;
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            base.init(context);
 //            store = (TimestampedKeyValueStore<K, T>)context.getStateStore(storeName);

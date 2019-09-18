@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream
 {
     public class Named : INamedOperation<Named>
     {
-        private static int MAX_NAME_LENGTH = 249;
+        private static readonly int MAX_NAME_LENGTH = 249;
 
         public string name { get; }
 

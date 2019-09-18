@@ -21,10 +21,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableAggregate<K, V, T> : IKTableProcessorSupplier<K, V, T>
     {
-        private string storeName;
-        private IInitializer<T> initializer;
-        private IAggregator<K, V, T> add;
-        private IAggregator<K, V, T> Remove;
+        private readonly string storeName;
+        private readonly IInitializer<T> initializer;
+        private readonly IAggregator<K, V, T> add;
+        private readonly IAggregator<K, V, T> Remove;
 
         private bool sendOldValues = false;
 

@@ -16,30 +16,29 @@
  */
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KTableSourceValueGetter<K, V> : IKTableValueGetter<K, V>
     {
-        //private ITimestampedKeyValueStore<K, V> store = null;
+        private ITimestampedKeyValueStore<K, V> store = null;
 
-        public void init(IProcessorContext<K, V> context)
+        public void init(IProcessorContext<K, V> context, string storeName)
         {
-            //store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }
 
         public ValueAndTimestamp<V> get(K key)
         {
-            return null; // store.get(key);
+            return store.get(key);
         }
-
 
         public void close() { }
 
-
-        State.ValueAndTimestamp<V> IKTableValueGetter<K, V>.get(K key)
+        ValueAndTimestamp<V> IKTableValueGetter<K, V>.get(K key)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

@@ -33,7 +33,7 @@
 //            this.valueTransformer = valueTransformer = valueTransformer ?? throw new System.ArgumentNullException("valueTransformer", nameof(valueTransformer));
 //        }
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            parentGetter.init(context);
 //            valueTransformer.init(new ForwardingDisabledProcessorContext(context));

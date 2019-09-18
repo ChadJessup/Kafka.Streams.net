@@ -28,14 +28,14 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class GroupedStreamAggregateBuilder<K, V>
     {
-        private InternalStreamsBuilder builder;
-        private ISerde<K> keySerde;
-        private ISerde<V> valueSerde;
-        private bool repartitionRequired;
-        private string userProvidedRepartitionTopicName;
-        private HashSet<string> sourceNodes;
-        private string name;
-        private StreamsGraphNode streamsGraphNode;
+        private readonly InternalStreamsBuilder builder;
+        private readonly ISerde<K> keySerde;
+        private readonly ISerde<V> valueSerde;
+        private readonly bool repartitionRequired;
+        private readonly string userProvidedRepartitionTopicName;
+        private readonly HashSet<string> sourceNodes;
+        private readonly string name;
+        private readonly StreamsGraphNode streamsGraphNode;
         private StreamsGraphNode repartitionNode;
 
         public IInitializer<long> countInitializer;// = () => 0L;

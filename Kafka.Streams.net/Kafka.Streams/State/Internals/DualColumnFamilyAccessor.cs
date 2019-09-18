@@ -11,8 +11,8 @@ namespace Kafka.Streams.State.Internals
 {
     public class DualColumnFamilyAccessor : IRocksDbAccessor
     {
-        private ColumnFamilyHandle oldColumnFamily;
-        private ColumnFamilyHandle newColumnFamily;
+        private readonly ColumnFamilyHandle oldColumnFamily;
+        private readonly ColumnFamilyHandle newColumnFamily;
         private readonly RocksDb db;
         private readonly WriteOptions wOptions;
         private readonly string name;

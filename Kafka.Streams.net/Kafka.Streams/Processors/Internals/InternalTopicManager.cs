@@ -27,18 +27,18 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class InternalTopicManager
     {
-        private static string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
+        private static readonly string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
             "Please report at https://issues.apache.org/jira/projects/KAFKA or dev-mailing list (https://kafka.apache.org/contact).";
 
-        private ILogger log;
-        private long windowChangeLogAdditionalRetention;
-        private Dictionary<string, string> defaultTopicConfigs = new Dictionary<string, string>();
+        private readonly ILogger log;
+        private readonly long windowChangeLogAdditionalRetention;
+        private readonly Dictionary<string, string> defaultTopicConfigs = new Dictionary<string, string>();
 
-        private short replicationFactor;
-        private IAdminClient adminClient;
+        private readonly short replicationFactor;
+        private readonly IAdminClient adminClient;
 
-        private int retries;
-        private long retryBackOffMs;
+        private readonly int retries;
+        private readonly long retryBackOffMs;
 
         public InternalTopicManager(IAdminClient adminClient,
                                     StreamsConfig streamsConfig)

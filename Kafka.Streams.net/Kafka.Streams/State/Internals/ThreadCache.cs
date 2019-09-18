@@ -14,10 +14,10 @@ namespace Kafka.Streams.State.Internals
      */
     public class ThreadCache
     {
-        private ILogger log;
-        private long maxCacheSizeBytes;
-        private StreamsMetricsImpl metrics;
-        private Dictionary<string, NamedCache> caches = new Dictionary<string, NamedCache>();
+        private readonly ILogger log;
+        private readonly long maxCacheSizeBytes;
+        private readonly StreamsMetricsImpl metrics;
+        private readonly Dictionary<string, NamedCache> caches = new Dictionary<string, NamedCache>();
 
         // internal stats
         private long numPuts = 0;

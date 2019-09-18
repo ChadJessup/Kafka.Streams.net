@@ -25,18 +25,18 @@ namespace Kafka.Common
      */
     public class Cluster
     {
-        private bool isBootstrapConfigured;
-        private List<Node> nodes;
-        private HashSet<string> unauthorizedTopics;
-        private HashSet<string> invalidTopics;
-        private HashSet<string> internalTopics;
-        private Node controller;
-        private Dictionary<TopicPartition, PartitionMetadata> partitionsByTopicPartition;
-        private Dictionary<string, List<PartitionMetadata>> partitionsByTopic;
-        private Dictionary<string, List<PartitionMetadata>> availablePartitionsByTopic;
-        private Dictionary<int, List<PartitionMetadata>> partitionsByNode;
-        private Dictionary<int, Node> nodesById;
-        private ClusterResource clusterResource;
+        private readonly bool isBootstrapConfigured;
+        private readonly List<Node> nodes;
+        private readonly HashSet<string> unauthorizedTopics;
+        private readonly HashSet<string> invalidTopics;
+        private readonly HashSet<string> internalTopics;
+        private readonly Node controller;
+        private readonly Dictionary<TopicPartition, PartitionMetadata> partitionsByTopicPartition;
+        private readonly Dictionary<string, List<PartitionMetadata>> partitionsByTopic;
+        private readonly Dictionary<string, List<PartitionMetadata>> availablePartitionsByTopic;
+        private readonly Dictionary<int, List<PartitionMetadata>> partitionsByNode;
+        private readonly Dictionary<int, Node> nodesById;
+        private readonly ClusterResource clusterResource;
 
         /**
          * Create a new cluster with the given id, nodes and partitions

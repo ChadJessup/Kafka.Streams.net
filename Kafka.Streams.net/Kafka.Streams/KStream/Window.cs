@@ -7,8 +7,8 @@ namespace Kafka.Streams.KStream
     {
         protected long startMs;
         protected long endMs;
-        private DateTime startTime;
-        private DateTime endTime;
+        private readonly DateTime startTime;
+        private readonly DateTime endTime;
 
 
         /**

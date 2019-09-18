@@ -1,22 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Common.Metrics;
-using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Consumer;
 using Kafka.Streams.Consumers;
@@ -26,7 +9,6 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals.Metrics;
 using Kafka.Streams.Processors;
-using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -37,19 +19,20 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class GlobalStreamThread : IThread<GlobalStreamThreadStates>
     {
-        private ILogger<GlobalStreamThread> logger;
+        private readonly ILogger<GlobalStreamThread> logger;
 
         public IStateMachine<GlobalStreamThreadStates> State { get; }
 
-        private LogContext logContext;
-        private StreamsConfig config;
-        private IConsumer<byte[], byte[]> globalConsumer;
-        private ITime time;
-        //private StateDirectory stateDirectory;
-        //private ThreadCache cache;
-        private StreamsMetricsImpl streamsMetrics;
+        private readonly LogContext logContext;
+        private readonly IStateRestoreListener stateRestoreListener;
+        private readonly StreamsConfig config;
+        private readonly IConsumer<byte[], byte[]> globalConsumer;
+        private readonly ITime time;
+        private readonly StateDirectory stateDirectory;
+        // private ThreadCache cache;
+        private readonly StreamsMetricsImpl streamsMetrics;
         private readonly string logPrefix;
-        private ProcessorTopology topology;
+        private readonly ProcessorTopology topology;
         private StreamsException startupException;
 
         public Thread Thread { get; }
@@ -62,12 +45,12 @@ namespace Kafka.Streams.Processor.Internals
             ProcessorTopology topology,
             StreamsConfig config,
             GlobalConsumer globalConsumer,
-            //StateDirectory stateDirectory,
+            StateDirectory stateDirectory,
             long cacheSizeBytes,
             MetricsRegistry metrics,
             ITime time,
-            string threadClientId)
-        //StateRestoreListener stateRestoreListener)
+            string threadClientId,
+            IStateRestoreListener stateRestoreListener)
         {
             this.logger = logger;
             this.State = globalStreamThreadState;
@@ -77,12 +60,12 @@ namespace Kafka.Streams.Processor.Internals
             this.config = config;
             this.topology = topology;
             this.globalConsumer = globalConsumer;
-            // this.stateDirectory = stateDirectory;
+            this.stateDirectory = stateDirectory;
             this.streamsMetrics = new StreamsMetricsImpl(metrics, threadClientId);
             this.logPrefix = string.Format("global-stream-thread [%s] ", threadClientId);
             this.logContext = new LogContext(logPrefix);
             // this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
-            // this.stateRestoreListener = stateRestoreListener;
+            this.stateRestoreListener = stateRestoreListener;
         }
 
         public void run()

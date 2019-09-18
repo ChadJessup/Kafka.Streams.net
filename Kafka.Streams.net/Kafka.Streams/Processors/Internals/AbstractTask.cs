@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processor.Interfaces;
@@ -38,7 +22,8 @@ namespace Kafka.Streams.Processor.Internals
         protected bool eosEnabled { get; }
         protected ILogger log { get; }
         public LogContext logContext { get; }
-        StateDirectory stateDirectory;
+
+        readonly StateDirectory stateDirectory;
 
         protected bool taskInitialized { get; set; }
         protected bool taskClosed { get; set; }
@@ -233,7 +218,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public virtual void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
         {
-            stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
+            stateMgr.reinitializeStateStoresForPartitions<K, V>(partitions, processorContext);
         }
 
         /**

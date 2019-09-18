@@ -68,7 +68,7 @@ namespace Kafka.Streams.Processor.Internals
     public class ProcessorNode<K, V> : ProcessorNode
     {
         public NodeMetrics<K, V> nodeMetrics { get; private set; }
-        private IProcessor<K, V> processor;
+        private readonly IProcessor<K, V> processor;
 
         public ProcessorNode(string name)
             : this(name, null, null)
@@ -84,7 +84,7 @@ namespace Kafka.Streams.Processor.Internals
             this.processor = processor;
         }
 
-        ProcessorNode<K, V> getChild(string childName)
+        public ProcessorNode<K, V> getChild(string childName)
         {
             return (ProcessorNode<K, V>)childByName[childName];
         }

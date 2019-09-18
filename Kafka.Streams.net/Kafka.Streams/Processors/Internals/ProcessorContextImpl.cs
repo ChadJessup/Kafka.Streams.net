@@ -1,205 +1,199 @@
-//using Kafka.Streams.State;
-//using Kafka.Streams.Processor.Interfaces;
-//using Kafka.Streams.State.Internals;
-//using Kafka.Streams.Processor.Internals.Metrics;
-//using Kafka.Streams.Errors;
-//using System.Collections.Generic;
-//using System;
-//using Kafka.Streams.Internals.Kafka.Streams.Internals;
+using Kafka.Streams.State;
+using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Errors;
+using System.Collections.Generic;
+using System;
+using Kafka.Streams.Internals;
+using Kafka.Streams.State.Interfaces;
+using System.Linq;
+using Kafka.Streams.Interfaces;
 
-//namespace Kafka.Streams.Processor.Internals
-//{
-//    public class ProcessorContextImpl<K, V> : AbstractProcessorContext<K, V>, ISupplier
-//    {
-//        private StreamTask<K, V> task;
-//        private IRecordCollector<K, V> collector;
-//        private ToInternal toInternal = new ToInternal();
-//        private static To SEND_TO_ALL = To.all();
+namespace Kafka.Streams.Processor.Internals
+{
+    public class ProcessorContextImpl<K, V> : AbstractProcessorContext<K, V>, ISupplier
+    {
+        private readonly StreamTask task;
+        private readonly IRecordCollector collector;
+        private readonly ToInternal toInternal = new ToInternal();
+        private static readonly To SEND_TO_ALL = To.all();
 
-//        public ProcessorContextImpl(TaskId id,
-//                             StreamTask<K, V> task,
-//                             StreamsConfig config,
-//                             IRecordCollector<K, V> collector,
-//                             ProcessorStateManager<K, V> stateMgr,
-//                             StreamsMetricsImpl metrics,
-//                             ThreadCache cache)
-//            : base(id, config, metrics, stateMgr, cache)
-//        {
-//            this.task = task;
-//            this.collector = collector;
-//        }
+        public ProcessorContextImpl(
+            TaskId id,
+            StreamTask task,
+            StreamsConfig config,
+            IRecordCollector collector,
+            ProcessorStateManager stateMgr,
+            StreamsMetricsImpl metrics,
+            ThreadCache cache)
+            : base(id, config, metrics, stateMgr, cache)
+        {
+            this.task = task;
+            this.collector = collector;
+        }
 
-//        public ProcessorStateManager<K, V> getStateMgr()
-//        {
-//            return (ProcessorStateManager<K, V>)stateManager;
-//        }
+        public ProcessorStateManager getStateMgr()
+        {
+            return (ProcessorStateManager)stateManager;
+        }
 
+        public IRecordCollector recordCollector()
+        {
+            return collector;
+        }
 
-//        public IRecordCollector<K, V> recordCollector()
-//        {
-//            return collector;
-//        }
+        /**
+         * @throws StreamsException if an attempt is made to access this state store from an unknown node
+         */
+        public override IStateStore getStateStore(string name)
+        {
+            if (currentNode == null)
+            {
+                throw new StreamsException("Accessing from an unknown node");
+            }
 
-//        /**
-//         * @throws StreamsException if an attempt is made to access this state store from an unknown node
-//         */
+            IStateStore? global = stateManager.getGlobalStore(name);
+            if (global != null)
+            {
+                if (global is ITimestampedKeyValueStore<K, V>)
+                {
+                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>((ITimestampedKeyValueStore<K, V>)global);
+                }
+                else if (global is IKeyValueStore<K, V>)
+                {
+                    return new KeyValueStoreReadOnlyDecorator<K, V>((IKeyValueStore<K, V>)global);
+                }
+                else if (global is ITimestampedWindowStore<K, V>)
+                {
+                    return new TimestampedWindowStoreReadOnlyDecorator<K, V>((ITimestampedWindowStore<K, V>)global);
+                }
+                else if (global is IWindowStore<K, V>)
+                {
+                    return new WindowStoreReadOnlyDecorator<K, V>((IWindowStore<K, V>)global);
+                }
+                else if (global is ISessionStore<K, V>)
+                {
+                    return new SessionStoreReadOnlyDecorator<K, V>((ISessionStore<K, V>)global);
+                }
 
+                return global;
+            }
 
-//        public IStateStore getStateStore(string name)
-//        {
-//            if (currentNode() == null)
-//            {
-//                throw new StreamsException("Accessing from an unknown node");
-//            }
+            if (!currentNode.stateStores.Contains(name))
+            {
+                throw new StreamsException("IProcessor " + currentNode.name + " has no access to IStateStore " + name +
+                    " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
+                    "make sure to connect the.Added store to the processor by providing the processor name to " +
+                    "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
+                    "DSL users need to provide the store name to '.process()', '.transform()', or '.transformValues()' " +
+                    "to connect the store to the corresponding operator. If you do not.Add stores manually, " +
+                    "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
+            }
 
-//            IStateStore global = stateManager.getGlobalStore(name);
-//            if (global != null)
-//            {
-//                if (global is ITimestampedKeyValueStore<K, V>)
-//                {
-//                    return new TimestampedKeyValueStoreReadOnlyDecorator<K, V>((ITimestampedKeyValueStore<K, V>)global);
-//                }
-//                else if (global is IKeyValueStore<K, V>)
-//                {
-//                    return new KeyValueStoreReadOnlyDecorator((IKeyValueStore<K, V>)global);
-//                }
-//                else if (global is ITimestampedWindowStore<K, V>)
-//                {
-//                    return new TimestampedWindowStoreReadOnlyDecorator((ITimestampedWindowStore)global);
-//                }
-//                else if (global is IWindowStore)
-//                {
-//                    return new WindowStoreReadOnlyDecorator((IWindowStore)global);
-//                }
-//                else if (global is ISessionStore)
-//                {
-//                    return new SessionStoreReadOnlyDecorator((ISessionStore)global);
-//                }
+            IStateStore? store = stateManager.getStore(name);
 
-//                return global;
-//            }
+            if (store is ITimestampedKeyValueStore<K, V>)
+            {
+                return new TimestampedKeyValueStoreReadWriteDecorator<K, V>((ITimestampedKeyValueStore<K, V>)store);
+            }
+            else if (store is IKeyValueStore<K, V>)
+            {
+                return new KeyValueStoreReadWriteDecorator<K, V>((IKeyValueStore<K, V>)store);
+            }
+            else if (store is ITimestampedWindowStore<K, V>)
+            {
+                return new TimestampedWindowStoreReadWriteDecorator<K, V>((ITimestampedWindowStore<K, V>)store);
+            }
+            else if (store is IWindowStore<K, V>)
+            {
+                return new WindowStoreReadWriteDecorator<K, V>((IWindowStore<K, V>)store);
+            }
+            else if (store is ISessionStore<K, V>)
+            {
+                return new SessionStoreReadWriteDecorator<K, V>((ISessionStore<K, V>)store);
+            }
 
-//            if (!currentNode().stateStores.Contains(name))
-//            {
-//                throw new StreamsException("IProcessor " + currentNode().name + " has no access to IStateStore " + name +
-//                    " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
-//                    "make sure to connect the.Added store to the processor by providing the processor name to " +
-//                    "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
-//                    "DSL users need to provide the store name to '.process()', '.transform()', or '.transformValues()' " +
-//                    "to connect the store to the corresponding operator. If you do not.Add stores manually, " +
-//                    "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
-//            }
+            return store;
+        }
 
-//            IStateStore store = stateManager.getStore(name);
-//            if (store is ITimestampedKeyValueStore)
-//            {
-//                return new TimestampedKeyValueStoreReadWriteDecorator((ITimestampedKeyValueStore)store);
-//            }
-//            else if (store is IKeyValueStore)
-//            {
-//                return new KeyValueStoreReadWriteDecorator((IKeyValueStore)store);
-//            }
-//            else if (store is ITimestampedWindowStore)
-//            {
-//                return new TimestampedWindowStoreReadWriteDecorator((ITimestampedWindowStore)store);
-//            }
-//            else if (store is IWindowStore)
-//            {
-//                return new WindowStoreReadWriteDecorator((IWindowStore)store);
-//            }
-//            else if (store is ISessionStore)
-//            {
-//                return new SessionStoreReadWriteDecorator((ISessionStore)store);
-//            }
+        public override void forward<K1, V1>(K1 key, V1 value)
+        {
+            forward(key, value, SEND_TO_ALL);
+        }
 
-//            return store;
-//        }
+        public override void forward<K1, V1>(K1 key, V1 value, To to)
+        {
+            ProcessorNode<K, V> previousNode = currentNode;
+            ProcessorRecordContext previousContext = recordContext;
 
-//        public void forward(K key,
-//                                   V value)
-//        {
-//            forward(key, value, SEND_TO_ALL);
-//        }
+            try
+            {
+                toInternal.update(to);
+                if (toInternal.hasTimestamp())
+                {
+                    recordContext = new ProcessorRecordContext(
+                        toInternal.timestamp,
+                        recordContext.offset,
+                        recordContext.partition,
+                        recordContext.Topic,
+                        recordContext.headers);
+                }
 
-//        public void forward(
-//            K key,
-//            V value,
-//            To to)
-//        {
-//            ProcessorNode previousNode = currentNode();
-//            ProcessorRecordContext previousContext = recordContext;
+                string sendTo = toInternal.child();
+                if (sendTo == null)
+                {
+                    List<ProcessorNode<K, V>> children = new List<ProcessorNode<K, V>>(currentNode.children.Select(c => (ProcessorNode<K, V>)c));
+                    foreach (var child in children)
+                    {
+                        forward(child, key, value);
+                    }
+                }
+                else
+                {
+                    ProcessorNode<K, V> child = currentNode.getChild(sendTo);
+                    if (child == null)
+                    {
+                        throw new StreamsException("Unknown downstream node: " + sendTo
+                            + " either does not exist or is not connected to this processor.");
+                    }
 
-//            try
-//            {
+                    forward(child, key, value);
+                }
+            }
+            finally
+            {
+                recordContext = previousContext;
+                setCurrentNode(previousNode);
+            }
+        }
 
-//                toInternal.update(to);
-//                if (toInternal.hasTimestamp())
-//                {
-//                    recordContext = new ProcessorRecordContext(
-//                        toInternal.timestamp(),
-//                        recordContext.offset(),
-//                        recordContext.partition(),
-//                        recordContext.Topic,
-//                        recordContext.headers());
-//                }
+        private void forward<K1, V1>(
+            ProcessorNode<K1, V1> child,
+            K key,
+            V value)
+        {
+            setCurrentNode(child);
+            child.process(key, value);
+        }
 
-//                string sendTo = toInternal.child();
-//                if (sendTo == null)
-//                {
-//                    List<ProcessorNode<K, V>> children = (List<ProcessorNode<K, V>>)currentNode().children();
-//                    foreach (ProcessorNode child in children)
-//                    {
-//                        forward(child, key, value);
-//                    }
-//                }
-//                else
-//                {
+        public override void commit()
+        {
+            task.requestCommit();
+        }
 
-//                    ProcessorNode child = currentNode().getChild(sendTo);
-//                    if (child == null)
-//                    {
-//                        throw new StreamsException("Unknown downstream node: " + sendTo
-//                            + " either does not exist or is not connected to this processor.");
-//                    }
-//                    forward(child, key, value);
-//                }
-//            }
-//            finally
-//            {
+        public ICancellable schedule(
+            TimeSpan interval,
+            PunctuationType type,
+            Punctuator callback)
+        {
+            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(interval, "interval");
+            return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
+        }
 
-//                recordContext = previousContext;
-//                setCurrentNode(previousNode);
-//            }
-//        }
-
-
-//        private void forward(
-//            ProcessorNode child,
-//            K key,
-//            V value)
-//        {
-//            setCurrentNode(child);
-//            child.process(key, value);
-//        }
-
-
-//        public void commit()
-//        {
-//            task.requestCommit();
-//        }
-
-//        public ICancellable schedule(
-//            TimeSpan interval,
-//            PunctuationType type,
-//            Punctuator callback)
-//        {
-//            string msgPrefix = prepareMillisCheckFailMsgPrefix(interval, "interval");
-//            return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
-//        }
-
-//        IRecordCollector recordCollector()
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public override void setCurrentNode(ProcessorNode<K, V> currentNode)
+        {
+            this.currentNode = currentNode;
+        }
+    }
+}

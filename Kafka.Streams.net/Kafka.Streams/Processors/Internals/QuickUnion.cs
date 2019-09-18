@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class QuickUnion<T>
     {
-        private Dictionary<T, T> ids = new Dictionary<T, T>();
+        private readonly Dictionary<T, T> ids = new Dictionary<T, T>();
 
         public void add(T id)
         {

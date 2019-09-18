@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream.Internals
 
     public class KStream<K, V> : AbstractStream<K, V>, IKStream<K, V>
     {
-        private bool repartitionRequired;
+        private readonly bool repartitionRequired;
 
         public KStream(
             string name,

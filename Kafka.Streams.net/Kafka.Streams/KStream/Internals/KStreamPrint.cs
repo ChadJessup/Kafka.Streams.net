@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamPrint<K, V> : IProcessorSupplier<K, V>
     {
 
-        private IForeachAction<K, V> action;
+        private readonly IForeachAction<K, V> action;
 
         public KStreamPrint(IForeachAction<K, V> action)
         {

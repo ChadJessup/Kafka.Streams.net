@@ -27,7 +27,7 @@ namespace Kafka.Streams.State.Internals
      */
     public class StreamThreadStateStoreProvider : IStateStoreProvider
     {
-        private StreamThread streamThread;
+        private readonly StreamThread streamThread;
 
         public StreamThreadStateStoreProvider(StreamThread streamThread)
         {

@@ -21,9 +21,9 @@ namespace Kafka.Streams.KStream.Internals
     public class KTableReduce<K, V> : IKTableProcessorSupplier<K, V, V>
     {
 
-        private string storeName;
-        private IReducer<V> addReducer;
-        private IReducer<V> removeReducer;
+        private readonly string storeName;
+        private readonly IReducer<V> addReducer;
+        private readonly IReducer<V> removeReducer;
 
         private bool sendOldValues = false;
 

@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
         /// <summary>
         /// The partition with which this queue is associated.
         /// </summary>
-        protected TopicPartition partition;
+        public TopicPartition partition { get; protected set; }
         protected ITimestampExtractor timestampExtractor;
         protected Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
         protected long partitionTime = RecordQueue.UNKNOWN;
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Processor.Internals
             throw new NotImplementedException();
         }
 
-        internal StampedRecord<object, object> Peek()
+        internal StampedRecord<K, V> Peek<K, V>()
         {
             throw new NotImplementedException();
         }
@@ -58,13 +58,13 @@ namespace Kafka.Streams.Processor.Internals
 
     public class RecordQueue<K, V> : RecordQueue
     {
-        private ILogger log;
-        private SourceNode<K, V> source;
-        private RecordDeserializer<K, V> recordDeserializer;
+        private readonly ILogger log;
+        private readonly SourceNode<K, V> source;
+        private readonly RecordDeserializer<K, V> recordDeserializer;
         private StampedRecord<K, V>? headRecord = null;
-        private IProcessorContext<K, V> processorContext;
+        private readonly IProcessorContext<K, V> processorContext;
 
-        RecordQueue(
+        public RecordQueue(
             TopicPartition partition,
             SourceNode<K, V> source,
             ITimestampExtractor timestampExtractor,

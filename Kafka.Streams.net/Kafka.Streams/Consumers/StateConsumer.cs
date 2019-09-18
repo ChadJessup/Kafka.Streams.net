@@ -29,11 +29,11 @@ namespace Kafka.Streams.Consumer
     public class StateConsumer
     {
         private readonly ILogger<StateConsumer> logger;
-        private IConsumer<byte[], byte[]> globalConsumer;
-        private IGlobalStateMaintainer stateMaintainer;
-        private ITime time;
-        private TimeSpan pollTime;
-        private long flushInterval;
+        private readonly IConsumer<byte[], byte[]> globalConsumer;
+        private readonly IGlobalStateMaintainer stateMaintainer;
+        private readonly ITime time;
+        private readonly TimeSpan pollTime;
+        private readonly long flushInterval;
 
         private long lastFlush;
 

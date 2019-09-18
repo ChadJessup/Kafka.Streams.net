@@ -20,7 +20,7 @@ namespace Kafka.Streams.State.Internals
 {
     internal class SimpleDateFormat
     {
-        private string v;
+        private readonly string v;
 
         public SimpleDateFormat(string v)
         {

@@ -20,20 +20,23 @@ using System.Runtime.Serialization;
 namespace Kafka.Streams.Processor.Internals
 {
     [Serializable]
-    internal class TaskMigratedException : Exception
+    internal class TaskMigratedException<K, V> : Exception
     {
-        private StreamTask streamTask;
-        private ProducerFencedException fatal;
+        private readonly StreamTask<K, V> streamTask;
+        private readonly ProducerFencedException fatal;
+        private readonly StreamTask<object, object> streamTask1;
+        private readonly ProducerFencedException e;
 
         public TaskMigratedException()
         {
         }
 
-        public TaskMigratedException(string message) : base(message)
+        public TaskMigratedException(string message)
+            : base(message)
         {
         }
 
-        public TaskMigratedException(StreamTask streamTask, ProducerFencedException fatal)
+        public TaskMigratedException(StreamTask<K, V> streamTask, ProducerFencedException fatal)
         {
             this.streamTask = streamTask;
             this.fatal = fatal;
@@ -41,6 +44,12 @@ namespace Kafka.Streams.Processor.Internals
 
         public TaskMigratedException(string message, Exception innerException) : base(message, innerException)
         {
+        }
+
+        public TaskMigratedException(StreamTask<object, object> streamTask1, ProducerFencedException e)
+        {
+            this.streamTask1 = streamTask1;
+            this.e = e;
         }
 
         protected TaskMigratedException(SerializationInfo info, StreamingContext context) : base(info, context)

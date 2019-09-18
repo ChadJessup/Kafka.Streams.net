@@ -1,20 +1,4 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Confluent.Kafka;
+﻿using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Common.Interfaces;
 using Kafka.Common.Metrics;
@@ -86,15 +70,15 @@ namespace Kafka.Streams
         // in userData of the subscription request to allow assignor be aware
         // of the co-location of stream thread's consumers. It is for internal
         // usage only and should not be exposed to users at all.
-        private ITime time;
+        private readonly ITime time;
         private readonly IServiceProvider services;
         private readonly ILogger<KafkaStreams> logger;
         private readonly string clientId;
         private readonly StreamsConfig config;
-        private MetricsRegistry metrics;
+        private readonly MetricsRegistry metrics;
         protected StreamThread[] threads;
-        //private StateDirectory stateDirectory;
-        private StreamsMetadataState streamsMetadataState;
+        private StateDirectory stateDirectory;
+        private readonly StreamsMetadataState streamsMetadataState;
         //        private ScheduledExecutorService stateDirCleaner;
         //private QueryableStoreProvider queryableStoreProvider;
         private readonly IAdminClient adminClient;
@@ -103,7 +87,7 @@ namespace Kafka.Streams
         private IStateListener stateListener;
         private IStateRestoreListener globalStateRestoreListener;
 
-        private object stateLock = new object();
+        private readonly object stateLock = new object();
         protected KafkaStreamsState state = null;
 
         /**
@@ -388,7 +372,7 @@ namespace Kafka.Streams
                     time,
                     streamsMetadataState,
                     cacheSizePerThread,
-                    //stateDirectory,
+                    stateDirectory,
                     delegatingStateRestoreListener,
                     i + 1);
 

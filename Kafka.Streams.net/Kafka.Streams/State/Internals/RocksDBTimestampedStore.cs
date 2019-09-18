@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Internals
      */
     public class RocksDbTimestampedStore : RocksDbStore, ITimestampedBytesStore
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<RocksDbTimestampedStore>();
+        private static readonly ILogger log = new LoggerFactory().CreateLogger<RocksDbTimestampedStore>();
 
         public RocksDbTimestampedStore(string name)
             : base(name)

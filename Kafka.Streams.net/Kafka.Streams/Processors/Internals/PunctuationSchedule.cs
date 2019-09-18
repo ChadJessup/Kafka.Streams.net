@@ -20,8 +20,8 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class PunctuationSchedule : Stamped<ProcessorNode>
     {
-        private long interval;
-        private Punctuator punctuator;
+        private readonly long interval;
+        public Punctuator punctuator { get; }
         public bool isCancelled { get; private set; } = false;
 
         // this Cancellable will be re-pointed at the successor schedule in next()

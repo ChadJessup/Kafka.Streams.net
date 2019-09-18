@@ -32,8 +32,8 @@ namespace Kafka.Streams.Processor.Internals
     {
         private readonly ILogger<GlobalStreamThreadState> logger;
         private Dictionary<GlobalStreamThreadStates, StateTransition<GlobalStreamThreadStates>> validTransitions = new Dictionary<GlobalStreamThreadStates, StateTransition<GlobalStreamThreadStates>>();
-        private object stateLock = new object();
-        private string logPrefix = "";
+        private readonly object stateLock = new object();
+        private readonly string logPrefix = "";
 
         public GlobalStreamThreadState(
             ILogger<GlobalStreamThreadState> logger,

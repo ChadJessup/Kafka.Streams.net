@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
@@ -29,132 +13,106 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class ForwardingDisabledProcessorContext<K, V> : IProcessorContext<K, V>
     {
-        private IProcessorContext<K, V> @delegate;
+        private readonly IProcessorContext<K, V> del;
 
         public ForwardingDisabledProcessorContext(IProcessorContext<K, V> @delegate)
         {
-            this.@delegate = @delegate = @delegate ?? throw new System.ArgumentNullException("@delegate", nameof(@delegate));
+            this.del = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
-        public string applicationId()
-        {
-            return @delegate.applicationId();
-        }
+        public string applicationId
+            => del.applicationId;
 
+        public TaskId taskId
+            => del.taskId;
 
-        public TaskId taskId()
-        {
-            return @delegate.taskId();
-        }
+        public ISerde<K> keySerde
+            => del.keySerde;
 
+        public ISerde<V> valueSerde
+            => del.valueSerde;
 
-        public ISerde<K> keySerde => @delegate.keySerde;
-        public ISerde<V> valueSerde => @delegate.valueSerde;
-
-        public DirectoryInfo stateDir()
-        {
-            return @delegate.stateDir();
-        }
+        public DirectoryInfo stateDir
+            => del.stateDir;
 
         public IStreamsMetrics metrics
-            => @delegate.metrics;
+            => del.metrics;
 
         public void register(
             IStateStore store,
             IStateRestoreCallback stateRestoreCallback)
         {
-            @delegate.register(store, stateRestoreCallback);
+            del.register(store, stateRestoreCallback);
         }
-
 
         public IStateStore getStateStore(string name)
         {
-            return @delegate.getStateStore(name);
+            return del.getStateStore(name);
         }
 
-
-        [System.Obsolete]
+        [Obsolete]
         public ICancellable schedule(
             long intervalMs,
             PunctuationType type,
             Punctuator callback)
         {
-            return @delegate.schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
+            return del.schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
         }
-
 
         public ICancellable schedule(
             TimeSpan interval,
             PunctuationType type,
             Punctuator callback)
         {
-            return @delegate.schedule(interval, type, callback);
+            return del.schedule(interval, type, callback);
         }
 
-
-        public void forward<V1>(K key, V1 value)
+        public void forward<K1, V1>(K1 key, V1 value)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-
-        public void forward(K key, V value, To to)
+        public void forward<K1, V1>(K1 key, V1 value, To to)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-
-        [System.Obsolete]
-        public void forward(K key, V value, int childIndex)
+        [Obsolete]
+        public void forward<K1, V1>(K1 key, V1 value, int childIndex)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
-
-        [System.Obsolete]
-        public void forward(K key, V value, string childName)
+        [Obsolete]
+        public void forward<K1, V1>(K1 key, V1 value, string childName)
         {
             throw new StreamsException("IProcessorContext#forward() not supported.");
         }
 
         public void commit()
         {
-            @delegate.commit();
+            del.commit();
         }
 
-        public string Topic => @delegate.Topic;
+        public string Topic
+            => del.Topic;
 
-        public int partition()
-        {
-            return @delegate.partition();
-        }
+        public int partition
+            => del.partition;
 
-        public long offset()
-        {
-            return @delegate.offset();
-        }
+        public long offset
+            => del.offset;
 
-        public Headers headers()
-        {
-            return @delegate.headers();
-        }
+        public Headers headers
+            => del.headers;
 
-
-        public long timestamp()
-        {
-            return @delegate.timestamp();
-        }
-
+        public long timestamp
+            => del.timestamp;
 
         public Dictionary<string, object> appConfigs()
-        {
-            return @delegate.appConfigs();
-        }
-
+            => del.appConfigs();
 
         public Dictionary<string, object> appConfigsWithPrefix(string prefix)
-        {
-            return @delegate.appConfigsWithPrefix(prefix);
-        }
+            => del.appConfigsWithPrefix(prefix);
     }
 }

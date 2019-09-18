@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class ChangedSerializer<T> : ISerializer<Change<T>>
     {
-        private static int NEWFLAG_SIZE = 1;
+        private static readonly int NEWFLAG_SIZE = 1;
 
         public ISerializer<T> inner { get; private set; }
 

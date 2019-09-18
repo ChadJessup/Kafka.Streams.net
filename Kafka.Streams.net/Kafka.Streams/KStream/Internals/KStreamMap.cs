@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamMap<K, V, K1, V1> : IProcessorSupplier<K, V>
     {
-        private IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
+        private readonly IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
         public KStreamMap(IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper)
         {

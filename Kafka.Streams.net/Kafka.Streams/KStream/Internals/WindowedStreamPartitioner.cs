@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class WindowedStreamPartitioner<K, V> : IStreamPartitioner<Windowed<K>, V>
     {
-        private IWindowedSerializer<K> serializer;
+        private readonly IWindowedSerializer<K> serializer;
 
         public WindowedStreamPartitioner(IWindowedSerializer<K> serializer)
         {

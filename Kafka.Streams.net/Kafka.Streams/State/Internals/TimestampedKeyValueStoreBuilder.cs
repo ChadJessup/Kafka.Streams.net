@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.Internals
     public class TimestampedKeyValueStoreBuilder<K, V>
         : AbstractStoreBuilder<K, ValueAndTimestamp<V>, ITimestampedKeyValueStore<K, V>>
     {
-        private IKeyValueBytesStoreSupplier storeSupplier;
+        private readonly IKeyValueBytesStoreSupplier storeSupplier;
 
         public TimestampedKeyValueStoreBuilder(
             IKeyValueBytesStoreSupplier storeSupplier,

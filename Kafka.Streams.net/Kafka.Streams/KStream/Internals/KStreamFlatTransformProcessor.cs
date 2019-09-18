@@ -30,7 +30,7 @@
 //        }
 
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            base.init(context);
 //            transformer.init(context);

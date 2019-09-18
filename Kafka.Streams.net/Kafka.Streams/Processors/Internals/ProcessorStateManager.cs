@@ -13,34 +13,34 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class ProcessorStateManager : IStateManager
     {
-        private static string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
+        private static readonly string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
 
-        private ILogger log;
-        private TaskId taskId;
-        private string logPrefix;
-        private bool isStandby;
-        private IChangelogReader changelogReader;
-        private Dictionary<TopicPartition, long> offsetLimits;
-        private Dictionary<TopicPartition, long> standbyRestoredOffsets;
-        private Dictionary<string, IStateRestoreCallback>? restoreCallbacks; // used for standby tasks, keyed by state topic name
-        private Dictionary<string, IRecordConverter> recordConverters; // used for standby tasks, keyed by state topic name
-        private Dictionary<string, string> storeToChangelogTopic;
+        private readonly ILogger log;
+        private readonly TaskId taskId;
+        private readonly string logPrefix;
+        private readonly bool isStandby;
+        private readonly IChangelogReader changelogReader;
+        private readonly Dictionary<TopicPartition, long> offsetLimits;
+        private readonly Dictionary<TopicPartition, long> standbyRestoredOffsets;
+        private readonly Dictionary<string, IStateRestoreCallback>? restoreCallbacks; // used for standby tasks, keyed by state topic name
+        private readonly Dictionary<string, IRecordConverter> recordConverters; // used for standby tasks, keyed by state topic name
+        private readonly Dictionary<string, string> storeToChangelogTopic;
 
         // must be maintained in topological order
-        private Dictionary<string, IStateStore?> registeredStores = new Dictionary<string, IStateStore?>();
-        private Dictionary<string, IStateStore?> globalStores = new Dictionary<string, IStateStore?>();
+        private readonly Dictionary<string, IStateStore?> registeredStores = new Dictionary<string, IStateStore?>();
+        private readonly Dictionary<string, IStateStore?> globalStores = new Dictionary<string, IStateStore?>();
 
-        private List<TopicPartition> changelogPartitions = new List<TopicPartition>();
+        private readonly List<TopicPartition> changelogPartitions = new List<TopicPartition>();
 
         // TODO: this map does not work with customized grouper where multiple partitions
         // of the same topic can be assigned to the same task.
-        private Dictionary<string, TopicPartition> partitionForTopic;
+        private readonly Dictionary<string, TopicPartition> partitionForTopic;
 
-        private bool eosEnabled;
+        private readonly bool eosEnabled;
         public DirectoryInfo baseDir { get; }
         private OffsetCheckpoint? checkpointFile;
-        private Dictionary<TopicPartition, long?> checkpointFileCache = new Dictionary<TopicPartition, long?>();
-        private Dictionary<TopicPartition, long?> initialLoadedCheckpoints;
+        private readonly Dictionary<TopicPartition, long> checkpointFileCache = new Dictionary<TopicPartition, long>();
+        private readonly Dictionary<TopicPartition, long> initialLoadedCheckpoints;
 
         /**
          * @throws ProcessorStateException if the task directory does not exist and could not be created
@@ -138,14 +138,13 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 else
                 {
-                    long? restoreCheckpoint = store.persistent()
-                        ? initialLoadedCheckpoints[storePartition]
-                        : null;
+                    long? restoreCheckpoint = initialLoadedCheckpoints[storePartition];
 
                     if (restoreCheckpoint != null)
                     {
-                        checkpointFileCache.Add(storePartition, restoreCheckpoint);
+                        checkpointFileCache.Add(storePartition, restoreCheckpoint.Value);
                     }
+
                     log.LogTrace("Restoring state store {} from changelog topic {} at checkpoint {}", storeName, topic, restoreCheckpoint);
 
                     StateRestorer restorer = new StateRestorer(
@@ -160,18 +159,18 @@ namespace Kafka.Streams.Processor.Internals
 
                     changelogReader.register(restorer);
                 }
+
                 changelogPartitions.Add(storePartition);
             }
 
-            registeredStores.Add(storeName, Optional.of(store));
+            registeredStores.Add(storeName, null);
         }
-
 
         public void reinitializeStateStoresForPartitions<K, V>(
             List<TopicPartition> partitions,
             IInternalProcessorContext<K, V> processorContext)
         {
-            StateManagerUtil.reinitializeStateStoresForPartitions(
+            StateManagerUtil.reinitializeStateStoresForPartitions<K, V>(
                 log,
                 eosEnabled,
                 baseDir,
@@ -195,10 +194,10 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public Dictionary<TopicPartition, long?> checkpointed()
+        public Dictionary<TopicPartition, long> checkpointed()
         {
-            updateCheckpointFileCache(new Dictionary<TopicPartition, long?>());
-            Dictionary<TopicPartition, long?> partitionsAndOffsets = new Dictionary<TopicPartition, long?>();
+            updateCheckpointFileCache(new Dictionary<TopicPartition, long>());
+            Dictionary<TopicPartition, long> partitionsAndOffsets = new Dictionary<TopicPartition, long>();
 
             foreach (KeyValuePair<string, IStateRestoreCallback> entry in restoreCallbacks)
             {
@@ -206,7 +205,7 @@ namespace Kafka.Streams.Processor.Internals
                 int partition = getPartition(topicName);
                 TopicPartition storePartition = new TopicPartition(topicName, partition);
 
-                partitionsAndOffsets.Add(storePartition, checkpointFileCache.GetValueOrDefault(storePartition, -1L).GetValueOrDefault(-1L));
+                partitionsAndOffsets.Add(storePartition, checkpointFileCache.GetValueOrDefault(storePartition, -1L));
             }
 
             return partitionsAndOffsets;
@@ -218,7 +217,7 @@ namespace Kafka.Streams.Processor.Internals
             long lastOffset)
         {
             // restore states from changelog records
-            IRecordBatchingStateRestoreCallback restoreCallback = adapt(restoreCallbacks[storePartition.Topic]);
+            IRecordBatchingStateRestoreCallback restoreCallback = StateRestoreCallbackAdapter.adapt(restoreCallbacks[storePartition.Topic]);
 
             if (restoreRecords.Any())
             {
@@ -332,7 +331,7 @@ namespace Kafka.Streams.Processor.Internals
                         {
 
                             store.close();
-                            registeredStores.Add(store.name, Optional.empty());
+                            registeredStores.Add(store.name, null);
                         }
                         catch (RuntimeException e)
                         {
@@ -373,7 +372,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        public void checkpoint(Dictionary<TopicPartition, long?> checkpointableOffsetsFromProcessing)
+        public void checkpoint(Dictionary<TopicPartition, long> checkpointableOffsetsFromProcessing)
         {
             ensureStoresRegistered();
 
@@ -399,10 +398,10 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private void updateCheckpointFileCache(Dictionary<TopicPartition, long?> checkpointableOffsetsFromProcessing)
+        private void updateCheckpointFileCache(Dictionary<TopicPartition, long> checkpointableOffsetsFromProcessing)
         {
             HashSet<TopicPartition> _validCheckpointableTopics = validCheckpointableTopics();
-            Dictionary<TopicPartition, long?> restoredOffsets = validCheckpointableOffsets(
+            var restoredOffsets = validCheckpointableOffsets(
                 changelogReader.restoredOffsets(),
                 validCheckpointableTopics());
 
@@ -433,7 +432,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     // As a last resort, fall back to the offset we loaded from the checkpoint file at startup, but
                     // only if the offset is actually valid for our current state stores.
-                    long? loadedOffset = validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics())[topicPartition];
+                    long loadedOffset = validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics())[topicPartition];
 
                     if (loadedOffset != null)
                     {
@@ -497,18 +496,18 @@ namespace Kafka.Streams.Processor.Internals
             return result;
         }
 
-        private static Dictionary<TopicPartition, long?> validCheckpointableOffsets(
-            Dictionary<TopicPartition, long?> checkpointableOffsets,
+        private static Dictionary<TopicPartition, long> validCheckpointableOffsets(
+            Dictionary<TopicPartition, long> checkpointableOffsets,
             HashSet<TopicPartition> validCheckpointableTopics)
         {
-            Dictionary<TopicPartition, long?> result = new Dictionary<TopicPartition, long?>(checkpointableOffsets.Count);
+            Dictionary<TopicPartition, long> result = new Dictionary<TopicPartition, long>(checkpointableOffsets.Count);
 
             foreach (var topicToCheckpointableOffset in checkpointableOffsets)
             {
                 TopicPartition topic = topicToCheckpointableOffset.Key;
                 if (validCheckpointableTopics.Contains(topic))
                 {
-                    long? checkpointableOffset = topicToCheckpointableOffset.Value;
+                    long checkpointableOffset = topicToCheckpointableOffset.Value;
                     result.Add(topic, checkpointableOffset);
                 }
             }

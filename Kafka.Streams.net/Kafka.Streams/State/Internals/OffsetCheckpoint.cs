@@ -26,14 +26,14 @@ namespace Kafka.Streams.State.Internals
      */
     public class OffsetCheckpoint
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<OffsetCheckpoint>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<OffsetCheckpoint>();
 
-        private static Regex WHITESPACE_MINIMUM_ONCE = new Regex("\\s+", RegexOptions.Compiled);
+        private static readonly Regex WHITESPACE_MINIMUM_ONCE = new Regex("\\s+", RegexOptions.Compiled);
 
-        private static int VERSION = 0;
+        private static readonly int VERSION = 0;
 
-        private FileInfo file;
-        private object @lock;
+        private readonly FileInfo file;
+        private readonly object @lock;
 
         public OffsetCheckpoint(FileInfo file)
         {
@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
         /**
          * @throws IOException if any file operation fails with an IO exception
          */
-        public void write(Dictionary<TopicPartition, long?> offsets)
+        public void write(Dictionary<TopicPartition, long> offsets)
         {
             // if there is no offsets, skip writing the file to save disk IOs
             if (!offsets.Any())
@@ -107,7 +107,7 @@ namespace Kafka.Streams.State.Internals
          * @throws IOException if any file operation fails with an IO exception
          * @throws ArgumentException if the offset checkpoint version is unknown
          */
-        public Dictionary<TopicPartition, long?> read()
+        public Dictionary<TopicPartition, long> read()
         {
             lock (@lock)
             {
@@ -120,7 +120,7 @@ namespace Kafka.Streams.State.Internals
                     {
                         case 0:
                             int expectedSize = readInt(reader);
-                            Dictionary<TopicPartition, long?> offsets = new Dictionary<TopicPartition, long?>();
+                            Dictionary<TopicPartition, long> offsets = new Dictionary<TopicPartition, long>();
                             string line = reader.readLine();
                             while (line != null)
                             {
@@ -151,7 +151,7 @@ namespace Kafka.Streams.State.Internals
                 }
                 catch (FileNotFoundException e)
                 {
-                    return new Dictionary<TopicPartition, long?>();
+                    return new Dictionary<TopicPartition, long>();
                 }
             }
         }

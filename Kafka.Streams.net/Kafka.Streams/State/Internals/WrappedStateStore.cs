@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.Internals
      * A storage engine wrapper for utilities like logging, caching, and metering.
      */
 
-    public abstract class WrappedStateStore : IStateStore
+    public abstract class WrappedStateStore : IStateStore, ICachedStateStore
     {
         public static bool isTimestamped(IStateStore stateStore)
         {
@@ -33,9 +33,16 @@ namespace Kafka.Streams.State.Internals
         public abstract void init<K, V>(IProcessorContext<K, V> context, IStateStore root);
         public abstract bool isOpen();
         public abstract bool persistent();
+
+        public bool isPresent()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public abstract bool setFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues);
     }
 
-    public abstract class WrappedStateStore<S, K, V> : WrappedStateStore, ICachedStateStore<K, V>
+    public abstract class WrappedStateStore<S> : WrappedStateStore
         where S : IStateStore
     {
         public S wrapped { get; }
@@ -50,12 +57,13 @@ namespace Kafka.Streams.State.Internals
             wrapped.init(context, root);
         }
 
-        public bool setFlushListener(ICacheFlushListener<K, V> listener, bool sendOldValues)
+        public override bool setFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues)
         {
-            if (wrapped is ICachedStateStore<K, V>)
+            if (wrapped is ICachedStateStore)
             {
-                return ((ICachedStateStore<K, V>)wrapped).setFlushListener(listener, sendOldValues);
+                return ((ICachedStateStore)wrapped).setFlushListener(listener, sendOldValues);
             }
+
             return false;
         }
 

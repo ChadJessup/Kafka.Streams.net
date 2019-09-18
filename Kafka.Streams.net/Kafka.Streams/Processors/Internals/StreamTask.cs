@@ -18,23 +18,23 @@ namespace Kafka.Streams.Processor.Internals
     /**
      * A StreamTask<K, V> is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
      */
-    public class StreamTask<K, V> : AbstractTask<K, V>, IProcessorNodePunctuator<K, V>
+    public class StreamTask : AbstractTask<byte[], byte[]>, IProcessorNodePunctuator<byte[], byte[]>
     {
-        private static ConsumeResult<K, V> DUMMY_RECORD = new ConsumeResult<K, V>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
+        private static readonly ConsumeResult<byte[], byte[]> DUMMY_RECORD = new ConsumeResult<byte[], byte[]>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
-        private ITime time;
-        private long maxTaskIdleMs;
-        private int maxBufferedSize;
-        private TaskMetrics taskMetrics;
-        private PartitionGroup partitionGroup;
-        private IRecordCollector recordCollector;
-        private RecordInfo recordInfo;
-        private Dictionary<TopicPartition, long> consumedOffsets;
-        private PunctuationQueue streamTimePunctuationQueue;
-        private PunctuationQueue systemTimePunctuationQueue;
-        private IProducerSupplier producerSupplier;
+        private readonly ITime time;
+        private readonly long maxTaskIdleMs;
+        private readonly int maxBufferedSize;
+        private readonly TaskMetrics taskMetrics;
+        private readonly PartitionGroup partitionGroup;
+        private readonly IRecordCollector recordCollector;
+        private readonly RecordInfo recordInfo;
+        private readonly Dictionary<TopicPartition, long> consumedOffsets;
+        private readonly PunctuationQueue streamTimePunctuationQueue;
+        private readonly PunctuationQueue systemTimePunctuationQueue;
+        private readonly IProducerSupplier producerSupplier;
 
-        private Sensor closeTaskSensor;
+        private readonly Sensor closeTaskSensor;
         private long idleStartTime;
         private IProducer<byte[], byte[]> producer;
         private bool commitRequested = false;
@@ -71,7 +71,6 @@ namespace Kafka.Streams.Processor.Internals
             IRecordCollector recordCollector)
             : base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config)
         {
-
             this.time = time;
             this.producerSupplier = producerSupplier;
             this.producer = producerSupplier.get();
@@ -109,7 +108,15 @@ namespace Kafka.Streams.Processor.Internals
             Dictionary<TopicPartition, RecordQueue> partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
 
             // initialize the topology with its own context
-            ProcessorContextImpl processorContextImpl = new ProcessorContextImpl(id, this, config, this.recordCollector, stateMgr, streamsMetrics, cache);
+            ProcessorContextImpl<byte[], byte[]> processorContextImpl = new ProcessorContextImpl<byte[], byte[]>(
+                id,
+                this,
+                config,
+                this.recordCollector,
+                stateMgr,
+                streamsMetrics,
+                cache);
+
             processorContext = processorContextImpl;
 
             ITimestampExtractor defaultTimestampExtractor = config.defaultTimestampExtractor();
@@ -117,9 +124,13 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (TopicPartition partition in partitions)
             {
-                var source = topology.source(partition.Topic);
-                ITimestampExtractor sourceTimestampExtractor = source.getTimestampExtractor() != null ? source.getTimestampExtractor() : defaultTimestampExtractor;
-                RecordQueue queue = new RecordQueue(
+                SourceNode<byte[], byte[]> source = null; // topology.source(partition.Topic);
+
+                ITimestampExtractor sourceTimestampExtractor = source.timestampExtractor != null
+                    ? source.timestampExtractor
+                    : defaultTimestampExtractor;
+
+                RecordQueue<byte[], byte[]> queue = new RecordQueue<byte[], byte[]>(
                     partition,
                     source,
                     sourceTimestampExtractor,
@@ -131,7 +142,7 @@ namespace Kafka.Streams.Processor.Internals
             }
 
             recordInfo = new RecordInfo();
-            partitionGroup = new PartitionGroup(partitionQueues, recordLatenessSensor(processorContextImpl));
+            // partitionGroup = new PartitionGroup(partitionQueues, processorContextImpl);
 
             stateMgr.registerGlobalStateStores(topology.globalStateStores);
 
@@ -158,7 +169,6 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-
         public override void initializeTopology()
         {
             initTopology();
@@ -171,8 +181,9 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 catch (ProducerFencedException fatal)
                 {
-                    throw new TaskMigratedException(this, fatal);
+                    throw new KafkaException(new Error(ErrorCode.TransactionCoordinatorFenced, "", true), fatal);
                 }
+
                 transactionInFlight = true;
             }
 
@@ -190,8 +201,7 @@ namespace Kafka.Streams.Processor.Internals
          * - resume the task
          * </pre>
          */
-
-        public void resume()
+        public override void resume()
         {
             log.LogDebug("Resuming");
             if (eosEnabled)
@@ -200,6 +210,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     throw new InvalidOperationException("Task producer should be null.");
                 }
+
                 producer = producerSupplier.get();
                 initializeTransactions();
                 recordCollector.init(producer);
@@ -258,11 +269,10 @@ namespace Kafka.Streams.Processor.Internals
          * @return true if this method processes a record, false if it does not process a record.
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-
         public bool process()
         {
             // get the next record to process
-            StampedRecord record = partitionGroup.nextRecord(recordInfo);
+            var record = partitionGroup.nextRecord<byte[], byte[]>(recordInfo);
 
             // if there is no record to process, return immediately
             if (record == null)
@@ -272,20 +282,19 @@ namespace Kafka.Streams.Processor.Internals
 
             try
             {
-
                 // process the record by passing to the source node of the topology
-                ProcessorNode currNode = recordInfo.node();
+                ProcessorNode<byte[], byte[]> currNode = (ProcessorNode<byte[], byte[]>)recordInfo.node();
                 TopicPartition partition = recordInfo.partition();
 
                 log.LogTrace("Start processing one record [{}]", record);
 
                 updateProcessorContext(record, currNode);
-                currNode.process(record.key(), record.value());
+                ((ProcessorNode<byte[], byte[]>)currNode).process(record.Key, record.Value);
 
                 log.LogTrace("Completed processing one record [{}]", record);
 
                 // update the consumed offset map after processing is done
-                consumedOffsets.Add(partition, record.offset());
+                consumedOffsets.Add(partition, record.offset);
                 commitNeeded = true;
 
                 // after processing this record, if its partition queue's buffered size has been
@@ -297,7 +306,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             catch (ProducerFencedException fatal)
             {
-                throw new TaskMigratedException(this, fatal);
+                throw;// new TaskMigratedException(this, fatal);
             }
             catch (KafkaException e)
             {
@@ -305,16 +314,14 @@ namespace Kafka.Streams.Processor.Internals
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                     id,
-                    processorContext.currentNode().name,
+                    processorContext.currentNode.name,
                     record.Topic,
                     record.partition,
-                    record.offset(),
-                    stackTrace
-                ), e);
+                    record.offset,
+                    stackTrace), e);
             }
             finally
             {
-
                 processorContext.setCurrentNode(null);
             }
 
@@ -343,14 +350,14 @@ namespace Kafka.Streams.Processor.Internals
          * @throws InvalidOperationException if the current node is not null
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void punctuate(ProcessorNode<K, V> node, long timestamp, PunctuationType type, Punctuator punctuator)
+        public void punctuate(ProcessorNode<byte[], byte[]> node, long timestamp, PunctuationType type, Punctuator punctuator)
         {
-            if (processorContext.currentNode() != null)
+            if (processorContext.currentNode != null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is not null", logPrefix));
             }
 
-            updateProcessorContext(new StampedRecord<K, V>(DUMMY_RECORD, timestamp), node);
+            updateProcessorContext(new StampedRecord<byte[], byte[]>(DUMMY_RECORD, timestamp), node);
 
             log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
 
@@ -361,7 +368,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             catch (ProducerFencedException fatal)
             {
-                throw new TaskMigratedException(this, fatal);
+                throw;// new TaskMigratedException(this, fatal);
             }
             catch (KafkaException e)
             {
@@ -369,20 +376,20 @@ namespace Kafka.Streams.Processor.Internals
             }
             finally
             {
-
                 processorContext.setCurrentNode(null);
             }
         }
 
-        private void updateProcessorContext(StampedRecord record, ProcessorNode currNode)
+        private void updateProcessorContext(StampedRecord<byte[], byte[]> record, ProcessorNode<byte[], byte[]> currNode)
         {
             processorContext.setRecordContext(
                 new ProcessorRecordContext(
                     record.timestamp,
-                    record.offset(),
+                    record.offset,
                     record.partition,
                     record.Topic,
-                    record.headers()));
+                    record.Headers));
+
             processorContext.setCurrentNode(currNode);
         }
 
@@ -396,8 +403,7 @@ namespace Kafka.Streams.Processor.Internals
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-
-        public void commit()
+        public override void commit()
         {
             commit(true);
         }
@@ -419,7 +425,8 @@ namespace Kafka.Streams.Processor.Internals
                 stateMgr.checkpoint(activeTaskCheckpointableOffsets());
             }
 
-            Dictionary<TopicPartition, OffsetAndMetadata> consumedOffsetsAndMetadata = new Dictionary<TopicPartition, OffsetAndMetadata>(consumedOffsets.Count);
+            var consumedOffsetsAndMetadata = new Dictionary<TopicPartition, OffsetAndMetadata>(consumedOffsets.Count);
+
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 TopicPartition partition = entry.Key;
@@ -433,28 +440,27 @@ namespace Kafka.Streams.Processor.Internals
 
                 if (eosEnabled)
                 {
-                    producer.sendOffsetsToTransaction(consumedOffsetsAndMetadata, applicationId);
-                    producer.commitTransaction();
+                    //producer.sendOffsetsToTransaction(consumedOffsetsAndMetadata, applicationId);
+                    //producer.commitTransaction();
                     transactionInFlight = false;
                     if (startNewTransaction)
                     {
-                        producer.beginTransaction();
+                        //  producer.beginTransaction();
                         transactionInFlight = true;
                     }
                 }
                 else
                 {
-
-                    consumer.commitSync(consumedOffsetsAndMetadata);
+                    consumer.Commit(consumedOffsetsAndMetadata.Select(tpo => new TopicPartitionOffset(new TopicPartition(tpo.Key.Topic, tpo.Key.Partition), tpo.Value.offset)));
                 }
             }
             catch (CommitFailedException cfe)
             {
-                throw new TaskMigratedException(this, error);
+                throw; // new TaskMigratedException(this, error);
             }
             catch (ProducerFencedException error)
             {
-                throw new TaskMigratedException(this, error);
+                throw; // new TaskMigratedException(this, error);
             }
 
             commitNeeded = false;
@@ -462,37 +468,36 @@ namespace Kafka.Streams.Processor.Internals
             taskMetrics.taskCommitTimeSensor.record(time.nanoseconds() - startNs);
         }
 
-
-        protected override Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
+        public override Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
         {
-            Dictionary<TopicPartition, long> checkpointableOffsets = recordCollector.offsets();
-            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
+            var checkpointableOffsets = recordCollector.offsets;
+
+            foreach (var entry in consumedOffsets)
             {
-                checkpointableOffsets.putIfAbsent(entry.Key, entry.Value);
+                checkpointableOffsets.TryAdd(entry.Key, entry.Value);
             }
 
             return checkpointableOffsets;
         }
 
-
-        protected void flushState()
+        protected override void flushState()
         {
             log.LogTrace("Flushing state and producer");
             base.flushState();
+
             try
             {
-
                 recordCollector.flush();
             }
             catch (ProducerFencedException fatal)
             {
-                throw new TaskMigratedException(this, fatal);
+                throw; // new TaskMigratedException(this, fatal);
             }
         }
 
         Dictionary<TopicPartition, long> purgableOffsets()
         {
-            Dictionary<TopicPartition, long> purgableConsumedOffsets = new Dictionary<>();
+            Dictionary<TopicPartition, long> purgableConsumedOffsets = new Dictionary<TopicPartition, long>();
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 TopicPartition tp = entry.Key;
@@ -509,17 +514,15 @@ namespace Kafka.Streams.Processor.Internals
         {
             // initialize the task by initializing all its processor nodes in the topology
             log.LogTrace("Initializing processor nodes of the topology");
-            foreach (var node in topology.processors())
+            foreach (ProcessorNode<byte[], byte[]> node in topology.processors())
             {
                 processorContext.setCurrentNode(node);
                 try
                 {
-
                     node.init(processorContext);
                 }
                 finally
                 {
-
                     processorContext.setCurrentNode(null);
                 }
             }
@@ -537,8 +540,7 @@ namespace Kafka.Streams.Processor.Internals
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-
-        public void suspend()
+        public override void suspend()
         {
             log.LogDebug("Suspending");
             suspend(true, false);
@@ -557,12 +559,10 @@ namespace Kafka.Streams.Processor.Internals
          *                               or if the task producer got fenced (EOS)
          */
         // visible for testing
-        void suspend(bool clean,
-                     bool isZombie)
+        void suspend(bool clean, bool isZombie)
         {
             try
             {
-
                 closeTopology(); // should we call this only on clean suspend?
             }
             catch (RuntimeException fatal)
@@ -575,36 +575,32 @@ namespace Kafka.Streams.Processor.Internals
 
             if (clean)
             {
-                TaskMigratedException taskMigratedException = null;
+                TaskMigratedException<byte[], byte[]> taskMigratedException = null;
                 try
                 {
-
                     commit(false);
                 }
                 finally
                 {
-
                     if (eosEnabled)
                     {
-
                         stateMgr.checkpoint(activeTaskCheckpointableOffsets());
 
                         try
                         {
-
                             recordCollector.close();
                         }
                         catch (ProducerFencedException e)
                         {
-                            taskMigratedException = new TaskMigratedException(this, e);
+                            //taskMigratedException = new TaskMigratedException(this, e);
                         }
                         finally
                         {
-
                             producer = null;
                         }
                     }
                 }
+
                 if (taskMigratedException != null)
                 {
                     throw taskMigratedException;
@@ -612,7 +608,6 @@ namespace Kafka.Streams.Processor.Internals
             }
             else
             {
-
                 maybeAbortTransactionAndCloseRecordCollector(isZombie);
             }
         }
@@ -623,11 +618,11 @@ namespace Kafka.Streams.Processor.Internals
             {
                 try
                 {
-
                     if (transactionInFlight)
                     {
-                        producer.abortTransaction();
+                        //producer.abortTransaction();
                     }
+
                     transactionInFlight = false;
                 }
                 catch (ProducerFencedException ignore)
@@ -647,7 +642,6 @@ namespace Kafka.Streams.Processor.Internals
             {
                 try
                 {
-
                     recordCollector.close();
                 }
                 catch (Throwable e)
@@ -656,7 +650,6 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 finally
                 {
-
                     producer = null;
                 }
             }
@@ -673,12 +666,12 @@ namespace Kafka.Streams.Processor.Internals
             RuntimeException exception = null;
             if (taskInitialized)
             {
-                foreach (var node in topology.processors())
+                foreach (ProcessorNode<byte[], byte[]> node in topology.processors())
                 {
                     processorContext.setCurrentNode(node);
+
                     try
                     {
-
                         node.close();
                     }
                     catch (RuntimeException e)
@@ -825,12 +818,12 @@ namespace Kafka.Streams.Processor.Internals
          */
         ICancellable schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
         {
-            if (processorContext.currentNode() == null)
+            if (processorContext.currentNode == null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is null", logPrefix));
             }
 
-            PunctuationSchedule schedule = new PunctuationSchedule(processorContext.currentNode(), startTime, interval, punctuator);
+            PunctuationSchedule schedule = new PunctuationSchedule(processorContext.currentNode, startTime, interval, punctuator);
 
             switch (type)
             {
@@ -909,7 +902,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * Request committing the current task's state
          */
-        void requestCommit()
+        public void requestCommit()
         {
             commitRequested = true;
         }

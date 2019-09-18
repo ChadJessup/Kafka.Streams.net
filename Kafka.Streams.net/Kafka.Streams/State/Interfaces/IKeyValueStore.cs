@@ -21,6 +21,7 @@ namespace Kafka.Streams.State.Internals
          * @throws ArgumentNullException If {@code null} is used for key.
          */
         void put(K key, V value);
+        void Add(K key, V value);
 
         /**
          * Update the value associated with this key, unless a value is already associated with the key.

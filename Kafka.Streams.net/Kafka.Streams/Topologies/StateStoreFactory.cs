@@ -30,7 +30,7 @@ namespace Kafka.Streams.Topologies
     public class StateStoreFactory<T> : StateStoreFactory
         where T : IStateStore
     {
-        private IStoreBuilder<T> builder;
+        private readonly IStoreBuilder<T> builder;
 
         public StateStoreFactory(IStoreBuilder<T> builder)
         {

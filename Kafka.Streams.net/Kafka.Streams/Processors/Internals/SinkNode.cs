@@ -31,8 +31,8 @@ namespace Kafka.Streams.Processor.Internals
     {
         private ISerializer<K> keySerializer;
         private ISerializer<V> valSerializer;
-        private ITopicNameExtractor topicExtractor;
-        private IStreamPartitioner<K, V> partitioner;
+        private readonly ITopicNameExtractor topicExtractor;
+        private readonly IStreamPartitioner<K, V> partitioner;
 
         private IInternalProcessorContext<K, V> context;
 
@@ -79,17 +79,17 @@ namespace Kafka.Streams.Processor.Internals
         {
             IRecordCollector collector = ((ISupplier)context).recordCollector();
 
-            long timestamp = context.timestamp();
+            long timestamp = context.timestamp;
             if (timestamp < 0)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }
 
-            string topic = topicExtractor.Extract(key, value, this.context.recordContext());
+            string topic = topicExtractor.Extract(key, value, this.context.recordContext);
 
             try
             {
-                collector.send(topic, key, value, context.headers(), timestamp, keySerializer, valSerializer, partitioner);
+                collector.send(topic, key, value, context.headers, timestamp, keySerializer, valSerializer, partitioner);
             }
             catch (Exception e)
             {

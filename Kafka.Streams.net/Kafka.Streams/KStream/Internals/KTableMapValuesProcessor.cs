@@ -1,20 +1,4 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Kafka.Streams.KStream.Interfaces;
+﻿using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State;
@@ -25,9 +9,9 @@ namespace Kafka.Streams.KStream.Internals
     {
         private ITimestampedKeyValueStore<K, V1> store;
         private TimestampedTupleForwarder<K, V1> tupleForwarder;
-        private string queryableName;
-        private IValueMapperWithKey<K, V, V1> mapper;
-        private bool sendOldValues;
+        private readonly IValueMapperWithKey<K, V, V1> mapper;
+        private readonly string queryableName;
+        private readonly bool sendOldValues;
 
         public KTableMapValuesProcessor(IValueMapperWithKey<K, V, V1> mapper)
         {
@@ -41,11 +25,11 @@ namespace Kafka.Streams.KStream.Internals
             {
                 store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
 
-                //tupleForwarder = new TimestampedTupleForwarder<K, V1>(
-                //    store,
-                //    context,
-                //    new TimestampedCacheFlushListener<K, V1>(context),
-                //    sendOldValues);
+                tupleForwarder = new TimestampedTupleForwarder<K, V1>(
+                    store,
+                    context,
+                    new TimestampedCacheFlushListener<K, V1>(context),
+                    sendOldValues);
             }
         }
 
@@ -59,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                //store.Add(key, ValueAndTimestamp<V>.make(newValue, context.timestamp()));
+                store.Add(key, ValueAndTimestamp<V1>.make(newValue, context.timestamp));
                 tupleForwarder.maybeForward(key, newValue, oldValue);
             }
             else

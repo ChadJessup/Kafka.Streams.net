@@ -25,11 +25,11 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class GlobalStoreNode<K, V, T> : StateStoreNode<T>
         where T : IStateStore
     {
-        private string sourceName;
-        private string topic;
-        private ConsumedInternal<K, V> consumed;
-        private string processorName;
-        private IProcessorSupplier<K, V> stateUpdateSupplier;
+        private readonly string sourceName;
+        private readonly string topic;
+        private readonly ConsumedInternal<K, V> consumed;
+        private readonly string processorName;
+        private readonly IProcessorSupplier<K, V> stateUpdateSupplier;
 
 
         public GlobalStoreNode(

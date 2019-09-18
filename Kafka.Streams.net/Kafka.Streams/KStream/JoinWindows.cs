@@ -64,14 +64,14 @@ namespace Kafka.Streams.KStream
      */
     public class JoinWindows : Windows<Window>
     {
-        private TimeSpan maintainDurationMs;
+        private readonly TimeSpan maintainDurationMs;
 
         /** Maximum time difference for tuples that are before the join tuple. */
         public TimeSpan beforeMs;
         /** Maximum time difference for tuples that are after the join tuple. */
         public TimeSpan afterMs;
 
-        private TimeSpan graceMs;
+        private readonly TimeSpan graceMs;
 
         private JoinWindows(
             TimeSpan beforeMs,

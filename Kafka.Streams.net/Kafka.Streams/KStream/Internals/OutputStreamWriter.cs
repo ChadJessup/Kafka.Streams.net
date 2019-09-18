@@ -21,8 +21,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     internal class OutputStreamWriter : StringWriter
     {
-        private Stream outputStream;
-        private Encoding uTF8;
+        private readonly Stream outputStream;
+        private readonly Encoding uTF8;
 
         public OutputStreamWriter(Stream outputStream, Encoding uTF8)
         {

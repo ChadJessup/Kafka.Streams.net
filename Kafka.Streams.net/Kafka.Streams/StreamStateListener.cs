@@ -34,10 +34,10 @@ namespace Kafka.Streams
     {
         private readonly ILogger<StreamStateListener> logger;
         private readonly KafkaStreamsState kafkaStreamsState;
-        private Dictionary<long, StreamThreadState> threadState;
-        private GlobalStreamThreadState globalThreadState;
+        private readonly Dictionary<long, StreamThreadState> threadState;
+        private readonly GlobalStreamThreadState globalThreadState;
         // this lock should always be held before the state lock
-        private object threadStatesLock;
+        private readonly object threadStatesLock;
 
         public StreamStateListener(
             ILogger<StreamStateListener> logger,

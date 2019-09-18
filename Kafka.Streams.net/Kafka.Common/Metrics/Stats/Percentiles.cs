@@ -16,9 +16,9 @@ namespace Kafka.Common.Metrics.Stats
             CONSTANT, LINEAR
         }
 
-        private int buckets;
-        private Percentile[] percentiles;
-        private IBinScheme binScheme;
+        private readonly int buckets;
+        private readonly Percentile[] percentiles;
+        private readonly IBinScheme binScheme;
 
         public Percentiles(int sizeInBytes, double max, BucketSizing bucketing, Percentile[] percentiles)
             : this(sizeInBytes, 0.0, max, bucketing, percentiles)

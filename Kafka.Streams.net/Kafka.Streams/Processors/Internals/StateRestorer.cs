@@ -27,11 +27,11 @@ namespace Kafka.Streams.Processor.Internals
         public static int NO_CHECKPOINT = -1;
 
         public long offsetLimit { get; }
-        private bool persistent;
+        private readonly bool persistent;
         public string storeName { get; }
         public TopicPartition partition { get; }
-        private CompositeRestoreListener compositeRestoreListener;
-        private IRecordConverter recordConverter;
+        private readonly CompositeRestoreListener compositeRestoreListener;
+        private readonly IRecordConverter recordConverter;
 
         private long checkpointOffset;
         public long restoredOffset { get; private set; }

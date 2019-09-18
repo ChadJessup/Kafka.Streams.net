@@ -21,8 +21,8 @@ namespace Kafka.Streams.Processor.Internals.Assignment
     public class TaskPairs
     {
 
-        private HashSet<Pair> pairs;
-        private int maxPairs;
+        private readonly HashSet<Pair> pairs;
+        private readonly int maxPairs;
 
         TaskPairs(int maxPairs)
         {

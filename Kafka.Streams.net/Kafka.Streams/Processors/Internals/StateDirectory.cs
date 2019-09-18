@@ -19,16 +19,16 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class StateDirectory
     {
-        private static Regex PATH_NAME = new Regex("\\d+_\\d+", RegexOptions.Compiled);
+        private static readonly Regex PATH_NAME = new Regex("\\d+_\\d+", RegexOptions.Compiled);
 
-        static string LOCK_FILE_NAME = ".lock";
-        private static ILogger log = new LoggerFactory().CreateLogger<StateDirectory>();
+        static readonly string LOCK_FILE_NAME = ".lock";
+        private static readonly ILogger log = new LoggerFactory().CreateLogger<StateDirectory>();
 
-        private DirectoryInfo stateDir;
-        private bool createStateDirectory;
-        private Dictionary<TaskId, FileChannel> channels = new Dictionary<TaskId, FileChannel>();
-        private Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
-        private ITime time;
+        private readonly DirectoryInfo stateDir;
+        private readonly bool createStateDirectory;
+        private readonly Dictionary<TaskId, FileChannel> channels = new Dictionary<TaskId, FileChannel>();
+        private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
+        private readonly ITime time;
 
         private FileChannel globalStateChannel;
         private FileLock globalStateLock;
@@ -53,8 +53,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (this.createStateDirectory && !baseDir.Exists)
             {
-                throw new ProcessorStateException(
-                    string.Format("base state directory [%s] doesn't exist and couldn't be created", stateDirName));
+                throw new ProcessorStateException($"base state directory [{stateDirName}] doesn't exist and couldn't be created");
             }
 
             stateDir = new DirectoryInfo(Path.Combine(baseDir.FullName, config.getString(StreamsConfigPropertyNames.ApplicationId)));
@@ -63,8 +62,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (this.createStateDirectory && !stateDir.Exists)
             {
-                throw new ProcessorStateException(
-                    string.Format("state directory [%s] doesn't exist and couldn't be created", stateDir.FullName));
+                throw new ProcessorStateException($"state directory [{stateDir.FullName}] doesn't exist and couldn't be created");
             }
         }
 
@@ -80,8 +78,7 @@ namespace Kafka.Streams.Processor.Internals
 
             if (createStateDirectory && !taskDir.Exists)
             {
-                throw new ProcessorStateException(
-                    string.Format("task directory [%s] doesn't exist and couldn't be created", taskDir.FullName));
+                throw new ProcessorStateException($"task directory [{taskDir.FullName}] doesn't exist and couldn't be created");
             }
 
             return taskDir;
@@ -107,9 +104,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         private string logPrefix()
-        {
-            return string.Format("stream-thread [%s]", Thread.CurrentThread.Name);
-        }
+            => $"stream-thread [{Thread.CurrentThread.Name}]";
 
         /**
          * Get the lock for the {@link TaskId}s directory if it is available
@@ -185,12 +180,14 @@ namespace Kafka.Streams.Processor.Internals
 
             if (globalStateLock != null)
             {
-                log.LogTrace("{} Found cached state dir lock for the global task", logPrefix());
+                log.LogTrace($"{logPrefix()} Found cached state dir lock for the global task");
+
                 return true;
             }
 
             FileInfo lockFile = new FileInfo(Path.Combine(globalStateDir().FullName, LOCK_FILE_NAME));
             FileChannel channel;
+
             try
             {
                 channel = null;// FileChannel.open(lockFile.FullName, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
@@ -202,12 +199,14 @@ namespace Kafka.Streams.Processor.Internals
                 // file, in this case we will return immediately indicating locking failed.
                 return false;
             }
+
             FileLock fileLock = tryLock(channel);
             if (fileLock == null)
             {
                 channel.close();
                 return false;
             }
+
             globalStateChannel = channel;
             globalStateLock = fileLock;
 
@@ -229,7 +228,7 @@ namespace Kafka.Streams.Processor.Internals
             globalStateLock = null;
             globalStateChannel = null;
 
-            log.LogDebug("{} Released global state dir lock", logPrefix());
+            log.LogDebug($"{logPrefix()} Released global state dir lock");
         }
 
         /**
@@ -264,6 +263,7 @@ namespace Kafka.Streams.Processor.Internals
                 // this is already logged within cleanRemovedTasks
                 throw new StreamsException(e);
             }
+
             try
             {
                 if (stateDir.Exists)
@@ -274,6 +274,7 @@ namespace Kafka.Streams.Processor.Internals
             catch (IOException e)
             {
                 log.LogError("{} Failed to delete global state directory due to an unexpected exception", logPrefix(), e);
+
                 throw new StreamsException(e);
             }
         }
@@ -290,7 +291,6 @@ namespace Kafka.Streams.Processor.Internals
         {
             try
             {
-
                 cleanRemovedTasks(cleanupDelayMs, false);
             }
             catch (Exception cannotHappen)
@@ -402,6 +402,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 //                channels.Add(taskId, FileChannel.open(lockPath, StandardOpenOption.CREATE, StandardOpenOption.WRITE));
             }
+
             return channels[taskId];
         }
 

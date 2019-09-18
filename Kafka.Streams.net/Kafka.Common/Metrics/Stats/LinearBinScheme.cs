@@ -12,8 +12,8 @@ namespace Kafka.Common.Metrics.Stats
     public class LinearBinScheme : IBinScheme
     {
         public int bins { get; private set; }
-        private double max;
-        private double scale;
+        private readonly double max;
+        private readonly double scale;
 
         /**
          * Create a linear bin scheme with the specified number of bins and the maximum value to be counted in the bins.

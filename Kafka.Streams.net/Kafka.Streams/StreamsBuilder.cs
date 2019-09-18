@@ -49,10 +49,10 @@ namespace Kafka.Streams
             private readonly ServiceProvider services;
 
             /** The actual topology that is constructed by this StreamsBuilder. */
-            private Topology topology;
+            private readonly Topology topology;
 
             private InternalTopologyBuilder internalTopologyBuilder => topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
-            private InternalStreamsBuilder internalStreamsBuilder;
+            private readonly InternalStreamsBuilder internalStreamsBuilder;
 
             public StreamsBuilder(
                 IConfiguration configuration,

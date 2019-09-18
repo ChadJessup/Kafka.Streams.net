@@ -27,9 +27,9 @@ namespace Kafka.Streams.State.Internals
     public class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
        , IKeyValueIterator<Bytes, byte[]>
     {
-        private string storeName;
-        private Iterator iter;
-        private HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
+        private readonly string storeName;
+        private readonly Iterator iter;
+        private readonly HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
 
         private volatile bool open = true;
 

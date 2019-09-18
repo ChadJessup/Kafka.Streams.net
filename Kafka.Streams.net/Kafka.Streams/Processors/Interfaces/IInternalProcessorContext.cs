@@ -1,5 +1,4 @@
 using Kafka.Streams.Processor.Internals;
-using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.Processor.Interfaces
 {
@@ -14,7 +13,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * Returns the current {@link RecordContext}
          * @return the current {@link RecordContext}
          */
-        ProcessorRecordContext recordContext();
+        ProcessorRecordContext recordContext { get; }
 
         /**
          * @param recordContext the {@link ProcessorRecordContext} for the record about to be processes
@@ -29,7 +28,7 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * Get the current {@link ProcessorNode}
          */
-        ProcessorNode<K, V> currentNode();
+        ProcessorNode<K, V> currentNode { get; }
 
         /**
          * Get the thread-global cache

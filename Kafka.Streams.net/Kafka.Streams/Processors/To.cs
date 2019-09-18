@@ -29,10 +29,9 @@ namespace Kafka.Streams.Processor
     public class To
     {
         protected string childName;
-        protected long timestamp;
+        public long timestamp { get; private set; }
 
-        private To(string childName,
-                   long timestamp)
+        private To(string childName, long timestamp)
         {
             this.childName = childName;
             this.timestamp = timestamp;

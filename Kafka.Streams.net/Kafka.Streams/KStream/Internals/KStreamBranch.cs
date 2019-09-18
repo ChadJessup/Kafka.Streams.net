@@ -21,8 +21,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamBranch<K, V> : IProcessorSupplier<K, V>
     {
-        private IPredicate<K, V>[] predicates;
-        private string[] childNodes;
+        private readonly IPredicate<K, V>[] predicates;
+        private readonly string[] childNodes;
 
         public KStreamBranch(
             IPredicate<K, V>[] predicates,

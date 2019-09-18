@@ -9,9 +9,9 @@ namespace Kafka.Common.Metrics
 {
     public class KafkaMetric : IMetric
     {
-        private object @lock;
-        private ITime time;
-        private IMetricValueProvider metricValueProvider;
+        private readonly object @lock;
+        private readonly ITime time;
+        private readonly IMetricValueProvider metricValueProvider;
 
         // public for testing
         public KafkaMetric(

@@ -11,10 +11,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KGroupedStream<K, V> : AbstractStream<K, V>, IKGroupedStream<K, V>
     {
-        static string REDUCE_NAME = "KSTREAM-REDUCE-";
-        static string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
+        static readonly string REDUCE_NAME = "KSTREAM-REDUCE-";
+        static readonly string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
 
-        private GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
+        private readonly GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
         public KGroupedStream(
             string name,

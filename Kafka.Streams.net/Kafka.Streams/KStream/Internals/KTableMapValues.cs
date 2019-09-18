@@ -22,9 +22,9 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMapValues<K, V, V1> : IKTableProcessorSupplier<K, V, V1>
     {
-        private KTable<K, V1, V> parent;
-        private IValueMapperWithKey<K, V, V1> mapper;
-        private string queryableName;
+        private readonly KTable<K, V1, V> parent;
+        private readonly IValueMapperWithKey<K, V, V1> mapper;
+        private readonly string queryableName;
         private bool sendOldValues = false;
 
         public KTableMapValues(

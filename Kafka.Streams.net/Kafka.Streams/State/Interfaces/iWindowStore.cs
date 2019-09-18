@@ -139,6 +139,8 @@ namespace Kafka.Streams.State.Interfaces
             long timeFrom,
             long timeTo);
 
+        void Add(K key, V value);
+
         //public IKeyValueIterator<Windowed<K>, V> fetchAll(
         //    DateTime from,
         //    DateTime to)

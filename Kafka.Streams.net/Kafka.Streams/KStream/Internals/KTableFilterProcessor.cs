@@ -25,7 +25,7 @@
 //        private ITimestampedKeyValueStore<K, V> store;
 //        private TimestampedTupleForwarder<K, V> tupleForwarder;
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            base.init(context);
 //            if (queryableName != null)

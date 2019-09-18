@@ -24,7 +24,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class Sink : AbstractNode, ISink
     {
-        private ITopicNameExtractor topicNameExtractor;
+        private readonly ITopicNameExtractor topicNameExtractor;
 
         public Sink(
             string name,

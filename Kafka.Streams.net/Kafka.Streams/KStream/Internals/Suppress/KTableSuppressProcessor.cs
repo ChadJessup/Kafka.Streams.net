@@ -29,18 +29,18 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 {
     public class KTableSuppressProcessor<K, V> : IProcessor<K, Change<V>>
     {
-        private long maxRecords;
-        private long maxBytes;
-        private long suppressDurationMillis;
-        private ITimeDefinition<K, V> bufferTimeDefinition;
-        private BufferFullStrategy bufferFullStrategy;
-        private bool safeToDropTombstones;
-        private string storeName;
+        private readonly long maxRecords;
+        private readonly long maxBytes;
+        private readonly long suppressDurationMillis;
+        private readonly ITimeDefinition<K, V> bufferTimeDefinition;
+        private readonly BufferFullStrategy bufferFullStrategy;
+        private readonly bool safeToDropTombstones;
+        private readonly string storeName;
 
         //private TimeOrderedKeyValueBuffer<K, V> buffer;
         private IInternalProcessorContext<K, V> internalProcessorContext;
-        private Sensor suppressionEmitSensor;
-        private long observedStreamTime = ConsumeResult.NO_TIMESTAMP;
+        private readonly Sensor suppressionEmitSensor;
+        private long observedStreamTime = -1L;// ConsumeResult.NO_TIMESTAMP;
 
         //public KTableSuppressProcessor(SuppressedInternal<K, V> suppress, string storeName)
         //{
@@ -66,7 +66,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         public void process(K key, Change<V> value)
         {
-            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp());
+            observedStreamTime = Math.Max(observedStreamTime, internalProcessorContext.timestamp);
             buffer(key, value);
             enforceConstraints();
         }
@@ -117,8 +117,8 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         {
             if (shouldForward(toEmit.value))
             {
-                ProcessorRecordContext prevRecordContext = internalProcessorContext.recordContext();
-//                internalProcessorContext.setRecordContext(toEmit.recordContext());
+                ProcessorRecordContext prevRecordContext = internalProcessorContext.recordContext;
+                internalProcessorContext.setRecordContext(toEmit.recordContext);
 
                 try
                 {

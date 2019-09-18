@@ -35,8 +35,8 @@ namespace Kafka.Streams.Processor.Internals
         public static IRecordConverter converterForStore(IStateStore store)
         {
             return WrappedStateStore.isTimestamped(store)
-                ? rawValueToTimestampedValue()
-                : identity();
+                ? RecordConverters.rawValueToTimestampedValue()
+                : RecordConverters.identity();
         }
 
         public static void reinitializeStateStoresForPartitions<K, V>(
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Processor.Internals
             List<TopicPartition> partitions,
             IInternalProcessorContext<K, V> processorContext,
             OffsetCheckpoint checkpointFile,
-            Dictionary<TopicPartition, long?> checkpointFileCache)
+            Dictionary<TopicPartition, long> checkpointFileCache)
         {
             Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
             HashSet<string> storesToBeReinitialized = new HashSet<string>();

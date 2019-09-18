@@ -1,25 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processor.Interfaces;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -33,12 +15,12 @@ namespace Kafka.Streams.Processor.Internals
 
     public class SourceNode<K, V> : ProcessorNode<K, V>
     {
-        private List<string> topics;
+        private readonly List<string> topics;
 
         private IProcessorContext<K, V> context;
         private IDeserializer<K> keyDeserializer;
         private IDeserializer<V> valDeserializer;
-        private ITimestampExtractor timestampExtractor;
+        public ITimestampExtractor timestampExtractor { get; }
 
         public SourceNode(
             string name,
@@ -83,6 +65,7 @@ namespace Kafka.Streams.Processor.Internals
             {
                 this.keyDeserializer = context.keySerde.Deserializer;
             }
+
             if (this.valDeserializer == null)
             {
                 this.valDeserializer = context.valueSerde.Deserializer;
@@ -105,7 +88,6 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @return a string representation of this node, useful for debugging.
          */
-
         public override string ToString()
         {
             return ToString("");
@@ -127,10 +109,5 @@ namespace Kafka.Streams.Processor.Internals
         //    sb.Append("]\n");
         //    return sb.ToString();
         //}
-
-        public ITimestampExtractor getTimestampExtractor()
-        {
-            return timestampExtractor;
-        }
     }
 }

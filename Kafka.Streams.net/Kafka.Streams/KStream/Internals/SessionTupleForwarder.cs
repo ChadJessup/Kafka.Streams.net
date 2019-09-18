@@ -29,13 +29,13 @@
 //     */
 //    public class SessionTupleForwarder<K, V>
 //    {
-//        private IProcessorContext<K, V> context;
+//        private IProcessorContext context;
 //        private bool sendOldValues;
 //        private bool cachingEnabled;
 
 
 //        SessionTupleForwarder(IStateStore store,
-//                               IProcessorContext<K, V> context,
+//                               IProcessorContext context,
 //                               ICacheFlushListener<Windowed<K>, V> flushListener,
 //                               bool sendOldValues)
 //        {

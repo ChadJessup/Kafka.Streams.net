@@ -27,7 +27,7 @@ namespace Kafka.Streams.Errors
     {
 
 
-        private static long serialVersionUID = 1L;
+        private static readonly long serialVersionUID = 1L;
 
         public TaskAssignmentException(string message)
             : base(message)

@@ -24,10 +24,10 @@ namespace Kafka.Streams.State.Internals
 {
     public class ValueAndTimestampDeserializer<V> : IDeserializer<ValueAndTimestamp<V>>
     {
-        private static IDeserializer<long> LONG_DESERIALIZER = Serdes.Long().Deserializer;
+        private static readonly IDeserializer<long> LONG_DESERIALIZER = Serdes.Long().Deserializer;
 
         public IDeserializer<V> valueDeserializer;
-        private IDeserializer<long> timestampDeserializer;
+        private readonly IDeserializer<long> timestampDeserializer;
 
         public ValueAndTimestampDeserializer(IDeserializer<V> valueDeserializer)
         {

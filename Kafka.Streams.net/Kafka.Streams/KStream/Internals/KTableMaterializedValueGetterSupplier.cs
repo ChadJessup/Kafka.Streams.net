@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMaterializedValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, V>
     {
-        private string storeName;
+        private readonly string storeName;
 
         public KTableMaterializedValueGetterSupplier(string storeName)
         {

@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
     public class MaterializedInternal<K, V, S> : Materialized<K, V, S>
         where S : IStateStore
     {
-        private bool queriable;
+        private readonly bool queriable;
 
         public MaterializedInternal(Materialized<K, V, S> materialized)
             : this(materialized, null, null)

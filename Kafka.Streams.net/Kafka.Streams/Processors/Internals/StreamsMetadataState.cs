@@ -34,12 +34,12 @@ namespace Kafka.Streams.Processor.Internals
     public class StreamsMetadataState
     {
         public static HostInfo UNKNOWN_HOST = new HostInfo("unknown", -1);
-        private InternalTopologyBuilder builder;
-        private List<StreamsMetadata> allMetadata = new List<StreamsMetadata>();
-        private HashSet<string> globalStores;
-        private HostInfo thisHost;
+        private readonly InternalTopologyBuilder builder;
+        private readonly List<StreamsMetadata> allMetadata = new List<StreamsMetadata>();
+        private readonly HashSet<string> globalStores;
+        private readonly HostInfo thisHost;
         private Cluster clusterMetadata;
-        private StreamsMetadata myMetadata;
+        private readonly StreamsMetadata myMetadata;
 
         public StreamsMetadataState(
             InternalTopologyBuilder builder,

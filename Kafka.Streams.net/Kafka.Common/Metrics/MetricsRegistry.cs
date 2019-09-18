@@ -42,9 +42,9 @@ namespace Kafka.Common.Metrics
         //private ConcurrentDictionary<MetricName, KafkaMetric> metrics;
         //private ConcurrentDictionary<Sensor, List<Sensor>> childrenSensors;
         //private List<IMetricsReporter> reporters;
-        private ITime time;
-        private ScheduledThreadPoolExecutor metricsScheduler;
-        private static ILogger log = new LoggerFactory().CreateLogger<MetricsRegistry>();
+        private readonly ITime time;
+        private readonly ScheduledThreadPoolExecutor metricsScheduler;
+        private static readonly ILogger log = new LoggerFactory().CreateLogger<MetricsRegistry>();
 
         /**
          * Create a metrics repository with no metric reporters and default configuration.

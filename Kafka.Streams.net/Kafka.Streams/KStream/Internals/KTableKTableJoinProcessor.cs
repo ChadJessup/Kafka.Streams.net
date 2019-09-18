@@ -33,7 +33,7 @@
 //        }
 
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            base.init(context);
 //            metrics = (StreamsMetricsImpl)context.metrics;

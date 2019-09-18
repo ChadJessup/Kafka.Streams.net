@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
         public LRUCacheEntry entry { get; private set; }
         public LRUNode previous { get; set; }
         public LRUNode next { get; set; }
-        private StreamsMetricsImpl metrics;
+        private readonly StreamsMetricsImpl metrics;
 
         public LRUNode(Bytes key, LRUCacheEntry entry)
         {

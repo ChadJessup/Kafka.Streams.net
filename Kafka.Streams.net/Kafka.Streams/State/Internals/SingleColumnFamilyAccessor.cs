@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Internals
         private readonly RocksDb db;
         private readonly WriteOptions wOptions;
         private readonly HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators;
-        private ColumnFamilyHandle columnFamily;
+        private readonly ColumnFamilyHandle columnFamily;
 
         public SingleColumnFamilyAccessor(
             string name,

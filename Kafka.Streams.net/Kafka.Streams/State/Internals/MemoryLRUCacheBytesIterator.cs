@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class MemoryLRUCacheBytesIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
-        private IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying;
+        private readonly IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying;
         private KeyValue<Bytes, LRUCacheEntry> nextEntry;
 
         public KeyValue<Bytes, LRUCacheEntry> Current { get; }

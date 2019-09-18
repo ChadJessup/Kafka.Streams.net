@@ -150,6 +150,7 @@ namespace Kafka.Streams.KStream
         public Consumed<K, V> WithKeySerde(ISerde<K> keySerde)
         {
             this.keySerde = keySerde;
+
             return this;
         }
 
@@ -162,6 +163,7 @@ namespace Kafka.Streams.KStream
         public Consumed<K, V> WithValueSerde(ISerde<V> valueSerde)
         {
             this.valueSerde = valueSerde;
+
             return this;
         }
 
@@ -174,6 +176,7 @@ namespace Kafka.Streams.KStream
         public Consumed<K, V> WithTimestampExtractor(ITimestampExtractor timestampExtractor)
         {
             this.timestampExtractor = timestampExtractor;
+
             return this;
         }
 
@@ -186,6 +189,7 @@ namespace Kafka.Streams.KStream
         public Consumed<K, V> WithOffsetResetPolicy(AutoOffsetReset resetPolicy)
         {
             this.resetPolicy = resetPolicy;
+
             return this;
         }
 

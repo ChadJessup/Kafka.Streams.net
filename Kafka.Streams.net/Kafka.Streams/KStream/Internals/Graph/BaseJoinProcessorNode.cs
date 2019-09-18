@@ -23,10 +23,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public abstract class BaseJoinProcessorNode<K, V1, V2, VR> : StreamsGraphNode
     {
-        private ProcessorParameters<K, V1> joinThisProcessorParameters;
-        private ProcessorParameters<K, V2> joinOtherProcessorParameters;
-        private ProcessorParameters<K, VR> joinMergeProcessorParameters;
-        private IValueJoiner<V1, V2, VR> valueJoiner;
+        private readonly ProcessorParameters<K, V1> joinThisProcessorParameters;
+        private readonly ProcessorParameters<K, V2> joinOtherProcessorParameters;
+        private readonly ProcessorParameters<K, VR> joinMergeProcessorParameters;
+        private readonly IValueJoiner<V1, V2, VR> valueJoiner;
         public string thisJoinSideNodeName { get; }
         public string otherJoinSideNodeName { get; }
 

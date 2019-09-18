@@ -1,6 +1,8 @@
-﻿namespace Kafka.Streams.Processor.Internals
+﻿using System;
+
+namespace Kafka.Streams.Processor.Internals
 {
-    internal class InvalidOffsetException
+    public class InvalidOffsetException : Exception
     {
     }
 }

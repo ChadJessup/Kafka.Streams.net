@@ -23,12 +23,12 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamWindowAggregate<K, V, Agg, W> : IKStreamAggProcessorSupplier<K, Windowed<K>, V, Agg>
         where W : Window
     {
-        private ILogger log = new LoggerFactory().CreateLogger<KStreamWindowAggregate<K, V, Agg, W>>();
+        private readonly ILogger log = new LoggerFactory().CreateLogger<KStreamWindowAggregate<K, V, Agg, W>>();
 
-        private string storeName;
-        private Windows<W> windows;
-        private IInitializer<Agg> initializer;
-        private IAggregator<K, V, Agg> aggregator;
+        private readonly string storeName;
+        private readonly Windows<W> windows;
+        private readonly IInitializer<Agg> initializer;
+        private readonly IAggregator<K, V, Agg> aggregator;
 
         private bool sendOldValues = false;
 

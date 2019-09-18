@@ -24,8 +24,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class StreamSourceNode<K, V> : StreamsGraphNode
     {
-        private IEnumerable<string> topicNames;
-        private Regex topicPattern;
+        private readonly IEnumerable<string> topicNames;
+        private readonly Regex topicPattern;
         protected ConsumedInternal<K, V> consumedInternal;
 
         public StreamSourceNode(

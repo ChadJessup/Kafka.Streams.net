@@ -18,8 +18,8 @@ namespace Kafka.Streams.State.Internals
 {
     internal class SimpleTimeZone
     {
-        private int v1;
-        private string v2;
+        private readonly int v1;
+        private readonly string v2;
 
         public SimpleTimeZone(int v1, string v2)
         {

@@ -23,9 +23,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
 {
     public class TableProcessorNode<K, V> : StreamsGraphNode
     {
-        private ProcessorParameters<K, V> processorParameters;
-        private IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
-        private string[] storeNames;
+        private readonly ProcessorParameters<K, V> processorParameters;
+        private readonly IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
+        private readonly string[] storeNames;
 
         public TableProcessorNode(
             string nodeName,

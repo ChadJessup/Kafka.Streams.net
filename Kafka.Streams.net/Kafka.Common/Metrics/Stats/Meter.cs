@@ -24,10 +24,10 @@ namespace Kafka.Common.Metrics.Stats
      */
     public class Meter : ICompoundStat
     {
-        private MetricName rateMetricName;
-        private MetricName totalMetricName;
-        private Rate rate;
-        private CumulativeSum total;
+        private readonly MetricName rateMetricName;
+        private readonly MetricName totalMetricName;
+        private readonly Rate rate;
+        private readonly CumulativeSum total;
 
         /**
          * Construct a Meter with seconds as time unit

@@ -4,7 +4,7 @@ namespace Kafka.Streams.Processor.Internals.Assignment
 {
     public class DataOutputStream : IDisposable
     {
-        private ByteArrayOutputStream baos;
+        private readonly ByteArrayOutputStream baos;
 
         public DataOutputStream(ByteArrayOutputStream baos)
         {

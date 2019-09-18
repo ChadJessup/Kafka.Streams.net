@@ -38,7 +38,7 @@ namespace Kafka.Streams.Topologies
         private readonly IServiceProvider services;
 
         private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("", RegexOptions.Compiled);
-        private static string[] NO_PREDECESSORS = { };
+        private static readonly string[] NO_PREDECESSORS = { };
 
         public InternalTopologyBuilder(
             ILogger<InternalTopologyBuilder> logger,
@@ -49,68 +49,68 @@ namespace Kafka.Streams.Topologies
         }
 
         // node factories in a topological order
-        private Dictionary<string, NodeFactory> nodeFactories = new Dictionary<string, NodeFactory>();
+        private readonly Dictionary<string, NodeFactory> nodeFactories = new Dictionary<string, NodeFactory>();
 
         // state factories
-        private Dictionary<string, StateStoreFactory> stateFactories = new Dictionary<string, StateStoreFactory>();
+        private readonly Dictionary<string, StateStoreFactory> stateFactories = new Dictionary<string, StateStoreFactory>();
 
         // built global state stores
-        private Dictionary<string, IStoreBuilder> globalStateBuilders = new Dictionary<string, IStoreBuilder>();
+        private readonly Dictionary<string, IStoreBuilder> globalStateBuilders = new Dictionary<string, IStoreBuilder>();
 
         // built global state stores
-        private Dictionary<string, IStateStore> _globalStateStores = new Dictionary<string, IStateStore>();
+        private readonly Dictionary<string, IStateStore> _globalStateStores = new Dictionary<string, IStateStore>();
 
         // all topics subscribed from source processors (without application-id prefix for internal topics)
-        private HashSet<string> sourceTopicNames = new HashSet<string>();
+        private readonly HashSet<string> sourceTopicNames = new HashSet<string>();
 
         // all internal topics auto-created by the topology builder and used in source / sink processors
-        private HashSet<string> internalTopicNames = new HashSet<string>();
+        private readonly HashSet<string> internalTopicNames = new HashSet<string>();
 
         // groups of source processors that need to be copartitioned
-        private List<HashSet<string>> copartitionSourceGroups = new List<HashSet<string>>();
+        private readonly List<HashSet<string>> copartitionSourceGroups = new List<HashSet<string>>();
 
         // map from source processor names to subscribed topics (without application-id prefix for internal topics)
-        private Dictionary<string, List<string>> nodeToSourceTopics = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> nodeToSourceTopics = new Dictionary<string, List<string>>();
 
         // map from source processor names to regex subscription patterns
-        private Dictionary<string, Regex> nodeToSourcePatterns = new Dictionary<string, Regex>();
+        private readonly Dictionary<string, Regex> nodeToSourcePatterns = new Dictionary<string, Regex>();
 
         // map from sink processor names to subscribed topic (without application-id prefix for internal topics)
-        private Dictionary<string, string> nodeToSinkTopic = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> nodeToSinkTopic = new Dictionary<string, string>();
 
         // map from topics to their matched regex patterns, this is to ensure one topic is passed through on source node
         // even if it can be matched by multiple regex patterns
-        private Dictionary<string, Regex> topicToPatterns = new Dictionary<string, Regex>();
+        private readonly Dictionary<string, Regex> topicToPatterns = new Dictionary<string, Regex>();
 
         // map from state store names to all the topics subscribed from source processors that
         // are connected to these state stores
-        private Dictionary<string, HashSet<string>> _stateStoreNameToSourceTopics = new Dictionary<string, HashSet<string>>();
+        private readonly Dictionary<string, HashSet<string>> _stateStoreNameToSourceTopics = new Dictionary<string, HashSet<string>>();
 
         // map from state store names to all the regex subscribed topics from source processors that
         // are connected to these state stores
-        private Dictionary<string, HashSet<Regex>> stateStoreNameToSourceRegex = new Dictionary<string, HashSet<Regex>>();
+        private readonly Dictionary<string, HashSet<Regex>> stateStoreNameToSourceRegex = new Dictionary<string, HashSet<Regex>>();
 
         // map from state store names to this state store's corresponding changelog topic if possible
-        private Dictionary<string, string> storeToChangelogTopic = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> storeToChangelogTopic = new Dictionary<string, string>();
 
         // all global topics
-        private HashSet<string> globalTopics = new HashSet<string>();
+        private readonly HashSet<string> globalTopics = new HashSet<string>();
 
-        private HashSet<string> earliestResetTopics = new HashSet<string>();
+        private readonly HashSet<string> earliestResetTopics = new HashSet<string>();
 
-        private HashSet<string> latestResetTopics = new HashSet<string>();
+        private readonly HashSet<string> latestResetTopics = new HashSet<string>();
 
-        private HashSet<Regex> earliestResetPatterns = new HashSet<Regex>();
+        private readonly HashSet<Regex> earliestResetPatterns = new HashSet<Regex>();
 
-        private HashSet<Regex> latestResetPatterns = new HashSet<Regex>();
+        private readonly HashSet<Regex> latestResetPatterns = new HashSet<Regex>();
 
-        private QuickUnion<string> nodeGrouper = new QuickUnion<string>();
+        private readonly QuickUnion<string> nodeGrouper = new QuickUnion<string>();
 
         public SubscriptionUpdates subscriptionUpdates { get; } = new SubscriptionUpdates();
 
         private string applicationId = null;
 
-        private Regex topicPattern = null;
+        private readonly Regex topicPattern = null;
 
         private Dictionary<int, HashSet<string>> _nodeGroups = null;
 
@@ -1373,7 +1373,7 @@ namespace Kafka.Streams.Topologies
             return false;
         }
 
-        private static NodeComparator NODE_COMPARATOR = new NodeComparator();
+        private static readonly NodeComparator NODE_COMPARATOR = new NodeComparator();
 
         private static void updateSize(AbstractNode node,
                                        int delta)
@@ -1422,9 +1422,9 @@ namespace Kafka.Streams.Topologies
             throw new InvalidOperationException("Sinks don't have successors.");
         }
 
-        private static GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
+        private static readonly GlobalStoreComparator GLOBALSTORE_COMPARATOR = new GlobalStoreComparator();
 
-        private static SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
+        private static readonly SubtopologyComparator SUBTOPOLOGY_COMPARATOR = new SubtopologyComparator();
 
         internal static string GetNodeNames(HashSet<INode> nodes)
         {

@@ -26,9 +26,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
      */
     public class StreamTableJoinNode<K, V> : StreamsGraphNode
     {
-        private string[] storeNames;
-        private ProcessorParameters<K, V> processorParameters;
-        private string otherJoinSideNodeName;
+        private readonly string[] storeNames;
+        private readonly ProcessorParameters<K, V> processorParameters;
+        private readonly string otherJoinSideNodeName;
 
         public StreamTableJoinNode(
             string nodeName,

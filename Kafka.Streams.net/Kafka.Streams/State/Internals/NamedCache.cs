@@ -26,10 +26,10 @@ namespace Kafka.Streams.State.Internals
 {
     public class NamedCache
     {
-        private static ILogger log = new LoggerFactory().CreateLogger<NamedCache>();
-        private string name;
-        private ConcurrentDictionary<Bytes, LRUNode> cache = new ConcurrentDictionary<Bytes, LRUNode>();
-        private HashSet<Bytes> dirtyKeys = new HashSet<Bytes>();
+        private static readonly ILogger log = new LoggerFactory().CreateLogger<NamedCache>();
+        private readonly string name;
+        private readonly ConcurrentDictionary<Bytes, LRUNode> cache = new ConcurrentDictionary<Bytes, LRUNode>();
+        private readonly HashSet<Bytes> dirtyKeys = new HashSet<Bytes>();
         private IDirtyEntryFlushListener listener;
         private LRUNode _tail;
         private LRUNode _head;

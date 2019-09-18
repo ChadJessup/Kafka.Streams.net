@@ -84,7 +84,7 @@ namespace Kafka.Streams
      */
     public class StreamsConfig : ConsumerConfig
     {
-        private static ILogger logger = new LoggerFactory().CreateLogger<StreamsConfig>();
+        private static readonly ILogger logger = new LoggerFactory().CreateLogger<StreamsConfig>();
 
         /// <summary>
         /// Initialize a new empty <see cref="StreamsConfig" /> instance.

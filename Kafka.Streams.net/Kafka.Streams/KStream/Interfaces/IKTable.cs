@@ -843,7 +843,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext<K, V> context)
+         *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -926,7 +926,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext<K, V> context)
+         *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state
@@ -1011,7 +1011,7 @@ namespace Kafka.Streams.KStream.Interfaces
 {
          *             private KeyValueStore<string, string> state;
          *
-         *             void init(IProcessorContext<K, V> context)
+         *             void init(IProcessorContext context)
 {
          *                 this.state = (KeyValueStore<string, string>)context.getStateStore("myValueTransformState");
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..)); // punctuate each 1000ms, can access this.state

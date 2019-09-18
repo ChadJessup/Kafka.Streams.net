@@ -25,7 +25,7 @@
 //        private IInternalProcessorContext<K, V> context;
 //        private ProcessorNode<K, V> myNode;
 
-//        SessionCacheFlushListener(IProcessorContext<K, V> context)
+//        SessionCacheFlushListener(IProcessorContext context)
 //        {
 //            this.context = (IInternalProcessorContext<K, V>)context;
 //            myNode = this.context.currentNode();

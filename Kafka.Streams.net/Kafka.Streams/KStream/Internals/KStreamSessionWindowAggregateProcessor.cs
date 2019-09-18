@@ -22,7 +22,7 @@
 
 
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            base.init(context);
 //            internalProcessorContext = (IInternalProcessorContext)context;

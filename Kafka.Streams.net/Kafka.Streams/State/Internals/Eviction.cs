@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.Internals
     {
         public K key { get; }
         public Change<V> value { get; }
-        private ProcessorRecordContext recordContext;
+        public ProcessorRecordContext recordContext { get; }
 
         public Eviction(K key, Change<V> value, ProcessorRecordContext recordContext)
         {

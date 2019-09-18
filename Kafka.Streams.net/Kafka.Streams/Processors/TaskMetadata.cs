@@ -24,9 +24,9 @@ namespace Kafka.Streams.Processor
      */
     public class TaskMetadata
     {
-        private string taskId;
+        private readonly string taskId;
 
-        private HashSet<TopicPartition> topicPartitions;
+        private readonly HashSet<TopicPartition> topicPartitions;
 
         public TaskMetadata(
             string taskId,

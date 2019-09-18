@@ -19,14 +19,14 @@ namespace Kafka.Common.Metrics
     {
         public static RecordingLevel RecordingLevel;
 
-        private MetricsRegistry registry;
+        private readonly MetricsRegistry registry;
         public List<Sensor> parents = new List<Sensor>();
-        private List<IStat> stats;
+        private readonly List<IStat> stats;
         public Dictionary<MetricName, KafkaMetric> metrics { get; } = new Dictionary<MetricName, KafkaMetric>();
-        private MetricConfig config;
-        private ITime time;
+        private readonly MetricConfig config;
+        private readonly ITime time;
         private long lastRecordTime;
-        private long inactiveSensorExpirationTimeMs;
+        private readonly long inactiveSensorExpirationTimeMs;
 
         public Sensor(
             MetricsRegistry registry,

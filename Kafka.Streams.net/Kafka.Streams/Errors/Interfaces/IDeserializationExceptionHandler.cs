@@ -16,7 +16,7 @@ namespace Kafka.Streams.Errors.Interfaces
          * @param record record that failed deserialization
          * @param exception the actual exception
          */
-        DeserializationHandlerResponse handle<K, V>(
+        DeserializationHandlerResponses handle<K, V>(
             IProcessorContext<K, V> context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception);

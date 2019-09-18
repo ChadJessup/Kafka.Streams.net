@@ -9,7 +9,7 @@
 
 
 
-//        public void init(IProcessorContext<K, V> context)
+//        public void init(IProcessorContext context)
 //        {
 //            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
 //        }

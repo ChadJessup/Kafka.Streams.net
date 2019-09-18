@@ -34,7 +34,7 @@
 //        private static ILogger log = new LoggerFactory().CreateLogger<LogAndFailExceptionHandler>();
 
 
-//        public DeserializationHandlerResponse handle(IProcessorContext<K, V> context,
+//        public DeserializationHandlerResponse handle(IProcessorContext context,
 //                                                      ConsumeResult<byte[], byte[]> record,
 //                                                      Exception exception)
 //        {

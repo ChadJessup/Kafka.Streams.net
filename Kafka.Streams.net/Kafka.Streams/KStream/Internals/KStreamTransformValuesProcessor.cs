@@ -16,15 +16,16 @@
  */
 using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processor.Internals;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamTransformValuesProcessor<K, V, R> : IProcessor<K, V>
     {
-        private IValueTransformerWithKey<K, V, R> valueTransformer;
+        private readonly IValueTransformerWithKey<K, V, R> valueTransformer;
         private IProcessorContext<K, V> context;
 
-        KStreamTransformValuesProcessor(IValueTransformerWithKey<K, V, R> valueTransformer)
+        public KStreamTransformValuesProcessor(IValueTransformerWithKey<K, V, R> valueTransformer)
         {
             this.valueTransformer = valueTransformer;
         }
@@ -32,7 +33,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void init(IProcessorContext<K, V> context)
         {
-            //valueTransformer.init(new ForwardingDisabledProcessorContext(context));
+            valueTransformer.init(new ForwardingDisabledProcessorContext<K, V>(context));
             this.context = context;
         }
 
@@ -41,7 +42,6 @@ namespace Kafka.Streams.KStream.Internals
         {
             //context.forward(key, valueTransformer.transform(key, value));
         }
-
 
         public void close()
         {

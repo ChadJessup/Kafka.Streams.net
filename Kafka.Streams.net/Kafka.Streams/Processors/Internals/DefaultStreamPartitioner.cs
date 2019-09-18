@@ -22,9 +22,9 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class DefaultStreamPartitioner<K, V> : IStreamPartitioner<K, V>
     {
-        private Cluster cluster;
-        private ISerializer<K> keySerializer;
-        private DefaultPartitioner defaultPartitioner;
+        private readonly Cluster cluster;
+        private readonly ISerializer<K> keySerializer;
+        private readonly DefaultPartitioner defaultPartitioner;
 
         public DefaultStreamPartitioner(
             ISerializer<K> keySerializer,

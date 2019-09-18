@@ -1,4 +1,4 @@
-using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.Processor;
 using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.State.Internals;
 
@@ -14,9 +14,9 @@ namespace Kafka.Streams.KStream.Internals
      */
     public class TimestampedTupleForwarder<K, V>
     {
-        private IProcessorContext<K, V> context;
-        private bool sendOldValues;
-        private bool cachingEnabled;
+        private readonly IProcessorContext<K, V> context;
+        private readonly bool sendOldValues;
+        private readonly bool cachingEnabled;
 
         public TimestampedTupleForwarder(
             IStateStore store,
@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             this.context = context;
             this.sendOldValues = sendOldValues;
-            //cachingEnabled = ((WrappedStateStore<S, K, V>)store).setFlushListener(flushListener, sendOldValues);
+            this.cachingEnabled = ((WrappedStateStore)store).setFlushListener(flushListener, sendOldValues);
         }
 
         public void maybeForward(
@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-                //context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null));
+                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default));
             }
         }
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-              //  context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : null), To.all().withTimestamp(timestamp));
+                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default), To.all().withTimestamp(timestamp));
             }
         }
     }

@@ -26,7 +26,7 @@ namespace Kafka.Streams.State.Internals
     public class ValueAndTimestampSerializer<V> : ISerializer<ValueAndTimestamp<V>>
     {
         public ISerializer<V> valueSerializer;
-        private ISerializer<long> timestampSerializer;
+        private readonly ISerializer<long> timestampSerializer;
 
         public ValueAndTimestampSerializer(ISerializer<V> valueSerializer)
         {

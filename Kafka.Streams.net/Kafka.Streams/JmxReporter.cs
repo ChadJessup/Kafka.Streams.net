@@ -18,7 +18,7 @@ namespace Kafka.Streams
 {
     internal class JmxReporter
     {
-        private string jMX_PREFIX;
+        private readonly string jMX_PREFIX;
 
         public JmxReporter(string jMX_PREFIX)
         {

@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class WindowStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IWindowStore<K, V>>
     {
-        private IWindowBytesStoreSupplier storeSupplier;
+        private readonly IWindowBytesStoreSupplier storeSupplier;
 
         public WindowStoreBuilder(
             IWindowBytesStoreSupplier storeSupplier,

@@ -14,7 +14,7 @@ namespace Kafka.Common.Metrics.Stats
      */
     public abstract class SampledStat : IMeasurableStat
     {
-        private double initialValue;
+        private readonly double initialValue;
         private int current = 0;
         protected List<Sample> samples;
 

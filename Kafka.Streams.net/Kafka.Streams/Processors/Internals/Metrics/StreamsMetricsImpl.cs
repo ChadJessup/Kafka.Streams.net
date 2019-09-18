@@ -11,20 +11,20 @@ namespace Kafka.Streams.Processor.Internals.Metrics
 {
     public class StreamsMetricsImpl : IStreamsMetrics
     {
-        private Dictionary<Sensor, Sensor> parentSensors;
+        private readonly Dictionary<Sensor, Sensor> parentSensors;
         public Dictionary<MetricName, IMetric> streamMetrics { get; }
         public MetricsRegistry metrics { get; }
 
-        private string threadName;
+        private readonly string threadName;
 
-        private List<string> threadLevelSensors = new List<string>();
-        private Dictionary<string, List<string>> taskLevelSensors = new Dictionary<string, List<string>>();
-        private Dictionary<string, List<string>> nodeLevelSensors = new Dictionary<string, List<string>>();
-        private Dictionary<string, List<string>> cacheLevelSensors = new Dictionary<string, List<string>>();
-        private Dictionary<string, List<string>> storeLevelSensors = new Dictionary<string, List<string>>();
+        private readonly List<string> threadLevelSensors = new List<string>();
+        private readonly Dictionary<string, List<string>> taskLevelSensors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> nodeLevelSensors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> cacheLevelSensors = new Dictionary<string, List<string>>();
+        private readonly Dictionary<string, List<string>> storeLevelSensors = new Dictionary<string, List<string>>();
 
-        private static string SENSOR_PREFIX_DELIMITER = ".";
-        private static string SENSOR_NAME_DELIMITER = ".s.";
+        private static readonly string SENSOR_PREFIX_DELIMITER = ".";
+        private static readonly string SENSOR_NAME_DELIMITER = ".s.";
 
         public static string THREAD_ID_TAG = "client-id";
         public static string TASK_ID_TAG = "task-id";

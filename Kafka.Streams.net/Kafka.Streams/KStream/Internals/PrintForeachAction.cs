@@ -33,10 +33,10 @@ namespace Kafka.Streams.KStream.Internals
     public class PrintForeachAction<K, V> : IForeachAction<K, V>
     {
 
-        private string label;
-        private PrintWriter printWriter;
-        private bool closable;
-        private IKeyValueMapper<K, V, string> mapper;
+        private readonly string label;
+        private readonly PrintWriter printWriter;
+        private readonly bool closable;
+        private readonly IKeyValueMapper<K, V, string> mapper;
 
         /**
          * Print customized output with given writer. The {@link Stream} can be {@link System#out} or the others.

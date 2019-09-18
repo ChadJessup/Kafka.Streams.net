@@ -24,10 +24,10 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class TaskMetrics
     {
-        StreamsMetricsImpl metrics;
+        readonly StreamsMetricsImpl metrics;
         public Sensor taskCommitTimeSensor { get; }
         public Sensor taskEnforcedProcessSensor { get; }
-        private string taskName;
+        private readonly string taskName;
 
         public TaskMetrics(TaskId id, StreamsMetricsImpl metrics)
         {

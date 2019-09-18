@@ -4,18 +4,15 @@ using System;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class StateStoreReadOnlyDecorator<T, K, V>
-    : WrappedStateStore<T, K, V>
+    public abstract class StateStoreReadOnlyDecorator<T> : WrappedStateStore<T>
         where T : IStateStore
     {
-
-        static string ERROR_MESSAGE = "Global store is read only";
+        public static string ERROR_MESSAGE = "Global store is read only";
 
         public StateStoreReadOnlyDecorator(T inner)
             : base(inner)
         {
         }
-
 
         public override void flush()
         {

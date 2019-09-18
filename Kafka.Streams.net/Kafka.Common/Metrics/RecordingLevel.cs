@@ -9,12 +9,11 @@ namespace Kafka.Common.Metrics
         public static RecordingLevel INFO = new RecordingLevel(0, "INFO");
         public static RecordingLevel DEBUG = new RecordingLevel(1, "DEBUG");
 
-        private static Dictionary<string, RecordingLevel> levels = new Dictionary<string, RecordingLevel>();
-        private static RecordingLevel[] ID_TO_TYPE;
-        private static int MIN_RECORDING_LEVEL_KEY = 0;
+        private static readonly Dictionary<string, RecordingLevel> levels = new Dictionary<string, RecordingLevel>();
+        private static readonly RecordingLevel[] ID_TO_TYPE;
+        private static readonly int MIN_RECORDING_LEVEL_KEY = 0;
         public static int MAX_RECORDING_LEVEL_KEY;
-
-        int maxRL = -1;
+        readonly int maxRL = -1;
 
         public RecordingLevel(int id, string name)
         {

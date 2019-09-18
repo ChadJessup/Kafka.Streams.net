@@ -60,8 +60,8 @@ namespace Kafka.Streams.Processor
          * @return nothing; always raises an exception
          * @throws StreamsException on every invocation
          */
-        public override long OnInvalidTimestamp(
-            ConsumeResult<object, object> record,
+        public override long OnInvalidTimestamp<K, V>(
+            ConsumeResult<K, V> record,
             long recordTimestamp,
             long partitionTime)
         {

@@ -7,8 +7,8 @@ namespace Kafka.Common.Metrics.Stats
 
     public class Histogram
     {
-        private IBinScheme binScheme;
-        private float[] hist;
+        private readonly IBinScheme binScheme;
+        private readonly float[] hist;
         private double count;
 
         public Histogram(IBinScheme binScheme)

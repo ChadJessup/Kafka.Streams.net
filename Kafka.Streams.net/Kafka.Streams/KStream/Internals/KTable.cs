@@ -36,11 +36,11 @@ namespace Kafka.Streams.KStream.Internals
 
     public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
-        private IProcessorSupplier<K, V> IProcessorSupplier;
-        private string queryableStoreName;
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
+        private readonly IProcessorSupplier<K, V> IProcessorSupplier;
+        private readonly string queryableStoreName;
         private bool sendOldValues = false;
-        private StatefulProcessorNode<K, V> statefulProcessorNode;
+        private readonly StatefulProcessorNode<K, V> statefulProcessorNode;
 
         public KTable(
             string name,

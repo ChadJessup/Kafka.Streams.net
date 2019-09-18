@@ -1,21 +1,18 @@
 ﻿using Confluent.Kafka;
-using Kafka.Streams;
 using Kafka.Common.Extensions;
+using Kafka.Common.Utils;
+using Kafka.Streams;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals;
+using Kafka.Streams.KStream.Mappers;
+using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Linq;
-using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Common.Utils;
-using Kafka.Streams.State.Internals;
 
 namespace WordCountProcessorDemo
 {

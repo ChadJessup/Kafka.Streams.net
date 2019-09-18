@@ -18,12 +18,14 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class StreamThread : IThread<StreamThreadStates>
     {
-        private object stateLock = new object();
+        private readonly object stateLock = new object();
 
         public StreamThread(
-            StreamThreadState state)
+            StreamThreadState state,
+            StreamStateListener stateListener)
         {
             this.State = state;
+            this.StateListener = stateListener;
 
             this.State.setTransitions(new List<StateTransition<StreamThreadStates>>
             {
@@ -53,8 +55,8 @@ namespace Kafka.Streams.Processor.Internals
             ITime time,
             StreamsMetadataState streamsMetadataState,
             long cacheSizeBytes,
-            //StateDirectory stateDirectory, 
-            IStateRestoreListener delegatingStateRestoreListener,
+            StateDirectory stateDirectory, 
+            IStateRestoreListener userStateRestoreListener,
             int threadId)
         {
             string threadClientId = $"{clientId}-StreamThread-{threadId}";
@@ -136,7 +138,7 @@ namespace Kafka.Streams.Processor.Internals
             IConsumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs);
             taskManager.setConsumer(consumer);
 
-            return new StreamThread(
+            return StreamThread.create(
                 time,
                 config,
                 threadProducer,

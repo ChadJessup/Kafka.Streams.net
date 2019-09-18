@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamJoinWindow<K, V> : IProcessorSupplier<K, V>
     {
-        private string windowName;
+        private readonly string windowName;
 
         public KStreamJoinWindow(string windowName)
         {

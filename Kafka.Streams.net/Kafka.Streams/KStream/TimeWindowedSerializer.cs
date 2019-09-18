@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream
      */
     public class TimeWindowedSerializer<T> : IWindowedSerializer<T>
     {
-        private ISerializer<T> inner;
+        private readonly ISerializer<T> inner;
 
         // Default constructor needed by Kafka
 

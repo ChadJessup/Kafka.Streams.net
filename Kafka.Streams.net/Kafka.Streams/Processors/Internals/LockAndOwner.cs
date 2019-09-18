@@ -2,7 +2,7 @@
 {
     public class LockAndOwner
     {
-        private string name;
+        private readonly string name;
 
         public LockAndOwner(string name, FileLock @lock)
         {

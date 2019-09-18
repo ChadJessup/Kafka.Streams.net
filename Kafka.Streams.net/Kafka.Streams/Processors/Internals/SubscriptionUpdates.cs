@@ -22,7 +22,7 @@ using System.Linq;
 */
 public class SubscriptionUpdates
 {
-    private HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
+    private readonly HashSet<string> updatedTopicSubscriptions = new HashSet<string>();
 
     public void updateTopics(List<string> topicNames)
     {

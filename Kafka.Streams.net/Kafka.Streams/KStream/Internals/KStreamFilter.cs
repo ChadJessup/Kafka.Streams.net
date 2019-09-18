@@ -22,8 +22,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamFilter<K, V> : IProcessorSupplier<K, V>
     {
-        private Func<K, V, bool> predicate;
-        private bool filterNot;
+        private readonly Func<K, V, bool> predicate;
+        private readonly bool filterNot;
 
         public KStreamFilter(Func<K, V, bool> predicate, bool filterNot)
         {

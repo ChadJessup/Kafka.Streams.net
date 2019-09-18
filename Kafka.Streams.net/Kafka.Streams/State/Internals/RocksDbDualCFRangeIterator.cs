@@ -10,8 +10,8 @@ namespace Kafka.Streams.State.Internals
         // RocksDb's JNI interface does not expose getters/setters that allow the
         // comparator to be pluggable, and the default is lexicographic, so it's
         // safe to just force lexicographic comparator here for now.
-        private IComparer<byte[]> comparator = Bytes.BYTES_LEXICO_COMPARATOR;
-        private byte[] upperBoundKey;
+        private readonly IComparer<byte[]> comparator = Bytes.BYTES_LEXICO_COMPARATOR;
+        private readonly byte[] upperBoundKey;
 
         public RocksDbDualCFRangeIterator(
             string storeName,

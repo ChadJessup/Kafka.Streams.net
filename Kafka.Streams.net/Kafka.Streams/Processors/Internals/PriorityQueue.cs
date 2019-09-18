@@ -5,8 +5,8 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class PriorityQueue<T> : Queue<T>
     {
-        private int v;
-        private object p;
+        private readonly int v;
+        private readonly object p;
 
         public PriorityQueue()
         {

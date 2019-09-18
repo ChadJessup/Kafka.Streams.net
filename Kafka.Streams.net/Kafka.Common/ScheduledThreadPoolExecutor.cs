@@ -13,9 +13,9 @@ namespace Kafka.Common
         public int ThreadCount => threads.Length;
         public EventHandler<Exception> OnException;
 
-        private ManualResetEvent waiter;
-        private Thread[] threads;
-        private SortedSet<Tuple<DateTime, Action>> queue;
+        private readonly ManualResetEvent waiter;
+        private readonly Thread[] threads;
+        private readonly SortedSet<Tuple<DateTime, Action>> queue;
 
         public ScheduledThreadPoolExecutor(int threadCount)
         {

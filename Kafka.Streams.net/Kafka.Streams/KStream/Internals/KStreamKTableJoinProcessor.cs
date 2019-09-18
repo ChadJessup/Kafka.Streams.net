@@ -24,35 +24,40 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamKTableJoinProcessor<K1, K2, V1, V2, R> : AbstractProcessor<K1, V1>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamKTableJoinProcessor<K1, K2, V1, V2, R>>();
+        private readonly ILogger<KStreamKTableJoinProcessor<K1, K2, V1, V2, R>> logger;
+        private readonly string storeName;
 
-        private IKTableValueGetter<K2, V2> valueGetter;
-        private IKeyValueMapper<K1, V1, K2> keyMapper;
-        private IValueJoiner<V1, V2, R> joiner;
-        private bool leftJoin;
+        private readonly IKTableValueGetter<K2, V2> valueGetter;
+        private readonly IKeyValueMapper<K1, V1, K2> keyMapper;
+        private readonly IValueJoiner<V1, V2, R> joiner;
         private StreamsMetricsImpl metrics;
-        private Sensor skippedRecordsSensor;
+        private readonly Sensor skippedRecordsSensor;
+        private readonly bool leftJoin;
 
         public KStreamKTableJoinProcessor(
+            ILogger<KStreamKTableJoinProcessor<K1, K2, V1, V2, R>> logger,
+            string storeName,
             IKTableValueGetter<K2, V2> valueGetter,
             IKeyValueMapper<K1, V1, K2> keyMapper,
             IValueJoiner<V1, V2, R> joiner,
             bool leftJoin)
         {
+            this.logger = logger;
+            this.storeName = storeName;
+
             this.valueGetter = valueGetter;
             this.keyMapper = keyMapper;
             this.joiner = joiner;
             this.leftJoin = leftJoin;
         }
 
-
-        public override void init(IProcessorContext<K1, V1> context)
+        public override void init(IProcessorContext<K2, V2> context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics;
             //skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
-            //valueGetter.init(context);
+            valueGetter.init(context, this.storeName);
         }
 
         public override void process(K1 key, V1 value)
@@ -67,23 +72,24 @@ namespace Kafka.Streams.KStream.Internals
             // thus, to be consistent and to avoid ambiguous null semantics, null values are ignored
             if (key == null || value == null)
             {
-                LOG.LogWarning(
-                    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-                    key, value, context.Topic, context.partition(), context.offset()
-                );
+                logger.LogWarning(
+                    $"Skipping record due to null key or value. key=[{key}] " +
+                    $"value=[{value}] topic=[{context.Topic}] partition=[{context.partition}] " +
+                    $"offset=[{context.offset}]");
+
                 skippedRecordsSensor.record();
             }
             else
             {
-                //K2 mappedKey = keyMapper.apply(key, value);
-                //V2 value2 = mappedKey == null ? null : getValueOrNull(valueGetter[mappedKey]);
-                //if (leftJoin || value2 != null)
-                //{
-                //    context.forward(key, joiner.apply(value, value2));
-                //}
+                K2 mappedKey = keyMapper.apply(key, value);
+                V2 value2 = valueGetter.get(mappedKey).value;
+
+                if (leftJoin || value2 != null)
+                {
+                    context.forward(key, joiner.apply(value, value2));
+                }
             }
         }
-
 
         public override void close()
         {

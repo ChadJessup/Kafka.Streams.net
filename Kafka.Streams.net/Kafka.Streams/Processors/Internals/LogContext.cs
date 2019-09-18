@@ -5,7 +5,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class LogContext
     {
-        private string logPrefix;
+        private readonly string logPrefix;
 
         public LogContext(string logPrefix)
         {

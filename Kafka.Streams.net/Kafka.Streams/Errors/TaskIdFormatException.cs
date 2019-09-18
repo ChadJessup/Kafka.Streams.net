@@ -29,7 +29,7 @@ namespace Kafka.Streams.Errors
     {
 
 
-        private static long serialVersionUID = 1L;
+        private static readonly long serialVersionUID = 1L;
 
         public TaskIdFormatException(string message)
             : base("Task id cannot be parsed correctly" + (message == null ? "" : " from " + message))

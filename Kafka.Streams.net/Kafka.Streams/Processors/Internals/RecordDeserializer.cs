@@ -10,10 +10,10 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class RecordDeserializer<K, V>
     {
-        private SourceNode<K, V> sourceNode;
-        private IDeserializationExceptionHandler deserializationExceptionHandler;
-        private ILogger log;
-        private Sensor skippedRecordSensor;
+        private readonly SourceNode<K, V> sourceNode;
+        private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
+        private readonly ILogger log;
+        private readonly Sensor skippedRecordSensor;
 
         public RecordDeserializer(
             SourceNode<K, V> sourceNode,
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             catch (Exception deserializationException)
             {
-                DeserializationHandlerResponse response;
+                DeserializationHandlerResponses response;
                 try
                 {
                     response = deserializationExceptionHandler.handle<K, V>(processorContext, rawRecord, deserializationException);
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Processor.Internals
                     throw new StreamsException("Fatal user code error in deserialization error callback", fatalUserException);
                 }
 
-                if (response == DeserializationHandlerResponse.FAIL)
+                if (response == DeserializationHandlerResponses.FAIL)
                 {
                     throw new StreamsException("Deserialization exception handler is set to fail upon" +
                         " a deserialization error. If you would rather have the streaming pipeline" +

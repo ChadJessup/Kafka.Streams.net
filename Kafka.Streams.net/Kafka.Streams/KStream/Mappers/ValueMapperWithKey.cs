@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Mappers
 {
     public class ValueMapperWithKey<K, V, VR> : IValueMapperWithKey<K, V, VR>
     {
-        private Func<K, V, VR> mapper;
+        private readonly Func<K, V, VR> mapper;
 
         public ValueMapperWithKey(Func<K, V, VR> mapper)
             => this.mapper = mapper;

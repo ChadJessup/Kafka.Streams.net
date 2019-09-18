@@ -16,14 +16,14 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the application id
          */
-        string applicationId();
+        string applicationId { get; }
 
         /**
          * Returns the task id
          *
          * @return the task id
          */
-        TaskId taskId();
+        TaskId taskId { get; }
 
         /**
          * Returns the default key serde
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the state directory
          */
-        DirectoryInfo stateDir();
+        DirectoryInfo stateDir { get; }
 
         /**
          * Returns Metrics instance
@@ -117,7 +117,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param key key
          * @param value value
          */
-        void forward<V1>(K key, V1 value);
+        void forward<K1, V1>(K1 key, V1 value);
 
         /**
          * Forwards a key/value pair to the specified downstream processors.
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param value value
          * @param to the options to use when forwarding
          */
-        void forward(K key, V value, To to);
+        void forward<K1, V1>(K1 key, V1 value, To to);
 
         /**
          * Forwards a key/value pair to one of the downstream processors designated by the downstream processor name
@@ -136,7 +136,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @param childName name of downstream processor
          * @deprecated please use {@link #forward(object, object, To)} instead
          */
-        void forward(K key, V value, string childName);
+        void forward<K1, V1>(K1 key, V1 value, string childName);
 
         /**
          * Requests a commit
@@ -157,7 +157,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the partition id
          */
-        int partition();
+        int partition { get; }
 
         /**
          * Returns the offset of the current input record; could be -1 if it is not
@@ -165,13 +165,13 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the offset
          */
-        long offset();
+        long offset { get; }
 
         /**
          * Returns the headers of the current input record; could be null if it is not available
          * @return the headers
          */
-        Headers headers();
+        Headers headers { get; }
 
         /**
          * Returns the current timestamp.
@@ -185,7 +185,7 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the timestamp
          */
-        long timestamp();
+        long timestamp { get; }
 
         /**
          * Returns all the application config properties as key/value pairs.

@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class FullChangeSerde<T>
     {
-        private ISerde<T> inner;
+        private readonly ISerde<T> inner;
 
         public static FullChangeSerde<T> wrap(ISerde<T> serde)
         {

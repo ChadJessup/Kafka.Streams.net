@@ -23,10 +23,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableFilter<K, S, V> : IKTableProcessorSupplier<K, V, V>
     {
-        private KTable<K, S, V> parent;
-        private IPredicate<K, V> predicate;
-        private bool filterNot;
-        private string queryableName;
+        private readonly KTable<K, S, V> parent;
+        private readonly IPredicate<K, V> predicate;
+        private readonly bool filterNot;
+        private readonly string queryableName;
         private bool sendOldValues = false;
 
         public KTableFilter(

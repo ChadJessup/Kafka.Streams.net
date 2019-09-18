@@ -22,8 +22,8 @@ using System.Linq;
 
 public class TopologyDescription
 {
-    private SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
-    private SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
+    private readonly SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
+    private readonly SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
 
     public void addSubtopology(ISubtopology subtopology)
     {

@@ -33,7 +33,7 @@
 //        public string windowName { get; }
 
 
-//        public override void init(IProcessorContext<K, V> context)
+//        public override void init(IProcessorContext context)
 //        {
 //            base.init(context);
 

@@ -31,11 +31,5 @@ namespace Kafka.Streams.Processor
         }
 
         public abstract void process(K key, V value);
-
-        /**
-         * Get the processor's context set during {@link #init(IProcessorContext) initialization}.
-         *
-         * @return the processor context; null only when called prior to {@link #init(IProcessorContext) initialization}.
-         */
     }
 }

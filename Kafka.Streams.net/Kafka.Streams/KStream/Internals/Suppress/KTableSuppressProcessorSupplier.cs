@@ -21,8 +21,8 @@ namespace Kafka.Streams.KStream.Internals.Suppress
     public class KTableSuppressProcessorSupplier<K, V, S> : IKTableProcessorSupplier<K, V, V>
     {
         //private SuppressedInternal<K, V> suppress;
-        private string storeName;
-        private KTable<K, S, V> parentKTable;
+        private readonly string storeName;
+        private readonly KTable<K, S, V> parentKTable;
 
         public KTableSuppressProcessorSupplier(
 //            SuppressedInternal<K, V> suppress,

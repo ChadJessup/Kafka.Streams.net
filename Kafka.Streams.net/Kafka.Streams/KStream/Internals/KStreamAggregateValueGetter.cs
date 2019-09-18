@@ -3,21 +3,19 @@ using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamAggregateValueGetter<K, T> : IKTableValueGetter<K, T>
+    public class KStreamAggregateValueGetter<K, V> : IKTableValueGetter<K, V>
     {
-        //private ITimestampedKeyValueStore<K, T> store;
+        private ITimestampedKeyValueStore<K, V> store;
 
-        public void init(IProcessorContext<K, T> context)
+        public void init(IProcessorContext<K, V> context, string storeName)
         {
-            //store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+            store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }
 
-
-        public ValueAndTimestamp<T> get(K key)
+        public ValueAndTimestamp<V> get(K key)
         {
-            return null; // store.get(key);
+            return store.get(key);
         }
-
 
         public void close() { }
     }

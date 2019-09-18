@@ -22,8 +22,8 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamPeek<K, V> : IProcessorSupplier<K, V>
     {
 
-        private bool forwardDownStream;
-        private IForeachAction<K, V> action;
+        private readonly bool forwardDownStream;
+        private readonly IForeachAction<K, V> action;
 
         public KStreamPeek(IForeachAction<K, V> action, bool forwardDownStream)
         {

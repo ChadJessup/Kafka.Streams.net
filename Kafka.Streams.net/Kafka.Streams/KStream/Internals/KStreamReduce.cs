@@ -6,10 +6,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamReduce<K, V> : IKStreamAggProcessorSupplier<K, K, V, V>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce<K, V>>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KStreamReduce<K, V>>();
 
-        private string storeName;
-        private IReducer<V> reducer;
+        private readonly string storeName;
+        private readonly IReducer<V> reducer;
 
         private bool sendOldValues = false;
 

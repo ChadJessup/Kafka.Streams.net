@@ -7,15 +7,15 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class NodeMetrics<K, V>
     {
-        private StreamsMetricsImpl metrics;
+        private readonly StreamsMetricsImpl metrics;
 
         public Sensor nodeProcessTimeSensor { get; }
-        private Sensor nodePunctuateTimeSensor;
-        private Sensor sourceNodeForwardSensor;
-        private Sensor nodeCreationSensor;
-        private Sensor nodeDestructionSensor;
-        private string taskName;
-        private string processorNodeName;
+        private readonly Sensor nodePunctuateTimeSensor;
+        private readonly Sensor sourceNodeForwardSensor;
+        private readonly Sensor nodeCreationSensor;
+        private readonly Sensor nodeDestructionSensor;
+        private readonly string taskName;
+        private readonly string processorNodeName;
 
         public NodeMetrics(
             StreamsMetricsImpl metrics,
@@ -24,9 +24,9 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.metrics = metrics;
 
-            string taskName = context.taskId().ToString();
-            Dictionary<string, string> tagMap = metrics.tagMap("task-id", context.taskId().ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, processorNodeName);
-            Dictionary<string, string> allTagMap = metrics.tagMap("task-id", context.taskId().ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, "all");
+            string taskName = context.taskId.ToString();
+            Dictionary<string, string> tagMap = metrics.tagMap("task-id", context.taskId.ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, processorNodeName);
+            Dictionary<string, string> allTagMap = metrics.tagMap("task-id", context.taskId.ToString(), StreamsMetricsImpl.PROCESSOR_NODE_ID_TAG, "all");
 
             nodeProcessTimeSensor = createTaskAndNodeLatencyAndThroughputSensors(
                 "process",

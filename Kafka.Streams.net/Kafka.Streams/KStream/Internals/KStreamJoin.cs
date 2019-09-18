@@ -9,8 +9,8 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamJoin
     {
-        private bool leftOuter;
-        private bool rightOuter;
+        private readonly bool leftOuter;
+        private readonly bool rightOuter;
         private readonly InternalStreamsBuilder builder;
 
         public KStreamJoin(

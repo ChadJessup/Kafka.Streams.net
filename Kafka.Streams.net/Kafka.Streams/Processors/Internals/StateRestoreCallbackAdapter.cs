@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-using Confluent.Kafka;
 using System;
 using System.Collections.Generic;
+using Confluent.Kafka;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -39,22 +39,15 @@ namespace Kafka.Streams.Processor.Internals
             }
             else
             {
-
-                //return records =>
-                //{
-                //    foreach (ConsumeResult<byte[], byte[]> record in records)
-                //    {
-                //        restoreCallback.restore(record.key(), record.value());
-                //    }
-                //};
+                return new BasicRestoreCallback(restoreCallback);
             }
         }
 
-        class BatchingStateRestoreCallback : IBatchingStateRestoreCallback, IRecordBatchingStateRestoreCallback
+        public class BasicRestoreCallback : IRecordBatchingStateRestoreCallback
         {
             private IStateRestoreCallback restoreCallback;
 
-            public BatchingStateRestoreCallback(IStateRestoreCallback restoreCallback)
+            public BasicRestoreCallback(IStateRestoreCallback restoreCallback)
             {
                 this.restoreCallback = restoreCallback;
             }
@@ -66,18 +59,15 @@ namespace Kafka.Streams.Processor.Internals
 
             public void restoreAll(List<KeyValue<byte[], byte[]>> records)
             {
-                List<KeyValue<byte[], byte[]>> keyValues = new List<KeyValue<byte[], byte[]>>();
-                foreach (var record in records)
-                {
-                    keyValues.Add(new KeyValue<byte[], byte[]>(record.key, record.value));
-                }
-
-                ((IBatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);
+                throw new NotImplementedException();
             }
 
             public void restoreBatch(List<ConsumeResult<byte[], byte[]>> records)
             {
-                throw new NotImplementedException();
+                foreach (ConsumeResult<byte[], byte[]> record in records)
+                {
+                    this.restoreCallback.restore(record.Key, record.Value);
+                }
             }
         }
     }

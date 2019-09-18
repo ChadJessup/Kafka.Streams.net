@@ -48,11 +48,11 @@ namespace Kafka.Streams.KStream.Internals
         private int index = 0;
         private int buildPriorityIndex = 0;
 
-        private Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes
+        private readonly Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes
             = new Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>();
 
-        private HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNode>();
-        private HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNode>();
+        private readonly HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNode>();
+        private readonly HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNode>();
 
         protected StreamsGraphNode root = new StreamsGraphNode(Constants.TopologyRoot);
 

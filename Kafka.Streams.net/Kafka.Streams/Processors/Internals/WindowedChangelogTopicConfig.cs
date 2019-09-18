@@ -25,12 +25,12 @@ namespace Kafka.Streams.Processor.Internals
      */
     public class WindowedChangelogTopicConfig : InternalTopicConfig
     {
-        private static Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
-        Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
+        readonly Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
         //tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE);
         //WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
 
-        private long retentionMs;
+        private readonly long retentionMs;
 
         WindowedChangelogTopicConfig(
             string name,

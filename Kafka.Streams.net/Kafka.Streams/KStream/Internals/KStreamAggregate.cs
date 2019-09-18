@@ -7,10 +7,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamAggregate<K, V, T> : IKStreamAggProcessorSupplier<K, K, V, T>
     {
-        private static ILogger LOG = new LoggerFactory().CreateLogger<KStreamAggregate<K, V, T>>();
-        private string storeName;
-        private IInitializer<T> initializer;
-        private IAggregator<K, V, T> aggregator;
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KStreamAggregate<K, V, T>>();
+        private readonly string storeName;
+        private readonly IInitializer<T> initializer;
+        private readonly IAggregator<K, V, T> aggregator;
 
         private bool sendOldValues = false;
 

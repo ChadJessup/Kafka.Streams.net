@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.Internals
     public class OrderedBytes
     {
 
-        private static int MIN_KEY_LENGTH = 1;
+        private static readonly int MIN_KEY_LENGTH = 1;
         /**
          * Returns the upper byte range for a key with a given fixed size maximum suffix
          *

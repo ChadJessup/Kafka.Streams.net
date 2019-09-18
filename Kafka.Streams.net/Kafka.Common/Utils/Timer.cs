@@ -36,7 +36,7 @@ namespace Kafka.Common.Utils
      */
     public class Timer
     {
-        private ITime time;
+        private readonly ITime time;
         private long startMs;
         private long deadlineMs;
 
