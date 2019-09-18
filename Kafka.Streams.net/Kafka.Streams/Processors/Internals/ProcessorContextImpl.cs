@@ -122,7 +122,10 @@ namespace Kafka.Streams.Processor.Internals
             forward(key, value, SEND_TO_ALL);
         }
 
-        public override void forward<K1, V1>(K1 key, V1 value, To to)
+        public override void forward<K1, V1>(
+            K1 key,
+            V1 value,
+            To to)
         {
             ProcessorNode<K, V> previousNode = currentNode;
             ProcessorRecordContext previousContext = recordContext;
@@ -169,7 +172,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
         private void forward<K1, V1>(
-            ProcessorNode<K1, V1> child,
+            ProcessorNode<K, V> child,
             K key,
             V value)
         {

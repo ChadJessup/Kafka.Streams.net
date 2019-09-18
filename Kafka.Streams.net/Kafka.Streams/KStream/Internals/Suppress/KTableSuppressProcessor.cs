@@ -54,7 +54,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
         //    safeToDropTombstones = suppress.safeToDropTombstones;
         //}
 
-        public void init(IProcessorContext<K, Change<V>> context)
+        public void init(IProcessorContext context)
         {
             internalProcessorContext = (IInternalProcessorContext<K, V>)context;
 //            suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);

@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream
          *
          * @param context the context
          */
-        void init(IProcessorContext<K, V> context);
+        void init(IProcessorContext context);
 
         /**
          * Transform the record with the given key and value.

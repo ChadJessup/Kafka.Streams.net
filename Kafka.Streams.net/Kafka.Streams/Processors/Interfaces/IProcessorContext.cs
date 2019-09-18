@@ -9,7 +9,7 @@ namespace Kafka.Streams.Processor.Interfaces
     /**
      * IProcessor context interface.
      */
-    public interface IProcessorContext<K, V>
+    public interface IProcessorContext
     {
         /**
          * Returns the application id
@@ -30,14 +30,14 @@ namespace Kafka.Streams.Processor.Interfaces
          *
          * @return the key serializer
          */
-        ISerde<K> keySerde { get; }
+        //ISerde<K> keySerde { get; }
 
         /**
          * Returns the default value serde
          *
          * @return the value serializer
          */
-        ISerde<V> valueSerde { get; }
+        //ISerde<V> valueSerde { get; }
 
         /**
          * Returns the state directory for the partition.

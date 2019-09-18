@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processor.Internals
          *                          oritself
          */
         public ConsumeResult<K, V> deserialize(
-            IProcessorContext<K, V> processorContext,
+            IProcessorContext processorContext,
             ConsumeResult<byte[], byte[]> rawRecord)
         {
             try

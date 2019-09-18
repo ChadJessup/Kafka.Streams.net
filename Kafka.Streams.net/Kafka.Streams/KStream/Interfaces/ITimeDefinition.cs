@@ -8,7 +8,7 @@ namespace Kafka.Streams.KStream.Interfaces
      */
     public interface ITimeDefinition<K, V>
     {
-        long time(IProcessorContext<K, V> context, K key);
+        long time(IProcessorContext context, K key);
 
         TimeDefinitionType type();
     }

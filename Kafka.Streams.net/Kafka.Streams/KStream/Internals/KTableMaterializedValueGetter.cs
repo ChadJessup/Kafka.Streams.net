@@ -7,7 +7,7 @@ namespace Kafka.Streams.KStream.Internals
     {
         private ITimestampedKeyValueStore<K, V> store;
 
-        public void init(IProcessorContext<K, V> context, string storeName)
+        public void init(IProcessorContext context, string storeName)
         {
             store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(storeName);
         }

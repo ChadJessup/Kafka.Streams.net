@@ -62,7 +62,7 @@ namespace Kafka.Streams.Processor.Internals
         private readonly SourceNode<K, V> source;
         private readonly RecordDeserializer<K, V> recordDeserializer;
         private StampedRecord<K, V>? headRecord = null;
-        private readonly IProcessorContext<K, V> processorContext;
+        private readonly IProcessorContext processorContext;
 
         public RecordQueue(
             TopicPartition partition,

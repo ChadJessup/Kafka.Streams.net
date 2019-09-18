@@ -11,11 +11,11 @@ namespace Kafka.Streams.Processor.Internals
     /**
      * {@code IProcessorContext} implementation that will throw on any forward call.
      */
-    public class ForwardingDisabledProcessorContext<K, V> : IProcessorContext<K, V>
+    public class ForwardingDisabledProcessorContext<K, V> : IProcessorContext
     {
-        private readonly IProcessorContext<K, V> del;
+        private readonly IProcessorContext del;
 
-        public ForwardingDisabledProcessorContext(IProcessorContext<K, V> @delegate)
+        public ForwardingDisabledProcessorContext(IProcessorContext @delegate)
         {
             this.del = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
@@ -27,10 +27,10 @@ namespace Kafka.Streams.Processor.Internals
             => del.taskId;
 
         public ISerde<K> keySerde
-            => del.keySerde;
+            => null;// del.keySerde;
 
         public ISerde<V> valueSerde
-            => del.valueSerde;
+            => null;// del.valueSerde;
 
         public DirectoryInfo stateDir
             => del.stateDir;

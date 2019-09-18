@@ -19,7 +19,7 @@ namespace Kafka.Streams.Errors
             => this.logger = logger;
 
         public DeserializationHandlerResponses handle<K, V>(
-            IProcessorContext<K, V> context,
+            IProcessorContext context,
             ConsumeResult<byte[], byte[]> record,
             Exception exception)
         {

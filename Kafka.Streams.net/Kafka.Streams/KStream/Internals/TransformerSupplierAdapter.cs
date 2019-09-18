@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
             return null;// new ITransformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>>();
         }
 
-        public void init(IProcessorContext<KIn, VIn> context)
+        public void init(IProcessorContext context)
         {
             transformer.init(context);
         }

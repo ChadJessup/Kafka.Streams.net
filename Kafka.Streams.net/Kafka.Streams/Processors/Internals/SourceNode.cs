@@ -17,7 +17,7 @@ namespace Kafka.Streams.Processor.Internals
     {
         private readonly List<string> topics;
 
-        private IProcessorContext<K, V> context;
+        private IProcessorContext context;
         private IDeserializer<K> keyDeserializer;
         private IDeserializer<V> valDeserializer;
         public ITimestampExtractor timestampExtractor { get; }
@@ -63,12 +63,12 @@ namespace Kafka.Streams.Processor.Internals
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                this.keyDeserializer = context.keySerde.Deserializer;
+                //this.keyDeserializer = context.keySerde.Deserializer;
             }
 
             if (this.valDeserializer == null)
             {
-                this.valDeserializer = context.valueSerde.Deserializer;
+                //this.valDeserializer = context.valueSerde.Deserializer;
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary

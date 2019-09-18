@@ -5,7 +5,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public interface IKTableValueGetter<K, V>
     {
-        void init(IProcessorContext<K, V> context, string storeName);
+        void init(IProcessorContext context, string storeName);
 
         ValueAndTimestamp<V> get(K key);
 

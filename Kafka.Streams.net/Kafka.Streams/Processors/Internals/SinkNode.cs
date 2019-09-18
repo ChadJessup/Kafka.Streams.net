@@ -64,14 +64,14 @@ namespace Kafka.Streams.Processor.Internals
             this.context = context;
 
             // if serializers are null, get the default ones from the context
-            this.keySerializer ??= context.keySerde.Serializer;
-            this.valSerializer ??= context.valueSerde.Serializer;
+            // this.keySerializer ??= context.keySerde.Serializer;
+            // this.valSerializer ??= context.valueSerde.Serializer;
 
             // if value serializers are for {@code Change} values, set the inner serializer when necessary
             if (valSerializer is ChangedSerializer<V>
                 && ((ChangedSerializer<V>)valSerializer).inner == null)
             {
-                ((ChangedSerializer<V>)valSerializer).setInner(context.valueSerde.Serializer);
+                // ((ChangedSerializer<V>)valSerializer).setInner(context.valueSerde.Serializer);
             }
         }
 

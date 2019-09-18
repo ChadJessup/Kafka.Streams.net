@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream.Internals
             this.parentGetter = parentGetter;
         }
 
-        public void init(IProcessorContext<K, V> context, string storeName)
+        public void init(IProcessorContext context, string storeName)
         {
             parentGetter.init(context, storeName);
         }

@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream.Internals
             this.leftJoin = leftJoin;
         }
 
-        public override void init(IProcessorContext<K2, V2> context)
+        public override void init(IProcessorContext context)
         {
             base.init(context);
             metrics = (StreamsMetricsImpl)context.metrics;

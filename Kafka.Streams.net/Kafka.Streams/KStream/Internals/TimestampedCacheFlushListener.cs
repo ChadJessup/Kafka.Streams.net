@@ -27,7 +27,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly IInternalProcessorContext<K, V> context;
         private readonly ProcessorNode<K, V> myNode;
 
-        public TimestampedCacheFlushListener(IProcessorContext<K, V> context)
+        public TimestampedCacheFlushListener(IProcessorContext context)
         {
             this.context = (IInternalProcessorContext<K, V>)context;
             myNode = this.context.currentNode;

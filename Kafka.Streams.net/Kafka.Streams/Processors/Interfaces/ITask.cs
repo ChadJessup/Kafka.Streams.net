@@ -48,14 +48,10 @@ namespace Kafka.Streams.Processors.Interfaces
          * @return any changelog partitions associated with this task
          */
         IEnumerable<TopicPartition> changelogPartitions { get; }
+        IProcessorContext context { get; }
 
         bool hasStateStores();
 
         string ToString(string indent);
-    }
-
-    public interface ITask<K, V> : ITask
-    {
-        IProcessorContext<K, V> context { get; }
     }
 }

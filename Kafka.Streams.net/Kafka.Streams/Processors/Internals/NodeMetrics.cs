@@ -20,7 +20,7 @@ namespace Kafka.Streams.Processor.Internals
         public NodeMetrics(
             StreamsMetricsImpl metrics,
             string processorNodeName,
-            IProcessorContext<K, V> context)
+            IProcessorContext context)
         {
             this.metrics = metrics;
 

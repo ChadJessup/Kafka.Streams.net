@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream
          * @throws InvalidOperationException If store gets registered after initialization is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void init(IProcessorContext<K, V> context);
+        void init(IProcessorContext context);
 
         /**
          * Transform the given [key and ]value to a new value.

@@ -14,13 +14,13 @@ namespace Kafka.Streams.KStream.Internals
      */
     public class TimestampedTupleForwarder<K, V>
     {
-        private readonly IProcessorContext<K, V> context;
+        private readonly IProcessorContext context;
         private readonly bool sendOldValues;
         private readonly bool cachingEnabled;
 
         public TimestampedTupleForwarder(
             IStateStore store,
-            IProcessorContext<K, V> context,
+            IProcessorContext context,
             TimestampedCacheFlushListener<K, V> flushListener,
             bool sendOldValues)
         {

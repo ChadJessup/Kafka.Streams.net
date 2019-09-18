@@ -5,16 +5,16 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableMapValueGetter<K, V, K1, V1> : IKTableValueGetter<K, KeyValue<K1, V1>>
     {
-        private readonly IKTableValueGetter<K, KeyValue<K1, V1>> parentGetter;
-        private IProcessorContext<K, KeyValue<K1, V1>> context;
+        private readonly IKTableValueGetter<K, V> parentGetter;
+        private IProcessorContext context;
         private readonly IKeyValueMapper<K, V, KeyValue<K1, V1>> mapper;
 
-        public KTableMapValueGetter(IKTableValueGetter<K, KeyValue<K1, V1>> parentGetter)
+        public KTableMapValueGetter(IKTableValueGetter<K, V> parentGetter)
         {
             this.parentGetter = parentGetter;
         }
 
-        public void init(IProcessorContext<K, KeyValue<K1, V1>> context, string storeName)
+        public void init(IProcessorContext context, string storeName)
         {
             this.context = context;
             this.parentGetter.init(context, storeName);

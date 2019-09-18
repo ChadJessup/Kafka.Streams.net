@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class AbstractTask<K, V> : ITask<K, V>
+    public abstract class AbstractTask<K, V> : ITask
     {
         public TaskId id { get; }
         public string applicationId { get; }
@@ -75,7 +75,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        public IProcessorContext<K, V> context => processorContext;
+        public IProcessorContext context => processorContext;
 
         public virtual IStateStore getStore(string name)
         {

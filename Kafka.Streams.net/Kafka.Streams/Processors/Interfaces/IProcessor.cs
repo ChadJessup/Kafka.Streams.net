@@ -21,7 +21,7 @@ namespace Kafka.Streams.Processor
          *
          * @param context the context; may not be null
          */
-        void init(IProcessorContext<K, V> context);
+        void init(IProcessorContext context);
 
         /**
          * Process the record with the given key and value.

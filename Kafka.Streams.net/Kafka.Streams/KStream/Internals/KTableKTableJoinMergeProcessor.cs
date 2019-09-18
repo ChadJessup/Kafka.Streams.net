@@ -32,16 +32,16 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-        public override void init(IProcessorContext<K, Change<V>> context)
+        public override void init(IProcessorContext context)
         {
             base.init(context);
             if (queryableName != null)
             {
                 store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
-                tupleForwarder = new TimestampedTupleForwarder<K, Change<V>>(
+                tupleForwarder = new TimestampedTupleForwarder<K, V>(
                     store,
                     context,
-                    new TimestampedCacheFlushListener<K, Change<V>>(context),
+                    new TimestampedCacheFlushListener<K, V>(context),
                     sendOldValues);
             }
         }

@@ -16,7 +16,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             return RecordTimeDefintion<K, V>.INSTANCE;
         }
 
-        public long time(IProcessorContext<K, V> context, K key)
+        public long time(IProcessorContext context, K key)
         {
             return context.timestamp;
         }

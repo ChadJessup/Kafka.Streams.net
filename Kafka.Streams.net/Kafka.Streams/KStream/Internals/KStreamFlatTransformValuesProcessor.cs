@@ -8,14 +8,14 @@ namespace Kafka.Streams.KStream.Internals
     public class KStreamFlatTransformValuesProcessor<K, V, VR> : IProcessor<K, V>
     {
         private readonly IValueTransformerWithKey<K, V, IEnumerable<VR>> valueTransformer;
-        private IProcessorContext<K, V> context;
+        private IProcessorContext context;
 
         public KStreamFlatTransformValuesProcessor(IValueTransformerWithKey<K, V, IEnumerable<VR>> valueTransformer)
         {
             this.valueTransformer = valueTransformer;
         }
 
-        public void init(IProcessorContext<K, V> context)
+        public void init(IProcessorContext context)
         {
             valueTransformer.init(new ForwardingDisabledProcessorContext<K, V>(context));
 

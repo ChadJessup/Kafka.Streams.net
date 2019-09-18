@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.Internals
         public abstract string name { get; }
         public abstract void close();
         public abstract void flush();
-        public abstract void init<K, V>(IProcessorContext<K, V> context, IStateStore root);
+        public abstract void init(IProcessorContext context, IStateStore root);
         public abstract bool isOpen();
         public abstract bool persistent();
 
@@ -52,7 +52,7 @@ namespace Kafka.Streams.State.Internals
             this.wrapped = wrapped;
         }
 
-        public override void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
+        public override void init(IProcessorContext context, IStateStore root)
         {
             wrapped.init(context, root);
         }

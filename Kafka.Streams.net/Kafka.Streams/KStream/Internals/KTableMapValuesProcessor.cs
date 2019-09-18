@@ -18,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
             this.mapper = mapper;
         }
 
-        public override void init(IProcessorContext<K, Change<V>> context)
+        public override void init(IProcessorContext context)
         {
             base.init(context);
             if (queryableName != null)

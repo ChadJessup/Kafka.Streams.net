@@ -19,7 +19,7 @@ namespace Kafka.Streams.Processor.Internals
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public override void init<K, V>(IProcessorContext<K, V> context, IStateStore root)
+        public override void init(IProcessorContext context, IStateStore root)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
