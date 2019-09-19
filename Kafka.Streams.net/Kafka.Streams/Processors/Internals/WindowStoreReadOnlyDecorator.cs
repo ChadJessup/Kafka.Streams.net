@@ -5,7 +5,7 @@ using System;
 namespace Kafka.Streams.Processor.Internals
 {
     public class WindowStoreReadOnlyDecorator<K, V>
-            : StateStoreReadOnlyDecorator<IWindowStore<K, V>, K, V>
+            : StateStoreReadOnlyDecorator<IWindowStore<K, V>>
             , IWindowStore<K, V>
     {
         public WindowStoreReadOnlyDecorator(IWindowStore<K, V> inner)

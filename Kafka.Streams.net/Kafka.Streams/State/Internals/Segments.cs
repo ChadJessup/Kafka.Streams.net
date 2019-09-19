@@ -30,11 +30,11 @@ namespace Kafka.Streams.State.Internals
 
         S getSegmentForTimestamp(long timestamp);
 
-        S getOrCreateSegmentIfLive<K, V>(long segmentId, IInternalProcessorContext<K, V> context, long streamTime);
+        S getOrCreateSegmentIfLive<K, V>(long segmentId, IInternalProcessorContext context, long streamTime);
 
-        S getOrCreateSegment<K, V>(long segmentId, IInternalProcessorContext<K, V> context);
+        S getOrCreateSegment<K, V>(long segmentId, IInternalProcessorContext context);
 
-        void openExisting<K, V>(IInternalProcessorContext<K, V> context, long streamTime);
+        void openExisting<K, V>(IInternalProcessorContext context, long streamTime);
 
         List<S> segments(long timeFrom, long timeTo);
 

@@ -22,9 +22,9 @@ namespace Kafka.Streams.Processor.Internals
     [Serializable]
     internal class TaskMigratedException<K, V> : Exception
     {
-        private readonly StreamTask<K, V> streamTask;
+        private readonly StreamTask streamTask;
         private readonly ProducerFencedException fatal;
-        private readonly StreamTask<object, object> streamTask1;
+        private readonly StreamTask streamTask1;
         private readonly ProducerFencedException e;
 
         public TaskMigratedException()
@@ -36,20 +36,22 @@ namespace Kafka.Streams.Processor.Internals
         {
         }
 
-        public TaskMigratedException(StreamTask<K, V> streamTask, ProducerFencedException fatal)
+        public TaskMigratedException(StreamTask streamTask, ProducerFencedException fatal, bool isFatal)
         {
-            this.streamTask = streamTask;
-            this.fatal = fatal;
+            if (isFatal)
+            {
+                this.streamTask = streamTask;
+                this.fatal = fatal;
+            }
+            else
+            {
+                this.streamTask1 = streamTask;
+                this.e = fatal;
+            }
         }
 
         public TaskMigratedException(string message, Exception innerException) : base(message, innerException)
         {
-        }
-
-        public TaskMigratedException(StreamTask<object, object> streamTask1, ProducerFencedException e)
-        {
-            this.streamTask1 = streamTask1;
-            this.e = e;
         }
 
         protected TaskMigratedException(SerializationInfo info, StreamingContext context) : base(info, context)

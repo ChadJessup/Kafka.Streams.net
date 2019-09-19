@@ -16,11 +16,11 @@ using System.Linq;
 namespace Kafka.Streams.Processor.Internals
 {
     /**
-     * A StreamTask<K, V> is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
+     * A StreamTask is associated with a {@link PartitionGroup}, and is assigned to a StreamThread for processing.
      */
-    public class StreamTask : AbstractTask<byte[], byte[]>, IProcessorNodePunctuator<byte[], byte[]>
+    public class StreamTask : AbstractTask, IProcessorNodePunctuator<byte[], byte[]>
     {
-        private static readonly ConsumeResult<byte[], byte[]> DUMMY_RECORD = new ConsumeResult<byte[], byte[]>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
+        private static readonly ConsumeResult<object, object> DUMMY_RECORD = new ConsumeResult<object, object>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
         private readonly ITime time;
         private readonly long maxTaskIdleMs;
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processor.Internals
         private readonly Sensor closeTaskSensor;
         private long idleStartTime;
         private IProducer<byte[], byte[]> producer;
-        private bool commitRequested = false;
+        public bool commitRequested { get; private set; } = false;
         private bool transactionInFlight = false;
 
         public StreamTask(
@@ -231,7 +231,7 @@ namespace Kafka.Streams.Processor.Internals
          * An active task is processable if its buffer contains data for all of its input
          * source topic partitions, or if it is enforced to be processable
          */
-        bool isProcessable(long now)
+        public bool isProcessable(long now)
         {
             if (partitionGroup.allPartitionsBuffered())
             {
@@ -288,8 +288,8 @@ namespace Kafka.Streams.Processor.Internals
 
                 log.LogTrace("Start processing one record [{}]", record);
 
-                updateProcessorContext(record, currNode);
-                ((ProcessorNode<byte[], byte[]>)currNode).process(record.Key, record.Value);
+                //updateProcessorContext(record, currNode);
+                //((ProcessorNode<byte[], byte[]>)currNode).process(record.Key, record.Value);
 
                 log.LogTrace("Completed processing one record [{}]", record);
 
@@ -314,7 +314,7 @@ namespace Kafka.Streams.Processor.Internals
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                     id,
-                    processorContext.currentNode.name,
+                    processorContext.GetCurrentNode<byte[], byte[]>().name,
                     record.Topic,
                     record.partition,
                     record.offset,
@@ -322,7 +322,7 @@ namespace Kafka.Streams.Processor.Internals
             }
             finally
             {
-                processorContext.setCurrentNode(null);
+                processorContext.setCurrentNode<byte[], byte[]>(null);
             }
 
             return true;
@@ -352,12 +352,12 @@ namespace Kafka.Streams.Processor.Internals
          */
         public void punctuate(ProcessorNode<byte[], byte[]> node, long timestamp, PunctuationType type, Punctuator punctuator)
         {
-            if (processorContext.currentNode != null)
+            if (processorContext.GetCurrentNode<byte[], byte[]>() != null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is not null", logPrefix));
             }
 
-            updateProcessorContext(new StampedRecord<byte[], byte[]>(DUMMY_RECORD, timestamp), node);
+            updateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
             log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
 
@@ -376,11 +376,11 @@ namespace Kafka.Streams.Processor.Internals
             }
             finally
             {
-                processorContext.setCurrentNode(null);
+                processorContext.setCurrentNode<byte[], byte[]>(null);
             }
         }
 
-        private void updateProcessorContext(StampedRecord<byte[], byte[]> record, ProcessorNode<byte[], byte[]> currNode)
+        private void updateProcessorContext(StampedRecord record, ProcessorNode<byte[], byte[]> currNode)
         {
             processorContext.setRecordContext(
                 new ProcessorRecordContext(
@@ -523,7 +523,7 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 finally
                 {
-                    processorContext.setCurrentNode(null);
+                    processorContext.setCurrentNode<byte[], byte[]>(null);
                 }
             }
         }
@@ -818,12 +818,12 @@ namespace Kafka.Streams.Processor.Internals
          */
         ICancellable schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
         {
-            if (processorContext.currentNode == null)
+            if (processorContext.GetCurrentNode() == null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is null", logPrefix));
             }
 
-            PunctuationSchedule schedule = new PunctuationSchedule(processorContext.currentNode, startTime, interval, punctuator);
+            PunctuationSchedule schedule = new PunctuationSchedule(processorContext.GetCurrentNode(), startTime, interval, punctuator);
 
             switch (type)
             {

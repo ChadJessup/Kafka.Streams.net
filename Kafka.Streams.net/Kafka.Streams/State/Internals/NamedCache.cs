@@ -326,13 +326,13 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public IEnumerator<KeyValuePair<Bytes, LRUNode>> subMapIterator(Bytes from, Bytes to)
         {
-            return cache.subMap(from, true, to, true).iterator();
+            return null;// cache.subMap(from, true, to, true).iterator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
         {
-            return cache.iterator();
+            return cache.GetEnumerator();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -342,6 +342,7 @@ namespace Kafka.Streams.State.Internals
             {
                 return null;
             }
+
             return _head.entry;
         }
 
@@ -352,6 +353,7 @@ namespace Kafka.Streams.State.Internals
             {
                 return null;
             }
+
             return _tail.entry;
         }
 

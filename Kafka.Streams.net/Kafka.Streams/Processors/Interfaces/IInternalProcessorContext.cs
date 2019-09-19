@@ -7,7 +7,7 @@ namespace Kafka.Streams.Processor.Interfaces
      * {@link ProcessorNode} when we are forwarding items that have been evicted or flushed from
      * {@link ThreadCache}
      */
-    public interface IInternalProcessorContext<K, V> : IProcessorContext
+    public interface IInternalProcessorContext : IProcessorContext
     {
         /**
          * Returns the current {@link RecordContext}
@@ -23,13 +23,13 @@ namespace Kafka.Streams.Processor.Interfaces
         /**
          * @param currentNode the current {@link ProcessorNode}
          */
-        void setCurrentNode(ProcessorNode<K, V> currentNode);
-
+        void setCurrentNode<K, V>(ProcessorNode<K, V> currentNode);
+        void setCurrentNode(ProcessorNode currentNode);
         /**
          * Get the current {@link ProcessorNode}
          */
-        ProcessorNode<K, V> currentNode { get; }
-
+        ProcessorNode<K, V> GetCurrentNode<K, V>();
+        ProcessorNode GetCurrentNode();
         /**
          * Get the thread-global cache
          */

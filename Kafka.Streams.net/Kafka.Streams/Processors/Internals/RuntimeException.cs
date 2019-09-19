@@ -37,5 +37,10 @@ namespace Kafka.Streams
         protected RuntimeException(SerializationInfo LogInformation, StreamingContext context) : base(LogInformation, context)
         {
         }
+
+        internal void compareAndSet(object p, RuntimeException runtimeException)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

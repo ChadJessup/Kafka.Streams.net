@@ -61,7 +61,7 @@
 //        }
 
 //        public TaskMigratedException(ITask task)
-//            : base(string.Format("Task %s is unexpectedly closed during processing", task.id()), null)
+//            : base(string.Format("Task %s is unexpectedly closed during processing", task.id), null)
 //        {
 
 //            this.task = task;
@@ -69,7 +69,7 @@
 
 //        public TaskMigratedException(ITask task,
 //                                      Throwable throwable)
-//            : base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id()), throwable)
+//            : base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id), throwable)
 //        {
 
 //            this.task = task;

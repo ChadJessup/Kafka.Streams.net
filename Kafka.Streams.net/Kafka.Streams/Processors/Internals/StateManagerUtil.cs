@@ -39,14 +39,14 @@ namespace Kafka.Streams.Processor.Internals
                 : RecordConverters.identity();
         }
 
-        public static void reinitializeStateStoresForPartitions<K, V>(
+        public static void reinitializeStateStoresForPartitions(
             ILogger log,
             bool eosEnabled,
             DirectoryInfo baseDir,
             Dictionary<string, IStateStore?> stateStores,
             Dictionary<string, string> storeToChangelogTopic,
             List<TopicPartition> partitions,
-            IInternalProcessorContext<K, V> processorContext,
+            IInternalProcessorContext processorContext,
             OffsetCheckpoint checkpointFile,
             Dictionary<TopicPartition, long> checkpointFileCache)
         {

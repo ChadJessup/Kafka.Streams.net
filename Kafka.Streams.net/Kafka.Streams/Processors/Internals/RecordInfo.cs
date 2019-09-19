@@ -8,7 +8,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public ProcessorNode node()
         {
-            return queue.source();
+            return null;// queue.source();
         }
 
         public TopicPartition partition()

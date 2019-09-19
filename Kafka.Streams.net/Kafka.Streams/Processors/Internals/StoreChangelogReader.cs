@@ -89,7 +89,7 @@ namespace Kafka.Streams.Processor.Internals
                 foreach (TopicPartition partition in partitions)
                 {
                     var task = active.restoringTaskFor(partition);
-                    log.LogInformation("Reinitializing StreamTask<K, V> {} for changelog {}", task, partition);
+                    log.LogInformation("Reinitializing StreamTask {} for changelog {}", task, partition);
 
                     needsInitializing.Remove(partition);
                     needsRestoring.Remove(partition);

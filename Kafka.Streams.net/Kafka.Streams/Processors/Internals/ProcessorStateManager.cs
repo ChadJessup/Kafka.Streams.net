@@ -166,11 +166,11 @@ namespace Kafka.Streams.Processor.Internals
             registeredStores.Add(storeName, null);
         }
 
-        public void reinitializeStateStoresForPartitions<K, V>(
+        public void reinitializeStateStoresForPartitions(
             List<TopicPartition> partitions,
-            IInternalProcessorContext<K, V> processorContext)
+            IInternalProcessorContext processorContext)
         {
-            StateManagerUtil.reinitializeStateStoresForPartitions<K, V>(
+            StateManagerUtil.reinitializeStateStoresForPartitions(
                 log,
                 eosEnabled,
                 baseDir,
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Processor.Internals
             return partitionsAndOffsets;
         }
 
-        void updateStandbyStates(
+        public void updateStandbyStates(
             TopicPartition storePartition,
             List<ConsumeResult<byte[], byte[]>> restoreRecords,
             long lastOffset)
@@ -250,7 +250,7 @@ namespace Kafka.Streams.Processor.Internals
             offsetLimits.Add(partition, limit);
         }
 
-        long offsetLimit(TopicPartition partition)
+        public long offsetLimit(TopicPartition partition)
         {
             long? limit = offsetLimits[partition];
 

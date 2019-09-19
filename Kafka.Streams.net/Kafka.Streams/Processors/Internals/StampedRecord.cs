@@ -2,26 +2,21 @@ using Confluent.Kafka;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public class StampedRecord<K, V> : Stamped<ConsumeResult<K, V>>
+    public class StampedRecord : Stamped<ConsumeResult<object, object>>
     {
-        private readonly ConsumeResult<K, V> record;
+        private readonly ConsumeResult<object, object> record;
 
-        public StampedRecord(ConsumeResult<K, V> record, long timestamp)
+        public StampedRecord(ConsumeResult<object, object> record, long timestamp)
             : base(record, timestamp)
         {
             this.record = record;
         }
 
         public string Topic => this.record.Topic;
-
         public int partition => this.record.Partition;
-
-        public K Key => this.record.Key;
-
-        public V Value => this.record.Value;
-
+        public object Key => this.record.Key;
+        public object Value => this.record.Value;
         public long offset => this.record.Offset;
-
         public Headers Headers => this.record.Headers;
 
         public override string ToString()

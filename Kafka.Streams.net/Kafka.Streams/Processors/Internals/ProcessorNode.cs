@@ -95,7 +95,7 @@ namespace Kafka.Streams.Processor.Internals
             childByName.Add(child.name, child);
         }
 
-        public virtual void init(IInternalProcessorContext<K, V> context)
+        public virtual void init(IInternalProcessorContext context)
         {
             try
             {

@@ -124,15 +124,15 @@ namespace Kafka.Streams.Processor.Internals
             string applicationId = config.getString(StreamsConfigPropertyNames.ApplicationId);
             Dictionary<string, object> consumerConfigs = config.GetMainConsumerConfigs(applicationId, getConsumerClientId(threadClientId), threadId);
             consumerConfigs.Add(InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, taskManager);
-            int assignmentErrorCode;
+            int assignmentErrorCode = 0;
 
             consumerConfigs.Add(InternalConfig.ASSIGNMENT_ERROR_CODE, assignmentErrorCode);
             string originalReset = null;
 
-            if (!builder.latestResetTopicsPattern().pattern().equals("") || !builder.earliestResetTopicsPattern().pattern().equals(""))
+            if (!builder.latestResetTopicsPattern().IsMatch("") || !builder.earliestResetTopicsPattern().IsMatch(""))
             {
-                originalReset = (string)consumerConfigs[ConsumerConfig.AUTO_OFFSET_RESET_CONFIG];
-                consumerConfigs.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
+                originalReset = (string)consumerConfigs["AutoOffsetReset"];
+                consumerConfigs.Add("AutoOffsetReset", "none");
             }
 
             IConsumer<byte[], byte[]> consumer = clientSupplier.getConsumer(consumerConfigs);
@@ -154,7 +154,7 @@ namespace Kafka.Streams.Processor.Internals
                 .updateThreadMetadata(getSharedAdminClientId(clientId));
         }
 
-        private static string getTaskProducerClientId(string threadClientId, TaskId taskId)
+        public static string getTaskProducerClientId(string threadClientId, TaskId taskId)
             => $"{threadClientId}-{taskId}-producer";
 
         private static string getThreadProducerClientId(string threadClientId)

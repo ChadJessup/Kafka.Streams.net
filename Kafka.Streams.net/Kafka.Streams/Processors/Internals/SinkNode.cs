@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processor.Internals
         private readonly ITopicNameExtractor topicExtractor;
         private readonly IStreamPartitioner<K, V> partitioner;
 
-        private IInternalProcessorContext<K, V> context;
+        private IInternalProcessorContext context;
 
         SinkNode(
             string name,
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Processor.Internals
             throw new InvalidOperationException("sink node does not allow.AddChild");
         }
 
-        public override void init(IInternalProcessorContext<K, V> context)
+        public override void init(IInternalProcessorContext context)
         {
             base.init(context);
             this.context = context;

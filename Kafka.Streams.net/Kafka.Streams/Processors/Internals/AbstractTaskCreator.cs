@@ -64,6 +64,6 @@ namespace Kafka.Streams.Processor.Internals
 
         public abstract T createTask(IConsumer<byte[], byte[]> consumer, TaskId id, HashSet<TopicPartition> partitions);
 
-        public void close() { }
+        public virtual void close() { }
     }
 }

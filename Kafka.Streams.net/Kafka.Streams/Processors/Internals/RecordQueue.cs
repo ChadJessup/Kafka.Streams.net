@@ -20,6 +20,7 @@ namespace Kafka.Streams.Processor.Internals
     public abstract class RecordQueue
     {
         public static long UNKNOWN = ConsumerRecord.NO_TIMESTAMP;
+        protected ILogger log { get; set; }
 
         /// <summary>
         /// The partition with which this queue is associated.
@@ -29,63 +30,16 @@ namespace Kafka.Streams.Processor.Internals
         protected Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
         protected long partitionTime = RecordQueue.UNKNOWN;
         protected Sensor skipRecordsSensor;
+        protected StampedRecord? headRecord = null;
+        protected IProcessorContext processorContext { get; set; }
 
-        internal int size()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal int addRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal bool isEmpty()
-        {
-            throw new NotImplementedException();
-        }
-
-        internal StampedRecord<K, V> Peek<K, V>()
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class RecordQueue<K, V> : RecordQueue
-    {
-        private readonly ILogger log;
-        private readonly SourceNode<K, V> source;
-        private readonly RecordDeserializer<K, V> recordDeserializer;
-        private StampedRecord<K, V>? headRecord = null;
-        private readonly IProcessorContext processorContext;
-
-        public RecordQueue(
-            TopicPartition partition,
-            SourceNode<K, V> source,
-            ITimestampExtractor timestampExtractor,
-            IDeserializationExceptionHandler deserializationExceptionHandler,
-            IInternalProcessorContext<K, V> processorContext,
-            LogContext logContext)
-        {
-            this.source = source;
-            this.partition = partition;
-            this.fifoQueue = new Queue<ConsumeResult<byte[], byte[]>>();
-            this.timestampExtractor = timestampExtractor;
-            this.processorContext = processorContext;
-            //skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics());
-            recordDeserializer = new RecordDeserializer<K, V>(
-                source,
-                deserializationExceptionHandler,
-                logContext,
-                skipRecordsSensor);
-
-            this.log = logContext.logger(typeof(RecordQueue<K, V>));
-        }
+        /**
+         * Returns the head record's timestamp
+         *
+         * @return timestamp
+         */
+        public long headRecordTimestamp
+            => headRecord == null ? UNKNOWN : headRecord.timestamp;
 
         /**
          * Add a batch of {@link ConsumerRecord} into the queue
@@ -93,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param rawRecords the raw records
          * @return the size of this queue
          */
-        public int addRawRecords(ConsumerRecords<byte[], byte[]> rawRecords)
+        public int addRawRecords(IEnumerable<ConsumeResult<byte[], byte[]>> rawRecords)
         {
             foreach (var rawRecord in rawRecords)
             {
@@ -110,9 +64,9 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @return StampedRecord
          */
-        public StampedRecord<K, V> poll()
+        public StampedRecord poll()
         {
-            StampedRecord<K, V> recordToReturn = headRecord;
+            StampedRecord recordToReturn = headRecord;
             headRecord = null;
 
             updateHead();
@@ -141,15 +95,6 @@ namespace Kafka.Streams.Processor.Internals
             return !fifoQueue.Any() && headRecord == null;
         }
 
-        /**
-         * Returns the head record's timestamp
-         *
-         * @return timestamp
-         */
-        public long headRecordTimestamp()
-        {
-            return headRecord == null ? RecordQueue.UNKNOWN : headRecord.timestamp;
-        }
 
         /**
          * Clear the fifo queue of its elements, also clear the time tracker's kept stamped elements
@@ -161,14 +106,17 @@ namespace Kafka.Streams.Processor.Internals
             partitionTime = RecordQueue.UNKNOWN;
         }
 
+        // protected abstract RecordDeserializer<K, V> GetRecordDeserializer<K, V>();
         private void updateHead()
         {
             while (headRecord == null && fifoQueue.Any())
             {
                 ConsumeResult<byte[], byte[]> raw = fifoQueue.Peek();
-                ConsumeResult<K, V> deserialized = recordDeserializer.deserialize(processorContext, raw);
+                //var recordDeserializer = GetRecordDeserializer<K, V>();
 
-                if (deserialized == null)
+                //ConsumeResult<K, V> deserialized = recordDeserializer.deserialize(processorContext, raw);
+
+                if (true)//deserialized == null)
                 {
                     // this only happens if the deserializer decides to skip. It has already logged the reason.
                     continue;
@@ -177,7 +125,7 @@ namespace Kafka.Streams.Processor.Internals
                 long timestamp;
                 try
                 {
-                    timestamp = timestampExtractor.Extract(deserialized, partitionTime);
+                    //timestamp = timestampExtractor.Extract(deserialized, partitionTime);
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
@@ -185,27 +133,59 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 catch (Exception fatalUserException)
                 {
-                    throw new StreamsException(
-                            string.Format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
-                            fatalUserException);
+                    //throw new StreamsException(
+                    //        string.Format("Fatal user code error in TimestampExtractor callback for record %s.", deserialized),
+                    //        fatalUserException);
                 }
-                log.LogTrace("Source node {} extracted timestamp {} for record {}", source.name, timestamp, deserialized);
+
+                // log.LogTrace($"Source node {source.name} extracted timestamp {timestamp} for record {deserialized}");
 
                 // drop message if TS is invalid, i.e., negative
                 if (timestamp < 0)
                 {
-                    log.LogWarning(
-                            "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
-                            deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
+                    //log.LogWarning(
+                    //        "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
+                    //        deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
 
                     skipRecordsSensor.record();
                     continue;
                 }
 
-                headRecord = new StampedRecord<K, V>(deserialized, timestamp);
+                //headRecord = new StampedRecord(deserialized, timestamp);
 
                 partitionTime = Math.Max(partitionTime, timestamp);
             }
         }
+    }
+
+    public class RecordQueue<K, V> : RecordQueue
+    {
+        private readonly SourceNode<K, V> source;
+        private readonly RecordDeserializer<K, V> recordDeserializer;
+        public RecordQueue(
+            TopicPartition partition,
+            SourceNode<K, V> source,
+            ITimestampExtractor timestampExtractor,
+            IDeserializationExceptionHandler deserializationExceptionHandler,
+            IInternalProcessorContext processorContext,
+            LogContext logContext)
+        {
+            this.source = source;
+            this.partition = partition;
+            this.fifoQueue = new Queue<ConsumeResult<byte[], byte[]>>();
+            this.timestampExtractor = timestampExtractor;
+            this.processorContext = processorContext;
+            //skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics());
+            recordDeserializer = new RecordDeserializer<K, V>(
+                source,
+                deserializationExceptionHandler,
+                logContext,
+                skipRecordsSensor);
+
+            this.log = logContext.logger(typeof(RecordQueue<K, V>));
+        }
+
+        //protected override RecordDeserializer<K, V> GetRecordDeserializer<K, V>()
+        //    => (RecordDeserializer<K, V>)this.recordDeserializer;
     }
 }

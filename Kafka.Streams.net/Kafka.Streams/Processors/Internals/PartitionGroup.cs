@@ -3,6 +3,7 @@ using Kafka.Common.Metrics;
 using RocksDbSharp;
 using System;
 using System.Collections.Generic;
+using Priority_Queue;
 
 namespace Kafka.Streams.Processor.Internals
 {
@@ -11,7 +12,7 @@ namespace Kafka.Streams.Processor.Internals
      *
      * In other words, it represents the "same" partition over multiple co-partitioned topics, and it is used
      * to buffer records from that partition in each of the contained topic-partitions.
-     * Each StreamTask<K, V> has exactly one PartitionGroup.
+     * Each StreamTask has exactly one PartitionGroup.
      *
      * PartitionGroup : the algorithm that determines in what order buffered records are selected for processing.
      *
@@ -32,7 +33,7 @@ namespace Kafka.Streams.Processor.Internals
     {
         private readonly Dictionary<TopicPartition, RecordQueue> partitionQueues;
         private readonly Sensor recordLatenessSensor;
-        private readonly PriorityQueue<RecordQueue> nonEmptyQueuesByTime;
+        private readonly SimplePriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
         public long streamTime { get; set; }
         private int totalBuffered;
@@ -41,7 +42,8 @@ namespace Kafka.Streams.Processor.Internals
 
         PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
         {
-            nonEmptyQueuesByTime = new Queue<RecordQueue>(partitionQueues.Count, Comparator.comparingLong(RecordQueue.headRecordTimestamp));
+            nonEmptyQueuesByTime = new SimplePriorityQueue<RecordQueue>();
+
             this.partitionQueues = partitionQueues;
             this.recordLatenessSensor = recordLatenessSensor;
             totalBuffered = 0;
@@ -60,17 +62,20 @@ namespace Kafka.Streams.Processor.Internals
          *
          * @return StampedRecord
          */
-        public StampedRecord<K, V> nextRecord<K, V>(RecordInfo LogInformation)
+        public StampedRecord nextRecord<K, V>(RecordInfo LogInformation)
         {
-            StampedRecord<K, V> record = null;
+            StampedRecord record = null;
 
-            RecordQueue queue = nonEmptyQueuesByTime.poll();
+            if (nonEmptyQueuesByTime.TryDequeue(out var queue))
+            {
+            }
+
             LogInformation.queue = queue;
 
             if (queue != null)
             {
                 // get the first record from this queue.
-                record = queue.Peek<K, V>();
+                record = null;// queue.Peek();
 
                 if (record != null)
                 {
@@ -84,7 +89,7 @@ namespace Kafka.Streams.Processor.Internals
                     else
                     {
 
-                        nonEmptyQueuesByTime.offer(queue);
+                        nonEmptyQueuesByTime.Enqueue(queue, queue.headRecordTimestamp);
                     }
 
                     // always update the stream-time to the record's timestamp yet to be processed if it is larger
@@ -121,7 +126,7 @@ namespace Kafka.Streams.Processor.Internals
             // add this record queue to be considered for processing in the future if it was empty before
             if (oldSize == 0 && newSize > 0)
             {
-                nonEmptyQueuesByTime.offer(recordQueue);
+                nonEmptyQueuesByTime.Enqueue(recordQueue, recordQueue.headRecordTimestamp);
 
                 // if all partitions now are non-empty, set the flag
                 // we do not need to update the stream-time here since this task will definitely be
@@ -180,7 +185,7 @@ namespace Kafka.Streams.Processor.Internals
             streamTime = RecordQueue.UNKNOWN;
             foreach (RecordQueue queue in partitionQueues.Values)
             {
-                queue.Clear();
+                queue.clear();
             }
         }
     }

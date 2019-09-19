@@ -24,13 +24,13 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class TimestampedCacheFlushListener<K, V> : ICacheFlushListener<K, ValueAndTimestamp<V>>
     {
-        private readonly IInternalProcessorContext<K, V> context;
+        private readonly IInternalProcessorContext context;
         private readonly ProcessorNode<K, V> myNode;
 
         public TimestampedCacheFlushListener(IProcessorContext context)
         {
-            this.context = (IInternalProcessorContext<K, V>)context;
-            myNode = this.context.currentNode;
+            this.context = (IInternalProcessorContext)context;
+            myNode = this.context.GetCurrentNode<K, V>();
         }
 
         public void apply(
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             ValueAndTimestamp<V> oldValue,
             long timestamp)
         {
-            var prev = context.currentNode;
+            var prev = context.GetCurrentNode<K, V>();
             context.setCurrentNode(myNode);
             try
             {

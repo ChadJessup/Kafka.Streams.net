@@ -55,7 +55,7 @@ namespace Kafka.Streams.Processor.Internals
             return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
-        public override void init(IInternalProcessorContext<K, V> context)
+        public override void init(IInternalProcessorContext context)
         {
             base.init(context);
             this.context = context;

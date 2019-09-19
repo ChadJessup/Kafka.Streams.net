@@ -48,7 +48,7 @@ namespace Kafka.Streams.Processor.Internals
          */
         public override IStateStore getStateStore(string name)
         {
-            if (currentNode == null)
+            if (GetCurrentNode<K, V>() == null)
             {
                 throw new StreamsException("Accessing from an unknown node");
             }
@@ -80,9 +80,9 @@ namespace Kafka.Streams.Processor.Internals
                 return global;
             }
 
-            if (!currentNode.stateStores.Contains(name))
+            if (!GetCurrentNode().stateStores.Contains(name))
             {
-                throw new StreamsException("IProcessor " + currentNode.name + " has no access to IStateStore " + name +
+                throw new StreamsException("IProcessor " + GetCurrentNode().name + " has no access to IStateStore " + name +
                     " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
                     "make sure to connect the.Added store to the processor by providing the processor name to " +
                     "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +
@@ -122,12 +122,9 @@ namespace Kafka.Streams.Processor.Internals
             forward(key, value, SEND_TO_ALL);
         }
 
-        public override void forward<K1, V1>(
-            K1 key,
-            V1 value,
-            To to)
+        public override void forward<K1, V1>(K1 key, V1 value, To to)
         {
-            ProcessorNode<K, V> previousNode = currentNode;
+            ProcessorNode<K, V> previousNode = GetCurrentNode<K, V>();
             ProcessorRecordContext previousContext = recordContext;
 
             try
@@ -146,22 +143,22 @@ namespace Kafka.Streams.Processor.Internals
                 string sendTo = toInternal.child();
                 if (sendTo == null)
                 {
-                    List<ProcessorNode<K, V>> children = new List<ProcessorNode<K, V>>(currentNode.children.Select(c => (ProcessorNode<K, V>)c));
+                    List<ProcessorNode<K, V>> children = new List<ProcessorNode<K, V>>(GetCurrentNode<K, V>().children.Select(c => (ProcessorNode<K, V>)c));
                     foreach (var child in children)
                     {
-                        forward(child, key, value);
+                        //forward(child, key, value);
                     }
                 }
                 else
                 {
-                    ProcessorNode<K, V> child = currentNode.getChild(sendTo);
+                    ProcessorNode<K, V> child = GetCurrentNode<K, V>().getChild(sendTo);
                     if (child == null)
                     {
                         throw new StreamsException("Unknown downstream node: " + sendTo
                             + " either does not exist or is not connected to this processor.");
                     }
 
-                    forward(child, key, value);
+                    //forward(child, key, value);
                 }
             }
             finally
@@ -171,10 +168,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        private void forward<K1, V1>(
-            ProcessorNode<K, V> child,
-            K key,
-            V value)
+        private void forward<K1, V1>(ProcessorNode<K, V> child, K key, V value)
         {
             setCurrentNode(child);
             child.process(key, value);
@@ -194,7 +188,7 @@ namespace Kafka.Streams.Processor.Internals
             return schedule(ApiUtils.validateMillisecondDuration(interval, msgPrefix), type, callback);
         }
 
-        public override void setCurrentNode(ProcessorNode<K, V> currentNode)
+        public override void setCurrentNode<K, V>(ProcessorNode<K, V> currentNode)
         {
             this.currentNode = currentNode;
         }

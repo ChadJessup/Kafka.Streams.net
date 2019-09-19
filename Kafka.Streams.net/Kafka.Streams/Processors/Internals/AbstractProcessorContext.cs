@@ -10,14 +10,22 @@ using System.IO;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class AbstractProcessorContext<K, V> : IInternalProcessorContext<K, V>
+    public abstract class AbstractProcessorContext<K, V> : IInternalProcessorContext
     {
         public static string NONEXIST_TOPIC = "__null_topic__";
         private readonly StreamsConfig config;
         private readonly ThreadCache cache;
         private bool initialized;
         public ProcessorRecordContext recordContext { get; protected set; }
-        public ProcessorNode<K, V> currentNode { get; protected set; }
+
+        protected ProcessorNode currentNode { get; set; }
+        public ProcessorNode<K, V> GetCurrentNode<K, V>()
+        {
+            return (ProcessorNode<K, V>)this.currentNode;
+        }
+        public ProcessorNode GetCurrentNode()
+            => this.currentNode;
+
         protected IStateManager stateManager { get; }
 
         public IStreamsMetrics metrics { get; }
@@ -161,10 +169,10 @@ namespace Kafka.Streams.Processor.Internals
             this.recordContext = recordContext;
         }
 
-        public abstract void setCurrentNode(ProcessorNode<K, V> currentNode);
-        //{
-        //    this.currentNode = currentNode;
-        //}
+        public virtual void setCurrentNode(ProcessorNode current)
+            => this.currentNode = currentNode;
+        public virtual void setCurrentNode<K, V>(ProcessorNode<K, V> currentNode)
+            => this.currentNode = currentNode;
 
         public ThreadCache getCache()
         {

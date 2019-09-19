@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Kafka.Streams.Processor.Internals
 {
-    public abstract class AbstractTask<K, V> : ITask
+    public abstract class AbstractTask : ITask
     {
         public TaskId id { get; }
         public string applicationId { get; }
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processor.Internals
         protected bool taskClosed { get; set; }
         public bool commitNeeded { get; set; }
 
-        protected IInternalProcessorContext<K, V> processorContext { get; set; }
+        protected IInternalProcessorContext processorContext { get; set; }
 
         /**
          * @throws ProcessorStateException if the state manager cannot be created
@@ -86,7 +86,7 @@ namespace Kafka.Streams.Processor.Internals
          * Produces a string representation containing useful information about a Task.
          * This is useful in debugging scenarios.
          *
-         * @return A string representation of the StreamTask<K, V> instance.
+         * @return A string representation of the StreamTask instance.
          */
         public override string ToString()
         {
@@ -218,13 +218,13 @@ namespace Kafka.Streams.Processor.Internals
 
         public virtual void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
         {
-            stateMgr.reinitializeStateStoresForPartitions<K, V>(partitions, processorContext);
+            stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
         }
 
         /**
          * @throws ProcessorStateException if there is an error while closing the state manager
          */
-        protected virtual void closeStateManager(bool clean)
+        public virtual void closeStateManager(bool clean)
         {
             ProcessorStateException exception = null;
             log.LogTrace("Closing state manager");

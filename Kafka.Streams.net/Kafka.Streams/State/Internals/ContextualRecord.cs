@@ -44,7 +44,7 @@ namespace Kafka.Streams.State.Internals
             int sizeOfContext = serializedContext.Length;
             int sizeOfValueLength = sizeof(int);
             int sizeOfValue = value == null ? 0 : value.Length;
-            ByteBuffer buffer = ByteBuffer.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + end.Adding);
+            ByteBuffer buffer = new ByteBuffer();//.allocate(sizeOfContext + sizeOfValueLength + sizeOfValue + end.Adding);
 
             buffer.Add(serializedContext);
 

@@ -1,16 +1,17 @@
 using Kafka.Streams.Processor.Interfaces;
+using Priority_Queue;
 
 namespace Kafka.Streams.Processor.Internals
 {
     public class PunctuationQueue
     {
-        private readonly PriorityQueue<PunctuationSchedule> pq = new PriorityQueue<PunctuationSchedule>();
+        private readonly SimplePriorityQueue<PunctuationSchedule> pq = new SimplePriorityQueue<PunctuationSchedule>();
 
         public ICancellable schedule(PunctuationSchedule sched)
         {
             lock (pq)
             {
-                pq.Add(sched);
+                pq.Enqueue(sched, sched.timestamp);
             }
 
             return sched.cancellable;
@@ -32,11 +33,11 @@ namespace Kafka.Streams.Processor.Internals
             lock (pq)
             {
                 bool punctuated = false;
-                PunctuationSchedule top = pq.Peek();
+                PunctuationSchedule top = null;//pq.Peek();
                 while (top != null && top.timestamp <= timestamp)
                 {
                     PunctuationSchedule sched = top;
-                    pq.poll();
+                    //pq.poll();
 
                     if (!sched.isCancelled)
                     {
@@ -44,13 +45,13 @@ namespace Kafka.Streams.Processor.Internals
                         // sched can be cancelled from within the punctuator
                         if (!sched.isCancelled)
                         {
-                            pq.Add(sched.next(timestamp));
+                            pq.Enqueue(sched.next(timestamp), sched.timestamp);
                         }
 
                         punctuated = true;
                     }
 
-                    top = pq.Peek();
+                    top = null;// pq.Peek();
                 }
 
                 return punctuated;
