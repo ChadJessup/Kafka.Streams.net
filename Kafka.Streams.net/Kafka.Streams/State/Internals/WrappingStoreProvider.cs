@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
     {
         private readonly List<IStateStoreProvider> storeProviders;
 
-        WrappingStoreProvider(List<IStateStoreProvider> storeProviders)
+        public WrappingStoreProvider(List<IStateStoreProvider> storeProviders)
         {
             this.storeProviders = storeProviders;
         }

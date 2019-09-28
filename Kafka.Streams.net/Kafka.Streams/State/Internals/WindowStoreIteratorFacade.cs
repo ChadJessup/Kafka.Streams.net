@@ -1,39 +1,55 @@
-﻿//using Kafka.Streams.State;
+﻿using System.Collections;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class WindowStoreIteratorFacade<V> : WindowStoreIterator<V>
-//    {
-//        IKeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
+namespace Kafka.Streams.State.Internals
+{
+    public class WindowStoreIteratorFacade<V> : IWindowStoreIterator<V>
+    {
+        IKeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
 
-//        WindowStoreIteratorFacade(IKeyValueIterator<long, ValueAndTimestamp<V>> iterator)
-//        {
-//            innerIterator = iterator;
-//        }
+        public KeyValue<long, V> Current { get; }
+        object IEnumerator.Current { get; }
 
+        public WindowStoreIteratorFacade(IKeyValueIterator<long, ValueAndTimestamp<V>> iterator)
+        {
+            innerIterator = iterator;
+        }
 
-//        public void close()
-//        {
-//            innerIterator.close();
-//        }
+        public void close()
+        {
+            innerIterator.close();
+        }
+        public long peekNextKey()
+        {
+            return innerIterator.peekNextKey();
+        }
 
+        public bool hasNext()
+        {
+            return innerIterator.MoveNext();
+        }
 
-//        public long peekNextKey()
-//        {
-//            return innerIterator.peekNextKey();
-//        }
+        public KeyValue<long, V> next()
+        {
+            KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
 
+            return KeyValue<long, V>.pair(innerKeyValue.key, ValueAndTimestamp<V>.getValueOrNull(innerKeyValue.value));
+        }
 
-//        public bool hasNext()
-//        {
-//            return innerIterator.hasNext();
-//        }
+        public bool MoveNext()
+        {
+            throw new System.NotImplementedException();
+        }
 
+        public void Reset()
+        {
+            throw new System.NotImplementedException();
+        }
 
-//        public KeyValue<long, V> next()
-//        {
-//            KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.next();
-//            return KeyValue.pair(innerKeyValue.key, getValueOrNull(innerKeyValue.value));
-//        }
-//    }
-//}
+        public void Dispose()
+        {
+            throw new System.NotImplementedException();
+        }
+    }
+}

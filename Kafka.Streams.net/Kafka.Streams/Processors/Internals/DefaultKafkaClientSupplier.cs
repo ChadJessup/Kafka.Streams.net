@@ -23,7 +23,7 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
-        public IAdminClient getAdminClient(Dictionary<string, object> config)
+        public IAdminClient GetAdminClient(Dictionary<string, string> config)
         {
             // create a new client upon each call; but expect this call to be only triggered once so this should be fine
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
@@ -32,7 +32,7 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-        public IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config)
+        public IProducer<byte[], byte[]> getProducer(Dictionary<string, string> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config)
+        public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, string> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config)
+        public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, string> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Processor.Internals
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config)
+        public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, string> config)
         {
             var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 

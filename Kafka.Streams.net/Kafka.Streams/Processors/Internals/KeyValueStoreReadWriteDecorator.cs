@@ -30,10 +30,8 @@ namespace Kafka.Streams.Processor.Internals
             return wrapped.all();
         }
 
-        public long approximateNumEntries()
-        {
-            return wrapped.approximateNumEntries();
-        }
+        public long approximateNumEntries
+            => wrapped.approximateNumEntries;
 
         public void put(K key, V value)
         {

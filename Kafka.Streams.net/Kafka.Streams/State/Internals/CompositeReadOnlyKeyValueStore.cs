@@ -27,10 +27,9 @@
 //            this.storeName = storeName;
 //        }
 
-
-//        public override V get(K key)
+//        public V get(K key)
 //        {
-//            List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
+//            var stores = this.storeProvider.stores<IReadOnlyKeyValueStore<K, V>>(this.storeName, this.storeType);
 //            foreach (IReadOnlyKeyValueStore<K, V> store in stores)
 //            {
 //                try
@@ -51,64 +50,72 @@
 //            return default;
 //        }
 
-//        public override IKeyValueIterator<K, V> range(K from, K to)
+//        public IKeyValueIterator<K, V> range(K from, K to)
 //        {
-//            //NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
-//            //{
-
-//            //public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
-//            //{
-//            //    try
-//            //    {
-//            //        return store.range(from, to);
-//            //    }
-//            //    catch (InvalidStateStoreException e)
-//            //    {
-//            //        throw new InvalidStateStoreException("State store is not available anymore and may have been migrated to another instance; please re-discover its location from the state metadata.");
-//            //    }
-//            //}
-//            //}
-
-//            List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
-//            return new DelegatingPeekingKeyValueIterator<>(storeName, new CompositeKeyValueIterator<>(stores.iterator(), nextIteratorFunction));
-//        }
-
-//        public override IKeyValueIterator<K, V> all()
-//        {
-//            //NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
-//            //{
-
-//            //    public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
-//            //{
-//            //    try
-//            //    {
-//            //        return store.all();
-//            //    }
-//            //    catch (InvalidStateStoreException e)
-//            //    {
-//            //        throw new InvalidStateStoreException("State store is not available anymore and may have been migrated to another instance; please re-discover its location from the state metadata.");
-//            //    }
-//            //}
-
-//            //List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
-
-//            return new DelegatingPeekingKeyValueIterator<>(storeName, new CompositeKeyValueIterator<>(stores.iterator(), nextIteratorFunction));
-//        }
-
-//        public override long approximateNumEntries()
-//        {
-//            List<IReadOnlyKeyValueStore<K, V>> stores = storeProvider.stores(storeName, storeType);
-//            long total = 0;
-
-//            foreach (IReadOnlyKeyValueStore<K, V> store in stores)
+//            INextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = null; // new INextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
 //            {
-//                total += store.approximateNumEntries();
-//                if (total < 0)
+
+//                public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
 //                {
-//                    return long.MaxValue;
+//                    try
+//                    {
+//                        return store.range(from, to);
+//                    }
+//                    catch (InvalidStateStoreException e)
+//                    {
+//                        throw new InvalidStateStoreException("State store is not available anymore and may have been migrated to another instance; please re-discover its location from the state metadata.");
+//                    }
 //                }
 //            }
-//            return total;
+
+//            List<IReadOnlyKeyValueStore<K, V>> stores = this.storeProvider.stores<IReadOnlyKeyValueStore<K, V>>(this.storeName, this.storeType);
+
+//            return new DelegatingPeekingKeyValueIterator<K, V>(
+//                storeName,
+//                new CompositeKeyValueIterator<IReadOnlyKeyValueStore<K, V>, K, V>(
+//                    stores.GetEnumerator(),
+//                    nextIteratorFunction));
+//        }
+
+//        public IKeyValueIterator<K, V> all()
+//        {
+//            NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>> nextIteratorFunction = new NextIteratorFunction<K, V, IReadOnlyKeyValueStore<K, V>>()
+//            {
+
+//                public KeyValueIterator<K, V> apply(IReadOnlyKeyValueStore<K, V> store)
+//            {
+//                try
+//                {
+//                    return store.all();
+//                }
+//                catch (InvalidStateStoreException e)
+//                {
+//                    throw new InvalidStateStoreException("State store is not available anymore and may have been migrated to another instance; please re-discover its location from the state metadata.");
+//                }
+//            }
+
+//            List<IReadOnlyKeyValueStore<K, V>> stores = this.storeProvider.stores<IReadOnlyKeyValueStore<K, V>>(this.storeName, this.storeType);
+//            return new DelegatingPeekingKeyValueIterator<K, V>(storeName, new CompositeKeyValueIterator<IReadOnlyKeyValueStore<K, V>, K, V>(stores.GetEnumerator(), nextIteratorFunction));
+//        }
+
+//        public long approximateNumEntries
+//        {
+//            get
+//            {
+//                List<IReadOnlyKeyValueStore<K, V>> stores = this.storeProvider.stores<IReadOnlyKeyValueStore<K, V>>(this.storeName, this.storeType);
+//                long total = 0;
+
+//                foreach (IReadOnlyKeyValueStore<K, V> store in stores)
+//                {
+//                    total += store.approximateNumEntries;
+//                    if (total < 0)
+//                    {
+//                        return long.MaxValue;
+//                    }
+//                }
+
+//                return total;
+//            }
 //        }
 //    }
 //}

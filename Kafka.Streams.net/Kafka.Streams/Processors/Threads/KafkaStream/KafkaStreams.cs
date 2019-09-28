@@ -77,10 +77,10 @@ namespace Kafka.Streams
         private readonly StreamsConfig config;
         private readonly MetricsRegistry metrics;
         protected StreamThread[] threads;
-        private StateDirectory stateDirectory;
+        private readonly StateDirectory stateDirectory;
         private readonly StreamsMetadataState streamsMetadataState;
-        //        private ScheduledExecutorService stateDirCleaner;
-        //private QueryableStoreProvider queryableStoreProvider;
+//        private ScheduledExecutorService stateDirCleaner;
+        private QueryableStoreProvider queryableStoreProvider;
         private readonly IAdminClient adminClient;
 
         private readonly GlobalStreamThread globalStreamThread;
@@ -323,7 +323,7 @@ namespace Kafka.Streams
 
             try
             {
-                // stateDirectory = new StateDirectory(config, time, createStateDirectory);
+                stateDirectory = new StateDirectory(config, time, createStateDirectory);
             }
             catch (ProcessorStateException fatal)
             {
@@ -331,7 +331,8 @@ namespace Kafka.Streams
             }
 
             IStateRestoreListener delegatingStateRestoreListener = new DelegatingStateRestoreListener();
-            GlobalStreamThreadState globalThreadState = null;
+            GlobalStreamThreadState? globalThreadState = null;
+
             if (globalTaskTopology != null)
             {
                 string globalThreadId = $"{clientId}-GlobalStreamThread";
@@ -341,13 +342,12 @@ namespace Kafka.Streams
                     globalTaskTopology,
                     config,
                     clientSupplier.getGlobalConsumer(config.GetGlobalConsumerConfigs(clientId)),
-                    //stateDirectory,
+                    stateDirectory,
                     cacheSizePerThread,
                     metrics,
                     time,
-                    globalThreadId//,
-                    //delegatingStateRestoreListener);
-                    );
+                    globalThreadId,
+                    delegatingStateRestoreListener);
 
                 globalThreadState = globalStreamThread.State as GlobalStreamThreadState
                     ?? throw new ArgumentException($"Expected a {nameof(GlobalStreamThreadState)} got {globalStreamThread.State.GetType()}");
@@ -355,7 +355,7 @@ namespace Kafka.Streams
 
 
             // use client id instead of thread client id since this admin client may be shared among threads
-            this.adminClient = clientSupplier.getAdminClient(config.getAdminConfigs(StreamThread.getSharedAdminClientId(clientId)));
+            this.adminClient = clientSupplier.GetAdminClient(config.getAdminConfigs(StreamThread.getSharedAdminClientId(clientId)));
 
             Dictionary<long, StreamThreadState> threadState = new Dictionary<long, StreamThreadState>(threads.Length);
             List<IStateStoreProvider> storeProviders = new List<IStateStoreProvider>();

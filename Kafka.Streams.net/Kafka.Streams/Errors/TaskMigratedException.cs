@@ -68,7 +68,7 @@
 //        }
 
 //        public TaskMigratedException(ITask task,
-//                                      Throwable throwable)
+//                                      Exception throwable)
 //            : base(string.Format("Client request for task %s has been fenced due to a rebalance", task.id), throwable)
 //        {
 

@@ -92,7 +92,7 @@ namespace Kafka.Streams.Processor.Internals
 
             try
             {
-                while (stillRunning())
+                while (isRunning())
                 {
                     stateConsumer.pollAndUpdate();
                 }
@@ -191,7 +191,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.Thread.Start();
 
-            while (!stillRunning())
+            while (!isRunning())
             {
                 Thread.Sleep(1);
                 if (startupException != null)
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Processor.Internals
         public void setStateListener(IStateListener listener)
             => this.StateListener = listener;
 
-        public bool stillRunning()
+        public bool isRunning()
             => this.State.isRunning();
     }
 }

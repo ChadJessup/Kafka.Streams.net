@@ -45,7 +45,7 @@ namespace Kafka.Streams.Processor.Internals
 
         public class BasicRestoreCallback : IRecordBatchingStateRestoreCallback
         {
-            private IStateRestoreCallback restoreCallback;
+            private readonly IStateRestoreCallback restoreCallback;
 
             public BasicRestoreCallback(IStateRestoreCallback restoreCallback)
             {

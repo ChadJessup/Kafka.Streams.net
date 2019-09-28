@@ -71,6 +71,6 @@ namespace Kafka.Streams.State.Interfaces
          * @return an approximate count of key-value mappings in the store.
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        long approximateNumEntries();
+        long approximateNumEntries { get; }
     }
 }

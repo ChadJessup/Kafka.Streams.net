@@ -46,23 +46,33 @@ namespace Kafka.Streams.Processor.Internals
         {
             this.time = time;
             this.createStateDirectory = createStateDirectory;
-            string stateDirName = config.getString(StreamsConfigPropertyNames.STATE_DIR_CONFIG);
+            string stateDirName = config.StateStoreDirectory;
             DirectoryInfo baseDir = new DirectoryInfo(stateDirName);
 
-            Directory.CreateDirectory(baseDir.FullName);
-
-            if (this.createStateDirectory && !baseDir.Exists)
+            if (this.createStateDirectory)
             {
-                throw new ProcessorStateException($"base state directory [{stateDirName}] doesn't exist and couldn't be created");
+                try
+                {
+                    Directory.CreateDirectory(baseDir.FullName);
+                }
+                catch (Exception e)
+                {
+                    throw new ProcessorStateException($"base state directory [{stateDirName}] doesn't exist and couldn't be created", e);
+                }
             }
 
-            stateDir = new DirectoryInfo(Path.Combine(baseDir.FullName, config.getString(StreamsConfigPropertyNames.ApplicationId)));
-
-            Directory.CreateDirectory(stateDir.FullName);
+            stateDir = new DirectoryInfo(Path.Combine(baseDir.FullName, config.ApplicationId));
 
             if (this.createStateDirectory && !stateDir.Exists)
             {
-                throw new ProcessorStateException($"state directory [{stateDir.FullName}] doesn't exist and couldn't be created");
+                try
+                {
+                    Directory.CreateDirectory(stateDir.FullName);
+                }
+                catch (Exception e)
+                {
+                    throw new ProcessorStateException($"state directory [{stateDir.FullName}] doesn't exist and couldn't be created", e);
+                }
             }
         }
 
@@ -74,11 +84,18 @@ namespace Kafka.Streams.Processor.Internals
         public DirectoryInfo directoryForTask(TaskId taskId)
         {
             var taskDir = new DirectoryInfo(Path.Combine(stateDir.FullName, taskId.ToString()));
-            Directory.CreateDirectory(taskDir.FullName);
 
-            if (createStateDirectory && !taskDir.Exists)
+
+            if (this.createStateDirectory && !taskDir.Exists)
             {
-                throw new ProcessorStateException($"task directory [{taskDir.FullName}] doesn't exist and couldn't be created");
+                try
+                {
+                    Directory.CreateDirectory(taskDir.FullName);
+                }
+                catch (Exception e)
+                {
+                    throw new ProcessorStateException($"task directory [{taskDir.FullName}] doesn't exist and couldn't be created", e);
+                }
             }
 
             return taskDir;

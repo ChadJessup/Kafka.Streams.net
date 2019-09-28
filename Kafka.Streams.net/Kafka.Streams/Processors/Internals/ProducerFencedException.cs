@@ -4,7 +4,7 @@ using System;
 namespace Kafka.Streams.Processor.Internals
 {
     [Serializable]
-    internal class ProducerFencedException : KafkaException
+    public class ProducerFencedException : KafkaException
     {
         public ProducerFencedException()
             : base(ErrorCode.InvalidProducerEpoch)

@@ -16,9 +16,10 @@ namespace Kafka.Streams.Processor.Internals
         private readonly StreamsConfig config;
         private readonly ThreadCache cache;
         private bool initialized;
-        public ProcessorRecordContext recordContext { get; protected set; }
+        public virtual ProcessorRecordContext recordContext { get; protected set; }
 
-        protected ProcessorNode currentNode { get; set; }
+        public virtual ProcessorNode currentNode { get; set; }
+
         public ProcessorNode<K, V> GetCurrentNode<K, V>()
         {
             return (ProcessorNode<K, V>)this.currentNode;
@@ -70,7 +71,7 @@ namespace Kafka.Streams.Processor.Internals
         /**
          * @throws InvalidOperationException if the task's record is null
          */
-        public string Topic
+        public virtual string Topic
         {
             get
             {
@@ -194,7 +195,7 @@ namespace Kafka.Streams.Processor.Internals
             throw new NotImplementedException();
         }
 
-        public ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
+        public virtual ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
         {
             throw new NotImplementedException();
         }

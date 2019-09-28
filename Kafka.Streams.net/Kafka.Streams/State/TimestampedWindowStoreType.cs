@@ -1,22 +1,22 @@
-﻿//namespace Kafka.Streams.State
-//{
+﻿using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
+using System;
+using System.Collections.Generic;
 
-//    public static class TimestampedWindowStoreType<K, V>
-//        : QueryableStoreTypeMatcher<ReadOnlyWindowStore<K, ValueAndTimestamp<V>>>
-//    {
+namespace Kafka.Streams.State
+{
+    public class TimestampedWindowStoreType<K, V>
+        : QueryableStoreTypeMatcher<IReadOnlyWindowStore<K, ValueAndTimestamp<V>>>
+    {
+        public TimestampedWindowStoreType()
+            : base(new HashSet<Type>(new[]
+            { typeof(ITimestampedWindowStore<K, V>), typeof(IReadOnlyWindowStore<K, V>) }))
+        {
+        }
 
-//        TimestampedWindowStoreType()
-//    : base(new HashSet<>(Arrays.asList(
-//        ITimestampedWindowStore,
-//        ReadOnlyWindowStore)))
-//        {
-//        }
-
-
-//        public ReadOnlyWindowStore<K, ValueAndTimestamp<V>> create(StateStoreProvider storeProvider,
-//                                                                   string storeName)
-//        {
-//            return new CompositeReadOnlyWindowStore<>(storeProvider, this, storeName);
-//        }
-//    }
-//}
+        public override IReadOnlyWindowStore<K, ValueAndTimestamp<V>> create(IStateStoreProvider storeProvider, string storeName)
+        {
+            return null;// new CompositeReadOnlyWindowStore<K, ValueAndTimestamp<V>>(storeProvider, this, storeName);
+        }
+    }
+}

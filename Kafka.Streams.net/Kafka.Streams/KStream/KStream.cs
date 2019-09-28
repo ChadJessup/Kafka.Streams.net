@@ -94,7 +94,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, false), name);
             ProcessorGraphNode<K, V> filterProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
-            builder.AddGraphNode(this.streamsGraphNode, filterProcessorNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, filterProcessorNode);
 
             return new KStream<K, V>(
                     name,
@@ -122,7 +122,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, true), name);
             ProcessorGraphNode<K, V> filterNotProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
-            builder.AddGraphNode(this.streamsGraphNode, filterNotProcessorNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, filterNotProcessorNode);
 
             return new KStream<K, V>(
                     name,
@@ -147,7 +147,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> selectKeyProcessorNode = internalSelectKey(mapper, new NamedInternal(named));
 
             selectKeyProcessorNode.IsKeyChangingOperation = true;
-            builder.AddGraphNode(this.streamsGraphNode, selectKeyProcessorNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, selectKeyProcessorNode);
 
             // key serde cannot be preserved
             return new KStream<KR, V>(
@@ -186,7 +186,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> mapProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
             mapProcessorNode.IsKeyChangingOperation = true;
-            builder.AddGraphNode(this.streamsGraphNode, mapProcessorNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, mapProcessorNode);
 
             // key and value serde cannot be preserved
             return new KStream<KR, VR>(
@@ -221,7 +221,7 @@ namespace Kafka.Streams.KStream.Internals
                 IsValueChangingOperation = true
             };
 
-            builder.AddGraphNode(this.streamsGraphNode, mapValuesProcessorNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, mapValuesProcessorNode);
 
             // value serde cannot be preserved
             return new KStream<K, VR>(
@@ -261,7 +261,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             flatMapNode.IsKeyChangingOperation = true;
 
-            builder.AddGraphNode(this.streamsGraphNode, flatMapNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, flatMapNode);
 
             // key and value serde cannot be preserved
             return new KStream<KR, VR>(
@@ -309,7 +309,7 @@ namespace Kafka.Streams.KStream.Internals
 
             flatMapValuesNode.IsValueChangingOperation = true;
 
-            builder.AddGraphNode(this.streamsGraphNode, flatMapValuesNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, flatMapValuesNode);
 
             // value serde cannot be preserved
             return new KStream<K, VR>(
@@ -359,7 +359,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var processorParameters = new ProcessorParameters<K, V>(new KStreamBranch<K, V>((IPredicate<K, V>[])predicates.Clone(), childNames), branchName);
             var branchNode = new ProcessorGraphNode<K, V>(branchName, processorParameters);
-            builder.AddGraphNode(this.streamsGraphNode, branchNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, branchNode);
 
             IKStream<K, V>[] branchChildren = new IKStream<K, V>[predicates.Length];
 
@@ -883,7 +883,7 @@ namespace Kafka.Streams.KStream.Internals
 
             var optimizableRepartitionNode = optimizableRepartitionNodeBuilder.Build();
 
-            builder.AddGraphNode(this.streamsGraphNode, optimizableRepartitionNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, optimizableRepartitionNode);
 
             return new KStream<K, V>(
                 repartitionedSourceName,

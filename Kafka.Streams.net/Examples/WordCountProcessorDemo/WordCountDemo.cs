@@ -44,17 +44,20 @@ namespace WordCountProcessorDemo
 
             StreamsBuilder builder = new StreamsBuilder(services);
 
-            IKStream<string, string> textLines = builder.stream<string, string>("TextLinesTopic");
+            IKStream<string, string> textLines = builder
+                .stream<string, string>("TextLinesTopic");
 
-            IKStream<string, string> flatMappedValues =
-                textLines.flatMapValues<string>(
-                    new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
+            IKStream<string, string> flatMappedValues = textLines
+                .flatMapValues<string>(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
 
-            IKGroupedStream<string, string> groupedByValues = flatMappedValues.groupBy<string>((key, word) => word);
+            IKGroupedStream<string, string> groupedByValues = flatMappedValues
+                .groupBy<string>((key, word) => word);
 
-            IKTable<string, long> wordCounts = groupedByValues.count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
+            IKTable<string, long> wordCounts = groupedByValues
+                .count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
 
-            IKStream<string, long> wordCountsStream = wordCounts.toStream();
+            IKStream<string, long> wordCountsStream = wordCounts
+                .toStream();
 
             wordCountsStream.to(
                 "WordsWithCountsTopic",

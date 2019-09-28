@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processor
 
         // the admin client should be shared among all threads, so the client id should be the same;
         // we keep it at the thread-level for user's convenience and possible extensions in the future
-        private readonly string adminClientId;
+        public readonly string adminClientId;
 
         public ThreadMetadata(
             string threadName,

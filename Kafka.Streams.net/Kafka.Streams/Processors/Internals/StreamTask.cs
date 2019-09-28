@@ -495,7 +495,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        Dictionary<TopicPartition, long> purgableOffsets()
+        public Dictionary<TopicPartition, long> purgableOffsets()
         {
             Dictionary<TopicPartition, long> purgableConsumedOffsets = new Dictionary<TopicPartition, long>();
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
@@ -575,7 +575,8 @@ namespace Kafka.Streams.Processor.Internals
 
             if (clean)
             {
-                TaskMigratedException<byte[], byte[]> taskMigratedException = null;
+                TaskMigratedException taskMigratedException = null;
+
                 try
                 {
                     commit(false);
@@ -644,7 +645,7 @@ namespace Kafka.Streams.Processor.Internals
                 {
                     recordCollector.close();
                 }
-                catch (Throwable e)
+                catch (Exception e)
                 {
                     log.LogError("Failed to close producer due to the following error:", e);
                 }
@@ -694,9 +695,10 @@ namespace Kafka.Streams.Processor.Internals
 
         // helper to avoid calling suspend() twice if a suspended task is not reassigned and closed
 
-        public void closeSuspended(bool clean,
-                                   bool isZombie,
-                                   RuntimeException firstException)
+        public override void closeSuspended(
+            bool clean,
+            bool isZombie,
+            RuntimeException firstException)
         {
             try
             {
@@ -793,19 +795,14 @@ namespace Kafka.Streams.Processor.Internals
          * @param type     the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        public ICancellable schedule(long interval, PunctuationType type, Punctuator punctuator)
+        public ICancellable Schedule(long interval, PunctuationType type, Punctuator punctuator)
         {
-            switch (type)
+            return type switch
             {
-                case PunctuationType.STREAM_TIME:
-                    // align punctuation to 0L, punctuate as soon as we have data
-                    return schedule(0L, interval, type, punctuator);
-                case PunctuationType.WALL_CLOCK_TIME:
-                    // align punctuation to now, punctuate after interval has elapsed
-                    return schedule(time.milliseconds() + interval, interval, type, punctuator);
-                default:
-                    throw new System.ArgumentException("Unrecognized PunctuationType: " + type);
-            }
+                PunctuationType.STREAM_TIME => Schedule(0L, interval, type, punctuator),
+                PunctuationType.WALL_CLOCK_TIME => Schedule(time.milliseconds() + interval, interval, type, punctuator),
+                _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
+            };
         }
 
         /**
@@ -816,7 +813,7 @@ namespace Kafka.Streams.Processor.Internals
          * @param type      the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        ICancellable schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
+        ICancellable Schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
         {
             if (processorContext.GetCurrentNode() == null)
             {
@@ -825,18 +822,12 @@ namespace Kafka.Streams.Processor.Internals
 
             PunctuationSchedule schedule = new PunctuationSchedule(processorContext.GetCurrentNode(), startTime, interval, punctuator);
 
-            switch (type)
+            return type switch
             {
-                case PunctuationType.STREAM_TIME:
-                    // STREAM_TIME punctuation is data driven, will first punctuate as soon as stream-time is known and >= time,
-                    // stream-time is known when we have received at least one record from each input topic
-                    return streamTimePunctuationQueue.schedule(schedule);
-                case PunctuationType.WALL_CLOCK_TIME:
-                    // WALL_CLOCK_TIME is driven by the wall clock time, will first punctuate when now >= time
-                    return systemTimePunctuationQueue.schedule(schedule);
-                default:
-                    throw new System.ArgumentException("Unrecognized PunctuationType: " + type);
-            }
+                PunctuationType.STREAM_TIME => streamTimePunctuationQueue.schedule(schedule),
+                PunctuationType.WALL_CLOCK_TIME => systemTimePunctuationQueue.schedule(schedule),
+                _ => throw new System.ArgumentException("Unrecognized PunctuationType: " + type),
+            };
         }
 
         /**
@@ -911,7 +902,7 @@ namespace Kafka.Streams.Processor.Internals
          * Whether or not a request has been made to commit the current state
          */
 
-        IProducer<byte[], byte[]> getProducer()
+        public IProducer<byte[], byte[]> getProducer()
         {
             return producer;
         }

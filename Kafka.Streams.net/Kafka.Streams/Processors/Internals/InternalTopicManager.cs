@@ -132,7 +132,7 @@ namespace Kafka.Streams.Processor.Internals
                 //        }
                 //        catch (Exception executionException)
                 //        {
-                //            Throwable cause = executionException.getCause();
+                //            Exception cause = executionException.getCause();
                 //            if (cause is TopicExistsException)
                 //            {
                 //                // This topic didn't exist earlier or its leader not known before; just retain it for next round of validation.
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Processor.Internals
             //    }
             //    catch (ExecutionException couldNotDescribeTopicException)
             //    {
-            //        Throwable cause = couldNotDescribeTopicException.getCause();
+            //        Exception cause = couldNotDescribeTopicException.getCause();
             //        if (cause is UnknownTopicOrPartitionException ||
             //            cause is LeaderNotAvailableException)
             //        {

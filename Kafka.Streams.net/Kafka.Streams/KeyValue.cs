@@ -52,13 +52,13 @@ namespace Kafka.Streams
                 return true;
             }
 
-//            if (!(obj is KeyValue))
+            if (!(obj is KeyValue<K, V>))
             {
                 return false;
             }
 
-            //KeyValue other = (KeyValue)obj;
-            return false; // key.Equals(other.key) && value.Equals(other.value);
+            KeyValue<K, V> other = (KeyValue<K, V>)obj;
+            return key.Equals(other.key) && value.Equals(other.value);
         }
 
         public override int GetHashCode()

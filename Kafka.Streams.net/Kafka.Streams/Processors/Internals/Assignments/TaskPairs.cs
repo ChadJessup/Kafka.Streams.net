@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals.Assignment
+namespace Kafka.Streams.Processor.Internals.Assignments
 {
     public class TaskPairs
     {

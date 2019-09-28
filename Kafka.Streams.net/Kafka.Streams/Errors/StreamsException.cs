@@ -9,7 +9,7 @@ namespace Kafka.Streams.Errors
     public class StreamsException : KafkaException
     {
         private readonly string message = "";
-        private readonly Exception exception = null;
+        private readonly Exception exception;
 
         public StreamsException(Error error)
             : base(error)

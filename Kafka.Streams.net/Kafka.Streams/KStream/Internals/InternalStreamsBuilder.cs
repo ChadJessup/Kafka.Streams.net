@@ -20,6 +20,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processor;
+using Kafka.Streams.Processor.Interfaces;
 using Kafka.Streams.Processor.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
@@ -80,7 +81,7 @@ namespace Kafka.Streams.KStream.Internals
             string name = new NamedInternal(consumed.name).OrElseGenerateWithPrefix(this, KStream.SourceName);
             StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
 
-            AddGraphNode(root, streamSourceNode);
+            this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { root }, streamSourceNode);
 
             return new KStream<K, V>(
                 name,
@@ -96,10 +97,10 @@ namespace Kafka.Streams.KStream.Internals
             Regex topicPattern,
             ConsumedInternal<K, V> consumed)
         {
-            //string name = NewProcessorName(KStream.SourceName);
-            //            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
+            string name = NewProcessorName(KStream.SourceName);
+            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
-            //addGraphNode(root, streamPatternSourceNode);
+            AddGraphNode<K, V>(root, streamPatternSourceNode);
 
             return null;
             //new KStream<K, V>(
@@ -188,63 +189,65 @@ namespace Kafka.Streams.KStream.Internals
             => $"{prefix}{KTable.StateStoreName}{index++,3:D3}";
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void AddStateStore(IStoreBuilder builder)
+        public void AddStateStore<K, V, T>(IStoreBuilder<T> builder)
+            where T : IStateStore
         {
-            //AddGraphNode(root, new StateStoreNode(builder));
+            AddGraphNode<K, V>(root, new StateStoreNode<T>(builder));
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddGlobalStore<K, V, T>(
-            IStoreBuilder storeBuilder,
+            IStoreBuilder<T> storeBuilder,
             string sourceName,
             string topic,
             ConsumedInternal<K, V> consumed,
             string processorName,
             IProcessorSupplier<K, V> stateUpdateSupplier)
+            where T : IStateStore
         {
+            StreamsGraphNode globalStoreNode = new GlobalStoreNode<K, V, T>(
+                storeBuilder,
+                sourceName,
+                topic,
+                consumed,
+                processorName,
+                stateUpdateSupplier);
 
-            //StreamsGraphNode globalStoreNode = new GlobalStoreNode<K, V, T>(
-            //    storeBuilder,
-            //    sourceName,
-            //    topic,
-            //    consumed,
-            //    processorName,
-            //    stateUpdateSupplier);
-
-            //addGraphNode(root, globalStoreNode);
+            this.AddGraphNode<K, V>(root, globalStoreNode);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void AddGlobalStore<K, V>(
-            //            IStoreBuilder<IKeyValueStore<K, V>> storeBuilder,
+        public void AddGlobalStore<K, V, T>(
+            IStoreBuilder<T> storeBuilder,
             string topic,
             ConsumedInternal<K, V> consumed,
             IProcessorSupplier<K, V> stateUpdateSupplier)
+            where T : IStateStore
         {
             // explicitly disable logging for global stores
-            //storeBuilder.withLoggingDisabled();
-            //string sourceName = NewProcessorName(KStream.SourceName);
-            //string processorName = NewProcessorName(KTable<K, V>.SourceName);
-            //addGlobalStore(storeBuilder,
-            //                sourceName,
-            //                topic,
-            //                consumed,
-            //                processorName,
-            //                stateUpdateSupplier);
+            storeBuilder.withLoggingDisabled();
+            string sourceName = NewProcessorName(KStream.SourceName);
+            string processorName = NewProcessorName(KTable.SourceName);
+
+            this.AddGlobalStore<K, V, T>(
+                storeBuilder,
+                sourceName,
+                topic,
+                consumed,
+                processorName,
+                stateUpdateSupplier);
         }
 
-        public void AddGraphNode(
-            StreamsGraphNode parent,
-            StreamsGraphNode child)
+        public void AddGraphNode<K, V>(StreamsGraphNode parent, StreamsGraphNode child)
         {
             parent = parent ?? throw new ArgumentNullException(nameof(parent));
             child = child ?? throw new ArgumentNullException(nameof(child));
 
             parent.AddChild(child);
-            MaybeAddNodeForOptimizationMetadata(child);
+            MaybeAddNodeForOptimizationMetadata<K, V>(child);
         }
 
-        public void AddGraphNode(
+        public void AddGraphNode<K, V>(
             HashSet<StreamsGraphNode> parents,
             StreamsGraphNode child)
         {
@@ -258,11 +261,11 @@ namespace Kafka.Streams.KStream.Internals
 
             foreach (StreamsGraphNode parent in parents)
             {
-                AddGraphNode(parent, child);
+                AddGraphNode<K, V>(parent, child);
             }
         }
 
-        private void MaybeAddNodeForOptimizationMetadata(StreamsGraphNode node)
+        private void MaybeAddNodeForOptimizationMetadata<K, V>(StreamsGraphNode node)
         {
             node.SetBuildPriority(buildPriorityIndex++);
 
@@ -290,10 +293,10 @@ namespace Kafka.Streams.KStream.Internals
             {
                 mergeNodes.Add(node);
             }
-            //else if (node is TableSourceNode)
-            //{
-            //    tableSourceNodes.Add(node);
-            //}
+            else if (node is TableSourceNode<K, V>)
+            {
+                tableSourceNodes.Add(node);
+            }
         }
 
         // use this method for testing only

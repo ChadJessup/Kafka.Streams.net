@@ -321,23 +321,28 @@ namespace Kafka.Streams.State.Internals
          *
          * @return an approximate count of key-value mappings in the store.
          */
-        public long approximateNumEntries()
+        public long approximateNumEntries
         {
-            validateStoreOpen();
-            long numEntries;
-            try
+            get
             {
-                numEntries = dbAccessor.approximateNumEntries();
+                validateStoreOpen();
+                long numEntries;
+                try
+                {
+                    numEntries = dbAccessor.approximateNumEntries();
+                }
+                catch (RocksDbException e)
+                {
+                    throw new ProcessorStateException("Error fetching property from store " + name, e);
+                }
+                
+                if (isOverflowing(numEntries))
+                {
+                    return long.MaxValue;
+                }
+             
+                return numEntries;
             }
-            catch (RocksDbException e)
-            {
-                throw new ProcessorStateException("Error fetching property from store " + name, e);
-            }
-            if (isOverflowing(numEntries))
-            {
-                return long.MaxValue;
-            }
-            return numEntries;
         }
 
         private bool isOverflowing(long value)

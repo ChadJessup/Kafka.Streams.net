@@ -11,10 +11,10 @@ namespace Kafka.Streams.Processor.Internals
 {
     public class AssignedStreamsTasks : AssignedTasks<StreamTask>, IRestoringTasks
     {
-        private Dictionary<TaskId, StreamTask> restoring = new Dictionary<TaskId, StreamTask>();
-        private HashSet<TopicPartition> restoredPartitions = new HashSet<TopicPartition>();
-        private Dictionary<TopicPartition, StreamTask> restoringByPartition = new Dictionary<TopicPartition, StreamTask>();
-        private ILogger log;
+        private readonly Dictionary<TaskId, StreamTask> restoring = new Dictionary<TaskId, StreamTask>();
+        private readonly HashSet<TopicPartition> restoredPartitions = new HashSet<TopicPartition>();
+        private readonly Dictionary<TopicPartition, StreamTask> restoringByPartition = new Dictionary<TopicPartition, StreamTask>();
+
         public AssignedStreamsTasks(LogContext logContext)
             : base(logContext, "stream task")
         {
@@ -26,16 +26,16 @@ namespace Kafka.Streams.Processor.Internals
             return restoringByPartition[partition];
         }
 
-
-        List<StreamTask> allTasks()
+        public override List<StreamTask> allTasks()
         {
             List<StreamTask> tasks = base.allTasks();
             tasks.AddRange(restoring.Values);
+
             return tasks;
         }
 
 
-        public HashSet<TaskId> allAssignedTaskIds()
+        public override HashSet<TaskId> allAssignedTaskIds()
         {
             HashSet<TaskId> taskIds = base.allAssignedTaskIds();
             taskIds.UnionWith(restoring.Keys);
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processor.Internals
         }
 
 
-        bool allTasksRunning()
+        public override bool allTasksRunning()
         {
             return base.allTasksRunning() && !restoring.Any();
         }
@@ -203,10 +203,13 @@ namespace Kafka.Streams.Processor.Internals
         public Dictionary<TopicPartition, long> recordsToDelete()
         {
             Dictionary<TopicPartition, long> recordsToDelete = new Dictionary<TopicPartition, long>();
-            //foreach (var task in running.Values)
-            //{
-            //    recordsToDelete.add(task.purgableOffsets());
-            //}
+            foreach (var task in running.Values)
+            {
+                foreach (var record in task.purgableOffsets())
+                {
+                    recordsToDelete.Add(record.Key, record.Value);
+                }
+            }
 
             return recordsToDelete;
         }

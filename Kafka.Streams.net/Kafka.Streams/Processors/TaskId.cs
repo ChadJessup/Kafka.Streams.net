@@ -1,23 +1,8 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor.Internals.Assignment;
 using System;
+using System.IO;
+using System.Text;
 
 namespace Kafka.Streams.Processor
 {
@@ -26,7 +11,6 @@ namespace Kafka.Streams.Processor
      */
     public class TaskId : IComparable<TaskId>
     {
-
         /** The ID of the topic group. */
         public int topicGroupId;
         /** The ID of the partition. */
@@ -49,6 +33,7 @@ namespace Kafka.Streams.Processor
         public static TaskId parse(string taskIdStr)
         {
             int index = taskIdStr.IndexOf('_');
+
             if (index <= 0 || index + 1 >= taskIdStr.Length)
             {
                 throw new TaskIdFormatException(taskIdStr);
@@ -56,13 +41,12 @@ namespace Kafka.Streams.Processor
 
             try
             {
-
                 int topicGroupId = int.Parse(taskIdStr.Substring(0, index));
                 int partition = int.Parse(taskIdStr.Substring(index + 1));
 
                 return new TaskId(topicGroupId, partition);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new TaskIdFormatException(taskIdStr);
             }
@@ -71,18 +55,22 @@ namespace Kafka.Streams.Processor
         /**
          * @throws IOException if cannot write to output stream
          */
-        public void writeTo(DataOutputStream @out)
+        public void writeTo(Stream outputStream)
         {
-            @out.writeInt(topicGroupId);
-            @out.writeInt(partition);
+            var bw = new BinaryWriter(outputStream, Encoding.UTF8, leaveOpen: true);
+
+            bw.Write(topicGroupId);
+            bw.Write(partition);
         }
 
         /**
          * @throws IOException if cannot read from input stream
          */
-        public static TaskId readFrom(DataInputStream input)
+        public static TaskId readFrom(Stream input)
         {
-            return new TaskId(input.readInt(), input.readInt());
+            var bw = new BinaryReader(input, Encoding.UTF8, leaveOpen: true);
+
+            return new TaskId(bw.ReadInt32(), bw.ReadInt32());
         }
 
         public void writeTo(ByteBuffer buf)
@@ -116,18 +104,19 @@ namespace Kafka.Streams.Processor
             }
         }
 
-
         public override int GetHashCode()
         {
             long n = ((long)topicGroupId << 32) | (long)partition;
             return (int)(n % 0xFFFFFFFFL);
         }
 
-
         public int CompareTo(TaskId other)
         {
             int compare = this.topicGroupId.CompareTo(other.topicGroupId);
-            return compare != 0 ? compare : this.partition.CompareTo(other.partition);
+
+            return compare != 0
+                ? compare
+                : this.partition.CompareTo(other.partition);
         }
     }
 }

@@ -18,7 +18,7 @@
 //using Microsoft.Extensions.Logging;
 //using System.Collections.Generic;
 
-//namespace Kafka.Streams.Processor.Internals.Assignment
+//namespace Kafka.Streams.Processor.Internals.Assignments
 //{
 //    public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId>
 //    {

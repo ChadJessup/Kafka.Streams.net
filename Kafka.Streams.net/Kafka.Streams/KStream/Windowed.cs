@@ -12,6 +12,9 @@ namespace Kafka.Streams.KStream
             this.window = window;
         }
 
+        public static implicit operator K (Windowed<K> windowed)
+            => windowed.key;
+
         public override string ToString()
         {
             return "[" + key + "@" + window.start() + "/" + window.end() + "]";

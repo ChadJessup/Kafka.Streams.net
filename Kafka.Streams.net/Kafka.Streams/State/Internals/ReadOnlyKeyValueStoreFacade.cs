@@ -1,33 +1,32 @@
-//namespace Kafka.Streams.State.Internals
-//{
-//    public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
-//    {
-//        protected ITimestampedKeyValueStore<K, V> inner;
+using Kafka.Streams.State.Interfaces;
 
-//        protected ReadOnlyKeyValueStoreFacade(ITimestampedKeyValueStore<K, V> store)
-//        {
-//            inner = store;
-//        }
+namespace Kafka.Streams.State.Internals
+{
+    public class ReadOnlyKeyValueStoreFacade<K, V> : IReadOnlyKeyValueStore<K, V>
+    {
+        protected ITimestampedKeyValueStore<K, V> inner;
 
-//        public override V get(K key)
-//        {
-//            return getValueOrNull(inner[key]);
-//        }
+        public ReadOnlyKeyValueStoreFacade(ITimestampedKeyValueStore<K, V> store)
+        {
+            inner = store;
+        }
 
-//        public override IKeyValueIterator<K, V> range(K from,
-//                                            K to)
-//        {
-//            return new KeyValueIteratorFacade<>(inner.range(from, to));
-//        }
+        public V get(K key)
+        {
+            return ValueAndTimestamp<V>.getValueOrNull(inner.get(key));
+        }
 
-//        public override IKeyValueIterator<K, V> all()
-//        {
-//            return new KeyValueIteratorFacade<>(inner.all());
-//        }
+        public IKeyValueIterator<K, V> range(K from, K to)
+        {
+            return new KeyValueIteratorFacade<K, V>(inner.range(from, to));
+        }
 
-//        public override long approximateNumEntries()
-//        {
-//            return inner.approximateNumEntries();
-//        }
-//    }
-//}
+        public IKeyValueIterator<K, V> all()
+        {
+            return new KeyValueIteratorFacade<K, V>(inner.all());
+        }
+
+        public long approximateNumEntries
+            => inner.approximateNumEntries;
+    }
+}

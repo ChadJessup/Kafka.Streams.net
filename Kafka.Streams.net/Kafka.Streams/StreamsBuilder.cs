@@ -194,7 +194,7 @@ namespace Kafka.Streams
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> stream<K, V>(
-                IReadOnlyList<string> topics,
+                IEnumerable<string> topics,
                 Consumed<K, V> consumed)
             {
                 topics = topics ?? throw new ArgumentNullException("topics can't be null", nameof(topics));

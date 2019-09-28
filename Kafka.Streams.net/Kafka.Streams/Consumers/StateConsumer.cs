@@ -74,7 +74,7 @@ namespace Kafka.Streams.Consumer
         {
             try
             {
-                ConsumerRecords<byte[], byte[]> received = globalConsumer.poll(pollTime);
+                ConsumerRecords<byte[], byte[]> received = globalConsumer.Poll(pollTime);
 
                 foreach (ConsumeResult<byte[], byte[]> record in received)
                 {

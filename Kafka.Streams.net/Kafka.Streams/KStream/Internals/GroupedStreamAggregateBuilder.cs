@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
                     repartitionNode = repartitionNodeBuilder.Build();
                 }
 
-                builder.AddGraphNode(parentNode, repartitionNode);
+                builder.AddGraphNode<K, V>(parentNode, repartitionNode);
                 parentNode = repartitionNode;
             }
 
@@ -108,7 +108,7 @@ namespace Kafka.Streams.KStream.Internals
                    new ProcessorParameters<K, V>(aggregateSupplier, aggFunctionName),
                    storeBuilder);
 
-            builder.AddGraphNode(parentNode, statefulProcessorNode);
+            builder.AddGraphNode<K, V>(parentNode, statefulProcessorNode);
 
             return new KTable<KR, object, VR>(
                 aggFunctionName,

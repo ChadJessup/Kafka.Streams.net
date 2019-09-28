@@ -25,9 +25,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class StateStoreNode<T> : StreamsGraphNode
         where T : IStateStore
     {
-        protected T storeBuilder;
+        protected IStoreBuilder<T> storeBuilder;
 
-        public StateStoreNode(T storeBuilder)
+        public StateStoreNode(IStoreBuilder<T> storeBuilder)
             : base(storeBuilder.name)
         {
             this.storeBuilder = storeBuilder;

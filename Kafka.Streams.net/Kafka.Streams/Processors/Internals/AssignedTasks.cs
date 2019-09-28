@@ -14,14 +14,14 @@ namespace Kafka.Streams.Processor.Internals
         where T : ITask
     {
         protected ILogger log { get; }
-        private string taskTypeName;
-        private Dictionary<TaskId, T> created = new Dictionary<TaskId, T>();
-        private Dictionary<TaskId, T> suspended = new Dictionary<TaskId, T>();
-        private HashSet<TaskId> previousActiveTasks = new HashSet<TaskId>();
+        private readonly string taskTypeName;
+        private readonly Dictionary<TaskId, T> created = new Dictionary<TaskId, T>();
+        private readonly Dictionary<TaskId, T> suspended = new Dictionary<TaskId, T>();
+        private readonly HashSet<TaskId> previousActiveTasks = new HashSet<TaskId>();
 
         // IQ may access this map.
         public ConcurrentDictionary<TaskId, T> running = new ConcurrentDictionary<TaskId, T>();
-        private Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
+        private readonly Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
 
         public AssignedTasks(
             LogContext logContext,
@@ -53,15 +53,16 @@ namespace Kafka.Streams.Processor.Internals
                 KeyValuePair<TaskId, T> entry = it.Current;
                 try
                 {
-
-                    if (!entry.Value.initializeStateStores())
+                    if (!entry.Value.initializeStateStores() && typeof(T) == typeof(StreamTask) && entry.Value != null)
                     {
-                        log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
-                        ((AssignedStreamsTasks)(object)this).addToRestoring(entry.Value);
+                        if (entry.Value is StreamTask valueAsTask)
+                        {
+                            log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
+                            ((AssignedStreamsTasks)(object)this).addToRestoring(valueAsTask);
+                        }
                     }
                     else
                     {
-
                         transitionToRunning(entry.Value);
                     }
 
@@ -75,7 +76,7 @@ namespace Kafka.Streams.Processor.Internals
             }
         }
 
-        public bool allTasksRunning()
+        public virtual bool allTasksRunning()
         {
             return !created.Any() || !suspended.Any();
         }
@@ -254,7 +255,6 @@ namespace Kafka.Streams.Processor.Internals
             return running;
         }
 
-
         public override string ToString()
         {
             return ToString("");
@@ -285,16 +285,18 @@ namespace Kafka.Streams.Processor.Internals
             builder.Append("\n");
         }
 
-        public List<T> allTasks()
+        public virtual List<T> allTasks()
         {
             List<T> tasks = new List<T>();
+
             tasks.AddRange(running.Values);
             tasks.AddRange(suspended.Values);
             tasks.AddRange(created.Values);
+
             return tasks;
         }
 
-        public HashSet<TaskId> allAssignedTaskIds()
+        public virtual HashSet<TaskId> allAssignedTaskIds()
         {
             HashSet<TaskId> taskIds = new HashSet<TaskId>();
             taskIds.UnionWith(running.Keys);
@@ -377,9 +379,9 @@ namespace Kafka.Streams.Processor.Internals
             while (standByTaskIterator.MoveNext())
             {
                 T suspendedTask = standByTaskIterator.Current;
-                if (!newAssignment.ContainsKey(suspendedtask.id) || !suspendedTask.partitions.Equals(newAssignment[suspendedtask.id]))
+                if (!newAssignment.ContainsKey(suspendedTask.id) || !suspendedTask.partitions.Equals(newAssignment[suspendedTask.id]))
                 {
-                    log.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedtask.id);
+                    log.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedTask.id);
                     try
                     {
 
@@ -387,7 +389,7 @@ namespace Kafka.Streams.Processor.Internals
                     }
                     catch (Exception e)
                     {
-                        log.LogError("Failed to Remove suspended {} {} due to the following error:", taskTypeName, suspendedtask.id, e);
+                        log.LogError("Failed to Remove suspended {} {} due to the following error:", taskTypeName, suspendedTask.id, e);
                     }
                     finally
                     {

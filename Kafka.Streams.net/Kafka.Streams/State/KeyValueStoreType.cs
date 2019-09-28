@@ -1,42 +1,20 @@
-﻿
+﻿using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
+using System;
+using System.Collections.Generic;
 
+namespace Kafka.Streams.State
+{
+    public class KeyValueStoreType<K, V> : QueryableStoreTypeMatcher<IReadOnlyKeyValueStore<K, V>>
+    {
+        public KeyValueStoreType()
+            : base(new HashSet<Type> { typeof(IReadOnlyKeyValueStore<K, V>) })
+        {
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//namespace Kafka.Streams.State
-//{
-
-//    public class KeyValueStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlyKeyValueStore<K, V>>
-//    {
-
-//        KeyValueStoreType()
-//        {
-//            base(Collections.singleton(ReadOnlyKeyValueStore));
-//        }
-
-
-//        public IReadOnlyKeyValueStore<K, V> create(StateStoreProvider storeProvider,
-//                                                  string storeName)
-//        {
-//            return new CompositeReadOnlyKeyValueStore<>(storeProvider, this, storeName);
-//        }
-
-//    }
-//}
+        public override IReadOnlyKeyValueStore<K, V> create(IStateStoreProvider storeProvider, string storeName)
+        {
+            return null; // new CompositeReadOnlyKeyValueStore<K, V>(storeProvider, this, storeName);
+        }
+    }
+}

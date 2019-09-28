@@ -13,7 +13,7 @@ namespace Kafka.Streams.Processor.Internals
     public class StandbyTask : AbstractTask
     {
         public Dictionary<TopicPartition, long> checkpointedOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
-        private Sensor closeTaskSensor;
+        private readonly Sensor closeTaskSensor;
 
         /**
          * Create {@link StandbyTask} with its assigned partitions
@@ -26,19 +26,20 @@ namespace Kafka.Streams.Processor.Internals
          * @param metrics        the {@link IStreamsMetrics} created by the thread
          * @param stateDirectory the {@link StateDirectory} created by the thread
          */
-        StandbyTask(TaskId id,
-                    List<TopicPartition> partitions,
-                    ProcessorTopology topology,
-                    IConsumer<byte[], byte[]> consumer,
-                    IChangelogReader changelogReader,
-                    StreamsConfig config,
-                    StreamsMetricsImpl metrics,
-                    StateDirectory stateDirectory)
+        public StandbyTask(
+            TaskId id,
+            List<TopicPartition> partitions,
+            ProcessorTopology topology,
+            IConsumer<byte[], byte[]> consumer,
+            IChangelogReader changelogReader,
+            StreamsConfig config,
+            StreamsMetricsImpl metrics,
+            StateDirectory stateDirectory)
             : base(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config)
         {
 
             closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
-            processorContext = new StandbyContextImpl(id, config, stateMgr, metrics);
+            processorContext = new StandbyContextImpl<byte[], byte[]>(id, config, stateMgr, metrics);
         }
 
 
@@ -46,7 +47,7 @@ namespace Kafka.Streams.Processor.Internals
         {
             log.LogTrace("Initializing state stores");
             registerStateStores();
-            checkpointedOffsets = Collections.unmodifiableMap(stateMgr.checkpointed());
+            checkpointedOffsets = stateMgr.checkpointed();
             processorContext.initialize();
             taskInitialized = true;
             return true;
@@ -102,7 +103,7 @@ namespace Kafka.Streams.Processor.Internals
         private void flushAndCheckpointState()
         {
             stateMgr.flush();
-            stateMgr.checkpoint(Collections.emptyMap());
+            stateMgr.checkpoint(new Dictionary<TopicPartition, long>());
         }
 
         /**
@@ -120,7 +121,9 @@ namespace Kafka.Streams.Processor.Internals
             {
                 return;
             }
+
             log.LogDebug("Closing");
+
             try
             {
 

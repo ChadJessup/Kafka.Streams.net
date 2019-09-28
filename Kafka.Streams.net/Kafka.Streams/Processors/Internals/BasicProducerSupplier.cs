@@ -13,6 +13,12 @@ namespace Kafka.Streams.Processor.Internals
         private readonly IProducer<byte[], byte[]> threadProducer;
         private readonly string applicationId;
         private readonly IKafkaClientSupplier clientSupplier;
+        private readonly IProducer<byte[], byte[]> producer;
+
+        public BasicProducerSupplier(IProducer<byte[], byte[]> producer)
+        {
+            this.producer = producer;
+        }
 
         public BasicProducerSupplier(
             TaskId id,
@@ -29,14 +35,16 @@ namespace Kafka.Streams.Processor.Internals
             this.applicationId = applicationId;
             this.clientSupplier = clientSupplier;
         }
+
         public IProducer<byte[], byte[]> get()
         {
             // eos
             if (threadProducer == null)
             {
-                Dictionary<string, object> producerConfigs = config.getProducerConfigs(StreamThread.getTaskProducerClientId(threadClientId, id));
+                var producerConfigs = config.getProducerConfigs(StreamThread.getTaskProducerClientId(threadClientId, id));
                 //    log.LogInformation("Creating producer client for task {}", id);
                 producerConfigs.Add("transactional.id", applicationId + "-" + id);
+
                 return clientSupplier.getProducer(producerConfigs);
             }
 

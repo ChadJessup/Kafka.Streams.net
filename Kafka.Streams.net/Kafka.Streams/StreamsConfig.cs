@@ -1,10 +1,11 @@
 using Confluent.Kafka;
+using Kafka.Common.Extensions;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Kafka.Streams
@@ -55,7 +56,7 @@ namespace Kafka.Streams
      * When increasing {@link ProducerConfig#MAX_BLOCK_MS_CONFIG} to be more resilient to non-available brokers you should also
      * increase {@link ConsumerConfig#MAX_POLL_INTERVAL_MS_CONFIG} using the following guidance:
      * <pre>
-     *     max.poll.interval.ms &gt; max.block.ms
+     *     max.poll.interval.ms > max.block.ms
      * </pre>
      *
      *
@@ -82,22 +83,33 @@ namespace Kafka.Streams
      * @see ConsumerConfig
      * @see ProducerConfig
      */
-    public class StreamsConfig : ConsumerConfig
+    public class StreamsConfig : ClientConfig
     {
-        private static readonly ILogger logger = new LoggerFactory().CreateLogger<StreamsConfig>();
+        private readonly Dictionary<string, string> originalValues = new Dictionary<string, string>();
+        
+        private static readonly string[] NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_AUTO_COMMIT_CONFIG };
+        private static readonly string[] NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ISOLATION_LEVEL_CONFIG };
+        private static readonly string[] NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_IDEMPOTENCE_CONFIG, StreamsConfigPropertyNames.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION };
 
         /// <summary>
-        /// Initialize a new empty <see cref="StreamsConfig" /> instance.
+        /// Initialize a new <see cref="StreamsConfig" /> instance, with Kafka Streams defaults applied.
         /// </summary>
-        public StreamsConfig() { }
+        public StreamsConfig()
+            : base()
+        {
+            this.SetDefaultConfiguration();
+        }
 
         /// <summary>
         /// Initialize a new <see cref="StreamsConfig" /> instance based on
         /// an existing <see cref="ClientConfig" /> instance.
         /// </summary>
         public StreamsConfig(ClientConfig config)
+            : this()
         {
-            this.properties = new Dictionary<string, string>(config.ToDictionary(a => a.Key, a => a.Value));
+            this.originalValues = new Dictionary<string, string>(config);
+
+            this.properties = this.MergeConfigurations(this.properties, config);
         }
 
         /// <summary>
@@ -105,31 +117,34 @@ namespace Kafka.Streams
         /// an existing key/value pair collection.
         /// </summary>
         public StreamsConfig(IEnumerable<KeyValuePair<string, string>> config)
+            : this()
         {
-            this.properties = new Dictionary<string, string>(config.ToDictionary(a => a.Key, a => a.Value));
+            this.originalValues = new Dictionary<string, string>(config);
+
+            this.MergeConfigurations(this.properties, config.ToDictionary(c => c.Key, c => c.Value));
         }
 
         public string ApplicationId
         {
-            get => Get(StreamsConfigPropertyNames.ApplicationId);
+            get => this.Get(StreamsConfigPropertyNames.ApplicationId);
             set => this.SetObject(StreamsConfigPropertyNames.ApplicationId, value);
         }
 
         //public string ClientId
         //{
-        //    get => Get(StreamsConfigPropertyNames.ClientId);
+        //    get => this.Get(StreamsConfigPropertyNames.ClientId);
         //    set => this.SetObject(StreamsConfigPropertyNames.ClientId, value);
         //}
 
         public Type DefaultKeySerde
         {
-            get => Type.GetType(Get(StreamsConfigPropertyNames.DefaultKeySerdeClass));
+            get => Type.GetType(this.Get(StreamsConfigPropertyNames.DefaultKeySerdeClass));
             set => this.SetObject(StreamsConfigPropertyNames.DefaultKeySerdeClass, value);
         }
 
         public Type DefaultValueSerde
         {
-            get => Type.GetType(Get(StreamsConfigPropertyNames.DefaultValueSerdeClass));
+            get => Type.GetType(this.Get(StreamsConfigPropertyNames.DefaultValueSerdeClass));
             set => this.SetObject(StreamsConfigPropertyNames.DefaultValueSerdeClass, value);
         }
 
@@ -143,6 +158,43 @@ namespace Kafka.Streams
         {
             get => this.getLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering) ?? 10485760L;
             set => this.Set(StreamsConfigPropertyNames.CacheMaxBytesBuffering, value.ToString());
+        }
+
+        public string StateStoreDirectory
+        {
+            get => this.getString(StreamsConfigPropertyNames.STATE_DIR_CONFIG) ?? Path.Combine(Path.GetTempPath(), "kafka-streams");
+            set => this.Set(StreamsConfigPropertyNames.STATE_DIR_CONFIG, value);
+        }
+
+        public bool EnableAutoCommit { get; private set; }
+        public AutoOffsetReset AutoOffsetReset { get; set; }
+
+        private void SetDefaultConfiguration()
+        {
+            this.EnableAutoCommit = false;
+
+            // TODO: make sure this and the producer configs that are required cannot be overridden:
+            // NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS, etc
+        }
+
+
+        private Dictionary<string, string> MergeConfigurations(IDictionary<string, string> properties, IEnumerable<KeyValuePair<string, string>> config)
+        {
+            var mergedConfig = new Dictionary<string, string>(properties);
+
+            foreach (var c in config)
+            {
+                if (mergedConfig.ContainsKey(c.Key))
+                {
+                    mergedConfig[c.Key] = c.Value;
+                }
+                else
+                {
+                    mergedConfig.Add(c.Key, c.Value);
+                }
+            }
+
+            return mergedConfig;
         }
 
         /**
@@ -261,24 +313,24 @@ namespace Kafka.Streams
             return configUpdates;
         }
 
-        private Dictionary<string, object> GetCommonConsumerConfigs()
+        private Dictionary<string, string> GetCommonConsumerConfigs()
         {
-            //Dictionary<string, object> clientProvidedProps = getClientPropsWithPrefix(CONSUMER_PREFIX, ConsumerConfig.configNames());
+            var clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, new ConsumerConfig());
 
-            //checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
-            //checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
+            CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
+            CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
 
-            Dictionary<string, object> consumerProps = new Dictionary<string, object>(/*eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES*/);
-            //consumerProps.putAll(getClientCustomProps());
-            //consumerProps.putAll(clientProvidedProps);
+            var consumerProps = new Dictionary<string, string>(/*eosEnabled ? CONSUMER_EOS_OVERRIDES : CONSUMER_DEFAULT_OVERRIDES*/);
+            consumerProps.PutAll(getClientCustomProps());
+            consumerProps.PutAll(clientProvidedProps);
 
-            //// bootstrap.servers should be from StreamsConfig
-            //consumerProps.Add(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG];
+            // bootstrap.servers should be from StreamsConfig
+            consumerProps.Add(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, this.originalValues[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG]);
 
             return consumerProps;
         }
 
-        private void CheckIfUnexpectedUserSpecifiedConsumerConfig(Dictionary<string, object> clientProvidedProps, string[] nonConfigurableConfigs)
+        private void CheckIfUnexpectedUserSpecifiedConsumerConfig(Dictionary<string, string> clientProvidedProps, string[] nonConfigurableConfigs)
         {
             // Streams does not allow users to configure certain consumer/producer configurations, for example,
             // enable.auto.commit. In cases where user tries to override such non-configurable
@@ -376,13 +428,13 @@ namespace Kafka.Streams
          * @param threadIdx    stream thread index
          * @return Map of the consumer configuration.
          */
-        public Dictionary<string, object> GetMainConsumerConfigs(string groupId, string clientId, int threadIdx)
+        public Dictionary<string, string> GetMainConsumerConfigs(string groupId, string clientId, int threadIdx)
         {
-            Dictionary<string, object> consumerProps = GetCommonConsumerConfigs();
+            Dictionary<string, string> consumerProps = GetCommonConsumerConfigs();
 
             //// Get main consumer override configs
-            //Dictionary<string, object> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
-            //foreach (KeyValuePair<string, object> entry in mainConsumerProps)
+            //Dictionary<string, string> mainConsumerProps = originalsWithPrefix(MAIN_CONSUMER_PREFIX);
+            //foreach (KeyValuePair<string, string> entry in mainConsumerProps)
             //{
             //    consumerProps.Add(entry.Key, entry.Value);
             //}
@@ -454,22 +506,27 @@ namespace Kafka.Streams
          * @param clientId clientId
          * @return Map of the restore consumer configuration.
          */
-        public Dictionary<string, object> GetRestoreConsumerConfigs(string clientId)
+        public Dictionary<string, string> GetRestoreConsumerConfigs(string clientId)
         {
-            Dictionary<string, object> baseConsumerProps = GetCommonConsumerConfigs();
+            var baseConsumerProps = GetCommonConsumerConfigs();
 
-            //// Get restore consumer override configs
-            //Dictionary<string, object> restoreConsumerProps = originalsWithPrefix(RESTORE_CONSUMER_PREFIX);
-            //foreach (KeyValuePair<string, object> entry in restoreConsumerProps)
-            //{
-            //    baseConsumerProps.Add(entry.Key, entry.Value);
-            //}
+            // Get restore consumer override configs
+            var restoreConsumerProps = originalsWithPrefix(StreamsConfigPropertyNames.RestoreConsumerPrefix);
+            foreach (var entry in restoreConsumerProps)
+            {
+                baseConsumerProps.Add(entry.Key, entry.Value);
+            }
 
-            //// no need to set group id for a restore consumer
-            //baseConsumerProps.Remove(ConsumerConfig.GROUP_ID_CONFIG);
-            ////.Add client id with stream client id prefix
-            //baseConsumerProps.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
-            //baseConsumerProps.Add(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "none");
+            // no need to set group id for a restore consumer
+            // C# library throws if GroupId isn't set...
+            // if (!string.IsNullOrWhiteSpace(this.GroupId) && baseConsumerProps.ContainsKey(this.GroupId))
+            // {
+            //     baseConsumerProps.Remove(this.GroupId);
+            // }
+
+            // add client id with stream client id prefix
+            baseConsumerProps.Add(StreamsConfigPropertyNames.ClientId, clientId);
+            this.AutoOffsetReset = AutoOffsetReset.Earliest;
 
             return baseConsumerProps;
         }
@@ -487,9 +544,9 @@ namespace Kafka.Streams
          * @param clientId clientId
          * @return Map of the global consumer configuration.
          */
-        public Dictionary<string, object> GetGlobalConsumerConfigs(string clientId)
+        public Dictionary<string, string> GetGlobalConsumerConfigs(string clientId)
         {
-            Dictionary<string, object> baseConsumerProps = GetCommonConsumerConfigs();
+            Dictionary<string, string> baseConsumerProps = GetCommonConsumerConfigs();
 
             //// Get global consumer override configs
             //Dictionary<string, object> globalConsumerProps = originalsWithPrefix(GLOBAL_CONSUMER_PREFIX);
@@ -516,20 +573,20 @@ namespace Kafka.Streams
          * @param clientId clientId
          * @return Map of the producer configuration.
          */
-        public Dictionary<string, object> getProducerConfigs(string clientId)
+        public Dictionary<string, string> getProducerConfigs(string clientId)
         {
-            Dictionary<string, object> clientProvidedProps = null; // getClientPropsWithPrefix(PRODUCER_PREFIX, ProducerConfig.configNames());
+            Dictionary<string, string> clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
 
-            //            checkIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
+            CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
 
             // generate producer configs from original properties and overridden maps
-            Dictionary<string, object> props = new Dictionary<string, object>(/*eosEnabled ? PRODUCER_EOS_OVERRIDES : PRODUCER_DEFAULT_OVERRIDES*/);
-            //props.putAll(getClientCustomProps());
-            //props.putAll(clientProvidedProps);
+            var props = new Dictionary<string, string>(/*eosEnabled ? PRODUCER_EOS_OVERRIDES : PRODUCER_DEFAULT_OVERRIDES*/);
+            props.PutAll(getClientCustomProps());
+            props.PutAll(clientProvidedProps);
 
-            //props.Add(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, originals()[BOOTSTRAP_SERVERS_CONFIG]);
-            ////.Add client id with stream client id prefix
-            //props.Add(CommonClientConfigs.CLIENT_ID_CONFIG, clientId);
+            props.Add(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, this.originalValues[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG]);
+            // add client id with stream client id prefix
+            props.Add(StreamsConfigPropertyNames.ClientId, clientId);
 
             return props;
         }
@@ -539,27 +596,41 @@ namespace Kafka.Streams
          * @param clientId clientId
          * @return Map of the admin client configuration.
          */
-        public Dictionary<string, object> getAdminConfigs(string clientId)
+        public Dictionary<string, string> getAdminConfigs(string clientId)
         {
-            //Dictionary<string, object> clientProvidedProps = getClientPropsWithPrefix(StreamConfigPropertyNames.AdminClientPrefix, new AdminClientConfig());
+            Dictionary<string, string> clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig());
 
-            Dictionary<string, object> props = new Dictionary<string, object>();
-            //props.putAll(getClientCustomProps());
-            //props.putAll(clientProvidedProps);
+            Dictionary<string, string> props = new Dictionary<string, string>();
+
+            foreach (var prop in getClientCustomProps())
+            {
+                props.Add(prop.Key, prop.Value);
+            }
+
+            foreach (var prop in clientProvidedProps)
+            {
+                props.Add(prop.Key, prop.Value);
+            }
 
             // add client id with stream client id prefix
-            //props.Add(CLIENT_ID_CONFIG, clientId);
+            props.Add(StreamsConfigPropertyNames.ClientId, clientId);
 
             return props;
         }
 
-        private Dictionary<string, object> getClientPropsWithPrefix(string prefix)
-        {
-            //Dictionary<string, object> props = clientProps(configNames, originals());
-            //props.putAll(originalsWithPrefix(prefix));
-            //return props;
+        private Dictionary<string, string> getClientPropsWithPrefix(string prefix, IEnumerable<KeyValuePair<string, string>> configKeyValuePairs)
+            => getClientPropsWithPrefix(prefix, new HashSet<string>(configKeyValuePairs.Select(kvp => kvp.Key)));
 
-            return new Dictionary<string, object>();
+        private Dictionary<string, string> getClientPropsWithPrefix(string prefix, HashSet<string> configNames)
+        {
+            var props = clientProps(configNames, this.originalValues);
+
+            foreach (var original in originalsWithPrefix(prefix))
+            {
+                props.Add(original.Key, original.Value);
+            }
+
+            return props;
         }
 
         public long? getLong(string key)
@@ -573,6 +644,47 @@ namespace Kafka.Streams
             return null;
         }
 
+
+        /**
+         * Gets all original settings with the given prefix, stripping the prefix before adding it to the output.
+         *
+         * @param prefix the prefix to use as a filter
+         * @return a Map containing the settings with the prefix
+         */
+        public Dictionary<string, string> originalsWithPrefix(string prefix)
+        {
+            return originalsWithPrefix(prefix, true);
+        }
+
+        /**
+         * Gets all original settings with the given prefix.
+         *
+         * @param prefix the prefix to use as a filter
+         * @param strip strip the prefix before adding to the output if set true
+         * @return a Map containing the settings with the prefix
+         */
+        public Dictionary<string, string> originalsWithPrefix(string prefix, bool strip)
+        {
+            var result = new Dictionary<string, string>();
+
+            foreach (var entry in this.originalValues)
+            {
+                if (entry.Key.StartsWith(prefix) && entry.Key.Length > prefix.Length)
+                {
+                    if (strip)
+                    {
+                        result.Add(entry.Key.Substring(prefix.Length), entry.Value);
+                    }
+                    else
+                    {
+                        result.Add(entry.Key, entry.Value);
+                    }
+                }
+            }
+
+            return result;
+        }
+
         /**
          * Get a map of custom configs by removing from the originals all the Streams, Consumer, Producer, and AdminClient configs.
          * Prefixed properties are also removed because they are already.Added by {@link #getClientPropsWithPrefix(string, Set)}.
@@ -581,20 +693,17 @@ namespace Kafka.Streams
          *
          * @return a map with the custom properties
          */
-        private Dictionary<string, object> getClientCustomProps()
+        private Dictionary<string, string> getClientCustomProps()
         {
-            //Dictionary<string, object> props = originals();
-            //props.Keys.removeAll(CONFIG.names());
-            //props.Keys.removeAll(ConsumerConfig.configNames());
-            //props.Keys.removeAll(ProducerConfig.configNames());
-            //props.Keys.removeAll(AdminClientConfig.configNames());
-            //props.Keys.removeAll(originalsWithPrefix(CONSUMER_PREFIX, false).Keys);
-            //props.Keys.removeAll(originalsWithPrefix(PRODUCER_PREFIX, false).Keys);
-            //props.Keys.removeAll(originalsWithPrefix(ADMIN_CLIENT_PREFIX, false).Keys);
+            //props.removeAll(CONFIG.names());
 
-            //return props;
-
-            return new Dictionary<string, object>();
+            return this.originalValues
+                .RemoveAll(new ConsumerConfig().Select(c => c.Key))
+                .RemoveAll(new ProducerConfig().Select(c => c.Key))
+                .RemoveAll(new AdminClientConfig().Select(c => c.Key))
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, false).Keys)
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, false).Keys)
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, false).Keys);
         }
 
         /**
@@ -679,13 +788,13 @@ namespace Kafka.Streams
          * @param originals   The original configs to be filtered.
          * @return client config with any overrides
          */
-        private Dictionary<string, object> clientProps(
+        private Dictionary<string, string> clientProps(
             HashSet<string> configNames,
-            Dictionary<string, object> originals)
+            Dictionary<string, string> originals)
         {
             // iterate all client config names, filter out non-client configs from the original
             // property map and use the overridden values when they are not specified by users
-            var parsed = new Dictionary<string, object>();
+            var parsed = new Dictionary<string, string>();
             foreach (string configName in configNames)
             {
                 if (originals.ContainsKey(configName))

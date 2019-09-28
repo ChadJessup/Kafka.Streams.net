@@ -32,7 +32,7 @@ namespace Kafka.Streams.Interfaces
          * @param config Supplied by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of {@link Admin}
          */
-        IAdminClient getAdminClient(Dictionary<string, object> config);
+        IAdminClient GetAdminClient(Dictionary<string, string> config);
 
         /**
          * Create a {@link Producer} which is used to write records to sink topics.
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Interfaces
          *               {@link java.util.Properties} given to the {@link KafkaStreams} instance
          * @return an instance of Kafka producer
          */
-        IProducer<byte[], byte[]> getProducer(Dictionary<string, object> config);
+        IProducer<byte[], byte[]> getProducer(Dictionary<string, string> config);
 
         /**
          * Create a {@link Consumer} which is used to read records of source topics.
@@ -50,7 +50,7 @@ namespace Kafka.Streams.Interfaces
          *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getConsumer(Dictionary<string, object> config);
+        IConsumer<byte[], byte[]> getConsumer(Dictionary<string, string> config);
 
         /**
          * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.
@@ -59,7 +59,7 @@ namespace Kafka.Streams.Interfaces
          *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, object> config);
+        IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, string> config);
 
         /**
          * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.
@@ -68,6 +68,6 @@ namespace Kafka.Streams.Interfaces
          *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, object> config);
+        IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, string> config);
     }
 }

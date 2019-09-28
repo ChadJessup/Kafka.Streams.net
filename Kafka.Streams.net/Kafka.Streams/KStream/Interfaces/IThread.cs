@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream.Interfaces
     public interface IThread
     {
         Thread Thread { get; }
-        bool stillRunning();
+        bool isRunning();
     }
 
     // We can't derive from the Thread object, so we'll wrap threads

@@ -5,9 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Confluent.Kafka" Version="1.1.0" />
-    <PackageReference Include="Confluent.SchemaRegistry.Serdes" Version="1.1.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0-preview8.19405.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj" />
+    <ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes\Confluent.SchemaRegistry.Serdes.csproj" />
+    <ProjectReference Include="..\..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry\Confluent.SchemaRegistry.csproj" />
   </ItemGroup>
 
 </Project>

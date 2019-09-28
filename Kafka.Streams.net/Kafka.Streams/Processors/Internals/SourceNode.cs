@@ -18,8 +18,8 @@ namespace Kafka.Streams.Processor.Internals
         private readonly List<string> topics;
 
         private IProcessorContext context;
-        private IDeserializer<K> keyDeserializer;
-        private IDeserializer<V> valDeserializer;
+        private readonly IDeserializer<K> keyDeserializer;
+        private readonly IDeserializer<V> valDeserializer;
         public ITimestampExtractor timestampExtractor { get; }
 
         public SourceNode(

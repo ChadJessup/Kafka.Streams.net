@@ -18,7 +18,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kafka.Common", "Kafka.Commo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WordCountProcessorDemo", "Examples\WordCountProcessorDemo\WordCountProcessorDemo.csproj", "{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kafka.Connect", "Kafka.Connect\Kafka.Connect.csproj", "{2AF62237-FF15-4643-A48F-92CF93629795}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.Kafka", "..\..\confluent-kafka-dotnet\src\Confluent.Kafka\Confluent.Kafka.csproj", "{A962794C-0F68-4E21-8DBA-C31720493239}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry\Confluent.SchemaRegistry.csproj", "{F1F07FCC-3059-4018-AB7D-E0156BD5751C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Confluent.SchemaRegistry.Serdes", "..\..\confluent-kafka-dotnet\src\Confluent.SchemaRegistry.Serdes\Confluent.SchemaRegistry.Serdes.csproj", "{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Confluent", "Confluent", "{E661C830-A872-4EBD-B109-10C59A33B33B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigGen", "..\..\confluent-kafka-dotnet\src\ConfigGen\ConfigGen.csproj", "{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,13 +54,31 @@ Global
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD0C7D58-02EC-4F8B-8FC9-C2CF4CE7E248}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2AF62237-FF15-4643-A48F-92CF93629795}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2AF62237-FF15-4643-A48F-92CF93629795}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2AF62237-FF15-4643-A48F-92CF93629795}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2AF62237-FF15-4643-A48F-92CF93629795}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A962794C-0F68-4E21-8DBA-C31720493239}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A962794C-0F68-4E21-8DBA-C31720493239}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A962794C-0F68-4E21-8DBA-C31720493239}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A962794C-0F68-4E21-8DBA-C31720493239}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1F07FCC-3059-4018-AB7D-E0156BD5751C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1F07FCC-3059-4018-AB7D-E0156BD5751C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1F07FCC-3059-4018-AB7D-E0156BD5751C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1F07FCC-3059-4018-AB7D-E0156BD5751C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A962794C-0F68-4E21-8DBA-C31720493239} = {E661C830-A872-4EBD-B109-10C59A33B33B}
+		{F1F07FCC-3059-4018-AB7D-E0156BD5751C} = {E661C830-A872-4EBD-B109-10C59A33B33B}
+		{E4FE5D9D-A0B7-427E-AA9D-64B14E09C40F} = {E661C830-A872-4EBD-B109-10C59A33B33B}
+		{3A4A5A06-D0E9-4587-8DBD-0A2A043F2BDD} = {E661C830-A872-4EBD-B109-10C59A33B33B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BD854F55-D416-43FB-8924-1130FB7035C1}

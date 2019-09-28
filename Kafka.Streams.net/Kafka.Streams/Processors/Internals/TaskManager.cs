@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
@@ -17,19 +18,19 @@ namespace Kafka.Streams.Processor.Internals
         // initialize the task list
         // activeTasks needs to be concurrent as it can be accessed
         // by QueryableState
-        private ILogger log;
+        private readonly ILogger log;
         public Guid processId { get; }
-        private AssignedStreamsTasks active;
-        private AssignedStandbyTasks standby;
-        private IChangelogReader changelogReader;
-        private string logPrefix;
-        private IConsumer<byte[], byte[]> restoreConsumer;
-        private AbstractTaskCreator<StreamTask> taskCreator;
-        private AbstractTaskCreator<StandbyTask> standbyTaskCreator;
-        private StreamsMetadataState streamsMetadataState;
+        private readonly AssignedStreamsTasks active;
+        private readonly AssignedStandbyTasks standby;
+        private readonly IChangelogReader changelogReader;
+        private readonly string logPrefix;
+        private readonly IConsumer<byte[], byte[]> restoreConsumer;
+        private readonly AbstractTaskCreator<StreamTask> taskCreator;
+        private readonly AbstractTaskCreator<StandbyTask> standbyTaskCreator;
+        private readonly StreamsMetadataState streamsMetadataState;
 
         public IAdminClient adminClient { get; }
-        private IDeleteRecordsResult deleteRecordsResult;
+        private readonly DeleteRecordsResult deleteRecordsResult;
 
         // following information is updated during rebalance phase by the partition assignor
         private Cluster cluster;
@@ -169,7 +170,7 @@ namespace Kafka.Streams.Processor.Internals
 
             foreach (StandbyTask task in standbyTaskCreator.createTasks(consumer, newStandbyTasks))
             {
-                standby.AddNewTask(task);
+                standby.addNewTask(task);
             }
         }
 
@@ -322,14 +323,14 @@ namespace Kafka.Streams.Processor.Internals
             return standby.runningTaskFor(partition);
         }
 
-        public Dictionary<TaskId, StreamTask> activeTasks<K, V>()
+        public Dictionary<TaskId, StreamTask> activeTasks()
         {
             return active.runningTaskMap().ToDictionary(k => k.Key, v => v.Value);
         }
 
-        Dictionary<TaskId, StandbyTask> standbyTasks()
+        public Dictionary<TaskId, StandbyTask> standbyTasks()
         {
-            return standby.runningTaskMap();
+            return standby.runningTaskMap().ToDictionary(k => k.Key, v => v.Value);
         }
 
         public void setConsumer(IConsumer<byte[], byte[]> consumer)
@@ -373,11 +374,14 @@ namespace Kafka.Streams.Processor.Internals
 
         private void assignStandbyPartitions()
         {
-            List<StandbyTask> running = standby.running;
+            List<StandbyTask> running = standby.running.Values.ToList();
             Dictionary<TopicPartition, long> checkpointedOffsets = new Dictionary<TopicPartition, long>();
             foreach (StandbyTask standbyTask in running)
             {
-                checkpointedOffsets.putAll(standbyTask.checkpointedOffsets);
+                foreach (var checkpointedOffset in standbyTask.checkpointedOffsets)
+                {
+                    checkpointedOffsets.Add(checkpointedOffset.Key, checkpointedOffset.Value);
+                }
             }
 
             restoreConsumer.Assign(checkpointedOffsets.Keys);
@@ -392,7 +396,6 @@ namespace Kafka.Streams.Processor.Internals
                 }
                 else
                 {
-
                     restoreConsumer.SeekToBeginning(new[] { partition });
                 }
             }
@@ -486,10 +489,9 @@ namespace Kafka.Streams.Processor.Internals
             // we do not check any possible exceptions since none of them are fatal
             // that should cause the application to fail, and we will try delete with
             // newer offsets anyways.
-            if (deleteRecordsResult == null || deleteRecordsResult.all().isDone())
+            if (deleteRecordsResult == null || deleteRecordsResult.all().IsCompleted)
             {
-
-                if (deleteRecordsResult != null && deleteRecordsResult.all().isCompletedExceptionally())
+                if (deleteRecordsResult != null && deleteRecordsResult.all().IsFaulted)
                 {
                     log.LogDebug("Previous delete-records request has failed: {}. Try sending the new request now", deleteRecordsResult.lowWatermarks());
                 }
@@ -513,7 +515,7 @@ namespace Kafka.Streams.Processor.Internals
          * @return A string representation of the TaskManager instance.
          */
 
-        public string ToString()
+        public override string ToString()
         {
             return ToString("");
         }

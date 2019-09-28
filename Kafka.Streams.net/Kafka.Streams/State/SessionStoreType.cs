@@ -1,40 +1,19 @@
-﻿
+﻿using Kafka.Streams.State.Interfaces;
+using System;
+using System.Collections.Generic;
 
+namespace Kafka.Streams.State
+{
+    public class SessionStoreType<K, V> : QueryableStoreTypeMatcher<IReadOnlySessionStore<K, V>>
+    {
+        public SessionStoreType()
+            : base(new HashSet<Type> { typeof(IReadOnlySessionStore<K, V>) })
+        {
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//namespace Kafka.Streams.State
-//{
-
-//    public static class SessionStoreType<K, V> : QueryableStoreTypeMatcher<ReadOnlySessionStore<K, V>>
-//    {
-//        static SessionStoreType()
-//            : base(Collections.singleton(ReadOnlySessionStore))
-//        {
-//        }
-
-
-//        public ReadOnlySessionStore<K, V> create(StateStoreProvider storeProvider,
-//                                                 string storeName)
-//        {
-//            return new CompositeReadOnlySessionStore<>(storeProvider, this, storeName);
-//        }
-//    }
-//}
+        public override IReadOnlySessionStore<K, V> create(IStateStoreProvider storeProvider, string storeName)
+        {
+            return null;// new CompositeReadOnlySessionStore<>(storeProvider, this, storeName);
+        }
+    }
+}

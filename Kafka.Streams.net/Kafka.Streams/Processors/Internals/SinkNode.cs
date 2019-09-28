@@ -29,8 +29,8 @@ namespace Kafka.Streams.Processor.Internals
 
     public class SinkNode<K, V> : ProcessorNode<K, V>, ISinkNode
     {
-        private ISerializer<K> keySerializer;
-        private ISerializer<V> valSerializer;
+        private readonly ISerializer<K> keySerializer;
+        private readonly ISerializer<V> valSerializer;
         private readonly ITopicNameExtractor topicExtractor;
         private readonly IStreamPartitioner<K, V> partitioner;
 

@@ -22,7 +22,7 @@ namespace Kafka.Streams.Errors
             return ProductionExceptionHandlerResponse.FAIL;
         }
 
-        public void configure(Dictionary<string, object> configs)
+        public void Configure(Dictionary<string, object> configs)
         {
             // ignore
         }

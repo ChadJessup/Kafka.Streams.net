@@ -1,50 +1,32 @@
-﻿
+﻿using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.State.Interfaces;
+using System;
+using System.Collections.Generic;
 
+namespace Kafka.Streams.State
+{
+    public abstract class QueryableStoreTypeMatcher<T> : IQueryableStoreType<T>
+    {
+        private HashSet<Type> matchTo;
 
+        public QueryableStoreTypeMatcher(HashSet<Type> matchTo)
+        {
+            this.matchTo = matchTo;
+        }
 
+        public bool accepts(IStateStore stateStore)
+        {
+            foreach (var matchToClass in matchTo)
+            {
+                if (!matchToClass.IsAssignableFrom(stateStore.GetType()))
+                {
+                    return false;
+                }
+            }
 
+            return true;
+        }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//namespace Kafka.Streams.State
-//{
-
-//    public abstract class QueryableStoreTypeMatcher<T> : IQueryableStoreType<T>
-//    {
-
-//        private HashSet<Class> matchTo;
-
-//        QueryableStoreTypeMatcher(HashSet<Class> matchTo)
-//        {
-//            this.matchTo = matchTo;
-//        }
-
-
-
-//        public bool accepts(IStateStore stateStore)
-//        {
-//            foreach (Class matchToClass in matchTo)
-//            {
-//                if (!matchToClass.isAssignableFrom(stateStore.GetType()))
-//                {
-//                    return false;
-//                }
-//            }
-//            return true;
-//        }
-//    }
-//}
+        public abstract T create(IStateStoreProvider storeProvider, string storeName);
+    }
+}

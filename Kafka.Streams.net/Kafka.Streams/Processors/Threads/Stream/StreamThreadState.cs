@@ -19,14 +19,17 @@ namespace Kafka.Streams.Processors.Internals
 
         public StreamThreadState(
             ILogger<StreamThreadState> logger,
-            StreamStateListener stateListener)
+            StreamStateListener stateListener,
+            TaskManager taskManager)
         {
             this.logger = logger;
             this.StateListener = stateListener;
+            this.TaskManager = taskManager;
         }
 
         public StreamThreadStates CurrentState { get; protected set; }
         public IStateListener StateListener { get; }
+        public TaskManager TaskManager { get; }
         public IThread<StreamThreadStates> Thread { get; }
 
         public bool isValidTransition(StreamThreadStates newState)
@@ -87,11 +90,17 @@ namespace Kafka.Streams.Processors.Internals
                 this.CurrentState = newState;
                 if (newState == StreamThreadStates.RUNNING)
                 {
-                    //updateThreadMetadata(taskManager.activeTasks(), taskManager.standbyTasks());
+                    if (this.Thread is StreamThread st)
+                    {
+                        st.updateThreadMetadata(TaskManager.activeTasks(), TaskManager.standbyTasks());
+                    }
                 }
                 else
                 {
-                    //updateThreadMetadata(null, null);
+                    if (this.Thread is StreamThread st)
+                    {
+                        st.updateThreadMetadata(null, null);
+                    }
                 }
             }
 

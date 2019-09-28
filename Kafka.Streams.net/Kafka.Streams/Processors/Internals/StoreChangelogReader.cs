@@ -4,8 +4,6 @@ using System;
 using Microsoft.Extensions.Logging;
 using Kafka.Streams.Processor.Interfaces;
 using System.Linq;
-using Kafka.Streams.Extensions;
-using Kafka.Common;
 using Kafka.Streams.Errors;
 
 namespace Kafka.Streams.Processor.Internals

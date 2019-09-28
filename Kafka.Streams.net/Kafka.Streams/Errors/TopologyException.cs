@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
+
 namespace Kafka.Streams.Errors
 {
     /**
@@ -27,13 +29,12 @@ namespace Kafka.Streams.Errors
         {
         }
 
-        public TopologyException(string message,
-                                  Throwable throwable)
+        public TopologyException(string message, Exception throwable)
             : base("Invalid topology" + (message == null ? "" : ": " + message), throwable)
         {
         }
 
-        public TopologyException(Throwable throwable)
+        public TopologyException(Exception throwable)
             : base(throwable)
         {
         }

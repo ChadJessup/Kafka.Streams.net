@@ -36,6 +36,19 @@ namespace Kafka.Streams.State
                 : new ValueAndTimestamp<V>(value, timestamp);
         }
 
+        /**
+         * Return the wrapped {@code value} of the given {@code valueAndTimestamp} parameter
+         * if the parameter is not {@code null}.
+         *
+         * @param valueAndTimestamp a {@link ValueAndTimestamp} instance; can be {@code null}
+         * @param <V> the type of the value
+         * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
+         */
+        public static V getValueOrNull(ValueAndTimestamp<V> valueAndTimestamp)
+        {
+            return valueAndTimestamp.value;
+        }
+
         public override string ToString()
             => "<" + value + "," + timestamp + ">";
 

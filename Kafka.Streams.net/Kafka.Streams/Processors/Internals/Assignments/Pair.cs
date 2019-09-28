@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
  * this work for.Additional information regarding copyright ownership.
@@ -14,13 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
 
-namespace Kafka.Streams.Processor.Internals.assignment
+namespace Kafka.Streams.Processor.Internals.Assignments
 {
-    public interface TaskAssignor<C, T>
-         where T : IComparable<T>
+    public class Pair
     {
-        void assign(int numStandbyReplicas);
+
+        private readonly TaskId task1;
+        private readonly TaskId task2;
+
+        public Pair(TaskId task1, TaskId task2)
+        {
+            this.task1 = task1;
+            this.task2 = task2;
+        }
+
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+
+            Pair pair = (Pair)o;
+
+            return (task1.Equals(pair.task1) &&
+                    task2.Equals(pair.task2));
+        }
+
+        public override int GetHashCode()
+        {
+            return (task1, task2).GetHashCode();
+        }
     }
 }

@@ -11,9 +11,9 @@ namespace Kafka.Streams.Processor.Internals
     public abstract class AbstractTaskCreator<T>
         where T : ITask
     {
-        private readonly ITime time;
-        private readonly ILogger log;
-        private readonly StreamsMetricsImpl streamsMetrics;
+        protected ITime time { get; }
+        protected ILogger log { get; }
+        protected StreamsMetricsImpl streamsMetrics { get; }
 
         public AbstractTaskCreator(
             InternalTopologyBuilder builder,
