@@ -16,7 +16,7 @@
 // */
 //using Confluent.Kafka;
 //using Kafka.Streams.State;
-//using Kafka.Streams.Processor.Internals.Assignment;
+//using Kafka.Streams.Processors.Internals.Assignment;
 //using System.Collections.Generic;
 //using System;
 //using Kafka.Streams.KStream.Internals;
@@ -24,7 +24,7 @@
 //using Microsoft.Extensions.Logging;
 //using Kafka.Streams.Errors;
 
-//namespace Kafka.Streams.Processor.Internals
+//namespace Kafka.Streams.Processors.Internals
 //{
 //    public partial class ClientMetadata
 //    {
@@ -119,7 +119,7 @@
 //        }
 
 //        /**
-//         * We need to have the PartitionAssignor and its StreamThread to be mutually accessible
+//         * We need to have the PartitionAssignor and its KafkaStreamThread to be mutually accessible
 //         * since the former needs later's cached metadata while sending subscriptions,
 //         * and the latter needs former's returned assignment when.Adding tasks.
 //         * @throws KafkaException if the stream thread is not specified

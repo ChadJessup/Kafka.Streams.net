@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class LogContext
     {

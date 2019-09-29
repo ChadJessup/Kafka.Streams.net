@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Kafka.Streams.Nodes;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Interfaces
 {

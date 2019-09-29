@@ -19,88 +19,92 @@ using Kafka.Streams.Interfaces;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using Kafka.Streams.Topologies;
+using Kafka.Streams.State;
 
-public class TopologyDescription
+namespace Kafka.Streams.Topologies
 {
-    private readonly SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
-    private readonly SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
-
-    public void addSubtopology(ISubtopology subtopology)
+    public class TopologyDescription
     {
-        subtopologies.Add(subtopology);
-    }
+        private readonly SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
+        private readonly SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
 
-    public void addGlobalStore(IGlobalStore globalStore)
-    {
-        globalStores.Add(globalStore);
-    }
-
-    public override string ToString()
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.Append("Topologies:\n ");
-        ISubtopology[] sortedSubtopologies =
-            subtopologies.OrderByDescending(t => t.id).ToArray();
-        IGlobalStore[] sortedGlobalStores =
-            globalStores.OrderByDescending(s => s.id).ToArray();
-        int expectedId = 0;
-        int subtopologiesIndex = sortedSubtopologies.Length - 1;
-        int globalStoresIndex = sortedGlobalStores.Length - 1;
-        while (subtopologiesIndex != -1 && globalStoresIndex != -1)
+        public void addSubtopology(ISubtopology subtopology)
         {
-            sb.Append("  ");
-            ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
-            IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
-            if (subtopology.id == expectedId)
+            subtopologies.Add(subtopology);
+        }
+
+        public void addGlobalStore(IGlobalStore globalStore)
+        {
+            globalStores.Add(globalStore);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("Topologies:\n ");
+            ISubtopology[] sortedSubtopologies =
+                subtopologies.OrderByDescending(t => t.id).ToArray();
+            IGlobalStore[] sortedGlobalStores =
+                globalStores.OrderByDescending(s => s.id).ToArray();
+            int expectedId = 0;
+            int subtopologiesIndex = sortedSubtopologies.Length - 1;
+            int globalStoresIndex = sortedGlobalStores.Length - 1;
+            while (subtopologiesIndex != -1 && globalStoresIndex != -1)
             {
+                sb.Append("  ");
+                ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
+                IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
+                if (subtopology.id == expectedId)
+                {
+                    sb.Append(subtopology);
+                    subtopologiesIndex--;
+                }
+                else
+                {
+                    sb.Append(globalStore);
+                    globalStoresIndex--;
+                }
+                expectedId++;
+            }
+
+            while (subtopologiesIndex != -1)
+            {
+                ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
+                sb.Append("  ");
                 sb.Append(subtopology);
                 subtopologiesIndex--;
             }
-            else
+            while (globalStoresIndex != -1)
             {
+                IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
+                sb.Append("  ");
                 sb.Append(globalStore);
                 globalStoresIndex--;
             }
-            expectedId++;
+            return sb.ToString();
         }
 
-        while (subtopologiesIndex != -1)
+        public override bool Equals(object o)
         {
-            ISubtopology subtopology = sortedSubtopologies[subtopologiesIndex];
-            sb.Append("  ");
-            sb.Append(subtopology);
-            subtopologiesIndex--;
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
+
+            TopologyDescription that = (TopologyDescription)o;
+            return subtopologies.Equals(that.subtopologies)
+                && globalStores.Equals(that.globalStores);
         }
-        while (globalStoresIndex != -1)
+
+        public override int GetHashCode()
         {
-            IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
-            sb.Append("  ");
-            sb.Append(globalStore);
-            globalStoresIndex--;
+            return (subtopologies, globalStores).GetHashCode();
         }
-        return sb.ToString();
+
     }
-
-    public override bool Equals(object o)
-    {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || GetType() != o.GetType())
-        {
-            return false;
-        }
-
-        TopologyDescription that = (TopologyDescription)o;
-        return subtopologies.Equals(that.subtopologies)
-            && globalStores.Equals(that.globalStores);
-    }
-
-
-    public override int GetHashCode()
-    {
-        return (subtopologies, globalStores).GetHashCode();
-    }
-
 }

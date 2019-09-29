@@ -3,7 +3,7 @@ using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 using System;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class KeyValueStoreReadWriteDecorator<K, V>
         : StateStoreReadWriteDecorator<IKeyValueStore<K, V>>

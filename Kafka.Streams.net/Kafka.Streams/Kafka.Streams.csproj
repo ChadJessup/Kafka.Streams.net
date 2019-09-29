@@ -22,8 +22,4 @@
     <ProjectReference Include="..\Kafka.Common\Kafka.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Topologies\Interfaces\" />
-  </ItemGroup>
-
 </Project>

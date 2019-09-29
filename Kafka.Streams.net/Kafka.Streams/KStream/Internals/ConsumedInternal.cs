@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
+using Kafka.Streams.Processors;
 
 namespace Kafka.Streams.KStream.Internals
 {

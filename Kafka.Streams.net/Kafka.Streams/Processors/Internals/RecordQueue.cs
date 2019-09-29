@@ -4,13 +4,14 @@ using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     /**
      * RecordQueue is a FIFO queue of {@link StampedRecord} (ConsumerRecord + timestamp). It also keeps track of the

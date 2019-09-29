@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Processor;
+using Kafka.Streams.Processors;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals

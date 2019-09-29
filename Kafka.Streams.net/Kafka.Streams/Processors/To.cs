@@ -16,7 +16,7 @@
  */
 using System;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
 
 

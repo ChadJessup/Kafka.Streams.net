@@ -2,7 +2,7 @@
 using Kafka.Streams.State.Interfaces;
 using System;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class SessionStoreReadOnlyDecorator<K, AGG>
         : StateStoreReadOnlyDecorator<ISessionStore<K, AGG>>

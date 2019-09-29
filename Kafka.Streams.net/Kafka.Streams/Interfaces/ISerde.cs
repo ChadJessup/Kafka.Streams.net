@@ -19,7 +19,7 @@ namespace Kafka.Streams.Interfaces
          * @param configs configs in key/value pairs
          * @param isKey whether is for key or value
          */
-        void Configure(Dictionary<string, object> configs, bool isKey);
+        void Configure(Dictionary<string, string> configs, bool isKey);
 
         /**
          * Close this serde, which will close the underlying serializer and deserializer.

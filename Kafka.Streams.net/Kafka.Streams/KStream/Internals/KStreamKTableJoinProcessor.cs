@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 using Kafka.Common.Metrics;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.KStream.Internals

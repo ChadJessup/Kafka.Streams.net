@@ -21,8 +21,8 @@
 //    using Kafka.Common.serialization.Serde;
 //    using Kafka.Common.Utils.Bytes;
 //    using Kafka.Common.Utils.Time;
-//    using Kafka.Streams.Processor.IProcessorContext;
-//    using Kafka.Streams.Processor.Internals.ProcessorStateManager;
+//    using Kafka.Streams.Processors.IProcessorContext;
+//    using Kafka.Streams.Processors.Internals.ProcessorStateManager;
 //    using Kafka.Streams.State.KeyValueStore;
 //    using Kafka.Streams.State.StateSerdes;
 //    using Kafka.Streams.State.ITimestampedKeyValueStore;

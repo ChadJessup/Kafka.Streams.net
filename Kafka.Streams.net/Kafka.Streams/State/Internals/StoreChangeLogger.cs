@@ -15,8 +15,8 @@
 // * limitations under the License.
 // */
 //using Confluent.Kafka;
-//using Kafka.Streams.Processor.Interfaces;
-//using Kafka.Streams.Processor.Internals;
+//using Kafka.Streams.Processors.Interfaces;
+//using Kafka.Streams.Processors.Internals;
 
 //namespace Kafka.Streams.State.Internals
 //{

@@ -17,9 +17,9 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;

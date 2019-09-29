@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors.Interfaces;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class PunctuationSchedule : Stamped<ProcessorNode>
     {

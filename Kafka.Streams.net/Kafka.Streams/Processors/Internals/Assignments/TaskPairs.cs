@@ -14,9 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Tasks;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals.Assignments
+namespace Kafka.Streams.Processors.Internals.Assignments
 {
     public class TaskPairs
     {
@@ -30,8 +31,7 @@ namespace Kafka.Streams.Processor.Internals.Assignments
             //this.pairs = new HashSet<Pair>(maxPairs);
         }
 
-        bool hasNewPair(TaskId task1,
-                           HashSet<TaskId> taskIds)
+        bool hasNewPair(TaskId task1, HashSet<TaskId> taskIds)
         {
             if (pairs.Count == maxPairs)
             {

@@ -20,8 +20,8 @@
 //using Kafka.Streams.Interfaces;
 //using Kafka.Streams.KStream.Internals;
 //using Kafka.Streams.KStream.Internals.Metrics;
-//using Kafka.Streams.Processor.Interfaces;
-//using Kafka.Streams.Processor.Internals;
+//using Kafka.Streams.Processors.Interfaces;
+//using Kafka.Streams.Processors.Internals;
 //using System;
 //using System.Collections.Generic;
 

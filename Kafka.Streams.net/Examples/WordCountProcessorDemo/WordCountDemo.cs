@@ -2,11 +2,13 @@
 using Kafka.Common.Extensions;
 using Kafka.Common.Utils;
 using Kafka.Streams;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -42,8 +44,12 @@ namespace WordCountProcessorDemo
 
             var latch = new ManualResetEvent(initialState: false);
 
+
             StreamsBuilder builder = new StreamsBuilder(services);
 
+            
+            
+            
             IKStream<string, string> textLines = builder
                 .stream<string, string>("TextLinesTopic");
 
@@ -69,7 +75,7 @@ namespace WordCountProcessorDemo
             var topology = builder.build();
             services.AddSingleton(topology);
 
-            using KafkaStreams streams = builder.BuildKafkaStreams(); 
+            using KafkaStreamsThread streams = builder.BuildKafkaStreams(); 
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>

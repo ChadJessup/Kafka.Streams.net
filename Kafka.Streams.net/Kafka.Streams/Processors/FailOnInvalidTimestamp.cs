@@ -19,7 +19,7 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
     /**
      * Retrieves embedded metadata timestamps from Kafka messages.

@@ -1,5 +1,5 @@
 using Confluent.Kafka;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using System;
 
 namespace Kafka.Streams.Errors.Interfaces

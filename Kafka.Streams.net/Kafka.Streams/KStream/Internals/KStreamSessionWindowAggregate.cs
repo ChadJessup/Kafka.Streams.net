@@ -1,5 +1,5 @@
 //using Kafka.Streams.KStream.Interfaces;
-//using Kafka.Streams.Processor;
+//using Kafka.Streams.Processors;
 //using Microsoft.Extensions.Logging;
 
 //namespace Kafka.Streams.KStream.Internals

@@ -1,5 +1,5 @@
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.State.Internals

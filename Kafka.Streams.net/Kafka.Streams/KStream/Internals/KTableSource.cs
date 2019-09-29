@@ -1,4 +1,4 @@
-using Kafka.Streams.Processor;
+using Kafka.Streams.Processors;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;

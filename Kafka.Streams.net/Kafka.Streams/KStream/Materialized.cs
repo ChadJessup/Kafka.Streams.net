@@ -17,7 +17,7 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
@@ -176,7 +176,7 @@ namespace Kafka.Streams.KStream
          * @param           store type
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
-        public static Materialized<K, V, S> with(
+        public new static Materialized<K, V, S> with(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
             => new Materialized<K, V, S>("")
@@ -191,7 +191,7 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public Materialized<K, V, S> withValueSerde(ISerde<V> valueSerde)
+        public new Materialized<K, V, S> withValueSerde(ISerde<V> valueSerde)
         {
             this.valueSerde = valueSerde;
 
@@ -204,7 +204,7 @@ namespace Kafka.Streams.KStream
          *                  serde from configs will be used
          * @return itself
          */
-        public Materialized<K, V, S> withKeySerde(ISerde<K> keySerde)
+        public new Materialized<K, V, S> withKeySerde(ISerde<K> keySerde)
         {
             this.keySerde = keySerde;
 

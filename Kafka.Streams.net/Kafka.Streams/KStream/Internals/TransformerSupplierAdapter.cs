@@ -1,4 +1,4 @@
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -1,6 +1,6 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.Processor.Internals;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Processors.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;

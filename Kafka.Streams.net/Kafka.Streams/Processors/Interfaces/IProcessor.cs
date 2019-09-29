@@ -1,6 +1,6 @@
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
     /**
      * A processor of key-value pair records.

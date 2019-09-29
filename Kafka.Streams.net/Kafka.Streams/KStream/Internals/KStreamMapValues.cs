@@ -17,7 +17,7 @@
 using System;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.Processor;
+using Kafka.Streams.Processors;
 
 namespace Kafka.Streams.KStream.Internals
 {

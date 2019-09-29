@@ -2,7 +2,7 @@
 using Kafka.Streams.KStream.Internals;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class Subscription
     {

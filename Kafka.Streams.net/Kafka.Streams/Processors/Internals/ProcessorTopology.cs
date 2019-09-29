@@ -1,9 +1,11 @@
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class ProcessorTopology
     {

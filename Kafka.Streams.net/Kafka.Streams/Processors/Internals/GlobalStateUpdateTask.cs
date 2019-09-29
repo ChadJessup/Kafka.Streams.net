@@ -16,11 +16,11 @@
 // */
 //using Confluent.Kafka;
 //using Kafka.Streams.Errors.Interfaces;
-//using Kafka.Streams.Processor.Interfaces;
-//using Kafka.Streams.Processor.Internals.Metrics;
+//using Kafka.Streams.Processors.Interfaces;
+//using Kafka.Streams.Processors.Internals.Metrics;
 //using System.Collections.Generic;
 
-//namespace Kafka.Streams.Processor.Internals
+//namespace Kafka.Streams.Processors.Internals
 //{
 
 //    /**

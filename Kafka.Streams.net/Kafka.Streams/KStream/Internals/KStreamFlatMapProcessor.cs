@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.Processor;
+﻿using Kafka.Streams.Processors;
 
 namespace Kafka.Streams.KStream.Internals
 {

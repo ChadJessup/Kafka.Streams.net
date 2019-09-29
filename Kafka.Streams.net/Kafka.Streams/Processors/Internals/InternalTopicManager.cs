@@ -16,6 +16,7 @@
  */
 
 using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
 using System;
@@ -23,7 +24,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class InternalTopicManager
     {
@@ -40,8 +41,7 @@ namespace Kafka.Streams.Processor.Internals
         private readonly int retries;
         private readonly long retryBackOffMs;
 
-        public InternalTopicManager(IAdminClient adminClient,
-                                    StreamsConfig streamsConfig)
+        public InternalTopicManager(IAdminClient adminClient, StreamsConfig streamsConfig)
         {
             this.adminClient = adminClient;
 

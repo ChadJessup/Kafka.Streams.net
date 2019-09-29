@@ -1,7 +1,7 @@
-﻿using Kafka.Streams.Processor.Internals.Assignmentss;
+﻿using Kafka.Streams.Processors.Internals.Assignmentss;
 using System;
 
-namespace Kafka.Streams.Processor.Internals.Assignments
+namespace Kafka.Streams.Processors.Internals.Assignments
 {
     public class DataOutputStream : IDisposable
     {

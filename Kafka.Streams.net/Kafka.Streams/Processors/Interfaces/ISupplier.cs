@@ -15,7 +15,7 @@
 // * limitations under the License.
 // */
 
-//namespace Kafka.Streams.Processor.Internals
+//namespace Kafka.Streams.Processors.Internals
 //{
 //    /**
 //     * A supplier of a {@link RecordCollectorImpl} instance.

@@ -1,4 +1,4 @@
-﻿namespace Kafka.Streams.Processor.Internals.Assignmentss
+﻿namespace Kafka.Streams.Processors.Internals.Assignmentss
 {
     public class ByteArrayOutputStream
     {

@@ -16,7 +16,7 @@
  */
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
     /**
      * Represents the state of a single thread running within a {@link KafkaStreams} application.

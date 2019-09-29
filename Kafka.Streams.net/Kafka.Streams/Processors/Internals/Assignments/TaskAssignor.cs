@@ -1,6 +1,6 @@
 using System;
 
-namespace Kafka.Streams.Processor.Internals.Assignments
+namespace Kafka.Streams.Processors.Internals.Assignments
 {
     public interface TaskAssignor<C, T>
          where T : IComparable<T>

@@ -2,6 +2,7 @@ using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
+using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using System;

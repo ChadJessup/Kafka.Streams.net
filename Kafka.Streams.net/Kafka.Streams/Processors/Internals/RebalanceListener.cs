@@ -1,25 +1,25 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common.Utils.Interfaces;
-using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Tasks;
+using Kafka.Streams.Threads.KafkaStream;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class RebalanceListener : IConsumerRebalanceListener
     {
         private readonly ITime time;
         private readonly TaskManager taskManager;
-        private readonly StreamThread streamThread;
+        private readonly KafkaStreamThread streamThread;
         private readonly ILogger log;
 
         public RebalanceListener(
             ITime time,
             TaskManager taskManager,
-            StreamThread streamThread,
+            KafkaStreamThread streamThread,
             ILogger log)
         {
             this.time = time;
@@ -48,7 +48,7 @@ namespace Kafka.Streams.Processor.Internals
             try
             {
 
-                if (streamThread.State.setState(StreamThreadStates.PARTITIONS_ASSIGNED) == null)
+                if (streamThread.State.setState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
                 {
                     log.LogDebug(
                         "Skipping task creation in rebalance because we are already in {} state.",
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Processor.Internals
                 taskManager.activeTaskIds(),
                 taskManager.standbyTaskIds());
 
-            if (streamThread.State.setState(StreamThreadStates.PARTITIONS_REVOKED))
+            if (streamThread.State.setState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
             {
                 long start = time.milliseconds();
                 try

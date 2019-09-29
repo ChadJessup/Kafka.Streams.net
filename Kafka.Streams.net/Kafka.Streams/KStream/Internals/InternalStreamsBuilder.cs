@@ -15,13 +15,16 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Graph;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;

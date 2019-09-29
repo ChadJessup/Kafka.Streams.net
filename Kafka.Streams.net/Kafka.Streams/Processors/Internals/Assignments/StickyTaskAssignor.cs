@@ -14,11 +14,11 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//using Kafka.Streams.Processor.Internals.assignment;
+//using Kafka.Streams.Processors.Internals.assignment;
 //using Microsoft.Extensions.Logging;
 //using System.Collections.Generic;
 
-//namespace Kafka.Streams.Processor.Internals.Assignments
+//namespace Kafka.Streams.Processors.Internals.Assignments
 //{
 //    public class StickyTaskAssignor<ID> : TaskAssignor<ID, TaskId>
 //    {

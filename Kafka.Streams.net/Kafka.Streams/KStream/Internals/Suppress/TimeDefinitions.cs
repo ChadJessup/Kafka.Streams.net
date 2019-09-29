@@ -1,4 +1,4 @@
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream.Internals.Suppress

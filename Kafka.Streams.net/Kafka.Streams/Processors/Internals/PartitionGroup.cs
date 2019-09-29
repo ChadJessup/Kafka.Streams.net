@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using Priority_Queue;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     /**
      * PartitionGroup is used to buffer all co-partitioned records for processing.

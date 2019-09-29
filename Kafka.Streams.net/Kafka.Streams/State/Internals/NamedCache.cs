@@ -19,7 +19,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using Kafka.Common.Utils;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Processors.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.State.Internals

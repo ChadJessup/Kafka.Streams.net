@@ -16,7 +16,7 @@
  */
 using System.IO;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     internal class PrintWriter
     {

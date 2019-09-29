@@ -1,38 +1,11 @@
-///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements. See the NOTICE file distributed with
-// * this work for.Additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License. You may obtain a copy of the License at
-// *
-// *    http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//namespace Kafka.Streams.Processor
+//using Confluent.Kafka;
+//using Kafka.Common;
+//using Microsoft.Extensions.Logging;
+//using System.Collections.Generic;
+//using System.Linq;
+
+//namespace Kafka.Streams.Processors
 //{
-
-
-//    using Kafka.Common.Cluster;
-//    using Kafka.Common.PartitionInfo;
-//    using Kafka.Common.TopicPartition;
-//    using Microsoft.Extensions.Logging;
-
-
-
-
-
-
-
-
-
-
-
 //    /**
 //     * Default implementation of the {@link PartitionGrouper} interface that groups partitions by the partition id.
 //     *
@@ -42,8 +15,6 @@
 //     */
 //    public class DefaultPartitionGrouper : IPartitionGrouper
 //    {
-
-
 //        private static ILogger log = new LoggerFactory().CreateLogger<DefaultPartitionGrouper>();
 //        /**
 //         * Generate tasks with the assigned topic partitions.
@@ -54,7 +25,7 @@
 //         */
 //        public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Dictionary<int, HashSet<string>> topicGroups, Cluster metadata)
 //        {
-//            Dictionary<TaskId, HashSet<TopicPartition>> groups = new Dictionary<>();
+//            Dictionary<TaskId, HashSet<TopicPartition>> groups = new Dictionary<TaskId, HashSet<TopicPartition>>();
 
 //            foreach (KeyValuePair<int, HashSet<string>> entry in topicGroups)
 //            {
@@ -65,12 +36,12 @@
 
 //                for (int partitionId = 0; partitionId < maxNumPartitions; partitionId++)
 //                {
-//                    HashSet<TopicPartition> group = new HashSet<>(topicGroup.size());
+//                    HashSet<TopicPartition> group = new HashSet<TopicPartition>(topicGroup.Count);
 
 //                    foreach (string topic in topicGroup)
 //                    {
 //                        List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
-//                        if (partitionId < partitions.size())
+//                        if (partitionId < partitions.Count)
 //                        {
 //                            group.Add(new TopicPartition(topic, partitionId));
 //                        }
@@ -91,13 +62,13 @@
 //            foreach (string topic in topics)
 //            {
 //                List<PartitionInfo> partitions = metadata.partitionsForTopic(topic);
-//                if (partitions.isEmpty())
+//                if (!partitions.Any())
 //                {
 //                    log.LogError("Empty partitions for topic {}", topic);
 //                    throw new RuntimeException("Empty partitions for topic " + topic);
 //                }
 
-//                int numPartitions = partitions.size();
+//                int numPartitions = partitions.Count;
 //                if (numPartitions > maxNumPartitions)
 //                {
 //                    maxNumPartitions = numPartitions;

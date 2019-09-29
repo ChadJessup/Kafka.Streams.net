@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
+using Kafka.Streams.Nodes;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class RecordInfo
     {

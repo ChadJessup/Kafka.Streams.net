@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream
             this.Deserializer = deserializer;
         }
 
-        public virtual void Configure(Dictionary<string, object> configs, bool isKey)
+        public virtual void Configure(Dictionary<string, string> configs, bool isKey)
         {
         }
 

@@ -37,11 +37,11 @@ namespace Kafka.Streams.State.Internals
         }
 
         public void Configure(
-            Dictionary<string, object> configs,
+            Dictionary<string, string> configs,
             bool isKey)
         {
-            // valueSerializer.configure(configs, isKey);
-            // timestampSerializer.configure(configs, isKey);
+            //valueSerializer.Configure(configs, isKey);
+            //timestampSerializer.Configure(configs, isKey);
         }
 
         public byte[] Serialize(

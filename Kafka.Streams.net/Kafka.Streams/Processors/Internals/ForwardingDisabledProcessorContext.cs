@@ -1,12 +1,14 @@
 using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     /**
      * {@code IProcessorContext} implementation that will throw on any forward call.
@@ -38,9 +40,7 @@ namespace Kafka.Streams.Processor.Internals
         public IStreamsMetrics metrics
             => del.metrics;
 
-        public void register(
-            IStateStore store,
-            IStateRestoreCallback stateRestoreCallback)
+        public void register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
         {
             del.register(store, stateRestoreCallback);
         }

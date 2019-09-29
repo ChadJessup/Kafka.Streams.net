@@ -17,7 +17,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     [Serializable]
     internal class WakeupException : Exception

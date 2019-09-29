@@ -1,27 +1,29 @@
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor.Interfaces;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.Tasks;
+using Kafka.Streams.Threads.KafkaStream;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
     /**
-     * Wrapper over StreamThread that : StateStoreProvider
+     * Wrapper over KafkaStreamThread that : StateStoreProvider
      */
     public class StreamThreadStateStoreProvider : IStateStoreProvider
     {
-        private readonly StreamThread streamThread;
+        private readonly KafkaStreamThread streamThread;
 
-        public StreamThreadStateStoreProvider(StreamThread streamThread)
+        public StreamThreadStateStoreProvider(KafkaStreamThread streamThread)
         {
             this.streamThread = streamThread;
         }
 
         public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            if (streamThread.State.CurrentState == StreamThreadStates.DEAD)
+            if (streamThread.State.CurrentState == KafkaStreamThreadStates.DEAD)
             {
                 return new List<T>();
             }

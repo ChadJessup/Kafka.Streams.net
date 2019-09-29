@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     /**
      * Provides access to the {@link StreamsMetadata} in a KafkaStreams application. This can be used

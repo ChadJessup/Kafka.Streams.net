@@ -1,6 +1,6 @@
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class StampedRecord : Stamped<ConsumeResult<object, object>>
     {

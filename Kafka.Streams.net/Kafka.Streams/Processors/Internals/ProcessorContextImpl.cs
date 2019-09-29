@@ -1,7 +1,7 @@
 using Kafka.Streams.State;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.Errors;
 using System.Collections.Generic;
 using System;
@@ -9,8 +9,12 @@ using Kafka.Streams.Internals;
 using Kafka.Streams.State.Interfaces;
 using System.Linq;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Tasks;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class ProcessorContextImpl<K, V> : AbstractProcessorContext<K, V>, ISupplier
     {

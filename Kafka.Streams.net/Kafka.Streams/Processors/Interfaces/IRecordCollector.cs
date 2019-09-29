@@ -2,7 +2,7 @@ using Confluent.Kafka;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.Processors.Interfaces
 {
     /**
      * A supplier of a {@link RecordCollectorImpl} instance.

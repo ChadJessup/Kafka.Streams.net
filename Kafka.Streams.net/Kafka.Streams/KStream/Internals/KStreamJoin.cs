@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using System.Collections.Generic;

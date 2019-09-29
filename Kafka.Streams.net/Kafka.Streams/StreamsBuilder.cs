@@ -14,16 +14,24 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Common.Utils;
+using Kafka.Streams.Clients;
+using Kafka.Streams.Clients.Consumers;
+using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Internals;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.Threads.GlobalStream;
+using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.KafkaStreams;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,7 +59,7 @@ namespace Kafka.Streams
             /** The actual topology that is constructed by this StreamsBuilder. */
             private readonly Topology topology;
 
-            private InternalTopologyBuilder internalTopologyBuilder => topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
+            private InternalTopologyBuilder internalTopologyBuilder => this.topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
             private readonly InternalStreamsBuilder internalStreamsBuilder;
 
             public StreamsBuilder(
@@ -63,7 +71,10 @@ namespace Kafka.Streams
 
                 this.BuildDependencyTree(this.configuration, this.serviceCollection);
 
-                this.services = this.serviceCollection.BuildServiceProvider();
+                this.services = this.serviceCollection.BuildServiceProvider(new ServiceProviderOptions
+                {
+                    ValidateOnBuild = true,
+                });
 
                 this.topology = this.services.GetRequiredService<Topology>();
                 this.internalStreamsBuilder = this.services.GetRequiredService<InternalStreamsBuilder>();
@@ -81,37 +92,58 @@ namespace Kafka.Streams
                 : this(new ConfigurationBuilder().Build(), new ServiceCollection())
             { }
 
-            public KafkaStreams BuildKafkaStreams()
-                => this.services.GetRequiredService<KafkaStreams>();
+            public KafkaStreamsThread BuildKafkaStreams()
+                => this.services.GetRequiredService<KafkaStreamsThread>();
 
             private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
             {
-                serviceCollection.TryAddSingleton<KafkaStreams>(sp =>
-                {
-                    var ks = ActivatorUtilities.CreateInstance<KafkaStreams>(sp,
-                        sp.GetRequiredService<ILogger<KafkaStreams>>(),
-                        sp.GetRequiredService<KafkaStreamsState>(),
-                        this.build(),
-                        sp.GetRequiredService<StreamsConfig>(),
-                        sp);
+                serviceCollection.TryAddSingleton(configuration);
+                serviceCollection.TryAddSingleton(serviceCollection);
 
-                    return ks;
-                });
-                serviceCollection.TryAddSingleton<KafkaStreamsState>();
-
-                serviceCollection.TryAddSingleton<GlobalStreamThread>();
-                serviceCollection.TryAddSingleton<GlobalStreamThreadState>();
-
-                serviceCollection.TryAddScoped<StreamThread>();
-                serviceCollection.TryAddScoped<StreamThreadState>();
+                this.AddThreads(configuration, serviceCollection);
+                this.AddClients(configuration, serviceCollection);
 
                 serviceCollection.TryAddSingleton<StreamStateListener>();
 
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
                 serviceCollection.TryAddSingleton<Topology>();
-                serviceCollection.TryAddSingleton(configuration);
-                serviceCollection.TryAddSingleton(serviceCollection);
+            }
+
+            private void AddClients(IConfiguration configuration, IServiceCollection serviceCollection)
+            {
+                // Special clients, e.g., AdminClient
+                serviceCollection.AddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
+
+                // Consumers
+                serviceCollection.AddSingleton<GlobalConsumer>();
+                serviceCollection.AddSingleton<StateConsumer>();
+
+                // Producers
+
+            }
+
+            private void AddThreads(IConfiguration configuration, IServiceCollection serviceCollection)
+            {
+                serviceCollection.TryAddSingleton<KafkaStreamsThread>(sp =>
+                {
+                    var ks = ActivatorUtilities.CreateInstance<KafkaStreamsThread>(sp,
+                        sp.GetRequiredService<ILogger<KafkaStreamsThread>>(),
+                        sp.GetRequiredService<KafkaStreamsThreadState>(),
+                        this.build(),
+                        sp.GetRequiredService<StreamsConfig>(),
+                        sp);
+
+                    return ks;
+                });
+
+                serviceCollection.TryAddSingleton<KafkaStreamsThreadState>();
+
+                serviceCollection.TryAddSingleton<GlobalStreamThread>();
+                serviceCollection.TryAddSingleton<GlobalStreamThreadState>();
+                serviceCollection.TryAddScoped(typeof(IThread<>));
+                serviceCollection.TryAddScoped<KafkaStreamThread>();
+                serviceCollection.TryAddScoped<KafkaStreamThreadState>();
             }
 
             /**
@@ -662,7 +694,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public Topology build(StreamsConfig config)
             {
-                //InternalStreamsBuilder.buildAndOptimizeTopology(config);
+                this.internalStreamsBuilder.buildAndOptimizeTopology(config);
 
                 return topology;
             }

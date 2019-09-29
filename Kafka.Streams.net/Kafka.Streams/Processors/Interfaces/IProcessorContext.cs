@@ -1,10 +1,12 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.Processors.Interfaces
 {
     /**
      * IProcessor context interface.
@@ -62,9 +64,7 @@ namespace Kafka.Streams.Processor.Interfaces
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void register(
-            IStateStore store,
-            IStateRestoreCallback stateRestoreCallback);
+        void register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
 
         /**
          * Get the state store given the store name.

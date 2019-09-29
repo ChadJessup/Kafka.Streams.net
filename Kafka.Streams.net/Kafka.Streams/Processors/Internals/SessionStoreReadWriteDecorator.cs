@@ -2,7 +2,7 @@
 using System;
 using Kafka.Streams.KStream;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class SessionStoreReadWriteDecorator<K, AGG>
         : StateStoreReadWriteDecorator<ISessionStore<K, AGG>>

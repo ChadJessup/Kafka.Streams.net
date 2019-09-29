@@ -16,7 +16,7 @@
  */
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
     /**
      * The context associated with the current record being processed by

@@ -15,7 +15,7 @@
 // * limitations under the License.
 // */
 //using Kafka.Streams.KStream.Internals;
-//using Kafka.Streams.Processor.Internals;
+//using Kafka.Streams.Processors.Internals;
 
 //namespace Kafka.Streams.State.Internals
 //{

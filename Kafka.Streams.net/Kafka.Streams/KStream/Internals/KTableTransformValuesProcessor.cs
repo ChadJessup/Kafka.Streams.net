@@ -14,9 +14,9 @@
 // * See the License for the specific language governing permissions and
 // * limitations under the License.
 // */
-//using Kafka.Streams.Processor;
-//using Kafka.Streams.Processor.Interfaces;
-//using Kafka.Streams.Processor.Internals;
+//using Kafka.Streams.Processors;
+//using Kafka.Streams.Processors.Interfaces;
+//using Kafka.Streams.Processors.Internals;
 //using Kafka.Streams.State;
 
 //namespace Kafka.Streams.KStream.Internals

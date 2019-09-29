@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using Confluent.Kafka;
 using System;
 using Microsoft.Extensions.Logging;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using System.Linq;
 using Kafka.Streams.Errors;
+using Kafka.Streams.State;
+using Kafka.Streams.Tasks;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class StoreChangelogReader : IChangelogReader
     {

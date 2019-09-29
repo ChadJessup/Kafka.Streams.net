@@ -3,7 +3,7 @@ using Kafka.Streams.KStream.Internals;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     /**
      * This interface is used to define custom partition assignment for use in

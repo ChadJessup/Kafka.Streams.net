@@ -15,7 +15,7 @@
 // * limitations under the License.
 // */
 //using Kafka.Common.Utils;
-//using Kafka.Streams.Processor.Interfaces;
+//using Kafka.Streams.Processors.Interfaces;
 //using Microsoft.Extensions.Logging;
 
 //namespace Kafka.Streams.State.Internals

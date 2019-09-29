@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.Processor;
+﻿using Kafka.Streams.Processors;
 using RocksDbSharp;
 using System.Collections.Generic;
 using Confluent.Kafka;

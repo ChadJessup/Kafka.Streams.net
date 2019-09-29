@@ -1,7 +1,7 @@
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 
-namespace Kafka.Streams.Processor
+namespace Kafka.Streams.Processors
 {
     /**
      * An abstract implementation of {@link IProcessor} that manages the {@link IProcessorContext} instance and provides default no-op

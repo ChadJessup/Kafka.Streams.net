@@ -24,8 +24,8 @@ namespace Kafka.Streams.State.Internals
 {
     public class ValueAndTimestampSerde<V> : Serde<ValueAndTimestamp<V>>
     {
-        // private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
-        // private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
+        private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
+        private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
 
         public ValueAndTimestampSerde(ISerde<V> valueSerde)
             : base(
@@ -36,18 +36,18 @@ namespace Kafka.Streams.State.Internals
         }
 
         public override void Configure(
-            Dictionary<string, object> configs,
+            Dictionary<string, string> configs,
             bool isKey)
         {
-            //            this.Serializer.Configure(configs, isKey);
-            //            valueAndTimestampSerializer.configure(configs, isKey);
-            //            valueAndTimestampDeserializer.configure(configs, isKey);
+            //this.Serializer.Configure(configs, isKey);
+            valueAndTimestampSerializer.Configure(configs, isKey);
+            valueAndTimestampDeserializer.Configure(configs, isKey);
         }
 
         public override void Close()
         {
-            //            valueAndTimestampSerializer.close();
-            //            valueAndTimestampDeserializer.close();
+            valueAndTimestampSerializer.Close();
+            valueAndTimestampDeserializer.Close();
         }
     }
 }

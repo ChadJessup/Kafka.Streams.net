@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.State;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class TimestampedWindowStoreReadWriteDecorator<K, V>
         : WindowStoreReadWriteDecorator<K, ValueAndTimestamp<V>>

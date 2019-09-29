@@ -1,7 +1,8 @@
 using Kafka.Common.Utils;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processor;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;

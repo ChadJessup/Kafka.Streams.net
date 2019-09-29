@@ -1,10 +1,10 @@
 //using Confluent.Kafka;
 //using Kafka.Streams;
-//using Kafka.Streams.Processor;
-//using Kafka.Streams.Processor.Internals;
+//using Kafka.Streams.Processors;
+//using Kafka.Streams.Processors.Internals;
 //using Kafka.Streams.State.Internals;
 //using Kafka.Streams.Errors;
-//using Kafka.Streams.Processor.Interfaces;
+//using Kafka.Streams.Processors.Interfaces;
 //using Microsoft.Extensions.Logging;
 //using System;
 //using System.Collections.Generic;
@@ -15,7 +15,7 @@
 //using Kafka.Common.Extensions;
 //using Kafka.Streams.State.Interfaces;
 
-//namespace Kafka.Streams.Processor.Internals
+//namespace Kafka.Streams.Processors.Internals
 //{
 //    /**
 //     * This is responsible for the initialization, restoration, closing, flushing etc

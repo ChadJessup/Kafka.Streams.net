@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-namespace Kafka.Streams.Processor.Interfaces
+namespace Kafka.Streams.Processors.Interfaces
 {
     /**
      * Basic interface for keeping track of the state of a thread.

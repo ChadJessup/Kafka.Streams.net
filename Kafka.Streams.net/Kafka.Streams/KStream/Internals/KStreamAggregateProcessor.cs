@@ -1,9 +1,9 @@
 ﻿//using Kafka.Streams.State;
 //using Microsoft.Extensions.Logging;
-//using Kafka.Streams.Processor;
-//using Kafka.Streams.Processor.Internals.Metrics;
+//using Kafka.Streams.Processors;
+//using Kafka.Streams.Processors.Internals.Metrics;
 //using Kafka.Common.Metrics;
-//using Kafka.Streams.Processor.Interfaces;
+//using Kafka.Streams.Processors.Interfaces;
 //using System;
 
 //namespace Kafka.Streams.KStream.Internals

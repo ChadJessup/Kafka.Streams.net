@@ -2,14 +2,14 @@ using Confluent.Kafka;
 using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
-using Kafka.Streams.Processor.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Security.Authentication;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class RecordCollectorImpl : IRecordCollector
     {

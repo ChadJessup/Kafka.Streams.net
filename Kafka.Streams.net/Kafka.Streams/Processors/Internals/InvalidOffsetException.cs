@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Confluent.Kafka;
 
-namespace Kafka.Streams.Processor.Internals
+namespace Kafka.Streams.Processors.Internals
 {
     public class InvalidOffsetException : Exception
     {

@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Interfaces

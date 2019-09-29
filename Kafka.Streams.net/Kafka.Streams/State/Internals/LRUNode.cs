@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 using Kafka.Common.Utils;
-using Kafka.Streams.Processor.Internals.Metrics;
+using Kafka.Streams.Processors.Internals.Metrics;
 
 namespace Kafka.Streams.State.Internals
 {
