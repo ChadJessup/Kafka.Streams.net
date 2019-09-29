@@ -464,7 +464,7 @@ namespace Kafka.Streams.KStream.Internals
                name,
                processorParameters);
 
-            builder.AddGraphNode(this.streamsGraphNode, toStreamNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, toStreamNode);
 
             // we can inherit parent key and value serde
             return new KStream<K, V>(

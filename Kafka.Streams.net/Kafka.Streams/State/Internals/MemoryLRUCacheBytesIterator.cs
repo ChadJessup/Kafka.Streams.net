@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Internals
             {
                 throw new IndexOutOfRangeException();
             }
-            return nextEntry.key;
+            return nextEntry.Key;
         }
 
 

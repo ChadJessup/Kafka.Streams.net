@@ -63,14 +63,14 @@ namespace Kafka.Streams.KStream.Internals
 
             ProcessorParameters<K1, V1> thisWindowStreamProcessorParams = new ProcessorParameters<K1, V1>(thisWindowedStream, thisWindowStreamName);
             ProcessorGraphNode<K1, V1> thisWindowedStreamsNode = new ProcessorGraphNode<K1, V1>(thisWindowStreamName, thisWindowStreamProcessorParams);
-            builder.AddGraphNode(thisStreamsGraphNode, thisWindowedStreamsNode);
+            builder.AddGraphNode<K1, V1>(thisStreamsGraphNode, thisWindowedStreamsNode);
 
             KStreamJoinWindow<K1, V2> otherWindowedStream = new KStreamJoinWindow<K1, V2>(otherWindowStore.name);
 
             ProcessorParameters<K1, V2> otherWindowStreamProcessorParams = new ProcessorParameters<K1, V2>(otherWindowedStream, otherWindowStreamName);
             ProcessorGraphNode<K1, V2> otherWindowedStreamsNode = new ProcessorGraphNode<K1, V2>(otherWindowStreamName, otherWindowStreamProcessorParams);
 
-            builder.AddGraphNode(otherStreamsGraphNode, otherWindowedStreamsNode);
+            builder.AddGraphNode<K1, V1>(otherStreamsGraphNode, otherWindowedStreamsNode);
 
             KStreamKStreamJoin<K1, R, V1, V2> joinThis = new KStreamKStreamJoin<K1, R, V1, V2>(
                otherWindowStore.name,
@@ -106,7 +106,7 @@ namespace Kafka.Streams.KStream.Internals
 
             StreamsGraphNode joinGraphNode = joinBuilder.build();
 
-            builder.AddGraphNode(new HashSet<StreamsGraphNode> { thisStreamsGraphNode, otherStreamsGraphNode }, joinGraphNode);
+            builder.AddGraphNode<K1, V1>(new HashSet<StreamsGraphNode> { thisStreamsGraphNode, otherStreamsGraphNode }, joinGraphNode);
 
             HashSet<string> allSourceNodes = new HashSet<string>(((KStream<K1, V1>)lhs).sourceNodes);
 

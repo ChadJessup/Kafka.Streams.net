@@ -393,7 +393,7 @@ namespace Kafka.Streams.State.Internals
         public void addToBatch(KeyValue<byte[], byte[]> record,
                                WriteBatch batch)
         {
-            dbAccessor.addToBatch(record.key, record.value, batch);
+            dbAccessor.addToBatch(record.Key, record.Value, batch);
         }
 
         public void write(WriteBatch batch)

@@ -368,7 +368,7 @@ namespace Kafka.Streams.KStream.Internals
                 var innerProcessorParameters = new ProcessorParameters<K, V>(new KStreamPassThrough<K, V>(), childNames[i]);
                 var branchChildNode = new ProcessorGraphNode<K, V>(childNames[i], innerProcessorParameters);
 
-                builder.AddGraphNode(branchNode, branchChildNode);
+                builder.AddGraphNode<K, V>(branchNode, branchChildNode);
 
                 branchChildren[i] = new KStream<K, V>(
                     childNames[i],
@@ -417,7 +417,7 @@ namespace Kafka.Streams.KStream.Internals
             mergeNode.SetMergeNode(true);
 
             var parents = new HashSet<StreamsGraphNode> { this.streamsGraphNode, streamImpl.streamsGraphNode };
-            builder.AddGraphNode(parents, mergeNode);
+            builder.AddGraphNode<K, V>(parents, mergeNode);
 
             // drop the serde as we cannot safely use either one to represent both streams
             return new KStream<K, V>(name, null, null, allSourceNodes, requireRepartitioning, mergeNode, builder);
@@ -436,7 +436,7 @@ namespace Kafka.Streams.KStream.Internals
                    name);
 
             ProcessorGraphNode<K, V> foreachNode = new ProcessorGraphNode<K, V>(name, processorParameters);
-            builder.AddGraphNode(this.streamsGraphNode, foreachNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, foreachNode);
         }
 
         public IKStream<K, V> peek(IForeachAction<K, V> action)
@@ -552,7 +552,7 @@ namespace Kafka.Streams.KStream.Internals
                topicExtractor,
                produced);
 
-            builder.AddGraphNode(this.streamsGraphNode, sinkNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, sinkNode);
         }
 
         public IKStream<KR, VR> transform<KR, VR>(
@@ -604,7 +604,7 @@ namespace Kafka.Streams.KStream.Internals
                 IsKeyChangingOperation = true
             };
 
-            builder.AddGraphNode(streamsGraphNode, transformNode);
+            builder.AddGraphNode<K, V>(streamsGraphNode, transformNode);
 
             // cannot inherit key and value serde
             return new KStream<K1, V1>(
@@ -666,7 +666,7 @@ namespace Kafka.Streams.KStream.Internals
                 IsValueChangingOperation = true
             };
 
-            builder.AddGraphNode(this.streamsGraphNode, transformNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, transformNode);
 
             // cannot inherit value serde
             return new KStream<K, VR>(
@@ -732,7 +732,7 @@ namespace Kafka.Streams.KStream.Internals
                 IsValueChangingOperation = true
             };
 
-            builder.AddGraphNode(this.streamsGraphNode, transformNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, transformNode);
 
             // cannot inherit value serde
             return new KStream<K, VR>(
@@ -771,7 +771,7 @@ namespace Kafka.Streams.KStream.Internals
                    new ProcessorParameters<K, V>(IProcessorSupplier, name),
                    stateStoreNames);
 
-            builder.AddGraphNode(this.streamsGraphNode, processNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, processNode);
         }
 
         public IKStream<K, VR> join<VO, VR>(
@@ -1088,7 +1088,7 @@ namespace Kafka.Streams.KStream.Internals
                 new string[] { },
                 null);
 
-            builder.AddGraphNode(this.streamsGraphNode, streamTableJoinNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, streamTableJoinNode);
 
             // do not have serde for joined result
             return new KStream<K, VR>(
@@ -1182,7 +1182,7 @@ namespace Kafka.Streams.KStream.Internals
             ProcessorGraphNode<K, V> selectKeyMapNode = internalSelectKey(selector, new NamedInternal(groupedInternal.name));
             selectKeyMapNode.IsKeyChangingOperation = true;
 
-            builder.AddGraphNode(this.streamsGraphNode, selectKeyMapNode);
+            builder.AddGraphNode<K, V>(this.streamsGraphNode, selectKeyMapNode);
 
             return new KGroupedStream<KR, V>(
                 selectKeyMapNode.NodeName,

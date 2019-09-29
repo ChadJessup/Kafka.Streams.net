@@ -160,7 +160,7 @@ namespace Kafka.Streams.State.Internals
         {
             foreach (KeyValue<Bytes, LRUCacheEntry> entry in entries)
             {
-                put(@namespace, entry.key, entry.value);
+                put(@namespace, entry.Key, entry.Value);
             }
         }
 

@@ -28,7 +28,7 @@ namespace Kafka.Streams.Errors.Interfaces
     public class DeserializationHandlerResponse
     {
         public static DeserializationHandlerResponses Response { get; }
-        public static DeserializationHandlerResponse FAIL { get; internal set; }
+        public static DeserializationHandlerResponse FAIL { get; set; }
 
         /** an english description of the api--this is for debugging and can change */
         string name { get; }

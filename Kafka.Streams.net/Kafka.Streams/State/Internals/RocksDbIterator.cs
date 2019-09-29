@@ -89,7 +89,7 @@ namespace Kafka.Streams.State.Internals
                 throw new IndexOutOfRangeException();
             }
 
-            return next.key;
+            return next.Key;
         }
     }
 }

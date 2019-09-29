@@ -40,7 +40,7 @@ namespace Kafka.Streams.Processor.Internals
             List<KeyValue<byte[], byte[]>> keyValues = new List<KeyValue<byte[], byte[]>>();
             foreach (var record in records)
             {
-                keyValues.Add(new KeyValue<byte[], byte[]>(record.key, record.value));
+                keyValues.Add(new KeyValue<byte[], byte[]>(record.Key, record.Value));
             }
 
             ((IBatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);

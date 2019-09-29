@@ -57,7 +57,7 @@ namespace Kafka.Streams.State.Internals
             }
             else
             {
-                if (comparator.Compare(next.key.get(), rawToKey) <= 0)
+                if (comparator.Compare(next.Key.get(), rawToKey) <= 0)
                 {
                     return next;
                 }

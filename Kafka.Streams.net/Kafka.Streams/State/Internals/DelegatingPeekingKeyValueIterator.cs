@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.Internals
                 throw new IndexOutOfRangeException();
             }
 
-            return _next.key;
+            return _next.Key;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

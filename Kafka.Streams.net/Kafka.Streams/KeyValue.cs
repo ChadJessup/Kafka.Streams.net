@@ -1,3 +1,5 @@
+using System;
+
 namespace Kafka.Streams
 {
     /**
@@ -10,9 +12,9 @@ namespace Kafka.Streams
     public class KeyValue<K, V>
     {
         /** The key of the key-value pair. */
-        public K key;
+        public K Key { get; }
         /** The value of the key-value pair. */
-        public V value;
+        public V Value { get; }
 
         /**
          * Create a new key-value pair.
@@ -22,8 +24,8 @@ namespace Kafka.Streams
          */
         public KeyValue(K key, V value)
         {
-            this.key = key;
-            this.value = value;
+            this.Key = key ?? throw new ArgumentNullException(nameof(key));
+            this.Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /**
@@ -35,14 +37,14 @@ namespace Kafka.Streams
          * @param   the type of the value
          * @return a new key-value pair
          */
-        public static KeyValue<K, V> pair(K key, V value)
+        public static KeyValue<K, V> Pair(K key, V value)
         {
             return new KeyValue<K, V>(key, value);
         }
 
         public override string ToString()
         {
-            return "KeyValue(" + key + ", " + value + ")";
+            return $"KeyValue({this.Key}, {this.Value})";
         }
 
         public override bool Equals(object obj)
@@ -58,12 +60,13 @@ namespace Kafka.Streams
             }
 
             KeyValue<K, V> other = (KeyValue<K, V>)obj;
-            return key.Equals(other.key) && value.Equals(other.value);
+
+            return this.Key.Equals(other.Key) && this.Value.Equals(other.Value);
         }
 
         public override int GetHashCode()
         {
-            return (key, value).GetHashCode();
+            return (this.Key, this.Value).GetHashCode();
         }
     }
 }

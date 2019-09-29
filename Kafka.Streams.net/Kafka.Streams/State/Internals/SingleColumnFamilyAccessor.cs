@@ -58,14 +58,13 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        public void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
-                                 WriteBatch batch)
+        public void prepareBatch(
+            List<KeyValue<Bytes, byte[]>> entries,
+            WriteBatch batch)
         {
             foreach (KeyValue<Bytes, byte[]> entry in entries)
             {
-                entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
-
-                addToBatch(entry.key.get(), entry.value, batch);
+                addToBatch(entry.Key.get(), entry.Value, batch);
             }
         }
 
@@ -120,7 +119,7 @@ namespace Kafka.Streams.State.Internals
         {
             foreach (KeyValue<byte[], byte[]> record in records)
             {
-                addToBatch(record.key, record.value, batch);
+                addToBatch(record.Key, record.Value, batch);
             }
         }
 

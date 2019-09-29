@@ -34,7 +34,7 @@ namespace Kafka.Streams.State.Internals
         {
             KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
 
-            return KeyValue<long, V>.pair(innerKeyValue.key, ValueAndTimestamp<V>.getValueOrNull(innerKeyValue.value));
+            return KeyValue<long, V>.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.getValueOrNull(innerKeyValue.Value));
         }
 
         public bool MoveNext()

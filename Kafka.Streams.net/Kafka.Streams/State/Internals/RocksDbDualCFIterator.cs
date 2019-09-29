@@ -68,7 +68,7 @@ namespace Kafka.Streams.State.Internals
                 }
                 else
                 {
-                    next = KeyValue<Bytes, byte[]>.pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                    next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                     nextWithTimestamp = null;
                     iterWithTimestamp.Next();
                 }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.State.Internals
             {
                 if (nextWithTimestamp == null)
                 {
-                    next = KeyValue<Bytes, byte[]>.pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                    next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                     nextNoTimestamp = null;
                     iterNoTimestamp.Next();
                 }
@@ -85,13 +85,13 @@ namespace Kafka.Streams.State.Internals
                 {
                     if (comparator.Compare(nextNoTimestamp, nextWithTimestamp) <= 0)
                     {
-                        next = KeyValue<Bytes, byte[]>.pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                        next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                         nextNoTimestamp = null;
                         iterNoTimestamp.Next();
                     }
                     else
                     {
-                        next = KeyValue<Bytes, byte[]>.pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                        next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                         nextWithTimestamp = null;
                         iterWithTimestamp.Next();
                     }
@@ -122,7 +122,7 @@ namespace Kafka.Streams.State.Internals
                 throw new IndexOutOfRangeException();
             }
 
-            return next.key;
+            return next.Key;
         }
     }
 }
