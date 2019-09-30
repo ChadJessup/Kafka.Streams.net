@@ -5,8 +5,7 @@ using System;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public abstract class StateStoreReadWriteDecorator<T>
-        : WrappedStateStore<T>
+    public abstract class StateStoreReadWriteDecorator<T> : WrappedStateStore<T>
     where T : IStateStore
     {
 

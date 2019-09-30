@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.State
+namespace Kafka.Streams.Topologies
 {
     [Serializable]
     public class GlobalStoreComparator : IComparer<IGlobalStore>
     {
-        public int compare(IGlobalStore globalStore1, IGlobalStore globalStore2)
+        public int Compare(IGlobalStore globalStore1, IGlobalStore globalStore2)
         {
             if (globalStore1.Equals(globalStore2))
             {
@@ -14,11 +14,6 @@ namespace Kafka.Streams.State
             }
 
             return globalStore1.id - globalStore2.id;
-        }
-
-        public int Compare(IGlobalStore x, IGlobalStore y)
-        {
-            return compare(x, y);
         }
     }
 }

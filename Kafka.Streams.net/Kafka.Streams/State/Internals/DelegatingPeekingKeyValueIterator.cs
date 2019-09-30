@@ -12,8 +12,8 @@ namespace Kafka.Streams.State.Internals
      */
     public class DelegatingPeekingKeyValueIterator<K, V> : IKeyValueIterator<K, V>, IPeekingKeyValueIterator<K, V>
     {
-        private IKeyValueIterator<K, V> underlying;
-        private string storeName;
+        private readonly IKeyValueIterator<K, V> underlying;
+        private readonly string storeName;
         private KeyValue<K, V> _next;
 
         private volatile bool open = true;

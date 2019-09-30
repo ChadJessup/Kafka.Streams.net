@@ -4,10 +4,9 @@ using System.Collections.Generic;
 namespace Kafka.Streams.Topologies
 {
     [Serializable]
-    public class SubtopologyComparator : IComparer<Subtopology>
+    public class SubtopologyComparator : IComparer<ISubtopology>
     {
-        public int Compare(Subtopology subtopology1,
-                           Subtopology subtopology2)
+        public int Compare(ISubtopology subtopology1, ISubtopology subtopology2)
         {
             if (subtopology1.Equals(subtopology2))
             {

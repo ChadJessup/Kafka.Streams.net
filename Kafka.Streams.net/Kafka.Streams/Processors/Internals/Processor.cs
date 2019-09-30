@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -30,7 +31,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 return true;
             }
-            if (o == null || GetType() != o.GetType())
+            if (o == null || this.GetType() != o.GetType())
             {
                 return false;
             }

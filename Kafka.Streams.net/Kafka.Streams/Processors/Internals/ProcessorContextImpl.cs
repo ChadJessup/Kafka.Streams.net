@@ -86,7 +86,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (!GetCurrentNode().stateStores.Contains(name))
             {
-                throw new StreamsException("IProcessor " + GetCurrentNode().name + " has no access to IStateStore " + name +
+                throw new StreamsException("IProcessor " + GetCurrentNode().Name + " has no access to IStateStore " + name +
                     " as the store is not connected to the processor. If you.Add stores manually via '.AddStateStore()' " +
                     "make sure to connect the.Added store to the processor by providing the processor name to " +
                     "'.AddStateStore()' or connect them via '.connectProcessorAndStateStores()'. " +

@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
         public KStreamMapValues(Func<K, V, V1> mapper)
             => this.mapper = new ValueMapperWithKey<K, V, V1>(mapper);
 
-        public IProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> get()
             => new KStreamMapProcessor<K, V>();
 
         //public static implicit operator KStreamMapValues<K, V1, V>(KStreamMapValues<K, V, V1> toSwap)

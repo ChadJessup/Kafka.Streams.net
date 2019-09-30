@@ -1,7 +1,8 @@
-﻿using System;
+﻿using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Nodes
+namespace Kafka.Streams.Topologies
 {
     public abstract class AbstractNode : INode
     {

@@ -84,7 +84,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         private readonly StateDirectory stateDirectory;
         private readonly StreamsMetadataState streamsMetadataState;
 //        private ScheduledExecutorService stateDirCleaner;
-        private QueryableStoreProvider queryableStoreProvider;
+        private readonly QueryableStoreProvider queryableStoreProvider;
         private readonly IAdminClient adminClient;
 
         private readonly GlobalStreamThread globalStreamThread;

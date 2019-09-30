@@ -5,7 +5,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class KeyValueIteratorFacade<K, V> : IKeyValueIterator<K, V>
     {
-        private IKeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
+        private readonly IKeyValueIterator<K, ValueAndTimestamp<V>> innerIterator;
 
         public KeyValue<K, V> Current { get; }
         object IEnumerator.Current { get; }

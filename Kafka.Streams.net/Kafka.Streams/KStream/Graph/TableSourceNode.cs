@@ -15,10 +15,10 @@ namespace Kafka.Streams.Nodes
      */
     public class TableSourceNode<K, V> : StreamSourceNode<K, V>
     {
-        private MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
-        private ProcessorParameters<K, V> processorParameters;
-        private string sourceName;
-        private bool isGlobalKTable;
+        private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
+        private readonly ProcessorParameters<K, V> processorParameters;
+        private readonly string sourceName;
+        private readonly bool isGlobalKTable;
         private bool shouldReuseSourceTopicForChangelog = false;
 
         public TableSourceNode(

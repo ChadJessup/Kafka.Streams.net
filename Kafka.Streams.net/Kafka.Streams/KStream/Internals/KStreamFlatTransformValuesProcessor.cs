@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamFlatTransformValuesProcessor<K, V, VR> : IProcessor<K, V>
+    public class KStreamFlatTransformValuesProcessor<K, V, VR> : IKeyValueProcessor<K, V>
     {
         private readonly IValueTransformerWithKey<K, V, IEnumerable<VR>> valueTransformer;
         private IProcessorContext context;

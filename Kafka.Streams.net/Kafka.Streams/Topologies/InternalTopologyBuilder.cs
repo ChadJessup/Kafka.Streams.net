@@ -8,7 +8,6 @@ using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
-using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -788,7 +787,7 @@ namespace Kafka.Streams.Topologies
 
             Dictionary<string, ProcessorNode> processorMap = new Dictionary<string, ProcessorNode>();
             Dictionary<string, SourceNode> topicSourceMap = new Dictionary<string, SourceNode>();
-            Dictionary<string, ISinkNode> topicSinkMap = new Dictionary<string, ISinkNode>();
+            Dictionary<string, ISink> topicSinkMap = new Dictionary<string, ISink>();
             Dictionary<string, IStateStore> stateStoreMap = new Dictionary<string, IStateStore>();
             HashSet<string> repartitionTopics = new HashSet<string>();
 

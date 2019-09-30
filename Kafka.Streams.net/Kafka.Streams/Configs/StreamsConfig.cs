@@ -86,7 +86,7 @@ namespace Kafka.Streams.Configs
     public class StreamsConfig : ClientConfig
     {
         private Dictionary<string, string> originalValues = new Dictionary<string, string>();
-        
+
         private static readonly string[] NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_AUTO_COMMIT_CONFIG };
         private static readonly string[] NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ISOLATION_LEVEL_CONFIG };
         private static readonly string[] NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS = new string[] { StreamsConfigPropertyNames.ENABLE_IDEMPOTENCE_CONFIG, StreamsConfigPropertyNames.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION };
@@ -321,7 +321,14 @@ namespace Kafka.Streams.Configs
             consumerProps.PutAll(clientProvidedProps);
 
             // bootstrap.servers should be from StreamsConfig
-            consumerProps.Add(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, this.originalValues[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG]);
+            if (consumerProps.ContainsKey(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG))
+            {
+                consumerProps[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG] = this.originalValues[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG];
+            }
+            else
+            {
+                consumerProps.Add(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, this.originalValues[StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG]);
+            }
 
             return consumerProps;
         }
@@ -515,10 +522,10 @@ namespace Kafka.Streams.Configs
 
             // no need to set group id for a restore consumer
             // C# library throws if GroupId isn't set...
-            // if (!string.IsNullOrWhiteSpace(this.GroupId) && baseConsumerProps.ContainsKey(this.GroupId))
-            // {
-            //     baseConsumerProps.Remove(this.GroupId);
-            // }
+            //if (!string.IsNullOrWhiteSpace(this.GroupId) && baseConsumerProps.ContainsKey(this.GroupId))
+            //{
+            //    baseConsumerProps.Remove(this.GroupId);
+            //}
 
             // add client id with stream client id prefix
             baseConsumerProps.Add(StreamsConfigPropertyNames.ClientId, clientId);
@@ -696,6 +703,14 @@ namespace Kafka.Streams.Configs
             //props.removeAll(CONFIG.names());
 
             return this.originalValues
+                .RemoveAll(new[]
+                {
+                    "application.id",
+                    "default.key.serde",
+                    "default.value.serde",
+                    "num.stream.threads",
+                    "cache.max.bytes.buffering",
+                })
                 .RemoveAll(new ConsumerConfig().Select(c => c.Key))
                 .RemoveAll(new ProducerConfig().Select(c => c.Key))
                 .RemoveAll(new AdminClientConfig().Select(c => c.Key))

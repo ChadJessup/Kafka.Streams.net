@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IProcessor<K, Change<V>> get()
+        public IKeyValueProcessor<K, Change<V>> get()
         {
             return new KTableMapValuesProcessor<K, V, Change<V>>(null);// this.mapper);
         }

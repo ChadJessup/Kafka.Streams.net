@@ -10,8 +10,8 @@ namespace Kafka.Streams.State.Internals
      */
     public class QueryableStoreProvider
     {
-        private List<IStateStoreProvider> storeProviders;
-        private GlobalStateStoreProvider globalStoreProvider;
+        private readonly List<IStateStoreProvider> storeProviders;
+        private readonly GlobalStateStoreProvider globalStoreProvider;
 
         public QueryableStoreProvider(
             List<IStateStoreProvider> storeProviders,

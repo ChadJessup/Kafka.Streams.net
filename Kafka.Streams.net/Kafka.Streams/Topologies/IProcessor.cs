@@ -1,7 +1,8 @@
 ﻿using Kafka.Streams.Nodes;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.Interfaces
+namespace Kafka.Streams.Topologies
 {
     /**
      * A processor node of a topology.

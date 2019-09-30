@@ -24,8 +24,8 @@ namespace Kafka.Streams.State.Internals
 {
     public class ValueAndTimestampSerde<V> : Serde<ValueAndTimestamp<V>>
     {
-        private ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
-        private ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
+        private readonly ValueAndTimestampSerializer<V> valueAndTimestampSerializer;
+        private readonly ValueAndTimestampDeserializer<V> valueAndTimestampDeserializer;
 
         public ValueAndTimestampSerde(ISerde<V> valueSerde)
             : base(

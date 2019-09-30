@@ -42,7 +42,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IProcessor<K, Change<V>> get()
+        public IKeyValueProcessor<K, Change<V>> get()
         {
             return null; // new KTableFilterProcessor();
         }

@@ -14,21 +14,16 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Common.Utils;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
-using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
-using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
+using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.GlobalStream;
 using Kafka.Streams.Threads.KafkaStream;
 using Kafka.Streams.Threads.KafkaStreams;
@@ -40,7 +35,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Kafka.Streams
@@ -71,10 +65,7 @@ namespace Kafka.Streams
 
                 this.BuildDependencyTree(this.configuration, this.serviceCollection);
 
-                this.services = this.serviceCollection.BuildServiceProvider(new ServiceProviderOptions
-                {
-                    ValidateOnBuild = true,
-                });
+                this.services = this.serviceCollection.BuildServiceProvider();
 
                 this.topology = this.services.GetRequiredService<Topology>();
                 this.internalStreamsBuilder = this.services.GetRequiredService<InternalStreamsBuilder>();
@@ -141,7 +132,6 @@ namespace Kafka.Streams
 
                 serviceCollection.TryAddSingleton<GlobalStreamThread>();
                 serviceCollection.TryAddSingleton<GlobalStreamThreadState>();
-                serviceCollection.TryAddScoped(typeof(IThread<>));
                 serviceCollection.TryAddScoped<KafkaStreamThread>();
                 serviceCollection.TryAddScoped<KafkaStreamThreadState>();
             }

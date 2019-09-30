@@ -1,6 +1,4 @@
-﻿using Kafka.Streams.Nodes;
-using Kafka.Streams.Topologies;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace Kafka.Streams.Topologies

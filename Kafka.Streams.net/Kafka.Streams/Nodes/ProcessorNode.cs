@@ -16,14 +16,14 @@ namespace Kafka.Streams.Nodes
     {
         public ProcessorNode(string name, HashSet<string> stateStores)
         {
-            this.name = name;
+            this.Name = name;
             this.stateStores = stateStores;
             this.time = new SystemTime();
             this.children = new List<ProcessorNode>();
             this.childByName = new Dictionary<string, ProcessorNode>();
         }
 
-        public string name { get; }
+        public string Name { get; }
         protected ITime time { get; }
 
         public HashSet<string> stateStores { get; protected set; } = new HashSet<string>();
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Nodes
          */
         public virtual string ToString(string indent)
         {
-            StringBuilder sb = new StringBuilder($"{indent}{name}:\n");
+            StringBuilder sb = new StringBuilder($"{indent}{Name}:\n");
 
             if (this.stateStores.Any())
             {
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Nodes
     public class ProcessorNode<K, V> : ProcessorNode
     {
         public NodeMetrics<K, V> nodeMetrics { get; private set; }
-        private readonly IProcessor<K, V> processor;
+        private readonly IKeyValueProcessor<K, V> processor;
 
         public ProcessorNode(string name)
             : this(name, null, null)
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Nodes
 
         public ProcessorNode(
             string name,
-            IProcessor<K, V> processor,
+            IKeyValueProcessor<K, V> processor,
             HashSet<string> stateStores)
             : base(name, stateStores)
         {
@@ -93,14 +93,14 @@ namespace Kafka.Streams.Nodes
         public void addChild(ProcessorNode<K, V> child)
         {
             children.Add(child);
-            childByName.Add(child.name, child);
+            childByName.Add(child.Name, child);
         }
 
         public virtual void init(IInternalProcessorContext context)
         {
             try
             {
-                nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, name, context);
+                nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, Name, context);
                 long startNs = time.nanoseconds();
                 if (processor != null)
                 {
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Nodes
             }
             catch (Exception e)
             {
-                throw new StreamsException(string.Format("failed to initialize processor %s", name), e);
+                throw new StreamsException(string.Format("failed to initialize processor %s", Name), e);
             }
         }
 
@@ -130,10 +130,9 @@ namespace Kafka.Streams.Nodes
             }
             catch (Exception e)
             {
-                throw new StreamsException(string.Format("failed to close processor %s", name), e);
+                throw new StreamsException(string.Format("failed to close processor %s", Name), e);
             }
         }
-
 
         public virtual void process(K key, V value)
         {

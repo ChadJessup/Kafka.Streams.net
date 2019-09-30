@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
             this.filterNot = filterNot;
         }
 
-        public IProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> get()
         {
             return new KStreamFilterProcessor<K, V>();
         }

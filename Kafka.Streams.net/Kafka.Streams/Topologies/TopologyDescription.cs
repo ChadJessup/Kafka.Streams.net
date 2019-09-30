@@ -1,33 +1,24 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Kafka.Common;
-using Kafka.Streams.Interfaces;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Kafka.Streams.Topologies;
-using Kafka.Streams.State;
+using System.Text;
 
 namespace Kafka.Streams.Topologies
 {
-    public class TopologyDescription
+    /**
+ * A meta representation of a {@link Topology topology}.
+ * <p>
+ * The nodes of a topology are grouped into {@link Subtopology sub-topologies} if they are connected.
+ * In contrast, two sub-topologies are not connected but can be linked to each other via topics, i.e., if one
+ * sub-topology {@link Topology.AddSink(string, string, string...) writes} into a topic and another sub-topology
+ * {@link Topology.AddSource(string, string...) reads} from the same topic.
+ * <p>
+ * When {@link KafkaStreams#start()} is called, different sub-topologies will be constructed and executed as independent
+ * {@link StreamTask tasks}.
+ */
+    public class TopologyDescription : ITopology
     {
-        private readonly SortedSet<ISubtopology> subtopologies = new SortedSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
-        private readonly SortedSet<IGlobalStore> globalStores = new SortedSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
+        public HashSet<ISubtopology> subtopologies { get; } = new HashSet<ISubtopology>(/*SUBTOPOLOGY_COMPARATOR*/);
+        public HashSet<IGlobalStore> globalStores { get; } = new HashSet<IGlobalStore>(/*GLOBALSTORE_COMPARATOR*/);
 
         public void addSubtopology(ISubtopology subtopology)
         {
@@ -75,6 +66,7 @@ namespace Kafka.Streams.Topologies
                 sb.Append(subtopology);
                 subtopologiesIndex--;
             }
+            
             while (globalStoresIndex != -1)
             {
                 IGlobalStore globalStore = sortedGlobalStores[globalStoresIndex];
@@ -82,6 +74,7 @@ namespace Kafka.Streams.Topologies
                 sb.Append(globalStore);
                 globalStoresIndex--;
             }
+
             return sb.ToString();
         }
 
@@ -105,6 +98,7 @@ namespace Kafka.Streams.Topologies
         {
             return (subtopologies, globalStores).GetHashCode();
         }
+
 
     }
 }

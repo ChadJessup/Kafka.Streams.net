@@ -27,7 +27,7 @@ using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-    public class KTableSuppressProcessor<K, V> : IProcessor<K, Change<V>>
+    public class KTableSuppressProcessor<K, V> : IKeyValueProcessor<K, Change<V>>
     {
         private readonly long maxRecords;
         private readonly long maxBytes;

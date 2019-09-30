@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
             parentKTable.enableSendingOldValues();
         }
 
-        public IProcessor<K, Change<V>> get()
+        public IKeyValueProcessor<K, Change<V>> get()
         {
             return null;
             //return new KTableSuppressProcessor<K, Change<V>>(

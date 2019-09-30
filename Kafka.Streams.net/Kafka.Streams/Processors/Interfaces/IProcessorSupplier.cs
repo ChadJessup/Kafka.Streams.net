@@ -37,6 +37,6 @@ namespace Kafka.Streams.Processors
          *
          * @return  a new {@link IProcessor} instance
          */
-        IProcessor<K, V> get();
+        IKeyValueProcessor<K, V> get();
     }
 }

@@ -7,7 +7,7 @@ namespace Kafka.Streams.State.Internals
 {
     public class GlobalStateStoreProvider : IStateStoreProvider
     {
-        private Dictionary<string, IStateStore> globalStateStores;
+        private readonly Dictionary<string, IStateStore> globalStateStores;
 
         public GlobalStateStoreProvider(Dictionary<string, IStateStore> globalStateStores)
         {

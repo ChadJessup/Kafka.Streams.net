@@ -1,13 +1,12 @@
-﻿using Kafka.Streams.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace Kafka.Streams.Nodes
+namespace Kafka.Streams.Topologies
 {
     /**
      * A source node of a topology.
      */
-    public interface ISourceNode : INode
+    public interface ISource : INode
     {
         /**
          * The topic names this source node is reading from.

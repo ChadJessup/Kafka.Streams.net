@@ -2,12 +2,13 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Topologies;
 using System;
 using System.Text;
 
 namespace Kafka.Streams.Nodes
 {
-    public class SinkNode<K, V> : ProcessorNode<K, V>, ISinkNode
+    public class SinkNode<K, V> : ProcessorNode<K, V>
     {
         private readonly ISerializer<K> keySerializer;
         private readonly ISerializer<V> valSerializer;
@@ -16,7 +17,7 @@ namespace Kafka.Streams.Nodes
 
         private IInternalProcessorContext context;
 
-        SinkNode(
+        public SinkNode(
             string name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,

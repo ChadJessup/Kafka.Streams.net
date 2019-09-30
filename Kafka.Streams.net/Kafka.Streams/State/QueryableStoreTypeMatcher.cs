@@ -7,7 +7,7 @@ namespace Kafka.Streams.State
 {
     public abstract class QueryableStoreTypeMatcher<T> : IQueryableStoreType<T>
     {
-        private HashSet<Type> matchTo;
+        private readonly HashSet<Type> matchTo;
 
         public QueryableStoreTypeMatcher(HashSet<Type> matchTo)
         {

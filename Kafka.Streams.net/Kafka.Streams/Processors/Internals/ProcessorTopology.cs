@@ -1,6 +1,7 @@
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,12 @@ namespace Kafka.Streams.Processors.Internals
     {
         private readonly List<ProcessorNode> processorNodes;
         private readonly Dictionary<string, SourceNode> sourcesByTopic;
-        private readonly Dictionary<string, ISinkNode> sinksByTopic;
+        private readonly Dictionary<string, ISink> sinksByTopic;
 
         public ProcessorTopology(
             IEnumerable<ProcessorNode> processorNodes,
             Dictionary<string, SourceNode> sourcesByTopic,
-            Dictionary<string, ISinkNode> sinksByTopic,
+            Dictionary<string, ISink> sinksByTopic,
             IEnumerable<IStateStore> stateStores,
             IEnumerable<IStateStore> globalStateStores,
             Dictionary<string, string> storeToChangelogTopic,
@@ -73,7 +74,7 @@ namespace Kafka.Streams.Processors.Internals
             return new HashSet<string>(sinksByTopic.Keys);
         }
 
-        public ISinkNode sink(string topic)
+        public ISink sink(string topic)
         {
             return sinksByTopic[topic];
         }
@@ -94,7 +95,7 @@ namespace Kafka.Streams.Processors.Internals
             StringBuilder sb = new StringBuilder(indent + "\tchildren:\t[");
             foreach (var child in children)
             {
-                sb.Append(child.name);
+                sb.Append(child.Name);
                 sb.Append(", ");
             }
 
@@ -142,7 +143,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             foreach (ProcessorNode node in processorNodes)
             {
-                if (node.name.Equals(processorName))
+                if (node.Name.Equals(processorName))
                 {
                     return node.stateStores;
                 }

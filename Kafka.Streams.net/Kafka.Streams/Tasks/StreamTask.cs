@@ -320,7 +320,7 @@ namespace Kafka.Streams.Tasks
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                     id,
-                    processorContext.GetCurrentNode<byte[], byte[]>().name,
+                    processorContext.GetCurrentNode<byte[], byte[]>().Name,
                     record.Topic,
                     record.partition,
                     record.offset,
@@ -365,7 +365,7 @@ namespace Kafka.Streams.Tasks
 
             updateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
-            log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.name, timestamp, type);
+            log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.Name, timestamp, type);
 
             try
             {
@@ -378,7 +378,7 @@ namespace Kafka.Streams.Tasks
             }
             catch (KafkaException e)
             {
-                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.name), e);
+                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.Name), e);
             }
             finally
             {

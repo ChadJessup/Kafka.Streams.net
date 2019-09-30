@@ -12,8 +12,8 @@ namespace Kafka.Streams.KStream.Internals
         private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
         private StreamsMetricsImpl metrics;
-        private Sensor skippedRecordsSensor;
-        private string queryableName;
+        private readonly Sensor skippedRecordsSensor;
+        private readonly string queryableName;
         private readonly ILogger<KTableSourceProcessor<K, V>> LOG;
         private readonly bool sendOldValues;
 

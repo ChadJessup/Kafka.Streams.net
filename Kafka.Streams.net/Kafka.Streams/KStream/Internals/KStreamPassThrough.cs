@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamPassThrough<K, V> : IProcessorSupplier<K, V>
     {
-        public IProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> get()
         {
             return new KStreamPassThroughProcessor<K, V>();
         }

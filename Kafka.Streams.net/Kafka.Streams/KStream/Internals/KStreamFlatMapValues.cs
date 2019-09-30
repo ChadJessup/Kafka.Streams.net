@@ -31,7 +31,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> get()
         {
             return new KStreamFlatMapValuesProcessor<K, V, VR>(this.mapper);
         }

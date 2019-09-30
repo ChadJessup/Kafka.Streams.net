@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Kafka.Streams.Nodes
+namespace Kafka.Streams.Topologies
 {
     /**
      * A node of a topology. Can be a source, sink, or processor node.

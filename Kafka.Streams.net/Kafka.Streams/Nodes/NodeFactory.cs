@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.Nodes
 {
@@ -20,6 +21,6 @@ namespace Kafka.Streams.Nodes
 
         public abstract ProcessorNode<K, V> build();
 
-        public abstract AbstractNode describe();
+        public abstract INode describe();
     }
 }

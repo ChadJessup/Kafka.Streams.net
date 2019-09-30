@@ -3,7 +3,7 @@ using Kafka.Streams.Processors.Interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.KStream.Interfaces
+namespace Kafka.Streams.Threads
 {
     public interface IStateMachine<States> : IThreadStateTransitionValidator<States>
         where States : Enum

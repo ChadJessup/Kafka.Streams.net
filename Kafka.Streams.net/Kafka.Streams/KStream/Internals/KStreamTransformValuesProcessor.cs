@@ -20,7 +20,7 @@ using Kafka.Streams.Processors.Internals;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStreamTransformValuesProcessor<K, V, R> : IProcessor<K, V>
+    public class KStreamTransformValuesProcessor<K, V, R> : IKeyValueProcessor<K, V>
     {
         private readonly IValueTransformerWithKey<K, V, R> valueTransformer;
         private IProcessorContext context;

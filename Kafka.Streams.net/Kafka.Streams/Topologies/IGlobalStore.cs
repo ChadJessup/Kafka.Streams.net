@@ -1,7 +1,7 @@
 ﻿using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
 
-namespace Kafka.Streams.State
+namespace Kafka.Streams.Topologies
 {
     /**
      * Represents a {@link Topology.AddGlobalStore(org.apache.kafka.streams.state.StoreBuilder, string,
@@ -19,7 +19,7 @@ namespace Kafka.Streams.State
          * The source node reading from a "global" topic.
          * @return the "global" source node
          */
-        ISourceNode source { get; }
+        ISource source { get; }
 
         /**
          * The processor node maintaining the global store.

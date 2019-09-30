@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.KStream.Interfaces
+namespace Kafka.Streams.Threads
 {
     public class StateTransition<States>
         where States : Enum
     {
         public States StartingState { get; }
-        public HashSet<States> PossibleTransitions { get; }
+        public HashSet<States> PossibleTransitions { get; } = new HashSet<States>();
 
         public StateTransition(States startingState)
             => this.StartingState = startingState;

@@ -1,12 +1,14 @@
 ﻿using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.State
+namespace Kafka.Streams.Topologies
 {
     public class GlobalStore : IGlobalStore
     {
-        public ISourceNode source { get; }
+        public ISource source { get; }
         public IProcessor processor { get; }
         public int id { get; }
 
@@ -17,10 +19,10 @@ namespace Kafka.Streams.State
             string topicName,
             int id)
         {
-            source = new SourceNode(sourceName, new HashSet<string>() { topicName }, null);
+            source = new Source(sourceName, new HashSet<string>() { topicName }, null);
             processor = new Processor(processorName, new HashSet<string>() { storeName });
-            source.successors.Add(processor);
-            processor.predecessors.Add(source);
+            source.Successors.Add(processor);
+            processor.Predecessors.Add(source);
 
             this.id = id;
         }

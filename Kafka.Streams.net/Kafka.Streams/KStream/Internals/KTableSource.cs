@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly ILogger logger;
         private readonly IServiceProvider services;
 
-        private string storeName;
+        private readonly string storeName;
         public string queryableName { get; private set; }
         private bool sendOldValues;
 
@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
             this.sendOldValues = false;
         }
 
-        public IProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> get()
         {
             return ActivatorUtilities.CreateInstance<KTableSourceProcessor<K, V>>(
                 this.services,

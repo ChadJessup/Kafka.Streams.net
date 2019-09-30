@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IProcessor<KIn, VIn> get()
+        public IKeyValueProcessor<KIn, VIn> get()
         {
             return null; // new KStreamFlatTransformProcessor<KIn, VIn, KOut, VOut>(transformerSupplier());
         }

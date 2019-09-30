@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IProcessor<K1, V1> get()
+        public IKeyValueProcessor<K1, V1> get()
         {
             return new KStreamKTableJoinProcessor<K1, K2, V1, V2, R>(
                 null,

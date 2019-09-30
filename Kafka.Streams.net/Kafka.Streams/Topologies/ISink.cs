@@ -1,11 +1,11 @@
 ﻿using Kafka.Streams.Processors.Interfaces;
 
-namespace Kafka.Streams.Nodes
+namespace Kafka.Streams.Topologies
 {
     /// <summary>
     /// A sink node of a topology.
     /// </summary>
-    public interface ISinkNode : INode
+    public interface ISink : INode
     {
         /// <summary>
         /// Gets the topic name this sink node is writing to.
