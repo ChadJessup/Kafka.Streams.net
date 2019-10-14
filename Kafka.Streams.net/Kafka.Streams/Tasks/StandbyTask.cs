@@ -1,8 +1,6 @@
 using Confluent.Kafka;
-using Kafka.Common.Metrics;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -16,7 +14,6 @@ namespace Kafka.Streams.Tasks
     public class StandbyTask : AbstractTask
     {
         public Dictionary<TopicPartition, long> checkpointedOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
-        private readonly Sensor closeTaskSensor;
 
         /**
          * Create {@link StandbyTask} with its assigned partitions
@@ -30,19 +27,21 @@ namespace Kafka.Streams.Tasks
          * @param stateDirectory the {@link StateDirectory} created by the thread
          */
         public StandbyTask(
+            ILoggerFactory loggerFactory,
+            ILogger<StandbyTask> logger,
             TaskId id,
             List<TopicPartition> partitions,
             ProcessorTopology topology,
             IConsumer<byte[], byte[]> consumer,
             IChangelogReader changelogReader,
             StreamsConfig config,
-            StreamsMetricsImpl metrics,
+            //StreamsMetricsImpl metrics,
             StateDirectory stateDirectory)
             : base(id, partitions, topology, consumer, changelogReader, true, stateDirectory, config)
         {
 
-            closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
-            processorContext = new StandbyContextImpl<byte[], byte[]>(id, config, stateMgr, metrics);
+            // closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
+            processorContext = new StandbyContextImpl<byte[], byte[]>(loggerFactory, loggerFactory.CreateLogger<StandbyContextImpl<byte[], byte[]>>(), id, config, stateMgr);//, metrics);
         }
 
 
@@ -105,7 +104,7 @@ namespace Kafka.Streams.Tasks
 
         private void flushAndCheckpointState()
         {
-            stateMgr.flush();
+            stateMgr.Flush();
             stateMgr.checkpoint(new Dictionary<TopicPartition, long>());
         }
 
@@ -119,7 +118,6 @@ namespace Kafka.Streams.Tasks
 
         public override void close(bool clean, bool isZombie)
         {
-            closeTaskSensor.record();
             if (!taskInitialized)
             {
                 return;

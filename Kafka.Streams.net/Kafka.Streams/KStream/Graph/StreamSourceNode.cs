@@ -60,7 +60,7 @@ namespace Kafka.Streams.KStream.Graph
             else
             {
 
-                topologyBuilder.addSource(
+                topologyBuilder.AddSource(
                     consumedInternal.offsetResetPolicy(),
                     NodeName,
                     consumedInternal.timestampExtractor,

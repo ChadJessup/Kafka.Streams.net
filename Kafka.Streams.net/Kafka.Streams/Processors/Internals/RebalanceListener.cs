@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processors.Internals
             log.LogDebug("at state {}: partitions {} assigned at the end of consumer rebalance.\n" +
                     "\tcurrent suspended active tasks: {}\n" +
                     "\tcurrent suspended standby tasks: {}\n",
-                streamThread.Context.State,
+                streamThread.State,
                 assignment,
                 taskManager.suspendedActiveTaskIds(),
                 taskManager.suspendedStandbyTaskIds());
@@ -48,11 +48,11 @@ namespace Kafka.Streams.Processors.Internals
             try
             {
 
-                if (streamThread.Context.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
+                if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
                 {
                     log.LogDebug(
                         "Skipping task creation in rebalance because we are already in {} state.",
-                        streamThread.Context.State
+                        streamThread.State
                     );
                 }
                 else if (streamThread.AssignmentErrorCode != (int)StreamsPartitionAssignor.Error.NONE)
@@ -96,12 +96,12 @@ namespace Kafka.Streams.Processors.Internals
             log.LogDebug("at state {}: partitions {} revoked at the beginning of consumer rebalance.\n" +
                     "\tcurrent assigned active tasks: {}\n" +
                     "\tcurrent assigned standby tasks: {}\n",
-                streamThread.Context.State,
+                streamThread.State,
                 assignment,
                 taskManager.activeTaskIds(),
                 taskManager.standbyTaskIds());
 
-            if (streamThread.Context.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
+            if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
             {
                 long start = time.milliseconds();
                 try

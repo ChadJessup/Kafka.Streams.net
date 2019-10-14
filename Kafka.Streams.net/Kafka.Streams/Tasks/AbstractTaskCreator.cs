@@ -2,7 +2,6 @@
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
@@ -14,26 +13,24 @@ namespace Kafka.Streams.Tasks
         where T : ITask
     {
         protected ITime time { get; }
-        protected ILogger log { get; }
-        protected StreamsMetricsImpl streamsMetrics { get; }
+        protected ILogger<AbstractTaskCreator<T>> logger { get; }
 
         public AbstractTaskCreator(
+            ILogger<AbstractTaskCreator<T>> logger,
             InternalTopologyBuilder builder,
             StreamsConfig config,
-            StreamsMetricsImpl streamsMetrics,
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
-            ITime time,
-            ILogger log)
+            ITime time)
         {
-            this.applicationId = config.Get(StreamsConfigPropertyNames.ApplicationId);
+            this.logger = logger;
+
+            this.applicationId = config.ApplicationId;
             this.builder = builder;
             this.config = config;
-            this.streamsMetrics = streamsMetrics;
             this.stateDirectory = stateDirectory;
             this.storeChangelogReader = storeChangelogReader;
             this.time = time;
-            this.log = log;
         }
 
         public string applicationId { get; }
@@ -43,6 +40,7 @@ namespace Kafka.Streams.Tasks
         public IChangelogReader storeChangelogReader { get; }
 
         public List<T> createTasks(
+            ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
@@ -51,10 +49,10 @@ namespace Kafka.Streams.Tasks
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
-                T task = createTask(consumer, taskId, partitions);
+                T task = createTask(loggerFactory, consumer, taskId, partitions);
                 if (task != null)
                 {
-                    log.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
+                    logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
 
                     createdTasks.Add(task);
                 }
@@ -64,7 +62,11 @@ namespace Kafka.Streams.Tasks
             return createdTasks;
         }
 
-        public abstract T createTask(IConsumer<byte[], byte[]> consumer, TaskId id, HashSet<TopicPartition> partitions);
+        public abstract T createTask(
+            ILoggerFactory loggerFactory,
+            IConsumer<byte[], byte[]> consumer,
+            TaskId id,
+            HashSet<TopicPartition> partitions);
 
         public virtual void close() { }
     }

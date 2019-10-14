@@ -1,5 +1,4 @@
-﻿using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Internals;
+﻿using Kafka.Streams.State.Internals;
 using System;
 using System.Collections.Generic;
 
@@ -13,27 +12,27 @@ namespace Kafka.Streams.State
     public class StateStoreFactory<T> : StateStoreFactory
         where T : IStateStore
     {
-        private readonly IStoreBuilder<T> builder;
+        public IStoreBuilder<T> Builder { get; }
 
         public StateStoreFactory(IStoreBuilder<T> builder)
         {
-            this.builder = builder;
+            this.Builder = builder;
         }
 
-        public IStateStore build()
+        public IStateStore Build()
         {
-            return builder.build();
+            return Builder.Build();
         }
 
-        long retentionPeriod<K, V>()
+        private long RetentionPeriod<K, V>()
         {
-            if (builder is WindowStoreBuilder<K, V>)
+            if (this.Builder is WindowStoreBuilder<K, V>)
             {
-                return ((WindowStoreBuilder<K, V>)builder).retentionPeriod();
+                return ((WindowStoreBuilder<K, V>)this.Builder).retentionPeriod();
             }
-            else if (builder is TimestampedWindowStoreBuilder<K, V>)
+            else if (this.Builder is TimestampedWindowStoreBuilder<K, V>)
             {
-                return ((TimestampedWindowStoreBuilder<K, V>)builder).retentionPeriod();
+                return ((TimestampedWindowStoreBuilder<K, V>)this.Builder).retentionPeriod();
             }
             //else if (builder is SessionStoreBuilder<K, V>)
             //{
@@ -45,13 +44,13 @@ namespace Kafka.Streams.State
             }
         }
 
-        public string name => builder.name;
+        public string name => this.Builder.name;
 
-        private bool isWindowStore<K, V>()
+        private bool IsWindowStore<K, V>()
         {
-            return builder is WindowStoreBuilder<K, V>
-            || builder is TimestampedWindowStoreBuilder<K, V>;
-//            || builder is SessionStoreBuilder<K, V>;
+            return this.Builder is WindowStoreBuilder<K, V>
+            || this.Builder is TimestampedWindowStoreBuilder<K, V>;
+            // || builder is SessionStoreBuilder<K, V>;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,9 @@ namespace Kafka.Streams.Clients
 {
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
+        public IAdminClient GetAdminClient(StreamsConfig config)
+            => this.GetAdminClient(config.GetAdminConfigs(config.ClientId));
+
         public IAdminClient GetAdminClient(AdminClientConfig config)
         {
             // create a new client upon each call; but expect this call to be only triggered once so this should be fine

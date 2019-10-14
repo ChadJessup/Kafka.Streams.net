@@ -178,7 +178,7 @@ namespace Kafka.Streams.State.Internals
 
             // value getter should always read directly from rocksDB
             // since it is only for values that are already flushed
-            context.register(root, batchingStateRestoreCallback);
+            context.Register(root, batchingStateRestoreCallback);
         }
 
         // visible for testing

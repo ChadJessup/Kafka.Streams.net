@@ -2,10 +2,8 @@ using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
-using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
@@ -34,7 +32,7 @@ namespace Kafka.Streams.Processors
 
         protected IStateManager stateManager { get; }
 
-        public IStreamsMetrics metrics { get; }
+        //public IStreamsMetrics metrics { get; }
         public TaskId taskId { get; }
         public string applicationId { get; }
         public ISerde<K> keySerde { get; }
@@ -43,14 +41,14 @@ namespace Kafka.Streams.Processors
         public AbstractProcessorContext(
             TaskId taskId,
             StreamsConfig config,
-            StreamsMetricsImpl metrics,
+            //StreamsMetricsImpl metrics,
             IStateManager stateManager,
             ThreadCache cache)
         {
             this.taskId = taskId;
-            this.applicationId = config.getString(StreamsConfigPropertyNames.ApplicationId);
+            this.applicationId = config.ApplicationId;
             this.config = config;
-            this.metrics = metrics;
+            //this.metrics = metrics;
             this.stateManager = stateManager;
             valueSerde = (ISerde<V>)config.defaultValueSerde();
             keySerde = (ISerde<K>)config.defaultKeySerde();
@@ -59,7 +57,7 @@ namespace Kafka.Streams.Processors
 
         public DirectoryInfo stateDir => stateManager.baseDir;
 
-        public virtual void register(
+        public virtual void Register(
             IStateStore store,
             IStateRestoreCallback stateRestoreCallback)
         {
@@ -70,7 +68,7 @@ namespace Kafka.Streams.Processors
 
             store = store ?? throw new ArgumentNullException(nameof(store));
 
-            stateManager.register(store, stateRestoreCallback);
+            stateManager.Register(store, stateRestoreCallback);
         }
 
         /**

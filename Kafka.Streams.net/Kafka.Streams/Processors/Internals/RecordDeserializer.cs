@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Common.Metrics;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
@@ -12,21 +11,19 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class RecordDeserializer<K, V>
     {
+        private readonly ILogger<RecordDeserializer<K, V>> logger;
         private readonly SourceNode<K, V> sourceNode;
         private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
-        private readonly ILogger log;
-        private readonly Sensor skippedRecordSensor;
 
         public RecordDeserializer(
+            ILogger<RecordDeserializer<K, V>> logger,
             SourceNode<K, V> sourceNode,
             IDeserializationExceptionHandler deserializationExceptionHandler,
-            LogContext logContext,
-            Sensor skippedRecordsSensor)
+            LogContext logContext)
         {
             this.sourceNode = sourceNode;
             this.deserializationExceptionHandler = deserializationExceptionHandler;
-            this.log = logContext.logger<RecordDeserializer<K, V>>();
-            this.skippedRecordSensor = skippedRecordsSensor;
+            this.logger = logger;
         }
 
         /**
@@ -63,7 +60,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 catch (Exception fatalUserException)
                 {
-                    log.LogError(
+                    logger.LogError(
                         "Deserialization error callback failed after deserialization error for record {}",
                         rawRecord,
                         deserializationException);
@@ -81,14 +78,12 @@ namespace Kafka.Streams.Processors.Internals
                 else
                 {
 
-                    log.LogWarning(
+                    logger.LogWarning(
                         "Skipping record due to deserialization error. topic=[{}] partition=[{}] offset=[{}]",
                         rawRecord.Topic,
                         rawRecord.Partition,
                         rawRecord.Offset,
                         deserializationException);
-
-                    skippedRecordSensor.record();
 
                     return null;
                 }

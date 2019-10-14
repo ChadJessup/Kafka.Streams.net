@@ -1,22 +1,5 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
 using System.Collections.Generic;
 using System.IO;
 
@@ -31,18 +14,18 @@ namespace Kafka.Streams.State
          * (e.g., when it conflicts with the names of internal topics, like the checkpoint file name)
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
+        void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
 
-        void flush();
+        void Flush();
 
-        void reinitializeStateStoresForPartitions(
+        void ReinitializeStateStoresForPartitions(
             List<TopicPartition> partitions,
             IInternalProcessorContext processorContext);
 
-        void close(bool clean);
+        void Close(bool clean);
 
-        IStateStore? getGlobalStore(string name);
+        IStateStore? GetGlobalStore(string name);
 
-        IStateStore? getStore(string name);
+        IStateStore? GetStore(string name);
     }
 }

@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Common.Metrics;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
@@ -10,7 +9,6 @@ using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
@@ -31,7 +29,6 @@ namespace Kafka.Streams.Tasks
         private readonly ITime time;
         private readonly long maxTaskIdleMs;
         private readonly int maxBufferedSize;
-        private readonly TaskMetrics taskMetrics;
         private readonly PartitionGroup partitionGroup;
         private readonly IRecordCollector recordCollector;
         private readonly RecordInfo recordInfo;
@@ -40,7 +37,6 @@ namespace Kafka.Streams.Tasks
         private readonly PunctuationQueue systemTimePunctuationQueue;
         private readonly IProducerSupplier producerSupplier;
 
-        private readonly Sensor closeTaskSensor;
         private long idleStartTime;
         private IProducer<byte[], byte[]> producer;
         public bool commitRequested { get; private set; } = false;
@@ -53,12 +49,11 @@ namespace Kafka.Streams.Tasks
             IConsumer<byte[], byte[]> consumer,
             IChangelogReader changelogReader,
             StreamsConfig config,
-            StreamsMetricsImpl metrics,
             StateDirectory stateDirectory,
             ThreadCache cache,
             ITime time,
             IProducerSupplier producerSupplier)
-            : this(id, partitions, topology, consumer, changelogReader, config, metrics, stateDirectory, cache, time, producerSupplier, null)
+            : this(id, partitions, topology, consumer, changelogReader, config, stateDirectory, cache, time, producerSupplier, null)
         {
         }
 
@@ -69,7 +64,6 @@ namespace Kafka.Streams.Tasks
             IConsumer<byte[], byte[]> consumer,
             IChangelogReader changelogReader,
             StreamsConfig config,
-            StreamsMetricsImpl streamsMetrics,
             StateDirectory stateDirectory,
             ThreadCache cache,
             ITime time,
@@ -80,9 +74,6 @@ namespace Kafka.Streams.Tasks
             this.time = time;
             this.producerSupplier = producerSupplier;
             this.producer = producerSupplier.Get();
-            this.taskMetrics = new TaskMetrics(id, streamsMetrics);
-
-            //closeTaskSensor = ThreadMetrics.closeTaskSensor(streamsMetrics);
 
             IProductionExceptionHandler productionExceptionHandler = config.defaultProductionExceptionHandler();
 
@@ -91,8 +82,7 @@ namespace Kafka.Streams.Tasks
                 this.recordCollector = new RecordCollectorImpl(
                     id.ToString(),
                     logContext,
-                    productionExceptionHandler,
-                    null);// ThreadMetrics.skipRecordSensor(streamsMetrics));
+                    productionExceptionHandler);
             }
             else
             {
@@ -114,13 +104,12 @@ namespace Kafka.Streams.Tasks
             Dictionary<TopicPartition, RecordQueue> partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
 
             // initialize the topology with its own context
-            ProcessorContextImpl<byte[], byte[]> processorContextImpl = new ProcessorContextImpl<byte[], byte[]>(
+            var processorContextImpl = new ProcessorContextImpl<byte[], byte[]>(
                 id,
                 this,
                 config,
                 this.recordCollector,
                 stateMgr,
-                streamsMetrics,
                 cache);
 
             processorContext = processorContextImpl;
@@ -253,7 +242,7 @@ namespace Kafka.Streams.Tasks
 
                 if (now - idleStartTime >= maxTaskIdleMs)
                 {
-                    taskMetrics.taskEnforcedProcessSensor.record();
+                    //taskMetrics.taskEnforcedProcessSensor.record();
                     return true;
                 }
                 else
@@ -471,7 +460,7 @@ namespace Kafka.Streams.Tasks
 
             commitNeeded = false;
             commitRequested = false;
-            taskMetrics.taskCommitTimeSensor.record(time.nanoseconds() - startNs);
+            //taskMetrics.taskCommitTimeSensor.record(time.nanoseconds() - startNs);
         }
 
         public override Dictionary<TopicPartition, long> activeTaskCheckpointableOffsets()
@@ -708,7 +697,6 @@ namespace Kafka.Streams.Tasks
         {
             try
             {
-
                 closeStateManager(clean);
             }
             catch (RuntimeException e)
@@ -721,9 +709,9 @@ namespace Kafka.Streams.Tasks
             }
 
             partitionGroup.close();
-            taskMetrics.removeAllSensors();
+            //taskMetrics.removeAllSensors();
 
-            closeTaskSensor.record();
+            //closeTaskSensor.record();
 
             if (firstException != null)
             {

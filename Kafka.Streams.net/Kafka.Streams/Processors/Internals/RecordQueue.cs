@@ -1,6 +1,5 @@
 using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
@@ -30,7 +29,6 @@ namespace Kafka.Streams.Processors.Internals
         protected ITimestampExtractor timestampExtractor;
         protected Queue<ConsumeResult<byte[], byte[]>> fifoQueue;
         protected long partitionTime = RecordQueue.UNKNOWN;
-        protected Sensor skipRecordsSensor;
         protected StampedRecord? headRecord = null;
         protected IProcessorContext processorContext { get; set; }
 
@@ -148,7 +146,6 @@ namespace Kafka.Streams.Processors.Internals
                     //        "Skipping record due to negative extracted timestamp. topic=[{}] partition=[{}] offset=[{}] extractedTimestamp=[{}] extractor=[{}]",
                     //        deserialized.Topic, deserialized.Partition, deserialized.Offset, timestamp, timestampExtractor.GetType().FullName);
 
-                    skipRecordsSensor.record();
                     continue;
                 }
 
@@ -176,12 +173,12 @@ namespace Kafka.Streams.Processors.Internals
             this.fifoQueue = new Queue<ConsumeResult<byte[], byte[]>>();
             this.timestampExtractor = timestampExtractor;
             this.processorContext = processorContext;
-            //skipRecordsSensor = ThreadMetrics.skipRecordSensor(processorContext.metrics());
+
             recordDeserializer = new RecordDeserializer<K, V>(
+                null,
                 source,
                 deserializationExceptionHandler,
-                logContext,
-                skipRecordsSensor);
+                logContext);
 
             this.log = logContext.logger(typeof(RecordQueue<K, V>));
         }

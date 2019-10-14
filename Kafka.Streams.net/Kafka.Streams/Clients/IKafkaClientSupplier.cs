@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Clients
@@ -17,6 +18,7 @@ namespace Kafka.Streams.Clients
          * @return an instance of {@link Admin}
          */
         IAdminClient GetAdminClient(AdminClientConfig config);
+        IAdminClient GetAdminClient(StreamsConfig config);
 
         /**
          * Create a {@link Producer} which is used to write records to sink topics.

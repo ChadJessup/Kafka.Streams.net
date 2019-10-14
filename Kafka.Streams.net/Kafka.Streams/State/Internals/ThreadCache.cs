@@ -1,6 +1,4 @@
 using Kafka.Common.Utils;
-using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +12,9 @@ namespace Kafka.Streams.State.Internals
      */
     public class ThreadCache
     {
-        private readonly ILogger log;
+        private readonly ILogger<ThreadCache> logger;
         private readonly long maxCacheSizeBytes;
-        private readonly StreamsMetricsImpl metrics;
+        //private readonly StreamsMetricsImpl metrics;
         private readonly Dictionary<string, NamedCache> caches = new Dictionary<string, NamedCache>();
 
         // internal stats
@@ -26,13 +24,13 @@ namespace Kafka.Streams.State.Internals
         private long numFlushes = 0;
 
         public ThreadCache(
-            LogContext logContext,
-            long maxCacheSizeBytes,
-            StreamsMetricsImpl metrics)
+            ILogger<ThreadCache> logger,
+            long maxCacheSizeBytes) //,
+            // StreamsMetricsImpl metrics)
         {
             this.maxCacheSizeBytes = maxCacheSizeBytes;
-            this.metrics = metrics;
-            this.log = logContext.logger(GetType());
+            //this.metrics = metrics;
+            this.logger = logger;
         }
 
         public long puts()
@@ -113,7 +111,7 @@ namespace Kafka.Streams.State.Internals
             }
             cache.flush();
 
-            log.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", puts(), gets(), evicts(), flushes());
+            logger.LogTrace("Cache stats on flush: #puts={}, #gets={}, #evicts={}, #flushes={}", puts(), gets(), evicts(), flushes());
         }
 
         public LRUCacheEntry get(string @namespace, Bytes key)
@@ -263,7 +261,7 @@ namespace Kafka.Streams.State.Internals
                 numEvicted++;
             }
 
-            log.LogTrace("Evicted {} entries from cache {}", numEvicted, @namespace);
+            logger.LogTrace("Evicted {} entries from cache {}", numEvicted, @namespace);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -278,7 +276,7 @@ namespace Kafka.Streams.State.Internals
             NamedCache cache = caches[name];
             if (cache == null)
             {
-                cache = new NamedCache(name, this.metrics);
+                cache = new NamedCache(name);//, this.metrics);
                 caches.Add(name, cache);
             }
             return cache;

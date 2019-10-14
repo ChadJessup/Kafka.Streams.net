@@ -1,9 +1,12 @@
 using Kafka.Common.Utils.Interfaces;
+using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
+using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -15,14 +18,15 @@ namespace Kafka.Streams.Threads.GlobalStream
     public class GlobalStreamThread : IGlobalStreamThread
     {
         private readonly ILogger<GlobalStreamThread> logger;
-
+        private readonly IDisposable logPrefix;
+        private readonly StreamsConfig config;
+        private readonly IKafkaClientSupplier clientSupplier;
+        private readonly ILoggerFactory loggerFactory;
         private readonly IStateRestoreListener stateRestoreListener;
         private readonly GlobalConsumer globalConsumer;
         private readonly ITime time;
         private readonly StateDirectory stateDirectory;
         // private ThreadCache cache;
-        private readonly StreamsMetricsImpl streamsMetrics;
-        private readonly string logPrefix;
         private readonly ProcessorTopology topology;
         private StreamsException startupException;
 
@@ -30,34 +34,43 @@ namespace Kafka.Streams.Threads.GlobalStream
         public IStateMachine<GlobalStreamThreadStates> State { get; }
         public IStateListener StateListener { get; private set; }
         public string ThreadClientId { get; }
-        public IThreadContext<IThread<GlobalStreamThreadStates>, IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadStates> Context { get; private set; }
 
         public int ManagedThreadId => this.Thread.ManagedThreadId;
 
-        public GlobalStreamThread(ILogger<GlobalStreamThread> logger)
+        public GlobalStreamThread(
+            ILogger<GlobalStreamThread> logger,
+            ILoggerFactory loggerFactory,
+            StreamsConfig config,
+            IStateMachine<GlobalStreamThreadStates> states,
+            IKafkaClientSupplier clientSupplier,
+            StateDirectory stateDirectory,
+            Topology topology)
         {
-            this.logger = logger;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.State = states ?? throw new ArgumentNullException(nameof(states));
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
+            this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
+            this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
+            this.stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
+            this.topology = topology?.internalTopologyBuilder.buildGlobalStateTopology() ?? throw new ArgumentNullException(nameof(topology));
 
-            this.Thread = new Thread(run);
+            this.ThreadClientId = $"{config.ClientId}-GlobalStreamThread";
+            this.logPrefix = this.logger.BeginScope($"global-stream-thread [{this.ThreadClientId}] ");
 
-            //this.ThreadClientId = threadClientId;
+            this.Thread = new Thread(Run);
+
             //this.time = time;
-            //this.config = config;
-            //this.topology = topology;
             //this.globalConsumer = globalConsumer;
-            //this.stateDirectory = stateDirectory;
-            //this.streamsMetrics = new StreamsMetricsImpl(metrics, threadClientId);
-            //this.logPrefix = $"global-stream-thread [{threadClientId}] ";
-            //this.logContext = new LogContext(logPrefix);
-            // this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
+            //this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
             //this.stateRestoreListener = stateRestoreListener;
         }
-        public void SetContext(IThreadContext<IThread<GlobalStreamThreadStates>, IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadStates> context)
-            => this.Context = context ?? throw new ArgumentNullException(nameof(context));
 
-        public void run()
+        public void SetStateListener(IStateListener stateListener)
+            => this.StateListener = stateListener;
+
+        public void Run()
         {
-            StateConsumer stateConsumer = initialize();
+            using StateConsumer? stateConsumer = Initialize();
 
             if (stateConsumer == null)
             {
@@ -66,16 +79,15 @@ namespace Kafka.Streams.Threads.GlobalStream
                 // if an error happens during the restoration process, the stateConsumer will be null
                 // and in this case we will transit the state to PENDING_SHUTDOWN and DEAD immediately.
                 // the exception will be thrown in the caller thread during start() function.
-                this.Context.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
-                this.Context.State.SetState(GlobalStreamThreadStates.DEAD);
+                this.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
+                this.State.SetState(GlobalStreamThreadStates.DEAD);
 
-                logger.LogWarning("Error happened during initialization of the global state store; this thread has shutdown");
-                streamsMetrics.removeAllThreadLevelSensors();
+                this.logger.LogWarning("Error happened during initialization of the global state store; this thread has shutdown");
 
                 return;
             }
 
-            this.Context.State.SetState(GlobalStreamThreadStates.RUNNING);
+            this.State.SetState(GlobalStreamThreadStates.RUNNING);
 
             try
             {
@@ -86,42 +98,40 @@ namespace Kafka.Streams.Threads.GlobalStream
             }
             finally
             {
-
                 // set the state to pending shutdown first as it may be called due to error;
                 // its state may already be PENDING_SHUTDOWN so it will return false but we
                 // intentionally do not check the returned flag
-                this.Context.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
+                this.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
 
-                logger.LogInformation("Shutting down");
+                this.logger.LogInformation("Shutting down");
 
                 try
                 {
-                    stateConsumer.close();
+                    stateConsumer?.close();
                 }
                 catch (IOException e)
                 {
                     logger.LogError("Failed to close state maintainer due to the following error:", e);
                 }
 
-                streamsMetrics.removeAllThreadLevelSensors();
-
-                this.Context.State.SetState(GlobalStreamThreadStates.DEAD);
+                this.State.SetState(GlobalStreamThreadStates.DEAD);
 
                 logger.LogInformation("Shutdown complete");
             }
         }
 
-        private StateConsumer initialize()
+        private StateConsumer? Initialize()
         {
             try
             {
-                //IGlobalStateManager stateMgr = new GlobalStateManagerImpl(
-                //    logContext,
-                //    topology,
-                //    globalConsumer,
-                //    stateDirectory,
-                //    stateRestoreListener,
-                //    config);
+                IGlobalStateManager stateMgr = new GlobalStateManager(
+                    this.loggerFactory.CreateLogger<GlobalStateManager>(),
+                    this.topology,
+                    this.clientSupplier,
+                    this.globalConsumer,
+                    this.stateDirectory,
+                    this.stateRestoreListener,
+                    this.config);
 
                 //GlobalProcessorContextImpl globalProcessorContext = new GlobalProcessorContextImpl(
                 //    config,
@@ -131,25 +141,24 @@ namespace Kafka.Streams.Threads.GlobalStream
 
                 //stateMgr.setGlobalProcessorContext(globalProcessorContext);
 
-                //StateConsumer stateConsumer = new StateConsumer(
-                //    null,
-                //    globalConsumer,
-                //    null,
-                //    //new GlobalStateUpdateTask(
-                //    //    topology,
-                //    //    globalProcessorContext,
-                //    //    stateMgr,
-                //    //    config.defaultDeserializationExceptionHandler(),
-                //    //    logContext
-                //    //),
-                //    time,
-                //    TimeSpan.FromMilliseconds((double)config.getLong(StreamsConfigPropertyNames.PollMs)),
-                //    config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG).Value
-                //);
+                var stateConsumer = new StateConsumer(
+                    null,
+                    globalConsumer,
+                    null,
+                    //new GlobalStateUpdateTask(
+                    //    topology,
+                    //    globalProcessorContext,
+                    //    stateMgr,
+                    //    config.defaultDeserializationExceptionHandler(),
+                    //    logContext
+                    //),
+                    time,
+                    TimeSpan.FromMilliseconds((double)this.config.PollMs),
+                    this.config.CommitIntervalMs);
 
-                // stateConsumer.initialize();
+                stateConsumer.initialize();
 
-                return null; // stateConsumer;
+                return stateConsumer;
             }
             catch (LockException fatalException)
             {
@@ -163,6 +172,10 @@ namespace Kafka.Streams.Threads.GlobalStream
             catch (StreamsException fatalException)
             {
                 startupException = fatalException;
+            }
+            catch(ArgumentNullException argumentNullException)
+            {
+                this.logger.LogError(argumentNullException, $"Null value tried to be used when creating {nameof(StateConsumer)} for {nameof(GlobalStreamThread)}");
             }
             catch (Exception fatalException)
             {
@@ -191,14 +204,14 @@ namespace Kafka.Streams.Threads.GlobalStream
         {
             // one could call shutdown() multiple times, so ignore subsequent calls
             // if already shutting down or dead
-            this.Context.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
+            this.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
         }
 
         public void setStateListener(IStateListener listener)
             => this.StateListener = listener;
 
         public bool IsRunning()
-            => this.Context.State.IsRunning();
+            => this.State.IsRunning();
 
         private bool disposedValue = false; // To detect redundant calls
 

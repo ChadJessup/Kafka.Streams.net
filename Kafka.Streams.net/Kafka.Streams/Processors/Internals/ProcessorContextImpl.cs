@@ -1,18 +1,15 @@
-using Kafka.Streams.State;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.Processors.Internals.Metrics;
-using Kafka.Streams.Errors;
-using System.Collections.Generic;
-using System;
-using Kafka.Streams.Internals;
-using Kafka.Streams.State.Interfaces;
-using System.Linq;
-using Kafka.Streams.Interfaces;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Errors;
+using Kafka.Streams.Internals;
 using Kafka.Streams.Nodes;
-using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -29,9 +26,9 @@ namespace Kafka.Streams.Processors.Internals
             StreamsConfig config,
             IRecordCollector collector,
             ProcessorStateManager stateMgr,
-            StreamsMetricsImpl metrics,
+            //StreamsMetricsImpl metrics,
             ThreadCache cache)
-            : base(id, config, metrics, stateMgr, cache)
+            : base(id, config, stateMgr, cache)
         {
             this.task = task;
             this.collector = collector;
@@ -57,7 +54,7 @@ namespace Kafka.Streams.Processors.Internals
                 throw new StreamsException("Accessing from an unknown node");
             }
 
-            IStateStore? global = stateManager.getGlobalStore(name);
+            IStateStore? global = stateManager.GetGlobalStore(name);
             if (global != null)
             {
                 if (global is ITimestampedKeyValueStore<K, V>)
@@ -95,7 +92,7 @@ namespace Kafka.Streams.Processors.Internals
                     "please file a bug report at https://issues.apache.org/jira/projects/KAFKA.");
             }
 
-            IStateStore? store = stateManager.getStore(name);
+            IStateStore? store = stateManager.GetStore(name);
 
             if (store is ITimestampedKeyValueStore<K, V>)
             {

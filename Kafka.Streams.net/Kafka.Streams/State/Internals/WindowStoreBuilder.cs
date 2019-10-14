@@ -35,7 +35,7 @@ namespace Kafka.Streams.State.Internals
             this.storeSupplier = storeSupplier;
         }
 
-        public override IWindowStore<K, V> build()
+        public override IWindowStore<K, V> Build()
         {
             return null;
             //new MeteredWindowStore<K, V>(

@@ -1,6 +1,7 @@
 ﻿using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Kafka.Streams.Threads.KafkaStream
 {

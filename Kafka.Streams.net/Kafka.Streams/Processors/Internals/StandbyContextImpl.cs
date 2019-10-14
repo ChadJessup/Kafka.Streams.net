@@ -1,13 +1,11 @@
 using Kafka.Streams.Configs;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals.Metrics;
-using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
+using Microsoft.Extensions.Logging;
 using System;
-using System.Threading;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -15,22 +13,20 @@ namespace Kafka.Streams.Processors.Internals
     {
         private static readonly IRecordCollector NO_OP_COLLECTOR = new NoOpRecordCollector();
         public StandbyContextImpl(
+            ILoggerFactory loggerFactory,
+            ILogger<StandbyContextImpl<K, V>> logger,
             TaskId id,
             StreamsConfig config,
-            ProcessorStateManager stateMgr,
-            StreamsMetricsImpl metrics)
+            ProcessorStateManager stateMgr)
          : base(
             id,
             config,
-            metrics,
             stateMgr,
             new ThreadCache(
-                new LogContext(string.Format("stream-thread [%s] ", Thread.CurrentThread.Name)),
-                0,
-                metrics))
+                loggerFactory.CreateLogger<ThreadCache>(),//($"stream-thread [{Thread.CurrentThread.Name}] ",
+                0))
         {
         }
-
 
         IStateManager getStateMgr()
         {

@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
 
         public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            if (streamThread.Context.State.CurrentState == KafkaStreamThreadStates.DEAD)
+            if (streamThread.State.CurrentState == KafkaStreamThreadStates.DEAD)
             {
                 return new List<T>();
             }
@@ -29,7 +29,7 @@ namespace Kafka.Streams.State.Internals
             if (!streamThread.IsRunningAndNotRebalancing())
             {
                 throw new InvalidStateStoreException($"Cannot get state store {storeName} because the stream thread is " +
-                        $"{streamThread.Context.State.CurrentState}, not RUNNING");
+                        $"{streamThread.State.CurrentState}, not RUNNING");
             }
 
             var stores = new List<T>();

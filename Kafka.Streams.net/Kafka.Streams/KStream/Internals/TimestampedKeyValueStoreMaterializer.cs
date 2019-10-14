@@ -51,16 +51,16 @@ namespace Kafka.Streams.KStream.Internals
 
             if (materialized.loggingEnabled)
             {
-                builder.withLoggingEnabled(materialized.logConfig());
+                builder.WithLoggingEnabled(materialized.logConfig());
             }
             else
             {
-                builder.withLoggingDisabled();
+                builder.WithLoggingDisabled();
             }
 
             if (materialized.cachingEnabled)
             {
-                builder.withCachingEnabled();
+                builder.WithCachingEnabled();
             }
 
             return builder;

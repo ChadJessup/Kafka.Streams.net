@@ -15,7 +15,9 @@ namespace Kafka.Streams.Threads
         where States : Enum
     {
         string ThreadClientId { get; }
-        IThreadContext<IThread<States>, IStateMachine<States>, States> Context { get; }
-        void SetContext(IThreadContext<IThread<States>, IStateMachine<States>, States> context);
+        IStateListener StateListener { get; }
+        IStateMachine<States> State { get; }
+
+        void SetStateListener(IStateListener stateListener);
     }
 }

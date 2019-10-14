@@ -18,12 +18,13 @@ namespace Kafka.Streams.Tasks
         // initialize the task list
         // activeTasks needs to be concurrent as it can be accessed
         // by QueryableState
-        private readonly ILogger log;
-        public Guid processId { get; }
+        private readonly ILogger<TaskManager> logger;
+        private readonly ILoggerFactory loggerFactory;
+
+        //public Guid processId { get; }
         private readonly AssignedStreamsTasks active;
         private readonly AssignedStandbyTasks standby;
         private readonly IChangelogReader changelogReader;
-        private readonly string logPrefix;
         private readonly IConsumer<byte[], byte[]> restoreConsumer;
         private readonly AbstractTaskCreator<StreamTask> taskCreator;
         private readonly AbstractTaskCreator<StandbyTask> standbyTaskCreator;
@@ -39,20 +40,21 @@ namespace Kafka.Streams.Tasks
 
         private IConsumer<byte[], byte[]> consumer;
 
-        public TaskManager(IChangelogReader changelogReader,
-                    Guid processId,
-                    string logPrefix,
-                    IConsumer<byte[], byte[]> restoreConsumer,
-                    StreamsMetadataState streamsMetadataState,
-                    AbstractTaskCreator<StreamTask> taskCreator,
-                    AbstractTaskCreator<StandbyTask> standbyTaskCreator,
-                    IAdminClient adminClient,
-                    AssignedStreamsTasks active,
-                    AssignedStandbyTasks standby)
+        public TaskManager(
+            ILoggerFactory loggerFactory,
+            ILogger<TaskManager> logger,
+            IChangelogReader changelogReader,
+            //Guid processId,
+            IConsumer<byte[], byte[]> restoreConsumer,
+            StreamsMetadataState streamsMetadataState,
+            AbstractTaskCreator<StreamTask> taskCreator,
+            AbstractTaskCreator<StandbyTask> standbyTaskCreator,
+            IAdminClient adminClient,
+            AssignedStreamsTasks active,
+            AssignedStandbyTasks standby)
         {
             this.changelogReader = changelogReader;
-            this.processId = processId;
-            this.logPrefix = logPrefix;
+            //this.processId = processId;
             this.streamsMetadataState = streamsMetadataState;
             this.restoreConsumer = restoreConsumer;
             this.taskCreator = taskCreator;
@@ -60,9 +62,7 @@ namespace Kafka.Streams.Tasks
             this.active = active;
             this.standby = standby;
 
-            LogContext logContext = new LogContext(logPrefix);
-
-            this.log = logContext.logger(GetType());
+            this.logger = logger;
 
             this.adminClient = adminClient;
         }
@@ -71,6 +71,7 @@ namespace Kafka.Streams.Tasks
         {
             if (consumer == null)
             {
+                var logPrefix = "";
                 throw new InvalidOperationException(logPrefix + "consumer has not been initialized while.Adding stream tasks. This should not happen.");
             }
 
@@ -82,7 +83,7 @@ namespace Kafka.Streams.Tasks
             addStreamTasks(assignment);
             addStandbyTasks();
             // Pause all the partitions until the underlying state store is ready for all the active tasks.
-            log.LogTrace("Pausing partitions: {}", assignment);
+            logger.LogTrace("Pausing partitions: {}", assignment);
             consumer.Pause(assignment);
         }
 
@@ -94,7 +95,7 @@ namespace Kafka.Streams.Tasks
             }
             Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned tasks and reopen re-assigned tasks
-            log.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
+            logger.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
             foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks)
             {
                 TaskId taskId = entry.Key;
@@ -112,14 +113,14 @@ namespace Kafka.Streams.Tasks
                     }
                     catch (StreamsException e)
                     {
-                        log.LogError("Failed to resume an active task {} due to the following error:", taskId, e);
+                        logger.LogError("Failed to resume an active task {} due to the following error:", taskId, e);
                         throw;
                     }
                 }
                 else
                 {
 
-                    log.LogWarning("Task {} owned partitions {} are not contained in the assignment {}", taskId, partitions, assignment);
+                    logger.LogWarning("Task {} owned partitions {} are not contained in the assignment {}", taskId, partitions, assignment);
                 }
             }
 
@@ -131,9 +132,9 @@ namespace Kafka.Streams.Tasks
             // CANNOT FIND RETRY AND BACKOFF LOGIC
             // create all newly assigned tasks (guard against race condition with other thread via backoff and retry)
             // => other thread will call removeSuspendedTasks(); eventually
-            log.LogTrace("New active tasks to be created: {}", newTasks);
+            logger.LogTrace("New active tasks to be created: {}", newTasks);
 
-            foreach (StreamTask task in taskCreator.createTasks(consumer, newTasks))
+            foreach (StreamTask task in taskCreator.createTasks(this.loggerFactory, consumer, newTasks))
             {
                 active.addNewTask(task);
             }
@@ -146,7 +147,7 @@ namespace Kafka.Streams.Tasks
             {
                 return;
             }
-            log.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
+            logger.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
             Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned standby tasks and reopen re-assigned standby tasks
             foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks)
@@ -166,9 +167,9 @@ namespace Kafka.Streams.Tasks
 
             // create all newly assigned standby tasks (guard against race condition with other thread via backoff and retry)
             // => other thread will call removeSuspendedStandbyTasks(); eventually
-            log.LogTrace("New standby tasks to be created: {}", newStandbyTasks);
+            logger.LogTrace("New standby tasks to be created: {}", newStandbyTasks);
 
-            foreach (StandbyTask task in standbyTaskCreator.createTasks(consumer, newStandbyTasks))
+            foreach (StandbyTask task in standbyTaskCreator.createTasks(this.loggerFactory, consumer, newStandbyTasks))
             {
                 standby.addNewTask(task);
             }
@@ -239,7 +240,7 @@ namespace Kafka.Streams.Tasks
          */
         public void suspendTasksAndState()
         {
-            log.LogDebug("Suspending all active tasks {} and standby tasks {}", active.runningTaskIds(), standby.runningTaskIds());
+            logger.LogDebug("Suspending all active tasks {} and standby tasks {}", active.runningTaskIds(), standby.runningTaskIds());
 
             RuntimeException firstException = new RuntimeException(null);
 
@@ -354,7 +355,7 @@ namespace Kafka.Streams.Tasks
             if (active.allTasksRunning())
             {
                 HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(consumer.Assignment);
-                log.LogTrace("Resuming partitions {}", assignment);
+                logger.LogTrace("Resuming partitions {}", assignment);
                 consumer.Resume(assignment);
                 assignStandbyPartitions();
                 return standby.allTasksRunning();
@@ -432,7 +433,7 @@ namespace Kafka.Streams.Tasks
                 if (!existingTopics.All(et => assignedTopics.Contains(et)))
                 {
                     assignedTopics.UnionWith(existingTopics);
-                    builder().updateSubscribedTopics(assignedTopics, logPrefix);
+                    builder().updateSubscribedTopics(assignedTopics);
                 }
             }
         }
@@ -444,7 +445,7 @@ namespace Kafka.Streams.Tasks
                 List<string> existingTopics = builder().subscriptionUpdates.getUpdates();
                 if (!existingTopics.Equals(topics))
                 {
-                    builder().updateSubscribedTopics(topics, logPrefix);
+                    builder().updateSubscribedTopics(topics);
                 }
             }
         }
@@ -493,7 +494,7 @@ namespace Kafka.Streams.Tasks
             {
                 if (deleteRecordsResult != null && deleteRecordsResult.all().IsFaulted)
                 {
-                    log.LogDebug("Previous delete-records request has failed: {}. Try sending the new request now", deleteRecordsResult.lowWatermarks());
+                    logger.LogDebug("Previous delete-records request has failed: {}. Try sending the new request now", deleteRecordsResult.lowWatermarks());
                 }
 
                 Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new Dictionary<TopicPartition, RecordsToDelete>();
@@ -504,7 +505,7 @@ namespace Kafka.Streams.Tasks
 
                 //deleteRecordsResult = adminClient.deleteRecords(recordsToDelete);
 
-                log.LogTrace("Sent delete-records request: {}", recordsToDelete);
+                logger.LogTrace("Sent delete-records request: {}", recordsToDelete);
             }
         }
 

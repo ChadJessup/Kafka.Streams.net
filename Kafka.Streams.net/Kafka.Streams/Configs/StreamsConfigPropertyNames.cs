@@ -278,12 +278,11 @@
         public static readonly string PollMs = "poll.ms";
 
         /// <summary>
-        /// {@code processing.guarantee}
+        /// The processing guarantee that should be used. Possible values are <code>" + AtLeastOnce + "</code> (default) and <code>" + ExactlyOnce + "</code>.
+        /// Note that exactly-once processing requires a cluster of at least three brokers by default what is the recommended setting for production; for development you can change this, by adjusting broker setting
+        /// <code>transaction.state.log.replication.factor</code> and <code>transaction.state.log.min.isr</code>.
         /// </summary>
-        public static readonly string PROCESSING_GUARANTEE_CONFIG = "processing.guarantee";
-        // private static string PROCESSING_GUARANTEE_DOC = "The processing guarantee that should be used. Possible values are <code>" + AtLeastOnce + "</code> (default) and <code>" + ExactlyOnce + "</code>. " +
-        //    "Note that exactly-once processing requires a cluster of at least three brokers by default what is the recommended setting for production; for development you can change this, by adjusting broker setting " +
-        //    "<code>transaction.state.log.replication.factor</code> and <code>transaction.state.log.min.isr</code>.";
+        public static readonly string ProcessingGuarantee = "processing.guarantee";
 
         /// <summary>
         /// {@code request.timeout.ms}
@@ -293,12 +292,12 @@
         /// <summary>
         /// {@code retries}
         /// </summary>
-        public static readonly string RETRIES_CONFIG = "retries";
+        public static readonly string Retries = "retries";
 
         /// <summary>
         /// {@code retry.backoff.ms}
         /// </summary>
-        public static readonly string RETRY_BACKOFF_MS_CONFIG = "retry.backoff.ms";
+        public static readonly string RetryBackoffMs = "retry.backoff.ms";
 
         /// <summary>
         /// {@code rocksdb.config.setter}
@@ -373,7 +372,5 @@
         /// </summary>
         public static string MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION = "max.in.flight.requests.per.connection";
         // private static string WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_DOC = "Added to a windows maintainMs to ensure data is not deleted from the log prematurely. Allows for clock drift. Default is 1 day";
-
-
     }
 }

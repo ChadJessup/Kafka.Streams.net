@@ -1,12 +1,10 @@
 using Confluent.Kafka;
-using Kafka.Common.Metrics;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Security.Authentication;
 
 namespace Kafka.Streams.Processors.Internals
@@ -15,7 +13,6 @@ namespace Kafka.Streams.Processors.Internals
     {
         private readonly ILogger log;
         private readonly string logPrefix;
-        private readonly Sensor skippedRecordsSensor;
         private IProducer<byte[], byte[]> producer;
         public Dictionary<TopicPartition, long> offsets { get; }
         public ISupplier Supplier { get; }
@@ -34,15 +31,13 @@ namespace Kafka.Streams.Processors.Internals
         public RecordCollectorImpl(
             string streamTaskId,
             LogContext logContext,
-            IProductionExceptionHandler productionExceptionHandler,
-            Sensor skippedRecordsSensor)
+            IProductionExceptionHandler productionExceptionHandler)
         {
             this.offsets = new Dictionary<TopicPartition, long>();
 
             this.logPrefix = string.Format("task [%s] ", streamTaskId);
             this.log = logContext.logger(GetType());
             this.productionExceptionHandler = productionExceptionHandler;
-            this.skippedRecordsSensor = skippedRecordsSensor;
         }
 
         public void init(IProducer<byte[], byte[]> producer)

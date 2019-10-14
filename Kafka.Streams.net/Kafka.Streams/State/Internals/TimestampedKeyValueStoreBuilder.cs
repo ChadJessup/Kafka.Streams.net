@@ -43,7 +43,7 @@ namespace Kafka.Streams.State.Internals
             this.storeSupplier = storeSupplier;
         }
 
-        public override ITimestampedKeyValueStore<K, V> build()
+        public override ITimestampedKeyValueStore<K, V> Build()
         {
             IKeyValueStore<Bytes, byte[]> store = storeSupplier.get();
 

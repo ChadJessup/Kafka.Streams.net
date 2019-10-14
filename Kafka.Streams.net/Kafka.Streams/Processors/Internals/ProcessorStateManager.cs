@@ -106,7 +106,7 @@ namespace Kafka.Streams.Processors.Internals
             return applicationId + "-" + storeName + STATE_CHANGELOG_TOPIC_SUFFIX;
         }
 
-        public void register(
+        public void Register(
             IStateStore store,
             IStateRestoreCallback stateRestoreCallback)
         {
@@ -168,7 +168,7 @@ namespace Kafka.Streams.Processors.Internals
             registeredStores.Add(storeName, null);
         }
 
-        public void reinitializeStateStoresForPartitions(
+        public void ReinitializeStateStoresForPartitions(
             List<TopicPartition> partitions,
             IInternalProcessorContext processorContext)
         {
@@ -261,13 +261,13 @@ namespace Kafka.Streams.Processors.Internals
                 : long.MaxValue;
         }
 
-        public IStateStore? getStore(string name)
+        public IStateStore? GetStore(string name)
         {
             return registeredStores.GetValueOrDefault(name, null);
         }
 
 
-        public void flush()
+        public void Flush()
         {
             ProcessorStateException firstException = null;
             // attempting to flush the stores
@@ -315,7 +315,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws ProcessorStateException if any error happens when closing the state stores
          */
 
-        public void close(bool clean)
+        public void Close(bool clean)
         {
             ProcessorStateException firstException = null;
             // attempting to close the stores, just in case they
@@ -460,7 +460,7 @@ namespace Kafka.Streams.Processors.Internals
         }
 
 
-        public IStateStore? getGlobalStore(string name)
+        public IStateStore? GetGlobalStore(string name)
         {
             return globalStores.GetValueOrDefault(name, null);
         }

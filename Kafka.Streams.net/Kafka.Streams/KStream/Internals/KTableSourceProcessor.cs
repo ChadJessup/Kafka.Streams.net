@@ -1,7 +1,5 @@
-﻿using Kafka.Common.Metrics;
-using Kafka.Streams.Processors;
+﻿using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals.Metrics;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 
@@ -9,12 +7,10 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KTableSourceProcessor<K, V> : AbstractProcessor<K, V>
     {
+        private readonly ILogger<KTableSourceProcessor<K, V>> logger;
         private ITimestampedKeyValueStore<K, V> store;
         private TimestampedTupleForwarder<K, V> tupleForwarder;
-        private StreamsMetricsImpl metrics;
-        private readonly Sensor skippedRecordsSensor;
         private readonly string queryableName;
-        private readonly ILogger<KTableSourceProcessor<K, V>> LOG;
         private readonly bool sendOldValues;
 
         public KTableSourceProcessor(
@@ -22,7 +18,7 @@ namespace Kafka.Streams.KStream.Internals
             string queryableName,
             bool sendOldValues)
         {
-            this.LOG = logger;
+            this.logger = logger;
             this.queryableName = queryableName;
             this.sendOldValues = sendOldValues;
         }
@@ -30,8 +26,6 @@ namespace Kafka.Streams.KStream.Internals
         public override void init(IProcessorContext context)
         {
             base.init(context);
-            metrics = (StreamsMetricsImpl)context.metrics;
-            //skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
             if (queryableName != null)
             {
@@ -44,17 +38,15 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-
         public override void process(K key, V value)
         {
             // if the key is null, then ignore the record
             if (key == null)
             {
-                LOG.LogWarning(
+                logger.LogWarning(
                     "Skipping record due to null key. topic=[{}] partition=[{}] offset=[{}]",
                     context.Topic, context.partition, context.offset);
 
-                skippedRecordsSensor.record();
                 return;
             }
 
@@ -69,7 +61,7 @@ namespace Kafka.Streams.KStream.Internals
                     
                     if (context.timestamp < oldValueAndTimestamp.timestamp)
                     {
-                        LOG.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
+                        logger.LogWarning("Detected out-of-order KTable update for {} at offset {}, partition {}.",
                             store.name, context.offset, context.partition);
                     }
                 }

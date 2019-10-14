@@ -1,4 +1,6 @@
 ﻿using Kafka.Common;
+using Kafka.Common.Utils;
+using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
@@ -6,6 +8,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads;
@@ -70,12 +73,10 @@ namespace Kafka.Streams
 
             public IKafkaStreamsThread BuildKafkaStreams()
             {
-                var context = this.services.GetRequiredService<KafkaStreamsThreadContext>();
-                var streamStateListener = context.GetStateListener();
-                
-                context.SetStateListener(streamStateListener);
+                var kafkaStreamsThread = this.services.GetRequiredService<IKafkaStreamsThread>();
+                kafkaStreamsThread.SetStateListener(kafkaStreamsThread.GetStateListener());
 
-                return context.Thread;
+                return kafkaStreamsThread;
             }
 
             private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
@@ -86,8 +87,12 @@ namespace Kafka.Streams
                 this.AddThreads(serviceCollection);
                 this.AddClients(serviceCollection);
 
-                serviceCollection.TryAddSingleton<IStateListener, StreamStateListener>();
+                serviceCollection.TryAddSingleton<ITime>(Time.SYSTEM);
+                serviceCollection.TryAddSingleton<StateDirectory>();
 
+                serviceCollection.TryAddSingleton<IStateRestoreListener, DelegatingStateRestoreListener>();
+                serviceCollection.TryAddSingleton<IStateListener, StreamStateListener>();
+                serviceCollection.TryAddSingleton<StreamsMetadataState>();
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
                 serviceCollection.TryAddSingleton<Topology>();
@@ -108,37 +113,14 @@ namespace Kafka.Streams
 
             private void AddThreads(IServiceCollection serviceCollection)
             {
-                serviceCollection.TryAddScoped(typeof(ThreadContext<,,>));
-
                 serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
-                serviceCollection.TryAddSingleton<GlobalStreamThreadContext>();
 
-                serviceCollection.TryAddScoped<IKafkaStreamThread, KafkaStreamThread>();
-                serviceCollection.TryAddScoped<IStateMachine<KafkaStreamThreadStates>, KafkaStreamThreadState>();
-                serviceCollection.TryAddScoped<KafkaStreamThreadContext>();
+                serviceCollection.TryAddTransient<IKafkaStreamThread, KafkaStreamThread>();
+                serviceCollection.TryAddTransient<IStateMachine<KafkaStreamThreadStates>, KafkaStreamThreadState>();
 
                 serviceCollection.AddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
-                serviceCollection.AddScoped<KafkaStreamsThreadContext>(sp =>
-                {
-                    // We special case this ThreadContext, since it's the one that sets up the rest, we need to make sure it's set up correctly.
-                    var state = sp.GetRequiredService<IStateMachine<KafkaStreamsThreadStates>>();
-                    var globalThreadContext = sp.GetRequiredService<GlobalStreamThreadContext>();
-                    var logger = sp.GetRequiredService<ILogger<KafkaStreamsThreadContext>>();
-                    var thread = sp.GetRequiredService<IKafkaStreamsThread>();
-                    var config = sp.GetRequiredService<StreamsConfig>();
-
-                    var kafkaStreamsThreadContext = new KafkaStreamsThreadContext(
-                        logger, sp, thread, state, globalThreadContext, config);
-
-                    var streamsThread = (kafkaStreamsThreadContext.Thread as KafkaStreamsThread) ?? throw new InvalidOperationException($"Somehow didn't get the expected {nameof(KafkaStreamsThread)} type.");
-
-                    streamsThread.SetContext(kafkaStreamsThreadContext);
-                    streamsThread.Initialize(config);
-
-                    return kafkaStreamsThreadContext;
-                });
             }
 
             /**
@@ -592,10 +574,12 @@ namespace Kafka.Streams
              * @throws TopologyException if state store supplier is already added
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addStateStore(IStoreBuilder builder)
+            public StreamsBuilder addStateStore<K, V, T>(IStoreBuilder<T> builder)
+                where T : IStateStore
             {
                 Objects.requireNonNull(builder, "builder can't be null");
-                //internalStreamsBuilder.addStateStore(builder);
+                internalStreamsBuilder.AddStateStore<K, V, T>(builder);
+                
                 return this;
             }
 
@@ -603,13 +587,14 @@ namespace Kafka.Streams
              * @deprecated use {@link #addGlobalStore(StoreBuilder, String, Consumed, IProcessorSupplier)} instead
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addGlobalStore<K, V>(
-                IStoreBuilder storeBuilder,
+            public StreamsBuilder addGlobalStore<K, V, T>(
+                IStoreBuilder<T> storeBuilder,
                 string topic,
                 string sourceName,
                 Consumed<K, V> consumed,
                 string processorName,
                 IProcessorSupplier<K, V> stateUpdateSupplier)
+                where T : IStateStore
             {
                 Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
                 Objects.requireNonNull(consumed, "consumed can't be null");
@@ -650,19 +635,21 @@ namespace Kafka.Streams
              * @throws TopologyException if the processor of state is already registered
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addGlobalStore<K, V>(
-                IStoreBuilder storeBuilder,
+            public StreamsBuilder addGlobalStore<K, V, T>(
+                IStoreBuilder<T> storeBuilder,
                 string topic,
                 Consumed<K, V> consumed,
                 IProcessorSupplier<K, V> stateUpdateSupplier)
+                where T : IStateStore
             {
-                Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                //internalStreamsBuilder.addGlobalStore(
-                //    storeBuilder,
-                //    topic,
-                //    new ConsumedInternal<K, V>(consumed),
-                //    stateUpdateSupplier);
+                storeBuilder = storeBuilder ?? throw new ArgumentNullException(nameof(storeBuilder));
+                consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
+
+                internalStreamsBuilder.AddGlobalStore(
+                    storeBuilder,
+                    topic,
+                    new ConsumedInternal<K, V>(consumed),
+                    stateUpdateSupplier);
 
                 return this;
             }
@@ -693,6 +680,22 @@ namespace Kafka.Streams
 
                 return topology;
             }
+
+            public static string GetTaskProducerClientId(string threadClientId, TaskId taskId)
+                => $"{threadClientId}-{taskId}-producer";
+
+            public static string GetThreadProducerClientId(string threadClientId)
+                => $"{threadClientId}-producer";
+
+            public static string GetConsumerClientId(string threadClientId)
+                => $"{threadClientId}-consumer";
+
+            public static string GetRestoreConsumerClientId(string threadClientId)
+                => $"{threadClientId}-restore-consumer";
+
+            // currently admin client is shared among all threads
+            public static string GetSharedAdminClientId(string clientId)
+                => $"{clientId}-admin";
         }
     }
 }

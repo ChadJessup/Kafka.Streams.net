@@ -1,20 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Kafka.Streams.Processors.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State
@@ -23,7 +6,8 @@ namespace Kafka.Streams.State
      * Build a {@link IStateStore} wrapped with optional caching and logging.
      * @param  the type of store to build
      */
-    public interface IStoreBuilder
+    public interface IStoreBuilder<out T>
+        where T : IStateStore
     {
         /**
          * Returns a Map containing any log configs that will be used when creating the changelog for the {@link IStateStore}.
@@ -47,22 +31,18 @@ namespace Kafka.Streams.State
          * @return the name of this state store builder
          */
         string name { get; }
-    }
 
-    public interface IStoreBuilder<out T> : IStoreBuilder
-        where T : IStateStore
-    {
         /**
-         * Enable caching on the store.
-         * @return  this
-         */
-        IStoreBuilder<T> withCachingEnabled();
+ * Enable caching on the store.
+ * @return  this
+ */
+        IStoreBuilder<T> WithCachingEnabled();
 
         /**
          * Disable caching on the store.
          * @return  this
          */
-        IStoreBuilder<T> withCachingDisabled();
+        IStoreBuilder<T> WithCachingDisabled();
 
         /**
          * Maintain a changelog for any changes made to the store.
@@ -70,7 +50,7 @@ namespace Kafka.Streams.State
          * @param config  config applied to the changelog topic
          * @return this
          */
-        IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config);
+        IStoreBuilder<T> WithLoggingEnabled(Dictionary<string, string> config);
 
         /**
          * Disable the changelog for store built by this {@link StoreBuilder}.
@@ -78,13 +58,13 @@ namespace Kafka.Streams.State
          * By default the changelog is enabled.
          * @return this
          */
-        IStoreBuilder<T> withLoggingDisabled();
+        IStoreBuilder<T> WithLoggingDisabled();
 
         /**
          * Build the store as defined by the builder.
          *
          * @return the built {@link IStateStore}
          */
-        T build();
+        T Build();
     }
 }

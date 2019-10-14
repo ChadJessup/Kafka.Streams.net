@@ -12,7 +12,7 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class StoreChangelogReader : IChangelogReader
     {
-        private readonly ILogger log;
+        private readonly ILogger<StoreChangelogReader> logger;
         private readonly IConsumer<byte[], byte[]> restoreConsumer;
         private readonly IStateRestoreListener userStateRestoreListener;
         private Dictionary<TopicPartition, TopicPartitionOffset> endOffsets = new Dictionary<TopicPartition, TopicPartitionOffset>();
@@ -24,25 +24,27 @@ namespace Kafka.Streams.Processors.Internals
         private readonly TimeSpan pollTime;
 
         public StoreChangelogReader(
+            ILogger<StoreChangelogReader> logger,
             IConsumer<byte[], byte[]> restoreConsumer,
             TimeSpan pollTime,
-            IStateRestoreListener userStateRestoreListener,
-            LogContext logContext)
+            IStateRestoreListener userStateRestoreListener)
         {
+            this.logger = logger;
             this.restoreConsumer = restoreConsumer;
             this.pollTime = pollTime;
-            this.log = logContext.logger(GetType());
             this.userStateRestoreListener = userStateRestoreListener;
         }
 
         public void register(StateRestorer restorer)
         {
+            restorer = restorer ?? throw new ArgumentNullException(nameof(restorer));
+
             if (!stateRestorers.ContainsKey(restorer.partition))
             {
                 restorer.setUserRestoreListener(userStateRestoreListener);
                 stateRestorers.Add(restorer.partition, restorer);
 
-                log.LogTrace("Added restorer for changelog {}", restorer.partition);
+                this.logger.LogTrace($"Added restorer for changelog {restorer.partition}");
             }
 
             needsInitializing.Add(restorer.partition);
@@ -83,13 +85,13 @@ namespace Kafka.Streams.Processors.Internals
             }
             catch (TopicPartitionOffsetException recoverableException)
             {
-                log.LogWarning("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
+                this.logger.LogWarning("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
                 HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(recoverableException.Results.Select(tpo => tpo.TopicPartition));
 
                 foreach (TopicPartition partition in partitions)
                 {
                     var task = active.restoringTaskFor(partition);
-                    log.LogInformation("Reinitializing StreamTask {} for changelog {}", task, partition);
+                    logger.LogInformation("Reinitializing StreamTask {} for changelog {}", task, partition);
 
                     needsInitializing.Remove(partition);
                     needsRestoring.Remove(partition);
@@ -142,7 +144,7 @@ namespace Kafka.Streams.Processors.Internals
             catch (TimeoutException e)
             {
                 // if timeout exception gets thrown we just give up this time and retry in the next run loop
-                log.LogDebug($"Could not fetch end offset for {initializable}; will fall back to partition by partition fetching");
+                logger.LogDebug($"Could not fetch end offset for {initializable}; will fall back to partition by partition fetching");
 
                 return;
             }
@@ -181,7 +183,7 @@ namespace Kafka.Streams.Processors.Internals
                 else
                 {
 
-                    log.LogInformation("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
+                    logger.LogInformation("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
                     // iter.Remove();
                 }
             }
@@ -197,7 +199,7 @@ namespace Kafka.Streams.Processors.Internals
             HashSet<TopicPartition> initialized,
             IRestoringTasks active)
         {
-            log.LogDebug("Start restoring state stores from changelog topics {}", initialized);
+            logger.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 
             HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(restoreConsumer.Assignment);
             assignment.UnionWith(initialized);
@@ -211,9 +213,9 @@ namespace Kafka.Streams.Processors.Internals
                 StateRestorer restorer = stateRestorers[partition];
                 if (restorer.checkpoint() != StateRestorer.NO_CHECKPOINT)
                 {
-                    log.LogTrace($"Found checkpoint {restorer.checkpoint()} from changelog {partition} for store {restorer.storeName}.");
+                    this.logger.LogTrace($"Found checkpoint {restorer.checkpoint()} from changelog {partition} for store {restorer.storeName}.");
 
-                    restoreConsumer.Seek(new TopicPartitionOffset(partition, restorer.checkpoint()));
+                    this.restoreConsumer.Seek(new TopicPartitionOffset(partition, restorer.checkpoint()));
 
                     logRestoreOffsets(
                         partition,
@@ -225,7 +227,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 else
                 {
-                    log.LogTrace($"Did not find checkpoint from changelog {partition} for store {restorer.storeName}, rewinding to beginning.");
+                    this.logger.LogTrace($"Did not find checkpoint from changelog {partition} for store {restorer.storeName}, rewinding to beginning.");
 
                     restoreConsumer.SeekToBeginning(new List<TopicPartition> { partition });
                     needsPositionUpdate.Add(restorer);
@@ -242,7 +244,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 if (task.isEosEnabled())
                 {
-                    log.LogInformation("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
+                    this.logger.LogInformation("No checkpoint found for task {} state store {} changelog {} with EOS turned on. " +
                             "Reinitializing the task and restore its state from the beginning.", task.id, restorer.storeName, partition);
 
                     needsInitializing.Remove(partition);
@@ -253,7 +255,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 else
                 {
-                    log.LogInformation($"Restoring task {task.id}'s state store {restorer.storeName} from beginning of the changelog {partition} ");
+                    this.logger.LogInformation($"Restoring task {task.id}'s state store {restorer.storeName} from beginning of the changelog {partition} ");
 
                     long position = restoreConsumer.Position(restorer.partition);
                     logRestoreOffsets(
@@ -273,10 +275,7 @@ namespace Kafka.Streams.Processors.Internals
             long startingOffset,
             long endOffset)
         {
-            log.LogDebug("Restoring partition {} from offset {} to endOffset {}",
-                      partition,
-                      startingOffset,
-                      endOffset);
+            this.logger.LogDebug($"Restoring partition {partition} from offset {startingOffset} to endOffset {endOffset}");
         }
 
         private List<TopicPartition> completed()
@@ -290,14 +289,13 @@ namespace Kafka.Streams.Processors.Internals
             }
             catch (TimeoutException e)
             {
-                log.LogDebug("Could not fetch topic metadata within the timeout, will retry in the next run loop");
+                this.logger.LogDebug("Could not fetch topic metadata within the timeout, will retry in the next run loop");
             }
         }
 
-
         public Dictionary<TopicPartition, long> restoredOffsets()
         {
-            Dictionary<TopicPartition, long> restoredOffsets = new Dictionary<TopicPartition, long>();
+            var restoredOffsets = new Dictionary<TopicPartition, long>();
 
             foreach (KeyValuePair<TopicPartition, StateRestorer> entry in stateRestorers)
             {
@@ -364,7 +362,7 @@ namespace Kafka.Streams.Processors.Internals
                 restorer.restore(restoreRecords);
                 restorer.restoreBatchCompleted(lastRestoredOffset, records.Count);
 
-                log.LogTrace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
+                this.logger.LogTrace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
                         restorer.partition, restorer.storeName, records.Count, lastRestoredOffset, nextPosition);
             }
 

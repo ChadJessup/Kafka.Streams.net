@@ -54,7 +54,7 @@ namespace Kafka.Streams.Topologies
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, null, null, null, topics);
+            internalTopologyBuilder.AddSource<K, V>(null, name, null, null, null, topics);
             return this;
         }
 
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Topologies
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(offsetReset, name, null, null, null, topics);
+            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, null, null, null, topics);
             return this;
         }
 
@@ -150,7 +150,7 @@ namespace Kafka.Streams.Topologies
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(null, name, timestampExtractor, null, null, topics);
+            internalTopologyBuilder.AddSource<K, V>(null, name, timestampExtractor, null, null, topics);
             return this;
         }
 
@@ -202,7 +202,7 @@ namespace Kafka.Streams.Topologies
             string name,
             string[] topics)
         {
-            internalTopologyBuilder.addSource<K, V>(offsetReset, name, timestampExtractor, null, null, topics);
+            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, timestampExtractor, null, null, topics);
             return this;
         }
 
@@ -256,7 +256,7 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.addSource(null, name, null, keyDeserializer, valueDeserializer, topics);
+            internalTopologyBuilder.AddSource(null, name, null, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -323,7 +323,7 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.addSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topics);
+            internalTopologyBuilder.AddSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valueDeserializer,
             string[] topics)
         {
-            internalTopologyBuilder.addSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topics);
+            internalTopologyBuilder.AddSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topics);
             return this;
         }
 

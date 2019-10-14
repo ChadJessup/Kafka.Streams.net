@@ -53,7 +53,7 @@ namespace Kafka.Streams.Processors.Interfaces
          *
          * @return IStreamsMetrics
          */
-        IStreamsMetrics metrics { get; }
+        //IStreamsMetrics metrics { get; }
 
         /**
          * Registers and possibly restores the specified storage engine.
@@ -64,7 +64,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
+        void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback);
 
         /**
          * Get the state store given the store name.

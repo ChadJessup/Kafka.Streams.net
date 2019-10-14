@@ -50,21 +50,21 @@ namespace Kafka.Streams.State.Internals
             this.time = time;
         }
 
-        public IStoreBuilder<T> withCachingEnabled()
+        public IStoreBuilder<T> WithCachingEnabled()
         {
             enableCaching = true;
 
             return this;
         }
 
-        public IStoreBuilder<T> withCachingDisabled()
+        public IStoreBuilder<T> WithCachingDisabled()
         {
             enableCaching = false;
 
             return this;
         }
 
-        public IStoreBuilder<T> withLoggingEnabled(Dictionary<string, string> config)
+        public IStoreBuilder<T> WithLoggingEnabled(Dictionary<string, string> config)
         {
             config = config ?? throw new ArgumentNullException(nameof(config));
 
@@ -75,7 +75,7 @@ namespace Kafka.Streams.State.Internals
             return this;
         }
 
-        public IStoreBuilder<T> withLoggingDisabled()
+        public IStoreBuilder<T> WithLoggingDisabled()
         {
             enableLogging = false;
             logConfig.Clear();
@@ -83,6 +83,6 @@ namespace Kafka.Streams.State.Internals
             return this;
         }
 
-        public abstract T build();
+        public abstract T Build();
     }
 }

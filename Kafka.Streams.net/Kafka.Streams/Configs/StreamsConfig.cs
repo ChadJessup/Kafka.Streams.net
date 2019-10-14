@@ -174,6 +174,24 @@ namespace Kafka.Streams.Configs
             set => this.Set(StreamsConfigPropertyNames.CacheMaxBytesBuffering, value.ToString());
         }
 
+        public bool EnableIdempotence
+        {
+            get => this.GetBool("enable.idempotence") ?? false;
+            set => this.SetObject("enable.idempotence", value);
+        }
+
+        public int Retries
+        {
+            get => this.GetInt(StreamsConfigPropertyNames.Retries) ?? int.MaxValue;
+            set => this.SetObject(StreamsConfigPropertyNames.Retries, value);
+        }
+
+        public long RetryBackoffMs
+        {
+            get => this.GetInt(StreamsConfigPropertyNames.RetryBackoffMs) ?? 100L;
+            set => this.SetObject(StreamsConfigPropertyNames.RetryBackoffMs, value);
+        }
+
         public string StateStoreDirectory
         {
             get => this.getString(StreamsConfigPropertyNames.STATE_DIR_CONFIG) ?? Path.Combine(Path.GetTempPath(), "kafka-streams");
@@ -370,7 +388,7 @@ namespace Kafka.Streams.Configs
 
         private ConsumerConfig GetCommonConsumerConfigs()
         {
-            var clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, new ConsumerConfig());
+            var clientProvidedProps = GetClientPropsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, new ConsumerConfig());
 
             CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_DEFAULT_CONFIGS);
             CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_CONSUMER_EOS_CONFIGS);
@@ -523,13 +541,13 @@ namespace Kafka.Streams.Configs
             consumerProps.Set(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getString(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
             // add admin retries configs for creating topics
-            AdminClientConfig adminClientDefaultConfig = new AdminClientConfig(getClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
+            AdminClientConfig adminClientDefaultConfig = new AdminClientConfig(GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
             // consumerProps.Set(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
             // consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
             // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
             Dictionary<string, string> topicProps = originalsWithPrefix(StreamsConfigPropertyNames.TopicPrefix, strip: false);
-            Dictionary<string, string> producerProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
+            Dictionary<string, string> producerProps = GetClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
 
             // if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
             //     producerProps.ContainsKey(ProducerConfig.BATCH_SIZE_CONFIG))
@@ -638,7 +656,7 @@ namespace Kafka.Streams.Configs
         public ProducerConfig getProducerConfigs(string clientId)
         {
             var producerConfig = new ProducerConfig();
-            var clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
+            var clientProvidedProps = GetClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
 
             CheckIfUnexpectedUserSpecifiedConsumerConfig(clientProvidedProps, NON_CONFIGURABLE_PRODUCER_EOS_CONFIGS);
 
@@ -659,12 +677,12 @@ namespace Kafka.Streams.Configs
          * @param clientId clientId
          * @return Map of the admin client configuration.
          */
-        public AdminClientConfig getAdminConfigs(string clientId)
+        public AdminClientConfig GetAdminConfigs(string clientId)
         {
             this.originalValues = new Dictionary<string, string>(this.properties);
             var adminConfig = new AdminClientConfig();
 
-            var clientProvidedProps = getClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig());
+            var clientProvidedProps = GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig());
 
             adminConfig.SetAll(getClientCustomProps());
             adminConfig.SetAll(clientProvidedProps);
@@ -675,10 +693,10 @@ namespace Kafka.Streams.Configs
             return adminConfig;
         }
 
-        private Dictionary<string, string> getClientPropsWithPrefix(string prefix, IEnumerable<KeyValuePair<string, string>> configKeyValuePairs)
-            => getClientPropsWithPrefix(prefix, new HashSet<string>(configKeyValuePairs.Select(kvp => kvp.Key)));
+        private Dictionary<string, string> GetClientPropsWithPrefix(string prefix, IEnumerable<KeyValuePair<string, string>> configKeyValuePairs)
+            => GetClientPropsWithPrefix(prefix, new HashSet<string>(configKeyValuePairs.Select(kvp => kvp.Key)));
 
-        private Dictionary<string, string> getClientPropsWithPrefix(string prefix, HashSet<string> configNames)
+        private Dictionary<string, string> GetClientPropsWithPrefix(string prefix, HashSet<string> configNames)
         {
             var props = clientProps(configNames, this.originalValues);
 

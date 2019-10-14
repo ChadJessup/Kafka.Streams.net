@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tasks
     public abstract class AssignedTasks<T>
         where T : ITask
     {
-        protected ILogger log { get; }
+        protected ILogger<AssignedTasks<T>> logger { get; }
         private readonly string taskTypeName;
         private readonly Dictionary<TaskId, T> created = new Dictionary<TaskId, T>();
         private readonly Dictionary<TaskId, T> suspended = new Dictionary<TaskId, T>();
@@ -24,11 +24,11 @@ namespace Kafka.Streams.Tasks
         private readonly Dictionary<TopicPartition, T> runningByPartition = new Dictionary<TopicPartition, T>();
 
         public AssignedTasks(
-            LogContext logContext,
+            ILogger<AssignedTasks<T>> logger,
             string taskTypeName)
         {
             this.taskTypeName = taskTypeName;
-            this.log = logContext.logger(GetType());
+            this.logger = logger;
         }
 
         public void addNewTask(T task)
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Tasks
         {
             if (created.Any())
             {
-                log.LogDebug("Initializing {}s {}", taskTypeName, created.Keys);
+                logger.LogDebug("Initializing {}s {}", taskTypeName, created.Keys);
             }
 
             for (IEnumerator<KeyValuePair<TaskId, T>> it = created.GetEnumerator(); it.MoveNext();)
@@ -57,7 +57,7 @@ namespace Kafka.Streams.Tasks
                     {
                         if (entry.Value is StreamTask valueAsTask)
                         {
-                            log.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
+                            logger.LogDebug("Transitioning {} {} to restoring", taskTypeName, entry.Key);
                             ((AssignedStreamsTasks)(object)this).addToRestoring(valueAsTask);
                         }
                     }
@@ -71,7 +71,7 @@ namespace Kafka.Streams.Tasks
                 catch (LockException e)
                 {
                     // made this trace as it will spam the logs in the poll loop.
-                    log.LogTrace("Could not create {} {} due to {}; will retry", taskTypeName, entry.Key, e.ToString());
+                    logger.LogTrace("Could not create {} {} due to {}; will retry", taskTypeName, entry.Key, e.ToString());
                 }
             }
         }
@@ -84,9 +84,9 @@ namespace Kafka.Streams.Tasks
         public RuntimeException suspend()
         {
             RuntimeException firstException = new RuntimeException(null);
-            log.LogTrace("Suspending running {} {}", taskTypeName, runningTaskIds());
+            logger.LogTrace("Suspending running {} {}", taskTypeName, runningTaskIds());
             firstException.compareAndSet(null, suspendTasks(running.Values.ToList()));
-            log.LogTrace("Close created {} {}", taskTypeName, created.Keys);
+            logger.LogTrace("Close created {} {}", taskTypeName, created.Keys);
             firstException.compareAndSet(null, closeNonRunningTasks(created.Values.ToList()));
             previousActiveTasks.Clear();
             previousActiveTasks.UnionWith(running.Keys);
@@ -107,7 +107,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException e)
                 {
-                    log.LogError("Failed to close {}, {}", taskTypeName, task.id, e);
+                    logger.LogError("Failed to close {}, {}", taskTypeName, task.id, e);
                     if (exception == null)
                     {
                         exception = e;
@@ -133,7 +133,7 @@ namespace Kafka.Streams.Tasks
                 catch (TaskMigratedException closeAsZombieAndSwallow)
                 {
                     // as we suspend a task, we are either shutting down or rebalancing, thus, we swallow and move on
-                    log.LogInformation("Failed to suspend {} {} since it got migrated to another thread already. " +
+                    logger.LogInformation("Failed to suspend {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie and move on.", taskTypeName, task.id);
                     firstException.compareAndSet(null, closeZombieTask(task));
 
@@ -141,7 +141,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException e)
                 {
-                    log.LogError("Suspending {} {} failed due to the following error:", taskTypeName, task.id, e);
+                    logger.LogError("Suspending {} {} failed due to the following error:", taskTypeName, task.id, e);
                     firstException.compareAndSet(null, e);
                     try
                     {
@@ -150,7 +150,7 @@ namespace Kafka.Streams.Tasks
                     }
                     catch (RuntimeException f)
                     {
-                        log.LogError("After suspending failed, closing the same {} {} failed again due to the following error:", taskTypeName, task.id, f);
+                        logger.LogError("After suspending failed, closing the same {} {} failed again due to the following error:", taskTypeName, task.id, f);
                     }
                 }
             }
@@ -166,7 +166,7 @@ namespace Kafka.Streams.Tasks
             }
             catch (RuntimeException e)
             {
-                log.LogWarning("Failed to close zombie {} {} due to {}; ignore and proceed.", taskTypeName, task.id, e.ToString());
+                logger.LogWarning("Failed to close zombie {} {} due to {}; ignore and proceed.", taskTypeName, task.id, e.ToString());
                 return e;
             }
             return null;
@@ -185,7 +185,7 @@ namespace Kafka.Streams.Tasks
             if (suspended.ContainsKey(taskId))
             {
                 T task = suspended[taskId];
-                log.LogTrace("Found suspended {} {}", taskTypeName, taskId);
+                logger.LogTrace("Found suspended {} {}", taskTypeName, taskId);
                 if (task.partitions.Equals(partitions))
                 {
                     suspended.Remove(taskId);
@@ -199,7 +199,7 @@ namespace Kafka.Streams.Tasks
                     {
                         // we need to catch migration exception internally since this function
                         // is triggered in the rebalance callback
-                        log.LogInformation("Failed to resume {} {} since it got migrated to another thread already. " +
+                        logger.LogInformation("Failed to resume {} {} since it got migrated to another thread already. " +
                                 "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
                         RuntimeException fatalException = closeZombieTask(task);
                         running.Remove(task.id, out var _);
@@ -210,13 +210,13 @@ namespace Kafka.Streams.Tasks
 
                         throw;
                     }
-                    log.LogTrace("Resuming suspended {} {}", taskTypeName, task.id);
+                    logger.LogTrace("Resuming suspended {} {}", taskTypeName, task.id);
                     return true;
                 }
                 else
                 {
 
-                    log.LogWarning("Couldn't resume task {} assigned partitions {}, task partitions {}", taskId, partitions, task.partitions);
+                    logger.LogWarning("Couldn't resume task {} assigned partitions {}, task partitions {}", taskId, partitions, task.partitions);
                 }
             }
             return false;
@@ -227,7 +227,7 @@ namespace Kafka.Streams.Tasks
          */
         public void transitionToRunning(T task)
         {
-            log.LogDebug("Transitioning {} {} to running", taskTypeName, task.id);
+            logger.LogDebug("Transitioning {} {} to running", taskTypeName, task.id);
             running.TryAdd(task.id, task);
             task.initializeTopology();
             foreach (TopicPartition topicPartition in task.partitions)
@@ -341,7 +341,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    log.LogInformation("Failed to commit {} {} since it got migrated to another thread already. " +
+                    logger.LogInformation("Failed to commit {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
                     RuntimeException fatalException = closeZombieTask(task);
                     if (fatalException != null)
@@ -355,7 +355,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (RuntimeException t)
                 {
-                    log.LogError("Failed to commit {} {} due to the following error:",
+                    logger.LogError("Failed to commit {} {} due to the following error:",
                             taskTypeName,
                             task.id,
                             t);
@@ -382,7 +382,7 @@ namespace Kafka.Streams.Tasks
                 T suspendedTask = standByTaskIterator.Current;
                 if (!newAssignment.ContainsKey(suspendedTask.id) || !suspendedTask.partitions.Equals(newAssignment[suspendedTask.id]))
                 {
-                    log.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedTask.id);
+                    logger.LogDebug("Closing suspended and not re-assigned {} {}", taskTypeName, suspendedTask.id);
                     try
                     {
 
@@ -390,7 +390,7 @@ namespace Kafka.Streams.Tasks
                     }
                     catch (Exception e)
                     {
-                        log.LogError("Failed to Remove suspended {} {} due to the following error:", taskTypeName, suspendedTask.id, e);
+                        logger.LogError("Failed to Remove suspended {} {} due to the following error:", taskTypeName, suspendedTask.id, e);
                     }
                     finally
                     {
@@ -412,13 +412,13 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    log.LogInformation("Failed to close {} {} since it got migrated to another thread already. " +
+                    logger.LogInformation("Failed to close {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie and move on.", taskTypeName, task.id);
                     firstException.compareAndSet(null, closeZombieTask(task));
                 }
                 catch (RuntimeException t)
                 {
-                    log.LogError("Failed while closing {} {} due to the following error:",
+                    logger.LogError("Failed while closing {} {} due to the following error:",
                               task.GetType().Name,
                               task.id,
                               t);
@@ -448,14 +448,14 @@ namespace Kafka.Streams.Tasks
 
         private bool closeUnclean(T task)
         {
-            log.LogInformation("Try to close {} {} unclean.", task.GetType().FullName, task.id);
+            logger.LogInformation("Try to close {} {} unclean.", task.GetType().FullName, task.id);
             try
             {
                 task.close(false, false);
             }
             catch (RuntimeException fatalException)
             {
-                log.LogError("Failed while closing {} {} due to the following error:",
+                logger.LogError("Failed while closing {} {} due to the following error:",
                     task.GetType().Name,
                     task.id,
                     fatalException);

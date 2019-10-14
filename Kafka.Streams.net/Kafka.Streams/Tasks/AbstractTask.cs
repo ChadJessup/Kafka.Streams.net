@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tasks
             this.partitions = new HashSet<TopicPartition>(partitions);
             this.topology = topology;
             this.consumer = consumer;
-            this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.getString(StreamsConfigPropertyNames.PROCESSING_GUARANTEE_CONFIG));
+            this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.getString(StreamsConfigPropertyNames.ProcessingGuarantee));
             this.stateDirectory = stateDirectory;
 
             this.logPrefix = $"{(isStandby ? "standby-task" : "task")} [{id}] ";
@@ -81,7 +81,7 @@ namespace Kafka.Streams.Tasks
 
         public virtual IStateStore getStore(string name)
         {
-            return stateMgr.getStore(name);
+            return stateMgr.GetStore(name);
         }
 
         /**
@@ -175,7 +175,7 @@ namespace Kafka.Streams.Tasks
          */
         protected virtual void flushState()
         {
-            stateMgr.flush();
+            stateMgr.Flush();
         }
 
         /**
@@ -220,7 +220,7 @@ namespace Kafka.Streams.Tasks
 
         public virtual void reinitializeStateStoresForPartitions(List<TopicPartition> partitions)
         {
-            stateMgr.reinitializeStateStoresForPartitions(partitions, processorContext);
+            stateMgr.ReinitializeStateStoresForPartitions(partitions, processorContext);
         }
 
         /**
@@ -233,7 +233,7 @@ namespace Kafka.Streams.Tasks
             try
             {
 
-                stateMgr.close(clean);
+                stateMgr.Close(clean);
             }
             catch (ProcessorStateException e)
             {

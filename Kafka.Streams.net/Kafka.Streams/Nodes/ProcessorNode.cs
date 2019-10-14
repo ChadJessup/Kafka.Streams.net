@@ -1,10 +1,8 @@
-using Kafka.Common.Metrics;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals.Metrics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -68,7 +66,6 @@ namespace Kafka.Streams.Nodes
 
     public class ProcessorNode<K, V> : ProcessorNode
     {
-        public NodeMetrics<K, V> nodeMetrics { get; private set; }
         private readonly IKeyValueProcessor<K, V> processor;
 
         public ProcessorNode(string name)
@@ -100,7 +97,7 @@ namespace Kafka.Streams.Nodes
         {
             try
             {
-                nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, Name, context);
+                //nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, Name, context);
                 long startNs = time.nanoseconds();
                 if (processor != null)
                 {
@@ -124,9 +121,6 @@ namespace Kafka.Streams.Nodes
                 {
                     processor.close();
                 }
-
-                //nodeMetrics.nodeDestructionSensor.record(time.nanoseconds() - startNs);
-                nodeMetrics.removeAllSensors();
             }
             catch (Exception e)
             {
@@ -138,7 +132,6 @@ namespace Kafka.Streams.Nodes
         {
             long startNs = time.nanoseconds();
             processor.process(key, value);
-            nodeMetrics.nodeProcessTimeSensor.record(time.nanoseconds() - startNs);
         }
     }
 }

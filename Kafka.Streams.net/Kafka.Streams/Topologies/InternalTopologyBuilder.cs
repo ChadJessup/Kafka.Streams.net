@@ -20,18 +20,21 @@ namespace Kafka.Streams.Topologies
 {
     public class InternalTopologyBuilder
     {
-        private readonly ILogger logger;
+        private readonly ILogger<InternalTopologyBuilder> logger;
         private readonly IServiceProvider services;
-
+        private StreamsConfig config;
         private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("", RegexOptions.Compiled);
         private static readonly string[] NO_PREDECESSORS = { };
 
         public InternalTopologyBuilder(
             ILogger<InternalTopologyBuilder> logger,
-            IServiceProvider services)
+            IServiceProvider services,
+            StreamsConfig config)
         {
-            this.logger = logger;
-            this.services = services;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         // node factories in a topological order
@@ -111,37 +114,37 @@ namespace Kafka.Streams.Topologies
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public InternalTopologyBuilder rewriteTopology(StreamsConfig config)
+        public InternalTopologyBuilder RewriteTopology(StreamsConfig config)
         {
-            config = config ?? throw new ArgumentNullException(nameof(config));
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
 
             // set application id
-            setApplicationId(config.Get(StreamsConfigPropertyNames.ApplicationId));
+            setApplicationId(config.ApplicationId);
 
             // maybe strip out caching layers
-            if (config.getLong(StreamsConfigPropertyNames.CacheMaxBytesBuffering) == 0L)
+            if (config.CacheMaxBytesBuffering == 0L)
             {
                 foreach (var storeFactory in stateFactories.Values)
                 {
-                    //                  storeFactory.builder.withCachingDisabled();
+                    storeFactory.Builder.withCachingDisabled();
                 }
 
                 foreach (var storeBuilder in globalStateBuilders.Values)
                 {
-                    //                    storeBuilder.withCachingDisabled();
+                    storeBuilder.WithCachingDisabled();
                 }
             }
 
             // build global state stores
             foreach (var storeBuilder in globalStateBuilders.Values)
             {
-                //_globalStateStores.Add(storeBuilder.name, storeBuilder.build());
+                _globalStateStores.Add(storeBuilder.name, storeBuilder.Build());
             }
 
             return this;
         }
 
-        public void addSource<K, V>(
+        public void AddSource<K, V>(
             AutoOffsetReset? offsetReset,
             string name,
             ITimestampExtractor timestampExtractor,
@@ -1434,9 +1437,10 @@ namespace Kafka.Streams.Topologies
         }
 
         public void updateSubscribedTopics(
-            HashSet<string> topics,
-            string logPrefix)
+            HashSet<string> topics)//,
+            //string logPrefix)
         {
+            var logPrefix = "";
             SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
             logger.LogDebug($"{logPrefix}found {topics.Count} topics possibly matching regex");
             // update the topic groups with the returned subscription set for regex pattern subscriptions

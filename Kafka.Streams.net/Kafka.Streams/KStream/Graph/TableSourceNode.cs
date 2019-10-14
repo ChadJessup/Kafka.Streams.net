@@ -84,7 +84,7 @@ namespace Kafka.Streams.Nodes
             }
             else
             {
-                topologyBuilder.addSource(
+                topologyBuilder.AddSource(
                     consumedInternal.offsetResetPolicy(),
                     sourceName,
                     consumedInternal.timestampExtractor,
@@ -102,7 +102,7 @@ namespace Kafka.Streams.Nodes
 
                     if (shouldReuseSourceTopicForChangelog)
                     {
-                        storeBuilder.withLoggingDisabled();
+                        storeBuilder.WithLoggingDisabled();
                         topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name, topicName);
                     }
                 }

@@ -37,12 +37,12 @@ namespace Kafka.Streams.Processors.Internals
         public DirectoryInfo stateDir
             => del.stateDir;
 
-        public IStreamsMetrics metrics
-            => del.metrics;
+        //public IStreamsMetrics metrics
+        //    => del.metrics;
 
-        public void register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
+        public void Register(IStateStore store, IStateRestoreCallback stateRestoreCallback)
         {
-            del.register(store, stateRestoreCallback);
+            del.Register(store, stateRestoreCallback);
         }
 
         public IStateStore getStateStore(string name)

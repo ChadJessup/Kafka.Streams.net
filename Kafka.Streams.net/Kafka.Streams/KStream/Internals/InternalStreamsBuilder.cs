@@ -228,7 +228,7 @@ namespace Kafka.Streams.KStream.Internals
             where T : IStateStore
         {
             // explicitly disable logging for global stores
-            storeBuilder.withLoggingDisabled();
+            storeBuilder.WithLoggingDisabled();
             string sourceName = NewProcessorName(KStream.SourceName);
             string processorName = NewProcessorName(KTable.SourceName);
 

@@ -1,5 +1,6 @@
 using Confluent.Kafka;
 using Kafka.Common;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -26,13 +28,12 @@ namespace Kafka.Streams.Processors.Internals
         private Cluster clusterMetadata;
         private StreamsMetadata myMetadata;
 
-        public StreamsMetadataState(
-            InternalTopologyBuilder builder,
-            HostInfo thisHost)
+        public StreamsMetadataState(Topology topology, StreamsConfig config)
         {
-            this.builder = builder;
+            this.builder = topology.internalTopologyBuilder;
             this.globalStores = new HashSet<string>(builder.globalStateStores().Keys);
-            this.thisHost = thisHost;
+
+            this.thisHost = ParseHostInfo(config.ApplicationServer);
         }
 
         public override string ToString()
@@ -311,6 +312,56 @@ namespace Kafka.Streams.Processors.Internals
         private bool IsInitialized()
         {
             return clusterMetadata != null && clusterMetadata.topics().Any();
+        }
+
+        private HostInfo ParseHostInfo(string endPoint)
+        {
+            if (endPoint == null || !endPoint.Trim().Any())
+            {
+                return StreamsMetadataState.UNKNOWN_HOST;
+            }
+
+            string host = GetHost(endPoint);
+            int port = GetPort(endPoint);
+
+            if (host == null)
+            {
+                throw new Exception($"Error parsing host address {endPoint}. Expected string.Format host:port.");
+            }
+
+            return new HostInfo(host, port);
+        }
+
+        // This matches URIs of formats: host:port and protocol:\\host:port
+        // IPv6 is supported with [ip] pattern
+        private readonly Regex HOST_PORT_PATTERN = new Regex(".*?\\[?([0-9a-zA-Z\\-%._:]*)\\]?:([0-9]+)", RegexOptions.Compiled);
+
+        /**
+         * Extracts the hostname from a "host:port" address string.
+         * @param address address string to parse
+         * @return hostname or null if the given address is incorrect
+         */
+        private string GetHost(string address)
+        {
+            var matcher = HOST_PORT_PATTERN.Match(address);
+            
+            return matcher.Success
+                ? matcher.Groups[1]?.Value ?? ""
+                : "";
+        }
+
+        /**
+         * Extracts the port number from a "host:port" address string.
+         * @param address address string to parse
+         * @return port number or null if the given address is incorrect
+         */
+        private int GetPort(string address)
+        {
+            var matcher = HOST_PORT_PATTERN.Match(address);
+
+            return matcher.Success
+                ? int.Parse(matcher.Groups[2].Value)
+                : 0;
         }
     }
 }

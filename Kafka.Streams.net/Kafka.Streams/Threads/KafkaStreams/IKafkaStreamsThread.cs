@@ -7,5 +7,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
     public interface IKafkaStreamsThread : IThread<KafkaStreamsThreadStates>, IDisposable
     {
         Dictionary<long, KafkaStreamThreadState> ThreadStates { get; }
+        IStateListener GetStateListener();
     }
 }
