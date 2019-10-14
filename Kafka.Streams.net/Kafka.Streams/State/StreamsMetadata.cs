@@ -39,8 +39,8 @@ namespace Kafka.Streams.State
             new HashSet<TopicPartition>());
 
         private readonly HostInfo hostInfo;
-        private readonly HashSet<string> stateStoreNames;
-        private readonly HashSet<TopicPartition> topicPartitions;
+        public HashSet<string> stateStoreNames { get; }
+        public HashSet<TopicPartition> topicPartitions { get; }
 
         public StreamsMetadata(
             HostInfo hostInfo,

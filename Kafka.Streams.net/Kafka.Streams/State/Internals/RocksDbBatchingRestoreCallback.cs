@@ -21,7 +21,7 @@ namespace Kafka.Streams.State.Internals
             {
                 using (WriteBatch batch = new WriteBatch())
                 {
-                    rocksDBStore.dbAccessor.prepareBatchForRestore(records, batch);
+                    rocksDBStore.DbAccessor.prepareBatchForRestore(records, batch);
                     rocksDBStore.write(batch);
                 }
             }

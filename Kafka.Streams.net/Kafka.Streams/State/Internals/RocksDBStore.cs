@@ -4,6 +4,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
 using System;
@@ -35,15 +36,15 @@ namespace Kafka.Streams.State.Internals
 
         public string name { get; }
         private readonly string parentDir;
-        protected HashSet<IKeyValueIterator<Bytes, byte[]>> openIterators { get; } = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
+        protected HashSet<IKeyValueIterator<Bytes, byte[]>> OpenIterators { get; } = new HashSet<IKeyValueIterator<Bytes, byte[]>>();
 
-        protected DirectoryInfo dbDir { get; private set; }
-        public RocksDb db { get; protected set; }
-        public IRocksDbAccessor dbAccessor { get; protected set; }
+        protected DirectoryInfo DbDir { get; private set; }
+        public RocksDb Db { get; protected set; }
+        public IRocksDbAccessor DbAccessor { get; protected set; }
 
         // the following option objects will be created in openDB and closed in the close() method
         //private RocksDbGenericOptionsToDbOptionsColumnFamilyOptionsAdapter userSpecifiedOptions;
-        protected WriteOptions wOptions { get; set; }
+        protected WriteOptions WOptions { get; set; }
 
         // FlushOptions fOptions;
         private Cache cache;
@@ -53,7 +54,7 @@ namespace Kafka.Streams.State.Internals
         private IRocksDbConfigSetter configSetter;
 
         private bool prepareForBulkload = false;
-        public IProcessorContext internalProcessorContext { get; private set; }
+        public IProcessorContext InternalProcessorContext { get; private set; }
 
         // visible for testing
         IBatchingStateRestoreCallback batchingStateRestoreCallback = null;
@@ -74,7 +75,7 @@ namespace Kafka.Streams.State.Internals
             this.parentDir = parentDir;
         }
 
-        void openDB(IProcessorContext context)
+        void OpenDB(IProcessorContext context)
         {
             // initialize the default rocksdb options
 
@@ -103,8 +104,8 @@ namespace Kafka.Streams.State.Internals
             // (this could be a bug in the RocksDb code and their devs have been contacted).
             dbOptions.IncreaseParallelism(Math.Max(Environment.ProcessorCount, 2));
 
-            wOptions = new WriteOptions();
-            wOptions.DisableWal(1);
+            WOptions = new WriteOptions();
+            WOptions.DisableWal(1);
 
             //fOptions = new FlushOptions();
             //fOptions.setWaitForFlush(true);
@@ -124,22 +125,22 @@ namespace Kafka.Streams.State.Internals
                 //userSpecifiedOptions.prepareForBulkLoad();
             }
 
-            dbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir.FullName, parentDir), name));
+            DbDir = new DirectoryInfo(Path.Combine(Path.Combine(context.stateDir.FullName, parentDir), name));
 
             try
             {
-                Directory.CreateDirectory(dbDir.FullName);
+                Directory.CreateDirectory(DbDir.FullName);
             }
             catch (IOException fatal)
             {
                 throw new ProcessorStateException(fatal.ToString());
             }
 
-            openRocksDb(dbOptions, columnFamilyOptions);
+            OpenRocksDb(dbOptions, columnFamilyOptions);
             open = true;
         }
 
-        void openRocksDb(
+        void OpenRocksDb(
             DbOptions dbOptions,
             ColumnFamilyOptions columnFamilyOptions)
         {
@@ -149,29 +150,29 @@ namespace Kafka.Streams.State.Internals
 
             try
             {
-                db = RocksDb.Open(
+                Db = RocksDb.Open(
                     dbOptions,
-                    dbDir.FullName,
+                    DbDir.FullName,
                     columnFamilyDescriptors);
 
-                dbAccessor = new SingleColumnFamilyAccessor(
+                DbAccessor = new SingleColumnFamilyAccessor(
                     name,
-                    db,
-                    wOptions,
-                    openIterators,
+                    Db,
+                    WOptions,
+                    OpenIterators,
                     columnFamilies[0]);
             }
             catch (RocksDbException e)
             {
-                throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
+                throw new ProcessorStateException("Error opening store " + name + " at location " + DbDir.ToString(), e);
             }
         }
 
         public void init(IProcessorContext context, IStateStore root)
         {
             // open the DB dir
-            internalProcessorContext = context;
-            openDB(context);
+            InternalProcessorContext = context;
+            OpenDB(context);
 
             batchingStateRestoreCallback = new RocksDbBatchingRestoreCallback(this);
 
@@ -181,7 +182,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         // visible for testing
-        bool isPrepareForBulkload()
+        bool IsPrepareForBulkload()
         {
             return prepareForBulkload;
         }
@@ -196,7 +197,7 @@ namespace Kafka.Streams.State.Internals
             return open;
         }
 
-        private void validateStoreOpen()
+        private void ValidateStoreOpen()
         {
             if (!open)
             {
@@ -209,8 +210,8 @@ namespace Kafka.Streams.State.Internals
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
-            validateStoreOpen();
-            dbAccessor.put(key.get(), value);
+            ValidateStoreOpen();
+            DbAccessor.put(key.get(), value);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -232,11 +233,10 @@ namespace Kafka.Streams.State.Internals
         {
             try
             {
-                using (WriteBatch batch = new WriteBatch())
-                {
-                    dbAccessor.prepareBatch(entries, batch);
-                    write(batch);
-                }
+                using WriteBatch batch = new WriteBatch();
+
+                DbAccessor.prepareBatch(entries, batch);
+                write(batch);
             }
             catch (RocksDbException e)
             {
@@ -247,10 +247,10 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public byte[] get(Bytes key)
         {
-            validateStoreOpen();
+            ValidateStoreOpen();
             try
             {
-                return dbAccessor.get(key.get());
+                return DbAccessor.get(key.get());
             }
             catch (RocksDbException e)
             {
@@ -267,7 +267,7 @@ namespace Kafka.Streams.State.Internals
             byte[] oldValue;
             try
             {
-                oldValue = dbAccessor.getOnly(key.get());
+                oldValue = DbAccessor.getOnly(key.get());
             }
             catch (RocksDbException e)
             {
@@ -294,10 +294,10 @@ namespace Kafka.Streams.State.Internals
                 return null; // KeyValueIterators.emptyIterator();
             }
 
-            validateStoreOpen();
+            ValidateStoreOpen();
 
-            IKeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = dbAccessor.range(from, to);
-            openIterators.Add(rocksDBRangeIterator);
+            IKeyValueIterator<Bytes, byte[]> rocksDBRangeIterator = DbAccessor.range(from, to);
+            OpenIterators.Add(rocksDBRangeIterator);
 
             return rocksDBRangeIterator;
         }
@@ -305,9 +305,9 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public IKeyValueIterator<Bytes, byte[]> all()
         {
-            validateStoreOpen();
-            IKeyValueIterator<Bytes, byte[]> rocksDbIterator = dbAccessor.all();
-            openIterators.Add(rocksDbIterator);
+            ValidateStoreOpen();
+            IKeyValueIterator<Bytes, byte[]> rocksDbIterator = DbAccessor.all();
+            OpenIterators.Add(rocksDbIterator);
             return rocksDbIterator;
         }
 
@@ -326,18 +326,18 @@ namespace Kafka.Streams.State.Internals
         {
             get
             {
-                validateStoreOpen();
+                ValidateStoreOpen();
                 long numEntries;
                 try
                 {
-                    numEntries = dbAccessor.approximateNumEntries();
+                    numEntries = DbAccessor.approximateNumEntries();
                 }
                 catch (RocksDbException e)
                 {
                     throw new ProcessorStateException("Error fetching property from store " + name, e);
                 }
                 
-                if (isOverflowing(numEntries))
+                if (IsOverflowing(numEntries))
                 {
                     return long.MaxValue;
                 }
@@ -346,7 +346,7 @@ namespace Kafka.Streams.State.Internals
             }
         }
 
-        private bool isOverflowing(long value)
+        private bool IsOverflowing(long value)
         {
             // RocksDb returns an unsigned 8-byte integer, which could overflow long
             // and manifest as a negative value.
@@ -356,13 +356,13 @@ namespace Kafka.Streams.State.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void flush()
         {
-            if (db == null)
+            if (Db == null)
             {
                 return;
             }
             try
             {
-                dbAccessor.flush();
+                DbAccessor.flush();
             }
             catch (RocksDbException e)
             {
@@ -375,31 +375,31 @@ namespace Kafka.Streams.State.Internals
             if (prepareForBulkload)
             {
                 // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-                string[] sstFileNames = dbDir
+                string[] sstFileNames = DbDir
                     .GetFiles()
                     .Where(dir => SST_FILE_EXTENSION.IsMatch(dir.FullName))
                     .Select(fi => fi.FullName).ToArray();
 
                 if (sstFileNames != null && sstFileNames.Length > 0)
                 {
-                    dbAccessor.toggleDbForBulkLoading();
+                    DbAccessor.toggleDbForBulkLoading();
                 }
             }
 
             close();
             this.prepareForBulkload = prepareForBulkload;
-            openDB(internalProcessorContext);
+            OpenDB(InternalProcessorContext);
         }
 
         public void addToBatch(KeyValue<byte[], byte[]> record,
                                WriteBatch batch)
         {
-            dbAccessor.addToBatch(record.Key, record.Value, batch);
+            DbAccessor.addToBatch(record.Key, record.Value, batch);
         }
 
         public void write(WriteBatch batch)
         {
-            db.Write(batch, wOptions);
+            Db.Write(batch, WOptions);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -411,7 +411,7 @@ namespace Kafka.Streams.State.Internals
             }
 
             open = false;
-            closeOpenIterators();
+            CloseOpenIterators();
 
             if (configSetter != null)
             {
@@ -421,27 +421,27 @@ namespace Kafka.Streams.State.Internals
 
             // Important: do not rearrange the order in which the below objects are closed!
             // Order of closing must follow: ColumnFamilyHandle > RocksDb > DBOptions > ColumnFamilyOptions
-            dbAccessor.close();
+            DbAccessor.close();
             //db.close();
             //wOptions.close();
             //fOptions.close();
             //filter.close();
             //cache.close();
 
-            dbAccessor = null;
-            wOptions = null;
+            DbAccessor = null;
+            WOptions = null;
             //fOptions = null;
-            db = null;
+            Db = null;
             filter = null;
             cache = null;
         }
 
-        private void closeOpenIterators()
+        private void CloseOpenIterators()
         {
             HashSet<IKeyValueIterator<Bytes, byte[]>> iterators;
-            lock (openIterators)
+            lock (OpenIterators)
             {
-                iterators = new HashSet<IKeyValueIterator<Bytes, byte[]>>(openIterators);
+                iterators = new HashSet<IKeyValueIterator<Bytes, byte[]>>(OpenIterators);
             }
 
             if (iterators.Count != 0)

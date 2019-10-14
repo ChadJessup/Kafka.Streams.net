@@ -98,7 +98,7 @@ namespace Kafka.Streams.State
         //         */
         //        public static KeyValueBytesStoreSupplier inMemoryKeyValueStore(string name)
         //        {
-        //            name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+        //            name = name ?? throw new ArgumentNullException(nameof(name));
         //            return new KeyValueBytesStoreSupplier()
         //            {
 
@@ -135,7 +135,7 @@ namespace Kafka.Streams.State
         //     */
         //    public static KeyValueBytesStoreSupplier lruMap(string name, int maxCacheSize)
         //    {
-        //        name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+        //        name = name ?? throw new ArgumentNullException(nameof(name));
         //        if (maxCacheSize < 0)
         //        {
         //            throw new System.ArgumentException("maxCacheSize cannot be negative");
@@ -272,7 +272,7 @@ namespace Kafka.Streams.State
             bool retainDuplicates,
             bool timestampedStore)
         {
-            name = name ?? throw new ArgumentNullException("name cannot be null", nameof(name));
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
             string rpMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
             var retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
@@ -298,7 +298,7 @@ namespace Kafka.Streams.State
             TimeSpan segmentInterval,
             bool timestampedStore)
         {
-            name = name ?? throw new ArgumentNullException("name cannot be null", nameof(name));
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
             if (retentionPeriod.TotalMilliseconds < 0L)
             {
@@ -353,7 +353,7 @@ namespace Kafka.Streams.State
         //                                                           TimeSpan windowSize,
         //                                                           bool retainDuplicates)
         //{
-        //    name = name ?? throw new System.ArgumentNullException("name cannot be null", nameof(name));
+        //    name = name ?? throw new ArgumentNullException(nameof(name));
 
         //        string repartitionPeriodErrorMessagePrefix = prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
         //long retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, repartitionPeriodErrorMessagePrefix);
@@ -526,7 +526,7 @@ namespace Kafka.Streams.State
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
-            supplier = supplier ?? throw new ArgumentNullException("supplier cannot be null", nameof(supplier));
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new WindowStoreBuilder<K, V>(
                 supplier,

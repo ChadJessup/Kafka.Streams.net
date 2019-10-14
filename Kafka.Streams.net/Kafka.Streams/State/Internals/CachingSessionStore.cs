@@ -186,7 +186,7 @@
 
 //        public override byte[] fetchSession(Bytes key, long startTime, long endTime)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            validateStoreOpen();
 //            if (cache == null)
 //            {
@@ -210,15 +210,15 @@
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            return findSessions(key, 0, long.MaxValue);
 //        }
 
 //        public override IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from,
 //                                                               Bytes to)
 //        {
-//            from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
-//            to = to ?? throw new System.ArgumentNullException("to cannot be null", nameof(to));
+//            from = from ?? throw new ArgumentNullException(nameof(from));
+//            to = to ?? throw new ArgumentNullException(nameof(to));
 //            return findSessions(from, to, 0, long.MaxValue);
 //        }
 

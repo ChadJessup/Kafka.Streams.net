@@ -71,7 +71,7 @@ namespace Kafka.Common.Utils
             throw new InvalidOperationException("Removal not supported");
         }
 
-        public virtual T peek()
+        public virtual T Peek()
         {
             if (!hasNext())
             {

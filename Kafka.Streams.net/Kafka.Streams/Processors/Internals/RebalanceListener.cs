@@ -33,33 +33,33 @@ namespace Kafka.Streams.Processors.Internals
             log.LogDebug("at state {}: partitions {} assigned at the end of consumer rebalance.\n" +
                     "\tcurrent suspended active tasks: {}\n" +
                     "\tcurrent suspended standby tasks: {}\n",
-                streamThread.State,
+                streamThread.Context.State,
                 assignment,
                 taskManager.suspendedActiveTaskIds(),
                 taskManager.suspendedStandbyTaskIds());
 
-            if (streamThread.assignmentErrorCode == (int)StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA)
+            if (streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA)
             {
-                log.LogError("Received error code {} - shutdown", streamThread.assignmentErrorCode);
-                streamThread.shutdown();
+                log.LogError("Received error code {} - shutdown", streamThread.AssignmentErrorCode);
+                streamThread.Shutdown();
                 return;
             }
             long start = time.milliseconds();
             try
             {
 
-                if (streamThread.State.setState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
+                if (streamThread.Context.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
                 {
                     log.LogDebug(
                         "Skipping task creation in rebalance because we are already in {} state.",
-                        streamThread.State
+                        streamThread.Context.State
                     );
                 }
-                else if (streamThread.assignmentErrorCode != (int)StreamsPartitionAssignor.Error.NONE)
+                else if (streamThread.AssignmentErrorCode != (int)StreamsPartitionAssignor.Error.NONE)
                 {
                     log.LogDebug(
                         "Encountered assignment error during partition assignment: {}. Skipping task initialization",
-                        streamThread.assignmentErrorCode
+                        streamThread.AssignmentErrorCode
                     );
                 }
                 else
@@ -74,7 +74,7 @@ namespace Kafka.Streams.Processors.Internals
                 log.LogError(
                     "Error caught during partition assignment, " +
                         "will abort the current process and re-throw at the end of rebalance", t);
-                streamThread.setRebalanceException(t);
+                streamThread.SetRebalanceException(t);
             }
             finally
             {
@@ -96,21 +96,21 @@ namespace Kafka.Streams.Processors.Internals
             log.LogDebug("at state {}: partitions {} revoked at the beginning of consumer rebalance.\n" +
                     "\tcurrent assigned active tasks: {}\n" +
                     "\tcurrent assigned standby tasks: {}\n",
-                streamThread.State,
+                streamThread.Context.State,
                 assignment,
                 taskManager.activeTaskIds(),
                 taskManager.standbyTaskIds());
 
-            if (streamThread.State.setState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
+            if (streamThread.Context.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
             {
                 long start = time.milliseconds();
                 try
                 {
 
                     // suspend active tasks
-                    if (streamThread.assignmentErrorCode == (int)StreamsPartitionAssignor.Error.VERSION_PROBING)
+                    if (streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.VERSION_PROBING)
                     {
-                        streamThread.assignmentErrorCode = (int)StreamsPartitionAssignor.Error.NONE;
+                        streamThread.AssignmentErrorCode = (int)StreamsPartitionAssignor.Error.NONE;
                     }
                     else
                     {
@@ -125,12 +125,12 @@ namespace Kafka.Streams.Processors.Internals
                             "will abort the current process and re-throw at the end of rebalance: {}",
                         t
                     );
-                    streamThread.setRebalanceException(t);
+                    streamThread.SetRebalanceException(t);
                 }
                 finally
                 {
 
-                    streamThread.clearStandbyRecords();
+                    streamThread.ClearStandbyRecords();
 
                     log.LogInformation("partition revocation took {} ms.\n" +
                             "\tsuspended active tasks: {}\n" +

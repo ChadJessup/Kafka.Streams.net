@@ -53,7 +53,7 @@
 //         */
 //        public static Printed<K, V> toFile(string filePath)
 //        {
-//            filePath = filePath ?? throw new ArgumentNullException("filePath can't be null", nameof(filePath));
+//            filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
 
 //            if (!filePath.Trim().Any())
 //            {
@@ -90,7 +90,7 @@
 //         */
 //        public Printed<K, V> withLabel(string label)
 //        {
-//            this.label = label ?? throw new ArgumentNullException("label can't be null", nameof(label));
+//            this.label = label ?? throw new ArgumentNullException(nameof(label));
 
 //            return this;
 //        }
@@ -118,7 +118,7 @@
 //         */
 //        public Printed<K, V> withKeyValueMapper(IKeyValueMapper<K, V, string> mapper)
 //        {
-//            this.mapper = mapper ?? throw new ArgumentNullException("mapper can't be null", nameof(mapper));
+//            this.mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 //            return this;
 //        }
 

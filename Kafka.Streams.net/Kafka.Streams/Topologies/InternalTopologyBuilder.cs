@@ -104,7 +104,7 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public InternalTopologyBuilder setApplicationId(string applicationId)
         {
-            applicationId = applicationId ?? throw new System.ArgumentNullException("applicationId can't be null", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
             this.applicationId = applicationId;
 
             return this;
@@ -113,7 +113,7 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public InternalTopologyBuilder rewriteTopology(StreamsConfig config)
         {
-            config = config ?? throw new System.ArgumentNullException("config can't be null", nameof(config));
+            config = config ?? throw new ArgumentNullException(nameof(config));
 
             // set application id
             setApplicationId(config.Get(StreamsConfigPropertyNames.ApplicationId));
@@ -154,7 +154,7 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("You must provide at least one topic");
             }
 
-            name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
+            name = name ?? throw new ArgumentNullException(nameof(name));
             if (nodeFactories.ContainsKey(name))
             {
                 throw new TopologyException("IProcessor " + name + " is already.Added.");
@@ -164,7 +164,7 @@ namespace Kafka.Streams.Topologies
             {
                 if (topic == null)
                 {
-                    throw new System.ArgumentNullException("topic names cannot be null", nameof(topic));
+                    throw new ArgumentNullException(nameof(topic));
                 }
 
                 validateTopicNotAlreadyRegistered(topic);
@@ -186,8 +186,8 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valDeserializer,
             Regex topicPattern)
         {
-            topicPattern = topicPattern ?? throw new System.ArgumentNullException("topicPattern can't be null", nameof(topicPattern));
-            name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
+            topicPattern = topicPattern ?? throw new ArgumentNullException(nameof(topicPattern));
+            name = name ?? throw new ArgumentNullException(nameof(name));
 
             if (nodeFactories.ContainsKey(name))
             {
@@ -234,9 +234,9 @@ namespace Kafka.Streams.Topologies
             IStreamPartitioner<K, V> partitioner,
             string[] predecessorNames)
         {
-            name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
-            topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
-            predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            topic = topic ?? throw new ArgumentNullException(nameof(topic));
+            predecessorNames = predecessorNames ?? throw new ArgumentNullException(nameof(predecessorNames));
 
             if (predecessorNames.Length == 0)
             {
@@ -263,9 +263,9 @@ namespace Kafka.Streams.Topologies
             IStreamPartitioner<K, V> partitioner,
             string[] predecessorNames)
         {
-            name = name ?? throw new System.ArgumentNullException("name must not be null", nameof(name));
-            topicExtractor = topicExtractor ?? throw new System.ArgumentNullException("topic extractor must not be null", nameof(topicExtractor));
-            predecessorNames = predecessorNames ?? throw new System.ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            topicExtractor = topicExtractor ?? throw new ArgumentNullException(nameof(topicExtractor));
+            predecessorNames = predecessorNames ?? throw new ArgumentNullException(nameof(predecessorNames));
 
             if (nodeFactories.ContainsKey(name))
             {
@@ -316,9 +316,9 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> supplier,
             params string[] predecessorNames)
         {
-            name = name ?? throw new ArgumentNullException("name must not be null", nameof(name));
-            supplier = supplier ?? throw new ArgumentNullException("supplier must not be null", nameof(supplier));
-            predecessorNames = predecessorNames ?? throw new ArgumentNullException("predecessor names must not be null", nameof(predecessorNames));
+            name = name ?? throw new ArgumentNullException(nameof(name));
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
+            predecessorNames = predecessorNames ?? throw new ArgumentNullException(nameof(predecessorNames));
 
             if (nodeFactories.ContainsKey(name))
             {
@@ -334,7 +334,7 @@ namespace Kafka.Streams.Topologies
             {
                 if (predecessor == null)
                 {
-                    throw new ArgumentNullException("predecessor name must not be null", nameof(predecessor));
+                    throw new ArgumentNullException(nameof(predecessor));
                 }
 
                 if (predecessor.Equals(name))
@@ -371,7 +371,7 @@ namespace Kafka.Streams.Topologies
             string[] processorNames)
             where T : IStateStore
         {
-            storeBuilder = storeBuilder ?? throw new System.ArgumentNullException("storeBuilder can't be null", nameof(storeBuilder));
+            storeBuilder = storeBuilder ?? throw new ArgumentNullException(nameof(storeBuilder));
             if (!allowOverride && stateFactories.ContainsKey(storeBuilder.name))
             {
                 throw new TopologyException("IStateStore " + storeBuilder.name + " is already.Added.");
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Topologies
                 {
                     if (processorName == null)
                     {
-                        throw new System.ArgumentNullException("processor name must not be null", nameof(processorName));
+                        throw new ArgumentNullException(nameof(processorName));
                     }
 
                     connectProcessorAndStateStore<K, V>(processorName, storeBuilder.name);
@@ -405,7 +405,7 @@ namespace Kafka.Streams.Topologies
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
-            storeBuilder = storeBuilder ?? throw new ArgumentNullException("store builder must not be null", nameof(storeBuilder));
+            storeBuilder = storeBuilder ?? throw new ArgumentNullException(nameof(storeBuilder));
             validateGlobalStoreArguments(
                 sourceName,
                 topic,
@@ -460,8 +460,8 @@ namespace Kafka.Streams.Topologies
         public void connectProcessorAndStateStores(string processorName,
                                                          string[] stateStoreNames)
         {
-            processorName = processorName ?? throw new System.ArgumentNullException("processorName can't be null", nameof(processorName));
-            stateStoreNames = stateStoreNames ?? throw new System.ArgumentNullException("state store list must not be null", nameof(stateStoreNames));
+            processorName = processorName ?? throw new ArgumentNullException(nameof(processorName));
+            stateStoreNames = stateStoreNames ?? throw new ArgumentNullException(nameof(stateStoreNames));
             if (stateStoreNames.Length == 0)
             {
                 throw new TopologyException("Must provide at least one state store name.");
@@ -469,7 +469,7 @@ namespace Kafka.Streams.Topologies
 
             foreach (string stateStoreName in stateStoreNames)
             {
-                //stateStoreName = stateStoreName ?? throw new System.ArgumentNullException("state store name must not be null", nameof(stateStoreName));
+                //stateStoreName = stateStoreName ?? throw new ArgumentNullException(nameof(stateStoreName));
                 //connectProcessorAndStateStore(processorName, stateStoreName);
             }
 
@@ -489,7 +489,7 @@ namespace Kafka.Streams.Topologies
 
         public void addInternalTopic(string topicName)
         {
-            topicName = topicName ?? throw new System.ArgumentNullException("topicName can't be null", nameof(topicName));
+            topicName = topicName ?? throw new ArgumentNullException(nameof(topicName));
             internalTopicNames.Add(topicName);
         }
 
@@ -506,10 +506,10 @@ namespace Kafka.Streams.Topologies
             string storeName,
             bool loggingEnabled)
         {
-            sourceName = sourceName ?? throw new System.ArgumentNullException("sourceName must not be null", nameof(sourceName));
-            topic = topic ?? throw new System.ArgumentNullException("topic must not be null", nameof(topic));
-            stateUpdateSupplier = stateUpdateSupplier ?? throw new System.ArgumentNullException("supplier must not be null", nameof(stateUpdateSupplier));
-            processorName = processorName ?? throw new System.ArgumentNullException("processorName must not be null", nameof(processorName));
+            sourceName = sourceName ?? throw new ArgumentNullException(nameof(sourceName));
+            topic = topic ?? throw new ArgumentNullException(nameof(topic));
+            stateUpdateSupplier = stateUpdateSupplier ?? throw new ArgumentNullException(nameof(stateUpdateSupplier));
+            processorName = processorName ?? throw new ArgumentNullException(nameof(processorName));
             if (nodeFactories.ContainsKey(sourceName))
             {
                 throw new TopologyException("IProcessor " + sourceName + " is already.Added.");
@@ -652,7 +652,7 @@ namespace Kafka.Streams.Topologies
                     break;
                 case AutoOffsetReset.Error:
                 default:
-                    throw new TopologyException(string.Format("Unrecognized reset string.Format %s", offsetReset));
+                    throw new TopologyException($"Unrecognized reset string.Format {offsetReset}");
             }
         }
 
@@ -753,7 +753,7 @@ namespace Kafka.Streams.Topologies
         [MethodImpl(MethodImplOptions.Synchronized)]
         public ProcessorTopology buildGlobalStateTopology()
         {
-            applicationId = applicationId ?? throw new ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
 
             HashSet<string> globalGroups = GetGlobalNodeGroups();
             if (!globalGroups.Any())
@@ -783,7 +783,7 @@ namespace Kafka.Streams.Topologies
 
         private ProcessorTopology build(HashSet<string> nodeGroup)
         {
-            applicationId = applicationId ?? throw new ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
 
             Dictionary<string, ProcessorNode> processorMap = new Dictionary<string, ProcessorNode>();
             Dictionary<string, SourceNode> topicSourceMap = new Dictionary<string, SourceNode>();
@@ -944,14 +944,14 @@ namespace Kafka.Streams.Topologies
          */
         public Dictionary<string, IStateStore> globalStateStores()
         {
-            applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
 
             return _globalStateStores;
         }
 
         public HashSet<string> allStateStoreName()
         {
-            applicationId = applicationId ?? throw new System.ArgumentNullException("topology has not completed optimization", nameof(applicationId));
+            applicationId = applicationId ?? throw new ArgumentNullException(nameof(applicationId));
 
             HashSet<string> allNames = new HashSet<string>(stateFactories.Keys);
 

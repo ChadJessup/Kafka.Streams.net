@@ -121,7 +121,7 @@
 //            Windowed<K> sessionKey,
 //            V aggregate)
 //        {
-//            sessionKey = sessionKey ?? throw new System.ArgumentNullException("sessionKey can't be null", nameof(sessionKey));
+//            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
 //            long startNs = time.nanoseconds();
 //            try
 //            {
@@ -141,7 +141,7 @@
 
 //        public override void Remove(Windowed<K> sessionKey)
 //        {
-//            sessionKey = sessionKey ?? throw new System.ArgumentNullException("sessionKey can't be null", nameof(sessionKey));
+//            sessionKey = sessionKey ?? throw new ArgumentNullException(nameof(sessionKey));
 //            long startNs = time.nanoseconds();
 //            try
 //            {
@@ -161,7 +161,7 @@
 
 //        public override V fetchSession(K key, long startTime, long endTime)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            Bytes bytesKey = keyBytes(key);
 //            long startNs = time.nanoseconds();
 //            try
@@ -181,7 +181,7 @@
 
 //        public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            return new MeteredWindowedKeyValueIterator<>(
 //                wrapped.fetch(keyBytes(key)),
 //                fetchTime,
@@ -193,8 +193,8 @@
 //        public override IKeyValueIterator<Windowed<K>, V> fetch(K from,
 //                                                      K to)
 //        {
-//            from = from ?? throw new System.ArgumentNullException("from cannot be null", nameof(from));
-//            to = to ?? throw new System.ArgumentNullException("to cannot be null", nameof(to));
+//            from = from ?? throw new ArgumentNullException(nameof(from));
+//            to = to ?? throw new ArgumentNullException(nameof(to));
 //            return new MeteredWindowedKeyValueIterator<>(
 //                wrapped.fetch(keyBytes(from), keyBytes(to)),
 //                fetchTime,
@@ -207,7 +207,7 @@
 //                                                             long earliestSessionEndTime,
 //                                                             long latestSessionStartTime)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            Bytes bytesKey = keyBytes(key);
 //            return new MeteredWindowedKeyValueIterator<>(
 //                wrapped.findSessions(
@@ -225,8 +225,8 @@
 //                                                             long earliestSessionEndTime,
 //                                                             long latestSessionStartTime)
 //        {
-//            keyFrom = keyFrom ?? throw new System.ArgumentNullException("keyFrom cannot be null", nameof(keyFrom));
-//            keyTo = keyTo ?? throw new System.ArgumentNullException("keyTo cannot be null", nameof(keyTo));
+//            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
+//            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
 //            Bytes bytesKeyFrom = keyBytes(keyFrom);
 //            Bytes bytesKeyTo = keyBytes(keyTo);
 //            return new MeteredWindowedKeyValueIterator<>(

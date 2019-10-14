@@ -12,7 +12,7 @@ namespace Kafka.Common.Metrics.Stats
             this.histogram = new Histogram(scheme);
         }
 
-        public void reset(long now)
+        public void Reset(long now)
         {
             base.reset(now);
             this.histogram.clear();

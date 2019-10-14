@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private FullChangeSerde(ISerde<T> inner)
         {
-            this.inner = inner ?? throw new ArgumentNullException("can't be null", nameof(inner));
+            this.inner = inner ?? throw new ArgumentNullException(nameof(inner));
         }
 
         public ISerde<T> innerSerde()

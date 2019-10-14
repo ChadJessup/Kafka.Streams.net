@@ -136,7 +136,7 @@
 //        {
 //            removeExpiredSegments();
 
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 
 //            // Only need to search if the record hasn't expired yet
 //            if (endTime > observedStreamTime - retentionPeriod)
@@ -159,7 +159,7 @@
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 
 //            removeExpiredSegments();
 
@@ -175,8 +175,8 @@
 //                                                                      long earliestSessionEndTime,
 //                                                                      long latestSessionStartTime)
 //        {
-//            keyFrom = keyFrom ?? throw new System.ArgumentNullException("from key cannot be null", nameof(keyFrom));
-//            keyTo = keyTo ?? throw new System.ArgumentNullException("to key cannot be null", nameof(keyTo));
+//            keyFrom = keyFrom ?? throw new ArgumentNullException(nameof(keyFrom));
+//            keyTo = keyTo ?? throw new ArgumentNullException(nameof(keyTo));
 
 //            removeExpiredSegments();
 
@@ -197,7 +197,7 @@
 //        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes key)
 //        {
 
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 
 //            removeExpiredSegments();
 
@@ -207,8 +207,8 @@
 //        public IKeyValueIterator<Windowed<Bytes>, byte[]> fetch(Bytes from, Bytes to)
 //        {
 
-//            from = from ?? throw new System.ArgumentNullException("from key cannot be null", nameof(from));
-//            to = to ?? throw new System.ArgumentNullException("to key cannot be null", nameof(to));
+//            from = from ?? throw new ArgumentNullException(nameof(from));
+//            to = to ?? throw new ArgumentNullException(nameof(to));
 
 //            removeExpiredSegments();
 

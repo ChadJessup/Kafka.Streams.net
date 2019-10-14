@@ -2,7 +2,6 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
@@ -114,7 +113,7 @@ namespace Kafka.Streams.Tasks
                     catch (StreamsException e)
                     {
                         log.LogError("Failed to resume an active task {} due to the following error:", taskId, e);
-                        throw e;
+                        throw;
                     }
                 }
                 else
@@ -409,7 +408,7 @@ namespace Kafka.Streams.Tasks
 
         public void setPartitionsByHostState(Dictionary<HostInfo, HashSet<TopicPartition>> partitionsByHostState)
         {
-            this.streamsMetadataState.onChange(partitionsByHostState, cluster);
+            this.streamsMetadataState.OnChange(partitionsByHostState, cluster);
         }
 
         public void setAssignmentMetadata(Dictionary<TaskId, HashSet<TopicPartition>> activeTasks,

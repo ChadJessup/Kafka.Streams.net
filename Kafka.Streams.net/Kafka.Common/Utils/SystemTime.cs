@@ -10,17 +10,17 @@ namespace Kafka.Common.Utils
      */
     public class SystemTime : Time
     {
-        public long milliseconds()
+        public override long milliseconds()
         {
             return DateTime.Now.Millisecond;
         }
 
-        public long nanoseconds()
+        public override long nanoseconds()
         {
             return DateTime.Now.Ticks / 100;
         }
 
-        public void sleep(long ms)
+        public override void sleep(long ms)
         {
             //Utils.sleep(ms);
         }
@@ -30,7 +30,7 @@ namespace Kafka.Common.Utils
             throw new NotImplementedException();
         }
 
-        public void waitObject(object obj, Func<bool> condition, long deadlineMs)
+        public override void waitObject(object obj, Func<bool> condition, long deadlineMs)
         {
             lock (obj)
             {

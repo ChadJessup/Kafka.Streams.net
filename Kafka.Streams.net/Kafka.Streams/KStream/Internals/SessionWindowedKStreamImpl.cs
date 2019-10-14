@@ -41,7 +41,7 @@
 //            StreamsGraphNode streamsGraphNode)
 //            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
 //        {
-//            windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
+//            windows = windows ?? throw new ArgumentNullException(nameof(windows));
 //            this.windows = windows;
 //            this.aggregateBuilder = aggregateBuilder;
 //        }
@@ -55,7 +55,7 @@
 
 //        public IKTable<Windowed<K>, long> count(Materialized<K, long, ISessionStore<Bytes, byte[]>> materialized)
 //        {
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            // TODO: Remove this when we do a topology-incompatible release
 //            // we used to burn a topology name here, so we have to keep doing it for compatibility
@@ -104,8 +104,8 @@
 //        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer,
 //                                              Materialized<K, V, ISessionStore<Bytes, byte[]>> materialized)
 //        {
-//            reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 //            IAggregator<K, V, V> reduceAggregator = aggregatorForReducer(reducer);
 //            MaterializedInternal<K, V, ISessionStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<>(materialized, builder, REDUCE_NAME);
@@ -149,10 +149,10 @@
 //            IMerger<K, VR> sessionMerger,
 //            Materialized<K, VR, ISessionStore<Bytes, byte[]>> materialized)
 //        {
-//            initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
-//            aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
-//            sessionMerger = sessionMerger ?? throw new System.ArgumentNullException("sessionMerger can't be null", nameof(sessionMerger));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            initializer = initializer ?? throw new ArgumentNullException(nameof(initializer));
+//            aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+//            sessionMerger = sessionMerger ?? throw new ArgumentNullException(nameof(sessionMerger));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 //            MaterializedInternal<K, VR, ISessionStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 

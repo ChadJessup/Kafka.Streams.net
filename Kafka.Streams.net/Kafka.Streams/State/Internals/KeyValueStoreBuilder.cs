@@ -30,7 +30,7 @@
 //                                    ITime time)
 //            : base(storeSupplier.name, keySerde, valueSerde, time)
 //        {
-//            storeSupplier = storeSupplier ?? throw new System.ArgumentNullException("bytesStoreSupplier can't be null", nameof(storeSupplier));
+//            storeSupplier = storeSupplier ?? throw new ArgumentNullException(nameof(storeSupplier));
 //            this.storeSupplier = storeSupplier;
 //        }
 

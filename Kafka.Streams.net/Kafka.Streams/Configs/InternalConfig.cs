@@ -23,7 +23,7 @@
     //                    Type.STRING,
     //                    Importance.HIGH,
     //                    APPLICATION_ID_DOC)
-    //            .define(BOOTSTRAP_SERVERS_CONFIG, // required with no default value
+    //            .define(BootstrapServers, // required with no default value
     //                    Type.LIST,
     //                    Importance.HIGH,
     //                    CommonClientConfigs.BOOTSTRAP_SERVERS_DOC)

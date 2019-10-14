@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tasks
 
                     //it.Remove();
 
-                    throw e;
+                    throw;
                 }
                 catch (Exception t)
                 {
@@ -244,12 +244,13 @@ namespace Kafka.Streams.Tasks
 
                     //it.Remove();
 
-                    throw e;
+                    throw;
                 }
                 catch (RuntimeException e)
                 {
                     log.LogError("Failed to process stream task {} due to the following error:", task.id, e);
-                    throw e;
+
+                    throw;
                 }
             }
 
@@ -291,12 +292,13 @@ namespace Kafka.Streams.Tasks
 
                     // it.Remove();
 
-                    throw e;
+                    throw;
                 }
                 catch (KafkaException e)
                 {
                     log.LogError("Failed to punctuate stream task {} due to the following error:", task.id, e);
-                    throw e;
+
+                    throw;
                 }
             }
             return punctuated;

@@ -1,20 +1,4 @@
-﻿/*
-* Licensed to the Apache Software Foundation (ASF) under one or more
-* contributor license agreements. See the NOTICE file distributed with
-* this work for additional information regarding copyright ownership.
-* The ASF licenses this file to You under the Apache License, Version 2.0
-* (the "License"); you may not use this file except in compliance with
-* the License. You may obtain a copy of the License at
-*
-*    http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-using Kafka.Common;
+﻿using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
@@ -23,6 +7,7 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
+using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.GlobalStream;
 using Kafka.Streams.Threads.KafkaStream;
@@ -83,25 +68,32 @@ namespace Kafka.Streams
                 : this(new ConfigurationBuilder().Build(), new ServiceCollection())
             { }
 
-            public KafkaStreamsThread BuildKafkaStreams()
-                => this.services.GetRequiredService<KafkaStreamsThread>();
+            public IKafkaStreamsThread BuildKafkaStreams()
+            {
+                var context = this.services.GetRequiredService<KafkaStreamsThreadContext>();
+                var streamStateListener = context.GetStateListener();
+                
+                context.SetStateListener(streamStateListener);
+
+                return context.Thread;
+            }
 
             private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
             {
                 serviceCollection.TryAddSingleton(configuration);
                 serviceCollection.TryAddSingleton(serviceCollection);
 
-                this.AddThreads(configuration, serviceCollection);
-                this.AddClients(configuration, serviceCollection);
+                this.AddThreads(serviceCollection);
+                this.AddClients(serviceCollection);
 
-                serviceCollection.TryAddSingleton<StreamStateListener>();
+                serviceCollection.TryAddSingleton<IStateListener, StreamStateListener>();
 
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
                 serviceCollection.TryAddSingleton<Topology>();
             }
 
-            private void AddClients(IConfiguration configuration, IServiceCollection serviceCollection)
+            private void AddClients(IServiceCollection serviceCollection)
             {
                 // Special clients, e.g., AdminClient
                 serviceCollection.AddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
@@ -114,26 +106,39 @@ namespace Kafka.Streams
 
             }
 
-            private void AddThreads(IConfiguration configuration, IServiceCollection serviceCollection)
+            private void AddThreads(IServiceCollection serviceCollection)
             {
-                serviceCollection.TryAddSingleton<KafkaStreamsThread>(sp =>
+                serviceCollection.TryAddScoped(typeof(ThreadContext<,,>));
+
+                serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
+                serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
+                serviceCollection.TryAddSingleton<GlobalStreamThreadContext>();
+
+                serviceCollection.TryAddScoped<IKafkaStreamThread, KafkaStreamThread>();
+                serviceCollection.TryAddScoped<IStateMachine<KafkaStreamThreadStates>, KafkaStreamThreadState>();
+                serviceCollection.TryAddScoped<KafkaStreamThreadContext>();
+
+                serviceCollection.AddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
+                serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
+                serviceCollection.AddScoped<KafkaStreamsThreadContext>(sp =>
                 {
-                    var ks = ActivatorUtilities.CreateInstance<KafkaStreamsThread>(sp,
-                        sp.GetRequiredService<ILogger<KafkaStreamsThread>>(),
-                        sp.GetRequiredService<KafkaStreamsThreadState>(),
-                        this.build(),
-                        sp.GetRequiredService<StreamsConfig>(),
-                        sp);
+                    // We special case this ThreadContext, since it's the one that sets up the rest, we need to make sure it's set up correctly.
+                    var state = sp.GetRequiredService<IStateMachine<KafkaStreamsThreadStates>>();
+                    var globalThreadContext = sp.GetRequiredService<GlobalStreamThreadContext>();
+                    var logger = sp.GetRequiredService<ILogger<KafkaStreamsThreadContext>>();
+                    var thread = sp.GetRequiredService<IKafkaStreamsThread>();
+                    var config = sp.GetRequiredService<StreamsConfig>();
 
-                    return ks;
+                    var kafkaStreamsThreadContext = new KafkaStreamsThreadContext(
+                        logger, sp, thread, state, globalThreadContext, config);
+
+                    var streamsThread = (kafkaStreamsThreadContext.Thread as KafkaStreamsThread) ?? throw new InvalidOperationException($"Somehow didn't get the expected {nameof(KafkaStreamsThread)} type.");
+
+                    streamsThread.SetContext(kafkaStreamsThreadContext);
+                    streamsThread.Initialize(config);
+
+                    return kafkaStreamsThreadContext;
                 });
-
-                serviceCollection.TryAddSingleton<KafkaStreamsThreadState>();
-
-                serviceCollection.TryAddSingleton<GlobalStreamThread>();
-                serviceCollection.TryAddSingleton<GlobalStreamThreadState>();
-                serviceCollection.TryAddScoped<KafkaStreamThread>();
-                serviceCollection.TryAddScoped<KafkaStreamThreadState>();
             }
 
             /**
@@ -219,8 +224,8 @@ namespace Kafka.Streams
                 IEnumerable<string> topics,
                 Consumed<K, V> consumed)
             {
-                topics = topics ?? throw new ArgumentNullException("topics can't be null", nameof(topics));
-                consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
+                topics = topics ?? throw new ArgumentNullException(nameof(topics));
+                consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
                 return internalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
             }
@@ -267,8 +272,8 @@ namespace Kafka.Streams
                 Regex topicPattern,
                 Consumed<K, V> consumed)
             {
-                topicPattern = topicPattern ?? throw new ArgumentNullException("topic can't be null", nameof(topicPattern));
-                consumed = consumed ?? throw new ArgumentNullException("consumed can't be null", nameof(consumed));
+                topicPattern = topicPattern ?? throw new ArgumentNullException(nameof(topicPattern));
+                consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
                 return null;
                 //internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));

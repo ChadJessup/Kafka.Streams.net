@@ -57,7 +57,7 @@
 //        [Obsolete]
 //        public IWindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo)
 //        {
-//            key = key ?? throw new ArgumentNullException("key can't be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            List<IReadOnlyWindowStore<K, V>> stores = provider.stores<IReadOnlyWindowStore<K, V>>(storeName, windowStoreType);
 //            foreach (IReadOnlyWindowStore<K, V> windowStore in stores)
 //            {

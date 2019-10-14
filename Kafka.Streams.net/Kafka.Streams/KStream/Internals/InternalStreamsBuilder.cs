@@ -158,8 +158,8 @@ namespace Kafka.Streams.KStream.Internals
         //            ConsumedInternal<K, V> consumed,
         //            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         //        {
-        //            consumed = consumed ?? throw new System.ArgumentNullException("consumed can't be null", nameof(consumed));
-        //            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+        //            consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
+        //            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
         //            // explicitly disable logging for global stores
         //            //materialized.withLoggingDisabled();
         //            //string sourceName = NewProcessorName(KTable.SourceName);

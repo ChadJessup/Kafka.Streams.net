@@ -207,7 +207,8 @@ namespace Kafka.Streams.Tasks
                         {
                             throw fatalException;
                         }
-                        throw e;
+
+                        throw;
                     }
                     log.LogTrace("Resuming suspended {} {}", taskTypeName, task.id);
                     return true;
@@ -350,7 +351,7 @@ namespace Kafka.Streams.Tasks
 
                     running.TryRemove(it.Current.id, out var _);
 
-                    throw e;
+                    throw;
                 }
                 catch (RuntimeException t)
                 {

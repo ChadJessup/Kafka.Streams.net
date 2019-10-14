@@ -65,6 +65,7 @@ namespace Kafka.Streams.Threads.KafkaStream
      */
     public enum KafkaStreamThreadStates
     {
+        UNKNOWN = 0,
         CREATED, // CREATED(1, 5),
         STARTING, // STARTING(2, 5),
         PARTITIONS_REVOKED, // PARTITIONS_REVOKED(3, 5),

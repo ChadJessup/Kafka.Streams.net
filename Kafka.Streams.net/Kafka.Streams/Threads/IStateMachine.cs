@@ -10,9 +10,9 @@ namespace Kafka.Streams.Threads
     {
         IStateListener StateListener { get; }
         States CurrentState { get; }
-        bool setState(States state);
-        void setTransitions(IEnumerable<StateTransition<States>> validTransitions);
-        bool isRunning();
+        bool SetState(States state);
+        void SetTransitions(IEnumerable<StateTransition<States>> validTransitions);
+        bool IsRunning();
         IThread<States> Thread { get; }
     }
 }

@@ -8,8 +8,7 @@ namespace Kafka.Streams.Processors.Internals
     public abstract class StateStoreReadWriteDecorator<T> : WrappedStateStore<T>
     where T : IStateStore
     {
-
-        static readonly string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
+        protected static readonly string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
 
         public StateStoreReadWriteDecorator(T inner)
             : base(inner)

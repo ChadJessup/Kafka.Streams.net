@@ -138,8 +138,8 @@
 //                                    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
 //        {
 //            Objects.requireNonNull(adder, "adder can't be null");
-//            subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            subtractor = subtractor ?? throw new ArgumentNullException(nameof(subtractor));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 //            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
@@ -207,10 +207,10 @@
 //            IAggregator<K, V, VR> subtractor,
 //            Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
 //        {
-//            initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
+//            initializer = initializer ?? throw new ArgumentNullException(nameof(initializer));
 //            //Objects.requireNonNull(adder, "adder can't be null");
-//            subtractor = subtractor ?? throw new System.ArgumentNullException("subtractor can't be null", nameof(subtractor));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            subtractor = subtractor ?? throw new ArgumentNullException(nameof(subtractor));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);

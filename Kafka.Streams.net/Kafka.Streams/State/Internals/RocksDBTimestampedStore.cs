@@ -41,33 +41,33 @@ namespace Kafka.Streams.State.Internals
 
             try
             {
-                db = RocksDb.Open(
+                Db = RocksDb.Open(
                     dbOptions,
-                    dbDir.FullName);
+                    DbDir.FullName);
                 //                    , columnFamilyDescriptors);
 
                 ColumnFamilyHandle noTimestampColumnFamily = columnFamilies[0];
 
-                Iterator noTimestampsIter = db.NewIterator(noTimestampColumnFamily);
+                Iterator noTimestampsIter = Db.NewIterator(noTimestampColumnFamily);
                 noTimestampsIter.SeekToFirst();
                 if (noTimestampsIter.Valid())
                 {
                     log.LogInformation($"Opening store {name} in upgrade mode");
-                    dbAccessor = new DualColumnFamilyAccessor(
+                    DbAccessor = new DualColumnFamilyAccessor(
                         name,
-                        db,
-                        this.wOptions,
+                        Db,
+                        this.WOptions,
                         noTimestampColumnFamily,
                         columnFamilies[1]);
                 }
                 else
                 {
                     log.LogInformation($"Opening store {name} in regular mode");
-                    dbAccessor = new SingleColumnFamilyAccessor(
+                    DbAccessor = new SingleColumnFamilyAccessor(
                         name,
-                        db,
-                        this.wOptions,
-                        openIterators,
+                        Db,
+                        this.WOptions,
+                        OpenIterators,
                         columnFamilies[1]);
 
                     //noTimestampColumnFamily.Close();
@@ -81,9 +81,9 @@ namespace Kafka.Streams.State.Internals
                 {
                     try
                     {
-                        db = RocksDb.Open(
+                        Db = RocksDb.Open(
                             dbOptions,
-                            dbDir.FullName);
+                            DbDir.FullName);
                         //, columnFamilyDescriptors.Take(2),
                         //columnFamilies);
 
@@ -91,21 +91,21 @@ namespace Kafka.Streams.State.Internals
                     }
                     catch (RocksDbException fatal)
                     {
-                        throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), fatal);
+                        throw new ProcessorStateException("Error opening store " + name + " at location " + DbDir.ToString(), fatal);
                     }
 
                     log.LogInformation("Opening store {} in upgrade mode", name);
 
-                    dbAccessor = new DualColumnFamilyAccessor(
+                    DbAccessor = new DualColumnFamilyAccessor(
                         name,
-                        db,
-                        wOptions,
+                        Db,
+                        WOptions,
                         columnFamilies[0],
                         columnFamilies[1]);
                 }
                 else
                 {
-                    throw new ProcessorStateException("Error opening store " + name + " at location " + dbDir.ToString(), e);
+                    throw new ProcessorStateException("Error opening store " + name + " at location " + DbDir.ToString(), e);
                 }
             }
         }

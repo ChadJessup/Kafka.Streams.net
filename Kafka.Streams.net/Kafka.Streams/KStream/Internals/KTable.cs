@@ -21,17 +21,17 @@ namespace Kafka.Streams.KStream.Internals
      */
     public class KTable
     {
-        public static string SourceName = "KTABLE-SOURCE-";
-        public static string StateStoreName = "STATE-STORE-";
-        public static string FILTER_NAME = "KTABLE-FILTER-";
-        public static string JOINTHIS_NAME = "KTABLE-JOINTHIS-";
-        public static string JOINOTHER_NAME = "KTABLE-JOINOTHER-";
-        public static string MAPVALUES_NAME = "KTABLE-MAPVALUES-";
-        public static string MERGE_NAME = "KTABLE-MERGE-";
-        public static string SELECT_NAME = "KTABLE-SELECT-";
-        public static string SUPPRESS_NAME = "KTABLE-SUPPRESS-";
-        public static string TOSTREAM_NAME = "KTABLE-TOSTREAM-";
-        public static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
+        public readonly static string SourceName = "KTABLE-SOURCE-";
+        public readonly static string StateStoreName = "STATE-STORE-";
+        public readonly static string FILTER_NAME = "KTABLE-FILTER-";
+        public readonly static string JOINTHIS_NAME = "KTABLE-JOINTHIS-";
+        public readonly static string JOINOTHER_NAME = "KTABLE-JOINOTHER-";
+        public readonly static string MAPVALUES_NAME = "KTABLE-MAPVALUES-";
+        public readonly static string MERGE_NAME = "KTABLE-MERGE-";
+        public readonly static string SELECT_NAME = "KTABLE-SELECT-";
+        public readonly static string SUPPRESS_NAME = "KTABLE-SUPPRESS-";
+        public readonly static string TOSTREAM_NAME = "KTABLE-TOSTREAM-";
+        public readonly static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
     }
 
     public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
@@ -128,7 +128,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTable<K, V> filter(IPredicate<K, V> predicate)
         {
-            predicate = predicate ?? throw new System.ArgumentNullException("predicate can't be null", nameof(predicate));
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
             return doFilter(predicate, NamedInternal.empty(), null, false);
         }
 
@@ -368,8 +368,8 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             string[] stateStoreNames)
         {
-            materialized = materialized ?? throw new ArgumentNullException("materialized can't be null", nameof(materialized));
-            named = named ?? throw new ArgumentNullException("named can't be null", nameof(named));
+            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal = new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized);
 
@@ -636,7 +636,8 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
 
@@ -674,7 +675,8 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, KTable.MERGE_NAME);
 

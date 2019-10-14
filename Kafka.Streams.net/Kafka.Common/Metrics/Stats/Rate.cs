@@ -52,7 +52,7 @@ namespace Kafka.Common.Metrics.Stats
             return value / convert(windowSize(config, now));
         }
 
-        public long windowSize(MetricConfig config, long now)
+        public virtual long windowSize(MetricConfig config, long now)
         {
             // purge old samples before we compute the window size
             stat.purgeObsoleteSamples(config, now);

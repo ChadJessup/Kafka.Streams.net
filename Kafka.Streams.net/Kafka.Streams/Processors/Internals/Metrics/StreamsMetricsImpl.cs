@@ -23,32 +23,32 @@ namespace Kafka.Streams.Processors.Internals.Metrics
         private readonly Dictionary<string, List<string>> cacheLevelSensors = new Dictionary<string, List<string>>();
         private readonly Dictionary<string, List<string>> storeLevelSensors = new Dictionary<string, List<string>>();
 
-        private static readonly string SENSOR_PREFIX_DELIMITER = ".";
-        private static readonly string SENSOR_NAME_DELIMITER = ".s.";
+        private const string SENSOR_PREFIX_DELIMITER = ".";
+        private const string SENSOR_NAME_DELIMITER = ".s.";
 
-        public static string THREAD_ID_TAG = "client-id";
-        public static string TASK_ID_TAG = "task-id";
+        public const string THREAD_ID_TAG = "client-id";
+        public const string TASK_ID_TAG = "task-id";
 
-        public static string ALL_TASKS = "all";
+        public const string ALL_TASKS = "all";
 
-        public static string LATENCY_SUFFIX = "-latency";
-        public static string AVG_SUFFIX = "-avg";
-        public static string MAX_SUFFIX = "-max";
-        public static string RATE_SUFFIX = "-rate";
-        public static string TOTAL_SUFFIX = "-total";
+        public const string LATENCY_SUFFIX = "-latency";
+        public const string AVG_SUFFIX = "-avg";
+        public const string MAX_SUFFIX = "-max";
+        public const string RATE_SUFFIX = "-rate";
+        public const string TOTAL_SUFFIX = "-total";
 
-        public static string THREAD_LEVEL_GROUP = "stream-metrics";
-        public static string TASK_LEVEL_GROUP = "stream-task-metrics";
+        public const string THREAD_LEVEL_GROUP = "stream-metrics";
+        public const string TASK_LEVEL_GROUP = "stream-task-metrics";
 
-        public static string PROCESSOR_NODE_METRICS_GROUP = "stream-processor-node-metrics";
-        public static string PROCESSOR_NODE_ID_TAG = "processor-node-id";
+        public const string PROCESSOR_NODE_METRICS_GROUP = "stream-processor-node-metrics";
+        public const string PROCESSOR_NODE_ID_TAG = "processor-node-id";
 
-        public static string EXPIRED_WINDOW_RECORD_DROP = "expired-window-record-drop";
-        public static string LATE_RECORD_DROP = "late-record-drop";
+        public const string EXPIRED_WINDOW_RECORD_DROP = "expired-window-record-drop";
+        public const string LATE_RECORD_DROP = "late-record-drop";
 
         public StreamsMetricsImpl(MetricsRegistry metrics, string threadName)
         {
-            this.metrics = metrics ?? throw new ArgumentNullException("Metrics cannot be null", nameof(metrics));
+            this.metrics = metrics ?? throw new ArgumentNullException(nameof(metrics));
             this.threadName = threadName;
 
             this.parentSensors = new Dictionary<Sensor, Sensor>();
@@ -519,7 +519,7 @@ namespace Kafka.Streams.Processors.Internals.Metrics
          */
         //public void removeSensor(Sensor sensor)
         //{
-        //    //   sensor = sensor ?? throw new System.ArgumentNullException("Sensor is null", nameof(sensor));
+        //    //   sensor = sensor ?? throw new ArgumentNullException(nameof(sensor));
         //    metrics.removeSensor(sensor.name);
 
         //    if (parentSensors.TryGetValue(sensor, out var parent))

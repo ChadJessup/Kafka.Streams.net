@@ -35,7 +35,6 @@ namespace Kafka.Streams.Processors.Internals
             this.defaultPartitioner = new DefaultPartitioner();
         }
 
-
         public int partition(string topic, K key, V value, int numPartitions)
         {
             byte[] keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));

@@ -6,44 +6,46 @@ namespace Kafka.Streams.Clients
 {
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
-        public IAdminClient GetAdminClient(Dictionary<string, string> config)
+        public IAdminClient GetAdminClient(AdminClientConfig config)
         {
             // create a new client upon each call; but expect this call to be only triggered once so this should be fine
-            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            return new AdminClientBuilder(convertedConfig)
+            return new AdminClientBuilder(config)
                 .Build();
         }
 
-        public IProducer<byte[], byte[]> getProducer(Dictionary<string, string> config)
+        public IProducer<byte[], byte[]> getProducer(ProducerConfig config)
         {
-            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            return new ProducerBuilder<byte[], byte[]>(convertedConfig)
+            return new ProducerBuilder<byte[], byte[]>(config)
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getConsumer(Dictionary<string, string> config)
+        public IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config)
         {
-            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+            var convertedConfig = config
+                .Where(kvp => kvp.Key != null && kvp.Value != null)
+                .ToDictionary(k => k.Key, v => v.Value.ToString());
 
             return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getRestoreConsumer(Dictionary<string, string> config)
+        public IConsumer<byte[], byte[]> GetRestoreConsumer(ConsumerConfig config)
         {
-            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
+            return new ConsumerBuilder<byte[], byte[]>(config)
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getGlobalConsumer(Dictionary<string, string> config)
+        public IConsumer<byte[], byte[]> getGlobalConsumer(ConsumerConfig config)
         {
-            var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
+            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
+            return new ConsumerBuilder<byte[], byte[]>(config)
                 .Build();
         }
     }

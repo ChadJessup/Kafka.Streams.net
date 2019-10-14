@@ -134,10 +134,9 @@
         public static readonly string ExactlyOnce = "exactly_once";
 
         /// <summary>
-        /// {@code application.id}
+        /// An identifier for the stream processing application. Must be unique within the Kafka cluster. It is used as 1) the default client-id prefix, 2) the group-id for membership management, 3) the changelog topic prefix.
         /// </summary>
         public static readonly string ApplicationId = "application.id";
-        // private static string APPLICATION_ID_DOC = "An identifier for the stream processing application. Must be unique within the Kafka cluster. It is used as 1) the default client-id prefix, 2) the group-id for membership management, 3) the changelog topic prefix.";
 
         /// <summary>
         /// client.id
@@ -145,11 +144,15 @@
         public static readonly string ClientId = "client.id";
 
         /// <summary>
-        /// {@code user.endpoint}
+        /// group.id
+        /// </summary>
+        public static readonly string GroupId = "group.id";
+
+        /// <summary>
+        /// A host:port pair pointing to an embedded user defined endpoint that can be used for discovering the locations of state stores within a single KafkaStreams application.
         /// </summary>
         public static readonly string ApplicationServer = "application.server";
-        // private static string APPLICATION_SERVER_DOC = "A host:port pair pointing to an embedded user defined endpoint that can be used for discovering the locations of state stores within a single KafkaStreams application";
-
+        
         /// <summary>
         /// {@code buffered.records.per.partition}
         /// </summary>
@@ -270,11 +273,9 @@
         // private static string PARTITION_GROUPER_CLASS_DOC = "Partition grouper that : the <code>org.apache.kafka.streams.processor.PartitionGrouper</code> interface.";
 
         /// <summary>
-        /// {@code poll.ms}
+        /// "The amount of time in milliseconds to block waiting for input.
         /// </summary>
-
-        public static readonly string POLL_MS_CONFIG = "poll.ms";
-        // private static string POLL_MS_DOC = "The amount of time in milliseconds to block waiting for input.";
+        public static readonly string PollMs = "poll.ms";
 
         /// <summary>
         /// {@code processing.guarantee}
@@ -352,7 +353,7 @@
         /// discover the full cluster membership (which may change dynamically), this list need not contain the full set of
         /// servers (you may want more than one, though, in case a server is down).
         /// </summary>
-        public static readonly string BOOTSTRAP_SERVERS_CONFIG = "bootstrap.servers";
+        public static readonly string BootstrapServers = "bootstrap.servers";
 
         /// <summary>
         /// The TransactionalId to use for transactional delivery. This enables reliability semantics which span multiple producer sessions since it allows the client to guarantee that transactions using the same TransactionalId have been completed prior to starting any new transactions. If no TransactionalId is provided, then the producer is limited to idempotent delivery.

@@ -1,9 +1,7 @@
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.KafkaStream;
 using System.Collections.Generic;
 
@@ -14,28 +12,28 @@ namespace Kafka.Streams.State.Internals
      */
     public class StreamThreadStateStoreProvider : IStateStoreProvider
     {
-        private readonly KafkaStreamThread streamThread;
+        private readonly IKafkaStreamThread streamThread;
 
-        public StreamThreadStateStoreProvider(KafkaStreamThread streamThread)
+        public StreamThreadStateStoreProvider(IKafkaStreamThread streamThread)
         {
             this.streamThread = streamThread;
         }
 
         public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            if (streamThread.State.CurrentState == KafkaStreamThreadStates.DEAD)
+            if (streamThread.Context.State.CurrentState == KafkaStreamThreadStates.DEAD)
             {
                 return new List<T>();
             }
 
-            if (!streamThread.isRunningAndNotRebalancing())
+            if (!streamThread.IsRunningAndNotRebalancing())
             {
-                throw new InvalidStateStoreException("Cannot get state store " + storeName + " because the stream thread is " +
-                        streamThread.State.CurrentState + ", not RUNNING");
+                throw new InvalidStateStoreException($"Cannot get state store {storeName} because the stream thread is " +
+                        $"{streamThread.Context.State.CurrentState}, not RUNNING");
             }
 
             var stores = new List<T>();
-            foreach (ITask streamTask in streamThread.tasks().Values)
+            foreach (ITask streamTask in streamThread.Tasks().Values)
             {
                 IStateStore store = streamTask.getStore(storeName);
                 if (store != null && queryableStoreType.accepts(store))

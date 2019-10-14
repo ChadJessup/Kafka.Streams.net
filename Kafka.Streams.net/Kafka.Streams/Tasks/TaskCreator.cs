@@ -68,24 +68,27 @@ namespace Kafka.Streams.Tasks
                 stateDirectory,
                 cache,
                 time,
-                new BasicProducerSupplier(createProducer(taskId)));
+                new BasicProducerSupplier(CreateProducer(taskId)));
         }
 
-        private IProducer<byte[], byte[]> createProducer(TaskId id)
+        private IProducer<byte[], byte[]> CreateProducer(TaskId id)
         {
             // eos
             if (threadProducer == null)
             {
-                var producerConfigs = config.getProducerConfigs(KafkaStreamThread.getTaskProducerClientId(threadClientId, id));
+                var producerConfigs = config.getProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
 
                 log.LogInformation($"Creating producer client for task {id}");
-                producerConfigs.Add(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{applicationId}-{id}");
+                producerConfigs.Set(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{applicationId}-{id}");
 
                 return clientSupplier.getProducer(producerConfigs);
             }
 
             return threadProducer;
         }
+
+        private string GetTaskProducerClientId(string threadClientId, TaskId taskId)
+            => $"{threadClientId}-{taskId}-producer";
 
         public override void close()
         {

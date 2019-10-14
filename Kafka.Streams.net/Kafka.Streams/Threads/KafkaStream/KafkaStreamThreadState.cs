@@ -1,6 +1,4 @@
 ﻿using Kafka.Streams.Errors;
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Tasks;
 using Microsoft.Extensions.Logging;
 using System;
@@ -16,14 +14,22 @@ namespace Kafka.Streams.Threads.KafkaStream
         private Dictionary<KafkaStreamThreadStates, StateTransition<KafkaStreamThreadStates>> validTransitions = new Dictionary<KafkaStreamThreadStates, StateTransition<KafkaStreamThreadStates>>();
         private readonly string logPrefix = "";
 
-        public KafkaStreamThreadState(
-            ILogger<KafkaStreamThreadState> logger,
-            StreamStateListener stateListener,
-            TaskManager taskManager)
+        public KafkaStreamThreadState(ILogger<KafkaStreamThreadState> logger)
         {
             this.logger = logger;
-            this.StateListener = stateListener;
-            this.TaskManager = taskManager;
+
+            this.SetTransitions(new List<StateTransition<KafkaStreamThreadStates>>
+            {
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.CREATED, 1, 5),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.STARTING, 2, 5),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_REVOKED, 3, 5),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_ASSIGNED, 2, 4, 5),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.RUNNING, 2, 5),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PENDING_SHUTDOWN, 6),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.DEAD),
+            });
+
+            this.CurrentState = KafkaStreamThreadStates.CREATED;
         }
 
         public KafkaStreamThreadStates CurrentState { get; protected set; }
@@ -41,7 +47,7 @@ namespace Kafka.Streams.Threads.KafkaStream
          * @param newState New state
          * @return The state prior to the call to setState, or null if the transition is invalid
          */
-        public bool setState(KafkaStreamThreadStates newState)
+        public bool SetState(KafkaStreamThreadStates newState)
         {
             KafkaStreamThreadStates oldState;
 
@@ -91,14 +97,14 @@ namespace Kafka.Streams.Threads.KafkaStream
                 {
                     if (this.Thread is KafkaStreamThread st)
                     {
-                        st.updateThreadMetadata(TaskManager.activeTasks(), TaskManager.standbyTasks());
+                        st.UpdateThreadMetadata(TaskManager.activeTasks(), TaskManager.standbyTasks());
                     }
                 }
                 else
                 {
                     if (this.Thread is KafkaStreamThread st)
                     {
-                        st.updateThreadMetadata(null, null);
+                        st.UpdateThreadMetadata(null, null);
                     }
                 }
             }
@@ -111,13 +117,13 @@ namespace Kafka.Streams.Threads.KafkaStream
             return true;
         }
 
-        public void setTransitions(IEnumerable<StateTransition<KafkaStreamThreadStates>> validTransitions)
+        public void SetTransitions(IEnumerable<StateTransition<KafkaStreamThreadStates>> validTransitions)
         {
             this.validTransitions = validTransitions
                 .ToDictionary(k => k.StartingState, v => v);
         }
 
-        public bool isRunning()
+        public bool IsRunning()
         {
             throw new NotImplementedException();
         }

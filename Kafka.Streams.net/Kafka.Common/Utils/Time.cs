@@ -12,25 +12,9 @@ namespace Kafka.Common.Utils
     public abstract class Time : ITime
     {
         public static SystemTime SYSTEM { get; } = new SystemTime();
-
-        public long milliseconds()
-        {
-            throw new NotImplementedException();
-        }
-
-        public long nanoseconds()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void sleep(long ms)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void waitObject(object obj, Func<bool> condition, long timeoutMs)
-        {
-            throw new NotImplementedException();
-        }
+        public abstract long milliseconds();
+        public abstract long nanoseconds();
+        public abstract void sleep(long ms);
+        public abstract void waitObject(object obj, Func<bool> condition, long timeoutMs);
     }
 }

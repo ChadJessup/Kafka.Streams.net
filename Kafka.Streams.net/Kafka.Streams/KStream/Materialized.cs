@@ -106,7 +106,7 @@ namespace Kafka.Streams.KStream
          * @param           store type
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
-        public static Materialized<K, V> with(
+        public Materialized<K, V> with(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
             => new Materialized<K, V>()
@@ -176,7 +176,7 @@ namespace Kafka.Streams.KStream
          * @param           store type
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
-        public new static Materialized<K, V, S> with(
+        public static new Materialized<K, V, S> with(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
             => new Materialized<K, V, S>("")
@@ -225,7 +225,7 @@ namespace Kafka.Streams.KStream
          */
         public static Materialized<K, V, IWindowStore<Bytes, byte[]>> As(IWindowBytesStoreSupplier supplier)
         {
-            supplier = supplier ?? throw new ArgumentNullException("supplier can't be null", nameof(supplier));
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new Materialized<K, V, IWindowStore<Bytes, byte[]>>(supplier);
         }
@@ -245,7 +245,7 @@ namespace Kafka.Streams.KStream
          */
         public static Materialized<K, V, ISessionStore<Bytes, byte[]>> As(ISessionBytesStoreSupplier supplier)
         {
-            supplier = supplier ?? throw new ArgumentNullException("supplier can't be null", nameof(supplier));
+            supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
             return new Materialized<K, V, ISessionStore<Bytes, byte[]>>(supplier);
         }

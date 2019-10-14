@@ -69,9 +69,9 @@
 //            ISerde<K> keySerde,
 //            ISerde<V> valueSerde)
 //        {
-//            topic = topic ?? throw new System.ArgumentNullException("topic cannot be null", nameof(topic));
-//            keySerde = keySerde ?? throw new System.ArgumentNullException("key serde cannot be null", nameof(keySerde));
-//            valueSerde = valueSerde ?? throw new System.ArgumentNullException("value serde cannot be null", nameof(valueSerde));
+//            topic = topic ?? throw new ArgumentNullException(nameof(topic));
+//            keySerde = keySerde ?? throw new ArgumentNullException(nameof(keySerde));
+//            valueSerde = valueSerde ?? throw new ArgumentNullException(nameof(valueSerde));
 
 //            this.topic = topic;
 //            this.keySerde = keySerde;

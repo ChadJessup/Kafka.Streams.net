@@ -12,7 +12,7 @@ namespace Kafka.Common.Metrics.Stats
      */
     public class SimpleRate : Rate
     {
-        public long windowSize(MetricConfig config, long now)
+        public override long windowSize(MetricConfig config, long now)
         {
             stat.purgeObsoleteSamples(config, now);
             long elapsed = now - stat.oldest(now).lastWindowMs;

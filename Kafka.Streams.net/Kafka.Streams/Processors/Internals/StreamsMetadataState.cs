@@ -1,24 +1,9 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -39,7 +24,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly HashSet<string> globalStores;
         private readonly HostInfo thisHost;
         private Cluster clusterMetadata;
-        private readonly StreamsMetadata myMetadata;
+        private StreamsMetadata myMetadata;
 
         public StreamsMetadataState(
             InternalTopologyBuilder builder,
@@ -50,7 +35,6 @@ namespace Kafka.Streams.Processors.Internals
             this.thisHost = thisHost;
         }
 
-
         public override string ToString()
         {
             return ToString("");
@@ -59,6 +43,7 @@ namespace Kafka.Streams.Processors.Internals
         public string ToString(string indent)
         {
             StringBuilder builder = new StringBuilder();
+
             builder.Append(indent).Append("GlobalMetadata: ").Append(allMetadata).Append("\n");
             builder.Append(indent).Append("GlobalStores: ").Append(globalStores).Append("\n");
             builder.Append(indent).Append("My HostInfo: ").Append(thisHost).Append("\n");
@@ -74,7 +59,7 @@ namespace Kafka.Streams.Processors.Internals
          * @return all the {@link StreamsMetadata}s in a {@link KafkaStreams} application
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public List<StreamsMetadata> getAllMetadata()
+        public List<StreamsMetadata> GetAllMetadata()
         {
             return allMetadata;
         }
@@ -86,11 +71,11 @@ namespace Kafka.Streams.Processors.Internals
          * @return A collection of {@link StreamsMetadata} that have the provided storeName
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public List<StreamsMetadata> getAllMetadataForStore(string storeName)
+        public List<StreamsMetadata> GetAllMetadataForStore(string storeName)
         {
-            storeName = storeName ?? throw new System.ArgumentNullException("storeName cannot be null", nameof(storeName));
+            storeName = storeName ?? throw new ArgumentNullException(nameof(storeName));
 
-            if (!isInitialized())
+            if (!IsInitialized())
             {
                 return new List<StreamsMetadata>();
             }
@@ -109,11 +94,12 @@ namespace Kafka.Streams.Processors.Internals
             List<StreamsMetadata> results = new List<StreamsMetadata>();
             foreach (StreamsMetadata metadata in allMetadata)
             {
-                //if (metadata.stateStoreNames().Contains(storeName))
-                //{
-                //    results.Add(metadata);
-                //}
+                if (metadata.stateStoreNames.Contains(storeName))
+                {
+                    results.Add(metadata);
+                }
             }
+
             return results;
         }
 
@@ -133,16 +119,16 @@ namespace Kafka.Streams.Processors.Internals
          * if streams is (re-)initializing
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public StreamsMetadata getMetadataWithKey<K, V>(
+        public StreamsMetadata GetMetadataWithKey<K>(
             string storeName,
             K key,
             ISerializer<K> keySerializer)
         {
-            keySerializer = keySerializer ?? throw new System.ArgumentNullException("keySerializer can't be null", nameof(keySerializer));
-            storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
-            key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
+            keySerializer = keySerializer ?? throw new ArgumentNullException(nameof(keySerializer));
+            storeName = storeName ?? throw new ArgumentNullException(nameof(storeName));
+            key = key ?? throw new ArgumentNullException(nameof(key));
 
-            if (!isInitialized())
+            if (!IsInitialized())
             {
                 return StreamsMetadata.NOT_AVAILABLE;
             }
@@ -155,21 +141,21 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     return allMetadata[0];
                 }
+
                 return myMetadata;
             }
 
-            SourceTopicsInfo sourceTopicsInfo = getSourceTopicsInfo(storeName);
+            SourceTopicsInfo sourceTopicsInfo = GetSourceTopicsInfo(storeName);
             if (sourceTopicsInfo == null)
             {
                 return null;
             }
-            return null;
 
-            //return getStreamsMetadataForKey(
-            //    storeName,
-            //    key,
-            //    new DefaultStreamPartitioner<K, V>(keySerializer, clusterMetadata),
-            //    sourceTopicsInfo);
+            return GetStreamsMetadataForKey(
+                storeName,
+                key,
+                new DefaultStreamPartitioner<K, object>(keySerializer, clusterMetadata),
+                sourceTopicsInfo);
         }
 
         /**
@@ -186,16 +172,16 @@ namespace Kafka.Streams.Processors.Internals
          * if streams is (re-)initializing
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public StreamsMetadata getMetadataWithKey<K>(
+        public StreamsMetadata GetMetadataWithKey<K, V>(
             string storeName,
             K key,
-            IStreamPartitioner<K, object> partitioner)
+            IStreamPartitioner<K, V> partitioner)
         {
-            storeName = storeName ?? throw new System.ArgumentNullException("storeName can't be null", nameof(storeName));
-            key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
-            partitioner = partitioner ?? throw new System.ArgumentNullException("partitioner can't be null", nameof(partitioner));
+            storeName = storeName ?? throw new ArgumentNullException(nameof(storeName));
+            key = key ?? throw new ArgumentNullException(nameof(key));
+            partitioner = partitioner ?? throw new ArgumentNullException(nameof(partitioner));
 
-            if (!isInitialized())
+            if (!IsInitialized())
             {
                 return StreamsMetadata.NOT_AVAILABLE;
             }
@@ -208,15 +194,17 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     return allMetadata[0];
                 }
+
                 return myMetadata;
             }
 
-            SourceTopicsInfo sourceTopicsInfo = getSourceTopicsInfo(storeName);
+            SourceTopicsInfo sourceTopicsInfo = GetSourceTopicsInfo(storeName);
             if (sourceTopicsInfo == null)
             {
                 return null;
             }
-            return getStreamsMetadataForKey(storeName, key, partitioner, sourceTopicsInfo);
+
+            return GetStreamsMetadataForKey(storeName, key, partitioner, sourceTopicsInfo);
         }
 
         /**
@@ -226,13 +214,13 @@ namespace Kafka.Streams.Processors.Internals
          * @param clusterMetadata    the current clusterMetadata {@link Cluster}
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void onChange(Dictionary<HostInfo, HashSet<TopicPartition>> currentState, Cluster clusterMetadata)
+        public void OnChange(Dictionary<HostInfo, HashSet<TopicPartition>> currentState, Cluster clusterMetadata)
         {
             this.clusterMetadata = clusterMetadata;
-            rebuildMetadata(currentState);
+            RebuildMetadata(currentState);
         }
 
-        private bool hasPartitionsForAnyTopics(List<string> topicNames, HashSet<TopicPartition> partitionForHost)
+        private bool HasPartitionsForAnyTopics(List<string> topicNames, HashSet<TopicPartition> partitionForHost)
         {
             foreach (TopicPartition topicPartition in partitionForHost)
             {
@@ -241,10 +229,11 @@ namespace Kafka.Streams.Processors.Internals
                     return true;
                 }
             }
+
             return false;
         }
 
-        private void rebuildMetadata(Dictionary<HostInfo, HashSet<TopicPartition>> currentState)
+        private void RebuildMetadata(Dictionary<HostInfo, HashSet<TopicPartition>> currentState)
         {
             //allMetadata.clear();
             if (!currentState.Any())
@@ -252,69 +241,74 @@ namespace Kafka.Streams.Processors.Internals
                 return;
             }
 
-            Dictionary<string, List<string>> stores = builder.stateStoreNameToSourceTopics();
-            foreach (KeyValuePair<HostInfo, HashSet<TopicPartition>> entry in currentState)
+            var stores = builder.stateStoreNameToSourceTopics();
+            foreach (var entry in currentState)
             {
                 HostInfo key = entry.Key;
                 HashSet<TopicPartition> partitionsForHost = new HashSet<TopicPartition>(entry.Value);
-//                HashSet<string> storesOnHost = new HashSet<>();
-                foreach (KeyValuePair<string, List<string>> storeTopicEntry in stores)
+                HashSet<string> storesOnHost = new HashSet<string>();
+
+                foreach (var storeTopicEntry in stores)
                 {
                     List<string> topicsForStore = storeTopicEntry.Value;
-                    if (hasPartitionsForAnyTopics(topicsForStore, partitionsForHost))
+                    if (HasPartitionsForAnyTopics(topicsForStore, partitionsForHost))
                     {
-  //                      storesOnHost.Add(storeTopicEntry.Key);
+                        storesOnHost.Add(storeTopicEntry.Key);
                     }
                 }
 
-                //storesOnHost.AddAll(globalStores);
-                //StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
-                //allMetadata.Add(metadata);
+                storesOnHost.AddRange(globalStores);
+                StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
+                allMetadata.Add(metadata);
+
                 if (key.Equals(thisHost))
                 {
-                    //myMetadata = metadata;
+                    myMetadata = metadata;
                 }
             }
         }
 
-        private StreamsMetadata getStreamsMetadataForKey<K>(string storeName,
-                                                             K key,
-                                                             IStreamPartitioner<K, object> partitioner,
-                                                             SourceTopicsInfo sourceTopicsInfo)
+        private StreamsMetadata GetStreamsMetadataForKey<K, V>(
+            string storeName,
+            K key,
+            IStreamPartitioner<K, V> partitioner,
+            SourceTopicsInfo sourceTopicsInfo)
         {
+            int partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, default, sourceTopicsInfo.maxPartitions);
 
-            int partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, null, sourceTopicsInfo.maxPartitions);
-            //HashSet<TopicPartition> matchingPartitions = new HashSet<>();
-            //foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
-            //{
-            //    matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
-            //}
+            HashSet<TopicPartition> matchingPartitions = new HashSet<TopicPartition>();
+            foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
+            {
+                matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
+            }
 
             foreach (StreamsMetadata streamsMetadata in allMetadata)
             {
-                //HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames();
-                //HashSet<TopicPartition> topicPartitions = new HashSet<>(streamsMetadata.topicPartitions());
-                //topicPartitions.retainAll(matchingPartitions);
-                //if (stateStoreNames.Contains(storeName)
-                //        && topicPartitions.Any())
-                //{
-                //    return streamsMetadata;
-                //}
+                HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames;
+                HashSet<TopicPartition> topicPartitions = new HashSet<TopicPartition>(streamsMetadata.topicPartitions);
+                topicPartitions.IntersectWith(matchingPartitions);
+
+                if (stateStoreNames.Contains(storeName) && topicPartitions.Any())
+                {
+                    return streamsMetadata;
+                }
             }
+
             return null;
         }
 
-        private SourceTopicsInfo getSourceTopicsInfo(string storeName)
+        private SourceTopicsInfo GetSourceTopicsInfo(string storeName)
         {
             List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null || !sourceTopics.Any())
             {
                 return null;
             }
+
             return new SourceTopicsInfo(sourceTopics);
         }
 
-        private bool isInitialized()
+        private bool IsInitialized()
         {
             return clusterMetadata != null && clusterMetadata.topics().Any();
         }

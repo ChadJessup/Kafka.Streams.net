@@ -118,7 +118,7 @@
 //        public override void put(Bytes key,
 //                        byte[] value)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            validateStoreOpen();
 //            lock (writeLock().@lock)
 //            {
@@ -153,7 +153,7 @@
 //        public override byte[] putIfAbsent(Bytes key,
 //                                  byte[] value)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            validateStoreOpen();
 //            @lock.writeLock().@lock();
 //            try
@@ -179,7 +179,7 @@
 //            {
 //                foreach (KeyValue<Bytes, byte[]> entry in entries)
 //                {
-//                    entry.key = entry.key ?? throw new System.ArgumentNullException("key cannot be null", nameof(entry.key));
+//                    entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
 //                    put(entry.key, entry.value);
 //                }
 //            }
@@ -191,7 +191,7 @@
 
 //        public override byte[] delete(Bytes key)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            validateStoreOpen();
 //            @lock.writeLock().@lock();
 //            try
@@ -213,7 +213,7 @@
 
 //        public override byte[] get(Bytes key)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            validateStoreOpen();
 //            Lock theLock;
 //            if (Thread.CurrentThread.Equals(streamThread))

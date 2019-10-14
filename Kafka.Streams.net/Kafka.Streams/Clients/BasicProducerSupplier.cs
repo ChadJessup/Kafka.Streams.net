@@ -36,19 +36,22 @@ namespace Kafka.Streams.Clients
             this.clientSupplier = clientSupplier;
         }
 
-        public IProducer<byte[], byte[]> get()
+        public IProducer<byte[], byte[]> Get()
         {
             // eos
             if (threadProducer == null)
             {
-                var producerConfigs = config.getProducerConfigs(KafkaStreamThread.getTaskProducerClientId(threadClientId, id));
+                var producerConfigs = config.getProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
                 //    log.LogInformation("Creating producer client for task {}", id);
-                producerConfigs.Add("transactional.id", applicationId + "-" + id);
+                producerConfigs.Set("transactional.id", $"{applicationId}-{id}");
 
                 return clientSupplier.getProducer(producerConfigs);
             }
 
             return threadProducer;
         }
+
+        private string GetTaskProducerClientId(string threadClientId, TaskId taskId)
+            => $"{threadClientId}-{taskId}-producer";
     }
 }

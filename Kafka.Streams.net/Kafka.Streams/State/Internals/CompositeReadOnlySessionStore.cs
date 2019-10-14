@@ -37,7 +37,7 @@
 
 //        public override IKeyValueIterator<Windowed<K>, V> fetch(K key)
 //        {
-//            key = key ?? throw new System.ArgumentNullException("key can't be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 //            List<ReadOnlySessionStore<K, V>> stores = storeProvider.stores(storeName, queryableStoreType);
 //            foreach (ReadOnlySessionStore<K, V> store in stores)
 //            {
@@ -66,8 +66,8 @@
 
 //        public override IKeyValueIterator<Windowed<K>, V> fetch(K from, K to)
 //        {
-//            from = from ?? throw new System.ArgumentNullException("from can't be null", nameof(from));
-//            to = to ?? throw new System.ArgumentNullException("to can't be null", nameof(to));
+//            from = from ?? throw new ArgumentNullException(nameof(from));
+//            to = to ?? throw new ArgumentNullException(nameof(to));
 //            INextIteratorFunction<Windowed<K>, V, ReadOnlySessionStore<K, V>> nextIteratorFunction = store => store.fetch(from, to);
 //            return new DelegatingPeekingKeyValueIterator<>(storeName,
 //                                                           new CompositeKeyValueIterator<>(

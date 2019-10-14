@@ -79,7 +79,7 @@ namespace Kafka.Streams.Tasks
         {
             this.time = time;
             this.producerSupplier = producerSupplier;
-            this.producer = producerSupplier.get();
+            this.producer = producerSupplier.Get();
             this.taskMetrics = new TaskMetrics(id, streamsMetrics);
 
             //closeTaskSensor = ThreadMetrics.closeTaskSensor(streamsMetrics);
@@ -217,7 +217,7 @@ namespace Kafka.Streams.Tasks
                     throw new InvalidOperationException("Task producer should be null.");
                 }
 
-                producer = producerSupplier.get();
+                producer = producerSupplier.Get();
                 initializeTransactions();
                 recordCollector.init(producer);
 
@@ -575,7 +575,7 @@ namespace Kafka.Streams.Tasks
             {
                 if (clean)
                 {
-                    throw fatal;
+                    throw;
                 }
             }
 

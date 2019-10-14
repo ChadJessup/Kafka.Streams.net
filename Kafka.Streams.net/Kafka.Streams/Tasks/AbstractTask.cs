@@ -1,10 +1,8 @@
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -49,14 +47,14 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config)
         {
             this.id = id;
-            this.applicationId = config.getString(StreamsConfigPropertyNames.ApplicationId);
+            this.applicationId = config.ApplicationId;
             this.partitions = new HashSet<TopicPartition>(partitions);
             this.topology = topology;
             this.consumer = consumer;
             this.eosEnabled = StreamsConfigPropertyNames.ExactlyOnce.Equals(config.getString(StreamsConfigPropertyNames.PROCESSING_GUARANTEE_CONFIG));
             this.stateDirectory = stateDirectory;
 
-            this.logPrefix = string.Format("%s [%s] ", isStandby ? "standby-task" : "task", id);
+            this.logPrefix = $"{(isStandby ? "standby-task" : "task")} [{id}] ";
             this.logContext = new LogContext(logPrefix);
             this.log = logContext.logger(GetType());
 
@@ -157,15 +155,15 @@ namespace Kafka.Streams.Tasks
 
                     //                    log.LogTrace("Updating store offset limits {} for changelog {}", offset, partition);
                 }
-                catch (AuthorizationException e)
+                catch (AuthorizationException)
                 {
                     //                  throw new ProcessorStateException(string.Format("task [%s] AuthorizationException when initializing offsets for %s", id, partition), e);
                 }
-                catch (WakeupException e)
+                catch (WakeupException)
                 {
-                    throw e;
+                    throw;
                 }
-                catch (KafkaException e)
+                catch (KafkaException)
                 {
                     //                    throw new ProcessorStateException(string.Format("task [%s] Failed to initialize offsets for %s", id, partition), e);
                 }

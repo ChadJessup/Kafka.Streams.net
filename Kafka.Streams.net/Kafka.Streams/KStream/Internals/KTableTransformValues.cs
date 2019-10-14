@@ -30,8 +30,8 @@
 //            IValueTransformerWithKeySupplier<K, V, V1> transformerSupplier,
 //            string queryableName)
 //        {
-//            this.parent = parent ?? throw new System.ArgumentNullException("parent", nameof(parent));
-//            this.transformerSupplier = transformerSupplier = transformerSupplier ?? throw new System.ArgumentNullException("transformerSupplier", nameof(transformerSupplier));
+//            this.parent = parent ?? throw new ArgumentNullException(nameof(parent));
+//            this.transformerSupplier = transformerSupplier = transformerSupplier ?? throw new ArgumentNullException(nameof(transformerSupplier));
 //            this.queryableName = queryableName;
 //        }
 

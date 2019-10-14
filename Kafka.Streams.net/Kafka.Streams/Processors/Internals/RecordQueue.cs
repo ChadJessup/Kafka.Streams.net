@@ -130,7 +130,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 catch (StreamsException internalFatalExtractorException)
                 {
-                    throw internalFatalExtractorException;
+                    throw;
                 }
                 catch (Exception fatalUserException)
                 {

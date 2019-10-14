@@ -10,6 +10,7 @@ using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,15 +41,12 @@ namespace WordCountProcessorDemo
 
             var services = new ServiceCollection()
                 .AddSingleton(streamsConfig)
-                .AddLogging();
+                .AddLogging(config => config.AddConsole());
 
             var latch = new ManualResetEvent(initialState: false);
 
 
             StreamsBuilder builder = new StreamsBuilder(services);
-
-            
-            
             
             IKStream<string, string> textLines = builder
                 .stream<string, string>("TextLinesTopic");
@@ -75,7 +73,7 @@ namespace WordCountProcessorDemo
             var topology = builder.build();
             services.AddSingleton(topology);
 
-            using KafkaStreamsThread streams = builder.BuildKafkaStreams(); 
+            using IKafkaStreamsThread streams = builder.BuildKafkaStreams(); 
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>
@@ -85,7 +83,7 @@ namespace WordCountProcessorDemo
 
             try
             {
-                streams.start();
+                streams.Start();
                 latch.WaitOne();
             }
             catch (Exception e)
@@ -96,7 +94,7 @@ namespace WordCountProcessorDemo
             return 0;
         }
 
-        public void test()
+        public void Test()
         {
             //// Serializers/deserializers (serde) for String and Long types
             //ISerde<string> stringSerde = Serdes.String();

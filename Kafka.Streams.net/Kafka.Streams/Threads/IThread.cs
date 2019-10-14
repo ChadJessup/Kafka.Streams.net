@@ -1,14 +1,12 @@
-﻿using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Interfaces;
-using System;
-using System.Threading;
+﻿using System;
 
 namespace Kafka.Streams.Threads
 {
     public interface IThread
     {
-        Thread Thread { get; }
-        bool isRunning();
+        int ManagedThreadId { get; }
+        void Start();
+        bool IsRunning();
     }
 
     // We can't derive from the Thread object, so we'll wrap threads
@@ -17,8 +15,7 @@ namespace Kafka.Streams.Threads
         where States : Enum
     {
         string ThreadClientId { get; }
-        IStateListener StateListener { get; }
-        IStateMachine<States> State { get; }
-        void setStateListener(IStateListener listener);
+        IThreadContext<IThread<States>, IStateMachine<States>, States> Context { get; }
+        void SetContext(IThreadContext<IThread<States>, IStateMachine<States>, States> context);
     }
 }

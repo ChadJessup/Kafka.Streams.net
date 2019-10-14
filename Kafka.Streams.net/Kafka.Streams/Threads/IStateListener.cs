@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Kafka.Streams.Threads.KafkaStream;
+using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.Threads
 {
@@ -18,5 +20,7 @@ namespace Kafka.Streams.Threads
             States newState,
             States oldState)
             where States : Enum;
+
+        void SetThreadStates(Dictionary<long, KafkaStreamThreadState> threadStates);
     }
 }

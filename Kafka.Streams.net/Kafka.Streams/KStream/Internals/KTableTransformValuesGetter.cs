@@ -29,8 +29,8 @@
 //            IKTableValueGetter<K, V> parentGetter,
 //            IValueTransformerWithKey<K, V, V1> valueTransformer)
 //        {
-//            this.parentGetter = parentGetter = parentGetter ?? throw new System.ArgumentNullException("parentGetter", nameof(parentGetter));
-//            this.valueTransformer = valueTransformer = valueTransformer ?? throw new System.ArgumentNullException("valueTransformer", nameof(valueTransformer));
+//            this.parentGetter = parentGetter = parentGetter ?? throw new ArgumentNullException(nameof(parentGetter));
+//            this.valueTransformer = valueTransformer = valueTransformer ?? throw new ArgumentNullException(nameof(valueTransformer));
 //        }
 
 //        public void init(IProcessorContext context)

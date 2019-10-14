@@ -115,8 +115,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, V> filterNot(Func<K, V, bool> predicate, Named named)
         {
-            predicate = predicate ?? throw new ArgumentNullException("predicate can't be null", nameof(predicate));
-            named = named ?? throw new ArgumentNullException("named can't be null", nameof(named));
+            predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FilterName);
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, true), name);
@@ -141,8 +141,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<KR, V> selectKey<KR>(IKeyValueMapper<K, V, KR> mapper, Named named)
         {
-            mapper = mapper ?? throw new ArgumentNullException("mapper can't be null", nameof(mapper));
-            named = named ?? throw new ArgumentNullException("named can't be null", nameof(named));
+            mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
             ProcessorGraphNode<K, V> selectKeyProcessorNode = internalSelectKey(mapper, new NamedInternal(named));
 
@@ -210,8 +210,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper, Named named)
         {
-            mapper = mapper ?? throw new ArgumentNullException("mapper can't be null", nameof(mapper));
-            mapper = mapper ?? throw new ArgumentNullException("named can't be null", nameof(mapper));
+            mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.MAPVALUES_NAME);
 
@@ -236,7 +236,7 @@ namespace Kafka.Streams.KStream.Internals
 
         //public void print(Printed<K, V> printed)
         //{
-        //    printed = printed ?? throw new System.ArgumentNullException("printed can't be null", nameof(printed));
+        //    printed = printed ?? throw new ArgumentNullException(nameof(printed));
         //    PrintedInternal<K, V> printedInternal = new PrintedInternal<K, V>(printed);
         //    //            string name = new NamedInternal(printedInternal.name).OrElseGenerateWithPrefix(builder, KStream.PRINTING_NAME);
         //    ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(printedInternal.build(this.name), name);
@@ -252,8 +252,8 @@ namespace Kafka.Streams.KStream.Internals
             IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper,
             Named named)
         {
-            mapper = mapper ?? throw new ArgumentNullException("mapper can't be null", nameof(mapper));
-            named = named ?? throw new ArgumentNullException("named can't be null", nameof(named));
+            mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            named = named ?? throw new ArgumentNullException(nameof(named));
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FlatmapName);
 
@@ -428,7 +428,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void ForEach(IForeachAction<K, V> action, Named named)
         {
-            action = action ?? throw new ArgumentNullException("action can't be null", nameof(action));
+            action = action ?? throw new ArgumentNullException(nameof(action));
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.ForEachName);
             ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(
@@ -620,7 +620,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKStream<K, VR> transformValues<VR>(IValueTransformerSupplier<V, VR> valueTransformerSupplier,
                                                     string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
             return doTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), NamedInternal.empty(), stateStoreNames);
         }
 
@@ -628,8 +628,8 @@ namespace Kafka.Streams.KStream.Internals
                                                     Named named,
                                                     string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformSupplier can't be null", nameof(valueTransformerSupplier));
-            named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
+            named = named ?? throw new ArgumentNullException(nameof(named));
             return doTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier),
                     new NamedInternal(named), stateStoreNames);
         }
@@ -637,7 +637,7 @@ namespace Kafka.Streams.KStream.Internals
         public IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
                                                     string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
             return doTransformValues(valueTransformerSupplier, NamedInternal.empty(), stateStoreNames);
         }
 
@@ -646,8 +646,8 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformSupplier can't be null", nameof(valueTransformerSupplier));
-            named = named ?? throw new System.ArgumentNullException("named can't be null", nameof(named));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
+            named = named ?? throw new ArgumentNullException(nameof(named));
             return doTransformValues(valueTransformerSupplier, new NamedInternal(named), stateStoreNames);
         }
 
@@ -683,7 +683,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueTransformerSupplier<V, IEnumerable<VR>> valueTransformerSupplier,
             string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException(nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
 
             return doFlatTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), NamedInternal.empty(), stateStoreNames);
         }
@@ -693,7 +693,7 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
 
             return doFlatTransformValues(toValueTransformerWithKeySupplier(valueTransformerSupplier), named, stateStoreNames);
         }
@@ -702,7 +702,7 @@ namespace Kafka.Streams.KStream.Internals
             IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
             string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
 
             return doFlatTransformValues(valueTransformerSupplier, NamedInternal.empty(), stateStoreNames);
         }
@@ -712,7 +712,7 @@ namespace Kafka.Streams.KStream.Internals
             Named named,
             string[] stateStoreNames)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new System.ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
 
             return doFlatTransformValues(valueTransformerSupplier, named, stateStoreNames);
         }

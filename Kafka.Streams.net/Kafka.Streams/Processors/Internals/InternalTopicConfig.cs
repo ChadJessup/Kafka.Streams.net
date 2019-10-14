@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals
@@ -31,7 +32,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
         {
-            name = name ?? throw new System.ArgumentNullException("name can't be null", nameof(name));
+            name = name ?? throw new ArgumentNullException(nameof(name));
 //            Topic.validate(name);
 
             this.name = name;

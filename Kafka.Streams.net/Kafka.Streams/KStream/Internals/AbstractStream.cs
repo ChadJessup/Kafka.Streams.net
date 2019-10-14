@@ -37,10 +37,10 @@ namespace Kafka.Streams.KStream.Internals
      */
     public abstract class AbstractStream<K, V>
     {
-        protected string name;
-        protected ISerde<K> keySerde;
-        protected ISerde<V> valSerde;
-        public HashSet<string> sourceNodes { get; set; }
+        protected string name { get; }
+        protected ISerde<K> keySerde { get; }
+        protected ISerde<V> valSerde { get; }
+        public HashSet<string> sourceNodes { get; }
         public StreamsGraphNode streamsGraphNode { get; set; }
         protected InternalStreamsBuilder builder { get; private set; }
 
@@ -115,7 +115,7 @@ namespace Kafka.Streams.KStream.Internals
         public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(
              IValueTransformerSupplier<V, VR> valueTransformerSupplier)
         {
-            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException("valueTransformerSupplier can't be null", nameof(valueTransformerSupplier));
+            valueTransformerSupplier = valueTransformerSupplier ?? throw new ArgumentNullException(nameof(valueTransformerSupplier));
 
             return null;
             //    return ()=> {

@@ -119,7 +119,7 @@
 //        public byte[] fetch(Bytes key, long windowStartTimestamp)
 //        {
 
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 
 //            removeExpiredSegments();
 
@@ -143,7 +143,7 @@
 //        public IWindowStoreIterator<byte[]> fetch(Bytes key, long timeFrom, long timeTo)
 //        {
 
-//            key = key ?? throw new System.ArgumentNullException("key cannot be null", nameof(key));
+//            key = key ?? throw new ArgumentNullException(nameof(key));
 
 //            removeExpiredSegments();
 
@@ -165,8 +165,8 @@
 //                                                               long timeFrom,
 //                                                               long timeTo)
 //        {
-//            from = from ?? throw new System.ArgumentNullException("from key cannot be null", nameof(from));
-//            to = to ?? throw new System.ArgumentNullException("to key cannot be null", nameof(to));
+//            from = from ?? throw new ArgumentNullException(nameof(from));
+//            to = to ?? throw new ArgumentNullException(nameof(to));
 
 //            removeExpiredSegments();
 

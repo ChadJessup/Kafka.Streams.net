@@ -73,7 +73,7 @@
 //            StreamsGraphNode streamsGraphNode)
 //            : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
 //        {
-//            this.windows = windows = windows ?? throw new System.ArgumentNullException("windows can't be null", nameof(windows));
+//            this.windows = windows = windows ?? throw new ArgumentNullException(nameof(windows));
 //            this.aggregateBuilder = aggregateBuilder;
 //        }
 
@@ -86,7 +86,7 @@
 
 //        public IKTable<Windowed<K>, long> count(Materialized<K, long, IWindowStore<Bytes, byte[]>> materialized)
 //        {
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            // TODO: Remove this when we do a topology-incompatible release
 //            // we used to burn a topology name here, so we have to keep doing it for compatibility
@@ -133,9 +133,9 @@
 //                                                       IAggregator<K, V, VR> aggregator,
 //                                                       Materialized<K, VR, IWindowStore<Bytes, byte[]>> materialized)
 //        {
-//            initializer = initializer ?? throw new System.ArgumentNullException("initializer can't be null", nameof(initializer));
-//            aggregator = aggregator ?? throw new System.ArgumentNullException("aggregator can't be null", nameof(aggregator));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            initializer = initializer ?? throw new ArgumentNullException(nameof(initializer));
+//            aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 //            MaterializedInternal<K, VR, IWindowStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<>(materialized, builder, AGGREGATE_NAME);
 //            if (materializedInternal.keySerde == null)
@@ -160,8 +160,8 @@
 
 //        public IKTable<Windowed<K>, V> reduce(IReducer<V> reducer, Materialized<K, V, IWindowStore<Bytes, byte[]>> materialized)
 //        {
-//            reducer = reducer ?? throw new System.ArgumentNullException("reducer can't be null", nameof(reducer));
-//            materialized = materialized ?? throw new System.ArgumentNullException("materialized can't be null", nameof(materialized));
+//            reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
+//            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
 //            MaterializedInternal<K, V, IWindowStore<Bytes, byte[]>> materializedInternal =
 //               new MaterializedInternal<>(materialized, builder, REDUCE_NAME);

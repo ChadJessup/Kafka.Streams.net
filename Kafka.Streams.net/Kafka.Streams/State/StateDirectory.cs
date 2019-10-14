@@ -372,7 +372,8 @@ namespace Kafka.Streams.State
                         if (manualUserCall)
                         {
                             log.LogError("{} Failed to get the state directory lock.", logPrefix(), e);
-                            throw e;
+                            
+                            throw;
                         }
                     }
                     catch (IOException e)
@@ -380,7 +381,7 @@ namespace Kafka.Streams.State
                         log.LogError("{} Failed to delete the state directory.", logPrefix(), e);
                         if (manualUserCall)
                         {
-                            throw e;
+                            throw;
                         }
                     }
                     finally
@@ -394,7 +395,7 @@ namespace Kafka.Streams.State
                             log.LogError("{} Failed to release the state directory lock.", logPrefix());
                             if (manualUserCall)
                             {
-                                throw e;
+                                throw;
                             }
                         }
                     }
