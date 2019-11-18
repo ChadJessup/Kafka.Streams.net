@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly StreamsConfig config;
 
         private bool eosEnabled;
-        private ProcessorTopology topology;
+        private ProcessorTopology? topology;
         private IConsumer<byte[], byte[]> globalConsumer;
         private StateDirectory stateDirectory;
         private HashSet<string> globalStoreNames = new HashSet<string>();
@@ -43,7 +43,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public GlobalStateManager(
             ILogger<GlobalStateManager> logger,
-            ProcessorTopology topology,
+            ProcessorTopology? topology,
             IKafkaClientSupplier clientSupplier,
             IConsumer<byte[], byte[]> globalConsumer,
             StateDirectory stateDirectory,
@@ -52,7 +52,6 @@ namespace Kafka.Streams.Processors.Internals
         {
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
-            topology = topology ?? throw new ArgumentNullException(nameof(topology));
             this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
             
             this.eosEnabled = config.EnableIdempotence;
@@ -61,8 +60,8 @@ namespace Kafka.Streams.Processors.Internals
             this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
 
             // Find non persistent store's topics
-            Dictionary<string, string> storeToChangelogTopic = topology.storeToChangelogTopic;
-            foreach (var store in topology.globalStateStores)
+            var storeToChangelogTopic = topology?.StoreToChangelogTopic ?? new Dictionary<string, string>();
+            foreach (var store in topology?.globalStateStores ?? Enumerable.Empty<IStateStore>())
             {
                 if (!store.persistent())
                 {
@@ -70,7 +69,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
             }
 
-            this.topology = topology ?? throw new ArgumentNullException(nameof(topology));
+            this.topology = topology;
             this.globalConsumer = globalConsumer;
             this.stateDirectory = stateDirectory;
             this.stateRestoreListener = stateRestoreListener;
@@ -111,8 +110,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 try
                 {
-
-                    stateDirectory.unlockGlobalState();
+                    stateDirectory.UnlockGlobalState();
                 }
                 catch (IOException e1)
                 {
@@ -122,8 +120,8 @@ namespace Kafka.Streams.Processors.Internals
                 throw new StreamsException("Failed to read checkpoints for global state globalStores", e);
             }
 
-            var stateStores = topology.globalStateStores;
-            foreach (IStateStore stateStore in stateStores)
+            var stateStores = topology?.globalStateStores;
+            foreach (IStateStore stateStore in stateStores ?? Enumerable.Empty<IStateStore>())
             {
                 globalStoreNames.Add(stateStore.name);
                 stateStore.init(globalProcessorContext, stateStore);
@@ -142,7 +140,7 @@ namespace Kafka.Streams.Processors.Internals
                 eosEnabled,
                 baseDir,
                 globalStores,
-                topology.storeToChangelogTopic,
+                topology?.StoreToChangelogTopic,
                 partitions,
                 processorContext,
                 checkpointFile,
@@ -183,7 +181,7 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             logger.LogInformation($"Restoring state for global store {store.name}");
-            List<TopicPartition> topicPartitions = topicPartitionsForStore(store);
+            List<TopicPartition> topicPartitions = TopicPartitionsForStore(store);
             Dictionary<TopicPartition, long> highWatermarks = null;
 
             int attempts = 0;
@@ -220,7 +218,7 @@ namespace Kafka.Streams.Processors.Internals
 
             try
             {
-                restoreState(
+                RestoreState(
                     stateRestoreCallback,
                     topicPartitions,
                     highWatermarks,
@@ -236,9 +234,9 @@ namespace Kafka.Streams.Processors.Internals
 
         }
 
-        private List<TopicPartition> topicPartitionsForStore(IStateStore store)
+        private List<TopicPartition> TopicPartitionsForStore(IStateStore store)
         {
-            string sourceTopic = topology.storeToChangelogTopic[store.name];
+            string sourceTopic = topology.StoreToChangelogTopic[store.name];
             var partitionInfos = new List<PartitionMetadata>();
             int attempts = 0;
             while (true)
@@ -291,7 +289,7 @@ namespace Kafka.Streams.Processors.Internals
             return topicPartitions;
         }
 
-        private void restoreState(
+        private void RestoreState(
             IStateRestoreCallback stateRestoreCallback,
             List<TopicPartition> topicPartitions,
             Dictionary<TopicPartition, long> highWatermarks,

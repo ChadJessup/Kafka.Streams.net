@@ -1,27 +1,7 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using System;
 
 namespace Kafka.Streams.Processors
 {
-
-
-
-
     /**
      * This is used to provide the optional parameters when sending output records to downstream processor
      * using {@link IProcessorContext#forward(object, object, To)}.
@@ -29,23 +9,23 @@ namespace Kafka.Streams.Processors
     public class To
     {
         protected string childName;
-        public long timestamp { get; private set; }
+        public long Timestamp { get; private set; }
 
         private To(string childName, long timestamp)
         {
             this.childName = childName;
-            this.timestamp = timestamp;
+            this.Timestamp = timestamp;
         }
 
         protected To(To to)
-            : this(to.childName, to.timestamp)
+            : this(to.childName, to.Timestamp)
         {
         }
 
-        public virtual void update(To to)
+        public virtual void Update(To to)
         {
             childName = to.childName;
-            timestamp = to.timestamp;
+            Timestamp = to.Timestamp;
         }
 
         /**
@@ -53,7 +33,7 @@ namespace Kafka.Streams.Processors
          * @param childName name of downstream processor
          * @return a new {@link To} instance configured with {@code childName}
          */
-        public static To child(string childName)
+        public static To Child(string childName)
         {
             return new To(childName, -1);
         }
@@ -62,7 +42,7 @@ namespace Kafka.Streams.Processors
          * Forward the key/value pair to all downstream processors
          * @return a new {@link To} instance configured for all downstream processor
          */
-        public static To all()
+        public static To All()
         {
             return new To(null, -1);
         }
@@ -72,9 +52,9 @@ namespace Kafka.Streams.Processors
          * @param timestamp the output record timestamp
          * @return itself (i.e., {@code this})
          */
-        public To withTimestamp(long timestamp)
+        public To WithTimestamp(long timestamp)
         {
-            this.timestamp = timestamp;
+            this.Timestamp = timestamp;
             return this;
         }
 
@@ -90,14 +70,13 @@ namespace Kafka.Streams.Processors
                 return false;
             }
             To to = (To)o;
-            return timestamp == to.timestamp &&
+            return Timestamp == to.Timestamp &&
                 childName.Equals(to.childName);
         }
 
         /**
          * Equality is implemented in support of tests, *not* for use in Hash collections, since this is mutable.
          */
-
         public override int GetHashCode()
         {
             throw new InvalidOperationException("To is unsafe for use in Hash collections");

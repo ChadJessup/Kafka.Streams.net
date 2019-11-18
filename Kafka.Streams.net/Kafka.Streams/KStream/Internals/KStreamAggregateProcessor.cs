@@ -1,68 +1,79 @@
-﻿//using Kafka.Streams.State;
-//using Microsoft.Extensions.Logging;
-//using Kafka.Streams.Processors;
-//using Kafka.Streams.Processors.Internals.Metrics;
-//using Kafka.Common.Metrics;
-//using Kafka.Streams.Processors.Interfaces;
-//using System;
+﻿using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using System;
 
-//namespace Kafka.Streams.KStream.Internals
-//{
-//    public class KStreamAggregateProcessor<K, T> : AbstractProcessor<K, T>
-//    {
-//        //private ITimestampedKeyValueStore<K, T> store;
-//        private StreamsMetricsImpl metrics;
-//        private Sensor skippedRecordsSensor;
-//        private TimestampedTupleForwarder<K, T> tupleForwarder;
+namespace Kafka.Streams.KStream.Internals
+{
+    public class KStreamAggregateProcessor<K, V, T> : AbstractProcessor<K, V>
+    {
+        private TimestampedTupleForwarder<K, T> tupleForwarder;
+        private ITimestampedKeyValueStore<K, T> store;
+        private IInitializer<T> initializer;
+        private IAggregator<K, V, T> aggregator;
+        private readonly bool sendOldValues;
+        private readonly string storeName;
 
-//        public override void init(IProcessorContext<K, T> context)
-//        {
-//            base.init(context);
-//            metrics = (StreamsMetricsImpl)context.metrics;
-//            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-//            store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
-//            tupleForwarder = new TimestampedTupleForwarder<K, T>(
-//                store,
-//                context,
-//                new TimestampedCacheFlushListener<K, T>(context),
-//                sendOldValues);
-//        }
+        public KStreamAggregateProcessor(
+            string storeName,
+            bool sendOldValues,
+            IInitializer<T> initializer,
+            IAggregator<K, V, T> aggregator)
+        {
+            this.storeName = storeName;
+            this.sendOldValues = sendOldValues;
+            this.initializer = initializer;
+            this.aggregator = aggregator;
+        }
 
+        public override void init(IProcessorContext context)
+        {
+            base.init(context);
+            store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
+            tupleForwarder = new TimestampedTupleForwarder<K, T>(
+                store,
+                context,
+                new TimestampedCacheFlushListener<K, T>(context),
+                this.sendOldValues);
+        }
 
-//        public override void process(K key, T value)
-//        {
-//            // If the key or value is null we don't need to proceed
-//            if (key == null || value == null)
-//            {
-//                LOG.LogWarning(
-//                    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
-//                    key, value, context.Topic, context.partition(), context.offset()
-//                );
-//                skippedRecordsSensor.record();
-//                return;
-//            }
+        public override void process(K key, V value)
+        {
+            // If the key or value is null we don't need to proceed
+            if (key == null || value == null)
+            {
+                //LOG.LogWarning(
+                //    "Skipping record due to null key or value. key=[{}] value=[{}] topic=[{}] partition=[{}] offset=[{}]",
+                //    key, value, context.Topic, context.partition, context.offset);
 
-//            ValueAndTimestamp<T> oldAggAndTimestamp = store[key];
-//            T oldAgg = getValueOrNull(oldAggAndTimestamp);
+                return;
+            }
 
-//            T newAgg;
-//            long newTimestamp;
+            ValueAndTimestamp<T> oldAggAndTimestamp = store.get(key);
+            T oldAgg = ValueAndTimestamp<T>.getValueOrNull(oldAggAndTimestamp);
 
-//            if (oldAgg == null)
-//            {
-//                oldAgg = initializer.apply();
-//                newTimestamp = context.timestamp();
-//            }
-//            else
-//            {
-//                oldAgg = oldAggAndTimestamp.value();
-//                newTimestamp = Math.Max(context.timestamp(), oldAggAndTimestamp.timestamp());
-//            }
+            T newAgg;
+            long newTimestamp;
 
-//            newAgg = aggregator.apply(key, value, oldAgg);
+            if (oldAgg == null)
+            {
+                oldAgg = initializer.apply();
+                newTimestamp = context.timestamp;
+            }
+            else
+            {
+                oldAgg = oldAggAndTimestamp.value;
+                newTimestamp = Math.Max(context.timestamp, oldAggAndTimestamp.timestamp);
+            }
 
-//            store.Add(key, ValueAndTimestamp.make(newAgg, newTimestamp));
-//            tupleForwarder.maybeForward(key, newAgg, sendOldValues ? oldAgg : null, newTimestamp);
-//        }
-//    }
-//}
+            newAgg = aggregator.apply(key, value, oldAgg);
+
+            store.Add(key, ValueAndTimestamp<T>.make(newAgg, newTimestamp));
+            tupleForwarder.maybeForward(key, newAgg, sendOldValues
+                ? oldAgg
+                : default,
+                newTimestamp);
+        }
+    }
+}

@@ -72,17 +72,17 @@ namespace Kafka.Streams.KStream.Internals
             {
                 // we actually do not need to generate store names at all since if it is not specified, we will not
                 // materialize the store; but we still need to burn one index BEFORE generating the processor to keep compatibility.
-                if (materializedInternal.storeName == null)
+                if (materializedInternal.StoreName == null)
                 {
                     builder.NewStoreName(KTable.FILTER_NAME);
                 }
 
                 // we can inherit parent key and value serde if user do not provide specific overrides, more specifically:
                 // we preserve the key following the order of 1) materialized, 2) parent
-                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
+                keySerde = materializedInternal.KeySerde != null ? materializedInternal.KeySerde : this.keySerde;
 
                 // we preserve the value following the order of 1) materialized, 2) parent
-                valueSerde = materializedInternal.valueSerde != null ? materializedInternal.valueSerde : this.valSerde;
+                valueSerde = materializedInternal.ValueSerde != null ? materializedInternal.ValueSerde : this.valSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
 
                 // only materialize if materialized is specified and it has queryable name
@@ -125,13 +125,11 @@ namespace Kafka.Streams.KStream.Internals
             //    builder);
         }
 
-
         public IKTable<K, V> filter(IPredicate<K, V> predicate)
         {
             predicate = predicate ?? throw new ArgumentNullException(nameof(predicate));
             return doFilter(predicate, NamedInternal.empty(), null, false);
         }
-
 
         public IKTable<K, V> filter(IPredicate<K, V> predicate, Named named)
         {
@@ -139,7 +137,6 @@ namespace Kafka.Streams.KStream.Internals
 
             return doFilter(predicate, named, null, false);
         }
-
 
         public IKTable<K, V> filter(
             IPredicate<K, V> predicate,
@@ -212,16 +209,16 @@ namespace Kafka.Streams.KStream.Internals
             {
                 // we actually do not need to generate store names at all since if it is not specified, we will not
                 // materialize the store; but we still need to burn one index BEFORE generating the processor to keep compatibility.
-                if (materializedInternal.storeName == null)
+                if (materializedInternal.StoreName == null)
                 {
                     builder.NewStoreName(KTable.MAPVALUES_NAME);
                 }
 
-                keySerde = materializedInternal.keySerde != null
-                    ? materializedInternal.keySerde
+                keySerde = materializedInternal.KeySerde != null
+                    ? materializedInternal.KeySerde
                     : this.keySerde;
 
-                valueSerde = materializedInternal.valueSerde;
+                valueSerde = materializedInternal.ValueSerde;
                 queryableStoreName = materializedInternal.queryableStoreName();
 
                 // only materialize if materialized is specified and it has queryable name
@@ -491,7 +488,6 @@ namespace Kafka.Streams.KStream.Internals
             return toStream(named).selectKey(mapper);
         }
 
-
         public IKTable<K, V> suppress(ISuppressed<K> suppressed)
         {
             string name;
@@ -742,9 +738,9 @@ namespace Kafka.Streams.KStream.Internals
 
             if (materializedInternal != null)
             {
-                keySerde = materializedInternal.keySerde != null ? materializedInternal.keySerde : this.keySerde;
-                valueSerde = materializedInternal.valueSerde;
-                queryableStoreName = materializedInternal.storeName;
+                keySerde = materializedInternal.KeySerde != null ? materializedInternal.KeySerde : this.keySerde;
+                valueSerde = materializedInternal.ValueSerde;
+                queryableStoreName = materializedInternal.StoreName;
                 //storeBuilder = new TimestampedKeyValueStoreMaterializer<>(materializedInternal).materialize();
             }
             else

@@ -18,7 +18,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly StreamTask task;
         private readonly IRecordCollector collector;
         private readonly ToInternal toInternal = new ToInternal();
-        private static readonly To SEND_TO_ALL = To.all();
+        private static readonly To SEND_TO_ALL = To.All();
 
         public ProcessorContextImpl(
             TaskId id,
@@ -130,11 +130,11 @@ namespace Kafka.Streams.Processors.Internals
 
             try
             {
-                toInternal.update(to);
+                toInternal.Update(to);
                 if (toInternal.hasTimestamp())
                 {
                     recordContext = new ProcessorRecordContext(
-                        toInternal.timestamp,
+                        toInternal.Timestamp,
                         recordContext.offset,
                         recordContext.partition,
                         recordContext.Topic,
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
                 else
                 {
-                    ProcessorNode<K, V> child = GetCurrentNode<K, V>().getChild(sendTo);
+                    ProcessorNode<K, V> child = GetCurrentNode<K, V>().GetChild(sendTo);
                     if (child == null)
                     {
                         throw new StreamsException("Unknown downstream node: " + sendTo
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public override void commit()
         {
-            task.requestCommit();
+            task.RequestCommit();
         }
 
         public ICancellable schedule(

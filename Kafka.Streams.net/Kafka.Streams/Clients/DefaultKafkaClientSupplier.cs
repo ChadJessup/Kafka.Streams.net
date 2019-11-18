@@ -1,12 +1,14 @@
 using Confluent.Kafka;
+using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Kafka.Streams.Clients
 {
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
+        private readonly GlobalConsumer globalConsumer;
+
         public IAdminClient GetAdminClient(StreamsConfig config)
             => this.GetAdminClient(config.GetAdminConfigs(config.ClientId));
 
@@ -45,12 +47,7 @@ namespace Kafka.Streams.Clients
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getGlobalConsumer(ConsumerConfig config)
-        {
-            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
-
-            return new ConsumerBuilder<byte[], byte[]>(config)
-                .Build();
-        }
+        public GlobalConsumer GetGlobalConsumer()
+            => this.globalConsumer;
     }
 }

@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
@@ -46,7 +30,6 @@ namespace Kafka.Streams.KStream
      *
      * @see org.apache.kafka.streams.state.Stores
      */
-
     public class Materialized<K, V>
     {
         public Materialized()
@@ -55,14 +38,14 @@ namespace Kafka.Streams.KStream
 
         public Materialized(string storeName)
             : this()
-            => this.storeName = storeName;
+            => this.StoreName = storeName;
 
-        public virtual string storeName { get; protected set; }
-        public ISerde<V> valueSerde;
-        public ISerde<K> keySerde;
-        public bool loggingEnabled { get; protected set; } = true;
+        public virtual string StoreName { get; protected set; }
+        public ISerde<V> ValueSerde { get; protected set; }
+        public ISerde<K> KeySerde { get; protected set; }
+        public bool LoggingEnabled { get; protected set; } = true;
         public bool cachingEnabled { get; protected set; } = true;
-        protected Dictionary<string, string> topicConfig = new Dictionary<string, string>();
+        protected Dictionary<string, string> TopicConfig { get; set; } = new Dictionary<string, string>();
         public TimeSpan retention { get; protected set; }
 
         /**
@@ -73,9 +56,9 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public virtual Materialized<K, V> withValueSerde(ISerde<V> valueSerde)
+        public virtual Materialized<K, V> WithValueSerde(ISerde<V> valueSerde)
         {
-            this.valueSerde = valueSerde;
+            this.ValueSerde = valueSerde;
 
             return this;
         }
@@ -86,9 +69,9 @@ namespace Kafka.Streams.KStream
          *                  serde from configs will be used
          * @return itself
          */
-        public virtual Materialized<K, V> withKeySerde(ISerde<K> keySerde)
+        public virtual Materialized<K, V> WithKeySerde(ISerde<K> keySerde)
         {
-            this.keySerde = keySerde;
+            this.KeySerde = keySerde;
 
             return this;
         }
@@ -106,23 +89,23 @@ namespace Kafka.Streams.KStream
          * @param           store type
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
-        public Materialized<K, V> with(
+        public Materialized<K, V> With(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
             => new Materialized<K, V>()
-                .withKeySerde(keySerde)
-                .withValueSerde(valueSerde);
+                .WithKeySerde(keySerde)
+                .WithValueSerde(valueSerde);
     }
 
     public class Materialized<K, V, S> : Materialized<K, V>
             where S : IStateStore
     {
-        public IStoreSupplier<S> storeSupplier { get; set; }
+        public IStoreSupplier<S> StoreSupplier { get; set; }
 
         private Materialized(IStoreSupplier<S> storeSupplier)
             : base()
         {
-            this.storeSupplier = storeSupplier;
+            this.StoreSupplier = storeSupplier;
         }
 
         private Materialized(string storeName)
@@ -136,13 +119,13 @@ namespace Kafka.Streams.KStream
          */
         protected Materialized(Materialized<K, V, S> materialized)
         {
-            this.storeSupplier = materialized.storeSupplier;
-            this.storeName = materialized.storeName;
-            this.keySerde = materialized.keySerde;
-            this.valueSerde = materialized.valueSerde;
-            this.loggingEnabled = materialized.loggingEnabled;
+            this.StoreSupplier = materialized.StoreSupplier;
+            this.StoreName = materialized.StoreName;
+            this.KeySerde = materialized.KeySerde;
+            this.ValueSerde = materialized.ValueSerde;
+            this.LoggingEnabled = materialized.LoggingEnabled;
             this.cachingEnabled = materialized.cachingEnabled;
-            this.topicConfig = materialized.topicConfig;
+            this.TopicConfig = materialized.TopicConfig;
             this.retention = materialized.retention;
         }
 
@@ -176,12 +159,12 @@ namespace Kafka.Streams.KStream
          * @param           store type
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
-        public static new Materialized<K, V, S> with(
+        public static new Materialized<K, V, S> With(
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
             => new Materialized<K, V, S>("")
-                .withKeySerde(keySerde)
-                .withValueSerde(valueSerde);
+                .WithKeySerde(keySerde)
+                .WithValueSerde(valueSerde);
 
         /**
          * Set the valueSerde the materialized {@link IStateStore} will use.
@@ -191,9 +174,9 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public new Materialized<K, V, S> withValueSerde(ISerde<V> valueSerde)
+        public new Materialized<K, V, S> WithValueSerde(ISerde<V> valueSerde)
         {
-            this.valueSerde = valueSerde;
+            this.ValueSerde = valueSerde;
 
             return this;
         }
@@ -204,9 +187,9 @@ namespace Kafka.Streams.KStream
          *                  serde from configs will be used
          * @return itself
          */
-        public new Materialized<K, V, S> withKeySerde(ISerde<K> keySerde)
+        public new Materialized<K, V, S> WithKeySerde(ISerde<K> keySerde)
         {
-            this.keySerde = keySerde;
+            this.KeySerde = keySerde;
 
             return this;
         }
@@ -273,10 +256,10 @@ namespace Kafka.Streams.KStream
          * @param config    any configs that should be applied to the changelog
          * @return itself
          */
-        public Materialized<K, V, S> withLoggingEnabled(Dictionary<string, string> config)
+        public Materialized<K, V, S> WithLoggingEnabled(Dictionary<string, string> config)
         {
-            loggingEnabled = true;
-            this.topicConfig = config;
+            LoggingEnabled = true;
+            this.TopicConfig = config;
 
             return this;
         }
@@ -285,10 +268,10 @@ namespace Kafka.Streams.KStream
          * Disable change logging for the materialized {@link IStateStore}.
          * @return itself
          */
-        public Materialized<K, V, S> withLoggingDisabled()
+        public Materialized<K, V, S> WithLoggingDisabled()
         {
-            loggingEnabled = false;
-            this.topicConfig.Clear();
+            LoggingEnabled = false;
+            this.TopicConfig.Clear();
 
             return this;
         }
@@ -297,7 +280,7 @@ namespace Kafka.Streams.KStream
          * Enable caching for the materialized {@link IStateStore}.
          * @return itself
          */
-        public Materialized<K, V, S> withCachingEnabled()
+        public Materialized<K, V, S> WithCachingEnabled()
         {
             cachingEnabled = true;
 
@@ -308,7 +291,7 @@ namespace Kafka.Streams.KStream
          * Disable caching for the materialized {@link IStateStore}.
          * @return itself
          */
-        public Materialized<K, V, S> withCachingDisabled()
+        public Materialized<K, V, S> WithCachingDisabled()
         {
             cachingEnabled = false;
 
@@ -328,7 +311,7 @@ namespace Kafka.Streams.KStream
          * @return itself
          * @throws ArgumentException if retention is negative or can't be represented as {@code long milliseconds}
          */
-        public Materialized<K, V, S> withRetention(TimeSpan retention)
+        public Materialized<K, V, S> WithRetention(TimeSpan retention)
         {
             string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retention, "retention");
             var retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);

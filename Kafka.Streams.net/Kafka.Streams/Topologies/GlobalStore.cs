@@ -1,7 +1,4 @@
-﻿using Kafka.Streams.Interfaces;
-using Kafka.Streams.Nodes;
-using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Topologies;
+﻿using Kafka.Streams.Processors.Internals;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Topologies
@@ -29,9 +26,9 @@ namespace Kafka.Streams.Topologies
 
         public override string ToString()
         {
-            return "Sub-topology: " + id + " for global store (will not generate tasks)\n"
-                    + "    " + source.ToString() + "\n"
-                    + "    " + processor.ToString() + "\n";
+            return $"Sub-topology: {id} for global store (will not generate tasks)\n"
+                    + $"    {source.ToString()}\n"
+                    + $"    {processor.ToString()}\n";
         }
 
         public override bool Equals(object o)
@@ -40,12 +37,14 @@ namespace Kafka.Streams.Topologies
             {
                 return true;
             }
+
             if (o == null || GetType() != o.GetType())
             {
                 return false;
             }
 
             GlobalStore that = (GlobalStore)o;
+
             return source.Equals(that.source)
                 && processor.Equals(that.processor);
         }

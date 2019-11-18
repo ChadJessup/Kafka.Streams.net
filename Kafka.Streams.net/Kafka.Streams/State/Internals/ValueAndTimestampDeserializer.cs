@@ -38,7 +38,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public void Configure(
-            Dictionary<string, string> configs,
+            IDictionary<string, string> configs,
             bool isKey)
         {
             // valueDeserializer.Configure(configs, isKey);

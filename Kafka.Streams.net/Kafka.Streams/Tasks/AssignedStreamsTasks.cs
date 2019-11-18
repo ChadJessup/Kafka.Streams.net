@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tasks
             return exception;
         }
 
-        public void updateRestored(List<TopicPartition> restored)
+        public void UpdateRestored(List<TopicPartition> restored)
         {
             if (!restored.Any())
             {
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Tasks
                 StreamTask task = entry.Value;
                 if (restoredPartitions.All(p => task.changelogPartitions.Contains(p)))
                 {
-                    transitionToRunning(task);
+                    TransitionToRunning(task);
                     restoring.Remove(it.Current.Key);
 
                     logger.LogTrace("Stream task {} completed restoration as all its changelog partitions {} have been applied to restore state",
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (InvalidOperationException e)
                 {
-                    logger.LogInformation("Failed to commit {} since it got migrated to another thread already. " +
+                    logger.LogInformation(e, "Failed to commit {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
                     RuntimeException fatalException = closeZombieTask(task);
                     if (fatalException != null)
@@ -234,7 +234,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation("Failed to process stream task {} since it got migrated to another thread already. " +
+                    logger.LogInformation(e, "Failed to process stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
                     RuntimeException fatalException = closeZombieTask(task);
                     if (fatalException != null)
@@ -281,7 +281,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation("Failed to punctuate stream task {} since it got migrated to another thread already. " +
+                    logger.LogInformation(e, "Failed to punctuate stream task {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", task.id);
 
                     RuntimeException fatalException = closeZombieTask(task);
@@ -322,7 +322,7 @@ namespace Kafka.Streams.Tasks
 
         // for testing only
 
-        List<StreamTask> restoringTasks()
+        List<StreamTask> RestoringTasks()
         {
             return restoring.Values.ToList();
         }

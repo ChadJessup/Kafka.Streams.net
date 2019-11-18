@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
             return Stores.windowStoreBuilder(
                 Stores.persistentWindowStore(
                     joinName + "-store",
-                    windows.size() + windows.gracePeriodMs(),
+                    windows.size() + windows.gracePeriod(),
                     windows.size(),
                     true),
                 keySerde,
@@ -1116,7 +1116,7 @@ namespace Kafka.Streams.KStream.Internals
             NamedInternal renamed = new NamedInternal(joinedInternal.name);
 
             string name = renamed.OrElseGenerateWithPrefix(builder, leftJoin ? KStream.LEFTJOIN_NAME : KStream.JOIN_NAME);
-            // IProcessorSupplier<K, V> IProcessorSupplier = new KStreamKTableJoin<K, VR, V, VO>(
+            // IProcessorSupplier IProcessorSupplier = new KStreamKTableJoin<K, VR, V, VO>(
             //    ((KTable<K, V, VO>)other).valueGetterSupplier(),
             //    joiner,
             //    leftJoin);

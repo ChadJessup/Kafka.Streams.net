@@ -29,8 +29,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
         }
 
         public KafkaStreamsThreadStates CurrentState { get; private set; } = KafkaStreamsThreadStates.UNKNOWN;
-        public IStateListener StateListener { get; }
-        public IThread<KafkaStreamsThreadStates> Thread { get; }
+        public IStateListener StateListener { get; private set; }
+        public IThread<KafkaStreamsThreadStates> Thread { get; private set; }
 
         public bool IsRunning()
         {
@@ -106,5 +106,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
             this.validTransitions = validTransitions
                 .ToDictionary(k => k.StartingState, v => v);
         }
+
+        public void SetStateListener(IStateListener stateListener)
+            => this.StateListener = stateListener;
+
+        public void SetThread(IThread<KafkaStreamsThreadStates> thread)
+            => this.Thread = thread;
     }
 }

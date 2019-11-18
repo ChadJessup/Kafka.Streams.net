@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream.Internals
             K key = windowedKey.key;
             var window = windowedKey.window;
 
-            return windowStore.fetch(key, window.start());
+            return windowStore.fetch(key, window.Start());
         }
 
         public void close() { }

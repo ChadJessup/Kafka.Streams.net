@@ -34,8 +34,6 @@ namespace Kafka.Streams.KStream.Internals
         public override void init(IProcessorContext context)
         {
             base.init(context);
-            //metrics = (StreamsMetricsImpl)context.metrics;
-            //skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
 
             valueGetter.init(context, this.storeName);
         }

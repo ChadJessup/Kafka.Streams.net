@@ -63,12 +63,12 @@ namespace Kafka.Streams.Tasks
                 new BasicProducerSupplier(CreateProducer(taskId)));
         }
 
-        private IProducer<byte[], byte[]> CreateProducer(TaskId id)
+        public IProducer<byte[], byte[]> CreateProducer(TaskId id)
         {
             // eos
             if (threadProducer == null)
             {
-                var producerConfigs = config.getProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
+                var producerConfigs = config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
 
                 logger.LogInformation($"Creating producer client for task {id}");
                 producerConfigs.Set(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{applicationId}-{id}");

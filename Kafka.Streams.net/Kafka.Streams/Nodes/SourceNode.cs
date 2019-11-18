@@ -56,9 +56,9 @@ namespace Kafka.Streams.Nodes
             return valDeserializer.Deserialize(data, data == null, new SerializationContext(MessageComponentType.Value, topic));
         }
 
-        public override void init(IInternalProcessorContext context)
+        public override void Init(IInternalProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             this.context = context;
 
             // if deserializers are null, get the default ones from the context

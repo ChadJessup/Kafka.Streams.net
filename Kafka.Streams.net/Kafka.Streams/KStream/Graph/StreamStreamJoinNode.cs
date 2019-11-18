@@ -1,6 +1,7 @@
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Topologies;
+using System;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -62,15 +63,17 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
+            topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
+
             string thisProcessorName = thisProcessorParameters().processorName;
             string otherProcessorName = otherProcessorParameters().processorName;
             string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.processorName;
             string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.processorName;
 
-            topologyBuilder.addProcessor(thisProcessorName, thisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
-            topologyBuilder.addProcessor(otherProcessorName, otherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor(thisProcessorName, thisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
+            topologyBuilder.AddProcessor(otherProcessorName, otherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
 
-            topologyBuilder.addProcessor(
+            topologyBuilder.AddProcessor(
                 mergeProcessorParameters().processorName,
                 mergeProcessorParameters().ProcessorSupplier,
                 thisProcessorName, otherProcessorName);

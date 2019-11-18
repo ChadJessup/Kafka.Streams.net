@@ -63,7 +63,7 @@ namespace Kafka.Streams.Tasks
                     }
                     else
                     {
-                        transitionToRunning(entry.Value);
+                        TransitionToRunning(entry.Value);
                     }
 
                     created.Remove(it.Current.Key);
@@ -81,11 +81,11 @@ namespace Kafka.Streams.Tasks
             return !created.Any() || !suspended.Any();
         }
 
-        public RuntimeException suspend()
+        public RuntimeException Suspend()
         {
             RuntimeException firstException = new RuntimeException(null);
-            logger.LogTrace("Suspending running {} {}", taskTypeName, runningTaskIds());
-            firstException.compareAndSet(null, suspendTasks(running.Values.ToList()));
+            logger.LogTrace("Suspending running {} {}", taskTypeName, RunningTaskIds());
+            firstException.compareAndSet(null, SuspendTasks(running.Values.ToList()));
             logger.LogTrace("Close created {} {}", taskTypeName, created.Keys);
             firstException.compareAndSet(null, closeNonRunningTasks(created.Values.ToList()));
             previousActiveTasks.Clear();
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tasks
             return exception;
         }
 
-        private RuntimeException suspendTasks(List<T> tasks)
+        private RuntimeException SuspendTasks(List<T> tasks)
         {
             RuntimeException firstException = new RuntimeException(null);
             for (IEnumerator<T> it = tasks.GetEnumerator(); it.MoveNext();)
@@ -193,13 +193,13 @@ namespace Kafka.Streams.Tasks
                     try
                     {
 
-                        transitionToRunning(task);
+                        TransitionToRunning(task);
                     }
                     catch (TaskMigratedException e)
                     {
                         // we need to catch migration exception internally since this function
                         // is triggered in the rebalance callback
-                        logger.LogInformation("Failed to resume {} {} since it got migrated to another thread already. " +
+                        logger.LogInformation(e, "Failed to resume {} {} since it got migrated to another thread already. " +
                                 "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
                         RuntimeException fatalException = closeZombieTask(task);
                         running.Remove(task.id, out var _);
@@ -225,7 +225,7 @@ namespace Kafka.Streams.Tasks
         /**
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void transitionToRunning(T task)
+        public void TransitionToRunning(T task)
         {
             logger.LogDebug("Transitioning {} {} to running", taskTypeName, task.id);
             running.TryAdd(task.id, task);
@@ -241,17 +241,17 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        public T runningTaskFor(TopicPartition partition)
+        public T RunningTaskFor(TopicPartition partition)
         {
             return runningByPartition[partition];
         }
 
-        public HashSet<TaskId> runningTaskIds()
+        public HashSet<TaskId> RunningTaskIds()
         {
             return new HashSet<TaskId>(running.Keys);
         }
 
-        public ConcurrentDictionary<TaskId, T> runningTaskMap()
+        public ConcurrentDictionary<TaskId, T> RunningTaskMap()
         {
             return running;
         }
@@ -341,8 +341,9 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation("Failed to commit {} {} since it got migrated to another thread already. " +
+                    logger.LogInformation(e, "Failed to commit {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
+
                     RuntimeException fatalException = closeZombieTask(task);
                     if (fatalException != null)
                     {
@@ -412,7 +413,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation("Failed to close {} {} since it got migrated to another thread already. " +
+                    logger.LogInformation(e, "Failed to close {} {} since it got migrated to another thread already. " +
                             "Closing it as zombie and move on.", taskTypeName, task.id);
                     firstException.compareAndSet(null, closeZombieTask(task));
                 }

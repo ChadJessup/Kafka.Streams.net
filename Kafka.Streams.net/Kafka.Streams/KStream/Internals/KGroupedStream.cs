@@ -36,7 +36,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKTable<K, V> reduce(IReducer<V> reducer)
         {
-            return reduce(reducer, Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(keySerde, valSerde));
+            return reduce(reducer, Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.With(keySerde, valSerde));
         }
 
         public IKTable<K, V> reduce(
@@ -49,14 +49,14 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, builder, REDUCE_NAME);
 
-            if (materializedInternal.keySerde == null)
+            if (materializedInternal.KeySerde == null)
             {
-                materializedInternal.withKeySerde(keySerde);
+                materializedInternal.WithKeySerde(keySerde);
             }
 
-            if (materializedInternal.valueSerde == null)
+            if (materializedInternal.ValueSerde == null)
             {
-                materializedInternal.withValueSerde(valSerde);
+                materializedInternal.WithValueSerde(valSerde);
             }
 
             return null;
@@ -79,9 +79,9 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde == null)
+            if (materializedInternal.KeySerde == null)
             {
-                materializedInternal.withKeySerde(keySerde);
+                materializedInternal.WithKeySerde(keySerde);
             }
 
             return null;
@@ -98,11 +98,11 @@ namespace Kafka.Streams.KStream.Internals
             return aggregate(
                 initializer,
                 aggregator,
-                Materialized<K, VR, IKeyValueStore<Bytes, byte[]>>.with(keySerde, null));
+                Materialized<K, VR, IKeyValueStore<Bytes, byte[]>>.With(keySerde, null));
         }
 
         public IKTable<K, long> count()
-            => doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>>.with(keySerde, Serdes.Long()));
+            => doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>>.With(keySerde, Serdes.Long()));
 
 
         public IKTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
@@ -111,7 +111,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // TODO: Remove this when we do a topology-incompatible release
             // we used to burn a topology name here, so we have to keep doing it for compatibility
-            if (new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized).storeName == null)
+            if (new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized).StoreName == null)
             {
                 builder.NewStoreName(AGGREGATE_NAME);
             }
@@ -124,18 +124,18 @@ namespace Kafka.Streams.KStream.Internals
             MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
                new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
-            if (materializedInternal.keySerde == null)
+            if (materializedInternal.KeySerde == null)
             {
-                materializedInternal.withKeySerde(keySerde);
+                materializedInternal.WithKeySerde(keySerde);
             }
 
-            if (materializedInternal.valueSerde == null)
+            if (materializedInternal.ValueSerde == null)
             {
-                materializedInternal.withValueSerde(Serdes.Long());
+                materializedInternal.WithValueSerde(Serdes.Long());
             }
 
             var kstreamAggregate = new KStreamAggregate<K, V, long>(
-                    materializedInternal.storeName,
+                    materializedInternal.StoreName,
                     aggregateBuilder.countInitializer,
                     aggregateBuilder.countAggregator);
 
@@ -185,8 +185,8 @@ namespace Kafka.Streams.KStream.Internals
                 materialized,
                 aggregateSupplier,
                 materializedInternal.queryableStoreName(),
-                materializedInternal.keySerde,
-                materializedInternal.valueSerde);
+                materializedInternal.KeySerde,
+                materializedInternal.ValueSerde);
         }
     }
 }

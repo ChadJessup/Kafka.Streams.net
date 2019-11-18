@@ -38,7 +38,7 @@ namespace Kafka.Streams.Tasks
         {
             ProcessorTopology topology = builder.build(taskId.topicGroupId);
 
-            if (topology.stateStores.Any() && topology.storeToChangelogTopic.Any())
+            if (topology.StateStores.Any() && topology.StoreToChangelogTopic.Any())
             {
                 return new StandbyTask(
                     loggerFactory,

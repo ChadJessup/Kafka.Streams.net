@@ -445,7 +445,7 @@ namespace Kafka.Streams.Topologies
             string topic,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink<K, V>(name, topic, null, null, null, parentNames);
+            internalTopologyBuilder.AddSink<K, V>(name, topic, null, null, null, parentNames);
             return this;
         }
 
@@ -475,13 +475,13 @@ namespace Kafka.Streams.Topologies
          * @see #addSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addSink<K, V>(
+        public Topology AddSink<K, V>(
             string name,
             string topic,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topic, null, null, partitioner, parentNames);
+            internalTopologyBuilder.AddSink<K, V>(name, topic, null, null, partitioner, parentNames);
             return this;
         }
 
@@ -513,7 +513,7 @@ namespace Kafka.Streams.Topologies
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topic, keySerializer, valueSerializer, null, parentNames);
+            internalTopologyBuilder.AddSink(name, topic, keySerializer, valueSerializer, null, parentNames);
             return this;
         }
 
@@ -539,7 +539,7 @@ namespace Kafka.Streams.Topologies
          * @see #addSink(string, string, ISerializer, ISerializer, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addSink<K, V>(
+        public Topology AddSink<K, V>(
             string name,
             string topic,
             ISerializer<K> keySerializer,
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Topologies
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topic, keySerializer, valueSerializer, partitioner, parentNames);
+            internalTopologyBuilder.AddSink<K, V>(name, topic, keySerializer, valueSerializer, partitioner, parentNames);
             return this;
         }
 
@@ -574,7 +574,7 @@ namespace Kafka.Streams.Topologies
             ITopicNameExtractor topicExtractor,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink<K, V>(name, topicExtractor, null, null, null, parentNames);
+            internalTopologyBuilder.AddSink<K, V>(name, topicExtractor, null, null, null, parentNames);
             return this;
         }
 
@@ -605,13 +605,13 @@ namespace Kafka.Streams.Topologies
          * @see #addSink(string, string, ISerializer, ISerializer, StreamPartitioner, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addSink<K, V>(
+        public Topology AddSink<K, V>(
             string name,
             ITopicNameExtractor topicExtractor,
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topicExtractor, null, null, partitioner, parentNames);
+            internalTopologyBuilder.AddSink<K, V>(name, topicExtractor, null, null, partitioner, parentNames);
             return this;
         }
 
@@ -644,7 +644,7 @@ namespace Kafka.Streams.Topologies
             ISerializer<V> valueSerializer,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topicExtractor, keySerializer, valueSerializer, null, parentNames);
+            internalTopologyBuilder.AddSink(name, topicExtractor, keySerializer, valueSerializer, null, parentNames);
             return this;
         }
 
@@ -671,7 +671,7 @@ namespace Kafka.Streams.Topologies
          * @see #addSink(string, string, ISerializer, ISerializer, string[])
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addSink<K, V>(
+        public Topology AddSink<K, V>(
             string name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
@@ -679,7 +679,7 @@ namespace Kafka.Streams.Topologies
             IStreamPartitioner<K, V> partitioner,
             string[] parentNames)
         {
-            internalTopologyBuilder.addSink(name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);
+            internalTopologyBuilder.AddSink(name, topicExtractor, keySerializer, valueSerializer, partitioner, parentNames);
             return this;
         }
 
@@ -696,12 +696,13 @@ namespace Kafka.Streams.Topologies
          * @throws TopologyException if parent processor is not added yet, or if this processor's name is equal to the parent's name
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public Topology addProcessor<K, V>(
+        public Topology AddProcessor<K, V>(
             string name,
             IProcessorSupplier<K, V> supplier,
             string[] parentNames)
         {
-            internalTopologyBuilder.addProcessor(name, supplier, parentNames);
+            internalTopologyBuilder.AddProcessor<K, V>(name, supplier, parentNames);
+
             return this;
         }
 

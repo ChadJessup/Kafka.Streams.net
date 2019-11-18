@@ -39,9 +39,9 @@ namespace Kafka.Streams.Nodes
             throw new InvalidOperationException("sink node does not allow.AddChild");
         }
 
-        public override void init(IInternalProcessorContext context)
+        public override void Init(IInternalProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             this.context = context;
 
             // if serializers are null, get the default ones from the context

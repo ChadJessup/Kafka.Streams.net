@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.Clients.Consumers
@@ -7,9 +8,9 @@ namespace Kafka.Streams.Clients.Consumers
     {
         public GlobalConsumer(
             ILogger<GlobalConsumer> logger,
-            ConsumerConfig configs,
+            StreamsConfig config,
             ConsumerBuilder<byte[], byte[]>? builder = null)
-            : base(logger, configs, builder)
+            : base(logger, config.GetGlobalConsumerConfigs(config.ClientId), builder)
         {
         }
     }

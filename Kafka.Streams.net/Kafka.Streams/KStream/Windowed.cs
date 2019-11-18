@@ -1,4 +1,7 @@
 ﻿
+using System;
+using System.Diagnostics.CodeAnalysis;
+
 namespace Kafka.Streams.KStream
 {
     public class Windowed<K>
@@ -8,17 +11,12 @@ namespace Kafka.Streams.KStream
 
         public Windowed(K key, Window window)
         {
-            this.key = key;
-            this.window = window;
+            this.key = key ?? throw new ArgumentNullException(nameof(key));
+            this.window = window ?? throw new ArgumentNullException(nameof(key));
         }
-
-        public static implicit operator K (Windowed<K> windowed)
-            => windowed.key;
 
         public override string ToString()
-        {
-            return "[" + key + "@" + window.start() + "/" + window.end() + "]";
-        }
+            => $"[{key}@{window.Start()}/{window.End()}]";
 
         public override bool Equals(object obj)
         {
@@ -40,6 +38,11 @@ namespace Kafka.Streams.KStream
         {
             long n = ((long)window.GetHashCode() << 32) | key.GetHashCode();
             return (int)(n % 0xFFFFFFFFL);
+        }
+
+        public K ToK()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

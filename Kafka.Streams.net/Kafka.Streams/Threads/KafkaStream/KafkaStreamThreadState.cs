@@ -33,9 +33,9 @@ namespace Kafka.Streams.Threads.KafkaStream
         }
 
         public KafkaStreamThreadStates CurrentState { get; protected set; }
-        public IStateListener StateListener { get; }
+        public IStateListener StateListener { get; protected set; }
         public TaskManager TaskManager { get; }
-        public IThread<KafkaStreamThreadStates> Thread { get; }
+        public IThread<KafkaStreamThreadStates> Thread { get; protected set; }
 
         public bool isValidTransition(KafkaStreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
@@ -97,7 +97,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 {
                     if (this.Thread is KafkaStreamThread st)
                     {
-                        st.UpdateThreadMetadata(TaskManager.activeTasks(), TaskManager.standbyTasks());
+                        st.UpdateThreadMetadata(TaskManager.activeTasks(), TaskManager.StandbyTasks());
                     }
                 }
                 else
@@ -109,9 +109,9 @@ namespace Kafka.Streams.Threads.KafkaStream
                 }
             }
 
-            if (StateListener != null)
+            if (this.StateListener != null)
             {
-                StateListener.onChange(this.Thread, this.CurrentState, oldState);
+                this.StateListener.onChange(this.Thread, this.CurrentState, oldState);
             }
 
             return true;
@@ -127,5 +127,11 @@ namespace Kafka.Streams.Threads.KafkaStream
         {
             throw new NotImplementedException();
         }
+
+        public void SetStateListener(IStateListener stateListener)
+            => this.StateListener = stateListener;
+
+        public void SetThread(IThread<KafkaStreamThreadStates> thread)
+            => this.Thread = thread;
     }
 }

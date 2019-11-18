@@ -26,7 +26,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKeyValueProcessor<K, V> get()
         {
-            return null; // new KStreamAggregateProcessor();
+            return new KStreamAggregateProcessor<K, V, T>(
+                this.storeName,
+                this.sendOldValues,
+                this.initializer,
+                this.aggregator);
         }
 
         public void enableSendingOldValues()

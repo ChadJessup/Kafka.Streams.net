@@ -52,21 +52,19 @@ namespace Kafka.Streams.Threads.GlobalStream
             this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
             this.loggerFactory = loggerFactory ?? throw new ArgumentNullException(nameof(loggerFactory));
             this.stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
-            this.topology = topology?.internalTopologyBuilder.buildGlobalStateTopology() ?? throw new ArgumentNullException(nameof(topology));
+
+            var topologyBuilder = topology?.internalTopologyBuilder?.SetApplicationId(config.ApplicationId) ?? throw new ArgumentNullException(nameof(topology));
+            this.topology = topologyBuilder.buildGlobalStateTopology();
 
             this.ThreadClientId = $"{config.ClientId}-GlobalStreamThread";
             this.logPrefix = this.logger.BeginScope($"global-stream-thread [{this.ThreadClientId}] ");
+            this.globalConsumer = this.clientSupplier.GetGlobalConsumer();
 
             this.Thread = new Thread(Run);
 
             //this.time = time;
-            //this.globalConsumer = globalConsumer;
             //this.cache = new ThreadCache(logContext, cacheSizeBytes, streamsMetrics);
-            //this.stateRestoreListener = stateRestoreListener;
         }
-
-        public void SetStateListener(IStateListener stateListener)
-            => this.StateListener = stateListener;
 
         public void Run()
         {
@@ -200,14 +198,14 @@ namespace Kafka.Streams.Threads.GlobalStream
             }
         }
 
-        public void shutdown()
+        public void Shutdown()
         {
             // one could call shutdown() multiple times, so ignore subsequent calls
             // if already shutting down or dead
             this.State.SetState(GlobalStreamThreadStates.PENDING_SHUTDOWN);
         }
 
-        public void setStateListener(IStateListener listener)
+        public void SetStateListener(IStateListener listener)
             => this.StateListener = listener;
 
         public bool IsRunning()

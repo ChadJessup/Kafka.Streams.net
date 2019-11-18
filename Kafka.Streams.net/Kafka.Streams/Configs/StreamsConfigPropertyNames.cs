@@ -316,10 +316,10 @@
         public static readonly string SEND_BUFFER_CONFIG = "send.buffer.bytes";
 
         /// <summary>
+        /// The amount of time in milliseconds to wait before deleting state when a partition has migrated. Only state directories that have not been modified for at least <code>state.cleanup.delay.ms</code> will be removed
         /// {@code state.cleanup.delay}
         /// </summary>
-        public static readonly string STATE_CLEANUP_DELAY_MS_CONFIG = "state.cleanup.delay.ms";
-        // private static string STATE_CLEANUP_DELAY_MS_DOC = "The amount of time in milliseconds to wait before deleting state when a partition has migrated. Only state directories that have not been modified for at least <code>state.cleanup.delay.ms</code> will be removed";
+        public static readonly string StateCleanupDelayMs = "state.cleanup.delay.ms";
 
         /// <summary>
         /// {@code state.dir}

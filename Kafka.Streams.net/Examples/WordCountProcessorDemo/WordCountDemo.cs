@@ -49,7 +49,7 @@ namespace WordCountProcessorDemo
             StreamsBuilder builder = new StreamsBuilder(services);
             
             IKStream<string, string> textLines = builder
-                .stream<string, string>("TextLinesTopic");
+                .Stream<string, string>("TextLinesTopic");
 
             IKStream<string, string> flatMappedValues = textLines
                 .flatMapValues<string>(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
@@ -86,7 +86,7 @@ namespace WordCountProcessorDemo
                 streams.Start();
                 latch.WaitOne();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return 1;
             }

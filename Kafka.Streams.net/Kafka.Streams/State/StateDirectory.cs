@@ -161,7 +161,7 @@ namespace Kafka.Streams.State
             {
                 lockFile = new FileInfo(Path.Combine(directoryForTask(taskId).FullName, LOCK_FILE_NAME));
             }
-            catch (ProcessorStateException e)
+            catch (ProcessorStateException)
             {
                 // directoryForTask could be throwing an exception if another thread
                 // has concurrently deleted the directory
@@ -175,7 +175,7 @@ namespace Kafka.Streams.State
 
                 channel = getOrCreateFileChannel(taskId, lockFile.FullName);
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 // FileChannel.open(..) could throw FileNotFoundException when there is another thread
                 // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
@@ -183,7 +183,7 @@ namespace Kafka.Streams.State
                 return false;
             }
 
-            FileLock @lock = tryLock(channel);
+            FileLock @lock = TryLock(channel);
             if (@lock != null)
             {
                 locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, @lock));
@@ -215,7 +215,7 @@ namespace Kafka.Streams.State
             {
                 channel = null;// FileChannel.open(lockFile.FullName, StandardOpenOption.CREATE, StandardOpenOption.WRITE);
             }
-            catch (FileNotFoundException e)
+            catch (FileNotFoundException)
             {
                 // FileChannel.open(..) could throw FileNotFoundException when there is another thread
                 // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
@@ -223,7 +223,7 @@ namespace Kafka.Streams.State
                 return false;
             }
 
-            FileLock fileLock = tryLock(channel);
+            FileLock fileLock = TryLock(channel);
             if (fileLock == null)
             {
                 channel.close();
@@ -239,7 +239,7 @@ namespace Kafka.Streams.State
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void unlockGlobalState()
+        public void UnlockGlobalState()
         {
             if (globalStateLock == null)
             {
@@ -258,7 +258,7 @@ namespace Kafka.Streams.State
          * Unlock the state directory for the given {@link TaskId}.
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void unlock(TaskId taskId)
+        public void Unlock(TaskId taskId)
         {
             LockAndOwner lockAndOwner = locks[taskId];
             if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
@@ -392,11 +392,12 @@ namespace Kafka.Streams.State
                     {
                         try
                         {
-                            unlock(id);
+                            Unlock(id);
                         }
                         catch (IOException e)
                         {
-                            logger.LogError("{} Failed to release the state directory lock.", logPrefix());
+                            logger.LogError(e, $"{logPrefix()} Failed to release the state directory lock.");
+
                             if (manualUserCall)
                             {
                                 throw;
@@ -430,7 +431,7 @@ namespace Kafka.Streams.State
             return channels[taskId];
         }
 
-        private FileLock tryLock(FileChannel channel)
+        private FileLock TryLock(FileChannel channel)
         {
             try
             {

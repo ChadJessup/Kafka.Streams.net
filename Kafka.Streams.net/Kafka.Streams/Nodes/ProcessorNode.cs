@@ -34,7 +34,6 @@ namespace Kafka.Streams.Nodes
         {
             long startNs = time.nanoseconds();
             punctuator.punctuate(timestamp);
-            //nodeMetrics.nodePunctuateTimeSensor.record(time.nanoseconds() - startNs);
         }
 
         /**
@@ -82,7 +81,7 @@ namespace Kafka.Streams.Nodes
             this.processor = processor;
         }
 
-        public ProcessorNode<K, V> getChild(string childName)
+        public ProcessorNode<K, V> GetChild(string childName)
         {
             return (ProcessorNode<K, V>)childByName[childName];
         }
@@ -93,22 +92,18 @@ namespace Kafka.Streams.Nodes
             childByName.Add(child.Name, child);
         }
 
-        public virtual void init(IInternalProcessorContext context)
+        public virtual void Init(IInternalProcessorContext context)
         {
             try
             {
-                //nodeMetrics = new NodeMetrics<K, V>((StreamsMetricsImpl)context.metrics, Name, context);
-                long startNs = time.nanoseconds();
                 if (processor != null)
                 {
                     processor.init(context);
                 }
-
-                //nodeMetrics.nodeCreationSensor.record(time.nanoseconds() - startNs);
             }
             catch (Exception e)
             {
-                throw new StreamsException(string.Format("failed to initialize processor %s", Name), e);
+                throw new StreamsException($"failed to initialize processor {Name}", e);
             }
         }
 
@@ -116,7 +111,6 @@ namespace Kafka.Streams.Nodes
         {
             try
             {
-                long startNs = time.nanoseconds();
                 if (processor != null)
                 {
                     processor.close();
@@ -124,7 +118,7 @@ namespace Kafka.Streams.Nodes
             }
             catch (Exception e)
             {
-                throw new StreamsException(string.Format("failed to close processor %s", Name), e);
+                throw new StreamsException($"failed to close processor {Name}", e);
             }
         }
 

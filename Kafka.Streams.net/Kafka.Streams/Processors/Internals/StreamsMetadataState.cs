@@ -86,7 +86,7 @@ namespace Kafka.Streams.Processors.Internals
                 return allMetadata;
             }
 
-            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
+            List<string> sourceTopics = builder.StateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null)
             {
                 return new List<StreamsMetadata>();
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Processors.Internals
             List<StreamsMetadata> results = new List<StreamsMetadata>();
             foreach (StreamsMetadata metadata in allMetadata)
             {
-                if (metadata.stateStoreNames.Contains(storeName))
+                if (metadata.StateStoreNames.Contains(storeName))
                 {
                     results.Add(metadata);
                 }
@@ -205,7 +205,7 @@ namespace Kafka.Streams.Processors.Internals
                 return null;
             }
 
-            return GetStreamsMetadataForKey(storeName, key, partitioner, sourceTopicsInfo);
+            return GetStreamsMetadataForKey<K, V>(storeName, key, partitioner, sourceTopicsInfo);
         }
 
         /**
@@ -242,7 +242,7 @@ namespace Kafka.Streams.Processors.Internals
                 return;
             }
 
-            var stores = builder.stateStoreNameToSourceTopics();
+            var stores = builder.StateStoreNameToSourceTopics();
             foreach (var entry in currentState)
             {
                 HostInfo key = entry.Key;
@@ -285,8 +285,8 @@ namespace Kafka.Streams.Processors.Internals
 
             foreach (StreamsMetadata streamsMetadata in allMetadata)
             {
-                HashSet<string> stateStoreNames = streamsMetadata.stateStoreNames;
-                HashSet<TopicPartition> topicPartitions = new HashSet<TopicPartition>(streamsMetadata.topicPartitions);
+                HashSet<string> stateStoreNames = streamsMetadata.StateStoreNames;
+                HashSet<TopicPartition> topicPartitions = new HashSet<TopicPartition>(streamsMetadata.TopicPartitions);
                 topicPartitions.IntersectWith(matchingPartitions);
 
                 if (stateStoreNames.Contains(storeName) && topicPartitions.Any())
@@ -300,7 +300,7 @@ namespace Kafka.Streams.Processors.Internals
 
         private SourceTopicsInfo GetSourceTopicsInfo(string storeName)
         {
-            List<string> sourceTopics = builder.stateStoreNameToSourceTopics()[storeName];
+            List<string> sourceTopics = builder.StateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null || !sourceTopics.Any())
             {
                 return null;

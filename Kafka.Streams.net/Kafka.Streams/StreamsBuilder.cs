@@ -1,9 +1,11 @@
-﻿using Kafka.Common;
+﻿using Confluent.Kafka;
+using Kafka.Common;
 using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Factories;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
@@ -41,7 +43,9 @@ namespace Kafka.Streams
             /** The actual topology that is constructed by this StreamsBuilder. */
             private readonly Topology topology;
 
-            private InternalTopologyBuilder internalTopologyBuilder => this.topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
+            private InternalTopologyBuilder internalTopologyBuilder
+                => this.topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
+
             private readonly InternalStreamsBuilder internalStreamsBuilder;
 
             public StreamsBuilder(
@@ -84,8 +88,10 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton(configuration);
                 serviceCollection.TryAddSingleton(serviceCollection);
 
+                this.AddNodes(serviceCollection);
                 this.AddThreads(serviceCollection);
                 this.AddClients(serviceCollection);
+                this.AddFactories(serviceCollection);
 
                 serviceCollection.TryAddSingleton<ITime>(Time.SYSTEM);
                 serviceCollection.TryAddSingleton<StateDirectory>();
@@ -98,7 +104,24 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton<Topology>();
             }
 
-            private void AddClients(IServiceCollection serviceCollection)
+            private IServiceCollection AddFactories(IServiceCollection serviceCollection)
+            {
+                serviceCollection.TryAddSingleton(typeof(SourceNodeFactory<,>));
+                serviceCollection.TryAddSingleton<DeserializerFactory>();
+                serviceCollection.TryAddSingleton<SerializerFactory>();
+
+                return serviceCollection;
+            }
+
+            private IServiceCollection AddNodes(IServiceCollection serviceCollection)
+            {
+                serviceCollection.TryAddSingleton(typeof(IDeserializer<>));
+                serviceCollection.TryAddSingleton(typeof(ISerializer<>));
+
+                return serviceCollection;
+            }
+
+            private IServiceCollection AddClients(IServiceCollection serviceCollection)
             {
                 // Special clients, e.g., AdminClient
                 serviceCollection.AddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
@@ -109,9 +132,10 @@ namespace Kafka.Streams
 
                 // Producers
 
+                return serviceCollection;
             }
 
-            private void AddThreads(IServiceCollection serviceCollection)
+            private IServiceCollection AddThreads(IServiceCollection serviceCollection)
             {
                 serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
@@ -121,6 +145,8 @@ namespace Kafka.Streams
 
                 serviceCollection.AddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
+
+                return serviceCollection;
             }
 
             /**
@@ -138,9 +164,9 @@ namespace Kafka.Streams
              * @return a {@link KStream} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(string topic)
+            public IKStream<K, V> Stream<K, V>(string topic)
             {
-                return stream<K, V>(new List<string>() { topic }.AsReadOnly());
+                return Stream<K, V>(new List<string>() { topic }.AsReadOnly());
             }
 
             /**
@@ -157,11 +183,11 @@ namespace Kafka.Streams
              * @return a {@link KStream} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(
+            public IKStream<K, V> Stream<K, V>(
                 string topic,
                 Consumed<K, V> consumed)
             {
-                return stream(topic, consumed);
+                return Stream(topic, consumed);
             }
 
             /**
@@ -179,9 +205,9 @@ namespace Kafka.Streams
              * @return a {@link KStream} for the specified topics
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(IReadOnlyList<string> topics)
+            public IKStream<K, V> Stream<K, V>(IReadOnlyList<string> topics)
             {
-                return stream(
+                return Stream(
                     topics,
                     Consumed<K, V>.with(null, null, null, null));
             }
@@ -202,7 +228,7 @@ namespace Kafka.Streams
              * @return a {@link KStream} for the specified topics
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(
+            public IKStream<K, V> Stream<K, V>(
                 IEnumerable<string> topics,
                 Consumed<K, V> consumed)
             {
@@ -230,7 +256,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> stream<K, V>(Regex topicPattern)
             {
-                return stream(topicPattern, Consumed<K, V>.with(null, null));
+                return Stream(topicPattern, Consumed<K, V>.with(null, null));
             }
 
             /**
@@ -250,7 +276,7 @@ namespace Kafka.Streams
              * @return a {@link KStream} for topics matching the regex pattern.
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(
+            public IKStream<K, V> Stream<K, V>(
                 Regex topicPattern,
                 Consumed<K, V> consumed)
             {

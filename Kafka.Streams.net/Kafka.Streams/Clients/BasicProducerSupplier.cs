@@ -41,7 +41,7 @@ namespace Kafka.Streams.Clients
             // eos
             if (threadProducer == null)
             {
-                var producerConfigs = config.getProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
+                var producerConfigs = config.GetProducerConfigs(this.GetTaskProducerClientId(threadClientId, id));
                 //    log.LogInformation("Creating producer client for task {}", id);
                 producerConfigs.Set("transactional.id", $"{applicationId}-{id}");
 

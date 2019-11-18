@@ -2,7 +2,7 @@
 
 namespace Kafka.Streams.Threads
 {
-    public interface IThread
+    public interface IThread : IStateObserver
     {
         int ManagedThreadId { get; }
         void Start();
@@ -17,7 +17,5 @@ namespace Kafka.Streams.Threads
         string ThreadClientId { get; }
         IStateListener StateListener { get; }
         IStateMachine<States> State { get; }
-
-        void SetStateListener(IStateListener stateListener);
     }
 }

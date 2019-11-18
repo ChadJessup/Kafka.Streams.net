@@ -37,7 +37,7 @@ namespace Kafka.Streams.KStream
     public abstract class Windows<W>
         where W : Window
     {
-        private TimeSpan maintainDurationMs = WindowingDefaults.DefaultRetention;
+        private TimeSpan maintainRetentionDuration = WindowingDefaults.DefaultRetention;
 
         [Obsolete]
         public int segments = 3;
@@ -62,14 +62,14 @@ namespace Kafka.Streams.KStream
          *             or directly configure the retention in a store supplier and use {@link Materialized#as(WindowBytesStoreSupplier)}.
          */
         [Obsolete]
-        public Windows<W> until(TimeSpan durationMs)
+        public Windows<W> until(TimeSpan duration)
         {
-            if (durationMs < TimeSpan.Zero)
+            if (duration < TimeSpan.Zero)
             {
                 throw new ArgumentException("Window retention time (durationMs) cannot be negative.");
             }
 
-            maintainDurationMs = durationMs;
+            maintainRetentionDuration = duration;
 
             return this;
         }
@@ -81,9 +81,9 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1. Use {@link Materialized#retention} instead.
          */
         [Obsolete]
-        public virtual TimeSpan maintainMs()
+        public virtual TimeSpan maintainDuration()
         {
-            return maintainDurationMs;
+            return maintainRetentionDuration;
         }
 
         /**
@@ -129,6 +129,6 @@ namespace Kafka.Streams.KStream
          *
          * Lateness is defined as (stream_time - record_timestamp).
          */
-        public abstract TimeSpan gracePeriodMs();
+        public abstract TimeSpan gracePeriod();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
 using System.Collections.Generic;
 
@@ -54,6 +55,6 @@ namespace Kafka.Streams.Clients
          *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getGlobalConsumer(ConsumerConfig config);
+        GlobalConsumer GetGlobalConsumer();
     }
 }

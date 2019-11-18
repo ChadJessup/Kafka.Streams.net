@@ -36,7 +36,7 @@ namespace Kafka.Streams.State.Internals
         }
 
         public override void Configure(
-            Dictionary<string, string> configs,
+            IDictionary<string, string> configs,
             bool isKey)
         {
             //this.Serializer.Configure(configs, isKey);

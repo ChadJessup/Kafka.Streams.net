@@ -1,16 +1,18 @@
-﻿using Kafka.Streams.Interfaces;
+﻿using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Kafka.Streams.Nodes
+namespace Kafka.Streams.Factories
 {
-    public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>
+    public class ProcessorNodeFactory<K, V> : NodeFactory<K, V>, IProcessorNodeFactory
     {
-        private readonly IProcessorSupplier<K, V> supplier;
         public HashSet<string> stateStoreNames { get; } = new HashSet<string>();
+        private readonly IProcessorSupplier<K, V> supplier;
 
         public ProcessorNodeFactory(
             string name,
@@ -26,14 +28,14 @@ namespace Kafka.Streams.Nodes
             stateStoreNames.Add(stateStoreName);
         }
 
-        public override ProcessorNode<K, V> build()
+        public override ProcessorNode<K, V> Build()
         {
-            return new ProcessorNode<K, V>(name, supplier.get(), stateStoreNames);
+            return new ProcessorNode<K, V>(Name, supplier.get(), stateStoreNames);
         }
 
-        public override INode describe()
+        public override INode Describe()
         {
-            return new Processor(name, new HashSet<string>(stateStoreNames));
+            return new Processor(Name, new HashSet<string>(stateStoreNames));
         }
     }
 }

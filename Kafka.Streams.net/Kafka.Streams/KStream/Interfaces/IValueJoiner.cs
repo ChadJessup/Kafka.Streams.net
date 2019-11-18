@@ -33,5 +33,6 @@ namespace Kafka.Streams.KStream
          * @return the joined value
          */
         VR apply(V1 value1, V2 value2);
+        VR apply(V1 value1);
     }
 }

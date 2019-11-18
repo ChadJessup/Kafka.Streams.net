@@ -88,7 +88,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             if (node is StatefulProcessorNode<K, V>)
             {
-                //                IProcessorSupplier<K, V> IProcessorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().IProcessorSupplier();
+                //                IProcessorSupplier IProcessorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().IProcessorSupplier();
                 //if (IProcessorSupplier is KStreamWindowAggregate)
                 //{
                 //    KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate)IProcessorSupplier;

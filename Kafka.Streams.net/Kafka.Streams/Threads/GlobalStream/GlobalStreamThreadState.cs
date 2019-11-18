@@ -33,8 +33,8 @@ namespace Kafka.Streams.Threads.GlobalStream
         }
 
         public GlobalStreamThreadStates CurrentState { get; private set; } = GlobalStreamThreadStates.CREATED;
-        public IStateListener StateListener { get; }
-        public IThread<GlobalStreamThreadStates> Thread { get; }
+        public IStateListener StateListener { get; protected set; }
+        public IThread<GlobalStreamThreadStates> Thread { get; protected set; }
 
         public bool IsRunning()
             => this.CurrentState == GlobalStreamThreadStates.RUNNING;
@@ -89,5 +89,11 @@ namespace Kafka.Streams.Threads.GlobalStream
 
             return true;
         }
+
+        public void SetStateListener(IStateListener stateListener)
+            => this.StateListener = stateListener;
+
+        public void SetThread(IThread<GlobalStreamThreadStates> thread)
+            => this.Thread = thread;
     }
 }

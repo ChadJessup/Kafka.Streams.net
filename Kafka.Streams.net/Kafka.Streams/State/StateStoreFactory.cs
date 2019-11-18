@@ -4,14 +4,19 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.State
 {
-    public class StateStoreFactory
+    public interface IStateStoreFactory<out T>
+        where T :IStateStore
     {
-        protected HashSet<string> users { get; } = new HashSet<string>();
+        IStoreBuilder<T> Builder { get; }
+        IStateStore Build();
+        string name { get; }
     }
 
-    public class StateStoreFactory<T> : StateStoreFactory
+    public class StateStoreFactory<T> : IStateStoreFactory<T>
         where T : IStateStore
     {
+        protected HashSet<string> users { get; } = new HashSet<string>();
+        
         public IStoreBuilder<T> Builder { get; }
 
         public StateStoreFactory(IStoreBuilder<T> builder)
@@ -21,7 +26,7 @@ namespace Kafka.Streams.State
 
         public IStateStore Build()
         {
-            return Builder.Build();
+            return this.Builder.Build();
         }
 
         private long RetentionPeriod<K, V>()

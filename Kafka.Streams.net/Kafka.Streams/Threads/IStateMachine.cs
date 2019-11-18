@@ -5,14 +5,13 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.Threads
 {
-    public interface IStateMachine<States> : IThreadStateTransitionValidator<States>
+
+    public interface IStateMachine<States> : IThreadStateTransitionValidator<States>, IStateObserver, IThreadObserver<States>
         where States : Enum
     {
-        IStateListener StateListener { get; }
         States CurrentState { get; }
         bool SetState(States state);
         void SetTransitions(IEnumerable<StateTransition<States>> validTransitions);
         bool IsRunning();
-        IThread<States> Thread { get; }
     }
 }

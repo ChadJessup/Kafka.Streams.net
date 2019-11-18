@@ -144,7 +144,7 @@ namespace Kafka.Streams.Processors.Internals
             catch (TimeoutException e)
             {
                 // if timeout exception gets thrown we just give up this time and retry in the next run loop
-                logger.LogDebug($"Could not fetch end offset for {initializable}; will fall back to partition by partition fetching");
+                logger.LogDebug(e, $"Could not fetch end offset for {initializable}; will fall back to partition by partition fetching");
 
                 return;
             }
@@ -191,11 +191,11 @@ namespace Kafka.Streams.Processors.Internals
             // set up restorer for those initializable
             if (initializable.Any())
             {
-                startRestoration(initializable, active);
+                StartRestoration(initializable, active);
             }
         }
 
-        private void startRestoration(
+        private void StartRestoration(
             HashSet<TopicPartition> initialized,
             IRestoringTasks active)
         {
@@ -289,7 +289,7 @@ namespace Kafka.Streams.Processors.Internals
             }
             catch (TimeoutException e)
             {
-                this.logger.LogDebug("Could not fetch topic metadata within the timeout, will retry in the next run loop");
+                this.logger.LogDebug(e, "Could not fetch topic metadata within the timeout, will retry in the next run loop");
             }
         }
 

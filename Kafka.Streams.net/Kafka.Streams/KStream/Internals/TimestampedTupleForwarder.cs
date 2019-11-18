@@ -49,7 +49,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (!cachingEnabled)
             {
-                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default), To.all().withTimestamp(timestamp));
+                context.forward(key, new Change<V>(newValue, sendOldValues ? oldValue : default), To.All().WithTimestamp(timestamp));
             }
         }
     }

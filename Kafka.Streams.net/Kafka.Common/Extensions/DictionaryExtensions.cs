@@ -7,7 +7,7 @@ namespace Kafka.Common.Extensions
 {
     public static class DictionaryExtensions
     {
-        public static Dictionary<K, V> PutAll<K, V>(this Dictionary<K, V> original, Dictionary<K, V> keyValuePairs)
+        public static IDictionary<K, V> PutAll<K, V>(this IDictionary<K, V> original, IDictionary<K, V> keyValuePairs)
         {
             foreach (var kvp in keyValuePairs)
             {
@@ -17,7 +17,7 @@ namespace Kafka.Common.Extensions
             return original;
         }
 
-        public static Dictionary<K, V> RemoveAll<K, V>(this Dictionary<K, V> original, IEnumerable<K> keys)
+        public static IDictionary<K, V> RemoveAll<K, V>(this IDictionary<K, V> original, IEnumerable<K> keys)
         {
             foreach (var toRemoveKey in keys)
             {

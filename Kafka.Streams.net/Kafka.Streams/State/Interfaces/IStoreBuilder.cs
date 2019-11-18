@@ -33,9 +33,9 @@ namespace Kafka.Streams.State
         string name { get; }
 
         /**
- * Enable caching on the store.
- * @return  this
- */
+         * Enable caching on the store.
+         * @return  this
+         */
         IStoreBuilder<T> WithCachingEnabled();
 
         /**

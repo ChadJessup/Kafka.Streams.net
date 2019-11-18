@@ -20,18 +20,18 @@ namespace Kafka.Streams.Processors.Internals
     {
 
         public ToInternal()
-            : base(To.all())
+            : base(To.All())
         {
         }
 
-        public override void update(To to)
+        public override void Update(To to)
         {
-            base.update(to);
+            base.Update(to);
         }
 
         public bool hasTimestamp()
         {
-            return timestamp != -1;
+            return Timestamp != -1;
         }
 
         public string child()

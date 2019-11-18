@@ -41,7 +41,7 @@ namespace Kafka.Streams.Tasks
         {
 
             // closeTaskSensor = metrics.threadLevelSensor("task-closed", RecordingLevel.INFO);
-            processorContext = new StandbyContextImpl<byte[], byte[]>(loggerFactory, loggerFactory.CreateLogger<StandbyContextImpl<byte[], byte[]>>(), id, config, stateMgr);//, metrics);
+            processorContext = new StandbyContextImpl<byte[], byte[]>(loggerFactory, loggerFactory.CreateLogger<StandbyContextImpl<byte[], byte[]>>(), id, config, StateMgr);//, metrics);
         }
 
 
@@ -49,9 +49,9 @@ namespace Kafka.Streams.Tasks
         {
             log.LogTrace("Initializing state stores");
             registerStateStores();
-            checkpointedOffsets = stateMgr.checkpointed();
+            checkpointedOffsets = StateMgr.checkpointed();
             processorContext.initialize();
-            taskInitialized = true;
+            TaskInitialized = true;
             return true;
         }
 
@@ -69,7 +69,7 @@ namespace Kafka.Streams.Tasks
         public override void resume()
         {
             log.LogDebug("Resuming");
-            updateOffsetLimits();
+            UpdateOffsetLimits();
         }
 
         /**
@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tasks
             log.LogTrace("Committing");
             flushAndCheckpointState();
             // reinitialize offset limits
-            updateOffsetLimits();
+            UpdateOffsetLimits();
 
             commitNeeded = false;
         }
@@ -104,8 +104,8 @@ namespace Kafka.Streams.Tasks
 
         private void flushAndCheckpointState()
         {
-            stateMgr.Flush();
-            stateMgr.checkpoint(new Dictionary<TopicPartition, long>());
+            StateMgr.Flush();
+            StateMgr.checkpoint(new Dictionary<TopicPartition, long>());
         }
 
         /**
@@ -118,7 +118,7 @@ namespace Kafka.Streams.Tasks
 
         public override void close(bool clean, bool isZombie)
         {
-            if (!taskInitialized)
+            if (!TaskInitialized)
             {
                 return;
             }
@@ -139,7 +139,7 @@ namespace Kafka.Streams.Tasks
                 closeStateManager(true);
             }
 
-            taskClosed = true;
+            TaskClosed = true;
         }
 
 
@@ -157,7 +157,7 @@ namespace Kafka.Streams.Tasks
                                                            List<ConsumeResult<byte[], byte[]>> records)
         {
             log.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
-            long limit = stateMgr.offsetLimit(partition);
+            long limit = StateMgr.offsetLimit(partition);
 
             long lastOffset = -1L;
             List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tasks
                 }
             }
 
-            stateMgr.updateStandbyStates(partition, restoreRecords, lastOffset);
+            StateMgr.updateStandbyStates(partition, restoreRecords, lastOffset);
 
             if (restoreRecords.Any())
             {

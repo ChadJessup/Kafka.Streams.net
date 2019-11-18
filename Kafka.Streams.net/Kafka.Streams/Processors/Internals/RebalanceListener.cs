@@ -35,8 +35,8 @@ namespace Kafka.Streams.Processors.Internals
                     "\tcurrent suspended standby tasks: {}\n",
                 streamThread.State,
                 assignment,
-                taskManager.suspendedActiveTaskIds(),
-                taskManager.suspendedStandbyTaskIds());
+                taskManager.SuspendedActiveTaskIds(),
+                taskManager.SuspendedStandbyTaskIds());
 
             if (streamThread.AssignmentErrorCode == (int)StreamsPartitionAssignor.Error.INCOMPLETE_SOURCE_TOPIC_METADATA)
             {
@@ -85,7 +85,7 @@ namespace Kafka.Streams.Processors.Internals
                         "\tprevious active tasks: {}\n",
                     time.milliseconds() - start,
                     taskManager.activeTaskIds(),
-                    taskManager.standbyTaskIds(),
+                    taskManager.StandbyTaskIds(),
                     taskManager.prevActiveTaskIds());
             }
         }
@@ -99,7 +99,7 @@ namespace Kafka.Streams.Processors.Internals
                 streamThread.State,
                 assignment,
                 taskManager.activeTaskIds(),
-                taskManager.standbyTaskIds());
+                taskManager.StandbyTaskIds());
 
             if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
             {
@@ -115,7 +115,7 @@ namespace Kafka.Streams.Processors.Internals
                     else
                     {
 
-                        taskManager.suspendTasksAndState();
+                        taskManager.SuspendTasksAndState();
                     }
                 }
                 catch (Exception t)
@@ -136,8 +136,8 @@ namespace Kafka.Streams.Processors.Internals
                             "\tsuspended active tasks: {}\n" +
                             "\tsuspended standby tasks: {}",
                         time.milliseconds() - start,
-                        taskManager.suspendedActiveTaskIds(),
-                        taskManager.suspendedStandbyTaskIds());
+                        taskManager.SuspendedActiveTaskIds(),
+                        taskManager.SuspendedStandbyTaskIds());
                 }
             }
         }

@@ -26,20 +26,20 @@ namespace Kafka.Streams.Processors.Internals
             this.processorNodes = processorNodes.ToList();
             this.sourcesByTopic = sourcesByTopic;
             this.sinksByTopic = sinksByTopic;
-            this.stateStores = stateStores.ToList();
+            this.StateStores = stateStores.ToList();
             this.globalStateStores = globalStateStores.ToList();
-            this.storeToChangelogTopic = storeToChangelogTopic;
+            this.StoreToChangelogTopic = storeToChangelogTopic;
             this.repartitionTopics = repartitionTopics;
         }
 
-        public List<IStateStore> stateStores { get; }
+        public List<IStateStore> StateStores { get; }
         public List<IStateStore> globalStateStores { get; }
-        public Dictionary<string, string> storeToChangelogTopic { get; }
+        public Dictionary<string, string> StoreToChangelogTopic { get; }
         protected HashSet<string> repartitionTopics { get; }
 
         public bool hasPersistentLocalStore()
         {
-            foreach (IStateStore store in stateStores)
+            foreach (IStateStore store in StateStores)
             {
                 if (store.persistent())
                 {
@@ -63,18 +63,18 @@ namespace Kafka.Streams.Processors.Internals
             return false;
         }
 
-        public SourceNode source(string topic)
+        public SourceNode Source(string topic)
             => sourcesByTopic[topic];
 
-        public HashSet<SourceNode> sources()
+        public HashSet<SourceNode> Sources()
             => new HashSet<SourceNode>(sourcesByTopic.Values);
 
-        public HashSet<string> sinkTopics()
+        public HashSet<string> SinkTopics()
         {
             return new HashSet<string>(sinksByTopic.Keys);
         }
 
-        public ISink sink(string topic)
+        public ISink Sink(string topic)
         {
             return sinksByTopic[topic];
         }

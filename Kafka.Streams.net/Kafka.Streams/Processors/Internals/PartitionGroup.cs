@@ -1,6 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Common.Metrics;
-using RocksDbSharp;
 using System;
 using System.Collections.Generic;
 using Priority_Queue;
@@ -32,7 +30,6 @@ namespace Kafka.Streams.Processors.Internals
     public class PartitionGroup
     {
         private readonly Dictionary<TopicPartition, RecordQueue> partitionQueues;
-        private readonly Sensor recordLatenessSensor;
         private readonly SimplePriorityQueue<RecordQueue> nonEmptyQueuesByTime;
 
         public long streamTime { get; set; }
@@ -40,12 +37,11 @@ namespace Kafka.Streams.Processors.Internals
         private bool allBuffered;
         private readonly ProcessorContextImpl<object, object> processorContextImpl;
 
-        PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, Sensor recordLatenessSensor)
+        PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues)
         {
             nonEmptyQueuesByTime = new SimplePriorityQueue<RecordQueue>();
 
             this.partitionQueues = partitionQueues;
-            this.recordLatenessSensor = recordLatenessSensor;
             totalBuffered = 0;
             allBuffered = false;
             streamTime = RecordQueue.UNKNOWN;
@@ -96,12 +92,9 @@ namespace Kafka.Streams.Processors.Internals
                     if (record.timestamp > streamTime)
                     {
                         streamTime = record.timestamp;
-                        recordLatenessSensor.record(0);
                     }
                     else
                     {
-
-                        recordLatenessSensor.record(streamTime - record.timestamp);
                     }
                 }
             }

@@ -1,5 +1,4 @@
 ﻿using System;
-using Kafka.Common.Extensions;
 
 namespace Kafka.Streams.KStream
 {
@@ -9,7 +8,6 @@ namespace Kafka.Streams.KStream
         protected long endMs;
         private readonly DateTime startTime;
         private readonly DateTime endTime;
-
 
         /**
          * Create a new window for the given start and end time.
@@ -22,12 +20,14 @@ namespace Kafka.Streams.KStream
         {
             if (startMs < 0)
             {
-                throw new System.ArgumentException("Window startMs time cannot be negative.");
+                throw new ArgumentException("Window startMs time cannot be negative.");
             }
+
             if (endMs < startMs)
             {
-                throw new System.ArgumentException("Window endMs time cannot be smaller than window startMs time.");
+                throw new ArgumentException("Window endMs time cannot be smaller than window startMs time.");
             }
+
             this.startMs = startMs;
             this.endMs = endMs;
 
@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream
          *
          * @return The start timestamp of this window.
          */
-        public long start()
+        public long Start()
         {
             return startMs;
         }
@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream
          *
          * @return The end timestamp of this window.
          */
-        public long end()
+        public long End()
         {
             return endMs;
         }
@@ -63,9 +63,9 @@ namespace Kafka.Streams.KStream
          * @param other another window of the same type
          * @return {@code true} if {@code other} overlaps with this window&mdash;{@code false} otherwise
          */
-        public abstract bool overlap(Window other);
+        public abstract bool Overlap(Window other);
 
-        public bool equals(Object obj)
+        public override bool Equals(object obj)
         {
             if (obj == this)
             {
@@ -84,18 +84,17 @@ namespace Kafka.Streams.KStream
             return startMs == other.startMs && endMs == other.endMs;
         }
 
-        public int hashCode()
+        public override int GetHashCode()
         {
             return (int)(((startMs << 32) | endMs) % 0xFFFFFFFFL);
         }
 
-        public String toString()
+        public override string ToString()
         {
             return "Window{" +
                 "startMs=" + startMs +
                 ", endMs=" + endMs +
                 '}';
         }
-
     }
 }

@@ -4,7 +4,6 @@ using Kafka.Common.Utils;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
-using Kafka.Streams.Errors;
 using Kafka.Streams.Internals;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.Processors.Interfaces;
@@ -74,7 +73,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         private readonly IKafkaClientSupplier clientSupplier;
         private readonly StreamsConfig config;
 
-        protected IKafkaStreamThread[] threads;
+        protected IKafkaStreamThread[] Threads { get; set; }
 
         private StateDirectory stateDirectory;
         private StreamsMetadataState streamsMetadataState;
@@ -102,7 +101,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
         public KafkaStreamsThread(
             ILogger<KafkaStreamsThread> logger,
             IServiceProvider serviceProvider,
-            IGlobalStreamThread globalStreamThread,
             IStateMachine<KafkaStreamsThreadStates> states,
             StreamsConfig config,
             Topology topology,
@@ -116,8 +114,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             this.logContext = this.logger.BeginScope($"stream-client [{config.ClientId}] ");
 
-            this.globalStreamThread = globalStreamThread;
-
+            this.State.SetThread(this);
             this.services = serviceProvider;
             this.time = Time.SYSTEM;
 
@@ -136,7 +133,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             var taskTopology = topology.internalTopologyBuilder.build();
 
             //create the stream thread, global update thread, and cleanup thread
-            threads = new KafkaStreamThread[config.NumberOfStreamThreads];
+            Threads = new KafkaStreamThread[config.NumberOfStreamThreads];
 
             long totalCacheSize = config.CacheMaxBytesBuffering;
 
@@ -148,7 +145,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             var globalTaskTopology = topology.internalTopologyBuilder.buildGlobalStateTopology();
             
-            long cacheSizePerThread = totalCacheSize / (threads.Length + (globalTaskTopology == null ? 0 : 1));
+            long cacheSizePerThread = totalCacheSize / (Threads.Length + (globalTaskTopology == null ? 0 : 1));
 
             bool createStateDirectory = taskTopology.hasPersistentLocalStore()
                 || (globalTaskTopology != null && globalTaskTopology.hasPersistentGlobalStore());
@@ -159,7 +156,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
             {
                 string globalThreadId = $"{config.ClientId}-GlobalStreamThread";
 
-                //globalStreamThread = ActivatorUtilities.CreateInstance<GlobalStreamThread>(
+                this.globalStreamThread = ActivatorUtilities.CreateInstance<IGlobalStreamThread>(this.services);
+
                 //    this.services,
                 //    globalTaskTopology,
                 //    config,
@@ -175,12 +173,14 @@ namespace Kafka.Streams.Threads.KafkaStreams
             }
 
             var storeProviders = new List<IStateStoreProvider>();
-            for (int i = 0; i < threads.Length; i++)
+            for (int i = 0; i < Threads.Length; i++)
             {
-                threads[i] = ActivatorUtilities.GetServiceOrCreateInstance<IKafkaStreamThread>(this.services);
+                Threads[i] = ActivatorUtilities.GetServiceOrCreateInstance<IKafkaStreamThread>(this.services);
+                Threads[i].SetStateListener(this.StateListener);
+                Threads[i].State.SetThread(Threads[i]);
 
-                this.ThreadStates.Add(threads[i].ManagedThreadId, threads[i].State as KafkaStreamThreadState);
-                storeProviders.Add(new StreamThreadStateStoreProvider(threads[i]));
+                this.ThreadStates.Add(Threads[i].ManagedThreadId, Threads[i].State as KafkaStreamThreadState);
+                storeProviders.Add(new StreamThreadStateStoreProvider(Threads[i]));
             }
 
             var globalStateStoreProvider = new GlobalStateStoreProvider(topology.internalTopologyBuilder.globalStateStores());
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                         {
                             // stateLock.wait(remainingMs);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             // it is ok: just move on to the next iteration
                         }
@@ -274,6 +274,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 if (this.State.CurrentState == KafkaStreamsThreadStates.CREATED)
                 {
                     this.StateListener = listener;
+                    this.State.SetStateListener(listener);
                 }
                 else
                 {
@@ -295,7 +296,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             {
                 if (this.State.CurrentState == KafkaStreamsThreadStates.CREATED)
                 {
-                    foreach (var thread in threads)
+                    foreach (var thread in Threads)
                     {
                         //context.Thread.setUncaughtExceptionHandler(eh);
                     }
@@ -367,12 +368,12 @@ namespace Kafka.Streams.Threads.KafkaStreams
                     globalStreamThread.Start();
                 }
 
-                foreach (var thread in threads)
+                foreach (var thread in Threads)
                 {
                     thread.Start();
                 }
 
-                long cleanupDelay = this.config.getLong(StreamsConfigPropertyNames.STATE_CLEANUP_DELAY_MS_CONFIG).Value;
+                long cleanupDelay = this.config.StateCleanupDelayMs;
 
                 //stateDirCleaner.scheduleAtFixedRate(()=> {
                 //    // we do not use lock here since we only read on the value and act on it
