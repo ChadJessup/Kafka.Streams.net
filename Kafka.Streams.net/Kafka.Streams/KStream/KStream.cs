@@ -91,8 +91,8 @@ namespace Kafka.Streams.KStream.Internals
             named = named ?? throw new ArgumentNullException(nameof(named));
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FilterName);
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, false), name);
-            ProcessorGraphNode<K, V> filterProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
+            var processorParameters = new ProcessorParameters<K, V>(new KStreamFilter<K, V>(predicate, false), name);
+            var filterProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters);
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, filterProcessorNode);
 

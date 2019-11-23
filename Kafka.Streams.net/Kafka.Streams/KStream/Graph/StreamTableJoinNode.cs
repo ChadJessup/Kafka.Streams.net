@@ -29,9 +29,9 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StreamTableJoinNode{" +
-                   "storeNames=" + Arrays.ToString(storeNames) +
-                   ", processorParameters=" + processorParameters +
-                   ", otherJoinSideNodeName='" + otherJoinSideNodeName + '\'' +
+                   $"storeNames=[{string.Join(',', storeNames)}]" +
+                   $", processorParameters={processorParameters}" +
+                   $", otherJoinSideNodeName='{otherJoinSideNodeName}'" +
                    "} " + base.ToString();
         }
 
@@ -48,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             // Steam - KTable join only
             if (otherJoinSideNodeName != null)
             {
-                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
             }
 
         }

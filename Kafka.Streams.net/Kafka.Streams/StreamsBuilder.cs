@@ -115,8 +115,17 @@ namespace Kafka.Streams
 
             private IServiceCollection AddNodes(IServiceCollection serviceCollection)
             {
-                serviceCollection.TryAddSingleton(typeof(IDeserializer<>));
-                serviceCollection.TryAddSingleton(typeof(ISerializer<>));
+                //serviceCollection.TryAddScoped(typeof(IDeserializer<>),
+                //    sp =>
+                //    {
+                //        return null;
+                //    });
+
+                //serviceCollection.TryAddScoped(typeof(ISerializer<>),typeof(Serializer<T>))
+                //    sp =>
+                //    {
+                //        return null;
+                //    });
 
                 return serviceCollection;
             }
@@ -702,7 +711,7 @@ namespace Kafka.Streams
             [MethodImpl(MethodImplOptions.Synchronized)]
             public Topology build(StreamsConfig config)
             {
-                this.internalStreamsBuilder.buildAndOptimizeTopology(config);
+                this.internalStreamsBuilder.BuildAndOptimizeTopology(config);
 
                 return topology;
             }

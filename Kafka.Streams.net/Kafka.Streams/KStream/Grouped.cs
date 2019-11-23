@@ -27,7 +27,6 @@ namespace Kafka.Streams.KStream
 
         protected Grouped(Grouped<K, V> grouped)
          : this(grouped.name, grouped.keySerde, grouped.valueSerde)
-
         {
         }
 
@@ -45,7 +44,6 @@ namespace Kafka.Streams.KStream
             return new Grouped<K, V>(name, null, null);
         }
 
-
         /**
          * Create a {@link Grouped} instance with the provided keySerde. If {@code null} the default key serde from config will be used.
          *
@@ -59,7 +57,6 @@ namespace Kafka.Streams.KStream
         {
             return new Grouped<K, V>(null, keySerde, null);
         }
-
 
         /**
          * Create a {@link Grouped} instance with the provided valueSerde.  If {@code null} the default value serde from config will be used.
@@ -94,7 +91,6 @@ namespace Kafka.Streams.KStream
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }
-
 
         /**
          * Create a {@link Grouped} instance with the provided keySerde and valueSerde.  If the keySerde and/or the valueSerde is

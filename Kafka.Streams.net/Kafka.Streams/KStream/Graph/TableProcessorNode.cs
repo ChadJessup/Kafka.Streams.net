@@ -50,7 +50,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeNames.Length > 0)
             {
-                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
             }
 
             // TODO: we are enforcing this as a keyvalue store, but it should go beyond any type of stores

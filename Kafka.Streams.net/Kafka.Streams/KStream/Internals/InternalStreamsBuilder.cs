@@ -1,20 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Kafka.Common.Utils;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
@@ -23,16 +6,12 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
-using RocksDbSharp;
+using Priority_Queue;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -52,13 +31,13 @@ namespace Kafka.Streams.KStream.Internals
         private int index = 0;
         private int buildPriorityIndex = 0;
 
-        private readonly Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes
-            = new Dictionary<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>();
+        private readonly Dictionary<IStreamsGraphNode, HashSet<IOptimizableRepartitionNode>> keyChangingOperationsToOptimizableRepartitionNodes
+            = new Dictionary<IStreamsGraphNode, HashSet<IOptimizableRepartitionNode>>();
 
-        private readonly HashSet<StreamsGraphNode> mergeNodes = new HashSet<StreamsGraphNode>();
-        private readonly HashSet<StreamsGraphNode> tableSourceNodes = new HashSet<StreamsGraphNode>();
+        private readonly HashSet<IStreamsGraphNode> mergeNodes = new HashSet<IStreamsGraphNode>();
+        private readonly HashSet<ITableSourceNode> tableSourceNodes = new HashSet<ITableSourceNode>();
 
-        protected StreamsGraphNode root = new StreamsGraphNode(Constants.TopologyRoot);
+        private StreamsGraphNode root = new StreamsGraphNode(Constants.TopologyRoot);
 
         public InternalStreamsBuilder(
             ILogger<InternalStreamsBuilder> logger,
@@ -101,19 +80,18 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed)
         {
             string name = NewProcessorName(KStream.SourceName);
-            StreamSourceNode<K, V> streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
+            var streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
             AddGraphNode<K, V>(root, streamPatternSourceNode);
 
-            return null;
-            //new KStream<K, V>(
-            //name,
-            //consumed.keySerde,
-            //consumed.valueSerde,
-            //name,
-            //false,
-            //streamPatternSourceNode,
-            //this);
+            return new KStream<K, V>(
+                name,
+                consumed.keySerde,
+                consumed.valueSerde,
+                new HashSet<string> { name },
+                repartitionRequired: false,
+                streamPatternSourceNode,
+                this);
         }
 
         //        public IKTable<K, V> table<K, V>(
@@ -183,7 +161,6 @@ namespace Kafka.Streams.KStream.Internals
 
         //            return null; // new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
         //        }
-
 
         public string NewProcessorName(string prefix)
             => $"{prefix}{index++,3:D3}";
@@ -282,162 +259,166 @@ namespace Kafka.Streams.KStream.Internals
 
             if (node.IsKeyChangingOperation)
             {
-                keyChangingOperationsToOptimizableRepartitionNodes.Add(node, new HashSet<OptimizableRepartitionNode>());
+                keyChangingOperationsToOptimizableRepartitionNodes.Add(node, new HashSet<IOptimizableRepartitionNode>());
             }
-            //else if (node is OptimizableRepartitionNode<K, V>)
-            //{
-            //    StreamsGraphNode parentNode = getKeyChangingParentNode(node);
-            //    if (parentNode != null)
-            //    {
-            //        keyChangingOperationsToOptimizableRepartitionNodes[parentNode].Add((OptimizableRepartitionNode)node);
-            //    }
-            //}
+            else if (node is IOptimizableRepartitionNode repartitionNode)
+            {
+                IStreamsGraphNode? parentNode = GetKeyChangingParentNode(repartitionNode);
+                if (parentNode != null)
+                {
+                    keyChangingOperationsToOptimizableRepartitionNodes[parentNode].Add(repartitionNode);
+                }
+            }
             else if (node.IsMergeNode)
             {
                 mergeNodes.Add(node);
             }
-            else if (node is TableSourceNode<K, V>)
+            else if (node is ITableSourceNode tableSourceNode)
             {
-                tableSourceNodes.Add(node);
+                tableSourceNodes.Add(tableSourceNode);
             }
         }
 
         // use this method for testing only
-        public void buildAndOptimizeTopology()
+        public void BuildAndOptimizeTopology()
         {
-            buildAndOptimizeTopology(null);
+            BuildAndOptimizeTopology(null);
         }
 
-        public void buildAndOptimizeTopology(StreamsConfig config)
+        public void BuildAndOptimizeTopology(StreamsConfig config)
         {
-            maybePerformOptimizations(config);
+            MaybePerformOptimizations(config);
 
-            //            PriorityQueue<StreamsGraphNode> graphNodePriorityQueue = new PriorityQueue<StreamsGraphNode>(5, Comparator.comparing(StreamsGraphNode.buildPriority));
+            var graphNodePriorityQueue = new SimplePriorityQueue<IStreamsGraphNode>(new StreamsGraphNodeComparer());
 
-            //            //graphNodePriorityQueue.offer(root);
+            graphNodePriorityQueue.Enqueue(root, root.BuildPriority);
 
-            //            while (graphNodePriorityQueue.Any())
-            //            {
-            //                StreamsGraphNode streamGraphNode = graphNodePriorityQueue.Remove();
+            while (graphNodePriorityQueue.Any())
+            {
+                IStreamsGraphNode streamGraphNode = graphNodePriorityQueue.Dequeue();
 
-            //                LOG.LogDebug("Adding nodes to topology {} child nodes {}", streamGraphNode, streamGraphNode.children());
+                this.logger.LogDebug($"Adding nodes to topology {streamGraphNode} child nodes {streamGraphNode.Children()}");
 
-            //                if (streamGraphNode.allParentsWrittenToTopology() && !streamGraphNode.hasWrittenToTopology)
-            //                {
-            //                    streamGraphNode.WriteToTopology(internalTopologyBuilder);
-            //                    streamGraphNode.setHasWrittenToTopology(true);
-            //                }
+                if (streamGraphNode.AllParentsWrittenToTopology() && !streamGraphNode.HasWrittenToTopology)
+                {
+                    streamGraphNode.WriteToTopology(this.InternalTopologyBuilder);
+                    streamGraphNode.SetHasWrittenToTopology(hasWrittenToTopology: true);
+                }
 
-            //                foreach (StreamsGraphNode graphNode in streamGraphNode.children())
-            //                {
-            ////                    graphNodePriorityQueue.offer(graphNode);
-            //                }
-            //            }
+                foreach (IStreamsGraphNode graphNode in streamGraphNode.Children())
+                {
+                    graphNodePriorityQueue.Enqueue(graphNode, graphNode.BuildPriority);
+                }
+            }
         }
 
-        private void maybePerformOptimizations(StreamsConfig config)
+        private void MaybePerformOptimizations(StreamsConfig config)
         {
             if (config != null
                 && StreamsConfigPropertyNames.OPTIMIZE.Equals(config.Get(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION)))
             {
                 this.logger.LogDebug("Optimizing the Kafka Streams graph for repartition nodes");
 
-                optimizeKTableSourceTopics();
-                maybeOptimizeRepartitionOperations();
+                OptimizeKTableSourceTopics();
+                MaybeOptimizeRepartitionOperations();
             }
         }
 
-        private void optimizeKTableSourceTopics()
+        private void OptimizeKTableSourceTopics()
         {
             this.logger.LogDebug("Marking KTable source nodes to optimize using source topic for changelogs ");
-            //          tableSourceNodes.ForEach(node => ((TableSourceNode)node).reuseSourceTopicForChangeLog(true));
-        }
-
-
-        private void maybeOptimizeRepartitionOperations()
-        {
-            maybeUpdateKeyChangingRepartitionNodeMap();
-            //IEnumerator<Entry<StreamsGraphNode, HashSet<OptimizableRepartitionNode>>> entryIterator = keyChangingOperationsToOptimizableRepartitionNodes.iterator();
-
-            //while (entryIterator.hasNext())
-            //{
-            //    KeyValuePair<StreamsGraphNode, HashSet<OptimizableRepartitionNode>> entry = entryIterator.next();
-
-            //    StreamsGraphNode keyChangingNode = entry.Key;
-
-            //    if (entry.Value.isEmpty())
-            //    {
-            //        continue;
-            //    }
-
-            //    GroupedInternal groupedInternal = new GroupedInternal(getRepartitionSerdes(entry.Value));
-
-            //    string repartitionTopicName = getFirstRepartitionTopicName(entry.Value);
-            //    //passing in the name of the first repartition topic, re-used to create the optimized repartition topic
-            //    StreamsGraphNode optimizedSingleRepartition = createRepartitionNode(repartitionTopicName,
-            //                                                                             groupedInternal.keySerde,
-            //                                                                             groupedInternal.valueSerde);
-
-            //    // re-use parent buildPriority to make sure the single repartition graph node is evaluated before downstream nodes
-            //    optimizedSingleRepartition.setBuildPriority(keyChangingNode.buildPriority);
-
-            //    foreach (var repartitionNodeToBeReplaced in entry.Value)
-            //    {
-
-            //        StreamsGraphNode keyChangingNodeChild = findParentNodeMatching(repartitionNodeToBeReplaced, gn => gn.parentNodes.Contains(keyChangingNode));
-
-            //        if (keyChangingNodeChild == null)
-            //        {
-            //            throw new StreamsException(string.Format("Found a null keyChangingChild node for %s", repartitionNodeToBeReplaced));
-            //        }
-
-            //        LOG.LogDebug("Found the child node of the key changer {} from the repartition {}.", keyChangingNodeChild, repartitionNodeToBeReplaced);
-
-            //        // need to.Add children of key-changing node as children of optimized repartition
-            //        // in order to process records from re-partitioning
-            //        optimizedSingleRepartition.AddChild(keyChangingNodeChild);
-
-            //        LOG.LogDebug("Removing {} from {}  children {}", keyChangingNodeChild, keyChangingNode, keyChangingNode.children());
-            //        // now Remove children from key-changing node
-            //        keyChangingNode.removeChild(keyChangingNodeChild);
-
-            //        // now need to get children of repartition node so we can Remove repartition node
-            //        List<StreamsGraphNode> repartitionNodeToBeReplacedChildren = repartitionNodeToBeReplaced.children();
-            //        List<StreamsGraphNode> parentsOfRepartitionNodeToBeReplaced = repartitionNodeToBeReplaced.parentNodes;
-
-            //        foreach (StreamsGraphNode repartitionNodeToBeReplacedChild in repartitionNodeToBeReplacedChildren)
-            //        {
-            //            foreach (StreamsGraphNode parentNode in parentsOfRepartitionNodeToBeReplaced)
-            //            {
-            //                parentNode.AddChild(repartitionNodeToBeReplacedChild);
-            //            }
-            //        }
-
-            //        foreach (StreamsGraphNode parentNode in parentsOfRepartitionNodeToBeReplaced)
-            //        {
-            //            parentNode.removeChild(repartitionNodeToBeReplaced);
-            //        }
-            //        repartitionNodeToBeReplaced.clearChildren();
-
-            //        LOG.LogDebug("Updated node {} children {}", optimizedSingleRepartition, optimizedSingleRepartition.children());
-            //    }
-
-            //    keyChangingNode.AddChild(optimizedSingleRepartition);
-            //    entryIterator.Remove();
-            //}
-        }
-
-        private void maybeUpdateKeyChangingRepartitionNodeMap()
-        {
-            var mergeNodesToKeyChangers = new Dictionary<StreamsGraphNode, HashSet<StreamsGraphNode>>();
-            foreach (StreamsGraphNode mergeNode in mergeNodes)
+            foreach (var node in tableSourceNodes)
             {
-                mergeNodesToKeyChangers.Add(mergeNode, new HashSet<StreamsGraphNode>());
-                List<StreamsGraphNode> keys = new List<StreamsGraphNode>(); // keyChangingOperationsToOptimizableRepartitionNodes.Keys;
+                node.ShouldReuseSourceTopicForChangelog = true;
+            }
+        }
 
-                foreach (StreamsGraphNode key in keys)
+        private void MaybeOptimizeRepartitionOperations()
+        {
+            MaybeUpdateKeyChangingRepartitionNodeMap();
+
+            foreach (var entry in keyChangingOperationsToOptimizableRepartitionNodes)
+            {
+                IStreamsGraphNode keyChangingNode = entry.Key;
+
+                if (!entry.Value.Any())
                 {
-                    StreamsGraphNode maybeParentKey = FindParentNodeMatching(mergeNode, node => node.ParentNodes.Contains(key));
+                    continue;
+                }
+
+                //var groupedInternal = new GroupedInternal(GetRepartitionSerdes(entry.Value.ToList()));
+
+                //string repartitionTopicName = GetFirstRepartitionTopicName(entry.Value.ToList());
+
+                //// passing in the name of the first repartition topic, re-used to create the optimized repartition topic
+                //var optimizedSingleRepartition = CreateRepartitionNode(
+                //    repartitionTopicName,
+                //    groupedInternal.keySerde,
+                //    groupedInternal.valueSerde);
+
+                //// re-use parent buildPriority to make sure the single repartition graph node is evaluated before downstream nodes
+                //optimizedSingleRepartition.SetBuildPriority(keyChangingNode.BuildPriority);
+
+                //foreach (var repartitionNodeToBeReplaced in entry.Value)
+                //{
+                //    var keyChangingNodeChild = FindParentNodeMatching(
+                //        repartitionNodeToBeReplaced,
+                //        gn => gn.ParentNodes.Contains(keyChangingNode));
+
+                //    if (keyChangingNodeChild == null)
+                //    {
+                //        throw new StreamsException($"Found a null keyChangingChild node for {repartitionNodeToBeReplaced}");
+                //    }
+
+                //    this.logger.LogDebug($"Found the child node of the key changer {keyChangingNodeChild} from the repartition {repartitionNodeToBeReplaced}.");
+
+                //    // need to add children of key-changing node as children of optimized repartition
+                //    // in order to process records from re-partitioning
+                //    optimizedSingleRepartition.AddChild(keyChangingNodeChild);
+
+                //    this.logger.LogDebug($"Removing {keyChangingNodeChild} from {keyChangingNode}  children {keyChangingNode.Children()}");
+
+                //    // now Remove children from key-changing node
+                //    keyChangingNode.RemoveChild(keyChangingNodeChild);
+
+                //    // now need to get children of repartition node so we can Remove repartition node
+                //    var repartitionNodeToBeReplacedChildren = repartitionNodeToBeReplaced.Children();
+                //    var parentsOfRepartitionNodeToBeReplaced = repartitionNodeToBeReplaced.ParentNodes;
+
+                //    foreach (var repartitionNodeToBeReplacedChild in repartitionNodeToBeReplacedChildren)
+                //    {
+                //        foreach (var parentNode in parentsOfRepartitionNodeToBeReplaced)
+                //        {
+                //            parentNode.AddChild(repartitionNodeToBeReplacedChild);
+                //        }
+                //    }
+
+                //    foreach (var parentNode in parentsOfRepartitionNodeToBeReplaced)
+                //    {
+                //        parentNode.RemoveChild(repartitionNodeToBeReplaced);
+                //    }
+
+                //    repartitionNodeToBeReplaced.ClearChildren();
+
+                //    this.logger.LogDebug($"Updated node {optimizedSingleRepartition} children {optimizedSingleRepartition.Children()}");
+                //}
+
+                //keyChangingNode.AddChild(optimizedSingleRepartition);
+                // entryIterator.Remove();
+            }
+        }
+
+        private void MaybeUpdateKeyChangingRepartitionNodeMap()
+        {
+            var mergeNodesToKeyChangers = new Dictionary<IStreamsGraphNode, HashSet<IStreamsGraphNode>>();
+            foreach (var mergeNode in mergeNodes)
+            {
+                mergeNodesToKeyChangers.Add(mergeNode, new HashSet<IStreamsGraphNode>());
+                var keys = new List<IStreamsGraphNode>(keyChangingOperationsToOptimizableRepartitionNodes.Keys);
+
+                foreach (var key in keys)
+                {
+                    IStreamsGraphNode? maybeParentKey = FindParentNodeMatching(mergeNode, node => node.ParentNodes.Contains(key));
                     if (maybeParentKey != null)
                     {
                         mergeNodesToKeyChangers[mergeNode].Add(key);
@@ -445,11 +426,11 @@ namespace Kafka.Streams.KStream.Internals
                 }
             }
 
-            foreach (KeyValuePair<StreamsGraphNode, HashSet<StreamsGraphNode>> entry in mergeNodesToKeyChangers)
+            foreach (var entry in mergeNodesToKeyChangers)
             {
-                StreamsGraphNode mergeKey = entry.Key;
-                List<StreamsGraphNode> keyChangingParents = entry.Value.ToList();
-                var repartitionNodes = new HashSet<OptimizableRepartitionNode>();
+                IStreamsGraphNode mergeKey = entry.Key;
+                var keyChangingParents = entry.Value.ToList();
+                var repartitionNodes = new HashSet<IOptimizableRepartitionNode>();
 
                 foreach (var keyChangingParent in keyChangingParents)
                 {
@@ -457,36 +438,34 @@ namespace Kafka.Streams.KStream.Internals
                     keyChangingOperationsToOptimizableRepartitionNodes.Remove(keyChangingParent);
                 }
 
-                //keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
+                keyChangingOperationsToOptimizableRepartitionNodes.Add(mergeKey, repartitionNodes);
             }
         }
 
+        private OptimizableRepartitionNode<K, V> CreateRepartitionNode<K, V>(
+            string repartitionTopicName,
+            ISerde<K> keySerde,
+            ISerde<V> valueSerde)
+        {
+            OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
+                OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
-        //private OptimizableRepartitionNode<K, V> createRepartitionNode<K, V>(
-        //    string repartitionTopicName,
-        //    ISerde<K> keySerde,
-        //    ISerde<V> valueSerde)
-        //{
-        //    OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
-        //        OptimizableRepartitionNode.optimizableRepartitionNodeBuilder<K, V>();
+            KStream<K, V>.CreateRepartitionedSource(
+                this,
+                keySerde,
+                valueSerde,
+                repartitionTopicName,
+                repartitionNodeBuilder);
 
-        //    KStream<K, V>.createRepartitionedSource(
-        //        this,
-        //        keySerde,
-        //        valueSerde,
-        //        repartitionTopicName,
-        //        repartitionNodeBuilder);
+            // ensures setting the repartition topic to the name of the
+            // first repartition topic to get merged
+            // this may be an auto-generated name or a user specified name
+            repartitionNodeBuilder.WithRepartitionTopic(repartitionTopicName);
 
-        //    // ensures setting the repartition topic to the name of the
-        //    // first repartition topic to get merged
-        //    // this may be an auto-generated name or a user specified name
-        //    repartitionNodeBuilder.withRepartitionTopic(repartitionTopicName);
+            return repartitionNodeBuilder.Build();
+        }
 
-        //    return repartitionNodeBuilder.build();
-
-        //}
-
-        private StreamsGraphNode? GetKeyChangingParentNode(StreamsGraphNode repartitionNode)
+        private IStreamsGraphNode? GetKeyChangingParentNode(IStreamsGraphNode repartitionNode)
         {
             var shouldBeKeyChangingNode = FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation || n.IsValueChangingOperation);
 
@@ -500,51 +479,47 @@ namespace Kafka.Streams.KStream.Internals
             return null;
         }
 
-        private string GetFirstRepartitionTopicName(List<OptimizableRepartitionNode> repartitionNodes)
+        private string GetFirstRepartitionTopicName(List<IOptimizableRepartitionNode> repartitionNodes)
         {
-            //.repartitionTopic()
-            return ""; // repartitionNodes.First();
+            return repartitionNodes.First().NodeName;
         }
 
+        private GroupedInternal<K, V> GetRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
+        {
+            ISerde<K>? keySerde = null;
+            ISerde<V>? valueSerde = null;
 
-        //private GroupedInternal<K, V> getRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
-        //{
-        //    ISerde<K> keySerde = null;
-        //    ISerde<V> valueSerde = null;
+            foreach (var repartitionNode in repartitionNodes)
+            {
+                if (keySerde == null && repartitionNode.keySerde != null)
+                {
+                    keySerde = repartitionNode.keySerde;
+                }
 
-        //    foreach (var repartitionNode in repartitionNodes)
-        //    {
-        //        if (keySerde == null && repartitionNode.keySerde != null)
-        //        {
-        //            keySerde = repartitionNode.keySerde;
-        //        }
+                if (valueSerde == null && repartitionNode.valueSerde != null)
+                {
+                    valueSerde = repartitionNode.valueSerde;
+                }
 
-        //        if (valueSerde == null && repartitionNode.valueSerde != null)
-        //        {
-        //            valueSerde = repartitionNode.valueSerde;
-        //        }
+                if (keySerde != null && valueSerde != null)
+                {
+                    break;
+                }
+            }
 
-        //        if (keySerde != null && valueSerde != null)
-        //        {
-        //            break;
-        //        }
-        //    }
+            return new GroupedInternal<K, V>(Grouped<K, V>.With(keySerde, valueSerde));
+        }
 
-        //    return null;
-        //        //new GroupedInternal<K, V>(Grouped<K, V>
-        //        //.with(keySerde, valueSerde));
-        //}
-
-        private StreamsGraphNode? FindParentNodeMatching(
-            StreamsGraphNode startSeekingNode,
-            Predicate<StreamsGraphNode> parentNodePredicate)
+        private IStreamsGraphNode? FindParentNodeMatching(
+            IStreamsGraphNode startSeekingNode,
+            Predicate<IStreamsGraphNode> parentNodePredicate)
         {
             if (parentNodePredicate(startSeekingNode))
             {
                 return startSeekingNode;
             }
 
-            StreamsGraphNode? foundParentNode = null;
+            IStreamsGraphNode? foundParentNode = null;
 
             foreach (var parentNode in startSeekingNode.ParentNodes)
             {

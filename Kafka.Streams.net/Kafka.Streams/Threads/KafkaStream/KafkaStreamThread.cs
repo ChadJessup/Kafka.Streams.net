@@ -330,7 +330,8 @@ namespace Kafka.Streams.Threads.KafkaStream
          */
         private void RunLoop()
         {
-            consumer.Subscribe(builder.SourceTopicPattern().ToString());//, rebalanceListener);
+            var sourceTopicPattern = builder.SourceTopicPattern();
+            consumer.Subscribe(sourceTopicPattern.ToString());//, rebalanceListener);
 
             while (isRunning())
             {

@@ -23,12 +23,12 @@ namespace Kafka.Streams.Processors.Internals
     {
         private readonly Dictionary<T, T> ids = new Dictionary<T, T>();
 
-        public void add(T id)
+        public void Add(T id)
         {
             ids.Add(id, id);
         }
 
-        public bool exists(T id)
+        public bool Exists(T id)
         {
             return ids.ContainsKey(id);
         }
@@ -36,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws NoSuchElementException if the parent of this node is null
          */
-        public T root(T id)
+        public T Root(T id)
         {
             T current = id;
             T parent = ids[current];
@@ -50,7 +50,14 @@ namespace Kafka.Streams.Processors.Internals
             {
                 // do the path splitting
                 T grandparent = ids[parent];
-                ids.Add(current, grandparent);
+                if (ids.ContainsKey(current))
+                {
+                    ids[current] = grandparent;
+                }
+                else
+                {
+                    ids.Add(current, grandparent);
+                }
 
                 current = parent;
                 parent = grandparent;
@@ -58,29 +65,30 @@ namespace Kafka.Streams.Processors.Internals
             return current;
         }
 
-
-        void unite(T id1, T[] idList)
+        public void Unite(T id1, T[] idList)
         {
             foreach (T id2 in idList)
             {
-                unitePair(id1, id2);
+                UnitePair(id1, id2);
             }
         }
 
-        private void unitePair(T id1, T id2)
+        private void UnitePair(T id1, T id2)
         {
-            T root1 = root(id1);
-            T root2 = root(id2);
+            T root1 = Root(id1);
+            T root2 = Root(id2);
 
             if (!root1.Equals(root2))
             {
-                ids.Add(root1, root2);
+                if (ids.ContainsKey(root1))
+                {
+                    ids[root1] = root2;
+                }
+                else
+                {
+                    ids.Add(root1, root2);
+                }
             }
-        }
-
-        internal void unite(string name, string[] predecessorNames)
-        {
-            throw new NotImplementedException();
         }
     }
 }

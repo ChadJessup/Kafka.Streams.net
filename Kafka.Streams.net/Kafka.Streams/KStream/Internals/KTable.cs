@@ -454,7 +454,7 @@ namespace Kafka.Streams.KStream.Internals
                 new KStreamMapValues<K, Change<V>, V>(
                     (key, change) => change.newValue);
 
-            ProcessorParameters<K, V> processorParameters = unsafeCastProcessorParametersToCompletelyDifferentType<V>(
+            ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
                new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
 
             ProcessorGraphNode<K, V> toStreamNode = new ProcessorGraphNode<K, V>(
@@ -879,12 +879,11 @@ namespace Kafka.Streams.KStream.Internals
          * We conflate V with Change<V> in many places. It might be nice to fix that eventually.
          * For now, I'm just explicitly lying about the parameterized type.
          */
-        private ProcessorParameters<K, VR> unsafeCastProcessorParametersToCompletelyDifferentType<VR>(
+        private ProcessorParameters<K, VR> UnsafeCastProcessorParametersToCompletelyDifferentType<VR>(
             ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
         {
-            return null;// return ProcessorParameters<K, VR>.ConvertFrom(kObjectProcessorParameters);
-
-            //return pp;
+            var converted = Convert.ChangeType(kObjectProcessorParameters, typeof(ProcessorParameters<K, VR>));
+            return (ProcessorParameters<K, VR>)converted;
         }
 
         string IKTable<K, V>.queryableStoreName()

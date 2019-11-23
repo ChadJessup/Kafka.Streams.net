@@ -38,7 +38,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             : base(nodeName, processorParameters)
         {
 
-            this.storeNames = default;
+            this.storeNames = Array.Empty<string>();
             this.storeBuilder = materializedKTableStoreBuilder;
         }
 
@@ -46,8 +46,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
         {
             return "StatefulProcessorNode{" +
-                "storeNames=" + Arrays.ToString(storeNames) +
-                ", storeBuilder=" + storeBuilder +
+                $"storeNames=[{string.Join(',', storeNames)}]" +
+                $", storeBuilder={storeBuilder}" +
                 "} " + base.ToString();
         }
 
@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             if (storeNames != null && storeNames.Length > 0)
             {
-                topologyBuilder.connectProcessorAndStateStores(processorName, storeNames);
+                topologyBuilder.ConnectProcessorAndStateStores(processorName, storeNames);
             }
 
             if (storeBuilder != null)

@@ -126,7 +126,7 @@ namespace Kafka.Streams.Topologies
             string name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(offsetReset, name, null, null, null, topicPattern);
+            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, null, null, null, topicPattern);
             return this;
         }
 
@@ -230,7 +230,7 @@ namespace Kafka.Streams.Topologies
             string name,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource<K, V>(offsetReset, name, timestampExtractor, null, null, topicPattern);
+            internalTopologyBuilder.AddSource<K, V>(offsetReset, name, timestampExtractor, null, null, topicPattern);
             return this;
         }
 
@@ -354,7 +354,7 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topicPattern);
+            internalTopologyBuilder.AddSource(offsetReset, name, null, keyDeserializer, valueDeserializer, topicPattern);
             return this;
         }
 
@@ -419,7 +419,7 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valueDeserializer,
             Regex topicPattern)
         {
-            internalTopologyBuilder.addSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topicPattern);
+            internalTopologyBuilder.AddSource(offsetReset, name, timestampExtractor, keyDeserializer, valueDeserializer, topicPattern);
             return this;
         }
 
@@ -823,7 +823,7 @@ namespace Kafka.Streams.Topologies
             string processorName,
             string[] stateStoreNames)
         {
-            internalTopologyBuilder.connectProcessorAndStateStores(processorName, stateStoreNames);
+            internalTopologyBuilder.ConnectProcessorAndStateStores(processorName, stateStoreNames);
             return this;
         }
 

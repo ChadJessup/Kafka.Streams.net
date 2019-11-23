@@ -2,10 +2,11 @@ using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
-    public class OptimizableRepartitionNode
+    public static class OptimizableRepartitionNode
     {
         public static OptimizableRepartitionNodeBuilder<K, V> GetOptimizableRepartitionNodeBuilder<K, V>()
         {
@@ -13,7 +14,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
     }
 
-    public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V>
+    public class OptimizableRepartitionNode<K, V> : BaseRepartitionNode<K, V>, IOptimizableRepartitionNode
     {
         public OptimizableRepartitionNode(
             string nodeName,
@@ -43,40 +44,38 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public override string ToString()
             => $"OptimizableRepartitionNode{{{base.ToString()}}}";
 
+        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
+        {
+            ISerializer<K> keySerializer = keySerde != null
+                ? keySerde.Serializer
+                : null;
 
-        //        public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
-        //        {
-        //            ISerializer<K> keySerializer = keySerde != null
-        //                ? keySerde.Serializer
-        //                : null;
+            IDeserializer<K> keyDeserializer = keySerde != null
+                ? keySerde.Deserializer
+                : null;
 
-        //            IDeserializer<K> keyDeserializer = keySerde != null
-        //                ? keySerde.Deserializer
-        //                : null;
+            topologyBuilder.addInternalTopic(repartitionTopic);
 
-        //            topologyBuilder.addInternalTopic(repartitionTopic);
+            topologyBuilder.AddProcessor(
+                processorParameters.processorName,
+                processorParameters.ProcessorSupplier,
+                ParentNodeNames());
 
-        //            topologyBuilder.addProcessor(
-        //                processorParameters.processorName,
-        //                processorParameters.IProcessorSupplier,
-        //                parentNodeNames());
+            topologyBuilder.AddSink(
+                sinkName,
+                repartitionTopic,
+                keySerializer,
+                GetValueSerializer(),
+                null,
+                new[] { processorParameters.processorName });
 
-        //            topologyBuilder.addSink(
-        //                sinkName,
-        //                repartitionTopic,
-        //                keySerializer,
-        //                getValueSerializer(),
-        //                null,
-        //                new[] { processorParameters.processorName });
-
-        //            topologyBuilder.addSource(
-        //                AutoOffsetReset.Error,
-        //                sourceName,
-        //                new FailOnInvalidTimestamp(),
-        //                keyDeserializer,
-        //                getValueDeserializer(),
-        //                new[] { repartitionTopic });
-        //        }
-        //    }
+            topologyBuilder.AddSource(
+                null,
+                sourceName,
+                new FailOnInvalidTimestamp(logger: null),
+                keyDeserializer,
+                GetValueDeserializer(),
+                new[] { repartitionTopic });
+        }
     }
 }

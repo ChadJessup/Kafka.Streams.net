@@ -13,13 +13,12 @@ namespace Kafka.Streams.Nodes
      * Used to represent either a KTable source or a GlobalKTable source. A bool flag is used to indicate if this represents a GlobalKTable a {@link
      * org.apache.kafka.streams.kstream.GlobalKTable}
      */
-    public class TableSourceNode<K, V> : StreamSourceNode<K, V>
+    public class TableSourceNode<K, V> : StreamSourceNode<K, V>, ITableSourceNode
     {
         private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
         private readonly ProcessorParameters<K, V> processorParameters;
         private readonly string sourceName;
         private readonly bool isGlobalKTable;
-        private bool shouldReuseSourceTopicForChangelog = false;
 
         public TableSourceNode(
             string nodeName,
@@ -39,18 +38,15 @@ namespace Kafka.Streams.Nodes
             this.materializedInternal = materializedInternal;
         }
 
-        public void reuseSourceTopicForChangeLog(bool shouldReuseSourceTopicForChangelog)
-        {
-            this.shouldReuseSourceTopicForChangelog = shouldReuseSourceTopicForChangelog;
-        }
+        public bool ShouldReuseSourceTopicForChangelog { get; set; } = false;
 
         public override string ToString()
         {
             return "TableSourceNode{" +
-                   "materializedInternal=" + materializedInternal +
-                   ", processorParameters=" + processorParameters +
-                   ", sourceName='" + sourceName + '\'' +
-                   ", isGlobalKTable=" + isGlobalKTable +
+                   $"materializedInternal={materializedInternal}" +
+                   $", processorParameters={processorParameters}" +
+                   $", sourceName='{sourceName}'" +
+                   $", isGlobalKTable={isGlobalKTable}" +
                    "} " + base.ToString();
         }
 
@@ -85,7 +81,7 @@ namespace Kafka.Streams.Nodes
             else
             {
                 topologyBuilder.AddSource(
-                    consumedInternal.offsetResetPolicy(),
+                    consumedInternal.OffsetResetPolicy(),
                     sourceName,
                     consumedInternal.timestampExtractor,
                     consumedInternal.keyDeserializer(),
@@ -100,7 +96,7 @@ namespace Kafka.Streams.Nodes
                 {
                     topologyBuilder.addStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { this.NodeName });
 
-                    if (shouldReuseSourceTopicForChangelog)
+                    if (ShouldReuseSourceTopicForChangelog)
                     {
                         storeBuilder.WithLoggingDisabled();
                         topologyBuilder.connectSourceStoreAndTopic(storeBuilder.name, topicName);

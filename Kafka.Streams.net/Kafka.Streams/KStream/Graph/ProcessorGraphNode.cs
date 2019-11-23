@@ -18,6 +18,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             ProcessorParameters<K, V> processorParameters)
             : base(nodeName)
         {
+            this.processorParameters = processorParameters;
         }
 
         public override string ToString()

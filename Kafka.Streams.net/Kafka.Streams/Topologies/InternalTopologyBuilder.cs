@@ -163,13 +163,8 @@ namespace Kafka.Streams.Topologies
                 throw new TopologyException("IProcessor " + name + " is already.Added.");
             }
 
-            foreach (string topic in topics)
+            foreach (string topic in topics.Where(t => t != null))
             {
-                if (topic == null)
-                {
-                    throw new ArgumentNullException(nameof(topic));
-                }
-
                 ValidateTopicNotAlreadyRegistered(topic);
                 maybeAddToResetList(earliestResetTopics, latestResetTopics, offsetReset, topic);
                 sourceTopicNames.Add(topic);
@@ -188,11 +183,11 @@ namespace Kafka.Streams.Topologies
                     valDeserializer));
 
             nodeToSourceTopics.Add(name, topics.ToList());
-            nodeGrouper.add(name);
+            nodeGrouper.Add(name);
             _nodeGroups = null;
         }
 
-        public void addSource<K, V>(
+        public void AddSource<K, V>(
             AutoOffsetReset offsetReset,
             string name,
             ITimestampExtractor timestampExtractor,
@@ -245,7 +240,7 @@ namespace Kafka.Streams.Topologies
                 valDeserializer));
 
             nodeToSourcePatterns.Add(name, topicPattern);
-            nodeGrouper.add(name);
+            nodeGrouper.Add(name);
             _nodeGroups = null;
         }
 
@@ -330,8 +325,8 @@ namespace Kafka.Streams.Topologies
                     valSerializer,
                     partitioner));
 
-            nodeGrouper.add(name);
-            nodeGrouper.unite(name, predecessorNames);
+            nodeGrouper.Add(name);
+            nodeGrouper.Unite(name, predecessorNames);
             _nodeGroups = null;
         }
 
@@ -384,9 +379,9 @@ namespace Kafka.Streams.Topologies
             }
 
             nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(name, predecessorNames, supplier));
-            nodeGrouper.add(name);
+            nodeGrouper.Add(name);
 
-            nodeGrouper.unite(name, predecessorNames);
+            nodeGrouper.Unite(name, predecessorNames);
             _nodeGroups = null;
         }
 
@@ -478,11 +473,11 @@ namespace Kafka.Streams.Topologies
             globalStateBuilders.Add(storeBuilder.name, (IStoreBuilder<IStateStore>)storeBuilder);
             connectSourceStoreAndTopic(storeBuilder.name, topic);
             nodeToSourceTopics.Add(sourceName, topics.ToList());
-            nodeGrouper.unite(processorName, predecessors);
+            nodeGrouper.Unite(processorName, predecessors);
             nodeFactories.Add(processorName, nodeFactory);
             nodeFactory.addStateStore(storeBuilder.name);
-            nodeGrouper.add(processorName);
-            nodeGrouper.add(sourceName);
+            nodeGrouper.Add(processorName);
+            nodeGrouper.Add(sourceName);
             _nodeGroups = null;
         }
 
@@ -490,20 +485,21 @@ namespace Kafka.Streams.Topologies
         {
             if (sourceTopicNames.Contains(topic) || globalTopics.Contains(topic))
             {
-                throw new TopologyException("Topic " + topic + " has already been registered by another source.");
+                throw new TopologyException($"Topic {topic} has already been registered by another source.");
             }
 
             foreach (Regex pattern in nodeToSourcePatterns.Values)
             {
-                //if (pattern.matcher(topic).matches())
-                //{
-                //    throw new TopologyException("Topic " + topic + " matches a Regex already registered by another source.");
-                //}
+                if (pattern.IsMatch(topic))
+                {
+                    throw new TopologyException($"Topic {topic} matches a Regex already registered by another source.");
+                }
             }
         }
 
-        public void connectProcessorAndStateStores(string processorName,
-                                                         string[] stateStoreNames)
+        public void ConnectProcessorAndStateStores(
+            string processorName,
+            string[] stateStoreNames)
         {
             processorName = processorName ?? throw new ArgumentNullException(nameof(processorName));
             stateStoreNames = stateStoreNames ?? throw new ArgumentNullException(nameof(stateStoreNames));
@@ -687,17 +683,20 @@ namespace Kafka.Streams.Topologies
             AutoOffsetReset? offsetReset,
             T item)
         {
-            switch (offsetReset)
+            if (offsetReset.HasValue)
             {
-                case AutoOffsetReset.Earliest:
-                    earliestResets.Add(item);
-                    break;
-                case AutoOffsetReset.Latest:
-                    latestResets.Add(item);
-                    break;
-                case AutoOffsetReset.Error:
-                default:
-                    throw new TopologyException($"Unrecognized reset string.Format {offsetReset}");
+                switch (offsetReset)
+                {
+                    case AutoOffsetReset.Earliest:
+                        earliestResets.Add(item);
+                        break;
+                    case AutoOffsetReset.Latest:
+                        latestResets.Add(item);
+                        break;
+                    case AutoOffsetReset.Error:
+                    default:
+                        throw new TopologyException($"Unrecognized {nameof(AutoOffsetReset)} value: {offsetReset}");
+                }
             }
         }
 
@@ -747,7 +746,7 @@ namespace Kafka.Streams.Topologies
             Dictionary<string, HashSet<string>> rootToNodeGroup)
         {
             int newNodeGroupId = nodeGroupId;
-            string root = nodeGrouper.root(nodeName);
+            string root = nodeGrouper.Root(nodeName);
             HashSet<string> nodeGroup = rootToNodeGroup[root];
             if (nodeGroup == null)
             {
