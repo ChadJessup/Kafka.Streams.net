@@ -75,7 +75,7 @@ namespace Kafka.Streams.Nodes
                     consumedInternal.keyDeserializer(),
                     consumedInternal.valueDeserializer(),
                     topicName,
-                    processorParameters.processorName,
+                    processorParameters.ProcessorName,
                     processorParameters.ProcessorSupplier);
             }
             else
@@ -88,7 +88,7 @@ namespace Kafka.Streams.Nodes
                     consumedInternal.valueDeserializer(),
                     new[] { topicName });
 
-                topologyBuilder.AddProcessor(processorParameters.processorName, processorParameters.ProcessorSupplier, sourceName);
+                topologyBuilder.AddProcessor(processorParameters.ProcessorName, processorParameters.ProcessorSupplier, sourceName);
 
                 // only add state store if the source KTable should be materialized
                 KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;

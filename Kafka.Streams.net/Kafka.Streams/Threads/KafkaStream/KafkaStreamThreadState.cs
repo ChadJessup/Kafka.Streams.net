@@ -124,9 +124,10 @@ namespace Kafka.Streams.Threads.KafkaStream
         }
 
         public bool IsRunning()
-        {
-            throw new NotImplementedException();
-        }
+            => this.CurrentState.HasFlag(KafkaStreamThreadStates.RUNNING)
+            || this.CurrentState.HasFlag(KafkaStreamThreadStates.STARTING)
+            || this.CurrentState.HasFlag(KafkaStreamThreadStates.PARTITIONS_REVOKED)
+            || this.CurrentState.HasFlag(KafkaStreamThreadStates.PARTITIONS_ASSIGNED);
 
         public void SetStateListener(IStateListener stateListener)
             => this.StateListener = stateListener;

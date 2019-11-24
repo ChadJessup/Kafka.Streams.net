@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            string processorName = processorParameters.processorName;
+            string processorName = processorParameters.ProcessorName;
             IProcessorSupplier<K, V> IProcessorSupplier = processorParameters.ProcessorSupplier;
 
             // Stream - Table join (Global or KTable)

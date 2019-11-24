@@ -65,16 +65,16 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            string thisProcessorName = thisProcessorParameters().processorName;
-            string otherProcessorName = otherProcessorParameters().processorName;
-            string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.processorName;
-            string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.processorName;
+            string thisProcessorName = thisProcessorParameters().ProcessorName;
+            string otherProcessorName = otherProcessorParameters().ProcessorName;
+            string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
+            string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
 
             topologyBuilder.AddProcessor(thisProcessorName, thisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
             topologyBuilder.AddProcessor(otherProcessorName, otherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);
 
             topologyBuilder.AddProcessor(
-                mergeProcessorParameters().processorName,
+                mergeProcessorParameters().ProcessorName,
                 mergeProcessorParameters().ProcessorSupplier,
                 thisProcessorName, otherProcessorName);
 

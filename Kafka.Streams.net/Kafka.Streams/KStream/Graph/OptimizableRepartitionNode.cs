@@ -57,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             topologyBuilder.addInternalTopic(repartitionTopic);
 
             topologyBuilder.AddProcessor(
-                processorParameters.processorName,
+                processorParameters.ProcessorName,
                 processorParameters.ProcessorSupplier,
                 ParentNodeNames());
 
@@ -67,7 +67,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 keySerializer,
                 GetValueSerializer(),
                 null,
-                new[] { processorParameters.processorName });
+                new[] { processorParameters.ProcessorName });
 
             topologyBuilder.AddSource(
                 null,

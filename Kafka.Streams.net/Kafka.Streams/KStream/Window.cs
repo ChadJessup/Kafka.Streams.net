@@ -1,13 +1,13 @@
-﻿using System;
+﻿using NodaTime;
+using System;
 
 namespace Kafka.Streams.KStream
 {
     public abstract class Window
     {
-        protected long startMs;
-        protected long endMs;
-        private readonly DateTime startTime;
-        private readonly DateTime endTime;
+        protected Duration Duration { get; }
+        private readonly Instant startTime;
+        private readonly Instant endTime;
 
         /**
          * Create a new window for the given start and end time.
@@ -16,23 +16,15 @@ namespace Kafka.Streams.KStream
          * @param endMs   the end timestamp of the window
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
          */
-        public Window(long startMs, long endMs)
+        public Window(Duration duration)
         {
-            if (startMs < 0)
+            if (duration.TotalNanoseconds < 0)
             {
-                throw new ArgumentException("Window startMs time cannot be negative.");
+                throw new ArgumentException("Window duration cannot be negative.");
             }
 
-            if (endMs < startMs)
-            {
-                throw new ArgumentException("Window endMs time cannot be smaller than window startMs time.");
-            }
-
-            this.startMs = startMs;
-            this.endMs = endMs;
-
-            //this.startTime = DateTime.ofEpochMilli(startMs);
-            //this.endTime = DateTime.ofEpochMilli(endMs);
+            this.startTime = SystemClock.Instance.GetCurrentInstant();
+            this.endTime = this.startTime + duration;
         }
 
         /**
@@ -42,7 +34,7 @@ namespace Kafka.Streams.KStream
          */
         public long Start()
         {
-            return startMs;
+            return this.startTime.ToUnixTimeMilliseconds();
         }
 
         /**
@@ -52,7 +44,7 @@ namespace Kafka.Streams.KStream
          */
         public long End()
         {
-            return endMs;
+            return this.endTime.ToUnixTimeMilliseconds();
         }
 
         /**

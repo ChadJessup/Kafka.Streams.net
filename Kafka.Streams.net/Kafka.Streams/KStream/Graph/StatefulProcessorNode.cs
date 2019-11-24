@@ -56,7 +56,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            string processorName = processorParameters.processorName;
+            string processorName = processorParameters.ProcessorName;
             var IProcessorSupplier = processorParameters.ProcessorSupplier;
 
             topologyBuilder.AddProcessor(processorName, IProcessorSupplier, ParentNodeNames());

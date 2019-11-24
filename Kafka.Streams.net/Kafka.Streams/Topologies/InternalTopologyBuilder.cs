@@ -747,7 +747,8 @@ namespace Kafka.Streams.Topologies
         {
             int newNodeGroupId = nodeGroupId;
             string root = nodeGrouper.Root(nodeName);
-            HashSet<string> nodeGroup = rootToNodeGroup[root];
+            rootToNodeGroup.TryGetValue(root, out var nodeGroup);
+
             if (nodeGroup == null)
             {
                 nodeGroup = new HashSet<string>();

@@ -454,12 +454,12 @@ namespace Kafka.Streams.KStream.Internals
                 new KStreamMapValues<K, Change<V>, V>(
                     (key, change) => change.newValue);
 
-            ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
-               new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
+            //ProcessorParameters<K, V> processorParameters = UnsafeCastProcessorParametersToCompletelyDifferentType<V>(
+               //new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
 
-            ProcessorGraphNode<K, V> toStreamNode = new ProcessorGraphNode<K, V>(
+            var toStreamNode = new ProcessorGraphNode<K, Change<V>>(
                name,
-               processorParameters);
+               new ProcessorParameters<K, Change<V>>(kStreamMapValues, name));
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, toStreamNode);
 
@@ -882,8 +882,17 @@ namespace Kafka.Streams.KStream.Internals
         private ProcessorParameters<K, VR> UnsafeCastProcessorParametersToCompletelyDifferentType<VR>(
             ProcessorParameters<K, Change<V>> kObjectProcessorParameters)
         {
-            var converted = Convert.ChangeType(kObjectProcessorParameters, typeof(ProcessorParameters<K, VR>));
-            return (ProcessorParameters<K, VR>)converted;
+            var supplierType = kObjectProcessorParameters.ProcessorSupplier.GetType();
+            Type[] typeArgs = new[] { typeof(K), typeof(VR) };
+            
+            var newSupplierType = supplierType.MakeGenericType(typeArgs);
+            var newSupplier = (IProcessorSupplier<K, VR>)newSupplierType.TypeInitializer.Invoke(Array.Empty<object>());
+
+            var pp = new ProcessorParameters<K, VR>(
+                processorSupplier: newSupplier,
+                processorName: kObjectProcessorParameters.ProcessorName);
+
+            return pp;
         }
 
         string IKTable<K, V>.queryableStoreName()
