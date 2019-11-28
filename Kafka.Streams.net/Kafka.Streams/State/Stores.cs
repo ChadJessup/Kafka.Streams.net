@@ -1,10 +1,12 @@
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.Sessions;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Window;
+using NodaTime;
 using System;
 
 namespace Kafka.Streams.State
@@ -464,18 +466,18 @@ namespace Kafka.Streams.State
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
         public static IStoreBuilder<IKeyValueStore<K, V>> keyValueStoreBuilder<K, V>(
+            IClock clock,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
-            return null;
-                //new KeyValueStoreBuilder<K, V>(
-                //supplier,
-                //keySerde,
-                //valueSerde,
-                //Time.SYSTEM);
+            return new KeyValueStoreBuilder<K, V>(
+                supplier,
+                keySerde,
+                valueSerde,
+                clock);
         }
 
         /**
@@ -494,6 +496,7 @@ namespace Kafka.Streams.State
          * @return an instance of a {@link StoreBuilder} that can build a {@link KeyValueStore}
          */
         public static IStoreBuilder<ITimestampedKeyValueStore<K, V>> timestampedKeyValueStoreBuilder<K, V>(
+            IClock clock,
             IKeyValueBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -504,7 +507,7 @@ namespace Kafka.Streams.State
                 supplier,
                 keySerde,
                 valueSerde,
-                Time.SYSTEM);
+                clock);
         }
 
         /**
@@ -522,6 +525,7 @@ namespace Kafka.Streams.State
          * @return an instance of {@link StoreBuilder} than can build a {@link WindowStore}
          */
         public static IStoreBuilder<IWindowStore<K, V>> windowStoreBuilder<K, V>(
+            IClock clock,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
@@ -532,7 +536,7 @@ namespace Kafka.Streams.State
                 supplier,
                 keySerde,
                 valueSerde,
-                Time.SYSTEM);
+                clock);
         }
 
         /**
@@ -551,13 +555,18 @@ namespace Kafka.Streams.State
          * @return an instance of {@link StoreBuilder} that can build a {@link TimestampedWindowStore}
          */
         public static IStoreBuilder<ITimestampedWindowStore<K, V>> timestampedWindowStoreBuilder<K, V>(
+            IClock clock,
             IWindowBytesStoreSupplier supplier,
             ISerde<K> keySerde,
             ISerde<V> valueSerde)
         {
             supplier = supplier ?? throw new ArgumentNullException(nameof(supplier));
 
-            return new TimestampedWindowStoreBuilder<K, V>(supplier, keySerde, valueSerde, Time.SYSTEM);
+            return new TimestampedWindowStoreBuilder<K, V>(
+                supplier,
+                keySerde,
+                valueSerde,
+                clock);
         }
 
         /**

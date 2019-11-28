@@ -16,6 +16,7 @@ using Kafka.Streams.Threads.KafkaStream;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -67,7 +68,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         private readonly ILogger<KafkaStreamsThread> logger;
         private readonly IDisposable logContext;
 
-        private readonly ITime time;
+        private readonly IClock clock;
         private readonly Guid processId;
         private readonly IServiceProvider services;
         private readonly IKafkaClientSupplier clientSupplier;
@@ -104,6 +105,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             IStateMachine<KafkaStreamsThreadStates> states,
             StreamsConfig config,
             Topology topology,
+            IClock clock,
             IKafkaClientSupplier clientSupplier)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -116,7 +118,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             this.State.SetThread(this);
             this.services = serviceProvider;
-            this.time = Time.SYSTEM;
+            this.clock = clock;
 
             this.processId = Guid.NewGuid();
 
@@ -198,7 +200,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         private bool WaitOnState(KafkaStreamsThreadStates targetState, long waitMs)
         {
-            long begin = time.milliseconds();
+            long begin = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
             lock (stateLock)
             {
                 long elapsedMs = 0L;
@@ -223,7 +225,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
                         return false;
                     }
 
-                    elapsedMs = time.milliseconds() - begin;
+                    elapsedMs = clock.GetCurrentInstant().ToUnixTimeMilliseconds() - begin;
                 }
 
                 return true;

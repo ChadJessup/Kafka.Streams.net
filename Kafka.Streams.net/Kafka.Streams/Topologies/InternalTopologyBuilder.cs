@@ -10,6 +10,7 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,12 +27,15 @@ namespace Kafka.Streams.Topologies
         private StreamsConfig config;
         private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("", RegexOptions.Compiled);
         private static readonly string[] NO_PREDECESSORS = Array.Empty<string>();
+        private readonly IClock clock;
 
         public InternalTopologyBuilder(
+            IClock clock,
             ILogger<InternalTopologyBuilder> logger,
             IServiceProvider services,
             StreamsConfig config)
         {
+            this.clock = clock ?? throw new ArgumentNullException(nameof(clock));
             this.services = services ?? throw new ArgumentNullException(nameof(services));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
@@ -173,6 +177,7 @@ namespace Kafka.Streams.Topologies
             nodeFactories.Add(
                 name,
                 new SourceNodeFactory<K, V>(
+                    this.clock,
                     name,
                     topics,
                     null,
@@ -230,6 +235,7 @@ namespace Kafka.Streams.Topologies
             maybeAddToResetList(earliestResetPatterns, latestResetPatterns, offsetReset, topicPattern);
 
             nodeFactories.Add(name, new SourceNodeFactory<K, V>(
+                this.clock,
                 name,
                 null,
                 topicPattern,
@@ -318,6 +324,7 @@ namespace Kafka.Streams.Topologies
             nodeFactories.Add(
                 name,
                 new SinkNodeFactory<K, V>(
+                    this.clock,
                     name,
                     predecessorNames,
                     topicExtractor,
@@ -378,7 +385,7 @@ namespace Kafka.Streams.Topologies
                 }
             }
 
-            nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(name, predecessorNames, supplier));
+            nodeFactories.Add(name, new ProcessorNodeFactory<K, V>(this.clock, name, predecessorNames, supplier));
             nodeGrouper.Add(name);
 
             nodeGrouper.Unite(name, predecessorNames);
@@ -452,6 +459,7 @@ namespace Kafka.Streams.Topologies
             string[] predecessors = { sourceName };
 
             var nodeFactory = new ProcessorNodeFactory<K, V>(
+                this.clock,
                 processorName,
                 predecessors,
                 stateUpdateSupplier);
@@ -461,6 +469,7 @@ namespace Kafka.Streams.Topologies
             nodeFactories.Add(
                 sourceName,
                 new SourceNodeFactory<K, V>(
+                    this.clock,
                     sourceName,
                     topics,
                     null,

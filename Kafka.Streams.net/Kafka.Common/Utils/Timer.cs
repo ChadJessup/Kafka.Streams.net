@@ -1,4 +1,5 @@
 using Kafka.Common.Utils.Interfaces;
+using NodaTime;
 using System;
 
 namespace Kafka.Common.Utils
@@ -36,13 +37,13 @@ namespace Kafka.Common.Utils
      */
     public class Timer
     {
-        private readonly ITime time;
+        private readonly IClock clock;
         private long startMs;
         private long deadlineMs;
 
-        public Timer(ITime time, long timeoutMs)
+        public Timer(IClock clock, long timeoutMs)
         {
-            this.time = time;
+            this.clock = clock;
             update();
             reset(timeoutMs);
         }
@@ -108,7 +109,7 @@ namespace Kafka.Common.Utils
          */
         public void update()
         {
-            update(time.milliseconds());
+            update(clock.GetCurrentInstant().ToUnixTimeMilliseconds());
         }
 
         /**
@@ -155,22 +156,22 @@ namespace Kafka.Common.Utils
          *
          * @return The elapsed time since construction or the last reset
          */
-        public long elapsedMs()
-        {
-            return currentTimeMs - startMs;
-        }
+        //public long elapsedMs()
+        //{
+        //    return currentTimeMs - startMs;
+        //}
 
-        /**
-         * Sleep for the requested duration and update the timer. Return when either the duration has
-         * elapsed or the timer has expired.
-         *
-         * @param durationMs The duration in milliseconds to sleep
-         */
-        public void sleep(long durationMs)
-        {
-            long sleepDurationMs = Math.Min(durationMs, remainingMs());
-            time.sleep(sleepDurationMs);
-            update();
-        }
+        ///**
+        // * Sleep for the requested duration and update the timer. Return when either the duration has
+        // * elapsed or the timer has expired.
+        // *
+        // * @param durationMs The duration in milliseconds to sleep
+        // */
+        //public void sleep(long durationMs)
+        //{
+        //    long sleepDurationMs = Math.Min(durationMs, remainingMs());
+        //    clock.sleep(sleepDurationMs);
+        //    update();
+        //}
     }
 }

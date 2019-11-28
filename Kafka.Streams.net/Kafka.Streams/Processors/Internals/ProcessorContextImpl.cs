@@ -6,6 +6,10 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.Sessions;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Window;
 using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
@@ -172,7 +176,7 @@ namespace Kafka.Streams.Processors.Internals
         private void forward<K1, V1>(ProcessorNode<K, V> child, K key, V value)
         {
             setCurrentNode(child);
-            child.process(key, value);
+            child.Process(key, value);
         }
 
         public override void commit()

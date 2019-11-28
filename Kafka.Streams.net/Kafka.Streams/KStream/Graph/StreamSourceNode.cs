@@ -1,3 +1,4 @@
+using Kafka.Streams.Extensions;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Topologies;
@@ -40,9 +41,9 @@ namespace Kafka.Streams.KStream.Graph
 
         public override string ToString()
             => "StreamSourceNode{" +
-                   $"topicNames={topicNames}" +
+                   $"topicNames={topicNames.ToJoinedString()}" +
                    $", topicPattern={topicPattern}" +
-                   $", consumedInternal={consumedInternal}" +
+                   $", consumedInternal={consumedInternal.GetType().Name}" +
                    $"}} {base.ToString()}";
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)

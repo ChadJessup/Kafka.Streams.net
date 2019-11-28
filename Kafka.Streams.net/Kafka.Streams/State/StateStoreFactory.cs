@@ -1,4 +1,6 @@
 ﻿using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.TimeStamped;
+using Kafka.Streams.State.Window;
 using System;
 using System.Collections.Generic;
 

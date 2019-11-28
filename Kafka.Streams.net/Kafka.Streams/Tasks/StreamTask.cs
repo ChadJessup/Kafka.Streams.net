@@ -12,6 +12,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,7 +27,7 @@ namespace Kafka.Streams.Tasks
     {
         private static readonly ConsumeResult<object, object> DUMMY_RECORD = new ConsumeResult<object, object>();// ProcessorContextImpl.NONEXIST_TOPIC, -1, -1L, null, null);
 
-        private readonly ITime time;
+        private readonly IClock clock;
         private readonly long maxTaskIdleMs;
         private readonly int maxBufferedSize;
         private readonly PartitionGroup partitionGroup;
@@ -51,9 +52,9 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             StateDirectory stateDirectory,
             ThreadCache cache,
-            ITime time,
+            IClock clock,
             IProducerSupplier producerSupplier)
-            : this(id, partitions, topology, consumer, changelogReader, config, stateDirectory, cache, time, producerSupplier, null)
+            : this(id, partitions, topology, consumer, changelogReader, config, stateDirectory, cache, clock, producerSupplier, null)
         {
         }
 
@@ -66,12 +67,12 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             StateDirectory stateDirectory,
             ThreadCache cache,
-            ITime time,
+            IClock clock,
             IProducerSupplier producerSupplier,
             IRecordCollector recordCollector)
             : base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config)
         {
-            this.time = time;
+            this.clock = clock;
             this.producerSupplier = producerSupplier;
             this.producer = producerSupplier.Get();
 
@@ -408,7 +409,7 @@ namespace Kafka.Streams.Tasks
         // visible for testing
         void commit(bool startNewTransaction)
         {
-            long startNs = time.nanoseconds();
+            long startNs = clock.GetCurrentInstant().ToUnixTimeTicks() * NodaConstants.NanosecondsPerTick;
             log.LogDebug("Committing");
 
             flushState();
@@ -792,7 +793,7 @@ namespace Kafka.Streams.Tasks
             return type switch
             {
                 PunctuationType.STREAM_TIME => Schedule(0L, interval, type, punctuator),
-                PunctuationType.WALL_CLOCK_TIME => Schedule(time.milliseconds() + interval, interval, type, punctuator),
+                PunctuationType.WALL_CLOCK_TIME => Schedule(clock.GetCurrentInstant().ToUnixTimeMilliseconds() + interval, interval, type, punctuator),
                 _ => throw new ArgumentException("Unrecognized PunctuationType: " + type),
             };
         }
@@ -870,7 +871,7 @@ namespace Kafka.Streams.Tasks
          */
         public bool maybePunctuateSystemTime()
         {
-            long systemTime = time.milliseconds();
+            long systemTime = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
 
             bool punctuated = systemTimePunctuationQueue.mayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
 

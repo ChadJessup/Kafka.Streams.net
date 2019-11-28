@@ -3,6 +3,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Topologies;
+using NodaTime;
 using System;
 using System.Text;
 
@@ -18,12 +19,13 @@ namespace Kafka.Streams.Nodes
         private IInternalProcessorContext context;
 
         public SinkNode(
+            IClock clock,
             string name,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
             IStreamPartitioner<K, V> partitioner)
-            : base(name)
+            : base(clock, name)
         {
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
@@ -56,7 +58,7 @@ namespace Kafka.Streams.Nodes
             }
         }
 
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             IRecordCollector collector = ((ISupplier)context).recordCollector();
 

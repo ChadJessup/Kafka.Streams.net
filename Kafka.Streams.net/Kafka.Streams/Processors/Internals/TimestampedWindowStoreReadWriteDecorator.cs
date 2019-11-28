@@ -1,4 +1,5 @@
 ﻿using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.Processors.Internals
 {

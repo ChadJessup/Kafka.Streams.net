@@ -30,9 +30,10 @@ namespace Kafka.Common
 
         public ConsumerRecords(List<ConsumeResult<K, V>> consumeResults)
         {
+            this.AddRange(consumeResults);
             this.records = new Dictionary<TopicPartition, List<ConsumeResult<K, V>>>();
 
-            foreach (var result in consumeResults)
+            foreach (var result in consumeResults.Where(r => r != null))
             {
                 if (this.records.ContainsKey(result.TopicPartition))
                 {

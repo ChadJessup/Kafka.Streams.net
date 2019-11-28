@@ -1,5 +1,7 @@
 ﻿using Kafka.Streams.KStream;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.Sessions;
 using System;
 
 namespace Kafka.Streams.Processors.Internals

@@ -1,5 +1,6 @@
 ﻿using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -14,7 +15,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public ValueAndTimestamp<Agg> get(Windowed<K> windowedKey)
         {
-            K key = windowedKey.key;
+            K key = windowedKey.Key;
             var window = windowedKey.window;
 
             return windowStore.fetch(key, window.Start());

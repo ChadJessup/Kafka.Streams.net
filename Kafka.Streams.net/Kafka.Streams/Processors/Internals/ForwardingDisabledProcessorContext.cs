@@ -3,6 +3,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;

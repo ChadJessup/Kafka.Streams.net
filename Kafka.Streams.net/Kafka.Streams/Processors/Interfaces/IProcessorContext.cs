@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;

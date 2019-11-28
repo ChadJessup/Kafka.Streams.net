@@ -2,6 +2,7 @@
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 using System;
 
 namespace Kafka.Streams.KStream.Internals
@@ -51,7 +52,7 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             ValueAndTimestamp<T> oldAggAndTimestamp = store.get(key);
-            T oldAgg = ValueAndTimestamp<T>.getValueOrNull(oldAggAndTimestamp);
+            T oldAgg = ValueAndTimestamp<T>.GetValueOrNull(oldAggAndTimestamp);
 
             T newAgg;
             long newTimestamp;

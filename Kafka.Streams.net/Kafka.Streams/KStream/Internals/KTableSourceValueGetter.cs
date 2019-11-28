@@ -16,6 +16,7 @@
  */
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 using System;
 
 namespace Kafka.Streams.KStream.Internals

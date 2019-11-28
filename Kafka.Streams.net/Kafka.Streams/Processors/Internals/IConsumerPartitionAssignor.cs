@@ -29,7 +29,7 @@ namespace Kafka.Streams.Processors.Internals
          *               and variants
          * @return nullable subscription user data
          */
-        public ByteBuffer subscriptionUserData(HashSet<string> topics)
+        public ByteBuffer SubscriptionUserData(HashSet<string> topics)
         {
             return null;
         }
@@ -41,14 +41,14 @@ namespace Kafka.Streams.Processors.Internals
          * @return A map from the members to their respective assignments. This should have one entry
          *         for each member in the input subscription map.
          */
-        GroupAssignment assign(Cluster metadata, GroupSubscription groupSubscription);
+        GroupAssignment Assign(Cluster metadata, GroupSubscription groupSubscription);
 
         /**
          * Callback which is invoked when a group member receives its assignment from the leader.
          * @param assignment The local member's assignment as provided by the leader in {@link #assign(Cluster, GroupSubscription)}
          * @param metadata Additional metadata on the consumer (optional)
          */
-        public void onAssignment(Assignment assignment, ConsumerGroupMetadata metadata)
+        public void OnAssignment(Assignment assignment, ConsumerGroupMetadata metadata)
         {
         }
 
@@ -56,7 +56,7 @@ namespace Kafka.Streams.Processors.Internals
          * Indicate which rebalance protocol this assignor works with;
          * By default it should always work with {@link RebalanceProtocol#EAGER}.
          */
-        public List<RebalanceProtocol> supportedProtocols()
+        public List<RebalanceProtocol> SupportedProtocols()
         {
             return new List<RebalanceProtocol> { RebalanceProtocol.EAGER };
         }
@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processors.Internals
          * Return the version of the assignor which indicates how the user metadata encodings
          * and the assignment algorithm gets evolved.
          */
-        public short version()
+        public short Version()
         {
             return (short)0;
         }
@@ -75,6 +75,6 @@ namespace Kafka.Streams.Processors.Internals
          * to be the same as the class name specified in {@link ConsumerConfig#PARTITION_ASSIGNMENT_STRATEGY_CONFIG}
          * @return non-null unique name
          */
-        string name();
+        string Name();
     }
 }

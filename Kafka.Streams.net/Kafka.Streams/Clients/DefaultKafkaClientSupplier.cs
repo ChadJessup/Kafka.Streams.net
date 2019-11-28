@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Processors.Interfaces;
 using System.Linq;
 
 namespace Kafka.Streams.Clients
@@ -29,14 +30,21 @@ namespace Kafka.Streams.Clients
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config)
+        public IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener)
         {
             var convertedConfig = config
                 .Where(kvp => kvp.Key != null && kvp.Value != null)
                 .ToDictionary(k => k.Key, v => v.Value.ToString());
 
-            return new ConsumerBuilder<byte[], byte[]>(convertedConfig)
-                .Build();
+            var builder = new ConsumerBuilder<byte[], byte[]>(convertedConfig);
+
+            if (rebalanceListener != null)
+            {
+                builder.SetPartitionsAssignedHandler(rebalanceListener.OnPartitionsAssigned);
+                builder.SetPartitionsRevokedHandler(rebalanceListener.OnPartitionsRevoked);
+            }
+
+            return builder.Build();
         }
 
         public IConsumer<byte[], byte[]> GetRestoreConsumer(ConsumerConfig config)

@@ -2,6 +2,7 @@
 using Kafka.Streams.State.Internals;
 using System.Collections.Generic;
 using System;
+using Kafka.Streams.State.KeyValue;
 
 namespace Kafka.Streams.Processors.Internals
 {

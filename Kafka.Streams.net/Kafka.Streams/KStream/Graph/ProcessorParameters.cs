@@ -25,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         }
 
         public override string ToString()
-            => $"ProcessorParameters{{processor={ProcessorSupplier.GetType()}, " +
+            => $"ProcessorParameters{{processor={ProcessorSupplier.GetType().Name}, " +
             $"processor name='{ProcessorName}'}}";
     }
 }

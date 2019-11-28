@@ -5,6 +5,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Tasks
@@ -12,7 +13,7 @@ namespace Kafka.Streams.Tasks
     public abstract class AbstractTaskCreator<T>
         where T : ITask
     {
-        protected ITime time { get; }
+        protected IClock clock { get; }
         protected ILogger<AbstractTaskCreator<T>> logger { get; }
 
         public AbstractTaskCreator(
@@ -21,7 +22,7 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
-            ITime time)
+            IClock clock)
         {
             this.logger = logger;
 
@@ -30,7 +31,7 @@ namespace Kafka.Streams.Tasks
             this.config = config;
             this.stateDirectory = stateDirectory;
             this.storeChangelogReader = storeChangelogReader;
-            this.time = time;
+            this.clock = clock;
         }
 
         public string applicationId { get; }

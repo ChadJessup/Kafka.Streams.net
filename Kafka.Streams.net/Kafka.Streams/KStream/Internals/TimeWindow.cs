@@ -1,3 +1,6 @@
+using NodaTime;
+using System;
+
 namespace Kafka.Streams.KStream.Internals
 {
     /**
@@ -15,8 +18,6 @@ namespace Kafka.Streams.KStream.Internals
      */
     public class TimeWindow : Window
     {
-
-
         /**
          * Create a new window for the given start time (inclusive) and end time (exclusive).
          *
@@ -25,13 +26,9 @@ namespace Kafka.Streams.KStream.Internals
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than or equal to
          * {@code startMs}
          */
-        public TimeWindow(long startMs, long endMs)
-            : base(startMs, endMs)
+        public TimeWindow(Duration duration)
+            : base(duration)
         {
-            if (startMs == endMs)
-            {
-                throw new System.ArgumentException("Window endMs must be greater than window startMs.");
-            }
         }
 
         /**
@@ -46,11 +43,12 @@ namespace Kafka.Streams.KStream.Internals
         {
             if (GetType() != other.GetType())
             {
-                throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
+                throw new ArgumentException("Cannot compare windows of different type. Other window has type "
                     + other.GetType() + ".");
             }
+
             TimeWindow otherWindow = (TimeWindow)other;
-            return startMs < otherWindow.endMs && otherWindow.startMs < endMs;
+            return this.Start() < otherWindow.End() && otherWindow.Start() < this.End();
         }
     }
 }

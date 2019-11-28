@@ -2,14 +2,15 @@ using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
+using NodaTime;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Nodes
 {
     public class SourceNode : ProcessorNode
     {
-        public SourceNode(string name, HashSet<string> stateStores)
-            : base(name, stateStores)
+        public SourceNode(IClock clock, string name, HashSet<string> stateStores)
+            : base(clock, name, stateStores)
         {
         }
     }
@@ -24,12 +25,13 @@ namespace Kafka.Streams.Nodes
         public ITimestampExtractor timestampExtractor { get; }
 
         public SourceNode(
+            IClock clock,
             string name,
             List<string> topics,
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : base(name)
+            : base(clock, name)
         {
             this.topics = topics;
             this.timestampExtractor = timestampExtractor;
@@ -38,11 +40,12 @@ namespace Kafka.Streams.Nodes
         }
 
         public SourceNode(
+            IClock clock,
             string name,
             List<string> topics,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
-            : this(name, topics, null, keyDeserializer, valDeserializer)
+            : this(clock, name, topics, null, keyDeserializer, valDeserializer)
         {
         }
 
@@ -80,7 +83,7 @@ namespace Kafka.Streams.Nodes
             //}
         }
 
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             context.forward(key, value);
             //sourceNodeForwardSensor.record();

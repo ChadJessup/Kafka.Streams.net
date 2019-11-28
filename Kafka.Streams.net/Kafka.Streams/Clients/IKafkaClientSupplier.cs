@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Processors.Interfaces;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Clients
@@ -37,7 +38,7 @@ namespace Kafka.Streams.Clients
          *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config);
+        IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener);
 
         /**
          * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.

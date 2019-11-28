@@ -5,9 +5,7 @@ namespace Kafka.Streams.KStream
 {
     public abstract class Window
     {
-        protected Duration Duration { get; }
-        private readonly Instant startTime;
-        private readonly Instant endTime;
+        public Interval Interval { get; }
 
         /**
          * Create a new window for the given start and end time.
@@ -16,15 +14,19 @@ namespace Kafka.Streams.KStream
          * @param endMs   the end timestamp of the window
          * @throws ArgumentException if {@code startMs} is negative or if {@code endMs} is smaller than {@code startMs}
          */
-        public Window(Duration duration)
+        public Window(Instant startTime, Instant endTime)
         {
-            if (duration.TotalNanoseconds < 0)
-            {
-                throw new ArgumentException("Window duration cannot be negative.");
-            }
+            this.Interval = new Interval(startTime, endTime);
+        }
 
-            this.startTime = SystemClock.Instance.GetCurrentInstant();
-            this.endTime = this.startTime + duration;
+        public Window(Duration duration)
+            : this(SystemClock.Instance.GetCurrentInstant(), duration)
+        {
+        }
+
+        public Window(Instant startTime, Duration duration)
+            : this(startTime, startTime + duration)
+        {
         }
 
         /**
@@ -34,7 +36,7 @@ namespace Kafka.Streams.KStream
          */
         public long Start()
         {
-            return this.startTime.ToUnixTimeMilliseconds();
+            return this.Interval.Start.ToUnixTimeMilliseconds();
         }
 
         /**
@@ -44,7 +46,7 @@ namespace Kafka.Streams.KStream
          */
         public long End()
         {
-            return this.endTime.ToUnixTimeMilliseconds();
+            return this.Interval.End.ToUnixTimeMilliseconds();
         }
 
         /**
@@ -63,29 +65,31 @@ namespace Kafka.Streams.KStream
             {
                 return true;
             }
+
             if (obj == null)
             {
                 return false;
             }
+
             if (GetType() != obj.GetType())
             {
                 return false;
             }
 
             Window other = (Window)obj;
-            return startMs == other.startMs && endMs == other.endMs;
+            return this.Start() == other.Start() && this.End() == other.End();
         }
 
         public override int GetHashCode()
         {
-            return (int)(((startMs << 32) | endMs) % 0xFFFFFFFFL);
+            return this.Interval.GetHashCode();
         }
 
         public override string ToString()
         {
             return "Window{" +
-                "startMs=" + startMs +
-                ", endMs=" + endMs +
+                $"startMs={this.Interval.Start.ToUnixTimeMilliseconds()}" +
+                $", endMs={this.Interval.End.ToUnixTimeMilliseconds()}" +
                 '}';
         }
     }

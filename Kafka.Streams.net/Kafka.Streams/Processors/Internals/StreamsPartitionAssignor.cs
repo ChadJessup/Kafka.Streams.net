@@ -36,14 +36,14 @@ namespace Kafka.Streams.Processors.Internals
             };
         }
 
-        public GroupAssignment assign(
+        public GroupAssignment Assign(
             Cluster metadata, 
             GroupSubscription groupSubscription)
         {
             throw new System.NotImplementedException();
         }
 
-        public string name()
+        public string Name()
         {
             throw new System.NotImplementedException();
         }

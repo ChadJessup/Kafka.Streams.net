@@ -89,10 +89,11 @@ namespace Kafka.Streams.Tasks
 
         private void addStreamTasks(List<TopicPartition> assignment)
         {
-            if (!assignedActiveTasks.Any())
+            if (!assignedActiveTasks?.Any() ?? true)
             {
                 return;
             }
+
             Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned tasks and reopen re-assigned tasks
             logger.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
@@ -143,10 +144,11 @@ namespace Kafka.Streams.Tasks
         private void addStandbyTasks()
         {
             Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks = this.assignedStandbyTasks;
-            if (!assignedStandbyTasks.Any())
+            if (!assignedStandbyTasks?.Any() ?? true)
             {
                 return;
             }
+
             logger.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
             Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned standby tasks and reopen re-assigned standby tasks

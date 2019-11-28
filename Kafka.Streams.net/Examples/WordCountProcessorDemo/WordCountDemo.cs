@@ -8,6 +8,7 @@ using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,17 +35,23 @@ namespace WordCountProcessorDemo
                 // setting offset reset to earliest so that we can re-run the demo code with the same pre-loaded data
                 // Note: To re-run the demo, you need to use the offset reset tool:
                 // https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Streams+Application+Reset+Tool
-                AutoOffsetReset = AutoOffsetReset.Earliest
-
+                AutoOffsetReset = AutoOffsetReset.Earliest,
                 // streamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG = 0;
             };
 
+            streamsConfig.Set("partitioner")
+
             var services = new ServiceCollection()
                 .AddSingleton(streamsConfig)
-                .AddLogging(config => config.AddConsole());
+                .AddLogging(config =>
+                {
+                    config.SetMinimumLevel(LogLevel.Debug);
+                    config.AddConsole();
+                });
+
+            TestProducer(streamsConfig);
 
             var latch = new ManualResetEvent(initialState: false);
-
 
             StreamsBuilder builder = new StreamsBuilder(services);
             
@@ -92,6 +99,25 @@ namespace WordCountProcessorDemo
             }
 
             return 0;
+        }
+
+        private static void TestProducer(StreamsConfig streamsConfig)
+        {
+            var drCalled = false;
+            using var producer = new ProducerBuilder<int, int>(streamsConfig.GetProducerConfigs("test"))
+                .Build();
+
+            producer.Produce("TextLinesTopic", new Message<int, int>
+            {
+                Key = 1,
+                Value = 1
+            },(dr) =>
+            {
+                Console.WriteLine(dr.Status);
+                drCalled = true;
+            });
+
+            SpinWait.SpinUntil(() => drCalled);
         }
 
         public void Test()

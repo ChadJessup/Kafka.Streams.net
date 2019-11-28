@@ -1,5 +1,6 @@
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Topologies;
 using System;
 

@@ -9,10 +9,12 @@ using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         private readonly object stateLock = new object();
         private readonly TaskManager taskManager;
         private readonly IServiceProvider services;
-        private readonly ITime time;
+        private readonly IClock clock;
         private readonly TimeSpan pollTime;
         private readonly long commitTimeMs;
         private readonly int maxPollTimeMs;
@@ -57,6 +59,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         readonly InternalTopologyBuilder builder;
 
         public KafkaStreamThread(
+            IClock clock,
             ILogger<KafkaStreamThread> logger,
             ILoggerFactory loggerFactory,
             StreamsConfig config,
@@ -72,6 +75,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             this.State = states ?? throw new ArgumentNullException(nameof(states));
             this.builder = topology?.internalTopologyBuilder ?? throw new ArgumentNullException(nameof(topology));
 
+            this.clock = clock;
 
             var clientId = config.ClientId;
             string threadClientId = $"{clientId}-KafkaStreamThread-{threadId++}";
@@ -82,7 +86,6 @@ namespace Kafka.Streams.Threads.KafkaStream
             this.pollTime = TimeSpan.FromMilliseconds(this.config.PollMs);
             this.commitTimeMs = this.config.CommitIntervalMs;
             this.numIterations = 1;
-
 
             this.logPrefix = this.logger.BeginScope($"stream-thread [{threadClientId}] ");
 
@@ -114,7 +117,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 stateDirectory,
                 changelogReader,
                 cache,
-                time,
+                clock,
                 clientSupplier,
                 this.producer,
                 threadClientId);
@@ -126,9 +129,9 @@ namespace Kafka.Streams.Threads.KafkaStream
                 config,
                 stateDirectory,
                 changelogReader,
-                time);
+                clock);
 
-            TaskManager taskManager = new TaskManager(
+            this.taskManager = new TaskManager(
                 loggerFactory,
                 loggerFactory.CreateLogger<TaskManager>(),
                 changelogReader,
@@ -141,8 +144,8 @@ namespace Kafka.Streams.Threads.KafkaStream
                 new AssignedStreamsTasks(loggerFactory.CreateLogger<AssignedStreamsTasks>()),
                 new AssignedStandbyTasks(loggerFactory.CreateLogger<AssignedStandbyTasks>()));
 
-            this.rebalanceListener = new RebalanceListener(time, this.taskManager, this, this.logger);
-            this.consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, taskManager);
+            this.rebalanceListener = new StreamsRebalanceListener(clock, this.taskManager, this, this.logger);
+            this.consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, taskManager, this.rebalanceListener);
 
             this.UpdateThreadMetadata(StreamsBuilder.GetSharedAdminClientId(clientId));
         }
@@ -172,7 +175,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             return clientSupplier.GetRestoreConsumer(restoreConsumerConfigs);
         }
 
-        private IConsumer<byte[], byte[]> CreateConsumerClient(StreamsConfig config, IKafkaClientSupplier clientSupplier, string threadClientId, TaskManager taskManager)
+        private IConsumer<byte[], byte[]> CreateConsumerClient(StreamsConfig config, IKafkaClientSupplier clientSupplier, string threadClientId, TaskManager taskManager, IConsumerRebalanceListener rebalanceListener)
         {
             this.logger.LogInformation("Creating consumer client");
 
@@ -192,7 +195,8 @@ namespace Kafka.Streams.Threads.KafkaStream
                 consumerConfigs.AutoOffsetReset = null;
             }
 
-            var consumer = clientSupplier.getConsumer(consumerConfigs);
+            var consumer = clientSupplier.getConsumer(consumerConfigs, rebalanceListener);
+
             taskManager.SetConsumer(consumer);
 
             return consumer;
@@ -330,8 +334,10 @@ namespace Kafka.Streams.Threads.KafkaStream
          */
         private void RunLoop()
         {
-            var sourceTopicPattern = builder.SourceTopicPattern();
-            consumer.Subscribe(sourceTopicPattern.ToString());//, rebalanceListener);
+            var sourceTopicPattern = '^' + builder.SourceTopicPattern().ToString();
+            consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
+
+            SpinWait.SpinUntil(() => consumer.Assignment.Any(), TimeSpan.FromSeconds(1.0));
 
             while (isRunning())
             {
@@ -372,7 +378,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         void RunOnce()
         {
             ConsumerRecords<byte[], byte[]> records;
-            now = time.milliseconds();
+            now = SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds();
 
             if (this.State.CurrentState == KafkaStreamThreadStates.PARTITIONS_ASSIGNED)
             {
@@ -386,11 +392,17 @@ namespace Kafka.Streams.Threads.KafkaStream
                 // in order to wait long enough to get the join response
                 records = PollRequests(pollTime);
             }
-            else if (this.State.CurrentState == KafkaStreamThreadStates.RUNNING || this.State.CurrentState == KafkaStreamThreadStates.STARTING)
+            else if (this.State.CurrentState == KafkaStreamThreadStates.RUNNING
+                || this.State.CurrentState == KafkaStreamThreadStates.STARTING)
             {
                 // try to fetch some records with normal poll time
                 // in order to get long polling
                 records = PollRequests(pollTime);
+
+                if(records.Any())
+                {
+
+                }
             }
             else
             {
@@ -607,11 +619,8 @@ namespace Kafka.Streams.Threads.KafkaStream
                 if (task == null)
                 {
                     this.logger.LogError(
-                        "Unable to locate active task for received-record partition {}. Current tasks: {}",
-                        partition,
-                        this.taskManager.ToString(">")
-                    );
-                    throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
+                        $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.taskManager.ToString(">")}");
+                        throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
                 }
                 else if (task.isClosed())
                 {
@@ -733,7 +742,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.taskManager.StandbyTaskIds()} in {time.milliseconds() - now} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.taskManager.StandbyTaskIds()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
                         }
                     }
                     processStandbyRecords = false;
@@ -810,7 +819,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         private long AdvanceNowAndComputeLatency()
         {
             long previous = now;
-            now = time.milliseconds();
+            now = SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds();
 
             return Math.Max(now - previous, 0);
         }

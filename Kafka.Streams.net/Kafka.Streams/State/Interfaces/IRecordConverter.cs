@@ -29,22 +29,9 @@ namespace Kafka.Streams.State.Interfaces
 
             return new ConsumeResult<byte[], byte[]>()
             {
-                Topic = record.Topic,
-                Partition = record.Partition,
-                Offset = record.Offset,
-                Timestamp = timestamp,
-                //record.timestampType(),
-                //record.checksum(),
-                //record.serializedKeySize(),
-                //record.serializedValueSize(),
-                Key = record.Key,
-                Value = recordValue,
-                Headers = record.Headers,
                 IsPartitionEOF = record.IsPartitionEOF,
                 Message = record.Message,
-                //TopicPartition = record.TopicPartition,
                 TopicPartitionOffset = record.TopicPartitionOffset,
-                //record.leaderEpoch());
             };
         }
     }

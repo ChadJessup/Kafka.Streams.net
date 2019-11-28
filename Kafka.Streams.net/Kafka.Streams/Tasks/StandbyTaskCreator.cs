@@ -5,6 +5,7 @@ using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -19,14 +20,14 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
-            ITime time)
+            IClock clock)
             : base(
                 loggerFactory.CreateLogger<AbstractTaskCreator<StandbyTask>>(),
                 builder,
                 config,
                 stateDirectory,
                 storeChangelogReader,
-                time)
+                clock)
         {
         }
 

@@ -1,4 +1,5 @@
 ﻿using Confluent.Kafka;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Interfaces
@@ -62,7 +63,6 @@ namespace Kafka.Streams.Processors.Interfaces
      */
     public interface IConsumerRebalanceListener
     {
-
         /**
          * A callback method the user can implement to provide handling of offset commits to a customized store on the start
          * of a rebalance operation. This method will be called before a rebalance operation starts and after the consumer
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Processors.Interfaces
          * @throws org.apache.kafka.common.errors.WakeupException If raised from a nested call to {@link KafkaConsumer}
          * @throws org.apache.kafka.common.errors.InterruptException If raised from a nested call to {@link KafkaConsumer}
          */
-        void onPartitionsRevoked(List<TopicPartition> partitions);
+        void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> revokedPartitions);
 
         /**
          * A callback method the user can implement to provide handling of customized offsets on completion of a successful
@@ -105,6 +105,6 @@ namespace Kafka.Streams.Processors.Interfaces
          * @throws org.apache.kafka.common.errors.WakeupException If raised from a nested call to {@link KafkaConsumer}
          * @throws org.apache.kafka.common.errors.InterruptException If raised from a nested call to {@link KafkaConsumer}
          */
-        void onPartitionsAssigned(List<TopicPartition> partitions);
+        void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions);
     }
 }

@@ -3,6 +3,7 @@ using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,17 +13,17 @@ namespace Kafka.Streams.Nodes
 {
     public class ProcessorNode
     {
-        public ProcessorNode(string name, HashSet<string> stateStores)
+        public ProcessorNode(IClock clock, string name, HashSet<string> stateStores)
         {
             this.Name = name;
             this.stateStores = stateStores;
-            this.time = new SystemTime();
+            this.clock = clock;
             this.children = new List<ProcessorNode>();
             this.childByName = new Dictionary<string, ProcessorNode>();
         }
 
         public string Name { get; }
-        protected ITime time { get; }
+        protected IClock clock { get; }
 
         public HashSet<string> stateStores { get; protected set; } = new HashSet<string>();
 
@@ -32,7 +33,6 @@ namespace Kafka.Streams.Nodes
 
         public void punctuate(long timestamp, Punctuator punctuator)
         {
-            long startNs = time.nanoseconds();
             punctuator.punctuate(timestamp);
         }
 
@@ -67,16 +67,17 @@ namespace Kafka.Streams.Nodes
     {
         private readonly IKeyValueProcessor<K, V> processor;
 
-        public ProcessorNode(string name)
-            : this(name, null, null)
+        public ProcessorNode(IClock clock, string name)
+            : this(clock, name, null, null)
         {
         }
 
         public ProcessorNode(
+            IClock clock,
             string name,
             IKeyValueProcessor<K, V> processor,
             HashSet<string> stateStores)
-            : base(name, stateStores)
+            : base(clock, name, stateStores)
         {
             this.processor = processor;
         }
@@ -122,9 +123,8 @@ namespace Kafka.Streams.Nodes
             }
         }
 
-        public virtual void process(K key, V value)
+        public virtual void Process(K key, V value)
         {
-            long startNs = time.nanoseconds();
             processor.process(key, value);
         }
     }

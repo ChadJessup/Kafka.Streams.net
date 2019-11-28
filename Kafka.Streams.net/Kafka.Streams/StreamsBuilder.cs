@@ -12,6 +12,7 @@ using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.GlobalStream;
@@ -22,6 +23,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -87,13 +89,13 @@ namespace Kafka.Streams
             {
                 serviceCollection.TryAddSingleton(configuration);
                 serviceCollection.TryAddSingleton(serviceCollection);
+                serviceCollection.TryAddSingleton<IClock>(SystemClock.Instance);
 
                 this.AddNodes(serviceCollection);
                 this.AddThreads(serviceCollection);
                 this.AddClients(serviceCollection);
                 this.AddFactories(serviceCollection);
 
-                serviceCollection.TryAddSingleton<ITime>(Time.SYSTEM);
                 serviceCollection.TryAddSingleton<StateDirectory>();
 
                 serviceCollection.TryAddSingleton<IStateRestoreListener, DelegatingStateRestoreListener>();

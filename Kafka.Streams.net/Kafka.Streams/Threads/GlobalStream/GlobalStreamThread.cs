@@ -6,8 +6,10 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -24,7 +26,7 @@ namespace Kafka.Streams.Threads.GlobalStream
         private readonly ILoggerFactory loggerFactory;
         private readonly IStateRestoreListener stateRestoreListener;
         private readonly GlobalConsumer globalConsumer;
-        private readonly ITime time;
+        private readonly IClock clock;
         private readonly StateDirectory stateDirectory;
         // private ThreadCache cache;
         private readonly ProcessorTopology topology;
@@ -150,7 +152,7 @@ namespace Kafka.Streams.Threads.GlobalStream
                     //    config.defaultDeserializationExceptionHandler(),
                     //    logContext
                     //),
-                    time,
+                    clock,
                     TimeSpan.FromMilliseconds((double)this.config.PollMs),
                     this.config.CommitIntervalMs);
 

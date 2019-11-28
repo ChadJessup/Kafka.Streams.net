@@ -44,8 +44,13 @@ namespace Kafka.Streams.State
          * @param <V> the type of the value
          * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
          */
-        public static V getValueOrNull(ValueAndTimestamp<V> valueAndTimestamp)
+        public static V GetValueOrNull(ValueAndTimestamp<V>? valueAndTimestamp)
         {
+            if(valueAndTimestamp == null)
+            {
+                return default;
+            }
+
             return valueAndTimestamp.value;
         }
 

@@ -1,5 +1,6 @@
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Extensions;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Graph;
 using Kafka.Streams.KStream.Interfaces;
@@ -9,6 +10,7 @@ using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using Priority_Queue;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,7 @@ namespace Kafka.Streams.KStream.Internals
             public const string TopologyRoot = "root";
         }
 
+        private readonly IClock clock;
         private readonly ILogger<InternalStreamsBuilder> logger;
         private readonly IServiceProvider services;
 
@@ -41,9 +44,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public InternalStreamsBuilder(
             ILogger<InternalStreamsBuilder> logger,
+            IClock clock,
             IServiceProvider services,
             InternalTopologyBuilder internalTopologyBuilder)
         {
+            this.clock = clock;
             this.logger = logger;
             this.services = services;
             this.InternalTopologyBuilder = internalTopologyBuilder;
@@ -66,6 +71,7 @@ namespace Kafka.Streams.KStream.Internals
             this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { root }, streamSourceNode);
 
             return new KStream<K, V>(
+                this.clock,
                 name,
                 consumed.keySerde,
                 consumed.valueSerde,
@@ -85,6 +91,7 @@ namespace Kafka.Streams.KStream.Internals
             AddGraphNode<K, V>(root, streamPatternSourceNode);
 
             return new KStream<K, V>(
+                this.clock,
                 name,
                 consumed.keySerde,
                 consumed.valueSerde,
@@ -297,7 +304,7 @@ namespace Kafka.Streams.KStream.Internals
             {
                 IStreamsGraphNode streamGraphNode = graphNodePriorityQueue.Dequeue();
 
-                this.logger.LogDebug($"Adding nodes to topology {streamGraphNode} child nodes {streamGraphNode.Children()}");
+                this.logger.LogDebug($"Adding nodes to topology {streamGraphNode} child nodes {streamGraphNode.Children().ToJoinedString()}");
 
                 if (streamGraphNode.AllParentsWrittenToTopology() && !streamGraphNode.HasWrittenToTopology)
                 {

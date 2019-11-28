@@ -17,6 +17,7 @@
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -31,7 +32,7 @@ namespace Kafka.Streams.State.Internals
 
         public ISerde<K> keySerde { get; }
         public ISerde<V> valueSerde { get; }
-        public ITime time { get; }
+        public IClock clock { get; }
         public bool enableCaching { get; private set; }
         public bool enableLogging { get; private set; } = true;
 
@@ -39,15 +40,15 @@ namespace Kafka.Streams.State.Internals
             string name,
             ISerde<K> keySerde,
             ISerde<V> valueSerde,
-            ITime time)
+            IClock clock)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
-            time = time ?? throw new ArgumentNullException(nameof(time));
+            clock = clock ?? throw new ArgumentNullException(nameof(clock));
 
             this.name = name;
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
-            this.time = time;
+            this.clock = clock;
         }
 
         public IStoreBuilder<T> WithCachingEnabled()

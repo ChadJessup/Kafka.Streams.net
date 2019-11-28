@@ -1,6 +1,8 @@
 ﻿using Kafka.Common.Utils;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using NodaTime;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {
@@ -13,6 +15,12 @@ namespace Kafka.Streams.KStream.Internals.Graph
         private MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
         private ProcessorParameters<K, V> processorParameters;
         private bool _isGlobalKTable = false;
+        private readonly IClock clock;
+
+        public TableSourceNodeBuilder(IClock clock)
+        {
+            this.clock = clock;
+        }
 
         public TableSourceNodeBuilder<K, V> withSourceName(string sourceName)
         {
@@ -60,6 +68,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public TableSourceNode<K, V> build()
         {
             return new TableSourceNode<K, V>(
+                this.clock,
                 nodeName,
                 sourceName,
                 topic,

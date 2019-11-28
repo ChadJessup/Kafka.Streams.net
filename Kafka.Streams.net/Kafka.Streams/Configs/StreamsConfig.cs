@@ -3,6 +3,7 @@ using Kafka.Common.Extensions;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors.Internals;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -112,6 +113,12 @@ namespace Kafka.Streams.Configs
         {
             get => this.Get(StreamsConfigPropertyNames.ApplicationId);
             set => this.SetObject(StreamsConfigPropertyNames.ApplicationId, value);
+        }
+
+        public string PartitionAssignmentStrategy
+        {
+            get => this.Get(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG);
+            set => this.SetObject(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, value);
         }
 
         public long StateCleanupDelayMs
@@ -500,7 +507,7 @@ namespace Kafka.Streams.Configs
             // consumerProps.Add(StreamsConfigPropertyNames.REPLICATION_FACTOR_CONFIG, GetInt(StreamsConfigPropertyNames.REPLICATION_FACTOR_CONFIG));
             consumerProps.Set(StreamsConfigPropertyNames.ApplicationServer, getString(StreamsConfigPropertyNames.ApplicationServer));
             consumerProps.Set(StreamsConfigPropertyNames.NUM_STANDBY_REPLICAS_CONFIG, getString(StreamsConfigPropertyNames.NUM_STANDBY_REPLICAS_CONFIG));
-            // consumerProps.Add(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, StreamsPartitionAssignor.getName());
+            consumerProps.Set(StreamsConfigPropertyNames.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getString(typeof(StreamsPartitionAssignor).FullName));
             consumerProps.Set(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getString(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
             // add admin retries configs for creating topics

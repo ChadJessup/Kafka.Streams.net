@@ -16,6 +16,7 @@
  */
 using Kafka.Streams.Errors;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Queryable;
 using System.Collections.Generic;
 using System.Linq;
 

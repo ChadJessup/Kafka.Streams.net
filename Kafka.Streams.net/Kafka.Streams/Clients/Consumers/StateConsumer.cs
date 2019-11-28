@@ -4,6 +4,7 @@ using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -14,7 +15,7 @@ namespace Kafka.Streams.Clients.Consumers
         private readonly ILogger<StateConsumer> logger;
         private readonly GlobalConsumer globalConsumer;
         private readonly IGlobalStateMaintainer stateMaintainer;
-        private readonly ITime time;
+        private readonly IClock clock;
         private readonly TimeSpan pollTime;
         private readonly long flushInterval;
 
@@ -24,7 +25,7 @@ namespace Kafka.Streams.Clients.Consumers
             ILogger<StateConsumer> logger,
             GlobalConsumer globalConsumer,
             IGlobalStateMaintainer stateMaintainer,
-            ITime time,
+            IClock clock,
             TimeSpan pollTime,
             long flushInterval)
             : base(logger, null, null)
@@ -32,7 +33,7 @@ namespace Kafka.Streams.Clients.Consumers
             this.logger = logger;
             this.globalConsumer = globalConsumer;
             this.stateMaintainer = stateMaintainer;
-            this.time = time;
+            this.clock = clock;
             this.pollTime = pollTime;
             this.flushInterval = flushInterval;
         }
@@ -51,7 +52,7 @@ namespace Kafka.Streams.Clients.Consumers
                 globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value));
             }
 
-            lastFlush = time.milliseconds();
+            lastFlush = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
         }
 
         public void pollAndUpdate()
@@ -65,7 +66,7 @@ namespace Kafka.Streams.Clients.Consumers
                     stateMaintainer.update(record);
                 }
 
-                long now = time.milliseconds();
+                long now = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
                 if (now >= lastFlush + flushInterval)
                 {
                     stateMaintainer.flushState();

@@ -1,5 +1,6 @@
 using Kafka.Common.Utils;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
 
 namespace Kafka.Streams.State.Interfaces
 {

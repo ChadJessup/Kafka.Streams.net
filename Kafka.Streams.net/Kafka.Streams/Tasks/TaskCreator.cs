@@ -7,6 +7,7 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -26,7 +27,7 @@ namespace Kafka.Streams.Tasks
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
             ThreadCache cache,
-            ITime time,
+            IClock clock,
             IKafkaClientSupplier clientSupplier,
             IProducer<byte[], byte[]> threadProducer,
             string threadClientId)
@@ -36,7 +37,7 @@ namespace Kafka.Streams.Tasks
             config,
             stateDirectory,
             storeChangelogReader,
-            time)
+            clock)
         {
             this.cache = cache;
             this.clientSupplier = clientSupplier;
@@ -59,7 +60,7 @@ namespace Kafka.Streams.Tasks
                 config,
                 stateDirectory,
                 cache,
-                time,
+                clock,
                 new BasicProducerSupplier(CreateProducer(taskId)));
         }
 

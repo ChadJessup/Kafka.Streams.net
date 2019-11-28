@@ -2,6 +2,7 @@ using Kafka.Streams.Configs;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
 using Microsoft.Extensions.Logging;

@@ -3,6 +3,7 @@ using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
+using NodaTime;
 using System.Linq;
 
 namespace Kafka.Streams.Factories
@@ -10,6 +11,7 @@ namespace Kafka.Streams.Factories
     public class SinkNodeFactory<K, V> : NodeFactory<K, V>
     {
         private readonly InternalTopologyBuilder internalTopologyBuilder;
+        private readonly IClock clock;
 
         public ITopicNameExtractor topicExtractor { get; }
 
@@ -18,14 +20,16 @@ namespace Kafka.Streams.Factories
         private readonly IStreamPartitioner<K, V> partitioner;
 
         public SinkNodeFactory(
+            IClock clock,
             string name,
             string[] predecessors,
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
             IStreamPartitioner<K, V> partitioner)
-            : base(name, predecessors.ToArray())
+            : base(clock, name, predecessors.ToArray())
         {
+            this.clock = clock;
             this.topicExtractor = topicExtractor;
             this.keySerializer = keySerializer;
             this.valueSerializer = valSerializer;
@@ -41,6 +45,7 @@ namespace Kafka.Streams.Factories
                 {
                     // prefix the internal topic name with the application id
                     return new SinkNode<K, V>(
+                        this.clock,
                         this.Name,
                         new StaticTopicNameExtractor(this.internalTopologyBuilder.DecorateTopic(topic)),
                         keySerializer,
@@ -50,6 +55,7 @@ namespace Kafka.Streams.Factories
                 else
                 {
                     return new SinkNode<K, V>(
+                        this.clock,
                         this.Name,
                         topicExtractor,
                         keySerializer,
@@ -60,6 +66,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SinkNode<K, V>(
+                    this.clock,
                     this.Name,
                     topicExtractor,
                     keySerializer,

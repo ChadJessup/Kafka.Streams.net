@@ -4,6 +4,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,7 @@ namespace Kafka.Streams.Factories
         private readonly IDeserializer<K> keyDeserializer;
 
         public SourceNodeFactory(
+            IClock clock,
             string name,
             string[] topics,
             Regex pattern,
@@ -26,8 +28,9 @@ namespace Kafka.Streams.Factories
             Dictionary<string, List<string>> nodeToSourceTopics,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valueDeserializer)
-            : base(name, Array.Empty<string>())
+            : base(clock, name, Array.Empty<string>())
         {
+            this.clock = clock;
             this.Topics = topics != null
                 ? topics.ToList()
                 : new List<string>();
@@ -39,6 +42,8 @@ namespace Kafka.Streams.Factories
             this.topicToPatterns = topicToPatterns;
             this.Pattern = pattern;
         }
+
+        private readonly IClock clock;
 
         public List<string> Topics { get; private set; }
 
@@ -95,6 +100,7 @@ namespace Kafka.Streams.Factories
             if (sourceTopics == null)
             {
                 return new SourceNode<K, V>(
+                    this.clock,
                     Name,
                     new List<string>(),
                     timestampExtractor,
@@ -104,6 +110,7 @@ namespace Kafka.Streams.Factories
             else
             {
                 return new SourceNode<K, V>(
+                    this.clock,
                     Name,
                     internalTopologyBuilder.MaybeDecorateInternalSourceTopics(sourceTopics),
                     timestampExtractor,

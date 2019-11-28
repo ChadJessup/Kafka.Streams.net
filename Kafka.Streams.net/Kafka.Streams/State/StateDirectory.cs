@@ -4,6 +4,7 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Tasks;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,7 @@ namespace Kafka.Streams.State
         private readonly bool createStateDirectory;
         private readonly Dictionary<TaskId, FileChannel> channels = new Dictionary<TaskId, FileChannel>();
         private readonly Dictionary<TaskId, LockAndOwner> locks = new Dictionary<TaskId, LockAndOwner>();
-        private readonly ITime time;
+        private readonly IClock clock;
 
         private FileChannel globalStateChannel;
         private FileLock globalStateLock;
@@ -44,12 +45,12 @@ namespace Kafka.Streams.State
         public StateDirectory(
             ILogger<StateDirectory> logger,
             StreamsConfig config,
-            ITime time)
+            IClock clock)
         {
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             config = config ?? throw new ArgumentNullException(nameof(config));
 
-            this.time = time;
+            this.clock = clock;
             this.createStateDirectory = true;
             string stateDirName = config.StateStoreDirectory;
             DirectoryInfo baseDir = new DirectoryInfo(stateDirName);

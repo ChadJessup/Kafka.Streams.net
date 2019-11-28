@@ -7,6 +7,7 @@ using System.Linq;
 using Kafka.Streams.Errors;
 using Kafka.Streams.State;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.Processors.Internals
 {

@@ -1,6 +1,7 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.State;
+using Kafka.Streams.State.Interfaces;
 using System;
 
 namespace Kafka.Streams

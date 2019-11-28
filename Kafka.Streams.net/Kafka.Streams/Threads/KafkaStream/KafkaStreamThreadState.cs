@@ -89,7 +89,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 }
                 else
                 {
-                    logger.LogInformation("StreamThreadState transition from {} to {}", oldState, newState);
+                    this.logger.LogInformation($"StreamThreadState transition from {oldState} to {newState}");
                 }
 
                 this.CurrentState = newState;
@@ -97,14 +97,18 @@ namespace Kafka.Streams.Threads.KafkaStream
                 {
                     if (this.Thread is KafkaStreamThread st)
                     {
-                        st.UpdateThreadMetadata(TaskManager.activeTasks(), TaskManager.StandbyTasks());
+                        st.UpdateThreadMetadata(
+                            TaskManager.activeTasks(),
+                            TaskManager.StandbyTasks());
                     }
                 }
                 else
                 {
                     if (this.Thread is KafkaStreamThread st)
                     {
-                        st.UpdateThreadMetadata(null, null);
+                        st.UpdateThreadMetadata(
+                            activeTasks: new Dictionary<TaskId, StreamTask>(),
+                            standbyTasks: new Dictionary<TaskId, StandbyTask>());
                     }
                 }
             }

@@ -3,6 +3,7 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using Kafka.Streams.State.TimeStamped;
 using System;
 using System.Collections.Generic;
 
@@ -76,7 +77,7 @@ namespace Kafka.Streams.KStream.Internals
                 if (windowEnd > closeTime)
                 {
                     ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
-                    Agg oldAgg = ValueAndTimestamp<Agg>.getValueOrNull(oldAggAndTimestamp);
+                    Agg oldAgg = ValueAndTimestamp<Agg>.GetValueOrNull(oldAggAndTimestamp);
 
                     Agg newAgg;
                     long newTimestamp;

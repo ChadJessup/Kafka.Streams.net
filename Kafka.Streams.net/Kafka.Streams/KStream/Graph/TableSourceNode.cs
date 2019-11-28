@@ -4,7 +4,10 @@ using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Topologies;
+using NodaTime;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Nodes
@@ -17,10 +20,12 @@ namespace Kafka.Streams.Nodes
     {
         private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal;
         private readonly ProcessorParameters<K, V> processorParameters;
+        private readonly IClock clock;
         private readonly string sourceName;
         private readonly bool isGlobalKTable;
 
         public TableSourceNode(
+            IClock clock,
             string nodeName,
             string sourceName,
             string topic,
@@ -32,6 +37,7 @@ namespace Kafka.Streams.Nodes
                   new List<string> { topic },
                   consumedInternal)
         {
+            this.clock = clock;
             this.sourceName = sourceName;
             this.isGlobalKTable = isGlobalKTable;
             this.processorParameters = processorParameters;
@@ -50,10 +56,10 @@ namespace Kafka.Streams.Nodes
                    "} " + base.ToString();
         }
 
-        public static TableSourceNodeBuilder<K, V> tableSourceNodeBuilder<T>()
+        public static TableSourceNodeBuilder<K, V> tableSourceNodeBuilder<T>(IClock clock)
             where T : IStateStore
         {
-            return new TableSourceNodeBuilder<K, V>();
+            return new TableSourceNodeBuilder<K, V>(clock);
         }
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
@@ -64,6 +70,7 @@ namespace Kafka.Streams.Nodes
             // should be expanded for other types of stores as well.
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>(
+                   this.clock,
                    (MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
 
             if (isGlobalKTable)

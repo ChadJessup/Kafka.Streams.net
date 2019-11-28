@@ -3,6 +3,8 @@ using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Window;
+using NodaTime;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
@@ -11,13 +13,16 @@ namespace Kafka.Streams.KStream.Internals
     {
         private readonly bool leftOuter;
         private readonly bool rightOuter;
+        private readonly IClock clock;
         private readonly InternalStreamsBuilder builder;
 
         public KStreamJoin(
+            IClock clock,
             InternalStreamsBuilder builder,
             bool leftOuter,
             bool rightOuter)
         {
+            this.clock = clock;
             this.builder = builder;
             this.leftOuter = leftOuter;
             this.rightOuter = rightOuter;
@@ -54,10 +59,10 @@ namespace Kafka.Streams.KStream.Internals
             StreamsGraphNode otherStreamsGraphNode = ((AbstractStream<K1, V2>)other).streamsGraphNode;
 
             IStoreBuilder<IWindowStore<K1, V1>> thisWindowStore =
-               KStream.joinWindowStoreBuilder(joinThisName, windows, joined.keySerde, joined.valueSerde);
+               KStream.joinWindowStoreBuilder(this.clock, joinThisName, windows, joined.keySerde, joined.valueSerde);
 
             IStoreBuilder<IWindowStore<K1, V2>> otherWindowStore =
-               KStream.joinWindowStoreBuilder(joinOtherName, windows, joined.keySerde, joined.otherValueSerde);
+               KStream.joinWindowStoreBuilder(this.clock, joinOtherName, windows, joined.keySerde, joined.otherValueSerde);
 
             KStreamJoinWindow<K1, V1> thisWindowedStream = new KStreamJoinWindow<K1, V1>(thisWindowStore.name);
 
@@ -116,6 +121,7 @@ namespace Kafka.Streams.KStream.Internals
             // do not have serde for joined result;
             // also for key serde we do not inherit from either since we cannot tell if these two serdes are different
             return new KStream<K1, R>(
+                this.clock,
                 joinMergeName,
                 joined.keySerde,
                 null,

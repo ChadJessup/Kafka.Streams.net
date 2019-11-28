@@ -4,6 +4,8 @@ using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -13,10 +15,11 @@ namespace Kafka.Streams.KStream.Internals
     {
         static readonly string REDUCE_NAME = "KSTREAM-REDUCE-";
         static readonly string AGGREGATE_NAME = "KSTREAM-AGGREGATE-";
-
+        private readonly IClock clock;
         private readonly GroupedStreamAggregateBuilder<K, V> aggregateBuilder;
 
         public KGroupedStream(
+            IClock clock,
             string name,
             HashSet<string> sourceNodes,
             GroupedInternal<K, V> groupedInternal,
@@ -25,7 +28,10 @@ namespace Kafka.Streams.KStream.Internals
             InternalStreamsBuilder builder)
             : base(name, groupedInternal.keySerde, groupedInternal.valueSerde, sourceNodes, streamsGraphNode, builder)
         {
+            this.clock = clock;
+
             this.aggregateBuilder = new GroupedStreamAggregateBuilder<K, V>(
+                this.clock,
                 builder,
                 groupedInternal,
                 repartitionRequired,
@@ -177,7 +183,7 @@ namespace Kafka.Streams.KStream.Internals
             string functionName,
             MaterializedInternal<K, T, IKeyValueStore<Bytes, byte[]>> materializedInternal)
         {
-            var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(materializedInternal);
+            var tkvsm = new TimestampedKeyValueStoreMaterializer<K, T>(this.clock, materializedInternal);
             var materialized = tkvsm.materialize();
 
             return aggregateBuilder.build(

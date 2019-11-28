@@ -4,6 +4,7 @@ using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class GroupedStreamAggregateBuilder<K, V>
     {
+        private readonly IClock clock;
         private readonly InternalStreamsBuilder builder;
         private readonly ISerde<K> keySerde;
         private readonly ISerde<V> valueSerde;
@@ -27,6 +29,7 @@ namespace Kafka.Streams.KStream.Internals
         public IInitializer<V> reduceInitializer;// = () => null;
 
         public GroupedStreamAggregateBuilder(
+            IClock clock,
             InternalStreamsBuilder builder,
             GroupedInternal<K, V> groupedInternal,
             bool repartitionRequired,
@@ -34,6 +37,7 @@ namespace Kafka.Streams.KStream.Internals
             string name,
             StreamsGraphNode streamsGraphNode)
         {
+            this.clock = clock;
             this.builder = builder;
             this.keySerde = groupedInternal.keySerde;
             this.valueSerde = groupedInternal.valueSerde;
@@ -95,6 +99,7 @@ namespace Kafka.Streams.KStream.Internals
             builder.AddGraphNode<K, V>(parentNode, statefulProcessorNode);
 
             return new KTable<KR, object, VR>(
+                this.clock,
                 aggFunctionName,
                 keySerde,
                 valSerde,

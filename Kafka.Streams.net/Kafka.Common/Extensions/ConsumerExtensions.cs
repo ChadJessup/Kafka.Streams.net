@@ -2,6 +2,7 @@
 using Kafka.Common;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -19,19 +20,21 @@ namespace Confluent.Kafka
 
         public static ConsumerRecords<K, V> Poll<K, V>(this IConsumer<K, V> consumer, TimeSpan timeout, bool includeMetadataInTimeout)
         {
-            if (!consumer.Assignment.Any())
-            {
-                throw new InvalidOperationException("Consumer is not subscribed to any topics or assigned any partitions");
-            }
-
-            using var cts = new CancellationTokenSource(timeout);
-
             var consumeResults = new List<ConsumeResult<K, V>>();
+            var remainingTime = timeout;
+            var sw = new Stopwatch();
 
             // poll for new data until the timeout expires
-            while (!cts.IsCancellationRequested)
+            while (DateTime.Now < DateTime.Now + remainingTime)
             {
-                consumeResults.Add(consumer.Consume(cts.Token));
+                sw.Restart();
+                var consumed = consumer.Consume(remainingTime);
+                if (consumed != null)
+                {
+                    consumeResults.Add(consumed);
+                }
+                sw.Stop();
+                remainingTime -= sw.Elapsed;
             }
 
             return new ConsumerRecords<K, V>(consumeResults);

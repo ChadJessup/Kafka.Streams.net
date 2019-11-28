@@ -1,3 +1,5 @@
+using NodaTime;
+
 namespace Kafka.Streams.KStream.Internals
 {
 
@@ -26,8 +28,8 @@ namespace Kafka.Streams.KStream.Internals
          * @param startMs the start timestamp of the window (inclusive)
          * @throws ArgumentException if {@code start} is negative
          */
-        public UnlimitedWindow(long startMs)
-            : base(startMs, long.MaxValue)
+        public UnlimitedWindow(Instant start)
+            : base(start, Duration.MaxValue)
         {
         }
 

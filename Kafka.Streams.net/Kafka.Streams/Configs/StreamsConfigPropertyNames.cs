@@ -260,6 +260,18 @@
         public static readonly string NUM_STANDBY_REPLICAS_CONFIG = "num.standby.replicas";
         // private static string NUM_STANDBY_REPLICAS_DOC = "The number of standby replicas for each task.";
 
+
+        /**
+         * <code>partition.assignment.strategy</code>
+         * A list of class names or class types, ordered by preference,
+         * of supported assignors responsible for the partition assignment strategy
+         * that the client will use to distribute partition ownership amongst consumer
+         * instances when group management is used.
+         * Implementing the <code>org.apache.kafka.clients.consumer.ConsumerPartitionAssignor</code>
+         * interface allows you to plug in a custom assignment strategy.
+         */
+        public static readonly string PARTITION_ASSIGNMENT_STRATEGY_CONFIG = "partition.assignment.strategy";
+
         /// <summary>
         /// {@code num.stream.threads}
         /// </summary>

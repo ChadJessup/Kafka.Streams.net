@@ -5,6 +5,9 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.Sessions;
+using Kafka.Streams.State.Window;
 using System;
 using System.Collections.Generic;
 

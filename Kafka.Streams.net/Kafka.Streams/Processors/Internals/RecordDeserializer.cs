@@ -39,16 +39,17 @@ namespace Kafka.Streams.Processors.Internals
             {
                 return new ConsumeResult<K, V>()
                 {
-                     Topic = rawRecord.Topic,
-                     Partition = rawRecord.Partition,
-                     Offset = rawRecord.Offset,
-                     Timestamp = rawRecord.Timestamp,
-                    //TimestampType.CREATE_TIME,
-                    //rawRecord.checksum(),
-                    //rawRecord.serializedKeySize(),
-                    //rawRecord.serializedValueSize(),
-                    //sourceNode.deserializeKey(rawRecord.Topic, rawRecord.Headers, rawRecord.Key),
-                    //sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers(),
+                    TopicPartitionOffset = new TopicPartitionOffset(rawRecord.TopicPartition, rawRecord.Offset),
+                    Message = new Message<K, V>
+                    {
+                        Timestamp = rawRecord.Timestamp,
+                        //TimestampType.CREATE_TIME,
+                        //rawRecord.checksum(),
+                        //rawRecord.serializedKeySize(),
+                        //rawRecord.serializedValueSize(),
+                        //sourceNode.deserializeKey(rawRecord.Topic, rawRecord.Headers, rawRecord.Key),
+                        //sourceNode.deserializeValue(rawRecord.Topic, rawRecord.headers(), rawRecord.value()), rawRecord.headers(),
+                    }
                 };
             }
             catch (Exception deserializationException)

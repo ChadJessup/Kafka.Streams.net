@@ -1,5 +1,6 @@
 ﻿using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.State.Window;
 
 namespace Kafka.Streams.KStream.Internals.Graph
 {

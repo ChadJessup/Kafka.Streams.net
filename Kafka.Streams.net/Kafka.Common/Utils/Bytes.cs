@@ -10,7 +10,7 @@ namespace Kafka.Common.Utils
     */
 
     //TODO: chad - 8/3/2019 - ReadOnlySpan should work here.
-    public class Bytes : IComparable<Bytes>
+    public class Bytes2 : IComparable<Bytes2>
     {
         public static LexicographicByteArrayComparator BYTES_LEXICO_COMPARATOR = new LexicographicByteArrayComparator();
         public static byte[] EMPTY = new byte[0];
@@ -22,14 +22,14 @@ namespace Kafka.Common.Utils
         // cache the hash code for the string, default to 0
         private int hashCode;
 
-        public static Bytes wrap(byte[] bytes)
+        public static Bytes2 wrap(byte[] bytes)
         {
             if (bytes == null)
             {
                 return null;
             }
 
-            return new Bytes(bytes);
+            return new Bytes2(bytes);
         }
 
         /**
@@ -37,7 +37,7 @@ namespace Kafka.Common.Utils
          *
          * @param bytes This array becomes the backing storage for the object.
          */
-        public Bytes(byte[] bytes)
+        public Bytes2(byte[] bytes)
         {
             this.bytes = bytes;
 
@@ -100,15 +100,15 @@ namespace Kafka.Common.Utils
                 return false;
             }
 
-            if (other is Bytes)
+            if (other is Bytes2)
             {
-                return Enumerable.SequenceEqual(this.bytes, ((Bytes)other).bytes);
+                return Enumerable.SequenceEqual(this.bytes, ((Bytes2)other).bytes);
             }
 
             return false;
         }
 
-        public int CompareTo(Bytes that)
+        public int CompareTo(Bytes2 that)
         {
             return 0; //BYTES_LEXICO_COMPARATOR.Compare(this.bytes, that.bytes);
         }
@@ -116,7 +116,7 @@ namespace Kafka.Common.Utils
 
         public override string ToString()
         {
-            return Bytes.ToString(bytes, 0, bytes.Length);
+            return Bytes2.ToString(bytes, 0, bytes.Length);
         }
 
         /**

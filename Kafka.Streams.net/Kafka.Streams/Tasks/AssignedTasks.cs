@@ -243,7 +243,12 @@ namespace Kafka.Streams.Tasks
 
         public T RunningTaskFor(TopicPartition partition)
         {
-            return runningByPartition[partition];
+            if (runningByPartition.TryGetValue(partition, out var task))
+            {
+                return task;
+            }
+
+            return default;
         }
 
         public HashSet<TaskId> RunningTaskIds()
@@ -377,6 +382,11 @@ namespace Kafka.Streams.Tasks
 
         public void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
         {
+            if (!newAssignment?.Any() ?? true)
+            {
+                return;
+            }
+
             IEnumerator<T> standByTaskIterator = suspended.Values.GetEnumerator();
             while (standByTaskIterator.MoveNext())
             {

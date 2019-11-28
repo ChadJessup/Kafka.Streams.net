@@ -6,7 +6,10 @@ using Kafka.Streams.KStream.Internals.Suppress;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.TimeStamped;
 using Microsoft.Extensions.Logging;
+using NodaTime;
 using System;
 using System.Collections.Generic;
 
@@ -37,12 +40,14 @@ namespace Kafka.Streams.KStream.Internals
     public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
     {
         private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
+        private readonly IClock clock;
         private readonly IProcessorSupplier<K, V> IProcessorSupplier;
         private readonly string queryableStoreName;
         private bool sendOldValues = false;
         private readonly StatefulProcessorNode<K, V> statefulProcessorNode;
 
         public KTable(
+            IClock clock,
             string name,
             ISerde<K> keySerde,
             ISerde<V> valSerde,
@@ -53,6 +58,7 @@ namespace Kafka.Streams.KStream.Internals
             InternalStreamsBuilder builder)
             : base(name, keySerde, valSerde, sourceNodes, streamsGraphNode, builder)
         {
+            this.clock = clock;
             this.IProcessorSupplier = IProcessorSupplier;
             this.queryableStoreName = queryableStoreName;
         }
@@ -87,7 +93,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 // only materialize if materialized is specified and it has queryable name
                 storeBuilder = queryableStoreName != null
-                    ? (new TimestampedKeyValueStoreMaterializer<K, V>(materializedInternal)).materialize()
+                    ? (new TimestampedKeyValueStoreMaterializer<K, V>(this.clock, materializedInternal)).materialize()
                     : null;
             }
             else
@@ -465,6 +471,7 @@ namespace Kafka.Streams.KStream.Internals
 
             // we can inherit parent key and value serde
             return new KStream<K, V>(
+                this.clock,
                 name,
                 keySerde,
                 valSerde,

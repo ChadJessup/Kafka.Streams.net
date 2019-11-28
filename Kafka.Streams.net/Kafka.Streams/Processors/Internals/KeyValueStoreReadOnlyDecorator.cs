@@ -1,5 +1,6 @@
 ﻿using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
+using Kafka.Streams.State.KeyValue;
 using System;
 using System.Collections.Generic;
 
