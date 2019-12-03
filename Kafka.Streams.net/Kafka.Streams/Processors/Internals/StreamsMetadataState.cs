@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
@@ -45,8 +46,8 @@ namespace Kafka.Streams.Processors.Internals
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.Append(indent).Append("GlobalMetadata: ").Append(allMetadata).Append("\n");
-            builder.Append(indent).Append("GlobalStores: ").Append(globalStores).Append("\n");
+            builder.Append(indent).Append("GlobalMetadata: ").Append(allMetadata.ToJoinedString()).Append("\n");
+            builder.Append(indent).Append("GlobalStores: ").Append(globalStores.ToJoinedString()).Append("\n");
             builder.Append(indent).Append("My HostInfo: ").Append(thisHost).Append("\n");
             builder.Append(indent).Append(clusterMetadata).Append("\n");
 

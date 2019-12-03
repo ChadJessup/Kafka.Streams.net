@@ -12,6 +12,7 @@ using Kafka.Streams.State.KeyValue;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +40,6 @@ namespace WordCountProcessorDemo
                 // streamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG = 0;
             };
 
-            streamsConfig.Set("partitioner")
-
             var services = new ServiceCollection()
                 .AddSingleton(streamsConfig)
                 .AddLogging(config =>
@@ -49,12 +48,12 @@ namespace WordCountProcessorDemo
                     config.AddConsole();
                 });
 
-            TestProducer(streamsConfig);
+            //TestProducer(streamsConfig);
 
             var latch = new ManualResetEvent(initialState: false);
 
             StreamsBuilder builder = new StreamsBuilder(services);
-            
+
             IKStream<string, string> textLines = builder
                 .Stream<string, string>("TextLinesTopic");
 
@@ -80,7 +79,7 @@ namespace WordCountProcessorDemo
             var topology = builder.build();
             services.AddSingleton(topology);
 
-            using IKafkaStreamsThread streams = builder.BuildKafkaStreams(); 
+            using IKafkaStreamsThread streams = builder.BuildKafkaStreams();
 
             // attach shutdown handler to catch control-c
             Console.CancelKeyPress += (o, e) =>
@@ -103,21 +102,39 @@ namespace WordCountProcessorDemo
 
         private static void TestProducer(StreamsConfig streamsConfig)
         {
+            //streamsConfig.Set("partitioner.class", typeof(IPartitioner).FullName);
+            //streamsConfig.Set("debug", "all");
+
             var drCalled = false;
             using var producer = new ProducerBuilder<int, int>(streamsConfig.GetProducerConfigs("test"))
+                .SetStatisticsHandler((prod, stat) =>
+                {
+                    var json = JsonConvert.DeserializeObject<KafkaStatistics>(stat);
+                })
+                .SetPartitioner((prod, partReq) =>
+                {
+                    return Partition.Any;
+                })
+                .SetErrorHandler((prod, error) =>
+                {
+                    Console.WriteLine($"Error: {error.Reason}");
+                })
+                .SetLogHandler((prod, m) =>
+                {
+                    Console.WriteLine($"Log: {m.Message}");
+                })
                 .Build();
 
             producer.Produce("TextLinesTopic", new Message<int, int>
             {
-                Key = 1,
                 Value = 1
-            },(dr) =>
-            {
-                Console.WriteLine(dr.Status);
-                drCalled = true;
-            });
+            }, (dr) =>
+             {
+                 Console.WriteLine(dr.Status);
+                 drCalled = true;
+             });
 
-            SpinWait.SpinUntil(() => drCalled);
+            SpinWait.SpinUntil(() => drCalled, TimeSpan.FromSeconds(5.0));
         }
 
         public void Test()

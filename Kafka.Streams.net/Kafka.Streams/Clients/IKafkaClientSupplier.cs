@@ -47,7 +47,7 @@ namespace Kafka.Streams.Clients
          *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> GetRestoreConsumer(ConsumerConfig config);
+        RestoreConsumer GetRestoreConsumer(ConsumerConfig config);
 
         /**
          * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.

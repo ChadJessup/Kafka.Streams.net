@@ -2,6 +2,8 @@ using Confluent.Kafka;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Interfaces;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Linq;
 
 namespace Kafka.Streams.Clients
@@ -9,6 +11,14 @@ namespace Kafka.Streams.Clients
     public class DefaultKafkaClientSupplier : IKafkaClientSupplier
     {
         private readonly GlobalConsumer globalConsumer;
+        private readonly ILoggerFactory loggerFactory;
+        private readonly ILogger<DefaultKafkaClientSupplier> logger;
+
+        public DefaultKafkaClientSupplier(ILogger<DefaultKafkaClientSupplier> logger, ILoggerFactory loggerFactory)
+        {
+            this.logger = logger;
+            this.loggerFactory = loggerFactory;
+        }
 
         public IAdminClient GetAdminClient(StreamsConfig config)
             => this.GetAdminClient(config.GetAdminConfigs(config.ClientId));
@@ -27,6 +37,18 @@ namespace Kafka.Streams.Clients
             //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
             return new ProducerBuilder<byte[], byte[]>(config)
+                .SetPartitioner((prod, partReq) =>
+                {
+                    return Partition.Any;
+                })
+                .SetErrorHandler((p, r) =>
+                {
+                    Console.WriteLine(r.Reason);
+                })
+                .SetLogHandler((p, l) =>
+                {
+                    Console.WriteLine(l.Message);
+                })
                 .Build();
         }
 
@@ -41,19 +63,18 @@ namespace Kafka.Streams.Clients
             if (rebalanceListener != null)
             {
                 builder.SetPartitionsAssignedHandler(rebalanceListener.OnPartitionsAssigned);
+                builder.SetAfterPartitionsAssignedHandler(rebalanceListener.OnAfterPartitionsAssigned);
                 builder.SetPartitionsRevokedHandler(rebalanceListener.OnPartitionsRevoked);
             }
 
             return builder.Build();
         }
 
-        public IConsumer<byte[], byte[]> GetRestoreConsumer(ConsumerConfig config)
-        {
-            //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
-
-            return new ConsumerBuilder<byte[], byte[]>(config)
-                .Build();
-        }
+        public RestoreConsumer GetRestoreConsumer(ConsumerConfig config)
+            => new RestoreConsumer(
+                this.loggerFactory.CreateLogger<RestoreConsumer>(),
+                config,
+                new ConsumerBuilder<byte[], byte[]>(config));
 
         public GlobalConsumer GetGlobalConsumer()
             => this.globalConsumer;

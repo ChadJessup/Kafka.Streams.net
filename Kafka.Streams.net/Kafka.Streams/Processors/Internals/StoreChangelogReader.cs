@@ -8,6 +8,8 @@ using Kafka.Streams.Errors;
 using Kafka.Streams.State;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.State.Interfaces;
+using Kafka.Streams.Clients.Consumers;
+using Kafka.Streams.Extensions;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -26,7 +28,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public StoreChangelogReader(
             ILogger<StoreChangelogReader> logger,
-            IConsumer<byte[], byte[]> restoreConsumer,
+            RestoreConsumer restoreConsumer,
             TimeSpan pollTime,
             IStateRestoreListener userStateRestoreListener)
         {
@@ -119,14 +121,14 @@ namespace Kafka.Streams.Processors.Internals
         {
             if (restoreConsumer.Subscription.Any())
             {
-                throw new StreamsException($"Restore consumer should not be subscribed to any topics ({restoreConsumer.Subscription})");
+                throw new StreamsException($"Restore consumer should not be subscribed to any topics ({restoreConsumer.Subscription.ToJoinedString()})");
             }
 
             // first refresh the changelog partition information from brokers, since initialize is only called when
             // the needsInitializing map is not empty, meaning we do not know the metadata for some of them yet
             refreshChangelogInfo();
 
-            HashSet<TopicPartition> initializable = new HashSet<TopicPartition>();
+            var initializable = new HashSet<TopicPartition>();
             foreach (TopicPartition topicPartition in needsInitializing)
             {
                 if (hasPartition(topicPartition))
@@ -158,35 +160,26 @@ namespace Kafka.Streams.Processors.Internals
 
                 // offset should not be null; but since the consumer API does not guarantee it
                 // we add this check just in case
-                if (endOffset != null)
+                StateRestorer restorer = stateRestorers[topicPartition];
+                if (restorer.checkpoint() >= endOffset)
                 {
-                    StateRestorer restorer = stateRestorers[topicPartition];
-                    if (restorer.checkpoint() >= endOffset)
-                    {
-                        restorer.setRestoredOffset(restorer.checkpoint());
-                        // iter.Current.Remove();
+                    restorer.setRestoredOffset(restorer.checkpoint());
+                    // iter.Current.Remove();
 
-                        completedRestorers.Add(topicPartition);
-                    }
-                    else if (restorer.offsetLimit == 0 || endOffset == 0)
-                    {
-                        restorer.setRestoredOffset(0);
-                        // iter.Remove();
-                        completedRestorers.Add(topicPartition);
-                    }
-                    else
-                    {
-                        restorer.setEndingOffset(endOffset);
-                    }
-
-                    needsInitializing.Remove(topicPartition);
+                    completedRestorers.Add(topicPartition);
+                }
+                else if (restorer.offsetLimit == 0 || endOffset == 0)
+                {
+                    restorer.setRestoredOffset(0);
+                    // iter.Remove();
+                    completedRestorers.Add(topicPartition);
                 }
                 else
                 {
-
-                    logger.LogInformation("End offset cannot be found form the returned metadata; removing this partition from the current run loop");
-                    // iter.Remove();
+                    restorer.setEndingOffset(endOffset);
                 }
+
+                needsInitializing.Remove(topicPartition);
             }
 
             // set up restorer for those initializable

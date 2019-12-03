@@ -2,8 +2,10 @@ using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
+using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Extensions;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -12,6 +14,7 @@ using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
+using Kafka.Streams.Threads.KafkaStreams;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -54,7 +57,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         // package-private for testing
         readonly IConsumerRebalanceListener rebalanceListener;
         readonly IProducer<byte[], byte[]>? producer;
-        readonly IConsumer<byte[], byte[]> restoreConsumer;
+        readonly RestoreConsumer restoreConsumer;
         readonly IConsumer<byte[], byte[]> consumer;
         readonly InternalTopologyBuilder builder;
 
@@ -146,6 +149,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             this.rebalanceListener = new StreamsRebalanceListener(clock, this.taskManager, this, this.logger);
             this.consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, taskManager, this.rebalanceListener);
+            (this.State as KafkaStreamThreadState)?.SetTaskManager(this.taskManager);
 
             this.UpdateThreadMetadata(StreamsBuilder.GetSharedAdminClientId(clientId));
         }
@@ -166,7 +170,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             return threadProducer;
         }
 
-        private IConsumer<byte[], byte[]> CreateRestoreConsumer(StreamsConfig config, IKafkaClientSupplier clientSupplier, IStateRestoreListener userStateRestoreListener, string threadClientId)
+        private RestoreConsumer CreateRestoreConsumer(StreamsConfig config, IKafkaClientSupplier clientSupplier, IStateRestoreListener userStateRestoreListener, string threadClientId)
         {
             this.logger.LogInformation("Creating restore consumer client");
             var restoreCustomerId = StreamsBuilder.GetRestoreConsumerClientId(threadClientId);
@@ -568,6 +572,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                         string errorMessage = "No valid committed offset found for input topic %s (partition %s) and no valid reset policy configured." +
                             " You need to set configuration parameter \"auto.offset.reset\" or specify a topic specific reset " +
                             "policy via StreamsBuilder#stream(..., Consumed.with(Topology.AutoOffsetReset)) or StreamsBuilder#table(..., Consumed.with(Topology.AutoOffsetReset))";
+
                         throw new StreamsException(string.Format(errorMessage, partition.Topic, partition.Partition), e);
                     }
 
@@ -664,8 +669,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             {
                 if (this.logger.IsEnabled(LogLevel.Trace))
                 {
-                    this.logger.LogTrace("Committing all active tasks {} and standby tasks {} since {}ms has elapsed (commit interval is {}ms)",
-                        this.taskManager.activeTaskIds(), this.taskManager.StandbyTaskIds(), now - lastCommitMs, commitTimeMs);
+                    this.logger.LogTrace($"Committing all active tasks {this.taskManager.activeTaskIds().ToJoinedString()} and standby tasks {this.taskManager.StandbyTaskIds().ToJoinedString()} since {now - lastCommitMs}ms has elapsed (commit interval is {commitTimeMs}ms)");
                 }
 
                 committed += this.taskManager.commitAll();
@@ -721,8 +725,8 @@ namespace Kafka.Streams.Threads.KafkaStream
 
                                 if (task.isClosed())
                                 {
-                                    this.logger.LogInformation("Standby task {} is already closed, probably because it got unexpectedly migrated to another thread already. " +
-                                        "Notifying the thread to trigger a new rebalance immediately.", task.id);
+                                    this.logger.LogInformation($"Standby task {task.id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
+                                        "Notifying the thread to trigger a new rebalance immediately.");
                                     throw new TaskMigratedException(task);
                                 }
 
@@ -742,7 +746,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.taskManager.StandbyTaskIds()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.taskManager.StandbyTaskIds().ToJoinedString()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
                         }
                     }
                     processStandbyRecords = false;
@@ -793,12 +797,12 @@ namespace Kafka.Streams.Threads.KafkaStream
 
                         if (task.isClosed())
                         {
-                            this.logger.LogInformation("Standby task {} is already closed, probably because it got unexpectedly migrated to another thread already. " +
-                                "Notifying the thread to trigger a new rebalance immediately.", task.id);
+                            this.logger.LogInformation($"Standby task {task.id} is already closed, probably because it got unexpectedly migrated to another thread already. " +
+                                "Notifying the thread to trigger a new rebalance immediately.");
                             throw new TaskMigratedException(task);
                         }
 
-                        this.logger.LogInformation("Reinitializing StandbyTask {} from changelogs {}", task, recoverableException.partitions());
+                        this.logger.LogInformation($"Reinitializing StandbyTask {task} from changelogs {recoverableException.partitions().ToJoinedString()}");
                         task.reinitializeStateStoresForPartitions(recoverableException.partitions().ToList());
                     }
 

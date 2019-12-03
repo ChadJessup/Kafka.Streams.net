@@ -34,13 +34,17 @@ namespace Kafka.Streams.Threads.KafkaStream
 
         public KafkaStreamThreadStates CurrentState { get; protected set; }
         public IStateListener StateListener { get; protected set; }
-        public TaskManager TaskManager { get; }
+        public TaskManager TaskManager { get; private set; }
         public IThread<KafkaStreamThreadStates> Thread { get; protected set; }
 
         public bool isValidTransition(KafkaStreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
                 ? this.validTransitions[newState].PossibleTransitions.Contains(newState)
                 : false;
+
+        public void SetTaskManager(TaskManager taskManager)
+            => this.TaskManager = taskManager;
+
         /**
          * Sets the state
          *
@@ -98,8 +102,8 @@ namespace Kafka.Streams.Threads.KafkaStream
                     if (this.Thread is KafkaStreamThread st)
                     {
                         st.UpdateThreadMetadata(
-                            TaskManager.activeTasks(),
-                            TaskManager.StandbyTasks());
+                            this.TaskManager.activeTasks(),
+                            this.TaskManager.StandbyTasks());
                     }
                 }
                 else

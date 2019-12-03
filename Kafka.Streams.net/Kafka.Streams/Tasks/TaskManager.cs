@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Common;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
@@ -67,7 +68,7 @@ namespace Kafka.Streams.Tasks
             this.adminClient = adminClient;
         }
 
-        public void createTasks(List<TopicPartition> assignment)
+        public void createTasks(List<TopicPartitionOffset> assignment)
         {
             if (consumer == null)
             {
@@ -83,11 +84,12 @@ namespace Kafka.Streams.Tasks
             addStreamTasks(assignment);
             addStandbyTasks();
             // Pause all the partitions until the underlying state store is ready for all the active tasks.
-            logger.LogTrace("Pausing partitions: {}", assignment);
-            consumer.Pause(assignment);
+            logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
+
+            consumer.Pause(assignment.Select(a => a.TopicPartition));
         }
 
-        private void addStreamTasks(List<TopicPartition> assignment)
+        private void addStreamTasks(List<TopicPartitionOffset> assignment)
         {
             if (!assignedActiveTasks?.Any() ?? true)
             {
@@ -96,13 +98,14 @@ namespace Kafka.Streams.Tasks
 
             Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned tasks and reopen re-assigned tasks
-            logger.LogDebug("Adding assigned tasks as active: {}", assignedActiveTasks);
+            logger.LogDebug($"Adding assigned tasks as active: {assignedActiveTasks}");
+
             foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks)
             {
                 TaskId taskId = entry.Key;
                 HashSet<TopicPartition> partitions = entry.Value;
 
-                if (assignment.TrueForAll(p => partitions.Contains(p)))
+                if (assignment.TrueForAll(p => partitions.Contains(p.TopicPartition)))
                 {
                     try
                     {

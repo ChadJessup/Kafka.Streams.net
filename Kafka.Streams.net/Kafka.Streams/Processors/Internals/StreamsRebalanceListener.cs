@@ -32,6 +32,10 @@ namespace Kafka.Streams.Processors.Internals
 
         public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
         {
+        }
+
+        public void OnAfterPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> assignedPartitions)
+        {
             log.LogDebug(
                 $"at state {streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
                 $"\tcurrent suspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
@@ -73,9 +77,9 @@ namespace Kafka.Streams.Processors.Internals
             {
                 log.LogInformation(
                     $"partition assignment took {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - start} ms.\n" +
-                    $"\tcurrent active tasks: {string.Join(',', taskManager.activeTaskIds())}\n" +
-                    $"\tcurrent standby tasks: {string.Join(',', taskManager.StandbyTaskIds())}\n" +
-                    $"\tprevious active tasks: {string.Join(',', taskManager.prevActiveTaskIds())}\n");
+                    $"\tcurrent active tasks: {taskManager.activeTaskIds().ToJoinedString()}\n" +
+                    $"\tcurrent standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n" +
+                    $"\tprevious active tasks: {taskManager.prevActiveTaskIds().ToJoinedString()}\n");
             }
         }
 
@@ -84,9 +88,9 @@ namespace Kafka.Streams.Processors.Internals
             var assignment = consumer?.Assignment ?? new List<TopicPartition>();
 
             log.LogDebug(
-                $"at state {streamThread.State}: partitions {assignment} revoked at the beginning of consumer rebalance.\n" +
-                $"\tcurrent assigned active tasks: {string.Join(',', taskManager.activeTaskIds())}\n" +
-                $"\tcurrent assigned standby tasks: {string.Join(',', taskManager.StandbyTaskIds())}\n");
+                $"at state {streamThread.State}: partitions {assignment.ToJoinedString()} revoked at the beginning of consumer rebalance.\n" +
+                $"\tcurrent assigned active tasks:  {taskManager.activeTaskIds().ToJoinedString()}\n" +
+                $"\tcurrent assigned standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n");
 
             if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
             {
@@ -117,8 +121,8 @@ namespace Kafka.Streams.Processors.Internals
 
                     log.LogInformation(
                         $"partition revocation took {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - start} ms.\n" +
-                        $"\tsuspended active tasks: {taskManager.SuspendedActiveTaskIds()}\n" +
-                        $"\tsuspended standby tasks: {taskManager.SuspendedStandbyTaskIds()}");
+                        $"\tsuspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
+                        $"\tsuspended standby tasks: {taskManager.SuspendedStandbyTaskIds().ToJoinedString()}");
                 }
             }
         }

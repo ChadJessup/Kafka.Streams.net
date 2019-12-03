@@ -99,10 +99,12 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton<StateDirectory>();
 
                 serviceCollection.TryAddSingleton<IStateRestoreListener, DelegatingStateRestoreListener>();
+                //serviceCollection.TryAddSingleton<IChangelogReader, StoreChangelogReader>();
                 serviceCollection.TryAddSingleton<IStateListener, StreamStateListener>();
                 serviceCollection.TryAddSingleton<StreamsMetadataState>();
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
+                //serviceCollection.TryAddSingleton<TaskManager>();
                 serviceCollection.TryAddSingleton<Topology>();
             }
 
