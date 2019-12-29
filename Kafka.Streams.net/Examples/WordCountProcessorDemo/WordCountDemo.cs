@@ -6,6 +6,7 @@ using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValue;
@@ -15,9 +16,12 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WordCountProcessorDemo
 {
@@ -48,7 +52,19 @@ namespace WordCountProcessorDemo
                     config.AddConsole();
                 });
 
-            //TestProducer(streamsConfig);
+            var cts = new CancellationTokenSource();
+
+            // attach shutdown handler to catch control-c
+            Console.CancelKeyPress += (o, e) =>
+            {
+                cts.Cancel();
+            };
+
+            TestConsumer(streamsConfig, cts.Token);
+
+            // TestProducer(streamsConfig, cts.Token);
+
+            TutorialOne(services);
 
             var latch = new ManualResetEvent(initialState: false);
 
@@ -100,21 +116,164 @@ namespace WordCountProcessorDemo
             return 0;
         }
 
-        private static void TestProducer(StreamsConfig streamsConfig)
+        private static void TutorialOne(IServiceCollection services)
         {
-            //streamsConfig.Set("partitioner.class", typeof(IPartitioner).FullName);
-            //streamsConfig.Set("debug", "all");
+            var builder = new StreamsBuilder(services);
+            builder.Stream<string, string>("streams-plaintext-input")
+                .to("streams-pipe-output");
 
-            var drCalled = false;
-            using var producer = new ProducerBuilder<int, int>(streamsConfig.GetProducerConfigs("test"))
+            services.AddSingleton(builder.build());
+
+            using var streams = builder.BuildKafkaStreams();
+
+            var latch = new ManualResetEvent(initialState: false);
+
+            Console.CancelKeyPress += (o, e) =>
+            {
+                latch.Set();
+            };
+
+            streams.Start();
+            latch.WaitOne();
+        }
+
+        //class TestPartitioner : IPartitioner
+        //{
+        //    public Partition Partition(string topic, IntPtr keydata, UIntPtr keylen, int partition_cnt, IntPtr rkt_opaque, IntPtr msg_opaque)
+        //    {
+        //        var partition = (keydata.ToInt32() % partition_cnt);
+        //        Console.WriteLine($"{nameof(TestPartitioner)} called: Topic {topic} Partition: {partition}");
+
+        //        return partition;
+        //    }
+
+        //    public void Dispose()
+        //    {
+        //    }
+        //}
+
+        //class TestPartitioner2 : IPartitioner
+        //{
+        //    public Partition Partition(string topic, IntPtr keydata, UIntPtr keylen, int partition_cnt, IntPtr rkt_opaque, IntPtr msg_opaque)
+        //    {
+        //        var partition = (keydata.ToInt32() % partition_cnt);
+        //        Console.WriteLine($"{nameof(TestPartitioner2)} called: Topic {topic} Partition: {partition}");
+
+        //        return partition;
+        //    }
+
+        //    public void Dispose()
+        //    {
+        //    }
+        //}
+
+        private static void TestConsumer(StreamsConfig streamsConfig, CancellationToken token)
+        {
+            var consumerConfig = new ConsumerConfig();// ($"test-{DateTime.Now.Millisecond}", "test", 1);
+            consumerConfig.Set("debug", "all");
+            consumerConfig.Set("group.id", $"test-{DateTime.Now.Millisecond}");
+            consumerConfig.BootstrapServers = "localhost:9092";
+
+            using var consumer = new ConsumerBuilder<int, int>(consumerConfig)
+                .SetPartitionsAssignedHandler((consumer, topics) =>
+                {
+                    topics.ForEach(t => Console.WriteLine($"Partition Assigned: {t.ToString()}"));
+                })
+                .SetPartitionsRevokedHandler((consumer, tpo) =>
+                {
+                    tpo.ForEach(t => Console.WriteLine($"Partition Revoked: {t.ToString()}"));
+                })
+                .SetOffsetsCommittedHandler((consumer, co) =>
+                {
+
+                })
                 .SetStatisticsHandler((prod, stat) =>
                 {
                     var json = JsonConvert.DeserializeObject<KafkaStatistics>(stat);
                 })
-                .SetPartitioner((prod, partReq) =>
+                .SetPartitionAssignor(new TestPartitionAssignor())
+                .SetErrorHandler((prod, error) =>
                 {
-                    return Partition.Any;
+                    Console.WriteLine($"Error: {error.Reason}");
                 })
+                .SetLogHandler((prod, m) =>
+                {
+
+                    if (m.Facility == "FETCH"
+                        || m.Facility == "OFFSET"
+                        || m.Facility == "SEND"
+                        || m.Facility == "RECV"
+                        || m.Facility == "COMMIT"
+                        || m.Facility == "HEARTBEAT"
+                        || m.Message.Contains("Fetch topic"))
+                    {
+                        return;
+                    }
+
+                    Console.WriteLine($"Log: {m.Level}: {m.Facility}: {m.Message}");
+                })
+                .Build();
+
+            consumer.Subscribe("customassignortest");
+
+            while (!token.IsCancellationRequested)
+            {
+                var message = consumer.Consume(token);
+
+                if (message != null)
+                {
+
+                }
+
+                Task.Delay(10000).Wait();
+            }
+        }
+
+        class TestPartitionAssignor : IConsumerPartitionAssignor
+        {
+            public void Dispose()
+            {
+            }
+
+            public string Name()
+            {
+                return nameof(TestPartitionAssignor);
+            }
+
+            public void OnAssignment(List<TopicPartition> assignment, Metadata metadata)
+            {
+            }
+
+            public byte[] SubscriptionUserData(HashSet<string> topics)
+            {
+                return Array.Empty<byte>();
+            }
+
+            public short Version()
+            {
+                return 0;
+            }
+        }
+
+        private static void TestProducer(StreamsConfig streamsConfig, CancellationToken token)
+        {
+            var producerConfig = streamsConfig.GetProducerConfigs("test");
+            producerConfig.Set("debug", "all");
+            producerConfig.Partitioner = Partitioner.Murmur2Random;
+            // producerConfig.PluginLibraryPaths = Assembly.GetExecutingAssembly().Location;
+            //producerConfig.Set("partitioner", typeof(Program).FullName);
+            //producerConfig.Partitioner = Partitioner.Murmur2Random;
+
+            var drCalled = false;
+            var dr2Called = false;
+
+            using var producer = new ProducerBuilder<int, int>(producerConfig)
+                .SetStatisticsHandler((prod, stat) =>
+                {
+                    var json = JsonConvert.DeserializeObject<KafkaStatistics>(stat);
+                })
+                //.SetPartitioner("TextLinesTopic", new TestPartitioner())
+                //.SetPartitioner("PartitionerTest", new TestPartitioner2())
                 .SetErrorHandler((prod, error) =>
                 {
                     Console.WriteLine($"Error: {error.Reason}");
@@ -125,16 +284,34 @@ namespace WordCountProcessorDemo
                 })
                 .Build();
 
-            producer.Produce("TextLinesTopic", new Message<int, int>
+            var ind = 0;
+            while (!token.IsCancellationRequested)
             {
-                Value = 1
-            }, (dr) =>
-             {
-                 Console.WriteLine(dr.Status);
-                 drCalled = true;
-             });
+                drCalled = false;
+                dr2Called = false;
 
-            SpinWait.SpinUntil(() => drCalled, TimeSpan.FromSeconds(5.0));
+                producer.Produce("TextLinesTopic", new Message<int, int>
+                {
+                    Key = ind++,
+                    Value = ind++,
+                },
+                (dr) =>
+                {
+                    Console.WriteLine($"DR1: {dr.Status}");
+                    drCalled = true;
+                });
+
+                producer.Produce("PartitionerTest", new Message<int, int>
+                {
+                    Key = ind++,
+                    Value = ind++,
+                },
+                (dr) =>
+                {
+                    Console.WriteLine($"DR2: {dr.Status}");
+                    dr2Called = true;
+                });
+            }
         }
 
         public void Test()

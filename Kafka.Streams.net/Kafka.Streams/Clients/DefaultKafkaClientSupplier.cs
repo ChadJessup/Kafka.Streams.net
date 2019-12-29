@@ -37,10 +37,10 @@ namespace Kafka.Streams.Clients
             //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 
             return new ProducerBuilder<byte[], byte[]>(config)
-                .SetPartitioner((prod, partReq) =>
-                {
-                    return Partition.Any;
-                })
+                //.SetPartitioner((prod, partReq) =>
+                //{
+                //    return Partition.Any;
+                //})
                 .SetErrorHandler((p, r) =>
                 {
                     Console.WriteLine(r.Reason);
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Clients
                 .Build();
         }
 
-        public IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener)
+        public IConsumer<byte[], byte[]> GetConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener)
         {
             var convertedConfig = config
                 .Where(kvp => kvp.Key != null && kvp.Value != null)
@@ -63,7 +63,6 @@ namespace Kafka.Streams.Clients
             if (rebalanceListener != null)
             {
                 builder.SetPartitionsAssignedHandler(rebalanceListener.OnPartitionsAssigned);
-                builder.SetAfterPartitionsAssignedHandler(rebalanceListener.OnAfterPartitionsAssigned);
                 builder.SetPartitionsRevokedHandler(rebalanceListener.OnPartitionsRevoked);
             }
 

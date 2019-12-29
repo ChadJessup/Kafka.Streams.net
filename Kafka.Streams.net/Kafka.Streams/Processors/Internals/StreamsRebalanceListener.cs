@@ -32,10 +32,6 @@ namespace Kafka.Streams.Processors.Internals
 
         public void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions)
         {
-        }
-
-        public void OnAfterPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> assignedPartitions)
-        {
             log.LogDebug(
                 $"at state {streamThread.State}: partitions {assignedPartitions.ToJoinedString()} assigned at the end of consumer rebalance.\n" +
                 $"\tcurrent suspended active tasks: {taskManager.SuspendedActiveTaskIds().ToJoinedString()}\n" +
@@ -52,7 +48,7 @@ namespace Kafka.Streams.Processors.Internals
             long start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
             try
             {
-                if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED) == null)
+                if (!streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED))
                 {
                     log.LogDebug($"Skipping task creation in rebalance because we are already in {streamThread.State} state.");
                 }

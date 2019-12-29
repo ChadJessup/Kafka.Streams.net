@@ -91,10 +91,13 @@ namespace Kafka.Streams.Threads
             lock (threadStatesLock)
             {
                 // StreamThreads first
-                if (thread is KafkaStreamThread)
+                if (thread is KafkaStreamThread kafkaStreamThread && kafkaStreamThread.State is KafkaStreamThreadState state)
                 {
                     KafkaStreamThreadStates newState = (KafkaStreamThreadStates)(object)abstractNewState;
-                    threadStates.Add(thread.ManagedThreadId, null);// newState);
+                    if (!threadStates.TryAdd(kafkaStreamThread.ManagedThreadId, state))
+                    {
+                        threadStates[kafkaStreamThread.ManagedThreadId] = state;
+                    }
 
                     if (newState == KafkaStreamThreadStates.PARTITIONS_REVOKED)
                     {

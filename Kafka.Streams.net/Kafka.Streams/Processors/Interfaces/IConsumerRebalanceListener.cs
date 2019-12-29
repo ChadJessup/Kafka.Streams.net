@@ -86,27 +86,5 @@ namespace Kafka.Streams.Processors.Interfaces
         void OnPartitionsRevoked(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> revokedPartitions);
 
         void OnPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartition> assignedPartitions);
-
-        /**
-         * A callback method the user can implement to provide handling of customized offsets on completion of a successful
-         * partition re-assignment. This method will be called after the partition re-assignment completes and before the
-         * consumer starts fetching data, and only as the result of a {@link Consumer#poll(java.time.Duration) poll(long)} call.
-         * <p>
-         * It is guaranteed that all the processes in a consumer group will execute their
-         * {@link #onPartitionsRevoked(Collection)} callback before any instance executes its
-         * {@link #onPartitionsAssigned(Collection)} callback.
-         * <p>
-         * It is common for the assignment callback to use the consumer instance in order to query offsets. It is possible
-         * for a {@link org.apache.kafka.common.errors.WakeupException} or {@link org.apache.kafka.common.errors.InterruptException}
-         * to be raised from one these nested invocations. In this case, the exception will be propagated to the current
-         * invocation of {@link KafkaConsumer#poll(java.time.Duration)} in which this callback is being executed. This means it is not
-         * necessary to catch these exceptions and re-attempt to wakeup or interrupt the consumer thread.
-         *
-         * @param partitions The list of partitions that are now assigned to the consumer (may include partitions previously
-         *            assigned to the consumer)
-         * @throws org.apache.kafka.common.errors.WakeupException If raised from a nested call to {@link KafkaConsumer}
-         * @throws org.apache.kafka.common.errors.InterruptException If raised from a nested call to {@link KafkaConsumer}
-         */
-        void OnAfterPartitionsAssigned(IConsumer<byte[], byte[]> consumer, List<TopicPartitionOffset> assignedPartitions);
     }
 }

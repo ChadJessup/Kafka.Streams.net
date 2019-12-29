@@ -38,7 +38,7 @@ namespace Kafka.Streams.Clients
          *               supplied by the {@link java.util.Properties} given to the {@link KafkaStreams} instance
          * @return an instance of Kafka consumer
          */
-        IConsumer<byte[], byte[]> getConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener);
+        IConsumer<byte[], byte[]> GetConsumer(ConsumerConfig config, IConsumerRebalanceListener rebalanceListener);
 
         /**
          * Create a {@link Consumer} which is used to read records to restore {@link IStateStore}s.

@@ -68,12 +68,12 @@ namespace Kafka.Streams.Tasks
             this.adminClient = adminClient;
         }
 
-        public void createTasks(List<TopicPartitionOffset> assignment)
+        public void createTasks(List<TopicPartition> assignment)
         {
             if (consumer == null)
             {
                 var logPrefix = "";
-                throw new InvalidOperationException(logPrefix + "consumer has not been initialized while.Adding stream tasks. This should not happen.");
+                throw new InvalidOperationException(logPrefix + "consumer has not been initialized while adding stream tasks. This should not happen.");
             }
 
             // do this first as we may have suspended standby tasks that
@@ -83,15 +83,16 @@ namespace Kafka.Streams.Tasks
 
             addStreamTasks(assignment);
             addStandbyTasks();
+            
+            // TODO: can't pause here, due to handler not actually being called after assingment.
             // Pause all the partitions until the underlying state store is ready for all the active tasks.
-            logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
-
-            consumer.Pause(assignment.Select(a => a.TopicPartition));
+            //logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
+            //consumer.Pause(assignment);//.Select(a => a.TopicPartition));
         }
 
-        private void addStreamTasks(List<TopicPartitionOffset> assignment)
+        private void addStreamTasks(List<TopicPartition> assignment)
         {
-            if (!assignedActiveTasks?.Any() ?? true)
+            if (!assignedActiveTasks?.Any() ?? false)
             {
                 return;
             }
@@ -100,12 +101,12 @@ namespace Kafka.Streams.Tasks
             // collect newly assigned tasks and reopen re-assigned tasks
             logger.LogDebug($"Adding assigned tasks as active: {assignedActiveTasks}");
 
-            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedActiveTasks)
+            foreach (var entry in assignedActiveTasks ?? Enumerable.Empty<KeyValuePair<TaskId, HashSet<TopicPartition>>>())
             {
                 TaskId taskId = entry.Key;
                 HashSet<TopicPartition> partitions = entry.Value;
 
-                if (assignment.TrueForAll(p => partitions.Contains(p.TopicPartition)))
+                if (assignment.TrueForAll(p => partitions.Contains(p)))
                 {
                     try
                     {
@@ -136,7 +137,7 @@ namespace Kafka.Streams.Tasks
             // CANNOT FIND RETRY AND BACKOFF LOGIC
             // create all newly assigned tasks (guard against race condition with other thread via backoff and retry)
             // => other thread will call removeSuspendedTasks(); eventually
-            logger.LogTrace("New active tasks to be created: {}", newTasks);
+            logger.LogTrace($"New active tasks to be created: {newTasks}");
 
             foreach (StreamTask task in taskCreator.createTasks(this.loggerFactory, consumer, newTasks))
             {

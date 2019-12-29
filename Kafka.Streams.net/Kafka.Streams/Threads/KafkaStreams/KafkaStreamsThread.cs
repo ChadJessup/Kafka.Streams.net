@@ -125,7 +125,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             // The application ID is a required config and hence should always have value
             string applicationId = config.ApplicationId;
             config.ClientId ??= $"{applicationId}-{processId}";
-            
+
             this.adminClient = this.clientSupplier.GetAdminClient(this.config.GetAdminConfigs(StreamsBuilder.GetSharedAdminClientId(config.ClientId)));
 
             // re-write the physical topology according to the config
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             }
 
             var globalTaskTopology = topology.internalTopologyBuilder.buildGlobalStateTopology();
-            
+
             long cacheSizePerThread = totalCacheSize / (Threads.Length + (globalTaskTopology == null ? 0 : 1));
 
             bool createStateDirectory = taskTopology.hasPersistentLocalStore()
@@ -178,7 +178,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
             for (int i = 0; i < Threads.Length; i++)
             {
                 Threads[i] = ActivatorUtilities.GetServiceOrCreateInstance<IKafkaStreamThread>(this.services);
-                Threads[i].SetStateListener(this.StateListener);
                 Threads[i].State.SetThread(Threads[i]);
 
                 this.ThreadStates.Add(Threads[i].ManagedThreadId, Threads[i].State as KafkaStreamThreadState);
@@ -196,6 +195,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
             //});
         }
 
+        public string ThreadClientId { get; }
+        public Thread Thread { get; }
+        public int ManagedThreadId { get; }
+        public IStateListener StateListener { get; private set; }
+        public IStateMachine<KafkaStreamsThreadStates> State { get; }
         public Dictionary<long, KafkaStreamThreadState> ThreadStates { get; } = new Dictionary<long, KafkaStreamThreadState>();
 
         private bool WaitOnState(KafkaStreamsThreadStates targetState, long waitMs)
@@ -277,6 +281,13 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 {
                     this.StateListener = listener;
                     this.State.SetStateListener(listener);
+
+                    foreach (var thread in this.Threads)
+                    {
+                        thread?.SetStateListener(listener);
+                    }
+
+                    this.globalStreamThread?.SetStateListener(listener);
                 }
                 else
                 {
@@ -711,12 +722,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
         //}
 
         private bool disposedValue = false; // To detect redundant calls
-
-        public string ThreadClientId { get; }
-        public Thread Thread { get; }
-        public int ManagedThreadId { get; }
-        public IStateListener StateListener { get; private set; }
-        public IStateMachine<KafkaStreamsThreadStates> State { get; }
 
         protected virtual void Dispose(bool disposing)
         {

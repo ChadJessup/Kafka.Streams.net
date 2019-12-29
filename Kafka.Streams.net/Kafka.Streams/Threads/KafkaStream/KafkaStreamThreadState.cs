@@ -62,16 +62,16 @@ namespace Kafka.Streams.Threads.KafkaStream
                 if (this.CurrentState == KafkaStreamThreadStates.PENDING_SHUTDOWN
                     && newState != KafkaStreamThreadStates.DEAD)
                 {
-                    logger.LogDebug("Ignoring request to transit from PENDING_SHUTDOWN to {}: " +
-                                  "only DEAD state is a valid next state", newState);
+                    logger.LogDebug($"Ignoring request to transit from PENDING_SHUTDOWN to {newState}: only DEAD state is a valid next state");
+
                     // when the state is already in PENDING_SHUTDOWN, all other transitions will be
                     // refused but we do not throw exception here
                     return false;
                 }
                 else if (this.CurrentState == KafkaStreamThreadStates.DEAD)
                 {
-                    logger.LogDebug("Ignoring request to transit from DEAD to {}: " +
-                                  "no valid next state after DEAD", newState);
+                    logger.LogDebug($"Ignoring request to transit from DEAD to {newState}: no valid next state after DEAD");
+
                     // when the state is already in NOT_RUNNING, all its transitions
                     // will be refused but we do not throw exception here
                     return false;
@@ -89,7 +89,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 {
                     this.logger.LogError($"Unexpected state transition from {oldState} to {newState}");
 
-                    throw new StreamsException(this.logPrefix + "Unexpected state transition from " + oldState + " to " + newState);
+                    throw new StreamsException($"Unexpected state transition from {oldState} to {newState}");
                 }
                 else
                 {
@@ -117,10 +117,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 }
             }
 
-            if (this.StateListener != null)
-            {
-                this.StateListener.onChange(this.Thread, this.CurrentState, oldState);
-            }
+            this.StateListener?.onChange(this.Thread, this.CurrentState, oldState);
 
             return true;
         }

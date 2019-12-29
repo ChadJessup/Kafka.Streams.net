@@ -83,8 +83,10 @@ namespace Kafka.Streams.Threads.KafkaStream
             var clientId = config.ClientId;
             string threadClientId = $"{clientId}-KafkaStreamThread-{threadId++}";
 
-            this.Thread = new Thread(Run);
-            this.Thread.Name = threadClientId;
+            this.Thread = new Thread(Run)
+            {
+                Name = threadClientId
+            };
 
             this.pollTime = TimeSpan.FromMilliseconds(this.config.PollMs);
             this.commitTimeMs = this.config.CommitIntervalMs;
@@ -199,7 +201,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 consumerConfigs.AutoOffsetReset = null;
             }
 
-            var consumer = clientSupplier.getConsumer(consumerConfigs, rebalanceListener);
+            var consumer = clientSupplier.GetConsumer(consumerConfigs, rebalanceListener);
 
             taskManager.SetConsumer(consumer);
 
@@ -248,7 +250,10 @@ namespace Kafka.Streams.Threads.KafkaStream
         }
 
         public void SetStateListener(IStateListener stateListener)
-            => this.StateListener = stateListener;
+        {
+            this.StateListener = stateListener;
+            this.State.SetStateListener(this.StateListener);
+        }
 
         // package-private for testing only
         KafkaStreamThread UpdateThreadMetadata(string adminClientId)
