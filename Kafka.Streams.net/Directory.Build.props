@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Authors>Chad Jessup</Authors>
     <Company>Good Enough Industries</Company>
-    <Product>Good Enough Industries</Product>
+    <Product>Kafka.Streams.net</Product>
     <Version>0.0.1</Version>
   </PropertyGroup>
 
