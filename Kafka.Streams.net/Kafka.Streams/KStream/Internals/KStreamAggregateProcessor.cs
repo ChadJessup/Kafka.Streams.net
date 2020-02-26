@@ -11,8 +11,8 @@ namespace Kafka.Streams.KStream.Internals
     {
         private TimestampedTupleForwarder<K, T> tupleForwarder;
         private ITimestampedKeyValueStore<K, T> store;
-        private IInitializer<T> initializer;
-        private IAggregator<K, V, T> aggregator;
+        private readonly IInitializer<T> initializer;
+        private readonly IAggregator<K, V, T> aggregator;
         private readonly bool sendOldValues;
         private readonly string storeName;
 

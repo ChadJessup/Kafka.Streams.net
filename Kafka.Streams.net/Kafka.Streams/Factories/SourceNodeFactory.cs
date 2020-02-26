@@ -49,7 +49,7 @@ namespace Kafka.Streams.Factories
 
         private readonly Dictionary<string, Regex> topicToPatterns;
 
-        private Dictionary<string, List<string>> nodeToSourceTopics;
+        private readonly Dictionary<string, List<string>> nodeToSourceTopics;
 
         public Regex Pattern { get; }
 

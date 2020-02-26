@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Kafka.Streams.Threads.KafkaStream
 {
@@ -20,26 +21,45 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             this.SetTransitions(new List<StateTransition<KafkaStreamThreadStates>>
             {
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.CREATED, 1, 5),
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.STARTING, 2, 5),
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_REVOKED, 3, 5),
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_ASSIGNED, 2, 4, 5),
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.RUNNING, 2, 5),
-                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PENDING_SHUTDOWN, 6),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.CREATED, KafkaStreamThreadStates.STARTING, KafkaStreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.STARTING, KafkaStreamThreadStates.PARTITIONS_REVOKED, KafkaStreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_REVOKED, KafkaStreamThreadStates.PARTITIONS_ASSIGNED, KafkaStreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PARTITIONS_ASSIGNED, KafkaStreamThreadStates.PARTITIONS_REVOKED, KafkaStreamThreadStates.RUNNING, KafkaStreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.RUNNING, KafkaStreamThreadStates.PARTITIONS_REVOKED, KafkaStreamThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.PENDING_SHUTDOWN, KafkaStreamThreadStates.DEAD),
                 new StateTransition<KafkaStreamThreadStates>(KafkaStreamThreadStates.DEAD),
             });
 
             this.CurrentState = KafkaStreamThreadStates.CREATED;
         }
 
-        public KafkaStreamThreadStates CurrentState { get; protected set; }
+        private volatile KafkaStreamThreadStates currentState;
+        public KafkaStreamThreadStates CurrentState
+        {
+            get
+            {
+                lock (stateLock)
+                {
+                    return this.currentState;
+                }
+            }
+
+            protected set
+            {
+                lock (stateLock)
+                {
+                    this.currentState = value;
+                }
+            }
+        }
+
         public IStateListener StateListener { get; protected set; }
         public TaskManager TaskManager { get; private set; }
         public IThread<KafkaStreamThreadStates> Thread { get; protected set; }
 
         public bool isValidTransition(KafkaStreamThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
-                ? this.validTransitions[newState].PossibleTransitions.Contains(newState)
+                ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
 
         public void SetTaskManager(TaskManager taskManager)
@@ -96,7 +116,8 @@ namespace Kafka.Streams.Threads.KafkaStream
                     this.logger.LogInformation($"StreamThreadState transition from {oldState} to {newState}");
                 }
 
-                this.CurrentState = newState;
+                this.currentState = newState;
+
                 if (newState == KafkaStreamThreadStates.RUNNING)
                 {
                     if (this.Thread is KafkaStreamThread st)
@@ -129,10 +150,10 @@ namespace Kafka.Streams.Threads.KafkaStream
         }
 
         public bool IsRunning()
-            => this.CurrentState.HasFlag(KafkaStreamThreadStates.RUNNING)
-            || this.CurrentState.HasFlag(KafkaStreamThreadStates.STARTING)
-            || this.CurrentState.HasFlag(KafkaStreamThreadStates.PARTITIONS_REVOKED)
-            || this.CurrentState.HasFlag(KafkaStreamThreadStates.PARTITIONS_ASSIGNED);
+            => this.CurrentState == KafkaStreamThreadStates.RUNNING
+            || this.CurrentState == KafkaStreamThreadStates.STARTING
+            || this.CurrentState == KafkaStreamThreadStates.PARTITIONS_REVOKED
+            || this.CurrentState == KafkaStreamThreadStates.PARTITIONS_ASSIGNED;
 
         public void SetStateListener(IStateListener stateListener)
             => this.StateListener = stateListener;

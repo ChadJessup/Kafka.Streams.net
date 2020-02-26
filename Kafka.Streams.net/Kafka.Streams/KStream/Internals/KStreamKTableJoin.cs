@@ -5,7 +5,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamKTableJoin<K, R, V1, V2> : IProcessorSupplier<K, V1>
     {
-        private IKeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((k, v) => k);
+        private readonly IKeyValueMapper<K, V1, K> keyValueMapper = new KeyValueMapper<K, V1, K>((k, v) => k);
 
         private readonly IKTableValueGetterSupplier<K, V2> valueGetterSupplier;
         private readonly IValueJoiner<V1, V2, R> joiner;

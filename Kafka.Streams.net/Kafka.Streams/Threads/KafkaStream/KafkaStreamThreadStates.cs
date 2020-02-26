@@ -9,41 +9,41 @@ namespace Kafka.Streams.Threads.KafkaStream
      *
      * <pre>
      *                +-------------+
-     *          +<--- | Created (0) |
+     *          +<--- | Created (1) |
      *          |     +-----+-------+
      *          |           |
      *          |           v
      *          |     +-----+-------+
-     *          +<--- | Starting (1)|
+     *          +<--- | Starting (2)|
      *          |     +-----+-------+
      *          |           |
      *          |           |
      *          |           v
      *          |     +-----+-------+
      *          +<--- | Partitions  |
-     *          |     | Revoked (2) | <----+
+     *          |     | Revoked (3) | <----+
      *          |     +-----+-------+      |
      *          |           |              |
      *          |           v              |
      *          |     +-----+-------+      |
      *          |     | Partitions  |      |
-     *          +<--- | Assigned (3)| ---=>+
+     *          +<--- | Assigned (4)| ---=>+
      *          |     +-----+-------+      |
      *          |           |              |
      *          |           v              |
      *          |     +-----+-------+      |
-     *          |     | Running (4) | ---=>+
+     *          |     | Running (5) | ---=>+
      *          |     +-----+-------+
      *          |           |
      *          |           v
      *          |     +-----+-------+
      *          +--=> | Pending     |
-     *                | Shutdown (5)|
+     *                | Shutdown (6)|
      *                +-----+-------+
      *                      |
      *                      v
      *                +-----+-------+
-     *                | Dead (6)    |
+     *                | Dead (7)    |
      *                +-------------+
      * </pre>
      *
@@ -66,13 +66,13 @@ namespace Kafka.Streams.Threads.KafkaStream
     public enum KafkaStreamThreadStates
     {
         UNKNOWN = 0,
-        CREATED, // CREATED(1, 5),
-        STARTING, // STARTING(2, 5),
-        PARTITIONS_REVOKED, // PARTITIONS_REVOKED(3, 5),
-        PARTITIONS_ASSIGNED, // PARTITIONS_ASSIGNED(2, 4, 5),
-        RUNNING, // RUNNING(2, 5),
-        PENDING_SHUTDOWN, // PENDING_SHUTDOWN(6),
-        DEAD, // DEAD;
+        CREATED = 1, // CREATED(1, 5),
+        STARTING = 2, // STARTING(2, 5),
+        PARTITIONS_REVOKED = 3, // PARTITIONS_REVOKED(3, 5),
+        PARTITIONS_ASSIGNED = 4, // PARTITIONS_ASSIGNED(2, 4, 5),
+        RUNNING = 5, // RUNNING(2, 5),
+        PENDING_SHUTDOWN = 6, // PENDING_SHUTDOWN(6),
+        DEAD = 7, // DEAD;
 
         //public static StreamThreadState DEAD { get; internal set; }
     }

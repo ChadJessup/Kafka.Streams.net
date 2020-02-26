@@ -1,14 +1,11 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common.Extensions;
-using Kafka.Common.Utils;
 using Kafka.Streams;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValue;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,9 +13,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,16 +50,11 @@ namespace WordCountProcessorDemo
             var cts = new CancellationTokenSource();
 
             // attach shutdown handler to catch control-c
-            Console.CancelKeyPress += (o, e) =>
-            {
-                cts.Cancel();
-            };
+            Console.CancelKeyPress += (o, e) => cts.Cancel();
 
-            TestConsumer(streamsConfig, cts.Token);
-
+            // TestConsumer(streamsConfig, cts.Token);
             // TestProducer(streamsConfig, cts.Token);
-
-            TutorialOne(services);
+            // TutorialOne(services);
 
             var latch = new ManualResetEvent(initialState: false);
 
@@ -98,10 +88,7 @@ namespace WordCountProcessorDemo
             using IKafkaStreamsThread streams = builder.BuildKafkaStreams();
 
             // attach shutdown handler to catch control-c
-            Console.CancelKeyPress += (o, e) =>
-            {
-                latch.Set();
-            };
+            Console.CancelKeyPress += (o, e) => latch.Set();
 
             try
             {
@@ -128,10 +115,7 @@ namespace WordCountProcessorDemo
 
             var latch = new ManualResetEvent(initialState: false);
 
-            Console.CancelKeyPress += (o, e) =>
-            {
-                latch.Set();
-            };
+            Console.CancelKeyPress += (o, e) => latch.Set();
 
             streams.Start();
             latch.WaitOne();

@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Kafka.Streams.Tasks
 {
@@ -83,16 +84,20 @@ namespace Kafka.Streams.Tasks
 
         public RuntimeException Suspend()
         {
-            RuntimeException firstException = new RuntimeException(null);
-            logger.LogTrace("Suspending running {} {}", taskTypeName, RunningTaskIds());
-            firstException.compareAndSet(null, SuspendTasks(running.Values.ToList()));
-            logger.LogTrace("Close created {} {}", taskTypeName, created.Keys);
-            firstException.compareAndSet(null, closeNonRunningTasks(created.Values.ToList()));
+            logger.LogTrace($"Suspending running {taskTypeName} {RunningTaskIds()}");
+            RuntimeException firstException = new RuntimeException();
+
+            firstException = Interlocked.Exchange(ref firstException, SuspendTasks(running.Values.ToList()));
+            logger.LogTrace($"Close created {taskTypeName} {created.Keys}");
+
+            firstException = Interlocked.Exchange(ref firstException, closeNonRunningTasks(created.Values.ToList()));
+
             previousActiveTasks.Clear();
             previousActiveTasks.UnionWith(running.Keys);
             running.Clear();
             created.Clear();
             runningByPartition.Clear();
+
             return firstException;
         }
 
@@ -121,6 +126,7 @@ namespace Kafka.Streams.Tasks
         private RuntimeException SuspendTasks(List<T> tasks)
         {
             RuntimeException firstException = new RuntimeException(null);
+
             for (IEnumerator<T> it = tasks.GetEnumerator(); it.MoveNext();)
             {
                 T task = it.Current;
@@ -133,16 +139,18 @@ namespace Kafka.Streams.Tasks
                 catch (TaskMigratedException closeAsZombieAndSwallow)
                 {
                     // as we suspend a task, we are either shutting down or rebalancing, thus, we swallow and move on
-                    logger.LogInformation("Failed to suspend {} {} since it got migrated to another thread already. " +
-                            "Closing it as zombie and move on.", taskTypeName, task.id);
-                    firstException.compareAndSet(null, closeZombieTask(task));
+                    logger.LogInformation($"Failed to suspend {taskTypeName} {task.id} since it got migrated to another thread already. " +
+                            "Closing it as zombie and move on.");
+                    firstException = Interlocked.Exchange(ref firstException, closeZombieTask(task));
 
                     tasks.Remove(it.Current);
                 }
                 catch (RuntimeException e)
                 {
-                    logger.LogError("Suspending {} {} failed due to the following error:", taskTypeName, task.id, e);
-                    firstException.compareAndSet(null, e);
+                    logger.LogError($"Suspending {taskTypeName} {task.id} failed due to the following error: {e}");
+
+                    firstException = Interlocked.Exchange(ref firstException, e);
+
                     try
                     {
 
@@ -154,6 +162,7 @@ namespace Kafka.Streams.Tasks
                     }
                 }
             }
+
             return firstException;
         }
 
@@ -423,26 +432,25 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation(e, "Failed to close {} {} since it got migrated to another thread already. " +
-                            "Closing it as zombie and move on.", taskTypeName, task.id);
-                    firstException.compareAndSet(null, closeZombieTask(task));
+                    logger.LogInformation(e, $"Failed to close {taskTypeName} {task.id} since it got migrated to another thread already. " +
+                            "Closing it as zombie and move on.");
+
+                    firstException = Interlocked.Exchange(ref firstException, closeZombieTask(task));
                 }
                 catch (RuntimeException t)
                 {
-                    logger.LogError("Failed while closing {} {} due to the following error:",
-                              task.GetType().Name,
-                              task.id,
-                              t);
+                    logger.LogError($"Failed while closing {task.GetType().Name} {task.id} due to the following error: {t}");
+
                     if (clean)
                     {
                         if (!closeUnclean(task))
                         {
-                            firstException.compareAndSet(null, t);
+                            firstException = Interlocked.Exchange(ref firstException, t);
                         }
                     }
                     else
                     {
-                        firstException.compareAndSet(null, t);
+                        firstException = Interlocked.Exchange(ref firstException, t);
                     }
                 }
             }

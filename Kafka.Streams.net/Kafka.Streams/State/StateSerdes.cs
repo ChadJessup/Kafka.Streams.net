@@ -33,9 +33,9 @@ namespace Kafka.Streams.State
             return new StateSerdes<K, V>(topic, Serdes.serdeFrom<K>(), Serdes.serdeFrom<V>());
         }
 
-        private string topic;
-        private ISerde<K> keySerde;
-        private ISerde<V> valueSerde;
+        private readonly string topic;
+        private readonly ISerde<K> keySerde;
+        private readonly ISerde<V> valueSerde;
 
         /**
          * Create a context for serialization using the specified serializers and deserializers which

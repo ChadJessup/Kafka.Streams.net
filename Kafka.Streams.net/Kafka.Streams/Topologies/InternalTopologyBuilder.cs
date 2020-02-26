@@ -39,6 +39,8 @@ namespace Kafka.Streams.Topologies
             this.services = services ?? throw new ArgumentNullException(nameof(services));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this.config = config ?? throw new ArgumentNullException(nameof(config));
+
+            this.applicationId = this.config.ApplicationId;
         }
 
         // node factories in a topological order
@@ -154,6 +156,23 @@ namespace Kafka.Streams.Topologies
             ITimestampExtractor timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer,
+            string topic)
+        {
+            this.AddSource(
+                offsetReset,
+                name,
+                timestampExtractor,
+                keyDeserializer,
+                valDeserializer,
+                new[] { topic });
+        }
+
+        public void AddSource<K, V>(
+            AutoOffsetReset? offsetReset,
+            string name,
+            ITimestampExtractor timestampExtractor,
+            IDeserializer<K> keyDeserializer,
+            IDeserializer<V> valDeserializer,
             string[] topics)
         {
             if (topics.Length == 0)
@@ -248,6 +267,23 @@ namespace Kafka.Streams.Topologies
             nodeToSourcePatterns.Add(name, topicPattern);
             nodeGrouper.Add(name);
             _nodeGroups = null;
+        }
+
+        public void AddSink<K, V>(
+            string name,
+            string topic,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valSerializer,
+            IStreamPartitioner<K, V> partitioner,
+            string predecessorName)
+        {
+            this.AddSink(
+                name,
+                topic,
+                keySerializer,
+                valSerializer,
+                partitioner,
+                new[] { predecessorName });
         }
 
         public void AddSink<K, V>(

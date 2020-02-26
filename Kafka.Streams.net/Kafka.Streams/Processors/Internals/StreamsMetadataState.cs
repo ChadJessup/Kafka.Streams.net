@@ -31,6 +31,16 @@ namespace Kafka.Streams.Processors.Internals
 
         public StreamsMetadataState(Topology topology, StreamsConfig config)
         {
+            if (topology is null)
+            {
+                throw new ArgumentNullException(nameof(topology));
+            }
+
+            if (config is null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             this.builder = topology.internalTopologyBuilder;
             this.globalStores = new HashSet<string>(builder.globalStateStores().Keys);
 
@@ -121,7 +131,7 @@ namespace Kafka.Streams.Processors.Internals
          * if streams is (re-)initializing
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public StreamsMetadata GetMetadataWithKey<K>(
+        public StreamsMetadata? GetMetadataWithKey<K>(
             string storeName,
             K key,
             ISerializer<K> keySerializer)
@@ -174,7 +184,7 @@ namespace Kafka.Streams.Processors.Internals
          * if streams is (re-)initializing
          */
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public StreamsMetadata GetMetadataWithKey<K, V>(
+        public StreamsMetadata? GetMetadataWithKey<K, V>(
             string storeName,
             K key,
             IStreamPartitioner<K, V> partitioner)
@@ -200,13 +210,13 @@ namespace Kafka.Streams.Processors.Internals
                 return myMetadata;
             }
 
-            SourceTopicsInfo sourceTopicsInfo = GetSourceTopicsInfo(storeName);
+            SourceTopicsInfo? sourceTopicsInfo = GetSourceTopicsInfo(storeName);
             if (sourceTopicsInfo == null)
             {
                 return null;
             }
 
-            return GetStreamsMetadataForKey<K, V>(storeName, key, partitioner, sourceTopicsInfo);
+            return GetStreamsMetadataForKey(storeName, key, partitioner, sourceTopicsInfo);
         }
 
         /**
@@ -218,7 +228,12 @@ namespace Kafka.Streams.Processors.Internals
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void OnChange(Dictionary<HostInfo, HashSet<TopicPartition>> currentState, Cluster clusterMetadata)
         {
-            this.clusterMetadata = clusterMetadata;
+            if (currentState is null)
+            {
+                throw new ArgumentNullException(nameof(currentState));
+            }
+
+            this.clusterMetadata = clusterMetadata ?? throw new ArgumentNullException(nameof(clusterMetadata));
             RebuildMetadata(currentState);
         }
 
@@ -270,13 +285,17 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        private StreamsMetadata GetStreamsMetadataForKey<K, V>(
+        private StreamsMetadata? GetStreamsMetadataForKey<K, V>(
             string storeName,
             K key,
             IStreamPartitioner<K, V> partitioner,
             SourceTopicsInfo sourceTopicsInfo)
         {
-            int partition = partitioner.partition(sourceTopicsInfo.topicWithMostPartitions, key, default, sourceTopicsInfo.maxPartitions);
+            int partition = partitioner.partition(
+                sourceTopicsInfo.topicWithMostPartitions,
+                key,
+                default,
+                sourceTopicsInfo.maxPartitions);
 
             HashSet<TopicPartition> matchingPartitions = new HashSet<TopicPartition>();
             foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
@@ -299,7 +318,7 @@ namespace Kafka.Streams.Processors.Internals
             return null;
         }
 
-        private SourceTopicsInfo GetSourceTopicsInfo(string storeName)
+        private SourceTopicsInfo? GetSourceTopicsInfo(string storeName)
         {
             List<string> sourceTopics = builder.StateStoreNameToSourceTopics()[storeName];
             if (sourceTopics == null || !sourceTopics.Any())

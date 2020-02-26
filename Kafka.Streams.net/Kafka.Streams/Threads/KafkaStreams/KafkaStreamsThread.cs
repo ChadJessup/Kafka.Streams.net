@@ -76,11 +76,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         protected IKafkaStreamThread[] Threads { get; set; }
 
-        private StateDirectory stateDirectory;
-        private StreamsMetadataState streamsMetadataState;
+        private readonly StateDirectory stateDirectory;
+        private readonly StreamsMetadataState streamsMetadataState;
         // private ScheduledExecutorService stateDirCleaner;
-        private QueryableStoreProvider queryableStoreProvider;
-        private IAdminClient adminClient;
+        private readonly QueryableStoreProvider queryableStoreProvider;
+        private readonly IAdminClient adminClient;
 
         private IStateRestoreListener globalStateRestoreListener;
         private readonly IGlobalStreamThread globalStreamThread;

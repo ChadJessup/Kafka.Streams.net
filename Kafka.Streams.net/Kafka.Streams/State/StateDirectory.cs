@@ -24,7 +24,7 @@ namespace Kafka.Streams.State
     {
         private static readonly Regex PATH_NAME = new Regex("\\d+_\\d+", RegexOptions.Compiled);
 
-        static readonly string LOCK_FILE_NAME = ".lock";
+        const string LOCK_FILE_NAME = ".lock";
 
         private readonly ILogger logger;
         private readonly DirectoryInfo stateDir;
@@ -416,7 +416,7 @@ namespace Kafka.Streams.State
         public DirectoryInfo[] listTaskDirectories()
         {
             return !stateDir.Exists
-                ? new DirectoryInfo[0]
+                ? Array.Empty<DirectoryInfo>()
                 : stateDir.GetDirectories().Where(pathname => pathname.Attributes == FileAttributes.Directory && PATH_NAME.IsMatch(pathname.FullName)).ToArray();
         }
 

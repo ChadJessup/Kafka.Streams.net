@@ -40,7 +40,7 @@ namespace Kafka.Streams.KStream.Internals
         private readonly HashSet<IStreamsGraphNode> mergeNodes = new HashSet<IStreamsGraphNode>();
         private readonly HashSet<ITableSourceNode> tableSourceNodes = new HashSet<ITableSourceNode>();
 
-        private StreamsGraphNode root = new StreamsGraphNode(Constants.TopologyRoot);
+        private readonly StreamsGraphNode root = new StreamsGraphNode(Constants.TopologyRoot);
 
         public InternalStreamsBuilder(
             ILogger<InternalStreamsBuilder> logger,

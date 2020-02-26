@@ -35,7 +35,6 @@ namespace Kafka.Streams.Threads.KafkaStream
         private static int threadId = 1;
 
         private readonly object stateLock = new object();
-        private readonly TaskManager taskManager;
         private readonly IServiceProvider services;
         private readonly IClock clock;
         private readonly TimeSpan pollTime;
@@ -51,15 +50,22 @@ namespace Kafka.Streams.Threads.KafkaStream
         private int numIterations;
         private Exception rebalanceException = null;
         private bool processStandbyRecords = false;
-        private volatile ThreadMetadata threadMetadata;
+        public ThreadMetadata ThreadMetadata { get; private set; }
         private Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> standbyRecords = new Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>>();
 
-        // package-private for testing
-        readonly IConsumerRebalanceListener rebalanceListener;
+        public TaskManager TaskManager { get; }
+        public IConsumerRebalanceListener RebalanceListener { get; }
+        public IConsumer<byte[], byte[]> Consumer { get; }
         readonly IProducer<byte[], byte[]>? producer;
-        readonly RestoreConsumer restoreConsumer;
-        readonly IConsumer<byte[], byte[]> consumer;
+        public RestoreConsumer RestoreConsumer { get; }
         readonly InternalTopologyBuilder builder;
+        public IStateListener StateListener { get; private set; }
+
+        public string ThreadClientId { get; }
+        public Thread Thread { get; }
+        public int ManagedThreadId => this.Thread.ManagedThreadId;
+        public IStateMachine<KafkaStreamThreadStates> State { get; }
+
 
         public KafkaStreamThread(
             IClock clock,
@@ -104,10 +110,11 @@ namespace Kafka.Streams.Threads.KafkaStream
             //this.maxPollTimeMs = new InternalConsumerConfig(config.GetMainConsumerConfigs("dummyGroupId", "dummyClientId", dummyThreadIdx))
             // .getInt(configPropertyNames.MAX_POLL_INTERVAL_MS_CONFIG);
 
-            this.restoreConsumer = this.CreateRestoreConsumer(config, clientSupplier, userStateRestoreListener, threadClientId);
+            this.RestoreConsumer = this.CreateRestoreConsumer(config, clientSupplier, userStateRestoreListener, threadClientId);
+
             var changelogReader = new StoreChangelogReader(
                 loggerFactory.CreateLogger<StoreChangelogReader>(),
-                restoreConsumer,
+                RestoreConsumer,
                 TimeSpan.FromMilliseconds(config.PollMs),
                 userStateRestoreListener);
 
@@ -136,12 +143,12 @@ namespace Kafka.Streams.Threads.KafkaStream
                 changelogReader,
                 clock);
 
-            this.taskManager = new TaskManager(
+            this.TaskManager = new TaskManager(
                 loggerFactory,
                 loggerFactory.CreateLogger<TaskManager>(),
                 changelogReader,
                 //processId,
-                restoreConsumer,
+                RestoreConsumer,
                 streamsMetadataState,
                 activeTaskCreator,
                 standbyTaskCreator,
@@ -149,10 +156,11 @@ namespace Kafka.Streams.Threads.KafkaStream
                 new AssignedStreamsTasks(loggerFactory.CreateLogger<AssignedStreamsTasks>()),
                 new AssignedStandbyTasks(loggerFactory.CreateLogger<AssignedStandbyTasks>()));
 
-            this.rebalanceListener = new StreamsRebalanceListener(clock, this.taskManager, this, this.logger);
-            this.consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, taskManager, this.rebalanceListener);
-            (this.State as KafkaStreamThreadState)?.SetTaskManager(this.taskManager);
-
+            this.RebalanceListener = new StreamsRebalanceListener(clock, this.TaskManager, this, this.logger);
+            this.Consumer = this.CreateConsumerClient(config, clientSupplier, threadClientId, TaskManager, this.RebalanceListener);
+            (this.State as KafkaStreamThreadState)?.SetTaskManager(this.TaskManager);
+            (this.State as KafkaStreamThreadState)?.SetThread(this);
+          
             this.UpdateThreadMetadata(StreamsBuilder.GetSharedAdminClientId(clientId));
         }
 
@@ -208,14 +216,6 @@ namespace Kafka.Streams.Threads.KafkaStream
             return consumer;
         }
 
-        public IStateListener StateListener { get; private set; }
-
-        public string ThreadClientId { get; }
-        public Thread Thread { get; }
-        public int ManagedThreadId => this.Thread.ManagedThreadId;
-
-        public IStateMachine<KafkaStreamThreadStates> State { get; }
-
         public void UpdateThreadMetadata(
             Dictionary<TaskId, StreamTask> activeTasks,
             Dictionary<TaskId, StandbyTask> standbyTasks)
@@ -236,9 +236,9 @@ namespace Kafka.Streams.Threads.KafkaStream
                 standbyTasksMetadata.Add(new TaskMetadata(task.Key.ToString(), task.Value.partitions));
             }
 
-            string adminClientId = threadMetadata.AdminClientId;
+            string adminClientId = this.ThreadMetadata.AdminClientId;
 
-            threadMetadata = new ThreadMetadata(
+            this.ThreadMetadata = new ThreadMetadata(
                 this.Thread.Name,
                 this.State.CurrentState.ToString(),
                 StreamsBuilder.GetConsumerClientId(this.Thread.Name),
@@ -256,9 +256,9 @@ namespace Kafka.Streams.Threads.KafkaStream
         }
 
         // package-private for testing only
-        KafkaStreamThread UpdateThreadMetadata(string adminClientId)
+        private KafkaStreamThread UpdateThreadMetadata(string adminClientId)
         {
-            threadMetadata = new ThreadMetadata(
+            this.ThreadMetadata = new ThreadMetadata(
                 this.Thread.Name,
                 this.State.ToString(),
                 StreamsBuilder.GetConsumerClientId(this.Thread.Name),
@@ -277,11 +277,12 @@ namespace Kafka.Streams.Threads.KafkaStream
             return this.State.CurrentState == KafkaStreamThreadStates.RUNNING;
         }
 
-        public bool isRunning()
+        public bool IsRunning()
         {
             lock (stateLock)
             {
-                return this.State.IsRunning();
+                var isRunning = this.State.IsRunning();
+                return isRunning;
             }
         }
 
@@ -344,11 +345,11 @@ namespace Kafka.Streams.Threads.KafkaStream
         private void RunLoop()
         {
             var sourceTopicPattern = '^' + builder.SourceTopicPattern().ToString();
-            consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
+            Consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
 
-            SpinWait.SpinUntil(() => consumer.Assignment.Any(), TimeSpan.FromSeconds(1.0));
+            SpinWait.SpinUntil(() => Consumer.Assignment.Any(), TimeSpan.FromSeconds(1.0));
 
-            while (isRunning())
+            while (IsRunning())
             {
                 try
                 {
@@ -372,8 +373,8 @@ namespace Kafka.Streams.Threads.KafkaStream
 
         private void EnforceRebalance()
         {
-            consumer.Unsubscribe();
-            consumer.Subscribe(builder.SourceTopicPattern().ToString());//, rebalanceListener);
+            Consumer.Unsubscribe();
+            Consumer.Subscribe(builder.SourceTopicPattern().ToString());//, rebalanceListener);
         }
 
         /**
@@ -383,8 +384,7 @@ namespace Kafka.Streams.Threads.KafkaStream
          *                               or if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-        // Visible for testing
-        void RunOnce()
+        public void RunOnce()
         {
             ConsumerRecords<byte[], byte[]> records;
             now = SystemClock.Instance.GetCurrentInstant().ToUnixTimeMilliseconds();
@@ -416,7 +416,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             else
             {
                 // any other state should not happen
-                this.logger.LogError("Unexpected state {} during normal iteration", this.State.CurrentState);
+                this.logger.LogError($"Unexpected state {this.State.CurrentState} during normal iteration");
                 throw new StreamsException(logPrefix + "Unexpected state " + this.State.CurrentState + " during normal iteration");
             }
 
@@ -424,9 +424,9 @@ namespace Kafka.Streams.Threads.KafkaStream
             // The task manager internal states could be uninitialized if the state transition happens during #onPartitionsAssigned().
             // Should only proceed when the thread is still running after #pollRequests(), because no external state mutation
             // could affect the task manager state beyond this point within #runOnce().
-            if (!isRunning())
+            if (!IsRunning())
             {
-                this.logger.LogDebug("State already transits to {}, skipping the run once call after poll request", this.State.CurrentState);
+                this.logger.LogDebug($"State already transits to {this.State.CurrentState}, skipping the run once call after poll request");
                 return;
             }
 
@@ -442,7 +442,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             // if the state is still in PARTITION_ASSIGNED after the poll call
             if (this.State.CurrentState == KafkaStreamThreadStates.PARTITIONS_ASSIGNED)
             {
-                if (this.taskManager.UpdateNewAndRestoringTasks())
+                if (this.TaskManager.UpdateNewAndRestoringTasks())
                 {
                     this.State.SetState(KafkaStreamThreadStates.RUNNING);
                 }
@@ -452,7 +452,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             // TODO: we will process some tasks even if the state is not RUNNING, i.e. some other
             // tasks are still being restored.
-            if (this.taskManager.hasActiveRunningTasks())
+            if (this.TaskManager.hasActiveRunningTasks())
             {
                 /*
                  * Within an iteration, after N (N initialized as 1 upon start up) round of processing one-record-each on the applicable tasks, check the current time:
@@ -469,7 +469,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                 {
                     for (int i = 0; i < numIterations; i++)
                     {
-                        processed = this.taskManager.process(now);
+                        processed = this.TaskManager.process(now);
 
                         if (processed > 0)
                         {
@@ -477,7 +477,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                             // processSensor.record(processLatency / (double)processed, now);
 
                             // commit any tasks that have requested a commit
-                            int committed = this.taskManager.maybeCommitActiveTasksPerUserRequested();
+                            int committed = this.TaskManager.maybeCommitActiveTasksPerUserRequested();
 
                             if (committed > 0)
                             {
@@ -531,7 +531,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             try
             {
-                records = consumer.Poll(pollTime);
+                records = Consumer.Poll(pollTime);
             }
             catch (InvalidOffsetException e)
             {
@@ -594,12 +594,12 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             if (seekToBeginning.Any())
             {
-                consumer.SeekToBeginning(seekToBeginning);
+                Consumer.SeekToBeginning(seekToBeginning);
             }
 
             if (seekToEnd.Any())
             {
-                consumer.SeekToEnd(seekToEnd);
+                Consumer.SeekToEnd(seekToEnd);
             }
         }
 
@@ -624,12 +624,12 @@ namespace Kafka.Streams.Threads.KafkaStream
         {
             foreach (TopicPartition partition in records.Partitions)
             {
-                StreamTask task = this.taskManager.activeTask(partition);
+                StreamTask task = this.TaskManager.activeTask(partition);
 
                 if (task == null)
                 {
                     this.logger.LogError(
-                        $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.taskManager.ToString(">")}");
+                        $"Unable to locate active task for received-record partition {partition}. Current tasks: {this.TaskManager.ToString(">")}");
                         throw new NullReferenceException("Task was unexpectedly missing for partition " + partition);
                 }
                 else if (task.isClosed())
@@ -648,7 +648,7 @@ namespace Kafka.Streams.Threads.KafkaStream
          */
         private bool MaybePunctuate()
         {
-            int punctuated = this.taskManager.punctuate();
+            int punctuated = this.TaskManager.punctuate();
             if (punctuated > 0)
             {
                 long punctuateLatency = AdvanceNowAndComputeLatency();
@@ -674,22 +674,22 @@ namespace Kafka.Streams.Threads.KafkaStream
             {
                 if (this.logger.IsEnabled(LogLevel.Trace))
                 {
-                    this.logger.LogTrace($"Committing all active tasks {this.taskManager.activeTaskIds().ToJoinedString()} and standby tasks {this.taskManager.StandbyTaskIds().ToJoinedString()} since {now - lastCommitMs}ms has elapsed (commit interval is {commitTimeMs}ms)");
+                    this.logger.LogTrace($"Committing all active tasks {this.TaskManager.activeTaskIds().ToJoinedString()} and standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} since {now - lastCommitMs}ms has elapsed (commit interval is {commitTimeMs}ms)");
                 }
 
-                committed += this.taskManager.commitAll();
+                committed += this.TaskManager.commitAll();
                 if (committed > 0)
                 {
                     long intervalCommitLatency = AdvanceNowAndComputeLatency();
                     // commitSensor.record(intervalCommitLatency / (double)committed, now);
 
                     // try to purge the committed records for repartition topics if possible
-                    this.taskManager.maybePurgeCommitedRecords();
+                    this.TaskManager.maybePurgeCommitedRecords();
 
                     if (this.logger.IsEnabled(LogLevel.Debug))
                     {
                         this.logger.LogDebug("Committed all active tasks {} and standby tasks {} in {}ms",
-                            this.taskManager.activeTaskIds(), this.taskManager.StandbyTaskIds(), intervalCommitLatency);
+                            this.TaskManager.activeTaskIds(), this.TaskManager.StandbyTaskIds(), intervalCommitLatency);
                     }
                 }
 
@@ -698,7 +698,7 @@ namespace Kafka.Streams.Threads.KafkaStream
             }
             else
             {
-                int commitPerRequested = this.taskManager.maybeCommitActiveTasksPerUserRequested();
+                int commitPerRequested = this.TaskManager.maybeCommitActiveTasksPerUserRequested();
                 if (commitPerRequested > 0)
                 {
                     long requestCommitLatency = AdvanceNowAndComputeLatency();
@@ -712,7 +712,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
         private void MaybeUpdateStandbyTasks()
         {
-            if (this.State.CurrentState == KafkaStreamThreadStates.RUNNING && this.taskManager.hasStandbyRunningTasks())
+            if (this.State.CurrentState == KafkaStreamThreadStates.RUNNING && this.TaskManager.hasStandbyRunningTasks())
             {
                 if (processStandbyRecords)
                 {
@@ -726,7 +726,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                             List<ConsumeResult<byte[], byte[]>> remaining = entry.Value;
                             if (remaining != null)
                             {
-                                StandbyTask task = this.taskManager.StandbyTask(partition);
+                                StandbyTask task = this.TaskManager.StandbyTask(partition);
 
                                 if (task.isClosed())
                                 {
@@ -742,7 +742,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                                 }
                                 else
                                 {
-                                    restoreConsumer.Resume(new[] { partition });
+                                    RestoreConsumer.Resume(new[] { partition });
                                 }
                             }
                         }
@@ -751,7 +751,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
                         if (this.logger.IsEnabled(LogLevel.Debug))
                         {
-                            this.logger.LogDebug($"Updated standby tasks {this.taskManager.StandbyTaskIds().ToJoinedString()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
+                            this.logger.LogDebug($"Updated standby tasks {this.TaskManager.StandbyTaskIds().ToJoinedString()} in {clock.GetCurrentInstant().ToUnixTimeMilliseconds() - now} ms");
                         }
                     }
                     processStandbyRecords = false;
@@ -763,13 +763,13 @@ namespace Kafka.Streams.Threads.KafkaStream
                     // We can afford to have slower restore (because we don't wait inside poll for results).
                     // Instead, we want to proceed to the next iteration to call the main consumer#poll()
                     // as soon as possible so as to not be kicked out of the group.
-                    ConsumerRecords<byte[], byte[]> records = restoreConsumer.Poll(TimeSpan.Zero);
+                    ConsumerRecords<byte[], byte[]> records = RestoreConsumer.Poll(TimeSpan.Zero);
 
                     if (records.Any())
                     {
                         foreach (TopicPartition partition in records.Partitions)
                         {
-                            StandbyTask task = this.taskManager.StandbyTask(partition);
+                            StandbyTask task = this.TaskManager.StandbyTask(partition);
 
                             if (task == null)
                             {
@@ -786,7 +786,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                             List<ConsumeResult<byte[], byte[]>> remaining = task.update(partition, records.GetRecords(partition));
                             if (remaining.Any())
                             {
-                                restoreConsumer.Pause(new[] { partition });
+                                RestoreConsumer.Pause(new[] { partition });
                                 standbyRecords.Add(partition, remaining);
                             }
                         }
@@ -798,7 +798,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                     HashSet<TopicPartition> partitions = recoverableException.partitions();
                     foreach (TopicPartition partition in partitions)
                     {
-                        StandbyTask task = this.taskManager.StandbyTask(partition);
+                        StandbyTask task = this.TaskManager.StandbyTask(partition);
 
                         if (task.isClosed())
                         {
@@ -811,7 +811,7 @@ namespace Kafka.Streams.Threads.KafkaStream
                         task.reinitializeStateStoresForPartitions(recoverableException.partitions().ToList());
                     }
 
-                    restoreConsumer.SeekToBeginning(partitions);
+                    RestoreConsumer.SeekToBeginning(partitions);
                 }
 
                 // update now if the standby restoration indeed executed
@@ -863,7 +863,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             try
             {
-                this.taskManager.Shutdown(cleanRun);
+                this.TaskManager.Shutdown(cleanRun);
             }
             catch (Exception e)
             {
@@ -872,7 +872,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             try
             {
-                consumer.Close();
+                Consumer.Close();
             }
             catch (Exception e)
             {
@@ -881,7 +881,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
             try
             {
-                restoreConsumer.Close();
+                RestoreConsumer.Close();
             }
             catch (Exception e)
             {
@@ -899,7 +899,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
         public Dictionary<TaskId, StreamTask> Tasks()
         {
-            return this.taskManager.activeTasks();
+            return this.TaskManager.activeTasks();
         }
 
         /**
@@ -922,7 +922,7 @@ namespace Kafka.Streams.Threads.KafkaStream
          */
         public string ToString(string indent)
         {
-            return indent + "\tStreamsThread threadId: " + this.Thread.Name + "\n" + this.taskManager.ToString(indent);
+            return indent + "\tStreamsThread threadId: " + this.Thread.Name + "\n" + this.TaskManager.ToString(indent);
         }
 
         // the following are for testing only
@@ -974,11 +974,6 @@ namespace Kafka.Streams.Threads.KafkaStream
             Dispose(true);
             // TODO: uncomment the following line if the finalizer is overridden above.
             // GC.SuppressFinalize(this);
-        }
-
-        public bool IsRunning()
-        {
-            throw new NotImplementedException();
         }
     }
 }

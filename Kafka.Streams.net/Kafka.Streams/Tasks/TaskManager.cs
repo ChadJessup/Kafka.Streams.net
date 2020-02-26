@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace Kafka.Streams.Tasks
 {
@@ -83,7 +84,7 @@ namespace Kafka.Streams.Tasks
 
             addStreamTasks(assignment);
             addStandbyTasks();
-            
+
             // TODO: can't pause here, due to handler not actually being called after assingment.
             // Pause all the partitions until the underlying state store is ready for all the active tasks.
             //logger.LogTrace($"Pausing partitions: {assignment.ToJoinedString()}");
@@ -248,16 +249,16 @@ namespace Kafka.Streams.Tasks
         {
             logger.LogDebug("Suspending all active tasks {} and standby tasks {}", active.RunningTaskIds(), standby.RunningTaskIds());
 
-            RuntimeException firstException = new RuntimeException(null);
+            RuntimeException firstException = new RuntimeException();
 
-            firstException.compareAndSet(null, active.Suspend());
+            firstException = Interlocked.Exchange(ref firstException, active.Suspend());
             // close all restoring tasks as well and then reset changelog reader;
             // for those restoring and still assigned tasks, they will be re-created
             // in.AddStreamTasks.
-            firstException.compareAndSet(null, active.closeAllRestoringTasks());
+            firstException = Interlocked.Exchange(ref firstException, active.closeAllRestoringTasks());
             changelogReader.reset();
 
-            firstException.compareAndSet(null, standby.Suspend());
+            firstException = Interlocked.Exchange(ref firstException, standby.Suspend());
 
             // Remove the changelog partitions from restore consumer
             restoreConsumer.Unsubscribe();
@@ -271,38 +272,42 @@ namespace Kafka.Streams.Tasks
 
         public void Shutdown(bool clean)
         {
-            RuntimeException firstException = null;
+            RuntimeException firstException = new RuntimeException();
 
-            //log.LogDebug("Shutting down all active tasks {}, standby tasks {}, suspended tasks {}, and suspended standby tasks {}", active.runningTaskIds(), standby.runningTaskIds(),
-            //          active.previousTaskIds(), standby.previousTaskIds());
+            this.logger.LogDebug($"Shutting down all active tasks {active.RunningTaskIds()}, " +
+                $"standby tasks {standby.RunningTaskIds()}," +
+                $" suspended tasks {active.previousTaskIds()}, " +
+                $"and suspended standby tasks {active.previousTaskIds()}");
 
-            //try
-            //{
+            try
+            {
+                active.close(clean);
+            }
+            catch (RuntimeException fe)
+            {
+                firstException = Interlocked.Exchange(ref firstException, fe);
+            }
 
-            //    active.close(clean);
-            //} catch (RuntimeException fatalException)
-            //{
-            //    firstException.compareAndSet(null, fatalException);
-            //}
-            //standby.close(clean);
+            standby.close(clean);
 
-            //// Remove the changelog partitions from restore consumer
-            //try
-            //{
+            // Remove the changelog partitions from restore consumer
+            try
+            {
+                restoreConsumer.Unsubscribe();
+            }
+            catch (RuntimeException fe)
+            {
+                firstException = Interlocked.Exchange(ref firstException, fe);
+            }
 
-            //    restoreConsumer.unsubscribe();
-            //} catch (RuntimeException fatalException)
-            //{
-            //    firstException.compareAndSet(null, fatalException);
-            //}
-            //taskCreator.close();
-            //standbyTaskCreator.close();
+            taskCreator.close();
+            standbyTaskCreator.close();
 
-            //RuntimeException fatalException = firstException[];
-            //if (fatalException != null)
-            //{
-            //    throw fatalException;
-            //}
+            RuntimeException fatalException = firstException;
+            if (fatalException != null)
+            {
+                throw fatalException;
+            }
         }
 
         public IAdminClient getAdminClient()

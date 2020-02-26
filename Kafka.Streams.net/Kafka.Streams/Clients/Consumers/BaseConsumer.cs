@@ -13,6 +13,19 @@ namespace Kafka.Streams.Clients.Consumers
 
         private bool disposedValue = false; // To detect redundant calls
 
+        public BaseConsumer(ILogger<BaseConsumer<K, V>> logger)
+        {
+            this.logger = logger;
+        }
+
+        public BaseConsumer(
+            ILogger<BaseConsumer<K, V>> logger,
+            IConsumer<K, V> consumer)
+        {
+            this.logger = logger;
+            this.consumer = consumer;
+        }
+
         public BaseConsumer(
             ILogger<BaseConsumer<K, V>> logger,
             ConsumerConfig? configs,
@@ -23,6 +36,7 @@ namespace Kafka.Streams.Clients.Consumers
 
             this.consumer = builder.Build();
         }
+
         public string MemberId => this.consumer.MemberId;
         public List<TopicPartition> Assignment => this.consumer.Assignment;
         public List<string> Subscription => this.consumer.Subscription;

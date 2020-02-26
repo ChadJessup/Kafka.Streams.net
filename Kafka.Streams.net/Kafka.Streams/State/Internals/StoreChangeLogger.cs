@@ -6,12 +6,12 @@ namespace Kafka.Streams.State.Internals
 {
     public class StoreChangeLogger<K, V>
     {
-        private string topic;
-        private int partition;
-        private IProcessorContext context;
-        private IRecordCollector collector;
-        private ISerializer<K> keySerializer;
-        private ISerializer<V> valueSerializer;
+        private readonly string topic;
+        private readonly int partition;
+        private readonly IProcessorContext context;
+        private readonly IRecordCollector collector;
+        private readonly ISerializer<K> keySerializer;
+        private readonly ISerializer<V> valueSerializer;
 
         public StoreChangeLogger(
             string storeName,

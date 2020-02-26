@@ -12,7 +12,7 @@ namespace Kafka.Streams.Processors.Internals
             this.logPrefix = logPrefix;
         }
 
-        internal ILogger logger(Type type)
+        public ILogger logger(Type type)
         {
             return null;
         }

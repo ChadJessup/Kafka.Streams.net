@@ -98,6 +98,23 @@ namespace Kafka.Streams.KStream
             => new Materialized<K, V>()
                 .WithKeySerde(keySerde)
                 .WithValueSerde(valueSerde);
+
+        /**
+         * Materialize a {@link IStateStore} with the given name.
+         *
+         * @param storeName  the name of the underlying {@link KTable} state store; valid characters are ASCII
+         * alphanumerics, '.', '_' and '-'.
+         * @param       key type of the store
+         * @param       value type of the store
+         * @param       type of the {@link IStateStore}
+         * @return a new {@link Materialized} instance with the given storeName
+         */
+        public static Materialized<K, V> As(string storeName)
+        {
+            Named.validate(storeName);
+
+            return new Materialized<K, V>(storeName);
+        }
     }
 
     public class Materialized<K, V, S> : Materialized<K, V>

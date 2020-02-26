@@ -1,7 +1,8 @@
-﻿using Kafka.Streams.Tasks;
+﻿using Confluent.Kafka;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.Tasks;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Kafka.Streams.Threads.KafkaStream
 {
@@ -9,5 +10,10 @@ namespace Kafka.Streams.Threads.KafkaStream
     {
         Dictionary<TaskId, StreamTask> Tasks();
         bool IsRunningAndNotRebalancing();
+        IConsumerRebalanceListener RebalanceListener { get; }
+        TaskManager TaskManager { get; }
+        IConsumer<byte[], byte[]> Consumer { get; }
+        void RunOnce();
+        void Shutdown();
     }
 }

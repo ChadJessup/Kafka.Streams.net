@@ -9,7 +9,7 @@ namespace Kafka.Streams.State.KeyValue
 {
     public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
     {
-        private IKeyValueBytesStoreSupplier storeSupplier;
+        private readonly IKeyValueBytesStoreSupplier storeSupplier;
 
         public KeyValueStoreBuilder(
             IKeyValueBytesStoreSupplier storeSupplier,

@@ -26,20 +26,20 @@ namespace Kafka.Streams.Processors.Internals
         private readonly IKafkaClientSupplier clientSupplier;
         private readonly StreamsConfig config;
 
-        private bool eosEnabled;
-        private ProcessorTopology? topology;
-        private IConsumer<byte[], byte[]> globalConsumer;
-        private StateDirectory stateDirectory;
-        private HashSet<string> globalStoreNames = new HashSet<string>();
-        private Dictionary<string, IStateStore?> globalStores = new Dictionary<string, IStateStore?>();
-        private IStateRestoreListener stateRestoreListener;
+        private readonly bool eosEnabled;
+        private readonly ProcessorTopology? topology;
+        private readonly IConsumer<byte[], byte[]> globalConsumer;
+        private readonly StateDirectory stateDirectory;
+        private readonly HashSet<string> globalStoreNames = new HashSet<string>();
+        private readonly Dictionary<string, IStateStore?> globalStores = new Dictionary<string, IStateStore?>();
+        private readonly IStateRestoreListener stateRestoreListener;
         private IInternalProcessorContext globalProcessorContext;
-        private int retries;
-        private long retryBackoffMs;
-        private TimeSpan pollTime;
-        private HashSet<string> globalNonPersistentStoresTopics = new HashSet<string>();
-        private OffsetCheckpoint checkpointFile;
-        private Dictionary<TopicPartition, long> checkpointFileCache;
+        private readonly int retries;
+        private readonly long retryBackoffMs;
+        private readonly TimeSpan pollTime;
+        private readonly HashSet<string> globalNonPersistentStoresTopics = new HashSet<string>();
+        private readonly OffsetCheckpoint checkpointFile;
+        private readonly Dictionary<TopicPartition, long> checkpointFileCache;
 
         public GlobalStateManager(
             ILogger<GlobalStateManager> logger,

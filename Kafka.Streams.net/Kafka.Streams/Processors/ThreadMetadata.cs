@@ -8,9 +8,9 @@ namespace Kafka.Streams.Processors
     public class ThreadMetadata
     {
         private readonly string threadName;
-        private readonly string threadState;
-        private readonly HashSet<TaskMetadata> activeTasks;
-        private readonly HashSet<TaskMetadata> standbyTasks;
+        public string ThreadState { get; }
+        public HashSet<TaskMetadata> ActiveTasks { get; }
+        public HashSet<TaskMetadata> standbyTasks { get; }
         private readonly string mainConsumerClientId;
         private readonly string restoreConsumerClientId;
         private readonly HashSet<string> producerClientIds;
@@ -34,8 +34,8 @@ namespace Kafka.Streams.Processors
             this.producerClientIds = producerClientIds;
             this.AdminClientId = adminClientId;
             this.threadName = threadName;
-            this.threadState = threadState;
-            this.activeTasks = activeTasks;
+            this.ThreadState = threadState;
+            this.ActiveTasks = activeTasks;
             this.standbyTasks = standbyTasks;
         }
 
@@ -55,8 +55,8 @@ namespace Kafka.Streams.Processors
 
             ThreadMetadata that = (ThreadMetadata)o;
             return threadName.Equals(that.threadName)
-                && threadState.Equals(that.threadState)
-                && activeTasks.Equals(that.activeTasks)
+                && ThreadState.Equals(that.ThreadState)
+                && ActiveTasks.Equals(that.ActiveTasks)
                 && standbyTasks.Equals(that.standbyTasks)
                 && mainConsumerClientId.Equals(that.mainConsumerClientId)
                 && restoreConsumerClientId.Equals(that.restoreConsumerClientId)
@@ -69,8 +69,8 @@ namespace Kafka.Streams.Processors
             // can only hash 7 things at once...
             return
             (
-                (threadName, threadState).GetHashCode(),
-                activeTasks,
+                (threadName, ThreadState).GetHashCode(),
+                ActiveTasks,
                 standbyTasks,
                 mainConsumerClientId,
                 restoreConsumerClientId,
@@ -83,8 +83,8 @@ namespace Kafka.Streams.Processors
         {
             return "ThreadMetadata{" +
                     $"threadName={threadName}" +
-                    $", threadState={threadState}" +
-                    $", activeTasks={activeTasks }" +
+                    $", threadState={ThreadState}" +
+                    $", activeTasks={ActiveTasks }" +
                     $", standbyTasks={standbyTasks}" +
                     $", consumerClientId={mainConsumerClientId}" +
                     $", restoreConsumerClientId={restoreConsumerClientId}" +

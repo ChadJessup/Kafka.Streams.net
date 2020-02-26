@@ -1,7 +1,4 @@
-﻿using Confluent.Kafka;
-using Kafka.Common;
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
+﻿using Kafka.Common;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
@@ -22,7 +19,6 @@ using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -38,31 +34,39 @@ namespace Kafka.Streams
         /// </summary>
         public class StreamsBuilder
         {
-            private readonly IConfiguration configuration;
-            private readonly IServiceCollection serviceCollection;
-            private readonly ServiceProvider services;
+            public IConfiguration Configuration { get; }
+            public IServiceCollection ServiceCollection { get; }
+            public ServiceProvider Services { get; }
 
             /** The actual topology that is constructed by this StreamsBuilder. */
-            private readonly Topology topology;
+            public Topology Topology { get; }
 
-            private InternalTopologyBuilder internalTopologyBuilder
-                => this.topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(internalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
+            public InternalTopologyBuilder InternalTopologyBuilder
+                => this.Topology?.internalTopologyBuilder ?? throw new InvalidOperationException($"{nameof(InternalTopologyBuilder)} accessed without initializing {nameof(StreamsBuilder)}");
 
-            private readonly InternalStreamsBuilder internalStreamsBuilder;
+            public InternalStreamsBuilder InternalStreamsBuilder { get; }
 
             public StreamsBuilder(
-                IConfiguration configuration,
-                IServiceCollection serviceCollection)
+                IConfiguration? configuration = null,
+                IServiceCollection? serviceCollection = null)
             {
-                this.configuration = configuration ?? new ConfigurationBuilder().Build();
-                this.serviceCollection = serviceCollection ?? new ServiceCollection();
+                this.Configuration = configuration ?? new ConfigurationBuilder().Build();
+                this.ServiceCollection = serviceCollection ?? new ServiceCollection();
+                this.ServiceCollection = this.BuildDependencyTree(this.Configuration, this.ServiceCollection);
 
-                this.BuildDependencyTree(this.configuration, this.serviceCollection);
+                // Add an empty configuration if none provided.
+                var config = new StreamsConfig
+                {
+                    ApplicationId = "ApplicationId_NotSet",
+                    BootstrapServers = "localhost:9092",
+                };
 
-                this.services = this.serviceCollection.BuildServiceProvider();
+                this.ServiceCollection.TryAddSingleton<StreamsConfig>(config);
 
-                this.topology = this.services.GetRequiredService<Topology>();
-                this.internalStreamsBuilder = this.services.GetRequiredService<InternalStreamsBuilder>();
+                this.Services = this.ServiceCollection.BuildServiceProvider();
+
+                this.Topology = this.Services.GetRequiredService<Topology>();
+                this.InternalStreamsBuilder = this.Services.GetRequiredService<InternalStreamsBuilder>();
             }
 
             public StreamsBuilder(IServiceCollection serviceCollection)
@@ -77,16 +81,18 @@ namespace Kafka.Streams
                 : this(new ConfigurationBuilder().Build(), new ServiceCollection())
             { }
 
-            public IKafkaStreamsThread BuildKafkaStreams()
+            public virtual IKafkaStreamsThread BuildKafkaStreams()
             {
-                var kafkaStreamsThread = this.services.GetRequiredService<IKafkaStreamsThread>();
+                var kafkaStreamsThread = this.Services.GetRequiredService<IKafkaStreamsThread>();
                 kafkaStreamsThread.SetStateListener(kafkaStreamsThread.GetStateListener());
 
                 return kafkaStreamsThread;
             }
 
-            private void BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
+            public virtual IServiceCollection BuildDependencyTree(IConfiguration configuration, IServiceCollection serviceCollection)
             {
+                serviceCollection.AddLogging();
+
                 serviceCollection.TryAddSingleton(configuration);
                 serviceCollection.TryAddSingleton(serviceCollection);
                 serviceCollection.TryAddSingleton<IClock>(SystemClock.Instance);
@@ -106,9 +112,11 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
                 //serviceCollection.TryAddSingleton<TaskManager>();
                 serviceCollection.TryAddSingleton<Topology>();
+
+                return serviceCollection;
             }
 
-            private IServiceCollection AddFactories(IServiceCollection serviceCollection)
+            protected virtual IServiceCollection AddFactories(IServiceCollection serviceCollection)
             {
                 serviceCollection.TryAddSingleton(typeof(SourceNodeFactory<,>));
                 serviceCollection.TryAddSingleton<DeserializerFactory>();
@@ -117,7 +125,7 @@ namespace Kafka.Streams
                 return serviceCollection;
             }
 
-            private IServiceCollection AddNodes(IServiceCollection serviceCollection)
+            protected virtual IServiceCollection AddNodes(IServiceCollection serviceCollection)
             {
                 //serviceCollection.TryAddScoped(typeof(IDeserializer<>),
                 //    sp =>
@@ -134,21 +142,21 @@ namespace Kafka.Streams
                 return serviceCollection;
             }
 
-            private IServiceCollection AddClients(IServiceCollection serviceCollection)
+            protected virtual IServiceCollection AddClients(IServiceCollection serviceCollection)
             {
                 // Special clients, e.g., AdminClient
-                serviceCollection.AddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
+                serviceCollection.TryAddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
 
                 // Consumers
-                serviceCollection.AddSingleton<GlobalConsumer>();
-                serviceCollection.AddSingleton<StateConsumer>();
+                serviceCollection.TryAddSingleton<GlobalConsumer>();
+                serviceCollection.TryAddSingleton<StateConsumer>();
 
                 // Producers
 
                 return serviceCollection;
             }
 
-            private IServiceCollection AddThreads(IServiceCollection serviceCollection)
+            protected virtual IServiceCollection AddThreads(IServiceCollection serviceCollection)
             {
                 serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
@@ -156,26 +164,24 @@ namespace Kafka.Streams
                 serviceCollection.TryAddTransient<IKafkaStreamThread, KafkaStreamThread>();
                 serviceCollection.TryAddTransient<IStateMachine<KafkaStreamThreadStates>, KafkaStreamThreadState>();
 
-                serviceCollection.AddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
+                serviceCollection.TryAddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
 
                 return serviceCollection;
             }
 
-            /**
-             * Create a {@link KStream} from the specified topic.
-             * The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
-             * deserializers as specified in the {@link StreamsConfig config} are used.
-             * <p>
-             * If multiple topics are specified there is no ordering guarantee for records from different topics.
-             * <p>
-             * Note that the specified input topic must be partitioned by key.
-             * If this is not the case it is the user's responsibility to repartition the data before any key based operation
-             * (like aggregation or join) is applied to the returned {@link KStream}.
-             *
-             * @param topic the topic name; cannot be {@code null}
-             * @return a {@link KStream} for the specified topic
-             */
+            // Create a {@link KStream} from the specified topic.
+            // The default {@code "auto.offset.reset"} strategy, default {@link ITimestampExtractor}, and default key and value
+            // deserializers as specified in the {@link StreamsConfig config} are used.
+            // <p>
+            // If multiple topics are specified there is no ordering guarantee for records from different topics.
+            // <p>
+            // Note that the specified input topic must be partitioned by key.
+            // If this is not the case it is the user's responsibility to repartition the data before any key based operation
+            // (like aggregation or join) is applied to the returned {@link KStream}.
+            // 
+            // @param topic the topic name; cannot be {@code null}
+            // @return a {@link KStream} for the specified topic
             [MethodImpl(MethodImplOptions.Synchronized)]
             public IKStream<K, V> Stream<K, V>(string topic)
             {
@@ -200,7 +206,7 @@ namespace Kafka.Streams
                 string topic,
                 Consumed<K, V> consumed)
             {
-                return Stream(topic, consumed);
+                return this.Stream(topic, consumed);
             }
 
             /**
@@ -248,7 +254,7 @@ namespace Kafka.Streams
                 topics = topics ?? throw new ArgumentNullException(nameof(topics));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                return internalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
+                return InternalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -617,8 +623,8 @@ namespace Kafka.Streams
                 where T : IStateStore
             {
                 Objects.requireNonNull(builder, "builder can't be null");
-                internalStreamsBuilder.AddStateStore<K, V, T>(builder);
-                
+                InternalStreamsBuilder.AddStateStore<K, V, T>(builder);
+
                 return this;
             }
 
@@ -684,7 +690,7 @@ namespace Kafka.Streams
                 storeBuilder = storeBuilder ?? throw new ArgumentNullException(nameof(storeBuilder));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                internalStreamsBuilder.AddGlobalStore(
+                InternalStreamsBuilder.AddGlobalStore(
                     storeBuilder,
                     topic,
                     new ConsumedInternal<K, V>(consumed),
@@ -700,7 +706,7 @@ namespace Kafka.Streams
              * @return the {@link Topology} that represents the specified processing logic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public Topology build()
+            public virtual Topology build()
             {
                 return build(null);
             }
@@ -713,11 +719,11 @@ namespace Kafka.Streams
              * @return the {@link Topology} that represents the specified processing logic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public Topology build(StreamsConfig config)
+            public virtual Topology build(StreamsConfig config)
             {
-                this.internalStreamsBuilder.BuildAndOptimizeTopology(config);
+                this.InternalStreamsBuilder.BuildAndOptimizeTopology(config);
 
-                return topology;
+                return Topology;
             }
 
             public static string GetTaskProducerClientId(string threadClientId, TaskId taskId)

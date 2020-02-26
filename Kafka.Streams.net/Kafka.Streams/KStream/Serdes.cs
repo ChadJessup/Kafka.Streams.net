@@ -1,5 +1,4 @@
 ﻿using Confluent.Kafka;
-using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using System;
 
@@ -17,6 +16,9 @@ namespace Kafka.Streams.KStream
 
         public static ISerde<long> Long()
             => new Serde<long>(Serializers.Int64, Deserializers.Int64);
+
+        public static ISerde<int> Int()
+            => new Serde<int>(Serializers.Int32, Deserializers.Int32);
 
         public static ISerde<byte[]> ByteArray()
             => new Serde<byte[]>(Serializers.ByteArray, Deserializers.ByteArray);

@@ -5,6 +5,11 @@ namespace Kafka.Streams.Clients.Consumers
 {
     public class RestoreConsumer : BaseConsumer<byte[], byte[]>
     {
+        public RestoreConsumer(ILogger<RestoreConsumer> logger, IConsumer<byte[], byte[]> consumer)
+            : base(logger, consumer)
+        {
+        }
+
         public RestoreConsumer(
             ILogger<RestoreConsumer> logger,
             ConsumerConfig configs,

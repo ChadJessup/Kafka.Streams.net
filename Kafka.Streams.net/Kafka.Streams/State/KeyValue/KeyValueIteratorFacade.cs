@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.KeyValue
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
-        private IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator1;
+        private readonly IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator1;
 
         protected virtual void Dispose(bool disposing)
         {
