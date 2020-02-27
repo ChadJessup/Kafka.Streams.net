@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KStream
+    public static class KStream
     {
         public static string SourceName = "KSTREAM-SOURCE-";
         public static string SinkName = "KSTREAM-SINK-";

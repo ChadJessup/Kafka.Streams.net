@@ -25,7 +25,7 @@ namespace Kafka.Streams.Topologies
         private readonly ILogger<InternalTopologyBuilder> logger;
         private readonly IServiceProvider services;
         private StreamsConfig config;
-        private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("", RegexOptions.Compiled);
+        private static readonly Regex EMPTY_ZERO_LENGTH_PATTERN = new Regex("^$", RegexOptions.Compiled);
         private static readonly string[] NO_PREDECESSORS = Array.Empty<string>();
         private readonly IClock clock;
 

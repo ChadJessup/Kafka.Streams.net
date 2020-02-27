@@ -8,7 +8,9 @@ using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
+using Kafka.Streams.State.KeyValue;
 using Kafka.Streams.Topologies;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using Priority_Queue;
@@ -101,79 +103,77 @@ namespace Kafka.Streams.KStream.Internals
                 this);
         }
 
-        //        public IKTable<K, V> table<K, V>(
-        //            string topic,
-        //            ConsumedInternal<K, V> consumed,
-        //            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-        //        {
-        //            //string sourceName = new NamedInternal(consumed.name)
-        //            //       .orElseGenerateWithPrefix(this, KStream<K, V>.SourceName);
+        public IKTable<K, V> table<K, V>(
+            string topic,
+            ConsumedInternal<K, V> consumed,
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        {
+            string sourceName = new NamedInternal(consumed.name)
+                   .OrElseGenerateWithPrefix(this, KStream.SourceName);
 
-        //            //string tableSourceName = new NamedInternal(consumed.name)
-        //            //       .suffixWithOrElseGet("-table-source", this, KTable.SourceName);
+            string tableSourceName = new NamedInternal(consumed.name)
+                   .suffixWithOrElseGet("-table-source", this, KTable.SourceName);
 
-        //  //          KTableSource<K, V> tableSource = new KTableSource<K, V>(materialized.storeName(), materialized.queryableStoreName());
+            var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, materialized.StoreName, materialized.queryableStoreName());
+            var processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
-        ////            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
+            var tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+                 .withTopic(topic)
+                 .withSourceName(sourceName)
+                 .withNodeName(tableSourceName)
+                 .withConsumedInternal(consumed)
+                 .withMaterializedInternal(materialized)
+                 .withProcessorParameters(processorParameters)
+                 .build();
 
-        //            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
-        //            //     .withTopic(topic)
-        //            //     .withSourceName(sourceName)
-        //            //     .withNodeName(tableSourceName)
-        //            //     .withConsumedInternal(consumed)
-        //            //     .withMaterializedInternal(materialized)
-        //            //     .withProcessorParameters(processorParameters)
-        //            //     .build();
+            AddGraphNode<K, V>(root, tableSourceNode);
 
-        //            //addGraphNode(root, tableSourceNode);
+            return new KTable<K, V>(
+                tableSourceName,
+                consumed.keySerde,
+                consumed.valueSerde,
+                sourceName,
+                materialized.queryableStoreName(),
+                tableSource,
+                tableSourceNode,
+                this);
+        }
 
-        //            return null;
-        //            //new KTable<K, V>(tableSourceName,
-        //            //                        consumed.keySerde,
-        //            //                        consumed.valueSerde,
-        //            //                        sourceName,
-        //            //                        materialized.queryableStoreName(),
-        //            //                        tableSource,
-        //            //                        tableSourceNode,
-        //            //                        this);
-        //        }
+        public IGlobalKTable<K, V> globalTable<K, V>(
+            string topic,
+            ConsumedInternal<K, V> consumed,
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+        {
+            consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
+            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
+            // explicitly disable logging for global stores
+            materialized.WithLoggingDisabled();
+            string sourceName = NewProcessorName(KTable.SourceName);
+            string processorName = NewProcessorName(KTable.SourceName);
+            // enforce store name as queryable name to always materialize global table stores
+            string storeName = materialized.StoreName;
+            var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, storeName, storeName);
+            var processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
-        //        public IGlobalKTable<K, V> globalTable<K, V>(
-        //            string topic,
-        //            ConsumedInternal<K, V> consumed,
-        //            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-        //        {
-        //            consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
-        //            materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
-        //            // explicitly disable logging for global stores
-        //            //materialized.withLoggingDisabled();
-        //            //string sourceName = NewProcessorName(KTable.SourceName);
-        //            //string processorName = NewProcessorName(KTable.SourceName);
-        //            //// enforce store name as queryable name to always materialize global table stores
-        //            //string storeName = materialized.storeName();
-        //            //KTableSource<K, V> tableSource = new KTableSource<K, V>(storeName, storeName);
+            var tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
+                  .withTopic(topic)
+                  .isGlobalKTable(true)
+                  .withSourceName(sourceName)
+                  .withConsumedInternal(consumed)
+                  .withMaterializedInternal(materialized)
+                  .withProcessorParameters(processorParameters)
+                  .build();
 
-        //            //ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
+            this.AddGraphNode<K, V>(root, tableSourceNode);
 
-        //            //var tableSourceNode = TableSourceNode<K, V, IKeyValueStore<Bytes, byte[]>>.tableSourceNodeBuilder()
-        //            //      .withTopic(topic)
-        //            //      .isGlobalKTable(true)
-        //            //      .withSourceName(sourceName)
-        //            //      .withConsumedInternal(consumed)
-        //            //      .withMaterializedInternal(materialized)
-        //            //      .withProcessorParameters(processorParameters)
-        //            //      .build();
-
-        //            //addGraphNode(root, tableSourceNode);
-
-        //            return null; // new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
-        //        }
+            return new GlobalKTableImpl<K, V>(new KTableSourceValueGetterSupplier<K, V>(storeName), materialized.queryableStoreName());
+        }
 
         public string NewProcessorName(string prefix)
-            => $"{prefix}{index++,3:D3}";
+            => $"{prefix}{index++,3:D10}";
 
         public string NewStoreName(string prefix)
-            => $"{prefix}{KTable.StateStoreName}{index++,3:D3}";
+            => $"{prefix}{KTable.StateStoreName}{index++,3:D10}";
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void AddStateStore<K, V, T>(IStoreBuilder<T> builder)

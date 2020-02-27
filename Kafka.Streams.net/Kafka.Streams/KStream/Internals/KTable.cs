@@ -22,7 +22,7 @@ namespace Kafka.Streams.KStream.Internals
      * @param the source's (parent's) value type
      * @param the value type
      */
-    public class KTable
+    public static class KTable
     {
         public readonly static string SourceName = "KTABLE-SOURCE-";
         public readonly static string StateStoreName = "STATE-STORE-";
@@ -37,9 +37,9 @@ namespace Kafka.Streams.KStream.Internals
         public readonly static string TRANSFORMVALUES_NAME = "KTABLE-TRANSFORMVALUES-";
     }
 
-    public class KTable<K, S, V> : AbstractStream<K, V>, IKTable<K, V>
+    public class KTable<K, V> : AbstractStream<K, V>, IKTable<K, V>
     {
-        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, S, V>>();
+        private static readonly ILogger LOG = new LoggerFactory().CreateLogger<KTable<K, V>>();
         private readonly IClock clock;
         private readonly IProcessorSupplier<K, V> IProcessorSupplier;
         private readonly string queryableStoreName;

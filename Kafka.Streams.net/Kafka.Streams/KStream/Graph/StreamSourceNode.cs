@@ -2,6 +2,7 @@ using Kafka.Streams.Extensions;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Topologies;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -48,19 +49,23 @@ namespace Kafka.Streams.KStream.Graph
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
+            if (topologyBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(topologyBuilder));
+            }
 
             if (topicPattern != null)
             {
-                //topologyBuilder.addSource(consumedInternal.offsetResetPolicy(),
-                //                          nodeName,
-                //                          consumedInternal.timestampExtractor,
-                //                          consumedInternal.keyDeserializer(),
-                //                          consumedInternal.valueDeserializer(),
-                //                          topicPattern);
+                topologyBuilder.AddSource(
+                    consumedInternal.OffsetResetPolicy(),
+                    NodeName,
+                    consumedInternal.timestampExtractor,
+                    consumedInternal.keyDeserializer(),
+                    consumedInternal.valueDeserializer(),
+                    topicPattern.ToString());
             }
             else
             {
-
                 topologyBuilder.AddSource(
                     consumedInternal.OffsetResetPolicy(),
                     NodeName,
@@ -68,7 +73,6 @@ namespace Kafka.Streams.KStream.Graph
                     consumedInternal.keyDeserializer(),
                     consumedInternal.valueDeserializer(),
                     topicNames.ToArray());
-
             }
         }
     }

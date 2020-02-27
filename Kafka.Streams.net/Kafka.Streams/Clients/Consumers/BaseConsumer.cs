@@ -37,83 +37,87 @@ namespace Kafka.Streams.Clients.Consumers
             this.consumer = builder.Build();
         }
 
-        public string MemberId => this.consumer.MemberId;
-        public List<TopicPartition> Assignment => this.consumer.Assignment;
-        public List<string> Subscription => this.consumer.Subscription;
-        public Handle Handle => this.consumer.Handle;
-        public string Name => this.consumer.Name;
+        public virtual string MemberId => this.consumer.MemberId;
+        public virtual List<TopicPartition> Assignment
+        { 
+            get => this.consumer.Assignment; 
+        }
 
-        public int AddBrokers(string brokers)
+        public virtual List<string> Subscription => this.consumer.Subscription;
+        public virtual Handle Handle => this.consumer.Handle;
+        public virtual string Name => this.consumer.Name;
+
+        public virtual int AddBrokers(string brokers)
             => this.consumer.AddBrokers(brokers);
 
-        public void Assign(TopicPartition partition)
+        public virtual void Assign(TopicPartition partition)
             => this.consumer.Assign(partition);
 
-        public void Assign(TopicPartitionOffset partition)
+        public virtual void Assign(TopicPartitionOffset partition)
             => this.consumer.Assign(partition);
 
-        public void Assign(IEnumerable<TopicPartitionOffset> partitions)
+        public virtual void Assign(IEnumerable<TopicPartitionOffset> partitions)
             => this.consumer.Assign(partitions);
 
-        public void Assign(IEnumerable<TopicPartition> partitions)
+        public virtual void Assign(IEnumerable<TopicPartition> partitions)
             => this.consumer.Assign(partitions);
 
-        public void Close()
+        public virtual void Close()
             => this.consumer.Close();
-        public List<TopicPartitionOffset> Commit()
+        public virtual List<TopicPartitionOffset> Commit()
             => this.consumer.Commit();
 
-        public void Commit(IEnumerable<TopicPartitionOffset> offsets)
+        public virtual void Commit(IEnumerable<TopicPartitionOffset> offsets)
             => this.consumer.Commit(offsets);
 
-        public void Commit(ConsumeResult<K, V> result)
+        public virtual void Commit(ConsumeResult<K, V> result)
             => this.consumer.Commit(result);
 
-        public List<TopicPartitionOffset> Committed(IEnumerable<TopicPartition> partitions, TimeSpan timeout)
+        public virtual List<TopicPartitionOffset> Committed(IEnumerable<TopicPartition> partitions, TimeSpan timeout)
             => this.consumer.Committed(partitions, timeout);
 
-        public ConsumeResult<K, V> Consume(CancellationToken cancellationToken = default)
+        public virtual ConsumeResult<K, V> Consume(CancellationToken cancellationToken = default)
             => this.consumer.Consume(cancellationToken);
 
-        public ConsumeResult<K, V> Consume(TimeSpan timeout)
+        public virtual ConsumeResult<K, V> Consume(TimeSpan timeout)
             => this.consumer.Consume(timeout);
 
-        public WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition)
+        public virtual WatermarkOffsets GetWatermarkOffsets(TopicPartition topicPartition)
             => this.consumer.GetWatermarkOffsets(topicPartition);
 
-        public List<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
+        public virtual List<TopicPartitionOffset> OffsetsForTimes(IEnumerable<TopicPartitionTimestamp> timestampsToSearch, TimeSpan timeout)
             => this.consumer.OffsetsForTimes(timestampsToSearch, timeout);
 
-        public void Pause(IEnumerable<TopicPartition> partitions)
+        public virtual void Pause(IEnumerable<TopicPartition> partitions)
             => this.consumer.Pause(partitions);
 
-        public Offset Position(TopicPartition partition)
+        public virtual Offset Position(TopicPartition partition)
             => this.consumer.Position(partition);
 
-        public WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout)
+        public virtual WatermarkOffsets QueryWatermarkOffsets(TopicPartition topicPartition, TimeSpan timeout)
             => this.consumer.QueryWatermarkOffsets(topicPartition, timeout);
 
-        public void Resume(IEnumerable<TopicPartition> partitions)
+        public virtual void Resume(IEnumerable<TopicPartition> partitions)
             => this.consumer.Resume(partitions);
 
-        public void Seek(TopicPartitionOffset tpo)
+        public virtual void Seek(TopicPartitionOffset tpo)
             => this.consumer.Seek(tpo);
 
-        public void StoreOffset(ConsumeResult<K, V> result)
+        public virtual void StoreOffset(ConsumeResult<K, V> result)
             => this.consumer.StoreOffset(result);
-        public void StoreOffset(TopicPartitionOffset offset)
+        public virtual void StoreOffset(TopicPartitionOffset offset)
             => this.consumer.StoreOffset(offset);
 
-        public void Subscribe(IEnumerable<string> topics)
+        public virtual void Subscribe(IEnumerable<string> topics)
             => this.consumer.Subscribe(topics);
 
-        public void Subscribe(string topic)
+        public virtual void Subscribe(string topic)
             => this.consumer.Subscribe(topic);
 
-        public void Unassign()
+        public virtual void Unassign()
             => this.consumer.Unassign();
 
-        public void Unsubscribe()
+        public virtual void Unsubscribe()
             => this.consumer.Unsubscribe();
 
         protected virtual void Dispose(bool disposing)

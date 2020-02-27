@@ -31,7 +31,7 @@ namespace Kafka.Streams.Tests
             Assert.Equal("Y-0000000001", builder.NewProcessorName("Y-"));
             Assert.Equal("Z-0000000002", builder.NewProcessorName("Z-"));
 
-            InternalStreamsBuilder newBuilder = this.streamsBuilder.InternalStreamsBuilder;
+            InternalStreamsBuilder newBuilder = new StreamsBuilder().InternalStreamsBuilder;
 
             Assert.Equal("X-0000000000", newBuilder.NewProcessorName("X-"));
             Assert.Equal("Y-0000000001", newBuilder.NewProcessorName("Y-"));
@@ -45,7 +45,7 @@ namespace Kafka.Streams.Tests
             Assert.Equal("Y-STATE-STORE-0000000001", builder.NewStoreName("Y-"));
             Assert.Equal("Z-STATE-STORE-0000000002", builder.NewStoreName("Z-"));
 
-            InternalStreamsBuilder newBuilder = this.streamsBuilder.InternalStreamsBuilder;
+            InternalStreamsBuilder newBuilder = new StreamsBuilder().InternalStreamsBuilder;
 
             Assert.Equal("X-STATE-STORE-0000000000", newBuilder.NewStoreName("X-"));
             Assert.Equal("Y-STATE-STORE-0000000001", newBuilder.NewStoreName("Y-"));
@@ -267,7 +267,7 @@ namespace Kafka.Streams.Tests
         public void shouldAddTableToEarliestAutoOffsetResetList()
         {
             string topicName = "topic-1";
-            // builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest)), materialized);
+            builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest)), materialized);
             builder.BuildAndOptimizeTopology();
             Assert.Matches(builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
             Assert.DoesNotMatch(builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
