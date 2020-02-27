@@ -129,10 +129,11 @@ namespace Kafka.Streams.KStream.Internals
             AddGraphNode<K, V>(root, tableSourceNode);
 
             return new KTable<K, V>(
+                this.clock,
                 tableSourceName,
                 consumed.keySerde,
                 consumed.valueSerde,
-                sourceName,
+                new HashSet<string> { sourceName },
                 materialized.queryableStoreName(),
                 tableSource,
                 tableSourceNode,

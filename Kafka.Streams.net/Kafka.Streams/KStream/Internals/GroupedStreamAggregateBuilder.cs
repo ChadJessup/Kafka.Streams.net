@@ -98,7 +98,7 @@ namespace Kafka.Streams.KStream.Internals
 
             builder.AddGraphNode<K, V>(parentNode, statefulProcessorNode);
 
-            return new KTable<KR, object, VR>(
+            return new KTable<KR, VR>(
                 this.clock,
                 aggFunctionName,
                 keySerde,

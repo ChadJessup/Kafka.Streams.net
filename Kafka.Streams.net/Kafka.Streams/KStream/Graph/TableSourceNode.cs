@@ -8,6 +8,7 @@ using Kafka.Streams.State.KeyValue;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Topologies;
 using NodaTime;
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Nodes
@@ -64,14 +65,25 @@ namespace Kafka.Streams.Nodes
 
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
-            string topicName = GetTopicNames().GetEnumerator().Current;
+            var topicEnumerator = GetTopicNames().GetEnumerator();
+            string topicName = string.Empty;
+
+            if (topicEnumerator.MoveNext())
+            {
+                topicName = topicEnumerator.Current;
+            }
+            else
+            {
+                // TODO: chad - see if no topic name should be allowed in the end.
+                throw new InvalidOperationException("TableSourceNode: Unable to WriteToTopology, no Topic names set.");
+            }
 
             // TODO: we assume source KTables can only be timestamped-key-value stores for now.
             // should be expanded for other types of stores as well.
             IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder =
                new TimestampedKeyValueStoreMaterializer<K, V>(
                    this.clock,
-                   (MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>)materializedInternal).materialize();
+                   materializedInternal).materialize();
 
             if (isGlobalKTable)
             {
@@ -98,7 +110,7 @@ namespace Kafka.Streams.Nodes
                 topologyBuilder.AddProcessor(processorParameters.ProcessorName, processorParameters.ProcessorSupplier, sourceName);
 
                 // only add state store if the source KTable should be materialized
-                KTableSource<K, V> ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;
+                var ktableSource = (KTableSource<K, V>)processorParameters.ProcessorSupplier;
                 if (ktableSource.queryableName != null)
                 {
                     topologyBuilder.addStateStore<K, V, ITimestampedKeyValueStore<K, V>>(storeBuilder, new[] { this.NodeName });

@@ -277,7 +277,7 @@ namespace Kafka.Streams.Tests
         public void shouldAddTableToLatestAutoOffsetResetList()
         {
             string topicName = "topic-1";
-            // builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest)), materialized);
+            builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest)), materialized);
             builder.BuildAndOptimizeTopology();
             Assert.Matches(builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
             Assert.DoesNotMatch(builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
