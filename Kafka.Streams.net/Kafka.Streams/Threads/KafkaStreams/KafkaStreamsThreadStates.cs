@@ -8,30 +8,30 @@
      *
      * <pre>
      *                 +--------------+
-     *         +&lt;----- | Created (0)  |
+     *         <-----  | Created (1)  |
      *         |       +-----+--------+
      *         |             |
      *         |             v
      *         |       +----+--+------+
      *         |       | Re-          |
-     *         +&lt;----- | Balancing (1)| --------&gt;+
+     *         <------ | Balancing (2)| --------->
      *         |       +-----+-+------+          |
      *         |             | ^                 |
      *         |             v |                 |
      *         |       +--------------+          v
-     *         |       | Running (2)  | --------&gt;+
+     *         |       | Running (3)  | -------- >
      *         |       +------+-------+          |
      *         |              |                  |
      *         |              v                  |
      *         |       +------+-------+     +----+-------+
-     *         +-----&gt; | Pending      |&lt;--- | Error (5)  |
-     *                 | Shutdown (3) |     +------------+
+     *         +-----> | Pending      |<--- | Error (6)  |
+     *                 | Shutdown (4) |     +------------+
      *                 +------+-------+
      *                        |
      *                        v
      *                 +------+-------+
      *                 | Not          |
-     *                 | Running (4)  |
+     *                 | Running (5)  |
      *                 +--------------+
      *
      *
@@ -46,12 +46,12 @@
     public enum KafkaStreamsThreadStates
     {
         UNKNOWN = 0,
-        CREATED, //(1, 3),
-        REBALANCING, //(2, 3, 5),
-        RUNNING, //(1, 3, 5),
-        PENDING_SHUTDOWN, //(4),
-        NOT_RUNNING,
-        ERROR, //(3);
-        DEAD,
+        CREATED = 1, //(2, 4),
+        REBALANCING = 2, //(3, 4, 6),
+        RUNNING = 3, //(2, 4, 6),
+        PENDING_SHUTDOWN = 4, //(5),
+        NOT_RUNNING = 5,
+        ERROR = 6, //(4);
+        DEAD = 7,
     }
 }

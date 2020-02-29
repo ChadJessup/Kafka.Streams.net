@@ -46,8 +46,8 @@ namespace Kafka.Streams.Threads.GlobalStream
         }
 
         public bool isValidTransition(GlobalStreamThreadStates newState)
-        => this.validTransitions.ContainsKey(newState)
-                ? this.validTransitions[newState].PossibleTransitions.Contains(newState)
+            => this.validTransitions.ContainsKey(newState)
+                ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
 
         public bool SetState(GlobalStreamThreadStates newState)

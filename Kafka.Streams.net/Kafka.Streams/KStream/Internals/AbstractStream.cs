@@ -38,8 +38,8 @@ namespace Kafka.Streams.KStream.Internals
     public abstract class AbstractStream<K, V>
     {
         protected string name { get; }
-        protected ISerde<K> keySerde { get; }
-        protected ISerde<V> valSerde { get; }
+        protected ISerde<K>? keySerde { get; }
+        protected ISerde<V>? valSerde { get; }
         public HashSet<string> sourceNodes { get; }
         public StreamsGraphNode streamsGraphNode { get; set; }
         protected InternalStreamsBuilder builder { get; private set; }
@@ -48,6 +48,11 @@ namespace Kafka.Streams.KStream.Internals
         // and KTable APIs with new methods without impacting the public interface.
         public AbstractStream(AbstractStream<K, V> stream)
         {
+            if (stream is null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             this.name = stream.name;
             this.builder = stream.builder;
             this.keySerde = stream.keySerde;
@@ -58,8 +63,8 @@ namespace Kafka.Streams.KStream.Internals
 
         public AbstractStream(
             string name,
-            ISerde<K> keySerde,
-            ISerde<V> valSerde,
+            ISerde<K>? keySerde,
+            ISerde<V>? valSerde,
             HashSet<string> sourceNodes,
             StreamsGraphNode streamsGraphNode,
             InternalStreamsBuilder builder)
@@ -84,6 +89,11 @@ namespace Kafka.Streams.KStream.Internals
 
         public HashSet<string> ensureJoinableWith<VO>(AbstractStream<K, VO> other)
         {
+            if (other is null)
+            {
+                throw new ArgumentNullException(nameof(other));
+            }
+
             HashSet<string> allSourceNodes = new HashSet<string>();
             allSourceNodes.UnionWith(sourceNodes);
             allSourceNodes.UnionWith(other.sourceNodes);

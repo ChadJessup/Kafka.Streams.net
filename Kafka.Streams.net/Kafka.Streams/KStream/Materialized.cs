@@ -44,8 +44,8 @@ namespace Kafka.Streams.KStream
             => this.StoreName = storeName;
 
         public virtual string StoreName { get; protected set; }
-        public ISerde<V> ValueSerde { get; protected set; }
-        public ISerde<K> KeySerde { get; protected set; }
+        public ISerde<V>? ValueSerde { get; protected set; }
+        public ISerde<K>? KeySerde { get; protected set; }
         public bool LoggingEnabled { get; protected set; } = true;
         public bool cachingEnabled { get; protected set; } = true;
         protected Dictionary<string, string> TopicConfig { get; set; } = new Dictionary<string, string>();
@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public virtual Materialized<K, V> WithValueSerde(ISerde<V> valueSerde)
+        public virtual Materialized<K, V> WithValueSerde(ISerde<V>? valueSerde)
         {
             this.ValueSerde = valueSerde;
 
@@ -180,8 +180,8 @@ namespace Kafka.Streams.KStream
          * @return a new {@link Materialized} instance with the given key and value serdes
          */
         public static new Materialized<K, V, S> With(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde)
             => new Materialized<K, V, S>("")
                 .WithKeySerde(keySerde)
                 .WithValueSerde(valueSerde);
@@ -194,7 +194,7 @@ namespace Kafka.Streams.KStream
          *                   it is treated as delete operation
          * @return itself
          */
-        public new Materialized<K, V, S> WithValueSerde(ISerde<V> valueSerde)
+        public new Materialized<K, V, S> WithValueSerde(ISerde<V>? valueSerde)
         {
             this.ValueSerde = valueSerde;
 
@@ -207,7 +207,7 @@ namespace Kafka.Streams.KStream
          *                  serde from configs will be used
          * @return itself
          */
-        public new Materialized<K, V, S> WithKeySerde(ISerde<K> keySerde)
+        public new Materialized<K, V, S> WithKeySerde(ISerde<K>? keySerde)
         {
             this.KeySerde = keySerde;
 

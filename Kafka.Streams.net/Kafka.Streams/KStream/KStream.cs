@@ -69,8 +69,8 @@ namespace Kafka.Streams.KStream.Internals
         public KStream(
             IClock clock,
             string name,
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
             HashSet<string> sourceNodes,
             bool repartitionRequired,
             StreamsGraphNode streamsGraphNode,
@@ -221,13 +221,14 @@ namespace Kafka.Streams.KStream.Internals
 
         public IKStream<K, VR> mapValues<VR>(IValueMapperWithKey<K, V, VR> mapper, Named named)
         {
-            mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            named = named ?? throw new ArgumentNullException(nameof(named));
             mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
 
-            string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.MAPVALUES_NAME);
+            string name = new NamedInternal(named)
+                .OrElseGenerateWithPrefix(builder, KStream.MAPVALUES_NAME);
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamMapValues<K, V, VR>(mapper), name);
-            ProcessorGraphNode<K, V> mapValuesProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters)
+            var processorParameters = new ProcessorParameters<K, V>(new KStreamMapValues<K, V, VR>(mapper), name);
+            var mapValuesProcessorNode = new ProcessorGraphNode<K, V>(name, processorParameters)
             {
                 IsValueChangingOperation = true
             };
@@ -237,13 +238,13 @@ namespace Kafka.Streams.KStream.Internals
             // value serde cannot be preserved
             return new KStream<K, VR>(
                 this.clock,
-                    name,
-                    keySerde,
-                    null,
-                    sourceNodes,
-                    repartitionRequired,
-                    mapValuesProcessorNode,
-                    builder);
+                name,
+                keySerde,
+                valueSerde: null,
+                sourceNodes,
+                repartitionRequired,
+                mapValuesProcessorNode,
+                builder);
         }
 
         //public void print(Printed<K, V> printed)
@@ -269,8 +270,8 @@ namespace Kafka.Streams.KStream.Internals
 
             string name = new NamedInternal(named).OrElseGenerateWithPrefix(builder, KStream.FlatmapName);
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMap<K, V, KR, VR>(mapper), name);
-            ProcessorGraphNode<K, V> flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters);
+            var processorParameters = new ProcessorParameters<K, V>(new KStreamFlatMap<K, V, KR, VR>(mapper), name);
+            var flatMapNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             flatMapNode.IsKeyChangingOperation = true;
 
             builder.AddGraphNode<K, V>(this.streamsGraphNode, flatMapNode);
@@ -423,12 +424,12 @@ namespace Kafka.Streams.KStream.Internals
             HashSet<string> allSourceNodes = new HashSet<string>();
 
             bool requireRepartitioning = streamImpl.repartitionRequired || repartitionRequired;
-            //allSourceNodes.AddAll(sourceNodes);
-            //allSourceNodes.AddAll(streamImpl.sourceNodes);
+            allSourceNodes.AddRange(sourceNodes);
+            allSourceNodes.AddRange(streamImpl.sourceNodes);
 
-            ProcessorParameters<K, V> processorParameters = new ProcessorParameters<K, V>(new KStreamPassThrough<K, V>(), name);
+            var processorParameters = new ProcessorParameters<K, V>(new KStreamPassThrough<K, V>(), name);
 
-            ProcessorGraphNode<K, V> mergeNode = new ProcessorGraphNode<K, V>(name, processorParameters);
+            var mergeNode = new ProcessorGraphNode<K, V>(name, processorParameters);
             mergeNode.SetMergeNode(true);
 
             var parents = new HashSet<StreamsGraphNode> { this.streamsGraphNode, streamImpl.streamsGraphNode };

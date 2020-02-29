@@ -22,7 +22,7 @@ namespace Kafka.Streams.Factories
             IClock clock,
             string name,
             string[] topics,
-            Regex pattern,
+            Regex? pattern,
             ITimestampExtractor timestampExtractor,
             Dictionary<string, Regex> topicToPatterns,
             Dictionary<string, List<string>> nodeToSourceTopics,
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Factories
 
         private readonly Dictionary<string, List<string>> nodeToSourceTopics;
 
-        public Regex Pattern { get; }
+        public Regex? Pattern { get; }
 
         private readonly InternalTopologyBuilder internalTopologyBuilder;
 

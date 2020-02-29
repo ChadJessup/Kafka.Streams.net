@@ -48,7 +48,7 @@ namespace Kafka.Streams.Threads.KafkaStream
         private long lastPollMs;
         private long lastCommitMs;
         private int numIterations;
-        private Exception rebalanceException = null;
+        private Exception? rebalanceException = null;
         private bool processStandbyRecords = false;
         public ThreadMetadata ThreadMetadata { get; private set; }
         private Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>> standbyRecords = new Dictionary<TopicPartition, List<ConsumeResult<byte[], byte[]>>>();
@@ -63,6 +63,7 @@ namespace Kafka.Streams.Threads.KafkaStream
 
         public string ThreadClientId { get; }
         public Thread Thread { get; }
+        public void Join() => this.Thread?.Join();
         public int ManagedThreadId => this.Thread.ManagedThreadId;
         public IStateMachine<KafkaStreamThreadStates> State { get; }
 
@@ -344,7 +345,7 @@ namespace Kafka.Streams.Threads.KafkaStream
          */
         private void RunLoop()
         {
-            var sourceTopicPattern = '^' + builder.SourceTopicPattern().ToString();
+            var sourceTopicPattern = builder.SourceTopicPattern().ToString();
             Consumer.Subscribe(sourceTopicPattern);//, rebalanceListener);
 
             SpinWait.SpinUntil(() => Consumer.Assignment.Any(), TimeSpan.FromSeconds(1.0));

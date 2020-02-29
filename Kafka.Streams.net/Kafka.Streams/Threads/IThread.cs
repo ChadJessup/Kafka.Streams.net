@@ -6,6 +6,7 @@ namespace Kafka.Streams.Threads
     {
         int ManagedThreadId { get; }
         void Start();
+        void Join();
         bool IsRunning();
     }
 
@@ -15,7 +16,6 @@ namespace Kafka.Streams.Threads
         where States : Enum
     {
         string ThreadClientId { get; }
-        IStateListener StateListener { get; }
         IStateMachine<States> State { get; }
     }
 }

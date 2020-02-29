@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using System;
 using System.Collections.Generic;
 
@@ -33,20 +17,18 @@ namespace Kafka.Streams.Processors.Internals
             return ids.ContainsKey(id);
         }
 
-        /**
-         * @throws NoSuchElementException if the parent of this node is null
-         */
         public T Root(T id)
         {
-            T current = id;
-            T parent = ids[current];
+            id = id ?? throw new ArgumentNullException(nameof(id));
 
-            if (parent == null)
+            T current = id;
+
+            if (!ids.TryGetValue(current, out var parent))
             {
                 throw new KeyNotFoundException("id: " + id.ToString());
             }
 
-            while (!parent.Equals(current))
+            while (!parent?.Equals(current) ?? false)
             {
                 // do the path splitting
                 T grandparent = ids[parent];
@@ -62,12 +44,16 @@ namespace Kafka.Streams.Processors.Internals
                 current = parent;
                 parent = grandparent;
             }
+
             return current;
         }
 
+        public void Unite(T id, T singleId)
+            => this.Unite(id, new[] { singleId });
+
         public void Unite(T id1, T[] idList)
         {
-            foreach (T id2 in idList)
+            foreach (T id2 in idList ?? Array.Empty<T>())
             {
                 UnitePair(id1, id2);
             }
@@ -78,7 +64,7 @@ namespace Kafka.Streams.Processors.Internals
             T root1 = Root(id1);
             T root2 = Root(id2);
 
-            if (!root1.Equals(root2))
+            if (!root1?.Equals(root2) ?? false)
             {
                 if (ids.ContainsKey(root1))
                 {

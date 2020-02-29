@@ -1,5 +1,4 @@
-﻿using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.TimeStamped;
+﻿using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Window;
 using System;
 using System.Collections.Generic;
@@ -11,13 +10,14 @@ namespace Kafka.Streams.State
     {
         IStoreBuilder<T> Builder { get; }
         IStateStore Build();
+        HashSet<string> Users { get; }
         string name { get; }
     }
 
     public class StateStoreFactory<T> : IStateStoreFactory<T>
         where T : IStateStore
     {
-        protected HashSet<string> users { get; } = new HashSet<string>();
+        public HashSet<string> Users { get; } = new HashSet<string>();
         
         public IStoreBuilder<T> Builder { get; }
 

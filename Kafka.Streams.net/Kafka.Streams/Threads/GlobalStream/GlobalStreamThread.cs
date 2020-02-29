@@ -33,6 +33,7 @@ namespace Kafka.Streams.Threads.GlobalStream
         private StreamsException startupException;
 
         public Thread Thread { get; }
+        public void Join() => this.Thread?.Join();
         public IStateMachine<GlobalStreamThreadStates> State { get; }
         public IStateListener StateListener { get; private set; }
         public string ThreadClientId { get; }

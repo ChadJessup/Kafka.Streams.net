@@ -374,7 +374,7 @@ namespace Kafka.Streams.Configs
             }
             else
             {
-                consumerProps.Add(StreamsConfigPropertyNames.BootstrapServers, (string)this.properties[StreamsConfigPropertyNames.BootstrapServers]);
+                consumerProps.Add(StreamsConfigPropertyNames.BootstrapServers, this.properties[StreamsConfigPropertyNames.BootstrapServers]);
             }
 
             return new ConsumerConfig(consumerProps);
@@ -744,6 +744,7 @@ namespace Kafka.Streams.Configs
             return new Dictionary<string, string>(this.properties)
                 .RemoveAll(new[]
                 {
+                    "state.dir",
                     "application.id",
                     "default.key.serde",
                     "default.value.serde",

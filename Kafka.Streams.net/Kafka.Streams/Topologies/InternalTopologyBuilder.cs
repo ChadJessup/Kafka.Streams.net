@@ -101,13 +101,13 @@ namespace Kafka.Streams.Topologies
 
         private readonly QuickUnion<string> nodeGrouper = new QuickUnion<string>();
 
-        public SubscriptionUpdates SubscriptionUpdates { get; } = new SubscriptionUpdates();
+        public SubscriptionUpdates SubscriptionUpdates { get; internal set; } = new SubscriptionUpdates();
 
-        private string applicationId = null;
+        private string? applicationId = null;
 
-        private Regex topicPattern = null;
+        private Regex? topicPattern = null;
 
-        private Dictionary<int, HashSet<string>> _nodeGroups = null;
+        private Dictionary<int, HashSet<string>>? _nodeGroups = null;
 
         // public for testing only
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -175,6 +175,11 @@ namespace Kafka.Streams.Topologies
             IDeserializer<V> valDeserializer,
             string[] topics)
         {
+            if (topics is null)
+            {
+                throw new ArgumentNullException(nameof(topics));
+            }
+
             if (topics.Length == 0)
             {
                 throw new TopologyException("You must provide at least one topic");
@@ -193,6 +198,8 @@ namespace Kafka.Streams.Topologies
                 sourceTopicNames.Add(topic);
             }
 
+            nodeToSourceTopics.Add(name, topics.ToList());
+
             nodeFactories.Add(
                 name,
                 new SourceNodeFactory<K, V>(
@@ -201,12 +208,11 @@ namespace Kafka.Streams.Topologies
                     topics,
                     null,
                     timestampExtractor,
-                    null,
-                    null,
+                    topicToPatterns,
+                    nodeToSourceTopics,
                     keyDeserializer,
                     valDeserializer));
 
-            nodeToSourceTopics.Add(name, topics.ToList());
             nodeGrouper.Add(name);
             _nodeGroups = null;
         }
@@ -570,6 +576,7 @@ namespace Kafka.Streams.Topologies
             {
                 throw new TopologyException("Source store " + sourceStoreName + " is already.Added.");
             }
+
             storeToChangelogTopic.Add(sourceStoreName, topic);
         }
 
@@ -637,96 +644,97 @@ namespace Kafka.Streams.Topologies
             }
 
             var stateStoreFactory = stateFactories[stateStoreName];
-            //IEnumerator<string> iter = stateStoreFactory.users().iterator();
-            //if (iter.hasNext())
-            //{
-            //  //  string user = iter.next();
-            //  //  nodeGrouper.unite(user, processorName);
-            //}
+            IEnumerator<string> iter = stateStoreFactory.Users.GetEnumerator();
 
-            //stateStoreFactory.users().Add(processorName);
+            if (iter.MoveNext())
+            {
+                string user = iter.Current;
+                nodeGrouper.Unite(user, processorName);
+            }
+
+            stateStoreFactory.Users.Add(processorName);
 
             var nodeFactory = nodeFactories[processorName];
-            //if (nodeFactory is ProcessorNodeFactory)
-            //{
-            //    ProcessorNodeFactory processorNodeFactory = (ProcessorNodeFactory)nodeFactory;
-            //    processorNodeFactory.addStateStore(stateStoreName);
-            //    connectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
-            //}
-            //else
-            //{
-            //    throw new TopologyException("cannot connect a state store " + stateStoreName + " to a source node or a sink node.");
-            //}
+            if (nodeFactory is ProcessorNodeFactory<K, V> processorNodeFactory)
+            {
+                processorNodeFactory.addStateStore(stateStoreName);
+                ConnectStateStoreNameToSourceTopicsOrPattern(stateStoreName, processorNodeFactory);
+            }
+            else
+            {
+                throw new TopologyException("cannot connect a state store " + stateStoreName + " to a source node or a sink node.");
+            }
         }
 
-        //private HashSet<SourceNodeFactory<K, V>> findSourcesForProcessorPredecessors<K, V>(string[] predecessors)
-        //{
-        //    HashSet<SourceNodeFactory<K, V>> sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
-        //    foreach (string predecessor in predecessors)
-        //    {
-        //        NodeFactory nodeFactory = nodeFactories[predecessor];
-        //        if (nodeFactory is SourceNodeFactory<K, V>)
-        //        {
-        //            sourceNodes.Add((SourceNodeFactory<K, V>)nodeFactory);
-        //        }
-        //        else if (nodeFactory is ProcessorNodeFactory)
-        //        {
-        //            //        sourceNodes.AddAll(findSourcesForProcessorPredecessors(((ProcessorNodeFactory)nodeFactory).predecessors));
-        //        }
-        //    }
-        //    return sourceNodes;
-        //}
+        private HashSet<SourceNodeFactory<K, V>> findSourcesForProcessorPredecessors<K, V>(IEnumerable<string> predecessors)
+        {
+            var sourceNodes = new HashSet<SourceNodeFactory<K, V>>();
+            foreach (string predecessor in predecessors)
+            {
+                var nodeFactory = nodeFactories[predecessor];
+                if (nodeFactory is SourceNodeFactory<K, V>)
+                {
+                    sourceNodes.Add((SourceNodeFactory<K, V>)nodeFactory);
+                }
+                else if (nodeFactory is ProcessorNodeFactory<K, V>)
+                {
+                    sourceNodes.AddRange(findSourcesForProcessorPredecessors<K, V>(((ProcessorNodeFactory<K, V>)nodeFactory).Predecessors));
+                }
+            }
 
-        //private void connectStateStoreNameToSourceTopicsOrPattern<K, V>(
-        //    string stateStoreName,
-        //    ProcessorNodeFactory processorNodeFactory)
-        //{
-        //    // we should never update the mapping from state store names to source topics if the store name already exists
-        //    // in the map; this scenario is possible, for example, that a state store underlying a source KTable is
-        //    // connecting to a join operator whose source topic is not the original KTable's source topic but an internal repartition topic.
-        //    if (_stateStoreNameToSourceTopics.ContainsKey(stateStoreName)
-        //        || stateStoreNameToSourceRegex.ContainsKey(stateStoreName))
-        //    {
-        //        return;
-        //    }
+            return sourceNodes;
+        }
 
-        //    HashSet<string> sourceTopics = new HashSet<string>();
-        //    HashSet<Regex> sourcePatterns = new HashSet<Regex>();
-        //    //HashSet<SourceNodeFactory<K, V>> sourceNodesForPredecessor =
-        //    //    findSourcesForProcessorPredecessors<K, V>(processorNodeFactory.predecessors);
+        private void ConnectStateStoreNameToSourceTopicsOrPattern<K, V>(
+            string stateStoreName,
+            ProcessorNodeFactory<K, V> processorNodeFactory)
+        {
+            // we should never update the mapping from state store names to source topics if the store name already exists
+            // in the map; this scenario is possible, for example, that a state store underlying a source KTable is
+            // connecting to a join operator whose source topic is not the original KTable's source topic but an internal repartition topic.
+            if (_stateStoreNameToSourceTopics.ContainsKey(stateStoreName)
+                || stateStoreNameToSourceRegex.ContainsKey(stateStoreName))
+            {
+                return;
+            }
 
-        //    foreach (var sourceNodeFactory in sourceNodesForPredecessor)
-        //    {
-        //        if (sourceNodeFactory.pattern != null)
-        //        {
-        //            sourcePatterns.Add(sourceNodeFactory.pattern);
-        //        }
-        //        else
-        //        {
-        //            //sourceTopics.AddAll(sourceNodeFactory.topics);
-        //        }
-        //    }
+            var sourceTopics = new HashSet<string>();
+            var sourcePatterns = new HashSet<Regex>();
+            var sourceNodesForPredecessor =
+                findSourcesForProcessorPredecessors<K, V>(processorNodeFactory.Predecessors);
 
-        //    if (sourceTopics.Any())
-        //    {
-        //        _stateStoreNameToSourceTopics.Add(stateStoreName,
-        //                sourceTopics);
-        //    }
+            foreach (var sourceNodeFactory in sourceNodesForPredecessor)
+            {
+                if (sourceNodeFactory.Pattern != null)
+                {
+                    sourcePatterns.Add(sourceNodeFactory.Pattern);
+                }
+                else
+                {
+                    sourceTopics.AddRange(sourceNodeFactory.Topics);
+                }
+            }
 
-        //    if (sourcePatterns.Any())
-        //    {
-        //        stateStoreNameToSourceRegex.Add(
-        //            stateStoreName,
-        //            sourcePatterns);
-        //    }
+            if (sourceTopics.Any())
+            {
+                _stateStoreNameToSourceTopics.Add(
+                    stateStoreName,
+                    sourceTopics);
+            }
 
-        //}
+            if (sourcePatterns.Any())
+            {
+                stateStoreNameToSourceRegex.Add(
+                    stateStoreName,
+                    sourcePatterns);
+            }
+        }
 
         private void maybeAddToResetList<T>(
-            ICollection<T> earliestResets,
-            ICollection<T> latestResets,
-            AutoOffsetReset? offsetReset,
-            T item)
+                ICollection<T> earliestResets,
+                ICollection<T> latestResets,
+                AutoOffsetReset? offsetReset,
+                T item)
         {
             if (offsetReset.HasValue)
             {
@@ -889,35 +897,35 @@ namespace Kafka.Streams.Topologies
             {
                 if (nodeGroup == null || nodeGroup.Contains(factory.Name))
                 {
-                    //                    ProcessorNode node = factory.build();
-                    //                  processorMap.Add(node.name, node);
+                    //ProcessorNode node = factory.Build();
+                    //processorMap.Add(node.Name, node);
 
                     //if (factory is ProcessorNodeFactory)
                     //{
-                    //    //buildProcessorNode(
-                    //    //    processorMap,
-                    //    //    stateStoreMap,
-                    //    //    (ProcessorNodeFactory)factory,
-                    //    //    node);
+                        //buildProcessorNode(
+                            //processorMap,
+                            //stateStoreMap,
+                            //(ProcessorNodeFactory)factory,
+                            //node);
                     //}
                     //else if (factory is SourceNodeFactory<K, V>)
                     //{
-                    //    //buildSourceNode(topicSourceMap,
-                    //    //                repartitionTopics,
-                    //    //                (SourceNodeFactory<K, V>)factory,
-                    //    //                (SourceNode<K, V>)node);
+                        //buildSourceNode(topicSourceMap,
+                                        //repartitionTopics,
+                                        //(SourceNodeFactory<K, V>)factory,
+                                        //(SourceNode<K, V>)node);
                     //}
                     //else if (factory is SinkNodeFactory<K, V>)
                     //{
-                    //    //buildSinkNode(processorMap,
-                    //    //              topicSinkMap,
-                    //    //              repartitionTopics,
-                    //    //              (SinkNodeFactory<K, V>)factory,
-                    //    //              (SinkNode<K, V>)node);
+                        //buildSinkNode(processorMap,
+                                      //topicSinkMap,
+                                      //repartitionTopics,
+                                      //(SinkNodeFactory<K, V>)factory,
+                                      //(SinkNode<K, V>)node);
                     //}
                     //else
                     //{
-                    //    throw new TopologyException("Unknown definition: " + factory.GetType().FullName);
+                        //throw new TopologyException("Unknown definition: " + factory.GetType().FullName);
                     //}
                 }
             }
@@ -956,7 +964,6 @@ namespace Kafka.Streams.Topologies
         //            }
         //            else
         //            {
-
         //                topicSinkMap.Add(topic, node);
         //            }
 
@@ -970,7 +977,6 @@ namespace Kafka.Streams.Topologies
         //    SourceNodeFactory<K, V> sourceNodeFactory,
         //    SourceNode<K, V> node)
         //{
-
         //    List<string> topics = (sourceNodeFactory.pattern != null)
         //        ? null //sourceNodeFactory.getTopics(subscriptionUpdates.getUpdates())
         //        : sourceNodeFactory.topics;
@@ -986,7 +992,6 @@ namespace Kafka.Streams.Topologies
         //        }
         //        else
         //        {
-
         //            topicSourceMap.Add(topic, node);
         //        }
         //    }
@@ -1002,7 +1007,7 @@ namespace Kafka.Streams.Topologies
         //    foreach (string predecessor in factory.predecessors)
         //    {
         //        ProcessorNode<K, V> predecessorNode = processorMap[predecessor];
-        //        //                predecessorNode.AddChild(node);
+        //        predecessorNode.AddChild(node);
         //    }
 
         //    foreach (string stateStoreName in factory.stateStoreNames)
@@ -1106,7 +1111,7 @@ namespace Kafka.Streams.Topologies
                         }
                     }
 
-                    // if the node is a sink node,.Add to the sink topics
+                    // if the node is a sink node, add to the sink topics
                     string topic = nodeToSinkTopic[node];
                     if (topic != null)
                     {
@@ -1123,7 +1128,7 @@ namespace Kafka.Streams.Topologies
                     }
 
                     // if the node is connected to a state store whose changelog topics are not predefined,
-                    //.Add to the changelog topics
+                    // add to the changelog topics
                     foreach (var stateFactory in stateFactories.Values)
                     {
                         //if (stateFactory.loggingEnabled && stateFactory.users().Contains(node))
@@ -1362,13 +1367,11 @@ namespace Kafka.Streams.Topologies
 
         // package-private for testing only
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void UpdateSubscriptions(
-            SubscriptionUpdates subscriptionUpdates,
-            string logPrefix)
+        void UpdateSubscriptions(SubscriptionUpdates subscriptionUpdates, string logPrefix)
         {
-            logger.LogDebug("{}updating builder with {} topic(s) with possible matching regex subscription(s)",
-                    logPrefix, subscriptionUpdates);
-            //            this.subscriptionUpdates = subscriptionUpdates;
+            logger.LogDebug($"{logPrefix}updating builder with {subscriptionUpdates} topic(s) with possible matching regex subscription(s)");
+
+            this.SubscriptionUpdates = subscriptionUpdates;
             SetRegexMatchedTopicsToSourceNodes();
             SetRegexMatchedTopicToStateStore();
         }
@@ -1528,6 +1531,11 @@ namespace Kafka.Streams.Topologies
             HashSet<string> topics)//,
                                    //string logPrefix)
         {
+            if (topics is null)
+            {
+                throw new ArgumentNullException(nameof(topics));
+            }
+
             var logPrefix = "";
             SubscriptionUpdates subscriptionUpdates = new SubscriptionUpdates();
             logger.LogDebug($"{logPrefix}found {topics.Count} topics possibly matching regex");

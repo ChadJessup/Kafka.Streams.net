@@ -15,16 +15,16 @@ namespace Kafka.Streams.Threads
     {
         private readonly ILogger<StreamStateListener> logger;
 
-        private Dictionary<long, KafkaStreamThreadState> threadStates;
+        private Dictionary<long, KafkaStreamThreadState> threadStates = new Dictionary<long, KafkaStreamThreadState>();
         private readonly IKafkaStreamsThread kafkaStreams;
-        private readonly IGlobalStreamThread globalThread;
+        private readonly IGlobalStreamThread? globalThread;
         
         // this lock should always be held before the state lock
         private readonly object threadStatesLock;
 
         public StreamStateListener(
             ILogger<StreamStateListener> logger,
-            IGlobalStreamThread globalThread,
+            IGlobalStreamThread? globalThread,
             IKafkaStreamsThread kafkaStreams)
         {
             this.logger = logger;
@@ -116,7 +116,7 @@ namespace Kafka.Streams.Threads
                 {
                     // global stream thread has different invariants
                     GlobalStreamThreadStates newState = (GlobalStreamThreadStates)(object)abstractNewState;
-                    this.globalThread.State.SetState(newState);
+                    this.globalThread?.State.SetState(newState);
 
                     // special case when global thread is dead
                     if (newState == GlobalStreamThreadStates.DEAD)

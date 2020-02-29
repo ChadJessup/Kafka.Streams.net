@@ -74,7 +74,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         private readonly IKafkaClientSupplier clientSupplier;
         private readonly StreamsConfig config;
 
-        protected IKafkaStreamThread[] Threads { get; set; }
+        public IKafkaStreamThread[] Threads { get; private set; }
 
         private readonly StateDirectory stateDirectory;
         private readonly StreamsMetadataState streamsMetadataState;
@@ -83,7 +83,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
         private readonly IAdminClient adminClient;
 
         private IStateRestoreListener globalStateRestoreListener;
-        private readonly IGlobalStreamThread globalStreamThread;
+        private IGlobalStreamThread? globalStreamThread;
         private readonly Topology topology;
         private readonly object stateLock = new object();
 
@@ -175,10 +175,17 @@ namespace Kafka.Streams.Threads.KafkaStreams
             }
 
             var storeProviders = new List<IStateStoreProvider>();
+            var streamStateListener = new StreamStateListener(null, this.globalStreamThread, this);
+            if (globalTaskTopology != null)
+            {
+                globalStreamThread?.SetStateListener(streamStateListener);
+            }
+
             for (int i = 0; i < Threads.Length; i++)
             {
                 Threads[i] = ActivatorUtilities.GetServiceOrCreateInstance<IKafkaStreamThread>(this.services);
                 Threads[i].State.SetThread(Threads[i]);
+                Threads[i].SetStateListener(streamStateListener);
 
                 this.ThreadStates.Add(Threads[i].ManagedThreadId, Threads[i].State as KafkaStreamThreadState);
                 storeProviders.Add(new StreamThreadStateStoreProvider(Threads[i]));
@@ -197,6 +204,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         public string ThreadClientId { get; }
         public Thread Thread { get; }
+        public void Join() => this.Thread?.Join();
         public int ManagedThreadId { get; }
         public IStateListener StateListener { get; private set; }
         public IStateMachine<KafkaStreamsThreadStates> State { get; }
@@ -281,13 +289,6 @@ namespace Kafka.Streams.Threads.KafkaStreams
                 {
                     this.StateListener = listener;
                     this.State.SetStateListener(listener);
-
-                    foreach (var thread in this.Threads)
-                    {
-                        thread?.SetStateListener(listener);
-                    }
-
-                    this.globalStreamThread?.SetStateListener(listener);
                 }
                 else
                 {
@@ -408,122 +409,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
          */
         public void Close()
         {
-            Close(long.MaxValue);
-        }
-
-        /**
-         * Shutdown this {@code KafkaStreams} by signaling all the threads to stop, and then wait up to the timeout for the
-         * threads to join.
-         * A {@code timeout} of 0 means to wait forever.
-         *
-         * @param timeout  how long to wait for the threads to shutdown. Can't be negative. If {@code timeout=0} just checking the state and return immediately.
-         * @param timeUnit unit of time used for timeout
-         * @return {@code true} if all threads were successfully stopped&mdash;{@code false} if the timeout was reached
-         * before all threads stopped
-         * Note that this method must not be called in the {@code onChange} callback of {@link StateListener}.
-         * @deprecated Use {@link #close(Duration)} instead; note, that {@link #close(Duration)} has different semantics and does not block on zero, e.g., `Duration.ofMillis(0)`.
-         */
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        public bool Close(long timeout, TimeUnit timeUnit)
-        {
-            long timeoutMs = 0; // timeUnit.toMillis(timeout);
-
-            logger.LogDebug($"Stopping Streams client with timeoutMillis = {timeoutMs} ms. You are using deprecated method. " +
-                "Please, consider update your code.");
-
-            if (timeoutMs < 0)
-            {
-                timeoutMs = 0;
-            }
-            else if (timeoutMs == 0)
-            {
-                timeoutMs = long.MaxValue;
-            }
-
-            return Close(timeoutMs);
-        }
-
-        private bool Close(long timeoutMs)
-        {
-            return true;
-
-            //if (!setState(State.PENDING_SHUTDOWN))
-            //{
-            //    // if transition failed, it means it was either in PENDING_SHUTDOWN
-            //    // or NOT_RUNNING already; just check that all threads have been stopped
-            //    log.LogInformation("Already in the pending shutdown state, wait to complete shutdown");
-            //}
-            //else
-            //{
-            //    stateDirCleaner.shutdownNow();
-
-            //    // wait for all threads to join in a separate thread;
-            //    // save the current thread so that if it is a stream thread
-            //    // we don't attempt to join it and cause a deadlock
-            //    //        Thread shutdownThread = new Thread(new ParameterizedThreadStart(() =>
-            //    //        {
-            //    //                // notify all the threads to stop; avoid deadlocks by stopping any
-            //    //                // further state reports from the thread since we're shutting down
-            //    //        foreach (KafkaStreamThread thread in threads)
-            //    //        {
-            //    //            thread.shutdown();
-            //    //        }
-
-            //    //        foreach (KafkaStreamThread thread in threads)
-            //    //        {
-            //    //            try
-            //    //            {
-            //    //                if (!thread.isRunning())
-            //    //                {
-            //    //                    thread.join();
-            //    //                }
-            //    //            }
-            //    //            catch (Exception ex)
-            //    //            {
-            //    //                Thread.CurrentThread.Interrupt();
-            //    //            }
-            //    //        }
-
-            //    //        if (globalStreamThread != null)
-            //    //        {
-            //    //            globalStreamThread.shutdown();
-            //    //        }
-
-            //    //        if (globalStreamThread != null && !globalStreamThread.stillRunning())
-            //    //        {
-            //    //            try
-            //    //            {
-            //    //                globalStreamThread.join();
-            //    //            }
-            //    //            catch (Exception e)
-            //    //            {
-            //    //                Thread.CurrentThread.Interrupt();
-            //    //            }
-
-            //    //            globalStreamThread = null;
-            //    //        }
-
-            //    //        adminClient.close();
-
-            //    //        metrics.close();
-            //    //        setState(State.NOT_RUNNING);
-            //    //    }, "kafka-streams-close-thread");
-
-            //    //    shutdownThread.setDaemon(true);
-            //    //    shutdownThread.start();
-            //    //}
-
-            //    if (waitOnState(State.NOT_RUNNING, timeoutMs))
-            //    {
-            //        log.LogInformation("Streams client stopped completely");
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        log.LogInformation("Streams client cannot stop completely within the timeout");
-            //        return false;
-            //    }
-            //}
+            Close(TimeSpan.MaxValue);
         }
 
         /**
@@ -541,16 +427,103 @@ namespace Kafka.Streams.Threads.KafkaStreams
         public bool Close(TimeSpan timeout)
         {
             string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(timeout, "timeout");
-            var timeoutMs = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
+            var validatedTimeout = ApiUtils.validateMillisecondDuration(timeout, msgPrefix);
 
-            if (timeoutMs < TimeSpan.Zero)
+            if (validatedTimeout.TotalMilliseconds > int.MaxValue)
+            {
+                validatedTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
+            }
+
+            if (validatedTimeout < TimeSpan.Zero)
             {
                 throw new ArgumentException("Timeout can't be negative.");
             }
 
-            logger.LogDebug($"Stopping Streams client with timeoutMillis = {timeoutMs} ms.");
+            logger.LogDebug($"Stopping Streams client with timeoutMillis = {validatedTimeout} ms.");
 
-            return Close(timeoutMs);
+            if (!this.State.SetState(KafkaStreamsThreadStates.PENDING_SHUTDOWN))
+            {
+                // if transition failed, it means it was either in PENDING_SHUTDOWN
+                // or NOT_RUNNING already; just check that all threads have been stopped
+                this.logger.LogInformation("Already in the pending shutdown state, wait to complete shutdown");
+            }
+            else
+            {
+                //stateDirCleaner.shutdownNow();
+
+                // wait for all threads to join in a separate thread;
+                // save the current thread so that if it is a stream thread
+                // we don't attempt to join it and cause a deadlock
+                Thread shutdownThread = new Thread(() =>
+                {
+                    // notify all the threads to stop; avoid deadlocks by stopping any
+                    // further state reports from the thread since we're shutting down
+                    foreach (var thread in this.Threads)
+                    {
+                        thread.Shutdown();
+                    }
+
+                    foreach (var thread in this.Threads)
+                    {
+                        try
+                        {
+                            if (!thread.IsRunning())
+                            {
+                                thread.Join();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Thread.CurrentThread.Interrupt();
+                        }
+                    }
+
+                    if (globalStreamThread != null)
+                    {
+                        globalStreamThread.Shutdown();
+                    }
+
+                    if (globalStreamThread != null && !globalStreamThread.IsRunning())
+                    {
+                        try
+                        {
+                            globalStreamThread.Join();
+                        }
+                        catch (Exception e)
+                        {
+                            Thread.CurrentThread.Interrupt();
+                        }
+
+                        globalStreamThread = null;
+                    }
+
+                    try
+                    {
+                        adminClient.Dispose();
+                    }
+                    catch(ThreadInterruptedException)
+                    {
+                    }
+                
+                    this.State.SetState(KafkaStreamsThreadStates.NOT_RUNNING);
+                })
+                {
+                    Name = "kafka-streams-close-thread"
+                };
+
+                shutdownThread.Start();
+            }
+
+            if (SpinWait.SpinUntil(() => this.State.CurrentState == KafkaStreamsThreadStates.NOT_RUNNING, validatedTimeout))
+            {
+                logger.LogInformation("Streams client stopped completely");
+                return true;
+            }
+            else
+            {
+                logger.LogInformation("Streams client cannot stop completely within the timeout");
+                return false;
+            }
         }
 
         /**

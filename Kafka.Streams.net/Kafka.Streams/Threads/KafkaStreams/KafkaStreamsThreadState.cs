@@ -16,12 +16,12 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
             this.SetTransitions(new List<StateTransition<KafkaStreamsThreadStates>>
             {
-                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.CREATED, 1, 3),
-                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.REBALANCING, 2, 3, 5),
-                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.RUNNING, 1, 3, 5),
-                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.PENDING_SHUTDOWN, 4),
+                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.CREATED, KafkaStreamsThreadStates.REBALANCING, KafkaStreamsThreadStates.PENDING_SHUTDOWN),
+                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.REBALANCING, KafkaStreamsThreadStates.RUNNING, KafkaStreamsThreadStates.PENDING_SHUTDOWN, KafkaStreamsThreadStates.ERROR),
+                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.RUNNING, KafkaStreamsThreadStates.REBALANCING, KafkaStreamsThreadStates.PENDING_SHUTDOWN, KafkaStreamsThreadStates.ERROR),
+                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.PENDING_SHUTDOWN, KafkaStreamsThreadStates.NOT_RUNNING),
                 new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.NOT_RUNNING),
-                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.ERROR, 3),
+                new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.ERROR, KafkaStreamsThreadStates.PENDING_SHUTDOWN),
                 new StateTransition<KafkaStreamsThreadStates>(KafkaStreamsThreadStates.DEAD),
             });
 
@@ -34,13 +34,13 @@ namespace Kafka.Streams.Threads.KafkaStreams
 
         public bool IsRunning()
         {
-            return CurrentState.HasFlag(KafkaStreamsThreadStates.RUNNING)
-                || CurrentState.HasFlag(KafkaStreamsThreadStates.REBALANCING);
+            return this.CurrentState == KafkaStreamsThreadStates.RUNNING
+                || this.CurrentState == KafkaStreamsThreadStates.REBALANCING;
         }
 
         public bool isValidTransition(KafkaStreamsThreadStates newState)
             => this.validTransitions.ContainsKey(newState)
-                ? this.validTransitions[newState].PossibleTransitions.Contains(newState)
+                ? this.validTransitions[this.CurrentState].PossibleTransitions.Contains(newState)
                 : false;
 
         public bool SetState(KafkaStreamsThreadStates newState)
