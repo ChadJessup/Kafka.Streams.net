@@ -20,6 +20,6 @@ namespace Kafka.Streams.KStream.Interfaces
 {
     public interface IWindowedSerializer<T> : ISerializer<Windowed<T>>
     {
-        byte[] serializeBaseKey(string topic, Windowed<T> data);
+        byte[] SerializeBaseKey(string topic, Windowed<T> data);
     }
 }

@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tasks
      */
     public class StandbyTask : AbstractTask
     {
-        public Dictionary<TopicPartition, long> checkpointedOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
+        public Dictionary<TopicPartition, long?> checkpointedOffsets { get; private set; } = new Dictionary<TopicPartition, long?>();
 
         /**
          * Create {@link StandbyTask} with its assigned partitions
@@ -47,7 +47,7 @@ namespace Kafka.Streams.Tasks
 
         public override bool initializeStateStores()
         {
-            log.LogTrace("Initializing state stores");
+            logger.LogTrace("Initializing state stores");
             registerStateStores();
             checkpointedOffsets = StateMgr.checkpointed();
             processorContext.initialize();
@@ -68,7 +68,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void resume()
         {
-            log.LogDebug("Resuming");
+            logger.LogDebug("Resuming");
             UpdateOffsetLimits();
         }
 
@@ -82,7 +82,7 @@ namespace Kafka.Streams.Tasks
 
         public override void commit()
         {
-            log.LogTrace("Committing");
+            logger.LogTrace("Committing");
             flushAndCheckpointState();
             // reinitialize offset limits
             UpdateOffsetLimits();
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void suspend()
         {
-            log.LogDebug("Suspending");
+            logger.LogDebug("Suspending");
             flushAndCheckpointState();
         }
 
@@ -123,7 +123,7 @@ namespace Kafka.Streams.Tasks
                 return;
             }
 
-            log.LogDebug("Closing");
+            logger.LogDebug("Closing");
 
             try
             {
@@ -156,12 +156,12 @@ namespace Kafka.Streams.Tasks
         public List<ConsumeResult<byte[], byte[]>> update(TopicPartition partition,
                                                            List<ConsumeResult<byte[], byte[]>> records)
         {
-            log.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
-            long limit = StateMgr.offsetLimit(partition);
+            logger.LogTrace("Updating standby replicas of its state store for partition [{}]", partition);
+            var limit = StateMgr.offsetLimit(partition);
 
-            long lastOffset = -1L;
-            List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
-            List<ConsumeResult<byte[], byte[]>> remainingRecords = new List<ConsumeResult<byte[], byte[]>>();
+            var lastOffset = -1L;
+            var restoreRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
+            var remainingRecords = new List<ConsumeResult<byte[], byte[]>>();
 
             foreach (ConsumeResult<byte[], byte[]> record in records)
             {
@@ -185,6 +185,16 @@ namespace Kafka.Streams.Tasks
             }
 
             return remainingRecords;
+        }
+
+        public override void initializeIfNeeded()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public override void CompleteRestoration()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

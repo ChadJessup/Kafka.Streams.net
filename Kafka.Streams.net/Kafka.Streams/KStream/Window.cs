@@ -1,5 +1,4 @@
 ﻿using NodaTime;
-using System;
 
 namespace Kafka.Streams.KStream
 {
@@ -25,7 +24,7 @@ namespace Kafka.Streams.KStream
         }
 
         public Window(Instant startTime, Duration duration)
-            : this(startTime, startTime + duration)
+            : this(startTime, duration == Duration.MaxValue ? Instant.FromUnixTimeMilliseconds((long)duration.TotalMilliseconds - startTime.ToUnixTimeMilliseconds()) : startTime + duration)
         {
         }
 
@@ -76,7 +75,7 @@ namespace Kafka.Streams.KStream
                 return false;
             }
 
-            Window other = (Window)obj;
+            var other = (Window)obj;
             return this.Start() == other.Start() && this.End() == other.End();
         }
 

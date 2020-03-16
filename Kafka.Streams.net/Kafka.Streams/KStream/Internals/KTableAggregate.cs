@@ -28,18 +28,6 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool sendOldValues = false;
 
-        KTableAggregate(
-            string storeName,
-            IInitializer<T> initializer,
-            IAggregator<K, V, T> add,
-            IAggregator<K, V, T> Remove)
-        {
-            this.storeName = storeName;
-            this.initializer = initializer;
-            this.add = add;
-            this.Remove = Remove;
-        }
-
         public void enableSendingOldValues()
         {
             sendOldValues = true;

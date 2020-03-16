@@ -24,9 +24,9 @@ namespace Kafka.Streams.KStream.Internals
             this.sendOldValues = sendOldValues;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
 
             if (queryableName != null)
             {
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             // if the key is null, then ignore the record
             if (key == null)

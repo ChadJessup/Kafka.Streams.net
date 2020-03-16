@@ -28,9 +28,9 @@ namespace Kafka.Streams.KStream.Internals
             this.aggregator = aggregator;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             store = (ITimestampedKeyValueStore<K, T>)context.getStateStore(storeName);
             tupleForwarder = new TimestampedTupleForwarder<K, T>(
                 store,
@@ -39,7 +39,7 @@ namespace Kafka.Streams.KStream.Internals
                 this.sendOldValues);
         }
 
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             // If the key or value is null we don't need to proceed
             if (key == null || value == null)

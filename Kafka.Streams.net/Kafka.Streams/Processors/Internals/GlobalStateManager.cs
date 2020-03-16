@@ -39,7 +39,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly TimeSpan pollTime;
         private readonly HashSet<string> globalNonPersistentStoresTopics = new HashSet<string>();
         private readonly OffsetCheckpoint checkpointFile;
-        private readonly Dictionary<TopicPartition, long> checkpointFileCache;
+        private readonly Dictionary<TopicPartition, long?> checkpointFileCache;
 
         public GlobalStateManager(
             ILogger<GlobalStateManager> logger,
@@ -53,10 +53,10 @@ namespace Kafka.Streams.Processors.Internals
             this.config = config ?? throw new ArgumentNullException(nameof(config));
             stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
             this.clientSupplier = clientSupplier ?? throw new ArgumentNullException(nameof(clientSupplier));
-            
+
             this.eosEnabled = config.EnableIdempotence;
             this.baseDir = stateDirectory.globalStateDir();
-            this.checkpointFileCache = new Dictionary<TopicPartition, long>();
+            this.checkpointFileCache = new Dictionary<TopicPartition, long?>();
             this.checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
 
             // Find non persistent store's topics
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Processors.Internals
             this.globalConsumer = globalConsumer;
             this.stateDirectory = stateDirectory;
             this.stateRestoreListener = stateRestoreListener;
-            
+
             this.retries = config.Retries;
             this.retryBackoffMs = config.RetryBackoffMs;
 
@@ -144,8 +144,7 @@ namespace Kafka.Streams.Processors.Internals
                 partitions,
                 processorContext,
                 checkpointFile,
-                checkpointFileCache
-            );
+                checkpointFileCache);
 
             globalConsumer.Assign(partitions);
             globalConsumer.SeekToBeginning(partitions);
@@ -184,7 +183,7 @@ namespace Kafka.Streams.Processors.Internals
             List<TopicPartition> topicPartitions = TopicPartitionsForStore(store);
             Dictionary<TopicPartition, long> highWatermarks = null;
 
-            int attempts = 0;
+            var attempts = 0;
             while (highWatermarks == null)
             {
                 try
@@ -200,7 +199,7 @@ namespace Kafka.Streams.Processors.Internals
                             store.name,
                             retries,
                             retryableException);
-                    
+
                         throw new StreamsException(string.Format("Failed to get end offsets for topic partitions of global store %s after %d retry attempts. " +
                                 "You can increase the number of retries via configuration parameter `retries`.", store.name, retries),
                             retryableException);
@@ -224,7 +223,7 @@ namespace Kafka.Streams.Processors.Internals
                     highWatermarks,
                     store.name,
                     StateManagerUtil.converterForStore(store));
-                
+
                 globalStores.Add(store.name, store);
             }
             finally
@@ -236,9 +235,9 @@ namespace Kafka.Streams.Processors.Internals
 
         private List<TopicPartition> TopicPartitionsForStore(IStateStore store)
         {
-            string sourceTopic = topology.StoreToChangelogTopic[store.name];
+            var sourceTopic = topology.StoreToChangelogTopic[store.name];
             var partitionInfos = new List<PartitionMetadata>();
-            int attempts = 0;
+            var attempts = 0;
             while (true)
             {
                 try
@@ -299,31 +298,24 @@ namespace Kafka.Streams.Processors.Internals
             foreach (TopicPartition topicPartition in topicPartitions)
             {
                 globalConsumer.Assign(topicPartition);
-                long checkpoint = checkpointFileCache[topicPartition];
+                var checkpoint = checkpointFileCache[topicPartition];
 
-                if (checkpoint != null)
-                {
-                    globalConsumer.Seek(new TopicPartitionOffset(topicPartition, checkpoint));
-                }
-                else
-                {
-                    globalConsumer.Seek(new TopicPartitionOffset(topicPartition, new Offset(0)));
-                }
+                globalConsumer.Seek(new TopicPartitionOffset(topicPartition, new Offset(checkpoint ?? 0)));
 
                 long offset = globalConsumer.Position(topicPartition);
-                long highWatermark = highWatermarks[topicPartition];
+                var highWatermark = highWatermarks[topicPartition];
                 IRecordBatchingStateRestoreCallback stateRestoreAdapter =
                     StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
 
                 stateRestoreListener.onRestoreStart(topicPartition, storeName, offset, highWatermark);
-                long restoreCount = 0L;
+                var restoreCount = 0L;
 
                 while (offset < highWatermark)
                 {
                     try
                     {
                         ConsumerRecords<byte[], byte[]> records = globalConsumer.Poll(pollTime);
-                        List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
+                        var restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
 
                         //foreach (ConsumeResult<byte[], byte[]> record in records.records(topicPartition))
                         //{
@@ -393,7 +385,7 @@ namespace Kafka.Streams.Processors.Internals
                     return;
                 }
 
-                StringBuilder closeFailed = new StringBuilder();
+                var closeFailed = new StringBuilder();
                 foreach (KeyValuePair<string, IStateStore?> entry in globalStores)
                 {
                     if (true)//entry.Value.isPresent())
@@ -438,12 +430,12 @@ namespace Kafka.Streams.Processors.Internals
         {
             //checkpointFileCache.putAll(offsets);
 
-            Dictionary<TopicPartition, long> filteredOffsets = new Dictionary<TopicPartition, long>();
+            var filteredOffsets = new Dictionary<TopicPartition, long?>();
 
             // Skip non persistent store
-            foreach (KeyValuePair<TopicPartition, long> topicPartitionOffset in checkpointFileCache)
+            foreach (var topicPartitionOffset in checkpointFileCache)
             {
-                string topic = topicPartitionOffset.Key.Topic;
+                var topic = topicPartitionOffset.Key.Topic;
                 if (!globalNonPersistentStoresTopics.Contains(topic))
                 {
                     filteredOffsets.Add(topicPartitionOffset.Key, topicPartitionOffset.Value);
@@ -453,7 +445,7 @@ namespace Kafka.Streams.Processors.Internals
             try
             {
 
-                checkpointFile.write(filteredOffsets);
+                checkpointFile.Write(filteredOffsets);
             }
             catch (IOException e)
             {
@@ -461,7 +453,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public Dictionary<TopicPartition, long> checkpointed()
+        public Dictionary<TopicPartition, long?> checkpointed()
         {
             return checkpointFileCache;
         }

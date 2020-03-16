@@ -1,9 +1,5 @@
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.Window;
 using NodaTime;
 
 namespace Kafka.Streams.State.Window
@@ -32,31 +28,6 @@ namespace Kafka.Streams.State.Window
             //    time,
             //    keySerde,
             //    valueSerde);
-        }
-
-        private IWindowStore<Bytes, byte[]> maybeWrapCaching(IWindowStore<Bytes, byte[]> inner)
-        {
-            if (!enableCaching)
-            {
-                return inner;
-            }
-
-            return null;
-            //new CachingWindowStore(
-            //    inner,
-            //    storeSupplier.windowSize(),
-            //    storeSupplier.segmentIntervalMs());
-        }
-
-        private IWindowStore<Bytes, byte[]> maybeWrapLogging(IWindowStore<Bytes, byte[]> inner)
-        {
-            if (!enableLogging)
-            {
-                return inner;
-            }
-
-            return null;
-            //new ChangeLoggingWindowBytesStore(inner, storeSupplier.retainDuplicates());
         }
 
         public long retentionPeriod()

@@ -1,4 +1,5 @@
-﻿using Kafka.Streams.Processors.Interfaces;
+﻿using Kafka.Streams.Interfaces;
+using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
@@ -24,7 +25,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             var valueAndTimestamp = parentGetter.get(key);
 
-            var mapped = mapper.apply(key, valueAndTimestamp.value);
+            var mapped = mapper.Apply(key, valueAndTimestamp.value);
 
             var timeStamp = valueAndTimestamp == null
                 ? context.timestamp

@@ -1,5 +1,4 @@
-﻿using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Interfaces;
+﻿using Kafka.Streams.State.Interfaces;
 using System;
 using System.Collections.Generic;
 

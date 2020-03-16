@@ -1,8 +1,7 @@
-using Kafka.Streams.KStream;
 using System;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     /**
      * IEnumerator interface of {@link KeyValue}.

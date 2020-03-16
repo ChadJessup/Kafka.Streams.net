@@ -1,6 +1,5 @@
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
-using Kafka.Streams.State;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -61,34 +60,6 @@ namespace Kafka.Streams.KStream.Internals
         {
             parent.enableSendingOldValues();
             sendOldValues = true;
-        }
-
-        private V1 computeValue(K key, V value)
-        {
-            V1 newValue = default;
-
-            if (value != null)
-            {
-                newValue = mapper.apply(key, value);
-            }
-
-            return newValue;
-        }
-
-        private ValueAndTimestamp<V> computeValueAndTimestamp(
-            K key,
-            ValueAndTimestamp<V> valueAndTimestamp)
-        {
-            V newValue = default;
-            long timestamp = 0;
-
-            if (valueAndTimestamp != null)
-            {
-                newValue = default;// mapper.apply(key, valueAndTimestamp.value);
-                timestamp = valueAndTimestamp.timestamp;
-            }
-
-            return ValueAndTimestamp<V>.make(newValue, timestamp);
         }
     }
 }

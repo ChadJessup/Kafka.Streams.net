@@ -2,11 +2,6 @@ using NodaTime;
 
 namespace Kafka.Streams.KStream.Internals
 {
-
-
-
-
-
     /**
      * {@link UnlimitedWindow} is an "infinite" large window with a fixed (inclusive) start time.
      * All windows of the same {@link org.apache.kafka.streams.kstream.UnlimitedWindows window specification} will have the
@@ -33,6 +28,11 @@ namespace Kafka.Streams.KStream.Internals
         {
         }
 
+        public UnlimitedWindow(long start)
+            : this(Instant.FromUnixTimeMilliseconds(start))
+        {
+        }
+
         /**
          * Returns {@code true} if the given window is of the same type, because all unlimited windows overlap with each
          * other due to their infinite size.
@@ -49,6 +49,7 @@ namespace Kafka.Streams.KStream.Internals
                 throw new System.ArgumentException("Cannot compare windows of different type. Other window has type "
                     + other.GetType() + ".");
             }
+
             return true;
         }
     }

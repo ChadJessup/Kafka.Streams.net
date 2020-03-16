@@ -5,8 +5,7 @@ using Kafka.Streams.State.ReadOnly;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Window;
 using Kafka.Streams.Tasks;
-using Kafka.Streams.Threads;
-using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.Stream;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -16,16 +15,16 @@ namespace Kafka.Streams.State.Internals
      */
     public class StreamThreadStateStoreProvider : IStateStoreProvider
     {
-        private readonly IKafkaStreamThread streamThread;
+        private readonly IStreamThread streamThread;
 
-        public StreamThreadStateStoreProvider(IKafkaStreamThread streamThread)
+        public StreamThreadStateStoreProvider(IStreamThread streamThread)
         {
             this.streamThread = streamThread;
         }
 
         public List<T> stores<T>(string storeName, IQueryableStoreType<T> queryableStoreType)
         {
-            if (streamThread.State.CurrentState == KafkaStreamThreadStates.DEAD)
+            if (streamThread.State.CurrentState == StreamThreadStates.DEAD)
             {
                 return new List<T>();
             }

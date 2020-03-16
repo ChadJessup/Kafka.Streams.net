@@ -36,11 +36,11 @@ namespace Kafka.Streams.KStream.Internals
             this.windows = windows;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
             context = context ?? throw new ArgumentNullException(nameof(context));
 
-            base.init(context);
+            base.Init(context);
             internalProcessorContext = (IInternalProcessorContext)context;
 
             windowStore = (ITimestampedWindowStore<K, Agg>)context.getStateStore(storeName);
@@ -52,7 +52,7 @@ namespace Kafka.Streams.KStream.Internals
                 sendOldValues);
         }
 
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             if (key == null)
             {
@@ -63,17 +63,17 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             // first get the matching windows
-            long timestamp = context.timestamp;
+            var timestamp = context.timestamp;
             observedStreamTime = Math.Max(observedStreamTime, timestamp);
-            long closeTime = observedStreamTime - (long)windows.gracePeriod().TotalMilliseconds;
+            var closeTime = observedStreamTime - (long)windows.GracePeriod().TotalMilliseconds;
 
-            Dictionary<long, W> matchedWindows = windows.windowsFor(TimeSpan.FromMilliseconds(timestamp));
+            Dictionary<long, W> matchedWindows = windows.WindowsFor(TimeSpan.FromMilliseconds(timestamp));
 
             // try update the window, and create the new window for the rest of unmatched window that do not exist yet
             foreach (var entry in matchedWindows)
             {
-                long windowStart = entry.Key;
-                long windowEnd = entry.Value.End();
+                var windowStart = entry.Key;
+                var windowEnd = entry.Value.End();
                 if (windowEnd > closeTime)
                 {
                     ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);

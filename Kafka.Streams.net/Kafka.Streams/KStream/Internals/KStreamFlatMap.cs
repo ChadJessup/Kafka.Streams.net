@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using System.Collections.Generic;
 

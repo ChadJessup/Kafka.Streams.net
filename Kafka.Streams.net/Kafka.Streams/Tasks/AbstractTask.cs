@@ -22,10 +22,9 @@ namespace Kafka.Streams.Tasks
         public IConsumer<byte[], byte[]> consumer { get; }
         protected string logPrefix { get; }
         protected bool eosEnabled { get; }
-        protected ILogger log { get; }
-        public LogContext logContext { get; }
+        protected ILogger<AbstractTask> logger { get; }
 
-        readonly StateDirectory stateDirectory;
+        protected StateDirectory stateDirectory { get; }
 
         protected bool TaskInitialized { get; set; }
         protected bool TaskClosed { get; set; }
@@ -55,21 +54,19 @@ namespace Kafka.Streams.Tasks
             this.stateDirectory = stateDirectory;
 
             this.logPrefix = $"{(isStandby ? "standby-task" : "task")} [{id}] ";
-            this.logContext = new LogContext(logPrefix);
-            this.log = logContext.logger(GetType());
 
             // create the processor state manager
             try
             {
                 StateMgr = new ProcessorStateManager(
+                    this.logger,
                     id,
                     partitions,
                     isStandby,
                     stateDirectory,
                     topology.StoreToChangelogTopic,
                     changelogReader,
-                    eosEnabled,
-                    logContext);
+                    eosEnabled);
             }
             catch (IOException e)
             {
@@ -108,7 +105,7 @@ namespace Kafka.Streams.Tasks
          */
         public virtual string ToString(string indent)
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append(indent);
             sb.Append("TaskId: ");
@@ -201,18 +198,17 @@ namespace Kafka.Streams.Tasks
             catch (IOException e)
             {
                 throw new StreamsException(
-                    string.Format("%sFatal error while trying to lock the state directory for task %s",
-                    logPrefix, id));
+                    $"{logPrefix}Fatal error while trying to lock the state directory for task {id}");
             }
 
-            log.LogTrace("Initializing state stores");
+            logger.LogTrace("Initializing state stores");
 
             // set initial offset limits
             UpdateOffsetLimits();
 
             foreach (IStateStore store in topology.StateStores)
             {
-                log.LogTrace("Initializing store {}", store.name);
+                logger.LogTrace("Initializing store {}", store.name);
                 processorContext.uninitialize();
                 store.init(processorContext, store);
             }
@@ -228,11 +224,10 @@ namespace Kafka.Streams.Tasks
          */
         public virtual void closeStateManager(bool clean)
         {
-            ProcessorStateException exception = null;
-            log.LogTrace("Closing state manager");
+            ProcessorStateException? exception = null;
+            logger.LogTrace("Closing state manager");
             try
             {
-
                 StateMgr.Close(clean);
             }
             catch (ProcessorStateException e)
@@ -241,7 +236,6 @@ namespace Kafka.Streams.Tasks
             }
             finally
             {
-
                 try
                 {
                     stateDirectory.Unlock(id);
@@ -296,6 +290,9 @@ namespace Kafka.Streams.Tasks
         public virtual void close(bool clean, bool isZombie)
         {
         }
+
+        public abstract void initializeIfNeeded();
+        public abstract void CompleteRestoration();
 
         public IEnumerable<TopicPartition> changelogPartitions
             => new List<TopicPartition>();

@@ -25,37 +25,6 @@ namespace Kafka.Streams.Processors.Internals.Assignments
         private readonly HashSet<Pair> pairs;
         private readonly int maxPairs;
 
-        TaskPairs(int maxPairs)
-        {
-            //this.maxPairs = maxPairs;
-            //this.pairs = new HashSet<Pair>(maxPairs);
-        }
-
-        bool hasNewPair(TaskId task1, HashSet<TaskId> taskIds)
-        {
-            if (pairs.Count == maxPairs)
-            {
-                return false;
-            }
-
-            foreach (TaskId taskId in taskIds)
-            {
-                if (!pairs.Contains(pair(task1, taskId)))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        void addPairs(TaskId taskId, HashSet<TaskId> assigned)
-        {
-            foreach (TaskId id in assigned)
-            {
-                pairs.Add(pair(id, taskId));
-            }
-        }
-
         Pair pair(TaskId task1, TaskId task2)
         {
             if (task1.CompareTo(task2) < 0)

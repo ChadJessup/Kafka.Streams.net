@@ -1,5 +1,5 @@
 
-//namespace Kafka.Streams.State.KeyValue
+//namespace Kafka.Streams.State.KeyValues
 //{
 
 

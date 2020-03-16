@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Streams.Temp;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -30,43 +29,43 @@ namespace Kafka.Streams.State.Internals
 
         private static readonly Regex WHITESPACE_MINIMUM_ONCE = new Regex("\\s+", RegexOptions.Compiled);
 
-        private static readonly int VERSION = 0;
+        private const int VERSION = 0;
 
         private readonly FileInfo file;
-        private readonly object @lock;
+        private readonly object lockObject;
 
         public OffsetCheckpoint(FileInfo file)
         {
             this.file = file;
-            @lock = new object();
+            lockObject = new object();
         }
 
         /**
          * @throws IOException if any file operation fails with an IO exception
          */
-        public void write(Dictionary<TopicPartition, long> offsets)
+        public void Write(Dictionary<TopicPartition, long?> offsets)
         {
             // if there is no offsets, skip writing the file to save disk IOs
-            if (!offsets.Any())
+            if (offsets == null || !offsets.Any())
             {
                 return;
             }
 
-            lock (@lock)
+            lock (lockObject)
             {
                 // write to temp file and then swap with the existing file
                 FileStream temp = File.OpenWrite(file.FullName + ".tmp");
                 LOG.LogTrace("Writing tmp checkpoint file {}", temp.Name);
 
-                FileStream fileOutputStream = new FileStream(temp.SafeFileHandle, FileAccess.Write);
+                var fileOutputStream = new FileStream(temp.SafeFileHandle, FileAccess.Write);
                 using var writer = new StreamWriter(fileOutputStream, System.Text.Encoding.UTF8);
 
-                writeIntLine(writer, VERSION);
-                writeIntLine(writer, offsets.Count);
+                WriteIntLine(writer, VERSION);
+                WriteIntLine(writer, offsets.Count);
 
                 foreach (var entry in offsets)
                 {
-                    writeEntry(writer, entry.Key, entry.Value);
+                    WriteEntry(writer, entry.Key, entry.Value);
                 }
 
                 writer.Flush();
@@ -80,7 +79,7 @@ namespace Kafka.Streams.State.Internals
         /**
          * @throws IOException if file write operations failed with any IO exception
          */
-        private void writeIntLine(StreamWriter writer, int number)
+        private void WriteIntLine(StreamWriter writer, int number)
         {
             writer.Write(number.ToString());
             writer.WriteLine();
@@ -89,10 +88,10 @@ namespace Kafka.Streams.State.Internals
         /**
          * @throws IOException if file write operations failed with any IO exception
          */
-        private void writeEntry(
+        private void WriteEntry(
             StreamWriter writer,
             TopicPartition part,
-            long offset)
+            long? offset)
         {
             writer.Write(part.Topic);
             writer.Write(' ');
@@ -107,46 +106,46 @@ namespace Kafka.Streams.State.Internals
          * @throws IOException if any file operation fails with an IO exception
          * @throws ArgumentException if the offset checkpoint version is unknown
          */
-        public Dictionary<TopicPartition, long> read()
+        public Dictionary<TopicPartition, long> Read()
         {
-            lock (@lock)
+            lock (lockObject)
             {
                 try
                 {
-                    using BufferedReader reader = Files.newBufferedReader(file.FullName);
+                    using var reader = new StreamReader(file.FullName);
 
-                    int version = readInt(reader);
+                    var version = ReadInt(reader);
                     switch (version)
                     {
                         case 0:
-                            int expectedSize = readInt(reader);
-                            Dictionary<TopicPartition, long> offsets = new Dictionary<TopicPartition, long>();
-                            string line = reader.readLine();
+                            var expectedSize = ReadInt(reader);
+                            var offsets = new Dictionary<TopicPartition, long>();
+                            var line = reader.ReadLine();
+
                             while (line != null)
                             {
-                                string[] pieces = WHITESPACE_MINIMUM_ONCE.Split(line);
+                                var pieces = WHITESPACE_MINIMUM_ONCE.Split(line);
                                 if (pieces.Length != 3)
                                 {
-                                    throw new IOException(
-                                        string.Format("Malformed line in offset checkpoint file: '%s'.", line));
+                                    throw new IOException($"Malformed line in offset checkpoint file: '{line}'.");
                                 }
 
-                                string topic = pieces[0];
-                                int partition = int.Parse(pieces[1]);
-                                long offset = long.Parse(pieces[2]);
+                                var topic = pieces[0];
+                                var partition = int.Parse(pieces[1]);
+                                var offset = long.Parse(pieces[2]);
                                 offsets.Add(new TopicPartition(topic, partition), offset);
-                                line = reader.readLine();
+                                line = reader.ReadLine();
                             }
+
                             if (offsets.Count != expectedSize)
                             {
-                                throw new IOException(
-                                    string.Format("Expected %d entries but found only %d", expectedSize, offsets.Count));
+                                throw new IOException($"Expected {expectedSize} entries but found only {offsets.Count}");
                             }
 
                             return offsets;
 
                         default:
-                            throw new System.ArgumentException("Unknown offset checkpoint version: " + version);
+                            throw new ArgumentException("Unknown offset checkpoint version: " + version);
                     }
                 }
                 catch (FileNotFoundException e)
@@ -159,20 +158,21 @@ namespace Kafka.Streams.State.Internals
         /**
          * @throws IOException if file read ended prematurely
          */
-        private int readInt(BufferedReader reader)
+        private int ReadInt(StreamReader reader)
         {
-            string line = reader.readLine();
+            var line = reader.ReadLine();
             if (line == null)
             {
                 throw new Exception("FileInfo ended prematurely.");
             }
+
             return int.Parse(line);
         }
 
         /**
          * @throws IOException if there is any IO exception during delete
          */
-        public void delete()
+        public void Delete()
         {
             file.Delete();
         }

@@ -1,5 +1,4 @@
-using Kafka.Common.Utils;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.KStream.Interfaces
 {

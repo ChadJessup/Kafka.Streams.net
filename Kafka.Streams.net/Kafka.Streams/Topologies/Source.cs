@@ -7,10 +7,10 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class Source : AbstractNode, ISource
     {
-        private readonly HashSet<string> topics;
-        public Regex topicPattern { get; }
+        private readonly HashSet<string>? topics;
+        public Regex? topicPattern { get; }
 
-        public Source(string name, HashSet<string> topics, Regex pattern)
+        public Source(string name, HashSet<string>? topics, Regex? pattern)
             : base(name)
         {
             if (topics == null && pattern == null)
@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
             this.topicPattern = pattern;
         }
 
-        public HashSet<string> topicSet()
+        public HashSet<string>? topicSet()
         {
             return topics;
         }
@@ -40,7 +40,9 @@ namespace Kafka.Streams.Processors.Internals
 
         public override string ToString()
         {
-            string topicsString = topics == null ? topicPattern.ToString() : topics.ToString();
+            var topicsString = topics == null
+                ? topicPattern?.ToString()
+                : topics.ToString();
 
             return $"Source: {this.Name} (topics: {topicsString })\n      -=> " +
                 $"{InternalTopologyBuilder.GetNodeNames(this.Successors)}";
@@ -59,12 +61,13 @@ namespace Kafka.Streams.Processors.Internals
                 return false;
             }
 
-            Source source = (Source)o;
+            var source = (Source)o;
             // omit successor to avoid infinite loops
             return this.Name.Equals(source.Name)
-                && topics.Equals(source.topics)
-                && (topicPattern == null ? source.topicPattern == null :
-                    topicPattern.ToString().Equals(source.topicPattern.ToString()));
+                && (topics?.Equals(source.topics) ?? false)
+                && (topicPattern == null
+                    ? source.topicPattern == null
+                    : topicPattern.ToString().Equals(source.topicPattern?.ToString()));
         }
 
         public override int GetHashCode()

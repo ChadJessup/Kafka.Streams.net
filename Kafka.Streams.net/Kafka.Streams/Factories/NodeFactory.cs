@@ -1,13 +1,11 @@
-﻿using Confluent.Kafka;
-using Kafka.Streams.Nodes;
+﻿using Kafka.Streams.Nodes;
 using Kafka.Streams.Topologies;
 using NodaTime;
-using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Factories
 {
-    public abstract class NodeFactory<K, V> : INodeFactory
+    public abstract class NodeFactory<K, V> : INodeFactory<K, V>
     {
         public string Name { get; }
         public IEnumerable<string> Predecessors { get; }
@@ -23,7 +21,7 @@ namespace Kafka.Streams.Factories
             this.Predecessors = predecessors;
         }
 
-        public abstract ProcessorNode<K, V> Build();
+        public abstract IProcessorNode Build();
 
         public abstract INode Describe();
     }

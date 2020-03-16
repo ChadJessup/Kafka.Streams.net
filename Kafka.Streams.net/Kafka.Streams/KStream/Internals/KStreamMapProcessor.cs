@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamMapProcessor<K, V> : AbstractProcessor<K, V>
     {
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             // KeyValue<K1, V1> newPair = mapper.apply(key, value);
             // context.forward(newPair.key, newPair.value);

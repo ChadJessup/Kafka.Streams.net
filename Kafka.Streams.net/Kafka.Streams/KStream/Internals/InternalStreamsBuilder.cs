@@ -1,14 +1,13 @@
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Extensions;
-using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Graph;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.State;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -67,8 +66,8 @@ namespace Kafka.Streams.KStream.Internals
             IEnumerable<string> topics,
             ConsumedInternal<K, V> consumed)
         {
-            string name = new NamedInternal(consumed.name).OrElseGenerateWithPrefix(this, KStream.SourceName);
-            StreamSourceNode<K, V> streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
+            var name = new NamedInternal(consumed.name).OrElseGenerateWithPrefix(this, KStream.SourceName);
+            var streamSourceNode = new StreamSourceNode<K, V>(name, topics, consumed);
 
             this.AddGraphNode<K, V>(new HashSet<StreamsGraphNode> { root }, streamSourceNode);
 
@@ -87,7 +86,7 @@ namespace Kafka.Streams.KStream.Internals
             Regex topicPattern,
             ConsumedInternal<K, V> consumed)
         {
-            string name = NewProcessorName(KStream.SourceName);
+            var name = NewProcessorName(KStream.SourceName);
             var streamPatternSourceNode = new StreamSourceNode<K, V>(name, topicPattern, consumed);
 
             AddGraphNode<K, V>(root, streamPatternSourceNode);
@@ -108,13 +107,18 @@ namespace Kafka.Streams.KStream.Internals
             ConsumedInternal<K, V> consumed,
             MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            string sourceName = new NamedInternal(consumed.name)
+            var sourceName = new NamedInternal(consumed.name)
                    .OrElseGenerateWithPrefix(this, KStream.SourceName);
 
-            string tableSourceName = new NamedInternal(consumed.name)
-                   .suffixWithOrElseGet("-table-source", this, KTable.SourceName);
+            var tableSourceName = new NamedInternal(consumed.name)
+                   .SuffixWithOrElseGet("-table-source", this, KTable.SourceName);
 
-            var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, materialized.StoreName, materialized.queryableStoreName());
+            var tableSource = new KTableSource<K, V>(
+                this.services.GetRequiredService<ILogger<KTableSource<K, V>>>(),
+                this.services,
+                materialized?.StoreName,
+                materialized?.queryableStoreName());
+
             var processorParameters = new ProcessorParameters<K, V>(tableSource, tableSourceName);
 
             var tableSourceNode = TableSourceNode<K, V>.tableSourceNodeBuilder<IKeyValueStore<Bytes, byte[]>>(this.clock)
@@ -149,10 +153,10 @@ namespace Kafka.Streams.KStream.Internals
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
             // explicitly disable logging for global stores
             materialized.WithLoggingDisabled();
-            string sourceName = NewProcessorName(KTable.SourceName);
-            string processorName = NewProcessorName(KTable.SourceName);
+            var sourceName = NewProcessorName(KTable.SourceName);
+            var processorName = NewProcessorName(KTable.SourceName);
             // enforce store name as queryable name to always materialize global table stores
-            string storeName = materialized.StoreName;
+            var storeName = materialized.StoreName;
             var tableSource = ActivatorUtilities.CreateInstance<KTableSource<K, V>>(this.services, storeName, storeName);
             var processorParameters = new ProcessorParameters<K, V>(tableSource, processorName);
 
@@ -212,10 +216,30 @@ namespace Kafka.Streams.KStream.Internals
             IProcessorSupplier<K, V> stateUpdateSupplier)
             where T : IStateStore
         {
+            if (storeBuilder is null)
+            {
+                throw new ArgumentNullException(nameof(storeBuilder));
+            }
+
+            if (string.IsNullOrEmpty(topic))
+            {
+                throw new ArgumentException("message", nameof(topic));
+            }
+
+            if (consumed is null)
+            {
+                throw new ArgumentNullException(nameof(consumed));
+            }
+
+            if (stateUpdateSupplier is null)
+            {
+                throw new ArgumentNullException(nameof(stateUpdateSupplier));
+            }
+
             // explicitly disable logging for global stores
             storeBuilder.WithLoggingDisabled();
-            string sourceName = NewProcessorName(KStream.SourceName);
-            string processorName = NewProcessorName(KTable.SourceName);
+            var sourceName = NewProcessorName(KStream.SourceName);
+            var processorName = NewProcessorName(KTable.SourceName);
 
             this.AddGlobalStore<K, V, T>(
                 storeBuilder,
@@ -290,10 +314,10 @@ namespace Kafka.Streams.KStream.Internals
         // use this method for testing only
         public void BuildAndOptimizeTopology()
         {
-            BuildAndOptimizeTopology(null);
+            BuildAndOptimizeTopology(config: null);
         }
 
-        public void BuildAndOptimizeTopology(StreamsConfig config)
+        public void BuildAndOptimizeTopology(StreamsConfig? config)
         {
             MaybePerformOptimizations(config);
 
@@ -320,7 +344,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        private void MaybePerformOptimizations(StreamsConfig config)
+        private void MaybePerformOptimizations(StreamsConfig? config)
         {
             if (config != null
                 && StreamsConfigPropertyNames.OPTIMIZE.Equals(config.Get(StreamsConfigPropertyNames.TOPOLOGY_OPTIMIZATION)))
@@ -450,29 +474,6 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        private OptimizableRepartitionNode<K, V> CreateRepartitionNode<K, V>(
-            string repartitionTopicName,
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
-        {
-            OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder =
-                OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
-
-            KStream<K, V>.CreateRepartitionedSource(
-                this,
-                keySerde,
-                valueSerde,
-                repartitionTopicName,
-                repartitionNodeBuilder);
-
-            // ensures setting the repartition topic to the name of the
-            // first repartition topic to get merged
-            // this may be an auto-generated name or a user specified name
-            repartitionNodeBuilder.WithRepartitionTopic(repartitionTopicName);
-
-            return repartitionNodeBuilder.Build();
-        }
-
         private IStreamsGraphNode? GetKeyChangingParentNode(IStreamsGraphNode repartitionNode)
         {
             var shouldBeKeyChangingNode = FindParentNodeMatching(repartitionNode, n => n.IsKeyChangingOperation || n.IsValueChangingOperation);
@@ -485,37 +486,6 @@ namespace Kafka.Streams.KStream.Internals
             }
 
             return null;
-        }
-
-        private string GetFirstRepartitionTopicName(List<IOptimizableRepartitionNode> repartitionNodes)
-        {
-            return repartitionNodes.First().NodeName;
-        }
-
-        private GroupedInternal<K, V> GetRepartitionSerdes<K, V>(List<OptimizableRepartitionNode<K, V>> repartitionNodes)
-        {
-            ISerde<K>? keySerde = null;
-            ISerde<V>? valueSerde = null;
-
-            foreach (var repartitionNode in repartitionNodes)
-            {
-                if (keySerde == null && repartitionNode.keySerde != null)
-                {
-                    keySerde = repartitionNode.keySerde;
-                }
-
-                if (valueSerde == null && repartitionNode.valueSerde != null)
-                {
-                    valueSerde = repartitionNode.valueSerde;
-                }
-
-                if (keySerde != null && valueSerde != null)
-                {
-                    break;
-                }
-            }
-
-            return new GroupedInternal<K, V>(Grouped<K, V>.With(keySerde, valueSerde));
         }
 
         private IStreamsGraphNode? FindParentNodeMatching(

@@ -1,4 +1,3 @@
-using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.Processors
@@ -14,7 +13,7 @@ namespace Kafka.Streams.Processors
     {
         public IProcessorContext context { get; private set; }
 
-        public virtual void init(IProcessorContext context)
+        public virtual void Init(IProcessorContext context)
         {
             this.context = context;
         }
@@ -25,11 +24,16 @@ namespace Kafka.Streams.Processors
          * This method does nothing by default; if desired, sues should override it with custom functionality.
          * </p>
          */
-        public virtual void close()
+        public virtual void Close()
         {
             // do nothing
         }
 
-        public abstract void process(K key, V value);
+        public abstract void Process(K key, V value);
+
+        public void Process<K1, V1>(K1 key, V1 value)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

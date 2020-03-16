@@ -186,7 +186,7 @@ namespace Kafka.Streams.KStream
          * @return new {@code Joined} instance configured with the {@code name}
          */
 
-        public Joined<K, V, VO> withName(string name)
+        public Joined<K, V, VO> WithName(string name)
         {
             return new Joined<K, V, VO>(keySerde, valueSerde, otherValueSerde, name);
         }

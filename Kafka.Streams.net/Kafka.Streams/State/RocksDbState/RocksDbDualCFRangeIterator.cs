@@ -1,5 +1,4 @@
-﻿using Kafka.Common.Utils;
-using RocksDbSharp;
+﻿using RocksDbSharp;
 using System;
 using System.Collections.Generic;
 

@@ -2,14 +2,13 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Topologies;
 using NodaTime;
 using System;
 using System.Text;
 
 namespace Kafka.Streams.Nodes
 {
-    public class SinkNode<K, V> : ProcessorNode<K, V>
+    public class SinkNode<K, V> : ProcessorNode<K, V>, ISinkNode<K, V>
     {
         private readonly ISerializer<K> keySerializer;
         private readonly ISerializer<V> valSerializer;
@@ -36,9 +35,9 @@ namespace Kafka.Streams.Nodes
         /**
          * @throws InvalidOperationException if this method.Adds a child to a sink node
          */
-        public void addChild(ProcessorNode<object, object> child)
+        public void AddChild(ProcessorNode<object, object> child)
         {
-            throw new InvalidOperationException("sink node does not allow.AddChild");
+            throw new InvalidOperationException("sink node does not allow AddChild");
         }
 
         public override void Init(IInternalProcessorContext context)
@@ -62,13 +61,13 @@ namespace Kafka.Streams.Nodes
         {
             IRecordCollector collector = ((ISupplier)context).recordCollector();
 
-            long timestamp = context.timestamp;
+            var timestamp = context.timestamp;
             if (timestamp < 0)
             {
                 throw new StreamsException("Invalid (negative) timestamp of " + timestamp + " for output record <" + key + ":" + value + ">.");
             }
 
-            string topic = topicExtractor.Extract(key, value, this.context.recordContext);
+            var topic = topicExtractor.Extract(key, value, this.context.recordContext);
 
             try
             {
@@ -76,8 +75,8 @@ namespace Kafka.Streams.Nodes
             }
             catch (Exception e)
             {
-                string keyClass = key == null ? "unknown because key is null" : key.GetType().FullName;
-                string valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
+                var keyClass = key == null ? "unknown because key is null" : key.GetType().FullName;
+                var valueClass = value == null ? "unknown because value is null" : value.GetType().FullName;
 
                 throw new StreamsException(
                         string.Format("A serializer (key: %s / value: %s) is not compatible to the actual key or value type " +
@@ -104,7 +103,7 @@ namespace Kafka.Streams.Nodes
          */
         public override string ToString(string indent)
         {
-            StringBuilder sb = new StringBuilder(base.ToString(indent));
+            var sb = new StringBuilder(base.ToString(indent));
 
             sb.Append(indent).Append("\ttopic:\t\t");
             sb.Append(topicExtractor);
@@ -112,5 +111,13 @@ namespace Kafka.Streams.Nodes
 
             return sb.ToString();
         }
+    }
+
+    public interface ISinkNode<K, V> : ISinkNode
+    {
+    }
+
+    public interface ISinkNode : IProcessorNode
+    {
     }
 }

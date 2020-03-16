@@ -1,5 +1,5 @@
 using Kafka.Streams.KStream;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.ReadOnly
 {
@@ -11,7 +11,7 @@ namespace Kafka.Streams.State.ReadOnly
      * @param the key type
      * @param <AGG> the aggregated value type
      */
-    public interface IReadOnlySessionStore<K, AGG>
+    public interface IReadOnlySessionStore<K, AGG> : IReadOnlySessionStore
     {
         /**
          * Retrieve all aggregated sessions for the provided key.
@@ -40,5 +40,9 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws   ArgumentNullException If null is used for any of the keys.
          */
         IKeyValueIterator<Windowed<K>, AGG> fetch(K from, K to);
+    }
+
+    public interface IReadOnlySessionStore
+    {
     }
 }

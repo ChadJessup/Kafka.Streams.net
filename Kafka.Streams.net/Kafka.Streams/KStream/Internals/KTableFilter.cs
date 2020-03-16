@@ -1,7 +1,5 @@
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
-using Kafka.Streams.State;
-using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -10,14 +8,14 @@ namespace Kafka.Streams.KStream.Internals
         private readonly KTable<K, V> parent;
         private readonly IPredicate<K, V> predicate;
         private readonly bool filterNot;
-        private readonly string queryableName;
+        private readonly string? queryableName;
         private bool sendOldValues = false;
 
         public KTableFilter(
             KTable<K, V> parent,
             IPredicate<K, V> predicate,
             bool filterNot,
-            string queryableName)
+            string? queryableName)
         {
             this.parent = parent;
             this.predicate = predicate;
@@ -36,34 +34,6 @@ namespace Kafka.Streams.KStream.Internals
         {
             parent.enableSendingOldValues();
             sendOldValues = true;
-        }
-
-        private V computeValue(K key, V value)
-        {
-            V newValue = default;
-
-            if (value != null && (filterNot))// ^ predicate.test(key, value)))
-            {
-                newValue = value;
-            }
-
-            return newValue;
-        }
-
-        private ValueAndTimestamp<V> computeValue(K key, ValueAndTimestamp<V> valueAndTimestamp)
-        {
-            ValueAndTimestamp<V> newValueAndTimestamp = null;
-
-            if (valueAndTimestamp != null)
-            {
-                V value = default;// valueAndTimestamp.value();
-                if (filterNot)// ^ predicate.test(key, value))
-                {
-                    newValueAndTimestamp = valueAndTimestamp;
-                }
-            }
-
-            return newValueAndTimestamp;
         }
 
         public IKTableValueGetterSupplier<K, V> view()

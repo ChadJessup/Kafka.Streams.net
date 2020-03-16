@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processors;
 

@@ -2,30 +2,30 @@ using Kafka.Streams.Nodes;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public class PunctuationSchedule : Stamped<ProcessorNode>
+    public class PunctuationSchedule : Stamped<IProcessorNode>
     {
         private readonly long interval;
-        public Punctuator punctuator { get; }
+        public IPunctuator punctuator { get; }
         public bool isCancelled { get; private set; } = false;
 
         // this Cancellable will be re-pointed at the successor schedule in next()
         public RepointableCancellable cancellable { get; }
 
         public PunctuationSchedule(
-            ProcessorNode node,
+            IProcessorNode node,
             long time,
             long interval,
-            Punctuator punctuator)
+            IPunctuator punctuator)
             : this(node, time, interval, punctuator, new RepointableCancellable())
         {
             cancellable.setSchedule(this);
         }
 
         public PunctuationSchedule(
-            ProcessorNode node,
+            IProcessorNode node,
             long time,
             long interval,
-            Punctuator punctuator,
+            IPunctuator punctuator,
             RepointableCancellable cancellable)
             : base(node, time)
         {
@@ -34,7 +34,7 @@ namespace Kafka.Streams.Processors.Internals
             this.cancellable = cancellable;
         }
 
-        public ProcessorNode node()
+        public IProcessorNode node()
         {
             return value;
         }
@@ -46,7 +46,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public PunctuationSchedule next(long currTimestamp)
         {
-            long nextPunctuationTime = timestamp + interval;
+            var nextPunctuationTime = timestamp + interval;
             if (currTimestamp >= nextPunctuationTime)
             {
                 // we missed one ore more punctuations
@@ -54,7 +54,7 @@ namespace Kafka.Streams.Processors.Internals
                 // - when using STREAM_TIME punctuation and there was a gap i.e., no data was
                 //   received for at least 2*interval
                 // - when using WALL_CLOCK_TIME and there was a gap i.e., punctuation was delayed for at least 2*interval (GC pause, overload, ...)
-                long intervalsMissed = (currTimestamp - timestamp) / interval;
+                var intervalsMissed = (currTimestamp - timestamp) / interval;
                 nextPunctuationTime = timestamp + (intervalsMissed + 1) * interval;
             }
 

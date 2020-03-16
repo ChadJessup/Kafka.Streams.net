@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Kafka.Streams.Threads.GlobalStream
+﻿namespace Kafka.Streams.Threads.GlobalStream
 {
     public enum GlobalStreamThreadStates
     {

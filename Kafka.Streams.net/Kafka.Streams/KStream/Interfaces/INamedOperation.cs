@@ -13,6 +13,6 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param name  the name to use.
          * @return an instance of {@link NamedOperation}
          */
-        T withName(string name);
+        T WithName(string name);
     }
 }

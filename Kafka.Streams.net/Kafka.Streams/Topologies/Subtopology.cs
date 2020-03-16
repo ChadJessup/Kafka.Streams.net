@@ -15,12 +15,6 @@ namespace Kafka.Streams.Topologies
             this.nodes.UnionWith(nodes);
         }
 
-        // visible for testing
-        IEnumerator<INode> nodesInOrder()
-        {
-            return nodes.GetEnumerator();
-        }
-
         public override string ToString()
         {
             return "Sub-topology: " + id + "\n" + nodesAsString() + "\n";
@@ -28,7 +22,7 @@ namespace Kafka.Streams.Topologies
 
         private string nodesAsString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             foreach (INode node in nodes)
             {
                 sb.Append("    ");
@@ -51,7 +45,7 @@ namespace Kafka.Streams.Topologies
                 return false;
             }
 
-            Subtopology that = (Subtopology)o;
+            var that = (Subtopology)o;
             return id == that.id
                 && nodes.Equals(that.nodes);
         }

@@ -1,8 +1,6 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using System;
 
 namespace Kafka.Streams.KStream.Interfaces
@@ -2141,6 +2139,6 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return the underlying state store name, or {@code null} if this {@code KTable} cannot be queried.
          */
-        string queryableStoreName();
+        string? queryableStoreName { get; }
     }
 }

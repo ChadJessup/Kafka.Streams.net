@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Confluent.Kafka;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.Processors.Internals

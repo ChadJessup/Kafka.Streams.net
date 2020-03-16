@@ -55,7 +55,7 @@ namespace Kafka.Streams.Processors.Internals
         public ICancellable schedule(
             long intervalMs,
             PunctuationType type,
-            Punctuator callback)
+            IPunctuator callback)
         {
             return del.schedule(TimeSpan.FromMilliseconds(intervalMs), type, callback);
         }
@@ -63,9 +63,13 @@ namespace Kafka.Streams.Processors.Internals
         public ICancellable schedule(
             TimeSpan interval,
             PunctuationType type,
-            Punctuator callback)
+            IPunctuator callback)
         {
             return del.schedule(interval, type, callback);
+        }
+        public ICancellable schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
+        {
+            throw new NotImplementedException();
         }
 
         public void forward<K1, V1>(K1 key, V1 value)

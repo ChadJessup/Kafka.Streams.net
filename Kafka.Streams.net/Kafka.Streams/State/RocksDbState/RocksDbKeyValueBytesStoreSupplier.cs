@@ -14,8 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Kafka.Common.Utils;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.RocksDbState;
 
 namespace Kafka.Streams.State.Internals

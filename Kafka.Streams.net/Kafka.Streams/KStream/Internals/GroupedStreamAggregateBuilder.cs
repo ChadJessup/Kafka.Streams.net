@@ -1,13 +1,10 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processors;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using NodaTime;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -61,9 +58,9 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentException($"{nameof(queryableStoreName)} must match {nameof(storeBuilder.name)}");
             }
 
-            string aggFunctionName = builder.NewProcessorName(functionName);
+            var aggFunctionName = builder.NewProcessorName(functionName);
 
-            string sourceName = this.name;
+            var sourceName = this.name;
             StreamsGraphNode parentNode = streamsGraphNode;
 
             if (repartitionRequired)
@@ -71,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals
                 OptimizableRepartitionNodeBuilder<K, V> repartitionNodeBuilder
                     = OptimizableRepartitionNode.GetOptimizableRepartitionNodeBuilder<K, V>();
 
-                string repartitionTopicPrefix = userProvidedRepartitionTopicName != null
+                var repartitionTopicPrefix = userProvidedRepartitionTopicName != null
                     ? userProvidedRepartitionTopicName
                     : storeBuilder.name;
 
@@ -90,7 +87,7 @@ namespace Kafka.Streams.KStream.Internals
                 parentNode = repartitionNode;
             }
 
-            StatefulProcessorNode<K, V> statefulProcessorNode =
+            var statefulProcessorNode =
                new StatefulProcessorNode<K, V>(
                    aggFunctionName,
                    new ProcessorParameters<K, V>(aggregateSupplier, aggFunctionName),

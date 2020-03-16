@@ -1,5 +1,5 @@
 ﻿using Kafka.Common;
-using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.Stream;
 using NodaTime;
 using Xunit;
 
@@ -8,7 +8,7 @@ namespace Kafka.Streams.Tests
     public class MockStreamThreadConsumer<K, V> : MockConsumer<K, V>
     {
 
-        private KafkaStreamThread streamThread;
+        private StreamThread streamThread;
 
         private MockStreamThreadConsumer()//OffsetResetStrategy offsetResetStrategy)
             : base(null)//offsetResetStrategy)
@@ -23,11 +23,11 @@ namespace Kafka.Streams.Tests
                 //  streamThread.Shutdown();
             }
 
-            //streamThread.RebalanceListener.OnPartitionsAssigned(null, assignedPartitions);
+            //streamThread.RebalanceListener.OnPartitionsAssigned(null,assignedPartitions);
             return null;// base.Poll(timeout);
         }
 
-        private void setStreamThread(KafkaStreamThread streamThread)
+        private void setStreamThread(StreamThread streamThread)
         {
             this.streamThread = streamThread;
         }

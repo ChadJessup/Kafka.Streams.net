@@ -23,6 +23,6 @@ namespace Kafka.Streams.Processors.Interfaces
     public interface ICheckpointable
     {
         void checkpoint(Dictionary<TopicPartition, long> offsets);
-        Dictionary<TopicPartition, long> checkpointed();
+        Dictionary<TopicPartition, long?> checkpointed();
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Kafka.Common;
 using Kafka.Streams.KStream.Internals;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Kafka.Streams.Processors.Internals
 {

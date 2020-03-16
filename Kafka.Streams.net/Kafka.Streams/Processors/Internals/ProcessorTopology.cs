@@ -1,5 +1,4 @@
 using Kafka.Streams.Nodes;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
 using System.Collections.Generic;
@@ -10,14 +9,14 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class ProcessorTopology
     {
-        private readonly List<ProcessorNode> processorNodes;
-        private readonly Dictionary<string, SourceNode> sourcesByTopic;
-        private readonly Dictionary<string, ISink> sinksByTopic;
+        private readonly List<IProcessorNode> processorNodes;
+        private readonly Dictionary<string, ISourceNode> sourcesByTopic;
+        private readonly Dictionary<string, ISinkNode> sinksByTopic;
 
         public ProcessorTopology(
-            IEnumerable<ProcessorNode> processorNodes,
-            Dictionary<string, SourceNode> sourcesByTopic,
-            Dictionary<string, ISink> sinksByTopic,
+            IEnumerable<IProcessorNode> processorNodes,
+            Dictionary<string, ISourceNode> sourcesByTopic,
+            Dictionary<string, ISinkNode> sinksByTopic,
             IEnumerable<IStateStore> stateStores,
             IEnumerable<IStateStore> globalStateStores,
             Dictionary<string, string> storeToChangelogTopic,
@@ -36,6 +35,8 @@ namespace Kafka.Streams.Processors.Internals
         public List<IStateStore> globalStateStores { get; }
         public Dictionary<string, string> StoreToChangelogTopic { get; }
         protected HashSet<string> repartitionTopics { get; }
+
+        public List<string> SourceTopics => sourcesByTopic.Keys.ToList();
 
         public bool hasPersistentLocalStore()
         {
@@ -63,36 +64,36 @@ namespace Kafka.Streams.Processors.Internals
             return false;
         }
 
-        public SourceNode Source(string topic)
+        public ISourceNode Source(string topic)
             => sourcesByTopic[topic];
 
-        public HashSet<SourceNode> Sources()
-            => new HashSet<SourceNode>(sourcesByTopic.Values);
+        public HashSet<ISourceNode> Sources()
+            => new HashSet<ISourceNode>(sourcesByTopic.Values);
 
         public HashSet<string> SinkTopics()
         {
             return new HashSet<string>(sinksByTopic.Keys);
         }
 
-        public ISink Sink(string topic)
+        public ISinkNode Sink(string topic)
         {
             return sinksByTopic[topic];
         }
 
-        public List<ProcessorNode> processors()
+        public List<IProcessorNode> processors()
             => processorNodes;
 
         public bool isRepartitionTopic(string topic)
             => repartitionTopics.Contains(topic);
 
-        private string childrenToString(string indent, List<ProcessorNode> children)
+        private string childrenToString(string indent, List<IProcessorNode> children)
         {
             if (children == null || !children.Any())
             {
                 return "";
             }
 
-            StringBuilder sb = new StringBuilder(indent + "\tchildren:\t[");
+            var sb = new StringBuilder(indent + "\tchildren:\t[");
             foreach (var child in children)
             {
                 sb.Append(child.Name);
@@ -103,7 +104,7 @@ namespace Kafka.Streams.Processors.Internals
             sb.Append("]\n");
 
             // recursively print children
-            foreach (ProcessorNode child in children)
+            foreach (var child in children)
             {
                 sb.Append(child.ToString(indent)).Append(childrenToString(indent, child.children));
             }
@@ -127,7 +128,7 @@ namespace Kafka.Streams.Processors.Internals
          */
         public string ToString(string indent)
         {
-            StringBuilder sb = new StringBuilder(indent + "ProcessorTopology:\n");
+            var sb = new StringBuilder(indent + "ProcessorTopology:\n");
 
             // start from sources
             foreach (var source in sourcesByTopic.Values)

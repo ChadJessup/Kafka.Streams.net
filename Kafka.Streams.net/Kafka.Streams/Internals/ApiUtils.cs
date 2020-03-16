@@ -1,8 +1,6 @@
 ﻿using Kafka.Common.Extensions;
 using Kafka.Streams.KStream.Internals;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 /*
     * Licensed to the Apache Software Foundation (ASF) under one or more

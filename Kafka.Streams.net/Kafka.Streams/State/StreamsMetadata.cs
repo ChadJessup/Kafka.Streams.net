@@ -51,7 +51,7 @@ namespace Kafka.Streams.State
             {
                 return false;
             }
-            StreamsMetadata that = (StreamsMetadata)o;
+            var that = (StreamsMetadata)o;
             if (!hostInfo.Equals(that.hostInfo))
             {
                 return false;
@@ -66,7 +66,7 @@ namespace Kafka.Streams.State
 
         public override int GetHashCode()
         {
-            int result = hostInfo.GetHashCode();
+            var result = hostInfo.GetHashCode();
             result = 31 * result + StateStoreNames.GetHashCode();
             result = 31 * result + TopicPartitions.GetHashCode();
             return result;

@@ -1,7 +1,5 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 using NodaTime;
 
@@ -10,11 +8,11 @@ namespace Kafka.Streams.KStream.Internals
     public class TimestampedKeyValueStoreMaterializer<K, V>
     {
         private readonly IClock clock;
-        private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized;
+        private readonly MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>? materialized;
 
         public TimestampedKeyValueStoreMaterializer(
             IClock clock,
-            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>? materialized)
         {
             this.clock = clock;
             this.materialized = materialized;
@@ -25,11 +23,11 @@ namespace Kafka.Streams.KStream.Internals
          */
         public IStoreBuilder<ITimestampedKeyValueStore<K, V>> materialize()
         {
-            IKeyValueBytesStoreSupplier supplier = (IKeyValueBytesStoreSupplier)materialized.StoreSupplier;
+            var supplier = (IKeyValueBytesStoreSupplier)materialized?.StoreSupplier ?? null;
 
             if (supplier == null)
             {
-                string name = materialized.StoreName;
+                var name = materialized?.StoreName;
                 supplier = Stores.persistentTimestampedKeyValueStore(name);
             }
 
@@ -37,10 +35,10 @@ namespace Kafka.Streams.KStream.Internals
                 Stores.timestampedKeyValueStoreBuilder(
                     this.clock,
                    supplier,
-                   materialized.KeySerde,
-                   materialized.ValueSerde);
+                   materialized?.KeySerde,
+                   materialized?.ValueSerde);
 
-            if (materialized.LoggingEnabled)
+            if (materialized?.LoggingEnabled == true)
             {
                 builder.WithLoggingEnabled(materialized.logConfig());
             }
@@ -49,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
                 builder.WithLoggingDisabled();
             }
 
-            if (materialized.cachingEnabled)
+            if (materialized?.cachingEnabled == true)
             {
                 builder.WithCachingEnabled();
             }

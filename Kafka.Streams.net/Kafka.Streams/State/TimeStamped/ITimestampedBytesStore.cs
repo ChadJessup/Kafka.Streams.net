@@ -1,6 +1,3 @@
-
-using Kafka.Streams.KStream.Internals;
-
 namespace Kafka.Streams.State.TimeStamped
 {
     public interface ITimestampedBytesStore

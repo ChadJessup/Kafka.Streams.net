@@ -33,7 +33,7 @@ public class MockChangelogReader : IChangelogReader
         registered.Clear();
     }
 
-    public bool wasRegistered(TopicPartition partition)
+    public bool asRegistered(TopicPartition partition)
     {
         return registered.Contains(partition);
     }

@@ -1,12 +1,9 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
-using Microsoft.Extensions.DependencyInjection;
+using Kafka.Streams.State.KeyValues;
 using Microsoft.Extensions.Logging;
 using RocksDbSharp;
 using System;
@@ -113,7 +110,7 @@ namespace Kafka.Streams.State.RocksDbState
             //fOptions.setWaitForFlush(true);
 
             Dictionary<string, object> configs = context.appConfigs();
-            IRocksDbConfigSetter configSetterClass =
+            var configSetterClass =
                 (IRocksDbConfigSetter)configs[StreamsConfigPropertyNames.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG];
 
             if (configSetterClass != null)
@@ -146,9 +143,9 @@ namespace Kafka.Streams.State.RocksDbState
             DbOptions dbOptions,
             ColumnFamilyOptions columnFamilyOptions)
         {
-            ColumnFamilies columnFamilyDescriptors = new ColumnFamilies(columnFamilyOptions);
+            var columnFamilyDescriptors = new ColumnFamilies(columnFamilyOptions);
 
-            List<ColumnFamilyHandle> columnFamilies = new List<ColumnFamilyHandle>(columnFamilyDescriptors.Count());
+            var columnFamilies = new List<ColumnFamilyHandle>(columnFamilyDescriptors.Count());
 
             try
             {
@@ -183,12 +180,6 @@ namespace Kafka.Streams.State.RocksDbState
             context.Register(root, batchingStateRestoreCallback);
         }
 
-        // visible for testing
-        bool IsPrepareForBulkload()
-        {
-            return prepareForBulkload;
-        }
-
         public bool persistent()
         {
             return true;
@@ -221,7 +212,7 @@ namespace Kafka.Streams.State.RocksDbState
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
-            byte[] originalValue = get(key);
+            var originalValue = get(key);
 
             if (originalValue == null)
             {
@@ -235,7 +226,7 @@ namespace Kafka.Streams.State.RocksDbState
         {
             try
             {
-                using WriteBatch batch = new WriteBatch();
+                using var batch = new WriteBatch();
 
                 DbAccessor.prepareBatch(entries, batch);
                 write(batch);
@@ -377,7 +368,7 @@ namespace Kafka.Streams.State.RocksDbState
             if (prepareForBulkload)
             {
                 // if the store is not empty, we need to compact to get around the num.levels check for bulk loading
-                string[] sstFileNames = DbDir
+                var sstFileNames = DbDir
                     .GetFiles()
                     .Where(dir => SST_FILE_EXTENSION.IsMatch(dir.FullName))
                     .Select(fi => fi.FullName).ToArray();

@@ -25,7 +25,12 @@ namespace Kafka.Streams.State.Internals
                       int partition,
                       string topic)
         {
-            ProcessorRecordContext context = new ProcessorRecordContext(timestamp, offset, partition, topic, headers);
+            var context = new ProcessorRecordContext(
+                timestamp,
+                offset,
+                partition,
+                topic,
+                headers);
 
             this.record = new ContextualRecord(
                 value,
@@ -68,7 +73,7 @@ namespace Kafka.Streams.State.Internals
                 return false;
             }
 
-            LRUCacheEntry that = (LRUCacheEntry)o;
+            var that = (LRUCacheEntry)o;
 
             return sizeBytes == that.sizeBytes
                 && isDirty == that.isDirty

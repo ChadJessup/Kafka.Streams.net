@@ -1,5 +1,4 @@
 ﻿using Confluent.Kafka;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
@@ -31,13 +30,14 @@ namespace Kafka.Streams.Tasks
         {
         }
 
-        public override StandbyTask createTask(
+        public override StandbyTask? createTask(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,
+            string threadClientId,
             HashSet<TopicPartition> partitions)
         {
-            ProcessorTopology topology = builder.build(taskId.topicGroupId);
+            ProcessorTopology topology = builder.Build(taskId.topicGroupId);
 
             if (topology.StateStores.Any() && topology.StoreToChangelogTopic.Any())
             {

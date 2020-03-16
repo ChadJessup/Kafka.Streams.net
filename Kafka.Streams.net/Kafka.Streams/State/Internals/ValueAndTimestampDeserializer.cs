@@ -54,7 +54,7 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            long timestamp = timestampDeserializer.Deserialize(rawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
+            var timestamp = timestampDeserializer.Deserialize(rawTimestamp(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
             V value = valueDeserializer.Deserialize(rawValue(valueAndTimestamp), false, new SerializationContext(MessageComponentType.Value, topic));
 
             return ValueAndTimestamp<V>.make(value, timestamp);
@@ -68,7 +68,7 @@ namespace Kafka.Streams.State.Internals
 
         static byte[] rawValue(byte[] rawValueAndTimestamp)
         {
-            int rawValueLength = rawValueAndTimestamp.Length - 8;
+            var rawValueLength = rawValueAndTimestamp.Length - 8;
 
             return new ByteBuffer()
                 .allocate(rawValueLength)
@@ -82,11 +82,6 @@ namespace Kafka.Streams.State.Internals
                 .allocate(8)
                 .add(rawValueAndTimestamp)//.UnionWith(, 0, 8 })
                 .array();
-        }
-
-        static long timestamp(byte[] rawValueAndTimestamp)
-        {
-            return LONG_DESERIALIZER.Deserialize(rawTimestamp(rawValueAndTimestamp), false, new SerializationContext());
         }
 
         public ValueAndTimestamp<V> Deserialize(

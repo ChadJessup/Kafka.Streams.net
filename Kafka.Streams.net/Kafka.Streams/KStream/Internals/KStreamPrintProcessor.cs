@@ -20,13 +20,13 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamPrintProcessor<K, V> : AbstractProcessor<K, V>
     {
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             //action.apply(key, value);
         }
 
 
-        public override void close()
+        public override void Close()
         {
             //if (action is PrintForeachAction)
             //{

@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -2061,9 +2062,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #foreach(IForeachAction)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process(
-            IProcessorSupplier<K, V> IProcessorSupplier,
-            string[] stateStoreNames);
+        void process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
 
         /**
          * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
@@ -2255,39 +2254,6 @@ namespace Kafka.Streams.KStream.Interfaces
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
-         * and {@link Serde}s as specified by {@link Serialized}.
-         * Grouping a stream on the record key is required before an aggregation operator can be applied to the data
-         * (cf. {@link KGroupedStream}).
-         * The {@link KeyValueMapper} selects a new key (which may or may not be of the same type) while preserving the
-         * original values.
-         * If the new record key is {@code null} the record will not be included in the resulting {@link KGroupedStream}.
-         * <p>
-         * Because a new key is selected, an internal repartitioning topic may need to be created in Kafka if a
-         * later operator depends on the newly selected key.
-         * This topic will be as "${applicationId}-&lt;name&gt;-repartition", where "applicationId" is user-specified in
-         * {@link  StreamsConfig} via parameter {@link StreamsConfig#APPLICATION_ID_CONFIG APPLICATION_ID_CONFIG},
-         * "&lt;name&gt;" is an internally generated name, and "-repartition" is a fixed suffix.
-         * <p>
-         * You can retrieve all generated internal topic names via {@link Topology#describe()}.
-         * <p>
-         * All data of this stream will be redistributed through the repartitioning topic by writing all records to it,
-         * and rereading all records from it, such that the resulting {@link KGroupedStream} is partitioned on the new key.
-         * <p>
-         * This operation is equivalent to calling {@link #selectKey(KeyValueMapper)} followed by {@link #groupByKey()}.
-         *
-         * @param selector a {@link KeyValueMapper} that computes a new key for grouping
-         * @param     the key type of the result {@link KGroupedStream}
-         * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
-         *
-         * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupBy(KeyValueMapper, Grouped)} instead
-         */
-        [Obsolete]
-        IKGroupedStream<KR, V> groupBy<KR>(
-            IKeyValueMapper<K, V, KR> selector,
-            ISerialized<KR, V> serialized);
-
-        /**
-         * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
          * and {@link Serde}s as specified by {@link Grouped}.
          * Grouping a stream on the record key is required before an aggregation operator can be applied to the data
          * (cf. {@link KGroupedStream}).
@@ -2391,9 +2357,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
          */
-        //IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
-        //                              IValueJoiner<V, VO, VR> joiner,
-        //                              JoinWindows windows);
+        IKStream<K, VR> Join<VO, VR>(
+            IKStream<K, VO> otherStream,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed inner equi join using the
@@ -2470,10 +2437,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        //IKStream<K, VR> join<VR, VO>(IKStream<K, VO> otherStream,
-        //                              IValueJoiner<V, VO, VR> joiner,
-        //                              JoinWindows windows,
-        //                              Joined<K, V, VO> joined);
+        IKStream<K, VR> Join<VO, VR>(
+            IKStream<K, VO> otherStream,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows,
+            Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join with default
@@ -2551,9 +2519,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows)
          */
-        //IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
-        //                                  IValueJoiner<V, VO, VR> joiner,
-        //                                  JoinWindows windows);
+        IKStream<K, VR> LeftJoin<VO, VR>(
+            IKStream<K, VO> otherStream,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed left equi join using the
@@ -2634,10 +2603,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KStream, ValueJoiner, JoinWindows, Joined)
          * @see #outerJoin(KStream, ValueJoiner, JoinWindows, Joined)
          */
-        //IKStream<K, VR> leftJoin<VR, VO>(IKStream<K, VO> otherStream,
-        //                                  IValueJoiner<V, VO, VR> joiner,
-        //                                  JoinWindows windows,
-        //                                  Joined<K, V, VO> joined);
+        IKStream<K, VR> LeftJoin<VO, VR>(
+            IKStream<K, VO> otherStream,
+            IValueJoiner<V, VO, VR> joiner,
+            JoinWindows windows,
+            Joined<K, V, VO> joined);
 
         /**
          * Join records of this stream with another {@code KStream}'s records using windowed outer equi join with default
@@ -2878,9 +2848,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner)
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        //IKStream<K, VR> join<VR, VT>(
-        //    IKTable<K, VT> table,
-        //    IValueJoiner<V, VT, VR> joiner);
+        IKStream<K, VR> Join<VT, VR>(
+            IKTable<K, VT> table,
+            IValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed inner equi join with default
@@ -2956,9 +2926,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #leftJoin(KTable, ValueJoiner, Joined)
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        //IKStream<K, VR> join<VR, VT>(IKTable<K, VT> table,
-        //                              IValueJoiner<V, VT, VR> joiner,
-        //                              Joined<K, V, VT> joined);
+        IKStream<K, VR> Join<VT, VR>(
+            IKTable<K, VT> table,
+            IValueJoiner<V, VT, VR> joiner,
+            Joined<K, V, VT> joined);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3035,9 +3006,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner)
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        //IKStream<K, VR> leftJoin<VR, VT>(
-        //    IKTable<K, VT> table,
-        //    IValueJoiner<V, VT, VR> joiner);
+        IKStream<K, VR> LeftJoin<VT, VR>(
+            IKTable<K, VT> table,
+            IValueJoiner<V, VT, VR> joiner);
 
         /**
          * Join records of this stream with {@link KTable}'s records using non-windowed left equi join with default
@@ -3116,10 +3087,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #join(KTable, ValueJoiner, Joined)
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        //IKStream<K, VR> leftJoin<VR, VT>(
-        //    IKTable<K, VT> table,
-        //    IValueJoiner<V, VT, VR> joiner,
-        //    Joined<K, V, VT> joined);
+        IKStream<K, VR> LeftJoin<VT, VR>(
+            IKTable<K, VT> table,
+            IValueJoiner<V, VT, VR> joiner,
+            Joined<K, V, VT> joined);
 
         /**
          * Join records of this stream with {@link GlobalKTable}'s records using non-windowed inner equi join.
@@ -3150,7 +3121,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner}, one output for each input {@code KStream} record
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, RV> join<RV, GK, GV>(
+        IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
             IValueJoiner<V, GV, RV> joiner);
@@ -3185,7 +3156,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner}, one output for each input {@code KStream} record
          * @see #leftJoin(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, RV> join<RV, GK, GV>(
+        IKStream<K, RV> Join<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
             IValueJoiner<V, GV, RV> joiner,
@@ -3224,7 +3195,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner}, one output for each input {@code KStream} record
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, RV> leftJoin<RV, GK, GV>(
+        IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
             IValueJoiner<V, GV, RV> valueJoiner);
@@ -3263,7 +3234,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner}, one output for each input {@code KStream} record
          * @see #join(GlobalKTable, KeyValueMapper, ValueJoiner)
          */
-        IKStream<K, RV> leftJoin<RV, GK, GV>(
+        IKStream<K, RV> LeftJoin<GK, GV, RV>(
             IGlobalKTable<GK, GV> globalKTable,
             IKeyValueMapper<K, V, GK> keyValueMapper,
             IValueJoiner<V, GV, RV> valueJoiner,

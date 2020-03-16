@@ -41,7 +41,7 @@ namespace Kafka.Streams.State.Internals
                 return queryableStoreType.create(new WrappingStoreProvider(new List<IStateStoreProvider> { globalStoreProvider }), storeName);
             }
 
-            List<T> allStores = new List<T>();
+            var allStores = new List<T>();
             foreach (IStateStoreProvider storeProvider in storeProviders)
             {
                 allStores.AddRange(storeProvider.stores(storeName, queryableStoreType));

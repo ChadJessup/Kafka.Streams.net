@@ -1,4 +1,4 @@
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.ReadOnly
 {
@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.ReadOnly
      * @param the key type
      * @param the value type
      */
-    public interface IReadOnlyKeyValueStore<K, V>
+    public interface IReadOnlyKeyValueStore<K, V> : IReadOnlyKeyValueStore
     {
         /**
          * Get the value corresponding to this key.
@@ -58,5 +58,9 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws InvalidStateStoreException if the store is not initialized
          */
         long approximateNumEntries { get; }
+    }
+
+    public interface IReadOnlyKeyValueStore
+    {
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.Queryable;
 using Kafka.Streams.State.ReadOnly;
 using System;

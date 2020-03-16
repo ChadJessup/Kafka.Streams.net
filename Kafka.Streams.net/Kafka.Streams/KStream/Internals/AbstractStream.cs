@@ -18,8 +18,6 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
 using System;
 using System.Collections.Generic;
@@ -94,7 +92,7 @@ namespace Kafka.Streams.KStream.Internals
                 throw new ArgumentNullException(nameof(other));
             }
 
-            HashSet<string> allSourceNodes = new HashSet<string>();
+            var allSourceNodes = new HashSet<string>();
             allSourceNodes.UnionWith(sourceNodes);
             allSourceNodes.UnionWith(other.sourceNodes);
 
@@ -119,7 +117,7 @@ namespace Kafka.Streams.KStream.Internals
         {
             valueMapper = valueMapper ?? throw new ArgumentNullException(nameof(valueMapper));
 
-            return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper.apply(value));
+            return new ValueMapperWithKey<K, V, VR>((readOnlyKey, value) => valueMapper.Apply(value));
         }
 
         public static IValueTransformerWithKeySupplier<K, V, VR> toValueTransformerWithKeySupplier<VR>(

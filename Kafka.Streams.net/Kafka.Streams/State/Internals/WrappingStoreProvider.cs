@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.Internals
             string storeName,
             IQueryableStoreType<T> type)
         {
-            List<T> allStores = new List<T>();
+            var allStores = new List<T>();
             foreach (IStateStoreProvider provider in storeProviders)
             {
                 List<T> stores = provider.stores(storeName, type);

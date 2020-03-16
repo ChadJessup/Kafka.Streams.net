@@ -6,7 +6,7 @@ using System;
 namespace Kafka.Streams.Processors.Internals
 {
     public abstract class StateStoreReadWriteDecorator<T> : WrappedStateStore<T>
-    where T : IStateStore
+        where T : IStateStore
     {
         protected static readonly string ERROR_MESSAGE = "This method may only be called by Kafka Streams";
 

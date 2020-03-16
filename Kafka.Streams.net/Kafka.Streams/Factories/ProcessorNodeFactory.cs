@@ -28,7 +28,7 @@ namespace Kafka.Streams.Factories
             stateStoreNames.Add(stateStoreName);
         }
 
-        public override ProcessorNode<K, V> Build()
+        public override IProcessorNode Build()
         {
             return new ProcessorNode<K, V>(this.Clock, Name, supplier.get(), stateStoreNames);
         }

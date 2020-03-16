@@ -1,9 +1,7 @@
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.ReadOnly;
 using System.Collections.Generic;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     /**
      * A key-value store that supports put/get/delete and range queries.
@@ -11,7 +9,7 @@ namespace Kafka.Streams.State.KeyValue
      * @param The key type
      * @param The value type
      */
-    public interface IKeyValueStore<K, V> : IStateStore, IReadOnlyKeyValueStore<K, V>
+    public interface IKeyValueStore<K, V> : IKeyValueStore, IStateStore, IReadOnlyKeyValueStore<K, V>
     {
         /**
          * Update the value associated with this key.
@@ -51,5 +49,9 @@ namespace Kafka.Streams.State.KeyValue
          * @throws ArgumentNullException If {@code null} is used for key.
          */
         V delete(K key);
+    }
+
+    public interface IKeyValueStore
+    {
     }
 }

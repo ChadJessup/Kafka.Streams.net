@@ -1,7 +1,5 @@
-using Confluent.Kafka;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
 using System;
 
@@ -43,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 : producedInternal.valueSerde.Serializer;
 
             IStreamPartitioner<K, V> partitioner = producedInternal.streamPartitioner();
-            string[] parentNames = ParentNodeNames();
+            var parentNames = ParentNodeNames();
 
             if (partitioner == null && keySerializer is IWindowedSerializer<K>)
             {

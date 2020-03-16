@@ -9,21 +9,39 @@ using System;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public class RecordDeserializer<K, V>
+    public class RecordDeserializer<K, V> : RecordDeserializer
     {
         private readonly ILogger<RecordDeserializer<K, V>> logger;
-        private readonly SourceNode<K, V> sourceNode;
+        private readonly ISourceNode<K, V> sourceNode;
         private readonly IDeserializationExceptionHandler deserializationExceptionHandler;
 
         public RecordDeserializer(
             ILogger<RecordDeserializer<K, V>> logger,
-            SourceNode<K, V> sourceNode,
-            IDeserializationExceptionHandler deserializationExceptionHandler,
-            LogContext logContext)
+            ISourceNode<K, V> sourceNode,
+            IDeserializationExceptionHandler deserializationExceptionHandler)
+            : base(null, sourceNode, deserializationExceptionHandler)
         {
             this.sourceNode = sourceNode;
             this.deserializationExceptionHandler = deserializationExceptionHandler;
             this.logger = logger;
+        }
+    }
+
+    public class RecordDeserializer
+    {
+        private readonly ILogger<RecordDeserializer> logger;
+
+        public ISourceNode SourceNode { get; }
+        private IDeserializationExceptionHandler deserializationExceptionHandler;
+
+        public RecordDeserializer(
+            ILogger<RecordDeserializer> logger,
+            ISourceNode source,
+            IDeserializationExceptionHandler deserializationExceptionHandler)
+        {
+            this.logger = logger;
+            this.SourceNode = source;
+            this.deserializationExceptionHandler = deserializationExceptionHandler;
         }
 
         /**
@@ -31,7 +49,7 @@ namespace Kafka.Streams.Processors.Internals
          *                          {@link IDeserializationExceptionHandler.DeserializationHandlerResponse#FAIL FAIL}
          *                          oritself
          */
-        public ConsumeResult<K, V> deserialize(
+        public ConsumeResult<K, V> Deserialize<K, V>(
             IProcessorContext processorContext,
             ConsumeResult<byte[], byte[]> rawRecord)
         {

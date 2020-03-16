@@ -20,7 +20,7 @@ using System.Runtime.Serialization;
 namespace Kafka.Streams.Processors.Internals
 {
     [Serializable]
-    internal class WakeupException : Exception
+    public class WakeupException : Exception
     {
         public WakeupException()
         {

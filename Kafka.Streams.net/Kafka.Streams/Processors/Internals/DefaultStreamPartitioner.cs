@@ -1,6 +1,5 @@
 using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Streams.Factories;
 using Kafka.Streams.Processors.Interfaces;
 
 namespace Kafka.Streams.Processors.Internals
@@ -20,7 +19,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public int partition(string topic, K key, V value, int numPartitions)
         {
-            byte[] keyBytes = this.keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
+            var keyBytes = this.keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
             return defaultPartitioner.partition(topic, key, keyBytes, value, null, cluster);
         }
     }

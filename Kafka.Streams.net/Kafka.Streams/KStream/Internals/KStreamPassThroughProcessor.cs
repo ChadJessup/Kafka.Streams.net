@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamPassThroughProcessor<K, V> : AbstractProcessor<K, V>
     {
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             context.forward(key, value);
         }

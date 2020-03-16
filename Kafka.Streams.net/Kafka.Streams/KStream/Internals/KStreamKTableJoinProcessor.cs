@@ -1,3 +1,4 @@
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -31,14 +32,14 @@ namespace Kafka.Streams.KStream.Internals
             this.leftJoin = leftJoin;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
 
             valueGetter.init(context, this.storeName);
         }
 
-        public override void process(K1 key, V1 value)
+        public override void Process(K1 key, V1 value)
         {
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             // If {@code keyMapper} returns {@code null} it implies there is no match,
@@ -57,7 +58,7 @@ namespace Kafka.Streams.KStream.Internals
             }
             else
             {
-                K2 mappedKey = keyMapper.apply(key, value);
+                K2 mappedKey = keyMapper.Apply(key, value);
                 V2 value2 = valueGetter.get(mappedKey).value;
 
                 if (leftJoin || value2 != null)
@@ -67,7 +68,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void close()
+        public override void Close()
         {
             valueGetter.close();
         }

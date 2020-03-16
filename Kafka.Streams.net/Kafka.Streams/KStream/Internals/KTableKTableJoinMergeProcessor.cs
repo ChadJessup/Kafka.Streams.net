@@ -33,9 +33,9 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             if (queryableName != null)
             {
                 store = (ITimestampedKeyValueStore<K, V>)context.getStateStore(queryableName);
@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public override void process(K key, Change<V> value)
+        public override void Process(K key, Change<V> value)
         {
             if (queryableName != null)
             {

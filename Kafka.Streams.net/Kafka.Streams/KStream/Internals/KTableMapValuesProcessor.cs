@@ -19,9 +19,9 @@ namespace Kafka.Streams.KStream.Internals
             this.mapper = mapper;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             if (queryableName != null)
             {
                 store = (ITimestampedKeyValueStore<K, V1>)context.getStateStore(queryableName);
@@ -35,7 +35,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public override void process(K key, Change<V> change)
+        public override void Process(K key, Change<V> change)
         {
             V1 newValue = computeValue(key, change.newValue);
             V1 oldValue = sendOldValues

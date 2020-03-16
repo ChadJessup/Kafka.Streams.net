@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Kafka.Streams.Processors;
 
 namespace Kafka.Streams.KStream.Internals.Graph
@@ -16,9 +14,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public IProcessorSupplier<K, V> ProcessorSupplier { get; }
         public string ProcessorName { get; }
 
-        public ProcessorParameters(
-            IProcessorSupplier<K, V> processorSupplier,
-            string processorName)
+        public ProcessorParameters(IProcessorSupplier<K, V> processorSupplier, string processorName)
         {
             this.ProcessorSupplier = processorSupplier;
             this.ProcessorName = processorName;

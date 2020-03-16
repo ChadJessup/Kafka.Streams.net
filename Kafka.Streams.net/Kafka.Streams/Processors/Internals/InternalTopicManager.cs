@@ -2,7 +2,6 @@ using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,25 +10,17 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class InternalTopicManager
     {
-        private static readonly string INTERRUPTED_ERROR_MESSAGE = "Thread got interrupted. This indicates a bug. " +
-            "Please report at https://issues.apache.org/jira/projects/KAFKA or dev-mailing list (https://kafka.apache.org/contact).";
-
         private readonly ILogger log;
-        private readonly long windowChangeLogAdditionalRetention;
         private readonly Dictionary<string, string> defaultTopicConfigs = new Dictionary<string, string>();
-
-        private readonly short replicationFactor;
         private readonly IAdminClient adminClient;
 
         private readonly int retries;
-        private readonly long retryBackOffMs;
 
         public InternalTopicManager(IAdminClient adminClient, StreamsConfig streamsConfig)
         {
             this.adminClient = adminClient;
 
-            LogContext logContext = new LogContext(string.Format("stream-thread [%s] ", Thread.CurrentThread.Name));
-            log = logContext.logger(GetType());
+            //new LogContext($"stream-thread [{Thread.CurrentThread.Name}] ");
 
             //replicationFactor = streamsConfig.getInt(StreamsConfig.REPLICATION_FACTOR_CONFIG).shortValue();
             //windowChangeLogAdditionalRetention = streamsConfig.getLong(StreamsConfig.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG);
@@ -66,8 +57,8 @@ namespace Kafka.Streams.Processors.Internals
             // we will do the validation / topic-creation in a loop, until we have confirmed all topics
             // have existed with the expected number of partitions, or some create topic returns fatal errors.
 
-            int remainingRetries = retries;
-            HashSet<string> topicsNotReady = new HashSet<string>(topics.Keys);
+            var remainingRetries = retries;
+            var topicsNotReady = new HashSet<string>(topics.Keys);
 
             while (topicsNotReady.Any() && remainingRetries >= 0)
             {
@@ -147,7 +138,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (topicsNotReady.Any())
             {
-                string timeoutAndRetryError = string.Format("Could not create topics after %d retries. " +
+                var timeoutAndRetryError = string.Format("Could not create topics after %d retries. " +
                     "This can happen if the Kafka cluster is temporary not available. " +
                     "You can increase admin client config `retries` to be resilient against this error.", retries);
                 log.LogError(timeoutAndRetryError);
@@ -219,7 +210,7 @@ namespace Kafka.Streams.Processors.Internals
 
             Dictionary<string, int> existedTopicPartition = getNumPartitions(topicsToValidate);
 
-            HashSet<string> topicsToCreate = new HashSet<string>();
+            var topicsToCreate = new HashSet<string>();
             foreach (KeyValuePair<string, InternalTopicConfig> entry in topicsMap)
             {
                 //string topicName = entry.Key;

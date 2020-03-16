@@ -1,25 +1,10 @@
 ﻿using Confluent.Kafka;
-using Kafka.Streams.Errors;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
-using System;
 
 namespace Kafka.Streams
 {
     public class DelegatingStateRestoreListener : IStateRestoreListener
     {
-        private void throwOnFatalException(
-            Exception fatalUserException,
-            TopicPartition topicPartition,
-            string storeName)
-        {
-            throw new StreamsException(
-                    string.Format("Fatal user code error in store restore listener for store %s, partition %s.",
-                            storeName,
-                            topicPartition),
-                    fatalUserException);
-        }
-
         public void onRestoreStart(
             TopicPartition topicPartition,
             string storeName,

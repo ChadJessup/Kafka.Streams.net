@@ -1,4 +1,3 @@
-using Kafka.Common.Utils.Interfaces;
 using NodaTime;
 using System;
 

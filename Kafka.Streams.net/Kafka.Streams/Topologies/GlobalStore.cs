@@ -43,7 +43,7 @@ namespace Kafka.Streams.Topologies
                 return false;
             }
 
-            GlobalStore that = (GlobalStore)o;
+            var that = (GlobalStore)o;
 
             return source.Equals(that.source)
                 && processor.Equals(that.processor);

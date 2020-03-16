@@ -129,7 +129,7 @@ namespace Kafka.Streams.State
             }
             catch (InvalidCastException e)
             {
-                string keyClass = key == null
+                var keyClass = key == null
                     ? "unknown because key is null"
                     : key.GetType().FullName;
 

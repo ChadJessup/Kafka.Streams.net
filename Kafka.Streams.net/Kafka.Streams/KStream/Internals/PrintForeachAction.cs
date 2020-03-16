@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors.Internals;
 using System.IO;
@@ -59,7 +60,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public void apply(K key, V value)
         {
-            string data = string.Format("[%s]: %s", label, mapper.apply(key, value));
+            var data = string.Format("[%s]: %s", label, mapper.Apply(key, value));
             //printWriter.println(data);
             if (!closable)
             {

@@ -42,19 +42,17 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             this.builder = topology.internalTopologyBuilder;
-            this.globalStores = new HashSet<string>(builder.globalStateStores().Keys);
+            this.globalStores = new HashSet<string>(builder.GlobalStateStores().Keys);
 
             this.thisHost = ParseHostInfo(config.ApplicationServer);
         }
 
         public override string ToString()
-        {
-            return ToString("");
-        }
+            => ToString("");
 
         public string ToString(string indent)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             builder.Append(indent).Append("GlobalMetadata: ").Append(allMetadata.ToJoinedString()).Append("\n");
             builder.Append(indent).Append("GlobalStores: ").Append(globalStores.ToJoinedString()).Append("\n");
@@ -103,7 +101,7 @@ namespace Kafka.Streams.Processors.Internals
                 return new List<StreamsMetadata>();
             }
 
-            List<StreamsMetadata> results = new List<StreamsMetadata>();
+            var results = new List<StreamsMetadata>();
             foreach (StreamsMetadata metadata in allMetadata)
             {
                 if (metadata.StateStoreNames.Contains(storeName))
@@ -157,7 +155,7 @@ namespace Kafka.Streams.Processors.Internals
                 return myMetadata;
             }
 
-            SourceTopicsInfo sourceTopicsInfo = GetSourceTopicsInfo(storeName);
+            SourceTopicsInfo? sourceTopicsInfo = GetSourceTopicsInfo(storeName);
             if (sourceTopicsInfo == null)
             {
                 return null;
@@ -252,7 +250,7 @@ namespace Kafka.Streams.Processors.Internals
 
         private void RebuildMetadata(Dictionary<HostInfo, HashSet<TopicPartition>> currentState)
         {
-            //allMetadata.clear();
+            allMetadata.Clear();
             if (!currentState.Any())
             {
                 return;
@@ -262,8 +260,8 @@ namespace Kafka.Streams.Processors.Internals
             foreach (var entry in currentState)
             {
                 HostInfo key = entry.Key;
-                HashSet<TopicPartition> partitionsForHost = new HashSet<TopicPartition>(entry.Value);
-                HashSet<string> storesOnHost = new HashSet<string>();
+                var partitionsForHost = new HashSet<TopicPartition>(entry.Value);
+                var storesOnHost = new HashSet<string>();
 
                 foreach (var storeTopicEntry in stores)
                 {
@@ -275,7 +273,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
 
                 storesOnHost.AddRange(globalStores);
-                StreamsMetadata metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
+                var metadata = new StreamsMetadata(key, storesOnHost, partitionsForHost);
                 allMetadata.Add(metadata);
 
                 if (key.Equals(thisHost))
@@ -291,14 +289,14 @@ namespace Kafka.Streams.Processors.Internals
             IStreamPartitioner<K, V> partitioner,
             SourceTopicsInfo sourceTopicsInfo)
         {
-            int partition = partitioner.partition(
+            var partition = partitioner.partition(
                 sourceTopicsInfo.topicWithMostPartitions,
                 key,
                 default,
                 sourceTopicsInfo.maxPartitions);
 
-            HashSet<TopicPartition> matchingPartitions = new HashSet<TopicPartition>();
-            foreach (string sourceTopic in sourceTopicsInfo.sourceTopics)
+            var matchingPartitions = new HashSet<TopicPartition>();
+            foreach (var sourceTopic in sourceTopicsInfo.sourceTopics)
             {
                 matchingPartitions.Add(new TopicPartition(sourceTopic, partition));
             }
@@ -306,7 +304,7 @@ namespace Kafka.Streams.Processors.Internals
             foreach (StreamsMetadata streamsMetadata in allMetadata)
             {
                 HashSet<string> stateStoreNames = streamsMetadata.StateStoreNames;
-                HashSet<TopicPartition> topicPartitions = new HashSet<TopicPartition>(streamsMetadata.TopicPartitions);
+                var topicPartitions = new HashSet<TopicPartition>(streamsMetadata.TopicPartitions);
                 topicPartitions.IntersectWith(matchingPartitions);
 
                 if (stateStoreNames.Contains(storeName) && topicPartitions.Any())
@@ -331,7 +329,8 @@ namespace Kafka.Streams.Processors.Internals
 
         private bool IsInitialized()
         {
-            return clusterMetadata != null && clusterMetadata.topics().Any();
+            return clusterMetadata != null
+                && clusterMetadata.topics().Any();
         }
 
         private HostInfo ParseHostInfo(string endPoint)
@@ -341,8 +340,8 @@ namespace Kafka.Streams.Processors.Internals
                 return StreamsMetadataState.UNKNOWN_HOST;
             }
 
-            string host = GetHost(endPoint);
-            int port = GetPort(endPoint);
+            var host = GetHost(endPoint);
+            var port = GetPort(endPoint);
 
             if (host == null)
             {
@@ -364,7 +363,7 @@ namespace Kafka.Streams.Processors.Internals
         private string GetHost(string address)
         {
             var matcher = HOST_PORT_PATTERN.Match(address);
-            
+
             return matcher.Success
                 ? matcher.Groups[1]?.Value ?? ""
                 : "";

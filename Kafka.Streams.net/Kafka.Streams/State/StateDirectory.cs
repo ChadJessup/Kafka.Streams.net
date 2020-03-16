@@ -1,4 +1,3 @@
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
@@ -47,13 +46,13 @@ namespace Kafka.Streams.State
             StreamsConfig config,
             IClock clock)
         {
-            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.logger = logger;// ?? throw new ArgumentNullException(nameof(logger));
             config = config ?? throw new ArgumentNullException(nameof(config));
 
             this.clock = clock;
             this.createStateDirectory = true;
-            string stateDirName = config.StateStoreDirectory;
-            DirectoryInfo baseDir = new DirectoryInfo(stateDirName);
+            var stateDirName = config.StateStoreDirectory;
+            var baseDir = new DirectoryInfo(stateDirName);
 
             if (this.createStateDirectory)
             {
@@ -115,7 +114,7 @@ namespace Kafka.Streams.State
          */
         public DirectoryInfo globalStateDir()
         {
-            DirectoryInfo dir = new DirectoryInfo(Path.Combine(stateDir.FullName, "global"));
+            var dir = new DirectoryInfo(Path.Combine(stateDir.FullName, "global"));
 
             Directory.CreateDirectory(dir.FullName);
             if (createStateDirectory && !dir.Exists)
@@ -129,70 +128,6 @@ namespace Kafka.Streams.State
 
         private string logPrefix()
             => $"stream-thread [{Thread.CurrentThread.Name}]";
-
-        /**
-         * Get the lock for the {@link TaskId}s directory if it is available
-         * @param taskId
-         * @return true if successful
-         * @throws IOException
-         */
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        bool lockTask(TaskId taskId)
-        {
-            if (!createStateDirectory)
-            {
-                return true;
-            }
-
-            FileInfo lockFile;
-            // we already have the lock so bail out here
-            LockAndOwner lockAndOwner = locks[taskId];
-            if (lockAndOwner != null && lockAndOwner.owningThread.Equals(Thread.CurrentThread.Name))
-            {
-                logger.LogTrace("{} Found cached state dir lock for task {}", logPrefix(), taskId);
-                return true;
-            }
-            else if (lockAndOwner != null)
-            {
-                // another thread owns the lock
-                return false;
-            }
-
-            try
-            {
-                lockFile = new FileInfo(Path.Combine(directoryForTask(taskId).FullName, LOCK_FILE_NAME));
-            }
-            catch (ProcessorStateException)
-            {
-                // directoryForTask could be throwing an exception if another thread
-                // has concurrently deleted the directory
-                return false;
-            }
-
-            FileChannel channel;
-
-            try
-            {
-
-                channel = getOrCreateFileChannel(taskId, lockFile.FullName);
-            }
-            catch (FileNotFoundException)
-            {
-                // FileChannel.open(..) could throw FileNotFoundException when there is another thread
-                // concurrently deleting the parent directory (i.e. the directory of the taskId) of the lock
-                // file, in this case we will return immediately indicating locking failed.
-                return false;
-            }
-
-            FileLock @lock = TryLock(channel);
-            if (@lock != null)
-            {
-                locks.Add(taskId, new LockAndOwner(Thread.CurrentThread.Name, @lock));
-
-                logger.LogDebug("{} Acquired state dir lock for task {}", logPrefix(), taskId);
-            }
-            return @lock != null;
-        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public bool lockGlobalState()
@@ -209,7 +144,7 @@ namespace Kafka.Streams.State
                 return true;
             }
 
-            FileInfo lockFile = new FileInfo(Path.Combine(globalStateDir().FullName, LOCK_FILE_NAME));
+            var lockFile = new FileInfo(Path.Combine(globalStateDir().FullName, LOCK_FILE_NAME));
             FileChannel channel;
 
             try
@@ -336,8 +271,8 @@ namespace Kafka.Streams.State
 
             foreach (var taskDir in taskDirs)
             {
-                string dirName = taskDir.FullName;
-                TaskId id = TaskId.parse(dirName);
+                var dirName = taskDir.FullName;
+                var id = TaskId.parse(dirName);
                 if (!locks.ContainsKey(id))
                 {
                     try

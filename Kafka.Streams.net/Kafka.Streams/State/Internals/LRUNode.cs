@@ -1,6 +1,4 @@
-﻿using Kafka.Common.Utils;
-
-namespace Kafka.Streams.State.Internals
+﻿namespace Kafka.Streams.State.Internals
 {
     /**
      * A simple wrapper to implement a doubly-linked list around MemoryLRUCacheBytesEntry

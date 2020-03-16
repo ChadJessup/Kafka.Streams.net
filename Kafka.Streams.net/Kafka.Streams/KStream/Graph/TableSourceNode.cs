@@ -1,10 +1,8 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.KStream.Graph;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Topologies;
 using NodaTime;
@@ -66,7 +64,7 @@ namespace Kafka.Streams.Nodes
         public override void WriteToTopology(InternalTopologyBuilder topologyBuilder)
         {
             var topicEnumerator = GetTopicNames().GetEnumerator();
-            string topicName = string.Empty;
+            var topicName = string.Empty;
 
             if (topicEnumerator.MoveNext())
             {

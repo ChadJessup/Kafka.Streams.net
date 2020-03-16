@@ -1,6 +1,5 @@
 ﻿using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.Topologies;
 using System;
 
 namespace Kafka.Streams.Topologies
@@ -43,7 +42,7 @@ namespace Kafka.Streams.Topologies
                 return false;
             }
 
-            Sink sink = (Sink)other;
+            var sink = (Sink)other;
 
             return this.Name.Equals(sink.Name)
                 && this.TopicNameExtractor.Equals(sink.TopicNameExtractor)

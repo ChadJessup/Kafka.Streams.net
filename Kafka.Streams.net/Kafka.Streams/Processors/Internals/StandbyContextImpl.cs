@@ -2,7 +2,6 @@ using Kafka.Streams.Configs;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.Tasks;
 using Microsoft.Extensions.Logging;
@@ -27,11 +26,6 @@ namespace Kafka.Streams.Processors.Internals
                 loggerFactory.CreateLogger<ThreadCache>(),//($"stream-thread [{Thread.CurrentThread.Name}] ",
                 0))
         {
-        }
-
-        IStateManager getStateMgr()
-        {
-            return stateManager;
         }
 
         public IRecordCollector recordCollector()
@@ -125,7 +119,7 @@ namespace Kafka.Streams.Processors.Internals
          */
 
         [Obsolete]
-        public ICancellable schedule(long interval, PunctuationType type, Punctuator callback)
+        public ICancellable schedule(long interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
         }
@@ -134,7 +128,7 @@ namespace Kafka.Streams.Processors.Internals
          * @throws InvalidOperationException on every invocation
          */
 
-        public override ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
+        public override ICancellable schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new InvalidOperationException("this should not happen: schedule() not supported in standby tasks.");
         }
@@ -155,7 +149,7 @@ namespace Kafka.Streams.Processors.Internals
             throw new InvalidOperationException("this should not happen: setRecordContext not supported in standby tasks.");
         }
 
-        public override void setCurrentNode(ProcessorNode currentNode)
+        public override void SetCurrentNode(IProcessorNode currentNode)
         {
             // no-op. can't throw as this is called on commit when the StateStores get flushed.
         }
@@ -163,7 +157,7 @@ namespace Kafka.Streams.Processors.Internals
         /**
          * @throws InvalidOperationException on every invocation
          */
-        public override ProcessorNode currentNode
+        public override IProcessorNode currentNode
             => throw new InvalidOperationException("this should not happen: currentNode not supported in standby tasks.");
     }
 }

@@ -1,7 +1,4 @@
-﻿using Kafka.Streams.Interfaces;
-using Kafka.Streams.Nodes;
-
-namespace Kafka.Streams.Topologies
+﻿namespace Kafka.Streams.Topologies
 {
     /**
      * Represents a {@link Topology.AddGlobalStore(org.apache.kafka.streams.state.StoreBuilder, string,

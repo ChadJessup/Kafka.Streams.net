@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Kafka.Streams.State.Internals
+﻿namespace Kafka.Streams.State.Internals
 {
     public interface IDirtyEntryFlushListener
     {

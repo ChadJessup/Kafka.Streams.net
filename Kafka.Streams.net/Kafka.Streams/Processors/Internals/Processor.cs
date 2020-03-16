@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Kafka.Streams.Interfaces;
-using Kafka.Streams.Nodes;
 using Kafka.Streams.Topologies;
 
 namespace Kafka.Streams.Processors.Internals
@@ -36,7 +34,7 @@ namespace Kafka.Streams.Processors.Internals
                 return false;
             }
 
-            IProcessor processor = (IProcessor)o;
+            var processor = (IProcessor)o;
             // omit successor to avoid infinite loops
             return Name.Equals(processor.Name)
                 && stores.Equals(processor.stores)

@@ -2,7 +2,6 @@ using Confluent.Kafka;
 using Kafka.Streams.Errors.Interfaces;
 using System;
 using System.Collections.Generic;
-using static Kafka.Streams.Errors.Interfaces.IProductionExceptionHandler;
 
 namespace Kafka.Streams.Errors
 {

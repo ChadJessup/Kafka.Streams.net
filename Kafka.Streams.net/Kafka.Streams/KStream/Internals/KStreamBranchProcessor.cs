@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamBranchProcessor<K, V> : AbstractProcessor<K, V>
     {
-        public override void process(K key, V value)
+        public override void Process(K key, V value)
         {
             //for (int i = 0; i < predicates.Length; i++)
             //{

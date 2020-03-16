@@ -1,5 +1,4 @@
 ﻿using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
 using System;
 using System.Linq;
 using System.Text;
@@ -69,7 +68,7 @@ namespace Kafka.Streams
                         return 0;
                     }
 
-                    int hash = 17;
+                    var hash = 17;
                     foreach (var @byte in bytes)
                     {
                         hash = hash * 31 + @byte.GetHashCode();
@@ -134,7 +133,7 @@ namespace Kafka.Streams
          */
         private static string ToString(byte[] b, int off, int len)
         {
-            StringBuilder result = new StringBuilder();
+            var result = new StringBuilder();
 
             if (b == null)
                 return result.ToString();
@@ -146,9 +145,9 @@ namespace Kafka.Streams
             if (off + len > b.Length)
                 len = b.Length - off;
 
-            for (int i = off; i < off + len; ++i)
+            for (var i = off; i < off + len; ++i)
             {
-                int ch = b[i] & 0xFF;
+                var ch = b[i] & 0xFF;
                 if (ch >= ' ' && ch <= '~' && ch != '\\')
                 {
                     result.Append((char)ch);

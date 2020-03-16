@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Streams.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
@@ -109,7 +108,12 @@ namespace Kafka.Streams.Processors.Interfaces
         ICancellable schedule(
             TimeSpan interval,
             PunctuationType type,
-            Punctuator callback);
+            IPunctuator callback);
+
+        ICancellable schedule(
+            TimeSpan interval,
+            PunctuationType type,
+            Action<long> callback);
 
         /**
          * Forwards a key/value pair to all downstream processors.

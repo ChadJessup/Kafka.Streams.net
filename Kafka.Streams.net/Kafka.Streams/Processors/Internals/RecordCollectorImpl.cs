@@ -5,7 +5,6 @@ using Kafka.Streams.Processors.Interfaces;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
-using System.Security.Authentication;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -30,13 +29,11 @@ namespace Kafka.Streams.Processors.Internals
 
         public RecordCollectorImpl(
             string streamTaskId,
-            LogContext logContext,
             IProductionExceptionHandler productionExceptionHandler)
         {
             this.offsets = new Dictionary<TopicPartition, long>();
 
             this.logPrefix = string.Format("task [%s] ", streamTaskId);
-            this.log = logContext.logger(GetType());
             this.productionExceptionHandler = productionExceptionHandler;
         }
 
@@ -59,7 +56,7 @@ namespace Kafka.Streams.Processors.Internals
 
             if (partitioner != null)
             {
-                List<Partition> partitions = new List<Partition>();// producer.partitionsFor(topic);
+                var partitions = new List<Partition>();// producer.partitionsFor(topic);
 
                 if (partitions.Count > 0)
                 {
@@ -87,57 +84,6 @@ namespace Kafka.Streams.Processors.Internals
                 valueSerializer);
         }
 
-        private bool productionExceptionIsFatal(Exception exception)
-        {
-            bool securityException = exception is AuthenticationException ||
-                exception is AuthorizationException;// ||
-                                                    //exception is SecurityDisabledException;
-
-            bool communicationException =
-                // exception is InvalidTopicException ||
-                // exception is UnknownServerException ||
-                // exception is SerializationException ||
-                // exception is OffsetMetadataTooLarge ||
-                exception is InvalidOperationException;
-
-            return securityException || communicationException;
-        }
-
-        private void recordSendError<K, V>(
-            K key,
-            V value,
-            long timestamp,
-            string topic,
-            Exception exception
-        )
-        {
-            string errorLogMessage = LOG_MESSAGE;
-            string errorMessage = EXCEPTION_MESSAGE;
-            // There is no documented API for detecting retriable errors, so we rely on `RetriableException`
-            // even though it's an implementation detail (i.e. we do the best we can given what's available)
-            if (exception is KafkaException && (exception as KafkaException).Error == ErrorCode.Local_Retry)
-            {
-                errorLogMessage += PARAMETER_HINT;
-                errorMessage += PARAMETER_HINT;
-            }
-
-            log.LogError(errorLogMessage, topic, exception.Message, exception);
-
-            // KAFKA-7510 put message key and value in TRACE level log so we don't leak data by default
-            log.LogTrace("Failed message: key {} value {} timestamp {}", key, value, timestamp);
-
-            sendException = new StreamsException(
-                string.Format(
-                    errorMessage,
-                    logPrefix,
-                    "an error caught",
-                    timestamp,
-                    topic,
-                    exception.ToString()),
-                exception);
-        }
-
-
         public void send<K, V>(
             string topic,
             K key,
@@ -149,8 +95,8 @@ namespace Kafka.Streams.Processors.Internals
             ISerializer<V> valueSerializer)
         {
             checkForException();
-            byte[] keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
-            byte[] valBytes = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topic));
+            var keyBytes = keySerializer.Serialize(key, new SerializationContext(MessageComponentType.Key, topic));
+            var valBytes = valueSerializer.Serialize(value, new SerializationContext(MessageComponentType.Value, topic));
 
             var serializedRecord = new DeliveryReport<byte[], byte[]>
             {
@@ -252,7 +198,7 @@ namespace Kafka.Streams.Processors.Internals
                 if (uncaughtException is KafkaException
                     && uncaughtException.Message is ProducerFencedException)
                 {
-                    KafkaException kafkaException = (KafkaException)uncaughtException;
+                    var kafkaException = (KafkaException)uncaughtException;
                     // producer.send() call may throw a KafkaException which wraps a FencedException,
                     // in this case we should throw its wrapped inner cause so that it can be captured and re-wrapped as TaskMigrationException
                     throw (ProducerFencedException)kafkaException.InnerException;

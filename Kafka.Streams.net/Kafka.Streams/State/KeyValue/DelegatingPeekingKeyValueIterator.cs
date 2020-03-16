@@ -1,6 +1,5 @@
 using Kafka.Streams.Errors;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using System;
 using System.Collections;
 using System.Collections.Generic;

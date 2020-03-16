@@ -1,42 +1,26 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using Kafka.Common;
-using Kafka.Streams.Errors;
+﻿using Kafka.Streams.Errors;
 using Kafka.Streams.KStream.Interfaces;
+using System;
 
 namespace Kafka.Streams.KStream
 {
     public class Named : INamedOperation<Named>
     {
-        private static readonly int MAX_NAME_LENGTH = 249;
+        private const int MAX_NAME_LENGTH = 249;
 
-        public string name { get; }
+        public string? Name { get; }
 
         protected Named(Named named)
-            : this(Objects.requireNonNull(named, "named can't be null").name)
+            : this(named?.Name)
         {
         }
 
-        protected Named(string name)
+        protected Named(string? name)
         {
-            this.name = name;
+            this.Name = name;
             if (name != null)
             {
-                validate(name);
+                Validate(name);
             }
         }
 
@@ -50,16 +34,20 @@ namespace Kafka.Streams.KStream
          */
         public static Named As(string name)
         {
-            Objects.requireNonNull(name, "name can't be null");
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             return new Named(name);
         }
 
-        public virtual Named withName(string name)
+        public virtual Named WithName(string name)
         {
             return new Named(name);
         }
 
-        public static void validate(string name)
+        public static void Validate(string name)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -77,7 +65,7 @@ namespace Kafka.Streams.KStream
                         " characters, name: " + name);
             }
 
-            if (!containsValidPattern(name))
+            if (!ContainsValidPattern(name))
                 throw new TopologyException("Name \"" + name + "\" is illegal, it contains a character other than " +
                         "ASCII alphanumerics, '.', '_' and '-'");
         }
@@ -85,20 +73,21 @@ namespace Kafka.Streams.KStream
         /**
          * Valid characters for Kafka topics are the ASCII alphanumerics, '.', '_', and '-'
          */
-        private static bool containsValidPattern(string topic)
+        private static bool ContainsValidPattern(string topic)
         {
-            for (int i = 0; i < topic.Length; ++i)
+            for (var i = 0; i < topic.Length; ++i)
             {
-                char c = topic[i];
+                var c = topic[i];
 
                 // We don't use Character.isLetterOrDigit(c) because it's slower
-                bool validLetterOrDigit = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z');
-                bool validChar = validLetterOrDigit || c == '.' || c == '_' || c == '-';
+                var validLetterOrDigit = (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z');
+                var validChar = validLetterOrDigit || c == '.' || c == '_' || c == '-';
                 if (!validChar)
                 {
                     return false;
                 }
             }
+
             return true;
         }
     }

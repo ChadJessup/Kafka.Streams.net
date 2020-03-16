@@ -1,4 +1,3 @@
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.Topologies;
 using System;
 

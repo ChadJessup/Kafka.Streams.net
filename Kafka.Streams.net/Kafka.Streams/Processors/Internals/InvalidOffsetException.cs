@@ -10,5 +10,13 @@ namespace Kafka.Streams.Processors.Internals
         {
             throw new NotImplementedException();
         }
+
+        public InvalidOffsetException(string message) : base(message)
+        {
+        }
+
+        public InvalidOffsetException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
     }
 }

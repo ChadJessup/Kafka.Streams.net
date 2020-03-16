@@ -158,15 +158,14 @@ namespace Kafka.Streams.Processors.Internals
 
     public class RecordQueue<K, V> : RecordQueue
     {
-        private readonly SourceNode<K, V> source;
+        private readonly ISourceNode<K, V> source;
         private readonly RecordDeserializer<K, V> recordDeserializer;
         public RecordQueue(
             TopicPartition partition,
-            SourceNode<K, V> source,
+            ISourceNode<K, V> source,
             ITimestampExtractor timestampExtractor,
             IDeserializationExceptionHandler deserializationExceptionHandler,
-            IInternalProcessorContext processorContext,
-            LogContext logContext)
+            IInternalProcessorContext processorContext)
         {
             this.source = source;
             this.partition = partition;
@@ -177,10 +176,7 @@ namespace Kafka.Streams.Processors.Internals
             recordDeserializer = new RecordDeserializer<K, V>(
                 null,
                 source,
-                deserializationExceptionHandler,
-                logContext);
-
-            this.log = logContext.logger(typeof(RecordQueue<K, V>));
+                deserializationExceptionHandler);
         }
 
         //protected override RecordDeserializer<K, V> GetRecordDeserializer<K, V>()

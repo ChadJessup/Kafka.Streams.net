@@ -27,7 +27,7 @@ namespace Kafka.Streams.Processors.Internals
         public SourceTopicsInfo(List<string> sourceTopics)
         {
             this.sourceTopics = sourceTopics;
-            foreach (string topic in sourceTopics)
+            foreach (var topic in sourceTopics)
             {
                 //List<PartitionInfo> partitions = clusterMetadata.partitionsForTopic(topic);
                 //if (partitions.Count > maxPartitions)

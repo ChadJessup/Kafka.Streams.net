@@ -33,18 +33,18 @@ namespace Kafka.Streams.KStream
      */
     public class Consumed<K, V> : INamedOperation<Consumed<K, V>>
     {
-        public ISerde<K> keySerde { get; private set; }
-        public ISerde<V> valueSerde { get; private set; }
-        public ITimestampExtractor timestampExtractor;
-        protected AutoOffsetReset? resetPolicy;
-        protected string processorName;
+        public ISerde<K>? keySerde { get; private set; }
+        public ISerde<V>? valueSerde { get; private set; }
+        public ITimestampExtractor? timestampExtractor { get; private set; }
+        protected AutoOffsetReset? resetPolicy { get; private set; }
+        protected string? processorName { get; private set; }
 
         private Consumed(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            ITimestampExtractor timestampExtractor,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
+            ITimestampExtractor? timestampExtractor,
             AutoOffsetReset? resetPolicy,
-            string processorName)
+            string? processorName)
         {
             this.keySerde = keySerde;
             this.valueSerde = valueSerde;
@@ -58,11 +58,11 @@ namespace Kafka.Streams.KStream
          * @param consumed  the instance of {@link Consumed} to copy
          */
         protected Consumed(Consumed<K, V> consumed)
-            : this(consumed.keySerde,
-                 consumed.valueSerde,
-                 consumed.timestampExtractor,
-                 consumed.resetPolicy,
-                 consumed.processorName)
+            : this(consumed?.keySerde,
+                 consumed?.valueSerde,
+                 consumed?.timestampExtractor,
+                 consumed?.resetPolicy,
+                 consumed?.processorName)
         {
         }
 
@@ -78,9 +78,9 @@ namespace Kafka.Streams.KStream
          * @return a new instance of {@link Consumed}
          */
         public static Consumed<K, V> with(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde,
-            ITimestampExtractor timestampExtractor,
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde,
+            ITimestampExtractor? timestampExtractor,
             AutoOffsetReset? resetPolicy)
         {
             return new Consumed<K, V>(keySerde, valueSerde, timestampExtractor, resetPolicy, null);
@@ -96,8 +96,8 @@ namespace Kafka.Streams.KStream
          * @return a new instance of {@link Consumed}
          */
         public static Consumed<K, V> with(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde)
         {
             return new Consumed<K, V>(keySerde, valueSerde, null, null, null);
         }
@@ -199,7 +199,7 @@ namespace Kafka.Streams.KStream
          * @param processorName the processor name to be used. If {@code null} a default processor name will be generated
          * @return this
          */
-        public Consumed<K, V> withName(string processorName)
+        public Consumed<K, V> WithName(string processorName)
         {
             this.processorName = processorName;
             return this;

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using Kafka.Streams.Errors;
-using Kafka.Streams.Processors;
 using System;
 using System.Linq;
 
@@ -58,7 +57,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
                 }
             }
 
-            string newChain = chain.Equals("") ? streamsGraphNode.NodeName : streamsGraphNode.NodeName + "=>" + chain;
+            var newChain = chain.Equals("") ? streamsGraphNode.NodeName : streamsGraphNode.NodeName + "=>" + chain;
 
             if (!streamsGraphNode.ParentNodes.Any())
             {
@@ -72,7 +71,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
             long inheritedGrace = -1;
             foreach (StreamsGraphNode parentNode in streamsGraphNode.ParentNodes)
             {
-                long parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
+                var parentGrace = findAndVerifyWindowGrace(parentNode, newChain);
                 inheritedGrace = Math.Max(inheritedGrace, parentGrace);
             }
 
@@ -83,38 +82,5 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
             return inheritedGrace;
         }
-
-        private static long extractGracePeriod<K, V>(StreamsGraphNode node)
-        {
-            if (node is StatefulProcessorNode<K, V>)
-            {
-                //                IProcessorSupplier IProcessorSupplier = ((StatefulProcessorNode<K, V>)node).processorParameters().IProcessorSupplier();
-                //if (IProcessorSupplier is KStreamWindowAggregate)
-                //{
-                //    KStreamWindowAggregate kStreamWindowAggregate = (KStreamWindowAggregate)IProcessorSupplier;
-                //    Windows windows = kStreamWindowAggregate.windows();
-                //    return windows.gracePeriodMs();
-                //}
-                //else if (IProcessorSupplier is KStreamSessionWindowAggregate)
-                //{
-                //    KStreamSessionWindowAggregate kStreamSessionWindowAggregate = (KStreamSessionWindowAggregate)IProcessorSupplier;
-                //    SessionWindows windows = kStreamSessionWindowAggregate.windows();
-                //    return windows.gracePeriodMs() + windows.inactivityGap();
-                //}
-                //else
-                //{
-
-                //    return null;
-                //}
-            }
-            else
-            {
-
-                //return null;
-            }
-
-            return 0;
-        }
-
     }
 }

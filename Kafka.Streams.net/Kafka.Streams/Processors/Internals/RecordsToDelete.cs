@@ -37,7 +37,7 @@
             if (this == o) return true;
             if (o == null || this.GetType() != o.GetType()) return false;
 
-            RecordsToDelete that = (RecordsToDelete)o;
+            var that = (RecordsToDelete)o;
 
             return this.offset == that.offset;
         }

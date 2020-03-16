@@ -1,6 +1,6 @@
 ﻿using Confluent.Kafka;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
+using Kafka.Streams.Clients.Producers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
@@ -15,9 +15,8 @@ namespace Kafka.Streams.Tasks
 {
     public class TaskCreator : AbstractTaskCreator<StreamTask>
     {
-        private readonly ThreadCache cache;
+        private readonly ThreadCache? cache;
         private readonly IKafkaClientSupplier clientSupplier;
-        private readonly string threadClientId;
         private readonly IProducer<byte[], byte[]> threadProducer;
 
         public TaskCreator(
@@ -26,11 +25,10 @@ namespace Kafka.Streams.Tasks
             StreamsConfig config,
             StateDirectory stateDirectory,
             IChangelogReader storeChangelogReader,
-            ThreadCache cache,
+            ThreadCache? cache,
             IClock clock,
             IKafkaClientSupplier clientSupplier,
-            IProducer<byte[], byte[]> threadProducer,
-            string threadClientId)
+            BaseProducer<byte[], byte[]> threadProducer)
         : base(
             logger,
             builder,
@@ -42,29 +40,29 @@ namespace Kafka.Streams.Tasks
             this.cache = cache;
             this.clientSupplier = clientSupplier;
             this.threadProducer = threadProducer;
-            this.threadClientId = threadClientId;
         }
 
         public override StreamTask createTask(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId taskId,
+            string threadClientId,
             HashSet<TopicPartition> partitions)
         {
             return new StreamTask(
                 taskId,
                 new List<TopicPartition>(partitions),
-                builder.build(taskId.topicGroupId),
+                builder.Build(taskId.topicGroupId),
                 consumer,
                 storeChangelogReader,
                 config,
                 stateDirectory,
                 cache,
                 clock,
-                new BasicProducerSupplier(CreateProducer(taskId)));
+                new BasicProducerSupplier(CreateProducer(taskId, threadClientId)));
         }
 
-        public IProducer<byte[], byte[]> CreateProducer(TaskId id)
+        public IProducer<byte[], byte[]> CreateProducer(TaskId id, string threadClientId)
         {
             // eos
             if (threadProducer == null)

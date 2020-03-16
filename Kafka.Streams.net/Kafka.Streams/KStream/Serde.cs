@@ -16,7 +16,6 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream

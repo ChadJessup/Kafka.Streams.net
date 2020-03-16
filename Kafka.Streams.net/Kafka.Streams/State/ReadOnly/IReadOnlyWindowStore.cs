@@ -1,6 +1,5 @@
 using Kafka.Streams.KStream;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Window;
 using System;
 
@@ -13,7 +12,7 @@ namespace Kafka.Streams.State.ReadOnly
      * @param Type of keys
      * @param Type of values
      */
-    public interface IReadOnlyWindowStore<K, V>
+    public interface IReadOnlyWindowStore<K, V> : IReadOnlyWindowStore
     {
         /**
          * Get the value of key from a window.
@@ -164,5 +163,9 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentException if duration is negative or can't be represented as {@code long milliseconds}
          */
         IKeyValueIterator<Windowed<K>, V> fetchAll(DateTime from, DateTime to);
+    }
+
+    public interface IReadOnlyWindowStore
+    {
     }
 }

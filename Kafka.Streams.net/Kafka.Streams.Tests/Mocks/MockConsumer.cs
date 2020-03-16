@@ -19,7 +19,6 @@ namespace Kafka.Streams.Tests
 
     public class MockConsumer<TKey, TValue> : BaseConsumer<TKey, TValue>
     {
-
         public MockConsumer(IConsumer<TKey, TValue> mockConsumer)
             : base(null, mockConsumer)
         {

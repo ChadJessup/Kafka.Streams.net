@@ -85,7 +85,7 @@ namespace Kafka.Streams.Tasks
         public RuntimeException Suspend()
         {
             logger.LogTrace($"Suspending running {taskTypeName} {RunningTaskIds()}");
-            RuntimeException firstException = new RuntimeException();
+            var firstException = new RuntimeException();
 
             firstException = Interlocked.Exchange(ref firstException, SuspendTasks(running.Values.ToList()));
             logger.LogTrace($"Close created {taskTypeName} {created.Keys}");
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tasks
 
         private RuntimeException SuspendTasks(List<T> tasks)
         {
-            RuntimeException firstException = new RuntimeException(null);
+            var firstException = new RuntimeException(null);
 
             for (IEnumerator<T> it = tasks.GetEnumerator(); it.MoveNext();)
             {
@@ -277,7 +277,7 @@ namespace Kafka.Streams.Tasks
 
         public string ToString(string indent)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             describe(builder, running.Values.ToList(), indent, "Running:");
             describe(builder, suspended.Values.ToList(), indent, "Suspended:");
@@ -292,17 +292,38 @@ namespace Kafka.Streams.Tasks
             string indent,
             string name)
         {
+            if (builder is null)
+            {
+                throw new ArgumentNullException(nameof(builder));
+            }
+
+            if (tasks is null)
+            {
+                throw new ArgumentNullException(nameof(tasks));
+            }
+
+            if (string.IsNullOrEmpty(indent))
+            {
+                throw new ArgumentException("message", nameof(indent));
+            }
+
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("message", nameof(name));
+            }
+
             builder.Append(indent).Append(name);
             foreach (T t in tasks)
             {
                 builder.Append(indent).Append(t.ToString(indent + "\t\t"));
             }
+
             builder.Append("\n");
         }
 
         public virtual List<T> allTasks()
         {
-            List<T> tasks = new List<T>();
+            var tasks = new List<T>();
 
             tasks.AddRange(running.Values);
             tasks.AddRange(suspended.Values);
@@ -313,7 +334,7 @@ namespace Kafka.Streams.Tasks
 
         public virtual HashSet<TaskId> allAssignedTaskIds()
         {
-            HashSet<TaskId> taskIds = new HashSet<TaskId>();
+            var taskIds = new HashSet<TaskId>();
             taskIds.UnionWith(running.Keys);
             taskIds.UnionWith(suspended.Keys);
             taskIds.UnionWith(created.Keys);
@@ -339,8 +360,8 @@ namespace Kafka.Streams.Tasks
          */
         public int commit()
         {
-            int committed = 0;
-            RuntimeException firstException = null;
+            var committed = 0;
+            RuntimeException? firstException = null;
             for (IEnumerator<T> it = running.Values.GetEnumerator(); it.MoveNext();)
             {
                 T task = it.Current;
@@ -355,8 +376,8 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (TaskMigratedException e)
                 {
-                    logger.LogInformation(e, "Failed to commit {} {} since it got migrated to another thread already. " +
-                            "Closing it as zombie before triggering a new rebalance.", taskTypeName, task.id);
+                    logger.LogInformation(e, $"Failed to commit {taskTypeName} {task.id} since it got migrated to another thread already. " +
+                            "Closing it as zombie before triggering a new rebalance.");
 
                     RuntimeException fatalException = closeZombieTask(task);
                     if (fatalException != null)
@@ -374,6 +395,7 @@ namespace Kafka.Streams.Tasks
                             taskTypeName,
                             task.id,
                             t);
+
                     if (firstException == null)
                     {
                         firstException = t;
@@ -391,7 +413,7 @@ namespace Kafka.Streams.Tasks
 
         public void closeNonAssignedSuspendedTasks(Dictionary<TaskId, HashSet<TopicPartition>> newAssignment)
         {
-            if (!newAssignment?.Any() ?? true)
+            if (newAssignment == null || !newAssignment.Any())
             {
                 return;
             }
@@ -422,7 +444,7 @@ namespace Kafka.Streams.Tasks
 
         public void close(bool clean)
         {
-            RuntimeException firstException = new RuntimeException(null);
+            var firstException = new RuntimeException(null);
             foreach (T task in allTasks())
             {
                 try

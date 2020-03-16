@@ -14,11 +14,11 @@ namespace Kafka.Streams.KStream
      */
     public class Grouped<K, V> : INamedOperation<Grouped<K, V>>
     {
-        public ISerde<K> keySerde { get; private set; }
-        public ISerde<V> valueSerde { get; private set; }
-        public string name { get; }
+        public ISerde<K>? keySerde { get; private set; }
+        public ISerde<V>? valueSerde { get; private set; }
+        public string? name { get; }
 
-        private Grouped(string name, ISerde<K> keySerde, ISerde<V> valueSerde)
+        private Grouped(string? name, ISerde<K>? keySerde, ISerde<V>? valueSerde)
         {
             this.name = name;
             this.keySerde = keySerde;
@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream
         }
 
         protected Grouped(Grouped<K, V> grouped)
-         : this(grouped.name, grouped.keySerde, grouped.valueSerde)
+         : this(grouped?.name, grouped?.keySerde, grouped?.valueSerde)
         {
         }
 
@@ -104,8 +104,8 @@ namespace Kafka.Streams.KStream
          * @see KTable#groupBy(KeyValueMapper, Grouped)
          */
         public static Grouped<K, V> With(
-            ISerde<K> keySerde,
-            ISerde<V> valueSerde)
+            ISerde<K>? keySerde,
+            ISerde<V>? valueSerde)
         {
             return new Grouped<K, V>(null, keySerde, valueSerde);
         }
@@ -117,7 +117,7 @@ namespace Kafka.Streams.KStream
          * @param name the name used for the processor name and as part of the repartition topic name if required
          * @return a new {@link Grouped} instance configured with the name
          * */
-        public Grouped<K, V> withName(string name)
+        public Grouped<K, V> WithName(string name)
         {
             return new Grouped<K, V>(name, keySerde, valueSerde);
         }

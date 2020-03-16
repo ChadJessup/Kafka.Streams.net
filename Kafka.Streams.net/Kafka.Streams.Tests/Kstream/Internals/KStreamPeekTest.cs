@@ -1,0 +1,57 @@
+//using Kafka.Streams.Configs;
+//using Kafka.Streams.Kafka.Streams;
+//using Kafka.Streams.KStream;
+//using Kafka.Streams.KStream.Interfaces;
+//using System.Collections.Generic;
+
+//namespace Kafka.Streams.KStream.Internals
+//{
+//    public class KStreamPeekTest
+//    {
+//        private string topicName = "topic";
+//        private ConsumerRecordFactory<int, string> recordFactory = new ConsumerRecordFactory<>(Serdes.Int(), Serdes.String());
+//        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+
+//        [Fact]
+//        public void shouldObserveStreamElements()
+//        {
+//            var builder = new StreamsBuilder();
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            List<KeyValue<int, string>> peekObserved = new List<>(), streamObserved = new List<>();
+//            stream.peek(collect(peekObserved)).ForEach(collect(streamObserved));
+
+//            var driver = new TopologyTestDriver(builder.Build(), props);
+//            List<KeyValue<int, string>> expected = new List<>();
+//            for (var key = 0; key < 32; key++)
+//            {
+//                var value = "V" + key;
+//                driver.pipeInput(recordFactory.create(topicName, key, value));
+//                expected.Add(new KeyValue<>(key, value));
+//            }
+
+//            Assert.Equal(expected, peekObserved);
+//            Assert.Equal(expected, streamObserved);
+//        }
+
+//        [Fact]
+//        public void shouldNotAllowNullAction()
+//        {
+//            var builder = new StreamsBuilder();
+//            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
+//            try
+//            {
+//                stream.peek(null);
+//                Assert.False(true, "expected null action to throw NPE");
+//            }
+//            catch (NullPointerException expected)
+//            {
+//                // do nothing
+//            }
+//        }
+
+//        private static ForeachAction<K, V> collect<K, V>(List<KeyValue<K, V>> into)
+//        {
+//            return (key, value) => into.add(new KeyValue<>(key, value));
+//        }
+//    }
+//}

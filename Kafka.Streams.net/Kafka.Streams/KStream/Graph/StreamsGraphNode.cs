@@ -24,8 +24,8 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public string[] ParentNodeNames()
         {
-            string[] parentNames = new string[ParentNodes.Count];
-            int index = 0;
+            var parentNames = new string[ParentNodes.Count];
+            var index = 0;
 
             foreach (var parentNode in ParentNodes)
             {
@@ -100,7 +100,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
 
         public override string ToString()
         {
-            string[] parentNames = ParentNodeNames();
+            var parentNames = ParentNodeNames();
 
             return $"StreamsGraphNode{{" +
                    $"nodeName='{this.NodeName}'" +

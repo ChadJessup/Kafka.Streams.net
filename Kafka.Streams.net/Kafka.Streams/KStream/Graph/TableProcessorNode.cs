@@ -1,4 +1,3 @@
-using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.Topologies;
@@ -46,7 +45,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            string processorName = processorParameters.ProcessorName;
+            var processorName = processorParameters.ProcessorName;
             topologyBuilder.AddProcessor(processorName, processorParameters.ProcessorSupplier, ParentNodeNames());
 
             if (storeNames.Length > 0)

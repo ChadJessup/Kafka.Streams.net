@@ -26,7 +26,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public int partition(string topic, Windowed<K> windowedKey, V value, int numPartitions)
         {
-            byte[] keyBytes = serializer.serializeBaseKey(topic, windowedKey);
+            var keyBytes = serializer.SerializeBaseKey(topic, windowedKey);
 
             // hash the keyBytes to choose a partition
             return 0; // toPositive(Utils.murmur2(keyBytes)) % numPartitions;

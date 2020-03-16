@@ -1,11 +1,9 @@
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.State.Internals;
 using NodaTime;
 using System;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     public class KeyValueStoreBuilder<K, V> : AbstractStoreBuilder<K, V, IKeyValueStore<K, V>>
     {
@@ -31,26 +29,6 @@ namespace Kafka.Streams.State.KeyValue
                 // this.clock,
                 // keySerde,
                 // valueSerde);
-        }
-
-        private IKeyValueStore<Bytes, byte[]> maybeWrapCaching(IKeyValueStore<Bytes, byte[]> inner)
-        {
-            if (!enableCaching)
-            {
-                return inner;
-            }
-
-            return null;// new CachingKeyValueStore(inner);
-        }
-
-        private IKeyValueStore<Bytes, byte[]> maybeWrapLogging(IKeyValueStore<Bytes, byte[]> inner)
-        {
-            if (!enableLogging)
-            {
-                return inner;
-            }
-
-            return new ChangeLoggingKeyValueBytesStore(inner);
         }
     }
 }

@@ -1,23 +1,8 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using Confluent.Kafka;
+using Kafka.Streams.Configs;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.KStream.Internals;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -31,29 +16,37 @@ namespace Kafka.Streams.KStream
      */
     public class TimeWindowedSerializer<T> : IWindowedSerializer<T>
     {
-        private readonly ISerializer<T> inner;
+        private readonly IServiceProvider services;
+        private ISerializer<T> inner;
 
-        // Default constructor needed by Kafka
+        public TimeWindowedSerializer(IServiceProvider services)
+        {
+            this.services = services;
+        }
 
-        public TimeWindowedSerializer() { }
-
-        public TimeWindowedSerializer(ISerializer<T> inner)
+        public TimeWindowedSerializer(IServiceProvider services, ISerializer<T> inner)
+            : this(services)
         {
             this.inner = inner;
         }
 
-        public void configure(Dictionary<string, object> configs, bool isKey)
+        public void Configure(Dictionary<string, string?> configs, bool isKey)
         {
             if (inner == null)
             {
-                //string propertyName = isKey ? StreamsConfig.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS : StreamsConfig.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
-                //string value = (string)configs[propertyName];
+                string propertyName = isKey
+                    ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
+                    : StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
+
+                var value = configs[propertyName];
+                var t = Type.GetType(value);
                 try
                 {
-//                    inner = Utils.newInstance(value, ISerde).Serializer();
-//                    inner.Configure(configs, isKey);
+                    var s = (ISerde<T>)ActivatorUtilities.CreateInstance(this.services, t);
+                    inner = s.Serializer;
+                    // inner.Configure(configs, isKey);
                 }
-                catch (System.TypeAccessException e)
+                catch (TypeAccessException e)
                 {
                     //throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
                     //throw new Exception($"{propertyName}, {value}, Serde {value} could not be found.");
@@ -61,7 +54,7 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        public byte[] serialize(string topic, Windowed<T> data)
+        public byte[]? Serialize(string topic, Windowed<T> data)
         {
             //WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
 
@@ -74,7 +67,7 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public void close()
+        public void Close()
         {
             if (inner != null)
             {
@@ -83,7 +76,7 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public byte[] serializeBaseKey(string topic, Windowed<T> data)
+        public byte[] SerializeBaseKey(string topic, Windowed<T> data)
         {
             return null;
             //WindowedSerdes.verifyInnerSerializerNotNull(inner, this);
@@ -92,14 +85,14 @@ namespace Kafka.Streams.KStream
         }
 
         // Only for testing
-        ISerializer<T> innerSerializer()
+        public ISerializer<T> InnerSerializer()
         {
             return inner;
         }
 
         public byte[] Serialize(Windowed<T> data, SerializationContext context)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

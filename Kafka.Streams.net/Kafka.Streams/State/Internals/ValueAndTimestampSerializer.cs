@@ -66,8 +66,8 @@ namespace Kafka.Streams.State.Internals
                 return null;
             }
 
-            byte[] rawValue = valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
-            byte[] rawTimestamp = timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
+            var rawValue = valueSerializer.Serialize(data, new SerializationContext(MessageComponentType.Value, topic));
+            var rawTimestamp = timestampSerializer.Serialize(timestamp, new SerializationContext(MessageComponentType.Value, topic));
 
             return new ByteBuffer()
                 .allocate(rawTimestamp.Length + rawValue.Length)

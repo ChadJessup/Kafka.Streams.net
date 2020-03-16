@@ -1,5 +1,4 @@
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.TimeStamped
 {
@@ -9,7 +8,11 @@ namespace Kafka.Streams.State.TimeStamped
      * @param The key type
      * @param The value type
      */
-    public interface ITimestampedKeyValueStore<K, V> : IKeyValueStore<K, ValueAndTimestamp<V>>
+    public interface ITimestampedKeyValueStore<K, V> : ITimestampedKeyValueStore, IKeyValueStore<K, ValueAndTimestamp<V>>
+    {
+    }
+
+    public interface ITimestampedKeyValueStore
     {
     }
 }

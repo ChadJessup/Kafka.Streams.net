@@ -1,5 +1,5 @@
 using Kafka.Streams.KStream;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Window;
 using System;

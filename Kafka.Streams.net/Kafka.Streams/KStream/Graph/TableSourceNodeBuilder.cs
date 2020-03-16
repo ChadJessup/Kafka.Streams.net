@@ -1,7 +1,5 @@
-﻿using Kafka.Common.Utils;
-using Kafka.Streams.Nodes;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+﻿using Kafka.Streams.Nodes;
+using Kafka.Streams.State.KeyValues;
 using NodaTime;
 
 namespace Kafka.Streams.KStream.Internals.Graph

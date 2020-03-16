@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processors.Internals.Assignments
                 return false;
             }
 
-            Pair pair = (Pair)o;
+            var pair = (Pair)o;
 
             return (task1.Equals(pair.task1) &&
                     task2.Equals(pair.task2));

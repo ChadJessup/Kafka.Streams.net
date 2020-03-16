@@ -1,8 +1,6 @@
 using System.Collections;
-using Kafka.Streams.KStream;
-using Kafka.Streams.State.Interfaces;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     public class KeyValueIteratorFacade<K, V> : IKeyValueIterator<K, V>
     {
@@ -31,7 +29,7 @@ namespace Kafka.Streams.State.KeyValue
             var innerKeyValue = iterator.Current;
 
             var vat = (ValueAndTimestamp<V>)(object)innerKeyValue.Value;
-            return KeyValue<K, V>.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(vat));
+            return KeyValue.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(vat));
         }
 
         public void close()
@@ -51,7 +49,6 @@ namespace Kafka.Streams.State.KeyValue
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls
-        private readonly IKeyValueIterator<Windowed<K>, ValueAndTimestamp<V>> innerIterator1;
 
         protected virtual void Dispose(bool disposing)
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kafka.Streams.Interfaces;
+using System;
 
 namespace Kafka.Streams.KStream.Mappers
 {
@@ -9,7 +10,7 @@ namespace Kafka.Streams.KStream.Mappers
         public KeyValueMapper(Func<K, V, VR> mapper)
             => this.mapper = mapper;
 
-        public VR apply(K key, V value)
+        public VR Apply(K key, V value)
             => this.mapper(key, value);
     }
 }

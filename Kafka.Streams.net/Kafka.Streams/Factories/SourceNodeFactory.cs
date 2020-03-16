@@ -14,20 +14,22 @@ namespace Kafka.Streams.Factories
 {
     public class SourceNodeFactory<K, V> : NodeFactory<K, V>, ISourceNodeFactory
     {
-        private readonly ITimestampExtractor timestampExtractor;
-        private readonly IDeserializer<V> valueDeserializer;
-        private readonly IDeserializer<K> keyDeserializer;
+        private readonly InternalTopologyBuilder internalTopologyBuilder;
+        private readonly ITimestampExtractor? timestampExtractor;
+        private readonly IDeserializer<V>? valueDeserializer;
+        private readonly IDeserializer<K>? keyDeserializer;
 
         public SourceNodeFactory(
             IClock clock,
             string name,
-            string[] topics,
+            string[]? topics,
             Regex? pattern,
-            ITimestampExtractor timestampExtractor,
-            Dictionary<string, Regex> topicToPatterns,
-            Dictionary<string, List<string>> nodeToSourceTopics,
-            IDeserializer<K> keyDeserializer,
-            IDeserializer<V> valueDeserializer)
+            ITimestampExtractor? timestampExtractor,
+            Dictionary<string, Regex>? topicToPatterns,
+            Dictionary<string, List<string>>? nodeToSourceTopics,
+            InternalTopologyBuilder internalTopologyBuilder,
+            IDeserializer<K>? keyDeserializer,
+            IDeserializer<V>? valueDeserializer)
             : base(clock, name, Array.Empty<string>())
         {
             this.clock = clock;
@@ -35,6 +37,7 @@ namespace Kafka.Streams.Factories
                 ? topics.ToList()
                 : new List<string>();
 
+            this.internalTopologyBuilder = internalTopologyBuilder;
             this.nodeToSourceTopics = nodeToSourceTopics;
             this.timestampExtractor = timestampExtractor;
             this.valueDeserializer = valueDeserializer;
@@ -49,24 +52,22 @@ namespace Kafka.Streams.Factories
 
         private readonly Dictionary<string, Regex> topicToPatterns;
 
-        private readonly Dictionary<string, List<string>> nodeToSourceTopics;
+        private readonly Dictionary<string, List<string>>? nodeToSourceTopics;
 
         public Regex? Pattern { get; }
-
-        private readonly InternalTopologyBuilder internalTopologyBuilder;
 
         public List<string> GetTopics(List<string> subscribedTopics)
         {
             // if it is subscribed via patterns, it is possible that the topic metadata has not been updated
             // yet and hence the map from source node to topics is stale, in this case we put the pattern as a place holder;
             // this should only happen for debugging since during runtime this function should always be called after the metadata has updated.
-            if (!subscribedTopics.Any())
+            if (!subscribedTopics.Any() && Pattern != null)
             {
                 return new List<string>(new[] { Pattern.ToString() });
             }
 
-            List<string> matchedTopics = new List<string>();
-            foreach (string update in subscribedTopics ?? Enumerable.Empty<string>())
+            var matchedTopics = new List<string>();
+            foreach (var update in subscribedTopics ?? Enumerable.Empty<string>())
             {
                 if (Pattern == topicToPatterns[update])
                 {
@@ -90,7 +91,7 @@ namespace Kafka.Streams.Factories
             return matchedTopics;
         }
 
-        public override ProcessorNode<K, V> Build()
+        public override IProcessorNode Build()
         {
             List<string> sourceTopics = nodeToSourceTopics[Name];
 
@@ -121,14 +122,15 @@ namespace Kafka.Streams.Factories
 
         private bool IsMatch(string topic)
         {
-            return Pattern.IsMatch(topic);
+            return Pattern?.IsMatch(topic) ?? false;
         }
 
         public override INode Describe()
         {
-            return new Source(Name, Topics.Count == 0
-                ? null
-                : new HashSet<string>(Topics),
+            return new Source(Name,
+                Topics.Count == 0
+                    ? null
+                    : new HashSet<string>(Topics),
                 Pattern);
         }
     }

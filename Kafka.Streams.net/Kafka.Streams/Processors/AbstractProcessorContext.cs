@@ -14,45 +14,55 @@ using System.IO;
 
 namespace Kafka.Streams.Processors
 {
-    public abstract class AbstractProcessorContext<K, V> : IInternalProcessorContext
+    public abstract class AbstractProcessorContext<K, V> : AbstractProcessorContext
     {
-        public static string NONEXIST_TOPIC = "__null_topic__";
+        public AbstractProcessorContext(
+            TaskId taskId,
+            StreamsConfig config,
+            IStateManager stateManager,
+            ThreadCache cache)
+            : base(
+                taskId,
+                config,
+                stateManager,
+                cache)
+        {
+            keySerde = (ISerde<K>)config.defaultKeySerde();
+            valueSerde = (ISerde<V>)config.defaultValueSerde();
+        }
+
+        public ISerde<K> keySerde { get; }
+        public ISerde<V> valueSerde { get; }
+    }
+
+    public abstract class AbstractProcessorContext : IInternalProcessorContext
+    {
+        public const string NONEXIST_TOPIC = "__null_topic__";
         private readonly StreamsConfig config;
         private readonly ThreadCache cache;
         private bool initialized;
         public virtual ProcessorRecordContext recordContext { get; protected set; }
 
-        public virtual ProcessorNode currentNode { get; set; }
+        public virtual IProcessorNode currentNode { get; set; }
 
-        public ProcessorNode<K, V> GetCurrentNode<K, V>()
-        {
-            return (ProcessorNode<K, V>)this.currentNode;
-        }
-        public ProcessorNode GetCurrentNode()
+        public IProcessorNode GetCurrentNode()
             => this.currentNode;
 
         protected IStateManager stateManager { get; }
 
-        //public IStreamsMetrics metrics { get; }
         public TaskId taskId { get; }
         public string applicationId { get; }
-        public ISerde<K> keySerde { get; }
-        public ISerde<V> valueSerde { get; }
 
         public AbstractProcessorContext(
             TaskId taskId,
             StreamsConfig config,
-            //StreamsMetricsImpl metrics,
             IStateManager stateManager,
             ThreadCache cache)
         {
             this.taskId = taskId;
             this.applicationId = config.ApplicationId;
             this.config = config;
-            //this.metrics = metrics;
             this.stateManager = stateManager;
-            valueSerde = (ISerde<V>)config.defaultValueSerde();
-            keySerde = (ISerde<K>)config.defaultKeySerde();
             this.cache = cache;
         }
 
@@ -84,7 +94,7 @@ namespace Kafka.Streams.Processors
                     throw new InvalidOperationException("This should not happen as Topic should only be called while a record is processed");
                 }
 
-                string topic = recordContext.Topic;
+                var topic = recordContext.Topic;
 
                 if (topic.Equals(NONEXIST_TOPIC))
                 {
@@ -158,7 +168,7 @@ namespace Kafka.Streams.Processors
 
         public Dictionary<string, object> appConfigs()
         {
-            Dictionary<string, object> combined = new Dictionary<string, object>();
+            var combined = new Dictionary<string, object>();
             //combined.putAll(config.originals());
             //combined.putAll(config.Values);
             return combined;
@@ -174,10 +184,8 @@ namespace Kafka.Streams.Processors
             this.recordContext = recordContext;
         }
 
-        public virtual void setCurrentNode(ProcessorNode current)
-            => this.currentNode = currentNode;
-        public virtual void setCurrentNode<K, V>(ProcessorNode<K, V> currentNode)
-            => this.currentNode = currentNode;
+        public virtual void SetCurrentNode(IProcessorNode current)
+            => this.currentNode = current;
 
         public ThreadCache getCache()
         {
@@ -199,7 +207,7 @@ namespace Kafka.Streams.Processors
             throw new NotImplementedException();
         }
 
-        public virtual ICancellable schedule(TimeSpan interval, PunctuationType type, Punctuator callback)
+        public virtual ICancellable schedule(TimeSpan interval, PunctuationType type, IPunctuator callback)
         {
             throw new NotImplementedException();
         }
@@ -220,6 +228,11 @@ namespace Kafka.Streams.Processors
         }
 
         public virtual void commit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public ICancellable schedule(TimeSpan interval, PunctuationType type, Action<long> callback)
         {
             throw new NotImplementedException();
         }

@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tasks
          */
         public static TaskId parse(string taskIdStr)
         {
-            int index = taskIdStr.IndexOf('_');
+            var index = taskIdStr.IndexOf('_');
 
             if (index <= 0 || index + 1 >= taskIdStr.Length)
             {
@@ -41,8 +41,8 @@ namespace Kafka.Streams.Tasks
 
             try
             {
-                int topicGroupId = int.Parse(taskIdStr.Substring(0, index));
-                int partition = int.Parse(taskIdStr.Substring(index + 1));
+                var topicGroupId = int.Parse(taskIdStr.Substring(0, index));
+                var partition = int.Parse(taskIdStr.Substring(index + 1));
 
                 return new TaskId(topicGroupId, partition);
             }
@@ -94,25 +94,23 @@ namespace Kafka.Streams.Tasks
 
             if (o is TaskId)
             {
-                TaskId other = (TaskId)o;
-                return other.topicGroupId == this.topicGroupId && other.partition == this.partition;
+                return ((TaskId)o).topicGroupId == this.topicGroupId && ((TaskId)o).partition == this.partition;
             }
             else
             {
-
                 return false;
             }
         }
 
         public override int GetHashCode()
         {
-            long n = ((long)topicGroupId << 32) | (long)partition;
+            var n = ((long)topicGroupId << 32) | (long)partition;
             return (int)(n % 0xFFFFFFFFL);
         }
 
         public int CompareTo(TaskId other)
         {
-            int compare = this.topicGroupId.CompareTo(other.topicGroupId);
+            var compare = this.topicGroupId.CompareTo(other.topicGroupId);
 
             return compare != 0
                 ? compare

@@ -1,7 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Common;
+using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Errors;
-using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
 using Kafka.Streams.Topologies;
@@ -15,7 +15,7 @@ using System.Threading;
 
 namespace Kafka.Streams.Tasks
 {
-    public class TaskManager
+    public class TaskManager : ITaskManager
     {
         // initialize the task list
         // activeTasks needs to be concurrent as it can be accessed
@@ -40,6 +40,7 @@ namespace Kafka.Streams.Tasks
         private Dictionary<TaskId, HashSet<TopicPartition>> assignedActiveTasks;
         private Dictionary<TaskId, HashSet<TopicPartition>> assignedStandbyTasks;
 
+        private string threadClientId;
         private IConsumer<byte[], byte[]> consumer;
 
         public TaskManager(
@@ -47,7 +48,7 @@ namespace Kafka.Streams.Tasks
             ILogger<TaskManager> logger,
             IChangelogReader changelogReader,
             //Guid processId,
-            IConsumer<byte[], byte[]> restoreConsumer,
+            RestoreConsumer restoreConsumer,
             StreamsMetadataState streamsMetadataState,
             AbstractTaskCreator<StreamTask> taskCreator,
             AbstractTaskCreator<StandbyTask> standbyTaskCreator,
@@ -98,7 +99,7 @@ namespace Kafka.Streams.Tasks
                 return;
             }
 
-            Dictionary<TaskId, HashSet<TopicPartition>> newTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+            var newTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned tasks and reopen re-assigned tasks
             logger.LogDebug($"Adding assigned tasks as active: {assignedActiveTasks}");
 
@@ -140,7 +141,7 @@ namespace Kafka.Streams.Tasks
             // => other thread will call removeSuspendedTasks(); eventually
             logger.LogTrace($"New active tasks to be created: {newTasks}");
 
-            foreach (StreamTask task in taskCreator.createTasks(this.loggerFactory, consumer, newTasks))
+            foreach (StreamTask task in taskCreator.createTasks(this.loggerFactory, consumer, this.threadClientId, newTasks))
             {
                 active.addNewTask(task);
             }
@@ -155,15 +156,13 @@ namespace Kafka.Streams.Tasks
             }
 
             logger.LogDebug("Adding assigned standby tasks {}", assignedStandbyTasks);
-            Dictionary<TaskId, HashSet<TopicPartition>> newStandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
+            var newStandbyTasks = new Dictionary<TaskId, HashSet<TopicPartition>>();
             // collect newly assigned standby tasks and reopen re-assigned standby tasks
-            foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> entry in assignedStandbyTasks)
+            foreach (var entry in assignedStandbyTasks ?? new Dictionary<TaskId, HashSet<TopicPartition>>())
             {
-                TaskId taskId = entry.Key;
-                HashSet<TopicPartition> partitions = entry.Value;
-                if (!standby.maybeResumeSuspendedTask(taskId, partitions))
+                if (!this.standby.maybeResumeSuspendedTask(entry.Key, entry.Value))
                 {
-                    newStandbyTasks.Add(taskId, partitions);
+                    newStandbyTasks.Add(entry.Key, entry.Value);
                 }
             }
 
@@ -176,11 +175,14 @@ namespace Kafka.Streams.Tasks
             // => other thread will call removeSuspendedStandbyTasks(); eventually
             logger.LogTrace("New standby tasks to be created: {}", newStandbyTasks);
 
-            foreach (StandbyTask task in standbyTaskCreator.createTasks(this.loggerFactory, consumer, newStandbyTasks))
+            foreach (StandbyTask task in standbyTaskCreator.createTasks(this.loggerFactory, consumer, this.threadClientId, newStandbyTasks))
             {
                 standby.addNewTask(task);
             }
         }
+
+        public void SetThreadClientId(string threadClientId)
+            => this.threadClientId = threadClientId;
 
         public HashSet<TaskId> activeTaskIds()
         {
@@ -207,7 +209,7 @@ namespace Kafka.Streams.Tasks
             // 2) the client has just got some tasks migrated out of itself to other clients while these task states
             //    have not been cleaned up yet (this can happen in a rolling bounce upgrade, for example).
 
-            HashSet<TaskId> tasks = new HashSet<TaskId>();
+            var tasks = new HashSet<TaskId>();
 
             var stateDirs = taskCreator.stateDirectory.listTaskDirectories();
             if (stateDirs != null)
@@ -217,7 +219,7 @@ namespace Kafka.Streams.Tasks
                     try
                     {
 
-                        TaskId id = TaskId.parse(dir.FullName);
+                        var id = TaskId.parse(dir.FullName);
                         // if the checkpoint file exists, the state is valid.
                         if (new DirectoryInfo(Path.Combine(dir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)).Exists)
                         {
@@ -249,7 +251,7 @@ namespace Kafka.Streams.Tasks
         {
             logger.LogDebug("Suspending all active tasks {} and standby tasks {}", active.RunningTaskIds(), standby.RunningTaskIds());
 
-            RuntimeException firstException = new RuntimeException();
+            var firstException = new RuntimeException();
 
             firstException = Interlocked.Exchange(ref firstException, active.Suspend());
             // close all restoring tasks as well and then reset changelog reader;
@@ -272,7 +274,7 @@ namespace Kafka.Streams.Tasks
 
         public void Shutdown(bool clean)
         {
-            RuntimeException firstException = new RuntimeException();
+            var firstException = new RuntimeException();
 
             this.logger.LogDebug($"Shutting down all active tasks {active.RunningTaskIds()}, " +
                 $"standby tasks {standby.RunningTaskIds()}," +
@@ -365,7 +367,7 @@ namespace Kafka.Streams.Tasks
 
             if (active.allTasksRunning())
             {
-                HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(consumer.Assignment);
+                var assignment = new HashSet<TopicPartition>(consumer.Assignment);
                 logger.LogTrace("Resuming partitions {}", assignment);
                 consumer.Resume(assignment);
                 assignStandbyPartitions();
@@ -386,8 +388,8 @@ namespace Kafka.Streams.Tasks
 
         private void assignStandbyPartitions()
         {
-            List<StandbyTask> running = standby.running.Values.ToList();
-            Dictionary<TopicPartition, long> checkpointedOffsets = new Dictionary<TopicPartition, long>();
+            var running = standby.running.Values.ToList();
+            var checkpointedOffsets = new Dictionary<TopicPartition, long?>();
             foreach (StandbyTask standbyTask in running)
             {
                 foreach (var checkpointedOffset in standbyTask.checkpointedOffsets)
@@ -398,13 +400,13 @@ namespace Kafka.Streams.Tasks
 
             restoreConsumer.Assign(checkpointedOffsets.Keys);
 
-            foreach (KeyValuePair<TopicPartition, long> entry in checkpointedOffsets)
+            foreach (var entry in checkpointedOffsets)
             {
                 TopicPartition partition = entry.Key;
-                long offset = entry.Value;
-                if (offset >= 0)
+                var offset = entry.Value;
+                if (offset.HasValue && offset.Value >= 0)
                 {
-                    restoreConsumer.Seek(new TopicPartitionOffset(partition, offset));
+                    restoreConsumer.Seek(new TopicPartitionOffset(partition, offset.Value));
                 }
                 else
                 {
@@ -435,8 +437,8 @@ namespace Kafka.Streams.Tasks
         {
             if (builder().SourceTopicPattern() != null)
             {
-                HashSet<string> assignedTopics = new HashSet<string>();
-                foreach (TopicPartition topicPartition in partitions)
+                var assignedTopics = new HashSet<string>();
+                foreach (TopicPartition topicPartition in partitions ?? Enumerable.Empty<TopicPartition>())
                 {
                     assignedTopics.Add(topicPartition.Topic);
                 }
@@ -466,9 +468,9 @@ namespace Kafka.Streams.Tasks
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-        public int commitAll()
+        public virtual int commitAll()
         {
-            int committed = active.commit();
+            var committed = active.commit();
             return committed + standby.commit();
         }
 
@@ -509,8 +511,8 @@ namespace Kafka.Streams.Tasks
                     logger.LogDebug("Previous delete-records request has failed: {}. Try sending the new request now", deleteRecordsResult.lowWatermarks());
                 }
 
-                Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = new Dictionary<TopicPartition, RecordsToDelete>();
-                foreach (KeyValuePair<TopicPartition, long> entry in active.recordsToDelete())
+                var recordsToDelete = new Dictionary<TopicPartition, RecordsToDelete>();
+                foreach (var entry in active?.recordsToDelete() ?? Enumerable.Empty<KeyValuePair<TopicPartition, long>>())
                 {
                     recordsToDelete.Add(entry.Key, RecordsToDelete.beforeOffset(entry.Value));
                 }
@@ -535,7 +537,7 @@ namespace Kafka.Streams.Tasks
 
         public string ToString(string indent)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
 
             builder.Append("TaskManager\n");
             builder.Append(indent).Append("\tMetadataState:\n");

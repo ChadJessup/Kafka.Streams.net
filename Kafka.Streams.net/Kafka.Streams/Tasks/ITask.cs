@@ -15,10 +15,9 @@ namespace Kafka.Streams.Tasks
          * @throws StreamsException if the store's change log does not contain the partition
          */
         bool initializeStateStores();
-
-        bool commitNeeded { get; }
-
+        void initializeIfNeeded();
         void initializeTopology();
+        bool commitNeeded { get; }
 
         void commit();
 
@@ -48,7 +47,7 @@ namespace Kafka.Streams.Tasks
          */
         IEnumerable<TopicPartition> changelogPartitions { get; }
         IProcessorContext context { get; }
-
+        void CompleteRestoration();
         bool hasStateStores();
 
         string ToString(string indent);

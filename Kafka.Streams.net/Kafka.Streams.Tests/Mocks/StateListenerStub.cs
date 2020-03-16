@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Threads;
-using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.Stream;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Kafka.Streams.Tests
             States oldState)
             where States : Enum
         {
-            long prevCount = mapStates.ContainsKey(newState)
+            var prevCount = mapStates.ContainsKey(newState)
                 ? mapStates[newState]
                 : 0;
 
@@ -29,7 +29,7 @@ namespace Kafka.Streams.Tests
             mapStates[newState] = prevCount + 1;
         }
 
-        public void SetThreadStates(Dictionary<long, KafkaStreamThreadState> threadStates)
+        public void SetThreadStates(Dictionary<long, StreamThreadState> threadStates)
         {
             throw new NotImplementedException();
         }

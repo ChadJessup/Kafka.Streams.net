@@ -2,14 +2,13 @@ using System.Collections.Generic;
 using Confluent.Kafka;
 using System;
 using Microsoft.Extensions.Logging;
-using Kafka.Streams.Processors.Interfaces;
 using System.Linq;
 using Kafka.Streams.Errors;
-using Kafka.Streams.State;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Extensions;
+using Kafka.Streams.Configs;
 
 namespace Kafka.Streams.Processors.Internals
 {
@@ -28,13 +27,13 @@ namespace Kafka.Streams.Processors.Internals
 
         public StoreChangelogReader(
             ILogger<StoreChangelogReader> logger,
+            StreamsConfig config,
             RestoreConsumer restoreConsumer,
-            TimeSpan pollTime,
             IStateRestoreListener userStateRestoreListener)
         {
             this.logger = logger;
             this.restoreConsumer = restoreConsumer;
-            this.pollTime = pollTime;
+            this.pollTime = TimeSpan.FromMilliseconds(config.PollMs);
             this.userStateRestoreListener = userStateRestoreListener;
         }
 
@@ -89,7 +88,7 @@ namespace Kafka.Streams.Processors.Internals
             catch (TopicPartitionOffsetException recoverableException)
             {
                 this.logger.LogWarning("Restoring StreamTasks failed. Deleting StreamTasks stores to recreate from scratch.", recoverableException);
-                HashSet<TopicPartition> partitions = new HashSet<TopicPartition>(recoverableException.Results.Select(tpo => tpo.TopicPartition));
+                var partitions = new HashSet<TopicPartition>(recoverableException.Results.Select(tpo => tpo.TopicPartition));
 
                 foreach (TopicPartition partition in partitions)
                 {
@@ -195,12 +194,12 @@ namespace Kafka.Streams.Processors.Internals
         {
             logger.LogDebug("Start restoring state stores from changelog topics {}", initialized);
 
-            HashSet<TopicPartition> assignment = new HashSet<TopicPartition>(restoreConsumer.Assignment);
+            var assignment = new HashSet<TopicPartition>(restoreConsumer.Assignment);
             assignment.UnionWith(initialized);
 
             restoreConsumer.Assign(assignment);
 
-            List<StateRestorer> needsPositionUpdate = new List<StateRestorer>();
+            var needsPositionUpdate = new List<StateRestorer>();
 
             foreach (TopicPartition partition in initialized)
             {
@@ -311,56 +310,6 @@ namespace Kafka.Streams.Processors.Internals
             endOffsets.Clear();
             needsInitializing.Clear();
             completedRestorers.Clear();
-        }
-
-        private long processNext(
-            List<ConsumeResult<byte[], byte[]>> records,
-            StateRestorer restorer,
-            long endOffset)
-        {
-            List<ConsumeResult<byte[], byte[]>> restoreRecords = new List<ConsumeResult<byte[], byte[]>>();
-            long nextPosition = -1;
-            int numberRecords = records.Count;
-            int numberRestored = 0;
-            long lastRestoredOffset = -1;
-
-            foreach (ConsumeResult<byte[], byte[]> record in records)
-            {
-                long offset = record.Offset;
-
-                if (restorer.hasCompleted(offset, endOffset))
-                {
-                    nextPosition = record.Offset;
-                    break;
-                }
-
-                lastRestoredOffset = offset;
-                numberRestored++;
-
-                if (record.Key != null)
-                {
-                    restoreRecords.Add(record);
-                }
-            }
-
-            // if we have changelog topic then we should have restored all records in the list
-            // otherwise if we did not fully restore to that point we need to set nextPosition
-            // to the position of the restoreConsumer and we'll cause a TaskMigratedException exception
-            if (nextPosition == -1 || (restorer.offsetLimit == long.MaxValue && numberRecords != numberRestored))
-            {
-                nextPosition = restoreConsumer.Position(restorer.partition);
-            }
-
-            if (restoreRecords.Any())
-            {
-                restorer.restore(restoreRecords);
-                restorer.restoreBatchCompleted(lastRestoredOffset, records.Count);
-
-                this.logger.LogTrace("Restored from {} to {} with {} records, ending offset is {}, next starting position is {}",
-                        restorer.partition, restorer.storeName, records.Count, lastRestoredOffset, nextPosition);
-            }
-
-            return nextPosition;
         }
 
         private bool hasPartition(TopicPartition topicPartition)

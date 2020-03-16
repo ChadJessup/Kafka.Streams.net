@@ -1,5 +1,6 @@
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.Processors.Interfaces
 {
@@ -24,17 +25,15 @@ namespace Kafka.Streams.Processors.Interfaces
         /**
          * @param currentNode the current {@link ProcessorNode}
          */
-        void setCurrentNode<K, V>(ProcessorNode<K, V> currentNode);
-        void setCurrentNode(ProcessorNode currentNode);
+        void SetCurrentNode(IProcessorNode? currentNode);
         /**
          * Get the current {@link ProcessorNode}
          */
-        ProcessorNode<K, V> GetCurrentNode<K, V>();
-        ProcessorNode GetCurrentNode();
+        IProcessorNode GetCurrentNode();
         /**
          * Get the thread-global cache
          */
-        //ThreadCache getCache();
+        ThreadCache getCache();
 
         /**
          * Mark this context as being initialized

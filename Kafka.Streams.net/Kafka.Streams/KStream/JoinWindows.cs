@@ -159,12 +159,12 @@ namespace Kafka.Streams.KStream
          *
          * @throws InvalidOperationException at every invocation
          */
-        public override Dictionary<long, Window> windowsFor(TimeSpan timestamp)
+        public override Dictionary<long, Window> WindowsFor(TimeSpan timestamp)
         {
             throw new InvalidOperationException("windowsFor() is not supported by JoinWindows.");
         }
 
-        public override TimeSpan size()
+        public override TimeSpan Size()
         {
             return beforeMs + afterMs;
         }
@@ -181,7 +181,7 @@ namespace Kafka.Streams.KStream
          */
         public JoinWindows grace(TimeSpan afterWindowEnd)
         {
-            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
+            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(afterWindowEnd, "afterWindowEnd");
             var afterWindowEndMs = ApiUtils.validateMillisecondDuration(afterWindowEnd, msgPrefix);
 
             if (afterWindowEndMs < TimeSpan.Zero)
@@ -198,14 +198,14 @@ namespace Kafka.Streams.KStream
         }
 
 
-        public override TimeSpan gracePeriod()
+        public override TimeSpan GracePeriod()
         {
             // NOTE: in the future, when we Remove maintainMs,
             // we should default the grace period to 24h to maintain the default behavior,
             // or we can default to (24h - size) if you want to be base.accurate.
             return graceMs != TimeSpan.FromMilliseconds(-1)
                 ? graceMs
-                : maintainDuration() - size();
+                : MaintainDuration() - Size();
         }
 
         /**
@@ -217,7 +217,7 @@ namespace Kafka.Streams.KStream
         [Obsolete]
         public new JoinWindows until(TimeSpan durationMs)
         {
-            if (durationMs < size())
+            if (durationMs < Size())
             {
                 throw new ArgumentException("Window retention time (durationMs) cannot be smaller than the window size.");
             }
@@ -241,9 +241,9 @@ namespace Kafka.Streams.KStream
          */
 
         [Obsolete]
-        public override TimeSpan maintainDuration()
+        public override TimeSpan MaintainDuration()
         {
-            return TimeSpan.FromMilliseconds(Math.Max(maintainDurationMs.TotalMilliseconds, size().TotalMilliseconds));
+            return TimeSpan.FromMilliseconds(Math.Max(maintainDurationMs.TotalMilliseconds, Size().TotalMilliseconds));
         }
 
         public override bool Equals(object o)
@@ -257,7 +257,7 @@ namespace Kafka.Streams.KStream
                 return false;
             }
 
-            JoinWindows that = (JoinWindows)o;
+            var that = (JoinWindows)o;
 
             return beforeMs == that.beforeMs &&
                 afterMs == that.afterMs &&

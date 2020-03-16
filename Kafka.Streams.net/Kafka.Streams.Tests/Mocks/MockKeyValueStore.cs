@@ -1,4 +1,4 @@
-﻿using Kafka.Streams.State.KeyValue;
+﻿using Kafka.Streams.State.KeyValues;
 using Kafka.Streams;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;

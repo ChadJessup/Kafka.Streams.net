@@ -1,4 +1,4 @@
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using System;
 
 namespace Kafka.Streams.State.Window

@@ -1,5 +1,5 @@
 using Kafka.Streams.KStream;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.ReadOnly;
 
 namespace Kafka.Streams.State.Window
@@ -12,7 +12,7 @@ namespace Kafka.Streams.State.Window
      * @param Type of keys
      * @param Type of values
      */
-    public interface IWindowStore<K, V> : IStateStore, IReadOnlyWindowStore<K, V>
+    public interface IWindowStore<K, V> : IWindowStore, IStateStore, IReadOnlyWindowStore<K, V>
     {
         /**
          * Use the current record timestamp as the {@code windowStartTimestamp} and
@@ -133,5 +133,9 @@ namespace Kafka.Streams.State.Window
         //        ApiUtils.validateMillisecondInstant(from, ApiUtils.prepareMillisCheckFailMsgPrefix(from, "from")),
         //        ApiUtils.validateMillisecondInstant(to, ApiUtils.prepareMillisCheckFailMsgPrefix(to, "to")));
         //}
+    }
+
+    public interface IWindowStore
+    {
     }
 }

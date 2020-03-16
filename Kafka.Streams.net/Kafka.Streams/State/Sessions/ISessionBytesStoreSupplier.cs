@@ -1,4 +1,3 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.State.Interfaces;
 
 namespace Kafka.Streams.State.Sessions

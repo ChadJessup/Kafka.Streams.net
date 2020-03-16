@@ -6,7 +6,7 @@ using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Mappers;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.Threads.KafkaStreams;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -82,7 +82,7 @@ namespace WordCountProcessorDemo
                 Serdes.Long()));
 
             // Make the topology injectable
-            var topology = builder.build();
+            var topology = builder.Build();
             services.AddSingleton(topology);
 
             using IKafkaStreamsThread streams = builder.BuildKafkaStreams();
@@ -109,7 +109,7 @@ namespace WordCountProcessorDemo
             builder.Stream<string, string>("streams-plaintext-input")
                 .to("streams-pipe-output");
 
-            services.AddSingleton(builder.build());
+            services.AddSingleton(builder.Build());
 
             using var streams = builder.BuildKafkaStreams();
 

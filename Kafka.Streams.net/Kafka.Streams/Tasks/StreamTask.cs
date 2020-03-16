@@ -1,10 +1,10 @@
 using Confluent.Kafka;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
@@ -14,6 +14,7 @@ using Kafka.Streams.State.Internals;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -72,8 +73,48 @@ namespace Kafka.Streams.Tasks
             IRecordCollector recordCollector)
             : base(id, partitions, topology, consumer, changelogReader, false, stateDirectory, config)
         {
-            this.clock = clock;
-            this.producerSupplier = producerSupplier;
+            if (id is null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
+            if (partitions is null)
+            {
+                throw new ArgumentNullException(nameof(partitions));
+            }
+
+            if (topology is null)
+            {
+                throw new ArgumentNullException(nameof(topology));
+            }
+
+            if (consumer is null)
+            {
+                throw new ArgumentNullException(nameof(consumer));
+            }
+
+            if (changelogReader is null)
+            {
+                throw new ArgumentNullException(nameof(changelogReader));
+            }
+
+            if (config is null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
+            if (stateDirectory is null)
+            {
+                throw new ArgumentNullException(nameof(stateDirectory));
+            }
+
+            if (cache is null)
+            {
+                throw new ArgumentNullException(nameof(cache));
+            }
+
+            this.clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this.producerSupplier = producerSupplier ?? throw new ArgumentNullException(nameof(producerSupplier));
             this.producer = producerSupplier.Get();
 
             IProductionExceptionHandler productionExceptionHandler = config.DefaultProductionExceptionHandler();
@@ -82,7 +123,6 @@ namespace Kafka.Streams.Tasks
             {
                 this.recordCollector = new RecordCollectorImpl(
                     id.ToString(),
-                    logContext,
                     productionExceptionHandler);
             }
             else
@@ -102,10 +142,10 @@ namespace Kafka.Streams.Tasks
 
             // create queues for each assigned partition and associate them
             // to corresponding source nodes in the processor topology
-            Dictionary<TopicPartition, RecordQueue> partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
+            var partitionQueues = new Dictionary<TopicPartition, RecordQueue>();
 
             // initialize the topology with its own context
-            var processorContextImpl = new ProcessorContextImpl<byte[], byte[]>(
+            var processorContextImpl = new ProcessorContext<byte[], byte[]>(
                 id,
                 this,
                 config,
@@ -120,17 +160,16 @@ namespace Kafka.Streams.Tasks
 
             foreach (TopicPartition partition in partitions)
             {
-                SourceNode<byte[], byte[]> source = null;// topology.source(partition.Topic);
+                var source = topology.Source(partition.Topic);
 
-                ITimestampExtractor sourceTimestampExtractor = source.timestampExtractor ?? defaultTimestampExtractor;
+                ITimestampExtractor sourceTimestampExtractor = source.TimestampExtractor ?? defaultTimestampExtractor;
 
-                RecordQueue<byte[], byte[]> queue = new RecordQueue<byte[], byte[]>(
+                var queue = new RecordQueue<byte[], byte[]>(
                     partition,
-                    source,
+                    (ISourceNode<byte[], byte[]>)source,
                     sourceTimestampExtractor,
                     defaultDeserializationExceptionHandler,
-                    processorContext,
-                    logContext);
+                    processorContext);
 
                 partitionQueues.Add(partition, queue);
             }
@@ -150,7 +189,7 @@ namespace Kafka.Streams.Tasks
 
         public override bool initializeStateStores()
         {
-            log.LogTrace("Initializing state stores");
+            logger.LogTrace("Initializing state stores");
             registerStateStores();
 
             return !changelogPartitions.Any();
@@ -165,7 +204,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void initializeTopology()
         {
-            initTopology();
+            InitTopology();
 
             if (isEosEnabled())
             {
@@ -197,7 +236,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void resume()
         {
-            log.LogDebug("Resuming");
+            logger.LogDebug("Resuming");
             if (eosEnabled)
             {
                 if (producer != null)
@@ -225,7 +264,7 @@ namespace Kafka.Streams.Tasks
          * An active task is processable if its buffer contains data for all of its input
          * source topic partitions, or if it is enforced to be processable
          */
-        public bool isProcessable(long now)
+        public bool IsProcessable(long now)
         {
             if (partitionGroup.allPartitionsBuffered())
             {
@@ -246,13 +285,11 @@ namespace Kafka.Streams.Tasks
                 }
                 else
                 {
-
                     return false;
                 }
             }
             else
             {
-
                 return false;
             }
         }
@@ -263,7 +300,7 @@ namespace Kafka.Streams.Tasks
          * @return true if this method processes a record, false if it does not process a record.
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool process()
+        public bool Process()
         {
             // get the next record to process
             var record = partitionGroup.nextRecord<byte[], byte[]>(recordInfo);
@@ -277,15 +314,15 @@ namespace Kafka.Streams.Tasks
             try
             {
                 // process the record by passing to the source node of the topology
-                ProcessorNode<byte[], byte[]> currNode = (ProcessorNode<byte[], byte[]>)recordInfo.node();
+                var currNode = (ProcessorNode<byte[], byte[]>)recordInfo.node();
                 TopicPartition partition = recordInfo.partition();
 
-                log.LogTrace("Start processing one record [{}]", record);
+                logger.LogTrace("Start processing one record [{}]", record);
 
                 //updateProcessorContext(record, currNode);
                 //((ProcessorNode<byte[], byte[]>)currNode).process(record.Key, record.Value);
 
-                log.LogTrace("Completed processing one record [{}]", record);
+                logger.LogTrace("Completed processing one record [{}]", record);
 
                 // update the consumed offset map after processing is done
                 consumedOffsets.Add(partition, record.offset);
@@ -304,11 +341,11 @@ namespace Kafka.Streams.Tasks
             }
             catch (KafkaException e)
             {
-                string stackTrace = getStacktraceString(e);
+                var stackTrace = GetStacktraceString(e);
                 throw new StreamsException(string.Format("Exception caught in process. taskId=%s, " +
                         "processor=%s, topic=%s, partition=%d, offset=%d, stacktrace=%s",
                     id,
-                    processorContext.GetCurrentNode<byte[], byte[]>().Name,
+                    processorContext.GetCurrentNode().Name,
                     record.Topic,
                     record.partition,
                     record.offset,
@@ -316,17 +353,17 @@ namespace Kafka.Streams.Tasks
             }
             finally
             {
-                processorContext.setCurrentNode<byte[], byte[]>(null);
+                processorContext.SetCurrentNode(null);
             }
 
             return true;
         }
 
-        private string getStacktraceString(KafkaException e)
+        private string GetStacktraceString(KafkaException e)
         {
-            string stacktrace = e.StackTrace;
-            using StringWriter stringWriter = new StringWriter();
-            PrintWriter printWriter = new PrintWriter(stringWriter);
+            var stacktrace = e.StackTrace;
+            using var stringWriter = new StringWriter();
+            var printWriter = new PrintWriter(stringWriter);
             try
             {
                 //e.printStackTrace(printWriter);
@@ -344,21 +381,20 @@ namespace Kafka.Streams.Tasks
          * @throws InvalidOperationException if the current node is not null
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public void punctuate(ProcessorNode<byte[], byte[]> node, long timestamp, PunctuationType type, Punctuator punctuator)
+        public void punctuate(IProcessorNode<byte[], byte[]> node, long timestamp, PunctuationType type, IPunctuator punctuator)
         {
-            if (processorContext.GetCurrentNode<byte[], byte[]>() != null)
+            if (processorContext.GetCurrentNode() != null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is not null", logPrefix));
             }
 
             UpdateProcessorContext(new StampedRecord(DUMMY_RECORD, timestamp), node);
 
-            log.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.Name, timestamp, type);
+            logger.LogTrace("Punctuating processor {} with timestamp {} and punctuation type {}", node.Name, timestamp, type);
 
             try
             {
-
-                node.punctuate(timestamp, punctuator);
+                node.Punctuate(timestamp, punctuator);
             }
             catch (ProducerFencedException fatal)
             {
@@ -366,15 +402,15 @@ namespace Kafka.Streams.Tasks
             }
             catch (KafkaException e)
             {
-                throw new StreamsException(string.Format("%sException caught while punctuating processor '%s'", logPrefix, node.Name), e);
+                throw new StreamsException($"Exception caught while punctuating processor", e);
             }
             finally
             {
-                processorContext.setCurrentNode<byte[], byte[]>(null);
+                processorContext.SetCurrentNode(null);
             }
         }
 
-        private void UpdateProcessorContext(StampedRecord record, ProcessorNode<byte[], byte[]> currNode)
+        private void UpdateProcessorContext(StampedRecord record, IProcessorNode<byte[], byte[]> currNode)
         {
             processorContext.setRecordContext(
                 new ProcessorRecordContext(
@@ -384,7 +420,7 @@ namespace Kafka.Streams.Tasks
                     record.Topic,
                     record.Headers));
 
-            processorContext.setCurrentNode(currNode);
+            processorContext.SetCurrentNode(currNode);
         }
 
         /**
@@ -399,7 +435,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void commit()
         {
-            commit(true);
+            Commit(true);
         }
 
         /**
@@ -407,10 +443,10 @@ namespace Kafka.Streams.Tasks
          *                               or if the task producer got fenced (EOS)
          */
         // visible for testing
-        void commit(bool startNewTransaction)
+        void Commit(bool startNewTransaction)
         {
-            long startNs = clock.GetCurrentInstant().ToUnixTimeTicks() * NodaConstants.NanosecondsPerTick;
-            log.LogDebug("Committing");
+            var startNs = clock.GetCurrentInstant().ToUnixTimeTicks() * NodaConstants.NanosecondsPerTick;
+            logger.LogDebug("Committing");
 
             flushState();
 
@@ -421,10 +457,10 @@ namespace Kafka.Streams.Tasks
 
             var consumedOffsetsAndMetadata = new Dictionary<TopicPartition, OffsetAndMetadata>(consumedOffsets.Count);
 
-            foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
+            foreach (var entry in consumedOffsets)
             {
                 TopicPartition partition = entry.Key;
-                long offset = entry.Value + 1;
+                var offset = entry.Value + 1;
                 consumedOffsetsAndMetadata.Add(partition, new OffsetAndMetadata(offset));
                 StateMgr.putOffsetLimit(partition, offset);
             }
@@ -476,7 +512,7 @@ namespace Kafka.Streams.Tasks
 
         protected override void flushState()
         {
-            log.LogTrace("Flushing state and producer");
+            logger.LogTrace("Flushing state and producer");
             base.flushState();
 
             try
@@ -489,9 +525,9 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        public Dictionary<TopicPartition, long> purgableOffsets()
+        public Dictionary<TopicPartition, long> PurgableOffsets()
         {
-            Dictionary<TopicPartition, long> purgableConsumedOffsets = new Dictionary<TopicPartition, long>();
+            var purgableConsumedOffsets = new Dictionary<TopicPartition, long>();
             foreach (KeyValuePair<TopicPartition, long> entry in consumedOffsets)
             {
                 TopicPartition tp = entry.Key;
@@ -504,20 +540,20 @@ namespace Kafka.Streams.Tasks
             return purgableConsumedOffsets;
         }
 
-        private void initTopology()
+        private void InitTopology()
         {
             // initialize the task by initializing all its processor nodes in the topology
-            log.LogTrace("Initializing processor nodes of the topology");
+            logger.LogTrace("Initializing processor nodes of the topology");
             foreach (ProcessorNode<byte[], byte[]> node in topology.processors())
             {
-                processorContext.setCurrentNode(node);
+                processorContext.SetCurrentNode(node);
                 try
                 {
                     node.Init(processorContext);
                 }
                 finally
                 {
-                    processorContext.setCurrentNode<byte[], byte[]>(null);
+                    processorContext.SetCurrentNode(null);
                 }
             }
         }
@@ -536,7 +572,7 @@ namespace Kafka.Streams.Tasks
          */
         public override void suspend()
         {
-            log.LogDebug("Suspending");
+            logger.LogDebug("Suspending");
             Suspend(true, false);
         }
 
@@ -557,7 +593,7 @@ namespace Kafka.Streams.Tasks
         {
             try
             {
-                closeTopology(); // should we call this only on clean suspend?
+                CloseTopology(); // should we call this only on clean suspend?
             }
             catch (RuntimeException fatal)
             {
@@ -569,11 +605,11 @@ namespace Kafka.Streams.Tasks
 
             if (clean)
             {
-                TaskMigratedException taskMigratedException = null;
+                TaskMigratedException? taskMigratedException = null;
 
                 try
                 {
-                    commit(false);
+                    Commit(false);
                 }
                 finally
                 {
@@ -603,11 +639,11 @@ namespace Kafka.Streams.Tasks
             }
             else
             {
-                maybeAbortTransactionAndCloseRecordCollector(isZombie);
+                MaybeAbortTransactionAndCloseRecordCollector(isZombie);
             }
         }
 
-        private void maybeAbortTransactionAndCloseRecordCollector(bool isZombie)
+        private void MaybeAbortTransactionAndCloseRecordCollector(bool isZombie)
         {
             if (eosEnabled && !isZombie)
             {
@@ -641,7 +677,7 @@ namespace Kafka.Streams.Tasks
                 }
                 catch (Exception e)
                 {
-                    log.LogError("Failed to close producer due to the following error:", e);
+                    logger.LogError("Failed to close producer due to the following error:", e);
                 }
                 finally
                 {
@@ -650,9 +686,9 @@ namespace Kafka.Streams.Tasks
             }
         }
 
-        private void closeTopology()
+        private void CloseTopology()
         {
-            log.LogTrace("Closing processor topology");
+            logger.LogTrace("Closing processor topology");
 
             partitionGroup.clear();
 
@@ -663,7 +699,7 @@ namespace Kafka.Streams.Tasks
             {
                 foreach (ProcessorNode<byte[], byte[]> node in topology.processors())
                 {
-                    processorContext.setCurrentNode(node);
+                    processorContext.SetCurrentNode(node);
 
                     try
                     {
@@ -676,7 +712,7 @@ namespace Kafka.Streams.Tasks
                     finally
                     {
 
-                        processorContext.setCurrentNode(null);
+                        processorContext.SetCurrentNode(null);
                     }
                 }
             }
@@ -704,7 +740,7 @@ namespace Kafka.Streams.Tasks
                 {
                     firstException = e;
                 }
-                log.LogError("Could not close state manager due to the following error:", e);
+                logger.LogError("Could not close state manager due to the following error:", e);
             }
 
             partitionGroup.close();
@@ -736,12 +772,11 @@ namespace Kafka.Streams.Tasks
          * @throws TaskMigratedException if committing offsets failed (non-EOS)
          *                               or if the task producer got fenced (EOS)
          */
-
         public override void close(
             bool clean,
             bool isZombie)
         {
-            log.LogDebug("Closing");
+            logger.LogDebug("Closing");
 
             RuntimeException firstException = null;
             try
@@ -753,7 +788,7 @@ namespace Kafka.Streams.Tasks
             {
                 clean = false;
                 firstException = e;
-                log.LogError("Could not close task due to the following error:", e);
+                logger.LogError("Could not close task due to the following error:", e);
             }
 
             closeSuspended(clean, isZombie, firstException);
@@ -768,10 +803,10 @@ namespace Kafka.Streams.Tasks
          * @param partition the partition
          * @param records   the records
          */
-        public void addRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
+        public void AddRecords(TopicPartition partition, IEnumerable<ConsumeResult<byte[], byte[]>> records)
         {
-            int newQueueSize = partitionGroup.addRawRecords(partition, records);
-            log.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
+            var newQueueSize = partitionGroup.addRawRecords(partition, records);
+            logger.LogTrace("Added records into the buffered queue of partition {}, new queue size is {}", partition, newQueueSize);
 
             // if after.Adding these records, its partition queue's buffered size has been
             // increased beyond the threshold, we can then pause the consumption for this partition
@@ -788,7 +823,7 @@ namespace Kafka.Streams.Tasks
          * @param type     the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        public ICancellable Schedule(long interval, PunctuationType type, Punctuator punctuator)
+        public ICancellable Schedule(long interval, PunctuationType type, IPunctuator punctuator)
         {
             return type switch
             {
@@ -806,14 +841,14 @@ namespace Kafka.Streams.Tasks
          * @param type      the punctuation type
          * @throws InvalidOperationException if the current node is not null
          */
-        ICancellable Schedule(long startTime, long interval, PunctuationType type, Punctuator punctuator)
+        ICancellable Schedule(long startTime, long interval, PunctuationType type, IPunctuator punctuator)
         {
             if (processorContext.GetCurrentNode() == null)
             {
                 throw new InvalidOperationException(string.Format("%sCurrent node is null", logPrefix));
             }
 
-            PunctuationSchedule schedule = new PunctuationSchedule(processorContext.GetCurrentNode(), startTime, interval, punctuator);
+            var schedule = new PunctuationSchedule(processorContext.GetCurrentNode(), startTime, interval, punctuator);
 
             return type switch
             {
@@ -824,23 +859,15 @@ namespace Kafka.Streams.Tasks
         }
 
         /**
-         * @return The number of records left in the buffer of this task's partition group
-         */
-        int numBuffered()
-        {
-            return partitionGroup.numBuffered();
-        }
-
-        /**
          * Possibly trigger registered stream-time punctuation functions if
          * current partition group timestamp has reached the defined stamp
          * Note, this is only called in the presence of new records
          *
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool maybePunctuateStreamTime()
+        public bool MaybePunctuateStreamTime()
         {
-            long streamTime = partitionGroup.streamTime;
+            var streamTime = partitionGroup.streamTime;
 
             // if the timestamp is not known yet, meaning there is not enough data accumulated
             // to reason stream partition time, then skip.
@@ -851,7 +878,7 @@ namespace Kafka.Streams.Tasks
             else
             {
 
-                bool punctuated = streamTimePunctuationQueue.mayPunctuate(streamTime, PunctuationType.STREAM_TIME, this);
+                var punctuated = streamTimePunctuationQueue.mayPunctuate(streamTime, PunctuationType.STREAM_TIME, this);
 
                 if (punctuated)
                 {
@@ -869,11 +896,11 @@ namespace Kafka.Streams.Tasks
          *
          * @throws TaskMigratedException if the task producer got fenced (EOS only)
          */
-        public bool maybePunctuateSystemTime()
+        public bool MaybePunctuateSystemTime()
         {
-            long systemTime = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            var systemTime = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
 
-            bool punctuated = systemTimePunctuationQueue.mayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
+            var punctuated = systemTimePunctuationQueue.mayPunctuate(systemTime, PunctuationType.WALL_CLOCK_TIME, this);
 
             if (punctuated)
             {
@@ -894,7 +921,6 @@ namespace Kafka.Streams.Tasks
         /**
          * Whether or not a request has been made to commit the current state
          */
-
         public IProducer<byte[], byte[]> getProducer()
         {
             return producer;
@@ -908,7 +934,7 @@ namespace Kafka.Streams.Tasks
             }
             catch (TimeoutException retriable)
             {
-                log.LogError(
+                logger.LogError(
                     "Timeout exception caught when initializing transactions for task {}. " +
                         "This might happen if the broker is slow to respond, if the network connection to " +
                         "the broker was interrupted, or if similar circumstances arise. " +
@@ -917,9 +943,115 @@ namespace Kafka.Streams.Tasks
                     retriable
                 );
                 throw new StreamsException(
-                    string.Format("%sFailed to initialize task %s due to timeout.", logPrefix, id),
+                    $"{logPrefix}Failed to initialize task {id} due to timeout.",
                     retriable
                 );
+            }
+        }
+
+        public override void initializeIfNeeded()
+        {
+            if (false)//state() == State.CREATED)
+            {
+                //recordCollector.initialize();
+
+                //StateManagerUtil.registerStateStores(log, logPrefix, topology, stateMgr, stateDirectory, processorContext);
+
+                //transitionTo(State.RESTORING);
+
+                logger.LogInformation("Initialized");
+            }
+        }
+        private void initializeMetadata()
+        {
+            try
+            {
+                var offsetsAndMetadata = this.consumer.Committed(partitions, TimeSpan.FromSeconds(10.0))
+                    .Where(e => e != null)
+                    .ToDictionary(k => k.TopicPartition, v => v);
+
+                initializeTaskTime(offsetsAndMetadata);
+            }
+            catch (TimeoutException e)
+            {
+                logger.LogWarning("Encountered {} while trying to fetch committed offsets, will retry initializing the metadata in the next loop." +
+                    "\nConsider overwriting consumer config {} to a larger value to avoid timeout errors",
+                    e.ToString(),
+                    "default.api.timeout.ms");
+
+                throw;
+            }
+            catch (KafkaException e)
+            {
+                throw new StreamsException($"task [{id}] Failed to initialize offsets for {partitions}", e);
+            }
+        }
+
+        public override void CompleteRestoration()
+        {
+            if (false)//state() == State.RESTORING)
+            {
+                initializeMetadata();
+                initializeTopology();
+                processorContext.initialize();
+                idleStartTime = RecordQueue.UNKNOWN;
+                //transitionTo(State.RUNNING);
+
+                logger.LogInformation("Restored and ready to run");
+            }
+            else
+            {
+                throw new Exception("Illegal state " + "TESTstate()" + " while completing restoration for active task " + id);
+            }
+        }
+
+        private long DecodeTimestamp(string encryptedString)
+        {
+            if (!encryptedString.Any())
+            {
+                return RecordQueue.UNKNOWN;
+            }
+
+            ByteBuffer buffer = null;// ByteBuffer.wrap(Base64.DecodeFromUtf8InPlace(encryptedString));
+            byte? version = null;// buffer.getLong;
+            switch (version)
+            {
+                //case LATEST_MAGIC_BYTE:
+                //    return buffer.getLong();
+                default:
+                    //log.LogWarning("Unsupported offset metadata version found. Supported version {}. Found version {}.",
+                    //         LATEST_MAGIC_BYTE, version);
+
+                    return RecordQueue.UNKNOWN;
+            }
+        }
+
+        private void initializeTaskTime(Dictionary<TopicPartition, TopicPartitionOffset> offsetsAndMetadata)
+        {
+            foreach (var entry in offsetsAndMetadata)
+            {
+                TopicPartition partition = entry.Key;
+                var metadata = entry.Value;
+
+                if (metadata != null)
+                {
+                    //long committedTimestamp = DecodeTimestamp(metadata);
+                    //partitionGroup.SetPartitionTime(partition, committedTimestamp);
+                    logger.LogDebug($"A committed timestamp was detected: setting the partition time of partition {partition}");
+                    //+ $" to {committedTimestamp} in stream task {id}");
+                }
+                else
+                {
+                    logger.LogDebug("No committed timestamp was found in metadata for partition {}", partition);
+                }
+            }
+
+            var nonCommitted = new HashSet<TopicPartition>(partitions);
+            nonCommitted.RemoveWhere(tp => offsetsAndMetadata.Keys.Contains(tp));
+
+            foreach (var partition in nonCommitted)
+            {
+                logger.LogDebug("No committed offset for partition {}, therefore no timestamp can be found for this partition", partition);
             }
         }
     }

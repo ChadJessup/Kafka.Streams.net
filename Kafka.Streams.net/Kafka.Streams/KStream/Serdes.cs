@@ -17,6 +17,9 @@ namespace Kafka.Streams.KStream
         public static ISerde<long> Long()
             => new Serde<long>(Serializers.Int64, Deserializers.Int64);
 
+        public static ISerde<double> Double()
+            => new Serde<double>(Serializers.Double, Deserializers.Double);
+
         public static ISerde<int> Int()
             => new Serde<int>(Serializers.Int32, Deserializers.Int32);
 

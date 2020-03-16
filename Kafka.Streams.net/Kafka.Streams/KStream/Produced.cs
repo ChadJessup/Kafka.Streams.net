@@ -227,7 +227,7 @@ namespace Kafka.Streams.KStream
             => (this.keySerde, this.valueSerde, partitioner)
                 .GetHashCode();
 
-        public Produced<K, V> withName(string name)
+        public Produced<K, V> WithName(string name)
         {
             this.processorName = name;
             return this;

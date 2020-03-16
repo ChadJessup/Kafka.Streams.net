@@ -1,6 +1,5 @@
 ﻿using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Window;
 using System;
 
@@ -26,13 +25,13 @@ namespace Kafka.Streams.KStream.Internals
             this.joinAfterMs = joinAfterMs;
         }
 
-        public override void init(IProcessorContext context)
+        public override void Init(IProcessorContext context)
         {
-            base.init(context);
+            base.Init(context);
             otherWindow = (IWindowStore<K, V2>)context.getStateStore(otherWindow.name);
         }
 
-        public override void process(K key, V1 value)
+        public override void Process(K key, V1 value)
         {
             // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
             //
@@ -49,11 +48,11 @@ namespace Kafka.Streams.KStream.Internals
                 return;
             }
 
-            bool needOuterJoin = outer;
+            var needOuterJoin = outer;
 
-            long inputRecordTimestamp = context.timestamp;
-            long timeFrom = Math.Max(0L, inputRecordTimestamp - (long)joinBeforeMs.TotalMilliseconds);
-            long timeTo = Math.Max(0L, inputRecordTimestamp + (long)joinAfterMs.TotalMilliseconds);
+            var inputRecordTimestamp = context.timestamp;
+            var timeFrom = Math.Max(0L, inputRecordTimestamp - (long)joinBeforeMs.TotalMilliseconds);
+            var timeTo = Math.Max(0L, inputRecordTimestamp + (long)joinAfterMs.TotalMilliseconds);
 
             using IWindowStoreIterator<V2> iter = otherWindow.fetch(key, timeFrom, timeTo);
             {

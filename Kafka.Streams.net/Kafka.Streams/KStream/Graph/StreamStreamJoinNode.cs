@@ -1,5 +1,4 @@
 using Kafka.Streams.State;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Window;
 using Kafka.Streams.Topologies;
 using System;
@@ -9,7 +8,7 @@ namespace Kafka.Streams.KStream.Internals.Graph
     /**
      * Too much information to generalize, so Stream-Stream joins are represented by a specific node.
      */
-     public static class StreamStreamJoinNode
+    public static class StreamStreamJoinNode
     {
         public static StreamStreamJoinNodeBuilder<K, V1, V2, VR> streamStreamJoinNodeBuilder<K, V1, V2, VR>()
         {
@@ -66,10 +65,10 @@ namespace Kafka.Streams.KStream.Internals.Graph
         {
             topologyBuilder = topologyBuilder ?? throw new ArgumentNullException(nameof(topologyBuilder));
 
-            string thisProcessorName = thisProcessorParameters().ProcessorName;
-            string otherProcessorName = otherProcessorParameters().ProcessorName;
-            string thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
-            string otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
+            var thisProcessorName = thisProcessorParameters().ProcessorName;
+            var otherProcessorName = otherProcessorParameters().ProcessorName;
+            var thisWindowedStreamProcessorName = thisWindowedStreamProcessorParameters.ProcessorName;
+            var otherWindowedStreamProcessorName = otherWindowedStreamProcessorParameters.ProcessorName;
 
             topologyBuilder.AddProcessor(thisProcessorName, thisProcessorParameters().ProcessorSupplier, thisWindowedStreamProcessorName);
             topologyBuilder.AddProcessor(otherProcessorName, otherProcessorParameters().ProcessorSupplier, otherWindowedStreamProcessorName);

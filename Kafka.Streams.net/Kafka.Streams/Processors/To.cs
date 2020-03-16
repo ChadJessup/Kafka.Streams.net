@@ -69,7 +69,7 @@ namespace Kafka.Streams.Processors
             {
                 return false;
             }
-            To to = (To)o;
+            var to = (To)o;
             return Timestamp == to.Timestamp &&
                 childName.Equals(to.childName);
         }

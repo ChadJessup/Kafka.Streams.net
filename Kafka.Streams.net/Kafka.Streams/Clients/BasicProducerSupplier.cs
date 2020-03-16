@@ -1,7 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Tasks;
-using Kafka.Streams.Threads.KafkaStream;
 
 namespace Kafka.Streams.Clients
 {

@@ -1,6 +1,4 @@
-﻿using Confluent.Kafka;
-
-namespace Kafka.Streams.Processors.Internals
+﻿namespace Kafka.Streams.Processors.Internals
 {
     public class OffsetAndMetadata// : TopicPartitionOffset
     {

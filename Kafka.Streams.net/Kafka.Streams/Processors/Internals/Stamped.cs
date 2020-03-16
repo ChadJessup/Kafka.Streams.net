@@ -4,8 +4,8 @@ namespace Kafka.Streams.Processors.Internals
 {
     public class Stamped<V> : IComparable
     {
-        public V value;
-        public long timestamp;
+        public V value { get; }
+        public long timestamp { get; }
 
         public Stamped(V value, long timestamp)
         {
@@ -15,7 +15,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public int CompareTo(object other)
         {
-            long otherTimestamp = ((Stamped<object>)other).timestamp;
+            var otherTimestamp = ((Stamped<object>)other).timestamp;
 
             if (timestamp < otherTimestamp)
             {
@@ -25,6 +25,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 return 1;
             }
+
             return 0;
         }
 
@@ -35,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
                 return false;
             }
 
-            long otherTimestamp = ((Stamped<object>)other).timestamp;
+            var otherTimestamp = ((Stamped<object>)other).timestamp;
 
             return timestamp == otherTimestamp;
         }

@@ -10,17 +10,17 @@ namespace Kafka.Streams.KStream.Internals
         private readonly ILogger logger;
         private readonly IServiceProvider services;
 
-        private readonly string storeName;
-        public string queryableName { get; private set; }
+        private readonly string? storeName;
+        public string? queryableName { get; private set; }
         private bool sendOldValues;
 
         public KTableSource(
             ILogger<KTableSource<K, V>> logger,
             IServiceProvider serviceProvider,
-            string storeName,
-            string queryableName)
+            string? storeName,
+            string? queryableName)
         {
-            this.storeName = storeName ?? throw new ArgumentNullException(nameof(storeName));
+            this.storeName = storeName;
             
             this.logger = logger;
             this.services = serviceProvider;

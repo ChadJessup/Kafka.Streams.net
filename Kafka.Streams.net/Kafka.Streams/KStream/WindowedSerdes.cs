@@ -16,7 +16,6 @@
  */
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.KStream.Internals;
 using System;
 
 namespace Kafka.Streams.KStream
@@ -48,9 +47,7 @@ namespace Kafka.Streams.KStream
             return null; // new SessionWindowedSerde<T>(Serdes.serdeFrom<T>());
         }
 
-        public static void verifyInnerSerializerNotNull<T>(
-            ISerializer<T> inner,
-             ISerializer<T> wrapper)
+        public static void verifyInnerSerializerNotNull<T>(ISerializer<T> inner, ISerializer<T> wrapper)
         {
             if (inner == null)
             {
@@ -60,7 +57,8 @@ namespace Kafka.Streams.KStream
             }
         }
 
-        static void verifyInnerDeserializerNotNull<T>(
+        // TODO: share internals here, shouldn't be public
+        public static void verifyInnerDeserializerNotNull<T>(
             IDeserializer<T> inner,
             IDeserializer<T> wrapper)
         {

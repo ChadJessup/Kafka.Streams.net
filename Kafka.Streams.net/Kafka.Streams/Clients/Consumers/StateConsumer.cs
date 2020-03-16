@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Kafka.Common;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Processors.Internals;
 using Microsoft.Extensions.Logging;
@@ -44,12 +43,12 @@ namespace Kafka.Streams.Clients.Consumers
          */
         public void initialize()
         {
-            Dictionary<TopicPartition, long> partitionOffsets = stateMaintainer.initialize();
+            var partitionOffsets = stateMaintainer.initialize();
             globalConsumer.Assign(partitionOffsets.Keys);
 
-            foreach (KeyValuePair<TopicPartition, long> entry in partitionOffsets)
+            foreach (var entry in partitionOffsets)
             {
-                globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value));
+                globalConsumer.Seek(new TopicPartitionOffset(entry.Key, entry.Value ?? 0));
             }
 
             lastFlush = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
@@ -66,7 +65,7 @@ namespace Kafka.Streams.Clients.Consumers
                     stateMaintainer.update(record);
                 }
 
-                long now = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+                var now = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
                 if (now >= lastFlush + flushInterval)
                 {
                     stateMaintainer.flushState();

@@ -1,9 +1,8 @@
 ﻿using Confluent.Kafka;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Extensions;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Tasks;
-using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.Stream;
 using Microsoft.Extensions.Logging;
 using NodaTime;
 using System;
@@ -14,14 +13,14 @@ namespace Kafka.Streams.Processors.Internals
     public class StreamsRebalanceListener : IConsumerRebalanceListener
     {
         private readonly IClock clock;
-        private readonly TaskManager taskManager;
-        private readonly KafkaStreamThread streamThread;
+        private readonly ITaskManager taskManager;
+        private readonly StreamThread streamThread;
         private readonly ILogger log;
 
         public StreamsRebalanceListener(
             IClock clock,
-            TaskManager taskManager,
-            KafkaStreamThread streamThread,
+            ITaskManager taskManager,
+            StreamThread streamThread,
             ILogger log)
         {
             this.clock = clock;
@@ -45,10 +44,10 @@ namespace Kafka.Streams.Processors.Internals
                 return;
             }
 
-            long start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+            var start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
             try
             {
-                if (!streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_ASSIGNED))
+                if (!streamThread.State.SetState(StreamThreadStates.PARTITIONS_ASSIGNED))
                 {
                     log.LogDebug($"Skipping task creation in rebalance because we are already in {streamThread.State} state.");
                 }
@@ -88,9 +87,9 @@ namespace Kafka.Streams.Processors.Internals
                 $"\tcurrent assigned active tasks:  {taskManager.activeTaskIds().ToJoinedString()}\n" +
                 $"\tcurrent assigned standby tasks: {taskManager.StandbyTaskIds().ToJoinedString()}\n");
 
-            if (streamThread.State.SetState(KafkaStreamThreadStates.PARTITIONS_REVOKED))
+            if (streamThread.State.SetState(StreamThreadStates.PARTITIONS_REVOKED))
             {
-                long start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
+                var start = clock.GetCurrentInstant().ToUnixTimeMilliseconds();
                 try
                 {
                     // suspend active tasks

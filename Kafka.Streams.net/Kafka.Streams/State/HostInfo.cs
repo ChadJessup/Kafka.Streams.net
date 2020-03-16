@@ -54,13 +54,13 @@ namespace Kafka.Streams.State
                 return false;
             }
 
-            HostInfo hostInfo = (HostInfo)o;
+            var hostInfo = (HostInfo)o;
             return port == hostInfo.port && host.Equals(hostInfo.host);
         }
 
         public override int GetHashCode()
         {
-            int result = host.GetHashCode();
+            var result = host.GetHashCode();
             result = 31 * result + port;
             return result;
         }

@@ -1,5 +1,4 @@
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.TimeStamped;
 
 namespace Kafka.Streams.State.ReadOnly

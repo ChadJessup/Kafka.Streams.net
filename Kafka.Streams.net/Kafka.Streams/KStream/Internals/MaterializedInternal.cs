@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using Kafka.Streams.KStream.Interfaces;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using System;
 using System.Collections.Generic;
@@ -48,15 +47,15 @@ namespace Kafka.Streams.KStream.Internals
             }
         }
 
-        public string queryableStoreName()
+        public string? queryableStoreName()
         {
             return queriable
                 ? this.StoreName
                 : null;
         }
 
-        private string _storeName;
-        public override string StoreName
+        private string? _storeName;
+        public override string? StoreName
         {
             get => StoreSupplier?.name ?? _storeName;
             protected set => _storeName = value;
@@ -67,7 +66,7 @@ namespace Kafka.Streams.KStream.Internals
             return TopicConfig;
         }
 
-        public static explicit operator MaterializedInternal<K, V, S>(MaterializedInternal<K, V, IStateStore> v)
+        public static MaterializedInternal<K, V, S> ToMaterializedInternal(MaterializedInternal<K, V, S> left, MaterializedInternal<K, V, S> right)
         {
             throw new NotImplementedException();
         }

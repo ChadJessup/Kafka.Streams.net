@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Mappers
         public ValueMapper(Func<V, VR> mapper)
             => this.mapper = mapper;
 
-        public VR apply(V value)
+        public VR Apply(V value)
             => this.mapper(value);
     }
 }

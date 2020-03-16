@@ -1,5 +1,4 @@
 using Confluent.Kafka;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using System;
 using System.Collections.Generic;

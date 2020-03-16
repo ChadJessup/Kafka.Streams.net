@@ -41,8 +41,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             if (o is TopicsInfo)
             {
-                TopicsInfo other = (TopicsInfo)o;
-                return other.sourceTopics.Equals(sourceTopics) && other.stateChangelogTopics.Equals(stateChangelogTopics);
+                return ((TopicsInfo)o).sourceTopics.Equals(this.sourceTopics) && ((TopicsInfo)o).stateChangelogTopics.Equals(this.stateChangelogTopics);
             }
             else
             {
@@ -53,7 +52,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public override int GetHashCode()
         {
-            long n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
+            var n = ((long)sourceTopics.GetHashCode() << 32) | (long)stateChangelogTopics.GetHashCode();
             return (int)(n % 0xFFFFFFFFL);
         }
 

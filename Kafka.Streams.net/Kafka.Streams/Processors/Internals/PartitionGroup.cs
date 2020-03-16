@@ -35,19 +35,9 @@ namespace Kafka.Streams.Processors.Internals
         public long streamTime { get; set; }
         private int totalBuffered;
         private bool allBuffered;
-        private readonly ProcessorContextImpl<object, object> processorContextImpl;
+        private readonly ProcessorContext<object, object> processorContextImpl;
 
-        PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues)
-        {
-            nonEmptyQueuesByTime = new SimplePriorityQueue<RecordQueue>();
-
-            this.partitionQueues = partitionQueues;
-            totalBuffered = 0;
-            allBuffered = false;
-            streamTime = RecordQueue.UNKNOWN;
-        }
-
-        public PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, ProcessorContextImpl<object, object> processorContextImpl)
+        public PartitionGroup(Dictionary<TopicPartition, RecordQueue> partitionQueues, ProcessorContext<object, object> processorContextImpl)
         {
             this.partitionQueues = partitionQueues;
             this.processorContextImpl = processorContextImpl;
@@ -113,8 +103,8 @@ namespace Kafka.Streams.Processors.Internals
         {
             RecordQueue recordQueue = partitionQueues[partition];
 
-            int oldSize = recordQueue.size();
-            int newSize = recordQueue.addRawRecords(rawRecords);
+            var oldSize = recordQueue.size();
+            var newSize = recordQueue.addRawRecords(rawRecords);
 
             // add this record queue to be considered for processing in the future if it was empty before
             if (oldSize == 0 && newSize > 0)

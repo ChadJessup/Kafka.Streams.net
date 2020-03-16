@@ -1,5 +1,3 @@
-using Kafka.Common.Utils;
-
 namespace Kafka.Streams.State.Interfaces
 {
     public interface ICacheFunction

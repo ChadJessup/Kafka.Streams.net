@@ -1,4 +1,3 @@
-using Kafka.Common.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
@@ -29,36 +28,6 @@ namespace Kafka.Streams.State.Internals
         {
             this.name = name;
            // this.metrics = metrics;
-        }
-
-        //public NamedCache(string name, StreamsMetricsImpl metrics)
-        //{
-        //    this.name = name;
-        //    //this.namedCacheMetrics = new NamedCacheMetrics(metrics, name);
-        //}
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        long hits()
-        {
-            return numReadHits;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        long misses()
-        {
-            return numReadMisses;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        long overwrites()
-        {
-            return numOverwrites;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        long flushes()
-        {
-            return numFlushes;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -279,15 +248,6 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void putAll(List<KeyValue<byte[], LRUCacheEntry>> entries)
-        {
-            foreach (KeyValue<byte[], LRUCacheEntry> entry in entries)
-            {
-                put(Bytes.wrap(entry.Key), entry.Value);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public LRUCacheEntry delete(Bytes key)
         {
             if (!cache.TryRemove(key, out var node) || node == null)
@@ -316,40 +276,6 @@ namespace Kafka.Streams.State.Internals
         public IEnumerator<KeyValuePair<Bytes, LRUNode>> allIterator()
         {
             return cache.GetEnumerator();
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        LRUCacheEntry first()
-        {
-            if (_head == null)
-            {
-                return null;
-            }
-
-            return _head.entry;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        LRUCacheEntry last()
-        {
-            if (_tail == null)
-            {
-                return null;
-            }
-
-            return _tail.entry;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        LRUNode head()
-        {
-            return _head;
-        }
-
-        [MethodImpl(MethodImplOptions.Synchronized)]
-        LRUNode tail()
-        {
-            return _tail;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

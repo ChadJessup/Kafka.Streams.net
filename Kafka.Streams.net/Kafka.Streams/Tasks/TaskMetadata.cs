@@ -47,7 +47,7 @@ namespace Kafka.Streams.Processors
                 return false;
             }
 
-            TaskMetadata that = (TaskMetadata)o;
+            var that = (TaskMetadata)o;
             return taskId.Equals(that.taskId)
                 && topicPartitions.Equals(that.topicPartitions);
         }

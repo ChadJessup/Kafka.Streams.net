@@ -1,4 +1,3 @@
-using Kafka.Streams.Processors.Internals;
 using Microsoft.Extensions.Logging;
 
 namespace Kafka.Streams.Tasks

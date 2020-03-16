@@ -1,6 +1,6 @@
 ﻿using Kafka.Streams.KStream;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 public class MockKeyValueStoreBuilder : AbstractStoreBuilder<int, byte[], IKeyValueStore<int, byte[]>>
 {

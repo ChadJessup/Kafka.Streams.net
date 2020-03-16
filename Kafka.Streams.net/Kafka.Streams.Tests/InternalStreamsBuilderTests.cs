@@ -6,8 +6,10 @@ using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.KStream.Mappers;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.State.KeyValue;
-using Kafka.Streams.Topologies;
+using Kafka.Streams.State;
+using Kafka.Streams.State.KeyValues;
+using Kafka.Streams.Tests.Helpers;
+using Kafka.Streams.Tests.Mocks;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Xunit;
@@ -23,7 +25,7 @@ namespace Kafka.Streams.Tests
         private readonly string storePrefix = "prefix-";
         private readonly ConsumedInternal<string, string> consumed = new ConsumedInternal<string, string>();
 
-        private MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> Materialized =>
+        private MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materialized =>
             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
                 Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("test-store"),
                 Builder,
@@ -57,12 +59,12 @@ namespace Kafka.Streams.Tests
             Assert.Equal("Z-STATE-STORE-0000000002", newBuilder.NewStoreName("Z-"));
         }
 
-        [Fact(Skip = "make others pass first")]
+        [Fact]
         public void ShouldHaveCorrectSourceTopicsForTableFromMergedStream()
         {
-            string topic1 = "topic-1";
-            string topic2 = "topic-2";
-            string topic3 = "topic-3";
+            var topic1 = "topic-1";
+            var topic2 = "topic-2";
+            var topic3 = "topic-3";
             var source1 = Builder.Stream(new List<string> { topic1 }, consumed);
             var source2 = Builder.Stream(new List<string> { topic2 }, consumed);
             var source3 = Builder.Stream(new List<string> { topic3 }, consumed);
@@ -100,57 +102,59 @@ namespace Kafka.Streams.Tests
             Builder.BuildAndOptimizeTopology();
             ProcessorTopology topology = Builder.InternalTopologyBuilder
                 .RewriteTopology(StreamsTestConfigs.GetStandardConfig(APP_ID))
-                .build(null);
+                .Build(null);
 
             Assert.Empty(topology.StateStores);
             Assert.Empty(topology.StoreToChangelogTopic);
-            Assert.Null(table1.queryableStoreName());
+            Assert.Null(table1.queryableStoreName);
         }
-        //
-        //[Fact]
-        //public void shouldBuildGlobalTableWithNonQueryableStoreName()
-        //{
-        //    var materializedInternal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.With(null, null), builder, storePrefix);
-        //
-        //    IGlobalKTable<string, string> table1 = builder.globalTable("topic2", consumed, materializedInternal);
-        //
-        //    Assert.Null(table1.QueryableStoreName);
-        //}
-        //
-        //[Fact]
-        //public void shouldBuildGlobalTableWithQueryaIbleStoreName()
-        //{
-        //    MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("globalTable"), builder, storePrefix);
-        //    IGlobalKTable<string, string> table1 = builder.globalTable("topic2", consumed, materializedInternal);
-        //
-        //    Assert.Equal("globalTable", table1.QueryableStoreName);
-        //}
-        //
-        //[Fact]
-        //public void shouldBuildSimpleGlobalTableTopology()
-        //{
-        //    MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("globalTable"), builder, storePrefix);
-        //    builder.globalTable("table",
-        //                        consumed,
-        //        materializedInternal);
-        //
-        //    builder.BuildAndOptimizeTopology();
-        //    ProcessorTopology topology = builder.InternalTopologyBuilder
-        //        .RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)))
-        //        .buildGlobalStateTopology();
-        //    List<IStateStore> stateStores = topology.globalStateStores;
-        //
-        //    Assert.Single(stateStores);
-        //    Assert.Equal("globalTable", stateStores[0].name);
-        //}
-        //
+
+        [Fact]
+        public void ShouldBuildGlobalTableWithNonQueryableStoreName()
+        {
+            var materializedInternal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.With(null, null), Builder, storePrefix);
+
+            IGlobalKTable<string, string> table1 = Builder.globalTable("topic2", consumed, materializedInternal);
+
+            Assert.Null(table1.QueryableStoreName);
+        }
+
+        [Fact]
+        public void ShouldBuildGlobalTableWithQueryaIbleStoreName()
+        {
+            var materializedInternal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("globalTable"), Builder, storePrefix);
+            IGlobalKTable<string, string> table1 = Builder.globalTable("topic2", consumed, materializedInternal);
+
+            Assert.Equal("globalTable", table1.QueryableStoreName);
+        }
+
+        [Fact]
+        public void shouldBuildSimpleGlobalTableTopology()
+        {
+            var materializedInternal = new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(
+                Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("globalTable"),
+                Builder,
+                storePrefix);
+
+            Builder.globalTable("table", consumed, materializedInternal);
+
+            Builder.BuildAndOptimizeTopology();
+            ProcessorTopology topology = Builder.InternalTopologyBuilder
+                .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
+                .BuildGlobalStateTopology();
+
+            List<IStateStore> stateStores = topology.globalStateStores;
+
+            Assert.Single(stateStores);
+            Assert.Equal("globalTable", stateStores[0].name);
+        }
+
         //private void doBuildGlobalTopologyWithAllGlobalTables()
         //{
-        //    ProcessorTopology topology = builder.InternalTopologyBuilder
-        //        .RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)))
+        //    ProcessorTopology topology = Builder.InternalTopologyBuilder
+        //        .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
         //        .buildGlobalStateTopology();
         //
         //    List<IStateStore> stateStores = topology.globalStateStores;
@@ -165,218 +169,219 @@ namespace Kafka.Streams.Tests
         //{
         //    {
         //        MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-        //             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("global1"), builder, storePrefix);
-        //        builder.globalTable("table", consumed, materializedInternal);
+        //             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("global1"), Builder, storePrefix);
+        //        Builder.globalTable("table", consumed, materializedInternal);
         //    }
         //    {
         //        MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-        //             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("global2"), builder, storePrefix);
-        //        builder.globalTable("table2", consumed, materializedInternal);
+        //             new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("global2"), Builder, storePrefix);
+        //        Builder.globalTable("table2", consumed, materializedInternal);
         //    }
         //
-        //    builder.BuildAndOptimizeTopology();
+        //    Builder.BuildAndOptimizeTopology();
         //    doBuildGlobalTopologyWithAllGlobalTables();
         //}
-        //
-        //[Fact]
-        //public void shouldAddGlobalTablesToEachGroup()
-        //{
-        //    string one = "globalTable";
-        //    string two = "globalTable2";
-        //
-        //    MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As(one), builder, storePrefix);
-        //    IGlobalKTable<string, string> globalTable = builder.globalTable("table", consumed, materializedInternal);
-        //
-        //    MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternal2 =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As(two), builder, storePrefix);
-        //    IGlobalKTable<string, string> globalTable2 = builder.globalTable("table2", consumed, materializedInternal2);
-        //
-        //    MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>> materializedInternalNotGlobal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("not-global"), builder, storePrefix);
-        //    builder.table("not-global", consumed, materializedInternalNotGlobal);
-        //
-        //    var kvMapper = new KeyValueMapper<string, string, string>((key, value) => value);
-        //
-        //    KStream<string, string> stream = builder.Stream(Collections.singleton("t1"), consumed);
-        //    stream.leftJoin(globalTable, kvMapper, MockValueJoiner.TOSTRING_JOINER);
-        //    KStream<string, string> stream2 = builder.Stream(Collections.singleton("t2"), consumed);
-        //    stream2.leftJoin(globalTable2, kvMapper, MockValueJoiner.TOSTRING_JOINER);
-        //
-        //    var nodeGroups = builder.InternalTopologyBuilder.GetNodeGroups();
-        //    foreach (int groupId in nodeGroups.Keys)
-        //    {
-        //        ProcessorTopology topology = builder.InternalTopologyBuilder.build(groupId);
-        //        List<IStateStore> stateStores = topology.globalStateStores;
-        //        HashSet<string> names = new HashSet<string>();
-        //        foreach (var stateStore in stateStores)
-        //        {
-        //            names.Add(stateStore.name);
-        //        }
-        //
-        //        Assert.Equal(2, stateStores.Count);
-        //        Assert.Contains(one, names);
-        //        Assert.Contains(two, names);
-        //    }
-        //}
-        //
-        //[Fact]
-        //public void shouldMapStateStoresToCorrectSourceTopics()
-        //{
-        //    IKStream<string, string> playEvents = builder.Stream(new[] { "events" }, consumed);
-        //
-        //    var materializedInternal =
-        //         new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("table-store"), builder, storePrefix);
-        //    IKTable<string, string> table = builder.table("table-topic", consumed, materializedInternal);
-        //
-        //
-        //    KStream<string, string> mapped = playEvents.map(MockMapper<string, string> selectValueKeyValueMapper());
-        //    mapped.leftJoin(table, MockValueJoiner.TOSTRING_JOINER).groupByKey().count(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("count"));
-        //    builder.BuildAndOptimizeTopology();
-        //    builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)));
-        //    Assert.Equal(new[] { "table-topic" }, builder.InternalTopologyBuilder.StateStoreNameToSourceTopics()["table-store"]);
-        //    Assert.Equal(new[] { APP_ID + "-KSTREAM-MAP-0000000003-repartition" }, builder.InternalTopologyBuilder.StateStoreNameToSourceTopics()["count"]);
-        //}
+
+        [Fact]
+        public void shouldAddGlobalTablesToEachGroup()
+        {
+            var one = "globalTable";
+            var two = "globalTable2";
+
+            var materializedInternal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As(one), Builder, storePrefix);
+            IGlobalKTable<string, string> globalTable = Builder.globalTable("table", consumed, materializedInternal);
+
+            var materializedInternal2 =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As(two), Builder, storePrefix);
+            IGlobalKTable<string, string> globalTable2 = Builder.globalTable("table2", consumed, materializedInternal2);
+
+            var materializedInternalNotGlobal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("not-global"), Builder, storePrefix);
+            Builder.table("not-global", consumed, materializedInternalNotGlobal);
+
+            var kvMapper = new KeyValueMapper<string, string, string>((key, value) => value);
+
+            IKStream<string, string> stream = Builder.Stream(new[] { "t1" }, consumed);
+            stream.LeftJoin(globalTable, kvMapper, MockValueJoiner.TOSTRING_JOINER<string, string>());
+            IKStream<string, string> stream2 = Builder.Stream(new[] { "t2" }, consumed);
+            stream2.LeftJoin(globalTable2, kvMapper, MockValueJoiner.TOSTRING_JOINER<string, string>());
+
+            var nodeGroups = Builder.InternalTopologyBuilder.GetNodeGroups();
+            foreach (var groupId in nodeGroups.Keys)
+            {
+                ProcessorTopology topology = Builder.InternalTopologyBuilder.Build(groupId);
+                List<IStateStore> stateStores = topology.globalStateStores;
+                var names = new HashSet<string>();
+                foreach (var stateStore in stateStores)
+                {
+                    names.Add(stateStore.name);
+                }
+
+                Assert.Equal(2, stateStores.Count);
+                Assert.Contains(one, names);
+                Assert.Contains(two, names);
+            }
+        }
+
+        [Fact]
+        public void ShouldMapStateStoresToCorrectSourceTopics()
+        {
+            IKStream<string, string> playEvents = Builder.Stream(new[] { "events" }, consumed);
+
+            var materializedInternal =
+                 new MaterializedInternal<string, string, IKeyValueStore<Bytes, byte[]>>(Materialized<string, string, IKeyValueStore<Bytes, byte[]>>.As("table-store"), Builder, storePrefix);
+            IKTable<string, string> table = Builder.table("table-topic", consumed, materializedInternal);
+
+            var mapper = new MockMapper.SelectValueKeyValueMapper<string, string>();
+            IKStream<string, string> mapped = playEvents.map(mapper);
+            mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>()).groupByKey().count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("count"));
+            Builder.BuildAndOptimizeTopology();
+            Builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)));
+            Assert.Equal(new[] { "table-topic" }, Builder.InternalTopologyBuilder.StateStoreNameToSourceTopics()["table-store"]);
+            Assert.Equal(new[] { APP_ID + "-KSTREAM-MAP-0000000003-repartition" }, Builder.InternalTopologyBuilder.StateStoreNameToSourceTopics()["count"]);
+        }
 
         [Fact]
         public void ShouldAddTopicToEarliestAutoOffsetResetList()
         {
-            string topicName = "topic-1";
+            var topicName = "topic-1";
             var consumed = new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest));
             Builder.Stream(new[] { topicName }, consumed);
             Builder.BuildAndOptimizeTopology();
 
-            Assert.Matches(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
+            Assert.Matches(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
         }
 
         [Fact]
         public void ShouldAddTopicToLatestAutoOffsetResetList()
         {
-            string topicName = "topic-1";
+            var topicName = "topic-1";
 
             var consumed = new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest));
             Builder.Stream(new[] { topicName }, consumed);
             Builder.BuildAndOptimizeTopology();
 
             Assert.Matches(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
-            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
+            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
         }
 
         [Fact]
         public void ShouldAddTableToEarliestAutoOffsetResetList()
         {
-            string topicName = "topic-1";
-            Builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest)), Materialized);
+            var topicName = "topic-1";
+            Builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest)), materialized);
             Builder.BuildAndOptimizeTopology();
-            Assert.Matches(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
+            Assert.Matches(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
         }
 
         [Fact]
         public void ShouldAddTableToLatestAutoOffsetResetList()
         {
-            string topicName = "topic-1";
-            Builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest)), Materialized);
+            var topicName = "topic-1";
+            Builder.table(topicName, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest)), materialized);
             Builder.BuildAndOptimizeTopology();
             Assert.Matches(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
-            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
+            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
         }
 
         [Fact]
         public void ShouldNotAddTableToOffsetResetLists()
         {
-            string topicName = "topic-1";
-            Builder.table(topicName, consumed, Materialized);
+            var topicName = "topic-1";
+            Builder.table(topicName, consumed, materialized);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicName);
-            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicName);
+            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicName);
         }
 
         [Fact]
         public void ShouldNotAddRegexTopicsToOffsetResetLists()
         {
-            Regex topicPattern = new Regex("topic-\\d", RegexOptions.Compiled);
-            string topic = "topic-5";
+            var topicPattern = new Regex("topic-\\d", RegexOptions.Compiled);
+            var topic = "topic-5";
 
             Builder.Stream(topicPattern, consumed);
 
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topic);
-            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topic);
+            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topic);
 
         }
 
         [Fact]
         public void ShouldAddRegexTopicToEarliestAutoOffsetResetList()
         {
-            Regex topicPattern = new Regex("topic-\\d+", RegexOptions.Compiled);
-            string topicTwo = "topic-500000";
+            var topicPattern = new Regex("topic-\\d+", RegexOptions.Compiled);
+            var topicTwo = "topic-500000";
 
             Builder.Stream(topicPattern, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Earliest)));
             Builder.BuildAndOptimizeTopology();
 
-            Assert.Matches(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicTwo);
+            Assert.Matches(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicTwo);
             Assert.DoesNotMatch(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicTwo);
         }
 
         [Fact]
         public void ShouldAddRegexTopicToLatestAutoOffsetResetList()
         {
-            Regex topicPattern = new Regex("topic-\\d+", RegexOptions.Compiled);
-            string topicTwo = "topic-1000000";
+            var topicPattern = new Regex("topic-\\d+", RegexOptions.Compiled);
+            var topicTwo = "topic-1000000";
 
             Builder.Stream(topicPattern, new ConsumedInternal<string, string>(Consumed<string, string>.with(AutoOffsetReset.Latest)));
             Builder.BuildAndOptimizeTopology();
 
             Assert.Matches(Builder.InternalTopologyBuilder.LatestResetTopicsPattern(), topicTwo);
-            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.earliestResetTopicsPattern(), topicTwo);
+            Assert.DoesNotMatch(Builder.InternalTopologyBuilder.EarliestResetTopicsPattern(), topicTwo);
         }
 
-        // [Fact]
-        // public void shouldHaveNullTimestampExtractorWhenNoneSupplied()
-        // {
-        //     builder.Stream(new[] { "topic" }, consumed);
-        //     builder.BuildAndOptimizeTopology();
-        //     builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)));
-        //     ProcessorTopology processorTopology = builder.InternalTopologyBuilder.build(null);
-        //     Assert.Null(processorTopology.Source("topic").getTimestampExtractor());
-        // }
-        // 
-        // [Fact]
-        // public void shouldUseProvidedTimestampExtractor()
-        // {
-        //     var consumed = new ConsumedInternal<string, string>(Consumed<string, string>.with(new MockTimestampExtractor()));
-        //     builder.Stream(new[] { "topic" }, consumed);
-        //     builder.BuildAndOptimizeTopology();
-        //     ProcessorTopology processorTopology = builder.InternalTopologyBuilder
-        //         .RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)))
-        //         .build(null);
-        //     Assert.True(processorTopology.Source("topic").getTimestampExtractor() is MockTimestampExtractor);
-        // }
-        // 
-        // [Fact]
-        // public void ktableShouldHaveNullTimestampExtractorWhenNoneSupplied()
-        // {
-        //     builder.table("topic", consumed, materialized);
-        //     builder.BuildAndOptimizeTopology();
-        //     ProcessorTopology processorTopology = builder.InternalTopologyBuilder
-        //         .RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)))
-        //         .build(null);
-        // 
-        //     Assert.Null(processorTopology.Source("topic").getTimestampExtractor());
-        // }
-        // 
-        // [Fact]
-        // public void ktableShouldUseProvidedTimestampExtractor()
-        // {
-        //     var consumed = new ConsumedInternal<string, string>(
-        //         Consumed<string, string>.with(new MockTimestampExtractor()));
-        // 
-        //     builder.table("topic", consumed, materialized);
-        //     builder.BuildAndOptimizeTopology();
-        //     ProcessorTopology processorTopology = builder.InternalTopologyBuilder
-        //         .RewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig(APP_ID)))
-        //         .build(null);
-        //     Assert.True(processorTopology.Source("topic").getTimestampExtractor() is MockTimestampExtractor);
-        // }
+        [Fact]
+        public void shouldHaveNullTimestampExtractorWhenNoneSupplied()
+        {
+            Builder.Stream(new[] { "topic" }, consumed);
+            Builder.BuildAndOptimizeTopology();
+            Builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)));
+            ProcessorTopology processorTopology = Builder.InternalTopologyBuilder.Build(null);
+            Assert.Null(processorTopology.Source("topic").TimestampExtractor);
+        }
+
+        [Fact]
+        public void shouldUseProvidedTimestampExtractor()
+        {
+            var consumed = new ConsumedInternal<string, string>(Consumed<string, string>.with(new MockTimestampExtractor()));
+            Builder.Stream(new[] { "topic" }, consumed);
+            Builder.BuildAndOptimizeTopology();
+            ProcessorTopology processorTopology = Builder.InternalTopologyBuilder
+                .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
+                .Build(null);
+            Assert.True(processorTopology.Source("topic").TimestampExtractor is MockTimestampExtractor);
+        }
+
+        [Fact]
+        public void KtableShouldHaveNullTimestampExtractorWhenNoneSupplied()
+        {
+            Builder.table("topic", consumed, materialized);
+            Builder.BuildAndOptimizeTopology();
+            ProcessorTopology processorTopology = Builder.InternalTopologyBuilder
+                .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
+                .Build(null);
+
+            Assert.Null(processorTopology.Source("topic").TimestampExtractor);
+        }
+
+        [Fact]
+        public void ktableShouldUseProvidedTimestampExtractor()
+        {
+            var consumed = new ConsumedInternal<string, string>(
+                Consumed<string, string>.with(new MockTimestampExtractor()));
+
+            Builder.table("topic", consumed, materialized);
+            Builder.BuildAndOptimizeTopology();
+            ProcessorTopology processorTopology = Builder.InternalTopologyBuilder
+                .RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)))
+                .Build(null);
+
+            Assert.True(processorTopology.Source("topic").TimestampExtractor is MockTimestampExtractor);
+        }
     }
 }

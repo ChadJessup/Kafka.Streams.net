@@ -2,7 +2,6 @@
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Interfaces;
-using System.Collections.Generic;
 
 namespace Kafka.Streams.Clients
 {
@@ -47,7 +46,7 @@ namespace Kafka.Streams.Clients
          *               by the {@link java.util.Properties} given to the {@link KafkaStreams}
          * @return an instance of Kafka consumer
          */
-        RestoreConsumer GetRestoreConsumer(ConsumerConfig config);
+        RestoreConsumer GetRestoreConsumer(RestoreConsumerConfig config);
 
         /**
          * Create a {@link Consumer} which is used to consume records for {@link GlobalKTable}.

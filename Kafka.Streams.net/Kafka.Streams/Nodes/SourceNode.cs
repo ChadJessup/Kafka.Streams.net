@@ -1,40 +1,43 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using Kafka.Streams.Nodes;
 using Kafka.Streams.Processors.Interfaces;
 using NodaTime;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Kafka.Streams.Nodes
 {
-    public class SourceNode : ProcessorNode
+    public class SourceNode : ProcessorNode, ISourceNode
     {
-        public SourceNode(IClock clock, string name, HashSet<string> stateStores)
-            : base(clock, name, stateStores)
+        public SourceNode(IClock clock, string name, HashSet<string>? stateStores)
+            : base(clock, name, stateStores, null)
         {
         }
     }
 
-    public class SourceNode<K, V> : ProcessorNode<K, V>
+    public class SourceNode<K, V> : ProcessorNode<K, V>, ISourceNode<K, V>
     {
         private readonly List<string> topics;
+        private SourceNode sourceNode;
 
         private IProcessorContext context;
         private readonly IDeserializer<K> keyDeserializer;
         private readonly IDeserializer<V> valDeserializer;
-        public ITimestampExtractor timestampExtractor { get; }
+        public ITimestampExtractor? TimestampExtractor { get; }
 
         public SourceNode(
             IClock clock,
             string name,
             List<string> topics,
-            ITimestampExtractor timestampExtractor,
+            ITimestampExtractor? timestampExtractor,
             IDeserializer<K> keyDeserializer,
             IDeserializer<V> valDeserializer)
             : base(clock, name)
         {
+            this.sourceNode = new SourceNode(clock, Name, null);
+
             this.topics = topics;
-            this.timestampExtractor = timestampExtractor;
+            this.TimestampExtractor = timestampExtractor;
             this.keyDeserializer = keyDeserializer;
             this.valDeserializer = valDeserializer;
         }
@@ -47,6 +50,11 @@ namespace Kafka.Streams.Nodes
             IDeserializer<V> valDeserializer)
             : this(clock, name, topics, null, keyDeserializer, valDeserializer)
         {
+        }
+
+        public static implicit operator SourceNode(SourceNode<K, V> sourceNode)
+        {
+            return sourceNode.sourceNode;
         }
 
         public K deserializeKey(string topic, Headers headers, byte[] data)
@@ -67,12 +75,12 @@ namespace Kafka.Streams.Nodes
             // if deserializers are null, get the default ones from the context
             if (this.keyDeserializer == null)
             {
-                //this.keyDeserializer = context.keySerde.Deserializer;
+                // this.keyDeserializer = context.keySerde.Deserializer;
             }
 
             if (this.valDeserializer == null)
             {
-                //this.valDeserializer = context.valueSerde.Deserializer;
+                // this.valDeserializer = context.valueSerde.Deserializer;
             }
 
             // if value deserializers are for {@code Change} values, set the inner deserializer when necessary
@@ -100,18 +108,28 @@ namespace Kafka.Streams.Nodes
         /**
          * @return a string representation of this node starting with the given indent, useful for debugging.
          */
-        //public override string ToString(string indent)
-        //{
-        //    StringBuilder sb = new StringBuilder(base.ToString(indent));
-        //    sb.Append(indent).Append("\ttopics:\t\t[");
-        //    foreach (string topic in topics)
-        //    {
-        //        sb.Append(topic);
-        //        sb.Append(", ");
-        //    }
-        //    sb.Length = sb.Length - 2;  // Remove the last comma
-        //    sb.Append("]\n");
-        //    return sb.ToString();
-        //}
+        public override string ToString(string indent)
+        {
+            StringBuilder sb = new StringBuilder(base.ToString(indent));
+            sb.Append(indent).Append("\ttopics:\t\t[");
+            foreach (string topic in topics)
+            {
+                sb.Append(topic);
+                sb.Append(", ");
+            }
+
+            sb.Length -= 2;  // Remove the last comma
+            sb.Append("]\n");
+            return sb.ToString();
+        }
+    }
+
+    public interface ISourceNode<K, V> : IProcessorNode<K, V>, ISourceNode
+    {
+    }
+
+    public interface ISourceNode : IProcessorNode
+    {
+        void Process<K, V>(K key, V value);
     }
 }

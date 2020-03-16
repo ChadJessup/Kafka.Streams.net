@@ -1,5 +1,4 @@
 ﻿using Confluent.Kafka;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Configs;
 using Kafka.Streams.Processors.Internals;
 using Kafka.Streams.State;
@@ -43,14 +42,15 @@ namespace Kafka.Streams.Tasks
         public List<T> createTasks(
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
+            string threadTaskId,
             Dictionary<TaskId, HashSet<TopicPartition>> tasksToBeCreated)
         {
-            List<T> createdTasks = new List<T>();
+            var createdTasks = new List<T>();
             foreach (KeyValuePair<TaskId, HashSet<TopicPartition>> newTaskAndPartitions in tasksToBeCreated)
             {
                 TaskId taskId = newTaskAndPartitions.Key;
                 HashSet<TopicPartition> partitions = newTaskAndPartitions.Value;
-                T task = createTask(loggerFactory, consumer, taskId, partitions);
+                T task = createTask(loggerFactory, consumer, taskId, threadTaskId, partitions);
                 if (task != null)
                 {
                     logger.LogTrace($"Created task {{{taskId}}} with assigned partitions {{{partitions}}}");
@@ -67,6 +67,7 @@ namespace Kafka.Streams.Tasks
             ILoggerFactory loggerFactory,
             IConsumer<byte[], byte[]> consumer,
             TaskId id,
+            string threadClientId,
             HashSet<TopicPartition> partitions);
 
         public virtual void close() { }

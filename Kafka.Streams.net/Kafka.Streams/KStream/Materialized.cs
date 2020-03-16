@@ -1,11 +1,8 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.Window;
 using System;
@@ -39,11 +36,11 @@ namespace Kafka.Streams.KStream
         {
         }
 
-        public Materialized(string storeName)
+        public Materialized(string? storeName)
             : this()
             => this.StoreName = storeName;
 
-        public virtual string StoreName { get; protected set; }
+        public virtual string? StoreName { get; protected set; }
         public ISerde<V>? ValueSerde { get; protected set; }
         public ISerde<K>? KeySerde { get; protected set; }
         public bool LoggingEnabled { get; protected set; } = true;
@@ -111,7 +108,7 @@ namespace Kafka.Streams.KStream
          */
         public static Materialized<K, V> As(string storeName)
         {
-            Named.validate(storeName);
+            Named.Validate(storeName);
 
             return new Materialized<K, V>(storeName);
         }
@@ -128,7 +125,7 @@ namespace Kafka.Streams.KStream
             this.StoreSupplier = storeSupplier;
         }
 
-        private Materialized(string storeName)
+        private Materialized(string? storeName)
             : base(storeName)
         {
         }
@@ -139,6 +136,11 @@ namespace Kafka.Streams.KStream
          */
         protected Materialized(Materialized<K, V, S> materialized)
         {
+            if (materialized is null)
+            {
+                throw new ArgumentNullException(nameof(materialized));
+            }
+
             this.StoreSupplier = materialized.StoreSupplier;
             this.StoreName = materialized.StoreName;
             this.KeySerde = materialized.KeySerde;
@@ -161,7 +163,7 @@ namespace Kafka.Streams.KStream
          */
         public static Materialized<K, V, S> As(string storeName)
         {
-            Named.validate(storeName);
+            Named.Validate(storeName);
 
             return new Materialized<K, V, S>(storeName);
         }
@@ -182,7 +184,7 @@ namespace Kafka.Streams.KStream
         public static new Materialized<K, V, S> With(
             ISerde<K>? keySerde,
             ISerde<V>? valueSerde)
-            => new Materialized<K, V, S>("")
+            => new Materialized<K, V, S>(storeName: null)
                 .WithKeySerde(keySerde)
                 .WithValueSerde(valueSerde);
 
@@ -333,7 +335,7 @@ namespace Kafka.Streams.KStream
          */
         public Materialized<K, V, S> WithRetention(TimeSpan retention)
         {
-            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retention, "retention");
+            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retention, "retention");
             var retenationMs = ApiUtils.validateMillisecondDuration(retention, msgPrefix);
 
             if (retenationMs < TimeSpan.Zero)

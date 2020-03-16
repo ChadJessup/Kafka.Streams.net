@@ -1,8 +1,7 @@
 using Kafka.Streams.Interfaces;
 using Kafka.Streams.Internals;
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using Kafka.Streams.State.Sessions;
 using Kafka.Streams.State.TimeStamped;
 using Kafka.Streams.State.Window;
@@ -195,7 +194,7 @@ namespace Kafka.Streams.State
                 throw new ArgumentException("numSegments cannot be smaller than 2");
             }
 
-            TimeSpan legacySegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionPeriod.TotalMilliseconds / (numSegments - 1), 60_000L));
+            var legacySegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionPeriod.TotalMilliseconds / (numSegments - 1), 60_000L));
 
             return persistentWindowStore(
                 name,
@@ -276,9 +275,9 @@ namespace Kafka.Streams.State
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
-            string rpMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var rpMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
             var retentionMs = ApiUtils.validateMillisecondDuration(retentionPeriod, rpMsgPrefix);
-            string wsMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
+            var wsMsgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(windowSize, "windowSize");
             var windowSizeMs = ApiUtils.validateMillisecondDuration(windowSize, wsMsgPrefix);
 
             var defaultSegmentInterval = TimeSpan.FromMilliseconds(Math.Max(retentionMs.TotalMilliseconds / 2, 60_000L));
@@ -421,7 +420,7 @@ namespace Kafka.Streams.State
             string name,
             TimeSpan retentionPeriod)
         {
-            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
 
             return persistentSessionStore(name, ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix));
         }
@@ -440,7 +439,7 @@ namespace Kafka.Streams.State
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
 
-            string msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
+            var msgPrefix = ApiUtils.prepareMillisCheckFailMsgPrefix(retentionPeriod, "retentionPeriod");
             var retentionPeriodMs = ApiUtils.validateMillisecondDuration(retentionPeriod, msgPrefix);
 
             if (retentionPeriodMs < TimeSpan.Zero)

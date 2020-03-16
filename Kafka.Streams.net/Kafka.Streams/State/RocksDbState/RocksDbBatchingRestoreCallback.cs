@@ -19,7 +19,7 @@ namespace Kafka.Streams.State.RocksDbState
         {
             try
             {
-                using (WriteBatch batch = new WriteBatch())
+                using (var batch = new WriteBatch())
                 {
                     rocksDBStore.DbAccessor.prepareBatchForRestore(records, batch);
                     rocksDBStore.write(batch);

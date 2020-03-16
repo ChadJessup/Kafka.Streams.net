@@ -13,17 +13,21 @@ using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.Tasks;
 using Kafka.Streams.Threads;
 using Kafka.Streams.Threads.GlobalStream;
-using Kafka.Streams.Threads.KafkaStream;
+using Kafka.Streams.Threads.Stream;
 using Kafka.Streams.Threads.KafkaStreams;
 using Kafka.Streams.Topologies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using NodaTime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using Confluent.Kafka;
+using Kafka.Streams.State.Internals;
+using Kafka.Streams.Clients.Producers;
+using Kafka.Streams.State.KeyValues;
+using NodaTime;
 
 namespace Kafka.Streams
 {
@@ -105,12 +109,20 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton<StateDirectory>();
 
                 serviceCollection.TryAddSingleton<IStateRestoreListener, DelegatingStateRestoreListener>();
-                //serviceCollection.TryAddSingleton<IChangelogReader, StoreChangelogReader>();
+                serviceCollection.TryAddSingleton<IChangelogReader, StoreChangelogReader>();
                 serviceCollection.TryAddSingleton<IStateListener, StreamStateListener>();
                 serviceCollection.TryAddSingleton<StreamsMetadataState>();
                 serviceCollection.TryAddSingleton<InternalTopologyBuilder>();
                 serviceCollection.TryAddSingleton<InternalStreamsBuilder>();
-                //serviceCollection.TryAddSingleton<TaskManager>();
+
+                // TaskManager stuff
+                serviceCollection.TryAddTransient<ThreadCache>();
+                serviceCollection.TryAddSingleton<ITaskManager, TaskManager>();
+                serviceCollection.TryAddSingleton<AbstractTaskCreator<StandbyTask>, StandbyTaskCreator>();
+                serviceCollection.TryAddSingleton<AbstractTaskCreator<StreamTask>, TaskCreator>();
+                serviceCollection.TryAddSingleton<AssignedStreamsTasks>();
+                serviceCollection.TryAddSingleton<AssignedStandbyTasks>();
+
                 serviceCollection.TryAddSingleton<Topology>();
 
                 return serviceCollection;
@@ -144,14 +156,26 @@ namespace Kafka.Streams
 
             protected virtual IServiceCollection AddClients(IServiceCollection serviceCollection)
             {
-                // Special clients, e.g., AdminClient
                 serviceCollection.TryAddSingleton<IKafkaClientSupplier, DefaultKafkaClientSupplier>();
 
                 // Consumers
                 serviceCollection.TryAddSingleton<GlobalConsumer>();
                 serviceCollection.TryAddSingleton<StateConsumer>();
+                serviceCollection.TryAddSingleton<RestoreConsumer>();
+
+                serviceCollection.TryAddSingleton<RestoreConsumerConfig>();
 
                 // Producers
+                serviceCollection.TryAddSingleton<BaseProducer<byte[], byte[]>>();
+
+                // Special clients, e.g., AdminClient
+                serviceCollection.TryAddSingleton<IAdminClient>(sp =>
+                {
+                    var clientSupplier = sp.GetRequiredService<IKafkaClientSupplier>();
+                    var config = sp.GetRequiredService<StreamsConfig>();
+
+                    return clientSupplier.GetAdminClient(config);
+                });
 
                 return serviceCollection;
             }
@@ -161,8 +185,8 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton<IGlobalStreamThread, GlobalStreamThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<GlobalStreamThreadStates>, GlobalStreamThreadState>();
 
-                serviceCollection.TryAddTransient<IKafkaStreamThread, KafkaStreamThread>();
-                serviceCollection.TryAddTransient<IStateMachine<KafkaStreamThreadStates>, KafkaStreamThreadState>();
+                serviceCollection.TryAddTransient<IStreamThread, StreamThread>();
+                serviceCollection.TryAddTransient<IStateMachine<StreamThreadStates>, StreamThreadState>();
 
                 serviceCollection.TryAddSingleton<IKafkaStreamsThread, KafkaStreamsThread>();
                 serviceCollection.TryAddSingleton<IStateMachine<KafkaStreamsThreadStates>, KafkaStreamsThreadState>();
@@ -206,7 +230,7 @@ namespace Kafka.Streams
                 string topic,
                 Consumed<K, V> consumed)
             {
-                return this.Stream(topic, consumed);
+                return this.Stream(new[] { topic }, consumed);
             }
 
             /**
@@ -254,7 +278,7 @@ namespace Kafka.Streams
                 topics = topics ?? throw new ArgumentNullException(nameof(topics));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                return InternalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
+                return this.InternalStreamsBuilder.Stream(topics, new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -273,7 +297,7 @@ namespace Kafka.Streams
              * @return a {@link KStream} for topics matching the regex pattern.
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IKStream<K, V> stream<K, V>(Regex topicPattern)
+            public IKStream<K, V> Stream<K, V>(Regex topicPattern)
             {
                 return Stream(topicPattern, Consumed<K, V>.with(null, null));
             }
@@ -302,8 +326,7 @@ namespace Kafka.Streams
                 topicPattern = topicPattern ?? throw new ArgumentNullException(nameof(topicPattern));
                 consumed = consumed ?? throw new ArgumentNullException(nameof(consumed));
 
-                return null;
-                //internalStreamsBuilder.stream(topicPattern, new ConsumedInternal<K, V>(consumed));
+                return this.InternalStreamsBuilder.Stream(topicPattern, new ConsumedInternal<K, V>(consumed));
             }
 
             /**
@@ -343,24 +366,37 @@ namespace Kafka.Streams
              * @param materialized       the instance of {@link Materialized} used to materialize a state store; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IKTable<K, V> table<K, V>(
-            //    string topic,
-            //    Consumed<K, V> consumed,
-            //    Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
-            //{
-            //    Objects.requireNonNull(topic, "topic can't be null");
-            //    Objects.requireNonNull(consumed, "consumed can't be null");
-            //    Objects.requireNonNull(materialized, "materialized can't be null");
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IKTable<K, V> Table<K, V>(
+                string topic,
+                Consumed<K, V> consumed,
+                Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized)
+            {
+                if (string.IsNullOrEmpty(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
 
-            //    ConsumedInternal<K, V> consumedInternal = new ConsumedInternal<K, V>(consumed);
-            //    materialized.withKeySerde(consumedInternal.keySerde).withValueSerde(consumedInternal.valueSerde);
+                if (consumed is null)
+                {
+                    throw new ArgumentNullException(nameof(consumed));
+                }
 
-            //    MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
-            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, internalStreamsBuilder, topic + "-");
+                if (materialized is null)
+                {
+                    throw new ArgumentNullException(nameof(materialized));
+                }
 
-            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            //}
+                var consumedInternal = new ConsumedInternal<K, V>(consumed);
+                materialized
+                    .WithKeySerde(consumedInternal.keySerde)
+                    .WithValueSerde(consumedInternal.valueSerde);
+
+                var materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, this.InternalStreamsBuilder, topic + "-");
+
+                return this.InternalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+            }
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -380,11 +416,11 @@ namespace Kafka.Streams
              * @param topic the topic name; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IKTable<K, V> table<K, V>(string topic)
-            //{
-            //    return table(topic, new ConsumedInternal<K, V>());
-            //}
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IKTable<K, V> Table<K, V>(string topic)
+            {
+                return this.Table(topic, new ConsumedInternal<K, V>());
+            }
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -405,22 +441,30 @@ namespace Kafka.Streams
              * @param consumed  the instance of {@link Consumed} used to define optional parameters; cannot be {@code null}
              * @return a {@link KTable} for the specified topic
              */
-            //[MethodImpl(MethodImplOptions.Synchronized)]
-            //public IKTable<K, V> table<K, V>(
-            //    string topic,
-            //    Consumed<K, V> consumed)
-            //{
-            //    Objects.requireNonNull(topic, "topic can't be null");
-            //    Objects.requireNonNull(consumed, "consumed can't be null");
-            //    var consumedInternal = new ConsumedInternal<K, V>(consumed);
+            [MethodImpl(MethodImplOptions.Synchronized)]
+            public IKTable<K, V> Table<K, V>(
+                string topic,
+                Consumed<K, V> consumed)
+            {
+                if (string.IsNullOrEmpty(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
 
-            //    var materializedInternal =
-            //         new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
-            //                 Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.with(consumedInternal.keySerde, consumedInternal.valueSerde),
-            //                 internalStreamsBuilder, topic + "-");
+                if (consumed is null)
+                {
+                    throw new ArgumentNullException(nameof(consumed));
+                }
 
-            //    return internalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
-            //}
+                var consumedInternal = new ConsumedInternal<K, V>(consumed);
+
+                var materializedInternal =
+                     new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(
+                             Materialized<K, V, IKeyValueStore<Bytes, byte[]>>.With(consumedInternal.keySerde, consumedInternal.valueSerde),
+                             this.InternalStreamsBuilder, topic + "-");
+
+                return this.InternalStreamsBuilder.table(topic, consumedInternal, materializedInternal);
+            }
 
             /**
              * Create a {@link KTable} for the specified topic.
@@ -507,7 +551,7 @@ namespace Kafka.Streams
              * @return a {@link GlobalKTable} for the specified topic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public IGlobalKTable<K, V> globalTable<K, V>(string topic)
+            public IGlobalKTable<K, V> GlobalTable<K, V>(string topic)
             {
                 return null; // globalTable<K, V>(topic, Consumed<K, V>.with(null, null));
             }
@@ -619,7 +663,7 @@ namespace Kafka.Streams
              * @throws TopologyException if state store supplier is already added
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addStateStore<K, V, T>(IStoreBuilder<T> builder)
+            public StreamsBuilder AddStateStore<K, V, T>(IStoreBuilder<T> builder)
                 where T : IStateStore
             {
                 Objects.requireNonNull(builder, "builder can't be null");
@@ -632,7 +676,7 @@ namespace Kafka.Streams
              * @deprecated use {@link #addGlobalStore(StoreBuilder, String, Consumed, IProcessorSupplier)} instead
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addGlobalStore<K, V, T>(
+            public StreamsBuilder AddGlobalStore<K, V, T>(
                 IStoreBuilder<T> storeBuilder,
                 string topic,
                 string sourceName,
@@ -641,15 +685,43 @@ namespace Kafka.Streams
                 IProcessorSupplier<K, V> stateUpdateSupplier)
                 where T : IStateStore
             {
-                Objects.requireNonNull(storeBuilder, "storeBuilder can't be null");
-                Objects.requireNonNull(consumed, "consumed can't be null");
-                //internalStreamsBuilder.addGlobalStore(
-                //    storeBuilder,
-                //    sourceName,
-                //    topic,
-                //    new ConsumedInternal<K, V>(consumed),
-                //    processorName,
-                //    stateUpdateSupplier);
+                if (storeBuilder is null)
+                {
+                    throw new ArgumentNullException(nameof(storeBuilder));
+                }
+
+                if (string.IsNullOrEmpty(topic))
+                {
+                    throw new ArgumentException("message", nameof(topic));
+                }
+
+                if (string.IsNullOrEmpty(sourceName))
+                {
+                    throw new ArgumentException("message", nameof(sourceName));
+                }
+
+                if (consumed is null)
+                {
+                    throw new ArgumentNullException(nameof(consumed));
+                }
+
+                if (string.IsNullOrEmpty(processorName))
+                {
+                    throw new ArgumentException("message", nameof(processorName));
+                }
+
+                if (stateUpdateSupplier is null)
+                {
+                    throw new ArgumentNullException(nameof(stateUpdateSupplier));
+                }
+
+                this.InternalStreamsBuilder.AddGlobalStore(
+                    storeBuilder,
+                    sourceName,
+                    topic,
+                    new ConsumedInternal<K, V>(consumed),
+                    processorName,
+                    stateUpdateSupplier);
 
                 return this;
             }
@@ -680,7 +752,7 @@ namespace Kafka.Streams
              * @throws TopologyException if the processor of state is already registered
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public StreamsBuilder addGlobalStore<K, V, T>(
+            public StreamsBuilder AddGlobalStore<K, V, T>(
                 IStoreBuilder<T> storeBuilder,
                 string topic,
                 Consumed<K, V> consumed,
@@ -706,9 +778,9 @@ namespace Kafka.Streams
              * @return the {@link Topology} that represents the specified processing logic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public virtual Topology build()
+            public virtual Topology Build()
             {
-                return build(null);
+                return Build(null);
             }
 
             /**
@@ -719,7 +791,7 @@ namespace Kafka.Streams
              * @return the {@link Topology} that represents the specified processing logic
              */
             [MethodImpl(MethodImplOptions.Synchronized)]
-            public virtual Topology build(StreamsConfig config)
+            public virtual Topology Build(StreamsConfig? config)
             {
                 this.InternalStreamsBuilder.BuildAndOptimizeTopology(config);
 

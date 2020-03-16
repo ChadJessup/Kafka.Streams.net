@@ -25,19 +25,10 @@ namespace Kafka.Streams.Processors.Internals
      */
     public abstract class InternalTopicConfig
     {
-        public string name { get; private set; }
-        public Dictionary<string, string> topicConfigs { get; }
+        public string name { get; protected set; }
+        public Dictionary<string, string?> topicConfigs { get; protected set; }
 
-        //public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
-
-        public InternalTopicConfig(string name, Dictionary<string, string> topicConfigs)
-        {
-            name = name ?? throw new ArgumentNullException(nameof(name));
-//            Topic.validate(name);
-
-            this.name = name;
-            this.topicConfigs = topicConfigs;
-        }
+        public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
 
         /**
          * Get the configured properties for this topic. If retentionMs is set then
@@ -46,16 +37,16 @@ namespace Kafka.Streams.Processors.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        abstract public Dictionary<string, string> getProperties(Dictionary<string, string> defaultProperties, long additionalRetentionMs);
+        abstract public Dictionary<string, string?> getProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
 
         public void setNumberOfPartitions(int numberOfPartitions)
         {
             if (numberOfPartitions < 1)
             {
-                throw new System.ArgumentException("Number of partitions must be at least 1.");
+                throw new ArgumentException("Number of partitions must be at least 1.");
             }
 
-            //this.numberOfPartitions = numberOfPartitions;
+            this.numberOfPartitions = numberOfPartitions;
         }
 
         public override string ToString()

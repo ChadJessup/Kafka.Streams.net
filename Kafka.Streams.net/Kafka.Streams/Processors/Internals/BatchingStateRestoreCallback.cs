@@ -1,5 +1,4 @@
 ﻿using Confluent.Kafka;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public void restoreAll(List<KeyValue<byte[], byte[]>> records)
         {
-            List<KeyValue<byte[], byte[]>> keyValues = new List<KeyValue<byte[], byte[]>>();
+            var keyValues = new List<KeyValue<byte[], byte[]>>();
             foreach (var record in records)
             {
                 keyValues.Add(new KeyValue<byte[], byte[]>(record.Key, record.Value));

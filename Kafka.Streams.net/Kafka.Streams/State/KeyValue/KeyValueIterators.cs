@@ -1,8 +1,7 @@
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.Window;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     public class KeyValueIterators<V> : EmptyKeyValueIterator<long, V>, IWindowStoreIterator<V>
     {

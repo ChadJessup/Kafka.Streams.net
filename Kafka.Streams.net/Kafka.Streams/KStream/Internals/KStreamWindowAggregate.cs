@@ -1,7 +1,6 @@
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Kafka.Streams.KStream.Internals
 {

@@ -1,13 +1,17 @@
-using Kafka.Common;
-
 namespace Kafka.Streams.KStream.Internals
 {
-    public class Change<T>
+    public interface IChange<out T>
     {
-        public T newValue { get; }
-        public T oldValue { get; }
+        T newValue { get; }
+        T oldValue { get; }
+    }
 
-        public Change(T newValue, T oldValue)
+    public class Change<V> : IChange<V>
+    {
+        public V newValue { get; }
+        public V oldValue { get; }
+
+        public Change(V newValue, V oldValue)
         {
             this.newValue = newValue;
             this.oldValue = oldValue;
@@ -16,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
         public override string ToString()
             => $"({newValue}<-{oldValue})";
 
-        public static explicit operator T(Change<T> change)
+        public static implicit operator V(Change<V> change)
         {
             return change.newValue;
         }
@@ -33,7 +37,7 @@ namespace Kafka.Streams.KStream.Internals
                 return false;
             }
 
-            Change<object> change = (Change<object>)o;
+            var change = (Change<object>)o;
 
             return newValue?.Equals(change.newValue) ?? false
                 && oldValue.Equals(change.oldValue);

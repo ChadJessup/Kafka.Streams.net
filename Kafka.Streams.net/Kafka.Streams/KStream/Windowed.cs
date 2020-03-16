@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Kafka.Streams.KStream
 {
@@ -29,13 +28,13 @@ namespace Kafka.Streams.KStream
                 return false;
             }
 
-            Windowed<K> that = (Windowed<K>)obj;
+            var that = (Windowed<K>)obj;
             return window.Equals(that.window) && Key.Equals(that.Key);
         }
 
         public override int GetHashCode()
         {
-            long n = ((long)window.GetHashCode() << 32) | Key.GetHashCode();
+            var n = ((long)window.GetHashCode() << 32) | Key.GetHashCode();
             return (int)(n % 0xFFFFFFFFL);
         }
 

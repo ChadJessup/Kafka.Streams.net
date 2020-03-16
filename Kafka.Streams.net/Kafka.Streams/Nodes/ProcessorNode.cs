@@ -1,6 +1,5 @@
-using Kafka.Common.Utils;
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Errors;
+using Kafka.Streams.Interfaces;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Processors.Interfaces;
 using NodaTime;
@@ -11,15 +10,53 @@ using System.Text;
 
 namespace Kafka.Streams.Nodes
 {
-    public class ProcessorNode
+    public interface IProcessorNode
     {
-        public ProcessorNode(IClock clock, string name, HashSet<string> stateStores)
+        string Name { get; }
+        HashSet<string> stateStores { get; }
+        List<IProcessorNode> children { get; }
+        void AddChild(IProcessorNode child);
+        IProcessorNode GetChild(string childName);
+        string ToString(string indent);
+        ITimestampExtractor? TimestampExtractor { get; }
+        void Punctuate(long timestamp, IPunctuator punctuator);
+        void Process<K, V>(K key, V value);
+    }
+
+    public class ProcessorNode : IProcessorNode
+    {
+        public ProcessorNode(
+            IClock clock,
+            string name,
+            HashSet<string>? stateStores,
+            IKeyValueProcessor? processor)
         {
             this.Name = name;
-            this.stateStores = stateStores;
+            this.stateStores = stateStores ?? new HashSet<string>();
             this.clock = clock;
-            this.children = new List<ProcessorNode>();
-            this.childByName = new Dictionary<string, ProcessorNode>();
+            this.children = new List<IProcessorNode>();
+            this.childByName = new Dictionary<string, IProcessorNode>();
+            this.processor = processor;
+        }
+
+        public virtual void Process<K, V>(K key, V value)
+        {
+            processor?.Process(key, value);
+        }
+
+        public virtual void Init(IInternalProcessorContext context)
+        {
+            try
+            {
+                if (processor != null)
+                {
+                    processor.Init(context);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new StreamsException($"failed to initialize processor {Name}", e);
+            }
         }
 
         public string Name { get; }
@@ -28,10 +65,13 @@ namespace Kafka.Streams.Nodes
         public HashSet<string> stateStores { get; protected set; } = new HashSet<string>();
 
         // TODO: 'children' can be removed when #forward() via index is removed
-        public List<ProcessorNode> children { get; }
-        protected Dictionary<string, ProcessorNode> childByName { get; }
+        public List<IProcessorNode> children { get; }
+        protected Dictionary<string, IProcessorNode> childByName { get; }
+        public ITimestampExtractor? TimestampExtractor { get; }
 
-        public void punctuate(long timestamp, Punctuator punctuator)
+        private readonly IKeyValueProcessor? processor;
+
+        public void Punctuate(long timestamp, IPunctuator punctuator)
         {
             punctuator.punctuate(timestamp);
         }
@@ -49,7 +89,7 @@ namespace Kafka.Streams.Nodes
          */
         public virtual string ToString(string indent)
         {
-            StringBuilder sb = new StringBuilder($"{indent}{Name}:\n");
+            var sb = new StringBuilder($"{indent}{Name}:\n");
 
             if (this.stateStores.Any())
             {
@@ -61,11 +101,22 @@ namespace Kafka.Streams.Nodes
 
             return sb.ToString();
         }
+
+        public void AddChild(IProcessorNode child)
+        {
+            children.Add(child);
+            childByName.Add(child.Name, child);
+        }
+
+        public IProcessorNode GetChild(string childName)
+        {
+            return this.childByName[childName];
+        }
     }
 
-    public class ProcessorNode<K, V> : ProcessorNode
+    public class ProcessorNode<K, V> : ProcessorNode, IProcessorNode<K, V>, IProcessorNode
     {
-        private readonly IKeyValueProcessor<K, V> processor;
+        private readonly IKeyValueProcessor<K, V>? processor;
 
         public ProcessorNode(IClock clock, string name)
             : this(clock, name, null, null)
@@ -75,47 +126,28 @@ namespace Kafka.Streams.Nodes
         public ProcessorNode(
             IClock clock,
             string name,
-            IKeyValueProcessor<K, V> processor,
-            HashSet<string> stateStores)
-            : base(clock, name, stateStores)
+            IKeyValueProcessor<K, V>? processor,
+            HashSet<string>? stateStores)
+            : base(clock, name, stateStores, processor)
         {
             this.processor = processor;
         }
 
-        public ProcessorNode<K, V> GetChild(string childName)
+        public IProcessorNode<K, V> GetChild(string childName)
         {
-            return (ProcessorNode<K, V>)childByName[childName];
+            return (IProcessorNode<K, V>)childByName[childName];
         }
 
-        public void addChild(ProcessorNode<K, V> child)
+        public void AddChild(IProcessorNode<K, V> child)
         {
-            children.Add(child);
-            childByName.Add(child.Name, child);
-        }
-
-        public virtual void Init(IInternalProcessorContext context)
-        {
-            try
-            {
-                if (processor != null)
-                {
-                    processor.init(context);
-                }
-            }
-            catch (Exception e)
-            {
-                throw new StreamsException($"failed to initialize processor {Name}", e);
-            }
+            base.AddChild(child);
         }
 
         public void close()
         {
             try
             {
-                if (processor != null)
-                {
-                    processor.close();
-                }
+                processor?.Close();
             }
             catch (Exception e)
             {
@@ -125,7 +157,13 @@ namespace Kafka.Streams.Nodes
 
         public virtual void Process(K key, V value)
         {
-            processor.process(key, value);
+            processor?.Process(key, value);
         }
+    }
+
+    public interface IProcessorNode<K, V> : IProcessorNode
+    {
+        void AddChild(IProcessorNode<K, V> child);
+        IProcessorNode<K, V> GetChild(string childName);
     }
 }

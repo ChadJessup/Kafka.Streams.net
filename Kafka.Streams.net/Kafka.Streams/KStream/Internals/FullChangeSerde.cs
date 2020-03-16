@@ -87,8 +87,8 @@ namespace Kafka.Streams.KStream.Internals
                 return null;
             }
 
-            int oldSize = serialChange.oldValue == null ? -1 : serialChange.oldValue.Length;
-            int newSize = serialChange.newValue == null ? -1 : serialChange.newValue.Length;
+            var oldSize = serialChange.oldValue == null ? -1 : serialChange.oldValue.Length;
+            var newSize = serialChange.newValue == null ? -1 : serialChange.newValue.Length;
 
             ByteBuffer buffer = new ByteBuffer().allocate(sizeof(int) * 2 + Math.Max(0, oldSize) + Math.Max(0, newSize));
 
@@ -120,8 +120,8 @@ namespace Kafka.Streams.KStream.Internals
 
             ByteBuffer buffer = new ByteBuffer().wrap(data);
 
-            int oldSize = buffer.getInt();
-            byte[] oldBytes = oldSize == -1
+            var oldSize = buffer.getInt();
+            var oldBytes = oldSize == -1
                 ? null
                 : new byte[oldSize];
 
@@ -130,8 +130,8 @@ namespace Kafka.Streams.KStream.Internals
                 buffer.get(oldBytes);
             }
 
-            int newSize = buffer.getInt();
-            byte[] newBytes = newSize == -1 ? null : new byte[newSize];
+            var newSize = buffer.getInt();
+            var newBytes = newSize == -1 ? null : new byte[newSize];
             if (newBytes != null)
             {
                 buffer.get(newBytes);

@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using Kafka.Streams.State;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.Window
 {
@@ -35,7 +33,7 @@ namespace Kafka.Streams.State.Window
         {
             KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
 
-            return KeyValue<long, V>.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(innerKeyValue.Value));
+            return KeyValue.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(innerKeyValue.Value));
         }
 
         public bool MoveNext()

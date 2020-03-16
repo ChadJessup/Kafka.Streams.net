@@ -33,7 +33,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             lock (pq)
             {
-                bool punctuated = false;
+                var punctuated = false;
                 PunctuationSchedule top = null;//pq.Peek();
                 while (top != null && top.timestamp <= timestamp)
                 {

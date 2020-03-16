@@ -17,7 +17,7 @@ namespace Kafka.Streams.Processors.Internals
     {
         private static readonly string STATE_CHANGELOG_TOPIC_SUFFIX = "-changelog";
 
-        private readonly ILogger log;
+        private readonly ILogger logger;
         private readonly TaskId taskId;
         private readonly string logPrefix;
         private readonly bool isStandby;
@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processors.Internals
         private readonly bool eosEnabled;
         public DirectoryInfo baseDir { get; }
         private OffsetCheckpoint? checkpointFile;
-        private readonly Dictionary<TopicPartition, long> checkpointFileCache = new Dictionary<TopicPartition, long>();
+        private readonly Dictionary<TopicPartition, long?> checkpointFileCache = new Dictionary<TopicPartition, long?>();
         private readonly Dictionary<TopicPartition, long> initialLoadedCheckpoints;
 
         /**
@@ -49,18 +49,19 @@ namespace Kafka.Streams.Processors.Internals
          * @throws IOException             if any severe error happens while creating or locking the state directory
          */
         public ProcessorStateManager(
+            ILogger<ProcessorStateManager> logger,
             TaskId taskId,
             List<TopicPartition> sources,
             bool isStandby,
             StateDirectory stateDirectory,
             Dictionary<string, string> storeToChangelogTopic,
             IChangelogReader changelogReader,
-            bool eosEnabled,
-            LogContext logContext)
+            bool eosEnabled)
         {
             this.eosEnabled = eosEnabled;
 
-            log = logContext.logger(typeof(ProcessorStateManager));
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
             this.taskId = taskId;
             this.changelogReader = changelogReader;
             logPrefix = string.Format("task [%s] ", taskId);
@@ -84,24 +85,25 @@ namespace Kafka.Streams.Processors.Internals
 
             baseDir = stateDirectory.directoryForTask(taskId);
             checkpointFile = new OffsetCheckpoint(new FileInfo(Path.Combine(baseDir.FullName, StateManagerUtil.CHECKPOINT_FILE_NAME)));
-            initialLoadedCheckpoints = checkpointFile.read();
+            initialLoadedCheckpoints = checkpointFile.Read();
 
-            log.LogTrace("Checkpointable offsets read from checkpoint: {}", initialLoadedCheckpoints);
+            this.logger.LogTrace($"Checkpointable offsets read from checkpoint: {this.initialLoadedCheckpoints}");
 
             if (eosEnabled)
             {
                 // with EOS enabled, there should never be a checkpoint file _during_ processing.
                 // delete the checkpoint file after loading its stored offsets.
-                checkpointFile.delete();
+                checkpointFile.Delete();
                 checkpointFile = null;
             }
 
-            log.LogDebug("Created state store manager for task {}", taskId);
+            this.logger.LogDebug("Created state store manager for task {}", taskId);
         }
 
 
-        public static string storeChangelogTopic(string applicationId,
-                                                 string storeName)
+        public static string storeChangelogTopic(
+            string applicationId,
+            string storeName)
         {
             return applicationId + "-" + storeName + STATE_CHANGELOG_TOPIC_SUFFIX;
         }
@@ -110,8 +112,8 @@ namespace Kafka.Streams.Processors.Internals
             IStateStore store,
             IStateRestoreCallback stateRestoreCallback)
         {
-            string storeName = store.name;
-            log.LogDebug("Registering state store {} to its state manager", storeName);
+            var storeName = store.name;
+            logger.LogDebug("Registering state store {} to its state manager", storeName);
 
             if (StateManagerUtil.CHECKPOINT_FILE_NAME.Equals(storeName))
             {
@@ -124,16 +126,16 @@ namespace Kafka.Streams.Processors.Internals
             }
 
             // check that the underlying change log topic exist or not
-            string topic = storeToChangelogTopic[storeName];
+            var topic = storeToChangelogTopic[storeName];
             if (topic != null)
             {
-                TopicPartition storePartition = new TopicPartition(topic, getPartition(topic));
+                var storePartition = new TopicPartition(topic, getPartition(topic));
 
                 IRecordConverter recordConverter = StateManagerUtil.converterForStore(store);
 
                 if (isStandby)
                 {
-                    log.LogTrace("Preparing standby replica of persistent state store {} with changelog topic {}", storeName, topic);
+                    logger.LogTrace("Preparing standby replica of persistent state store {} with changelog topic {}", storeName, topic);
 
                     restoreCallbacks.Add(topic, stateRestoreCallback);
                     recordConverters.Add(topic, recordConverter);
@@ -147,9 +149,9 @@ namespace Kafka.Streams.Processors.Internals
                         checkpointFileCache.Add(storePartition, restoreCheckpoint.Value);
                     }
 
-                    log.LogTrace("Restoring state store {} from changelog topic {} at checkpoint {}", storeName, topic, restoreCheckpoint);
+                    logger.LogTrace("Restoring state store {} from changelog topic {} at checkpoint {}", storeName, topic, restoreCheckpoint);
 
-                    StateRestorer restorer = new StateRestorer(
+                    var restorer = new StateRestorer(
                         storePartition,
                         new CompositeRestoreListener(stateRestoreCallback),
                         restoreCheckpoint.GetValueOrDefault(-1),
@@ -173,7 +175,7 @@ namespace Kafka.Streams.Processors.Internals
             IInternalProcessorContext processorContext)
         {
             StateManagerUtil.reinitializeStateStoresForPartitions(
-                log,
+                logger,
                 eosEnabled,
                 baseDir,
                 registeredStores,
@@ -188,7 +190,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             if (checkpointFile != null)
             {
-                checkpointFile.delete();
+                checkpointFile.Delete();
                 checkpointFile = null;
 
                 checkpointFileCache.Clear();
@@ -196,16 +198,16 @@ namespace Kafka.Streams.Processors.Internals
         }
 
 
-        public Dictionary<TopicPartition, long> checkpointed()
+        public Dictionary<TopicPartition, long?> checkpointed()
         {
             updateCheckpointFileCache(new Dictionary<TopicPartition, long>());
-            Dictionary<TopicPartition, long> partitionsAndOffsets = new Dictionary<TopicPartition, long>();
+            var partitionsAndOffsets = new Dictionary<TopicPartition, long?>();
 
-            foreach (KeyValuePair<string, IStateRestoreCallback> entry in restoreCallbacks)
+            foreach (var entry in restoreCallbacks)
             {
-                string topicName = entry.Key;
-                int partition = getPartition(topicName);
-                TopicPartition storePartition = new TopicPartition(topicName, partition);
+                var topicName = entry.Key;
+                var partition = getPartition(topicName);
+                var storePartition = new TopicPartition(topicName, partition);
 
                 partitionsAndOffsets.Add(storePartition, checkpointFileCache.GetValueOrDefault(storePartition, -1L));
             }
@@ -224,7 +226,7 @@ namespace Kafka.Streams.Processors.Internals
             if (restoreRecords.Any())
             {
                 IRecordConverter converter = recordConverters[storePartition.Topic];
-                List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<ConsumeResult<byte[], byte[]>>(restoreRecords.Count);
+                var convertedRecords = new List<ConsumeResult<byte[], byte[]>>(restoreRecords.Count);
                 foreach (ConsumeResult<byte[], byte[]> record in restoreRecords)
                 {
                     convertedRecords.Add(converter.convert(record));
@@ -248,7 +250,7 @@ namespace Kafka.Streams.Processors.Internals
             TopicPartition partition,
             long limit)
         {
-            log.LogTrace("Updating store offset limit for partition {} to {}", partition, limit);
+            logger.LogTrace("Updating store offset limit for partition {} to {}", partition, limit);
             offsetLimits.Add(partition, limit);
         }
 
@@ -273,13 +275,13 @@ namespace Kafka.Streams.Processors.Internals
             // attempting to flush the stores
             if (registeredStores.Any())
             {
-                log.LogDebug("Flushing all stores registered in the state manager");
+                logger.LogDebug("Flushing all stores registered in the state manager");
                 foreach (KeyValuePair<string, IStateStore?> entry in registeredStores)
                 {
                     if (entry.Value.isPresent())
                     {
                         IStateStore store = entry.Value;
-                        log.LogTrace("Flushing store {}", store.name);
+                        logger.LogTrace("Flushing store {}", store.name);
                         try
                         {
 
@@ -291,7 +293,7 @@ namespace Kafka.Streams.Processors.Internals
                             {
                                 firstException = new ProcessorStateException(string.Format("%sFailed to flush state store %s", logPrefix, store.name), e);
                             }
-                            log.LogError("Failed to flush state store {}: ", store.name, e);
+                            logger.LogError("Failed to flush state store {}: ", store.name, e);
                         }
                     }
                     else
@@ -322,13 +324,13 @@ namespace Kafka.Streams.Processors.Internals
             // are not closed by a ProcessorNode yet
             if (registeredStores.Any())
             {
-                log.LogDebug("Closing its state manager and all the registered state stores");
+                logger.LogDebug("Closing its state manager and all the registered state stores");
                 foreach (var entry in registeredStores)
                 {
                     if (entry.Value.isPresent())
                     {
                         IStateStore store = entry.Value;
-                        log.LogDebug("Closing storage engine {}", store.name);
+                        logger.LogDebug("Closing storage engine {}", store.name);
                         try
                         {
 
@@ -342,13 +344,13 @@ namespace Kafka.Streams.Processors.Internals
                                 firstException = new ProcessorStateException(string.Format("%sFailed to close state store %s", logPrefix, store.name), e);
                             }
 
-                            log.LogError("Failed to close state store {}: ", store.name, e);
+                            logger.LogError("Failed to close state store {}: ", store.name, e);
                         }
                     }
                     else
                     {
 
-                        log.LogInformation("Skipping to close non-initialized store {}", entry.Key);
+                        logger.LogInformation("Skipping to close non-initialized store {}", entry.Key);
                     }
                 }
             }
@@ -386,17 +388,17 @@ namespace Kafka.Streams.Processors.Internals
 
             updateCheckpointFileCache(checkpointableOffsetsFromProcessing);
 
-            log.LogTrace("Checkpointable offsets updated with active acked offsets: {}", checkpointFileCache);
+            logger.LogTrace("Checkpointable offsets updated with active acked offsets: {}", checkpointFileCache);
 
-            log.LogTrace("Writing checkpoint: {}", checkpointFileCache);
+            logger.LogTrace("Writing checkpoint: {}", checkpointFileCache);
 
             try
             {
-                checkpointFile.write(checkpointFileCache);
+                checkpointFile.Write(checkpointFileCache);
             }
             catch (IOException e)
             {
-                log.LogWarning("Failed to write offset checkpoint file to [{}]", checkpointFile, e);
+                logger.LogWarning("Failed to write offset checkpoint file to [{}]", checkpointFile, e);
             }
         }
 
@@ -407,7 +409,7 @@ namespace Kafka.Streams.Processors.Internals
                 changelogReader.restoredOffsets(),
                 validCheckpointableTopics());
 
-            log.LogTrace("Checkpointable offsets updated with restored offsets: {}", checkpointFileCache);
+            logger.LogTrace("Checkpointable offsets updated with restored offsets: {}", checkpointFileCache);
             foreach (TopicPartition topicPartition in validCheckpointableTopics())
             {
                 if (checkpointableOffsetsFromProcessing.ContainsKey(topicPartition))
@@ -434,7 +436,7 @@ namespace Kafka.Streams.Processors.Internals
                 {
                     // As a last resort, fall back to the offset we loaded from the checkpoint file at startup, but
                     // only if the offset is actually valid for our current state stores.
-                    long loadedOffset = validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics())[topicPartition];
+                    var loadedOffset = validCheckpointableOffsets(initialLoadedCheckpoints, validCheckpointableTopics())[topicPartition];
 
                     if (loadedOffset != null)
                     {
@@ -452,7 +454,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public void registerGlobalStateStores(List<IStateStore> stateStores)
         {
-            log.LogDebug("Register global stores {}", stateStores);
+            logger.LogDebug("Register global stores {}", stateStores);
             foreach (IStateStore stateStore in stateStores)
             {
                 globalStores.Add(stateStore.name, stateStore);
@@ -482,34 +484,34 @@ namespace Kafka.Streams.Processors.Internals
         {
             // it's only valid to record checkpoints for registered stores that are both persistent and change-logged
 
-            HashSet<TopicPartition> result = new HashSet<TopicPartition>();
+            var result = new HashSet<TopicPartition>();
             foreach (KeyValuePair<string, string> storeToChangelog in storeToChangelogTopic)
             {
-                string storeName = storeToChangelog.Key;
+                var storeName = storeToChangelog.Key;
                 if (registeredStores.ContainsKey(storeName)
                     && registeredStores[storeName].isPresent()
                     && registeredStores[storeName].persistent())
                 {
 
-                    string changelogTopic = storeToChangelog.Value;
+                    var changelogTopic = storeToChangelog.Value;
                     result.Add(new TopicPartition(changelogTopic, getPartition(changelogTopic)));
                 }
             }
             return result;
         }
 
-        private static Dictionary<TopicPartition, long> validCheckpointableOffsets(
+        private static Dictionary<TopicPartition, long?> validCheckpointableOffsets(
             Dictionary<TopicPartition, long> checkpointableOffsets,
             HashSet<TopicPartition> validCheckpointableTopics)
         {
-            Dictionary<TopicPartition, long> result = new Dictionary<TopicPartition, long>(checkpointableOffsets.Count);
+            var result = new Dictionary<TopicPartition, long?>(checkpointableOffsets.Count);
 
             foreach (var topicToCheckpointableOffset in checkpointableOffsets)
             {
                 TopicPartition topic = topicToCheckpointableOffset.Key;
                 if (validCheckpointableTopics.Contains(topic))
                 {
-                    long checkpointableOffset = topicToCheckpointableOffset.Value;
+                    var checkpointableOffset = topicToCheckpointableOffset.Value;
                     result.Add(topic, checkpointableOffset);
                 }
             }

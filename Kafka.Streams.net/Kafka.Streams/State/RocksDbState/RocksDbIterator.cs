@@ -16,8 +16,7 @@
  */
 using Kafka.Common.Utils;
 using Kafka.Streams.Errors;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using RocksDbSharp;
 using System;
 using System.Collections.Generic;

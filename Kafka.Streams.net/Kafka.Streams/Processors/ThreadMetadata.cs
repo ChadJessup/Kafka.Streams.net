@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors
@@ -7,13 +8,13 @@ namespace Kafka.Streams.Processors
      */
     public class ThreadMetadata
     {
-        private readonly string threadName;
+        public string ThreadName { get; }
         public string ThreadState { get; }
         public HashSet<TaskMetadata> ActiveTasks { get; }
-        public HashSet<TaskMetadata> standbyTasks { get; }
-        private readonly string mainConsumerClientId;
-        private readonly string restoreConsumerClientId;
-        private readonly HashSet<string> producerClientIds;
+        public HashSet<TaskMetadata> StandbyTasks { get; }
+        public string MainConsumerClientId { get; }
+        public string RestoreConsumerClientId { get; }
+        public HashSet<string> ProducerClientIds { get; }
 
         // the admin client should be shared among all threads, so the client id should be the same;
         // we keep it at the thread-level for user's convenience and possible extensions in the future
@@ -29,17 +30,17 @@ namespace Kafka.Streams.Processors
             HashSet<TaskMetadata> activeTasks,
             HashSet<TaskMetadata> standbyTasks)
         {
-            this.mainConsumerClientId = mainConsumerClientId;
-            this.restoreConsumerClientId = restoreConsumerClientId;
-            this.producerClientIds = producerClientIds;
+            this.MainConsumerClientId = mainConsumerClientId;
+            this.RestoreConsumerClientId = restoreConsumerClientId;
+            this.ProducerClientIds = producerClientIds;
             this.AdminClientId = adminClientId;
-            this.threadName = threadName;
+            this.ThreadName = threadName;
             this.ThreadState = threadState;
             this.ActiveTasks = activeTasks;
-            this.standbyTasks = standbyTasks;
+            this.StandbyTasks = standbyTasks;
         }
 
-        public string consumerClientId => mainConsumerClientId;
+        public string ConsumerClientId => MainConsumerClientId;
 
         public override bool Equals(object o)
         {
@@ -53,42 +54,40 @@ namespace Kafka.Streams.Processors
                 return false;
             }
 
-            ThreadMetadata that = (ThreadMetadata)o;
-            return threadName.Equals(that.threadName)
+            var that = (ThreadMetadata)o;
+            return ThreadName.Equals(that.ThreadName)
                 && ThreadState.Equals(that.ThreadState)
                 && ActiveTasks.Equals(that.ActiveTasks)
-                && standbyTasks.Equals(that.standbyTasks)
-                && mainConsumerClientId.Equals(that.mainConsumerClientId)
-                && restoreConsumerClientId.Equals(that.restoreConsumerClientId)
-                && producerClientIds.Equals(that.producerClientIds)
+                && StandbyTasks.Equals(that.StandbyTasks)
+                && MainConsumerClientId.Equals(that.MainConsumerClientId)
+                && RestoreConsumerClientId.Equals(that.RestoreConsumerClientId)
+                && ProducerClientIds.Equals(that.ProducerClientIds)
                 && AdminClientId.Equals(that.AdminClientId);
         }
 
         public override int GetHashCode()
         {
-            // can only hash 7 things at once...
-            return
-            (
-                (threadName, ThreadState).GetHashCode(),
+            return HashCode.Combine(
+                ThreadName,
+                ThreadState,
                 ActiveTasks,
-                standbyTasks,
-                mainConsumerClientId,
-                restoreConsumerClientId,
-                producerClientIds,
-                AdminClientId
-            ).GetHashCode();
+                StandbyTasks,
+                MainConsumerClientId,
+                RestoreConsumerClientId,
+                ProducerClientIds,
+                AdminClientId);
         }
 
         public override string ToString()
         {
             return "ThreadMetadata{" +
-                    $"threadName={threadName}" +
+                    $"threadName={ThreadName}" +
                     $", threadState={ThreadState}" +
                     $", activeTasks={ActiveTasks }" +
-                    $", standbyTasks={standbyTasks}" +
-                    $", consumerClientId={mainConsumerClientId}" +
-                    $", restoreConsumerClientId={restoreConsumerClientId}" +
-                    $", producerClientIds={producerClientIds}" +
+                    $", standbyTasks={StandbyTasks}" +
+                    $", consumerClientId={MainConsumerClientId}" +
+                    $", restoreConsumerClientId={RestoreConsumerClientId}" +
+                    $", producerClientIds={ProducerClientIds}" +
                     $", adminClientId={AdminClientId}" +
                     '}';
         }

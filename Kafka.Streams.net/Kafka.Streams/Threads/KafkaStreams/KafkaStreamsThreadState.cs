@@ -28,7 +28,26 @@ namespace Kafka.Streams.Threads.KafkaStreams
             this.CurrentState = KafkaStreamsThreadStates.CREATED;
         }
 
-        public KafkaStreamsThreadStates CurrentState { get; private set; } = KafkaStreamsThreadStates.UNKNOWN;
+        private KafkaStreamsThreadStates currentState = KafkaStreamsThreadStates.UNKNOWN;
+        public KafkaStreamsThreadStates CurrentState
+        {
+            get
+            {
+                lock (stateLock)
+                {
+                    return this.currentState;
+                }
+            }
+
+            private set
+            {
+                lock (stateLock)
+                {
+                    this.currentState = value;
+                }
+            }
+        }
+
         public IStateListener StateListener { get; private set; }
         public IThread<KafkaStreamsThreadStates> Thread { get; private set; }
 
@@ -59,7 +78,8 @@ namespace Kafka.Streams.Threads.KafkaStreams
                     return false;
                 }
                 else if (this.CurrentState == KafkaStreamsThreadStates.NOT_RUNNING
-                    && (newState == KafkaStreamsThreadStates.PENDING_SHUTDOWN || newState == KafkaStreamsThreadStates.NOT_RUNNING))
+                    && (newState == KafkaStreamsThreadStates.PENDING_SHUTDOWN
+                        || newState == KafkaStreamsThreadStates.NOT_RUNNING))
                 {
                     // when the state is already in NOT_RUNNING, its transition to PENDING_SHUTDOWN or NOT_RUNNING (due to consecutive close calls)
                     // will be refused but we do not throw exception here, to allow idempotent close calls

@@ -49,7 +49,7 @@ namespace Kafka.Streams.Processors
             long partitionTime)
         {
 
-            string message = $"Input record {record} has invalid (negative) timestamp. " +
+            var message = $"Input record {record} has invalid (negative) timestamp. " +
                 "Possibly because a pre-0.10 producer client was used to write this record to Kafka without embedding " +
                 "a timestamp, or because the input topic was created before upgrading the Kafka cluster to 0.10+. " +
                 "Use a different ITimestampExtractor to process this data.";

@@ -1,78 +1,103 @@
+using Confluent.Kafka;
+using Kafka.Streams.Errors.Interfaces;
+using Kafka.Streams.Nodes;
+using Kafka.Streams.Processors.Interfaces;
+using System.Collections.Generic;
 
+namespace Kafka.Streams.Processors.Internals
+{
+    public class GlobalStateUpdateTask : IGlobalStateMaintainer
+    {
+        private ProcessorTopology topology;
+        private IInternalProcessorContext processorContext;
+        private Dictionary<TopicPartition, long> offsets = new Dictionary<TopicPartition, long>();
+        private Dictionary<string, RecordDeserializer> deserializers = new Dictionary<string, RecordDeserializer>();
+        private GlobalStateManager stateMgr;
+        private IDeserializationExceptionHandler deserializationExceptionHandler;
 
-//        public Dictionary<TopicPartition, long> initialize()
-//        {
-//            HashSet<string> storeNames = stateMgr.initialize();
-//            Dictionary<string, string> storeNameToTopic = topology.storeToChangelogTopic();
-//            foreach (string storeName in storeNames)
-//            {
-//                string sourceTopic = storeNameToTopic[storeName];
-//                SourceNode source = topology.source(sourceTopic);
-//                deserializers.Add(
-//                    sourceTopic,
-//                    new RecordDeserializer(
-//                        source,
-//                        deserializationExceptionHandler,
-//                        logContext,
-//                        ThreadMetrics.skipRecordSensor(processorContext.metrics)
-//                    )
-//                );
-//            }
-//            initTopology();
-//            processorContext.initialize();
-//            return stateMgr.checkpointed();
-//        }
+        public GlobalStateUpdateTask(
+            ProcessorTopology topology,
+            IInternalProcessorContext processorContext,
+            GlobalStateManager stateMgr,
+            IDeserializationExceptionHandler deserializationExceptionHandler)
+        {
+            this.topology = topology;
+            this.stateMgr = stateMgr;
+            this.processorContext = processorContext;
+            this.deserializationExceptionHandler = deserializationExceptionHandler;
+        }
 
+        public Dictionary<TopicPartition, long?> initialize()
+        {
+            HashSet<string> storeNames = stateMgr.Initialize();
+            Dictionary<string, string> storeNameToTopic = topology.StoreToChangelogTopic;
 
+            foreach (string storeName in storeNames)
+            {
+                string sourceTopic = storeNameToTopic[storeName];
+                ISourceNode source = topology.Source(sourceTopic);
+                deserializers.Add(
+                    sourceTopic,
+                    new RecordDeserializer(
+                        null,
+                        source,
+                        deserializationExceptionHandler)
+                );
+            }
 
-//        public void update(ConsumeResult<byte[], byte[]> record)
-//        {
-//            RecordDeserializer sourceNodeAndDeserializer = deserializers[record.Topic];
-//            ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize(processorContext, record);
+            initTopology();
+            processorContext.initialize();
+            return stateMgr.checkpointed();
+        }
 
-//            if (deserialized != null)
-//            {
-//                ProcessorRecordContext recordContext =
-//                    new ProcessorRecordContext(deserialized.timestamp(),
-//                        deserialized.offset(),
-//                        deserialized.partition(),
-//                        deserialized.Topic,
-//                        deserialized.headers());
-//                processorContext.setRecordContext(recordContext);
-//                processorContext.setCurrentNode(sourceNodeAndDeserializer.sourceNode());
-//                sourceNodeAndDeserializer.sourceNode().process(deserialized.key(), deserialized.value());
-//            }
+        public void update(ConsumeResult<byte[], byte[]> record)
+        {
+            var sourceNodeAndDeserializer = deserializers[record.Topic];
+            ConsumeResult<object, object> deserialized = sourceNodeAndDeserializer.Deserialize<object, object>(processorContext, record);
 
-//            offsets.Add(new TopicPartition(record.Topic, record.partition()), record.offset() + 1);
-//        }
+            if (deserialized != null)
+            {
+                var recordContext =
+                    new ProcessorRecordContext(deserialized.Timestamp.UnixTimestampMs,
+                        deserialized.Offset,
+                        deserialized.Partition,
+                        deserialized.Topic,
+                        deserialized.Headers);
+                processorContext.setRecordContext(recordContext);
+                processorContext.SetCurrentNode(sourceNodeAndDeserializer.SourceNode);
 
-//        public void flushState()
-//        {
-//            stateMgr.flush();
-//            stateMgr.checkpoint(offsets);
-//        }
+                sourceNodeAndDeserializer.SourceNode.Process(deserialized.Key, deserialized.Value);
+            }
 
-//        public void close()
-//        {
-//            stateMgr.close(true);
-//        }
+            this.offsets.Add(new TopicPartition(record.Topic, record.Partition), record.Offset + 1);
+        }
 
-//        private void initTopology()
-//        {
-//            foreach (ProcessorNode node in this.topology.processors())
-//            {
-//                processorContext.setCurrentNode(node);
-//                try
-//                {
+        public void flushState()
+        {
+            stateMgr.Flush();
+            stateMgr.checkpoint(offsets);
+        }
 
-//                    node.init(this.processorContext);
-//                }
-//                finally
-//                {
+        public void close()
+        {
+            stateMgr.Close(true);
+        }
 
-//                    processorContext.setCurrentNode(null);
-//                }
-//            }
-//        }
-//    }
-//}
+        private void initTopology()
+        {
+            foreach (ProcessorNode node in this.topology.processors())
+            {
+                processorContext.SetCurrentNode(node);
+
+                try
+                {
+                    node.Init(this.processorContext);
+                }
+                finally
+                {
+                    processorContext.SetCurrentNode(null);
+                }
+            }
+        }
+    }
+}

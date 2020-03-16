@@ -1,6 +1,4 @@
-﻿using Kafka.Common.Utils;
-
-namespace Kafka.Streams.State.Internals
+﻿namespace Kafka.Streams.State.Internals
 {
     public interface IEldestEntryRemovalListener
     {

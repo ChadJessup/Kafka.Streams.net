@@ -32,15 +32,15 @@ namespace Kafka.Streams.Topologies
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.Append("Topologies:\n ");
             ISubtopology[] sortedSubtopologies =
                 subtopologies.OrderByDescending(t => t.id).ToArray();
             IGlobalStore[] sortedGlobalStores =
                 globalStores.OrderByDescending(s => s.id).ToArray();
-            int expectedId = 0;
-            int subtopologiesIndex = sortedSubtopologies.Length - 1;
-            int globalStoresIndex = sortedGlobalStores.Length - 1;
+            var expectedId = 0;
+            var subtopologiesIndex = sortedSubtopologies.Length - 1;
+            var globalStoresIndex = sortedGlobalStores.Length - 1;
             while (subtopologiesIndex != -1 && globalStoresIndex != -1)
             {
                 sb.Append("  ");
@@ -89,7 +89,7 @@ namespace Kafka.Streams.Topologies
                 return false;
             }
 
-            TopologyDescription that = (TopologyDescription)o;
+            var that = (TopologyDescription)o;
             return subtopologies.Equals(that.subtopologies)
                 && globalStores.Equals(that.globalStores);
         }

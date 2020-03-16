@@ -69,7 +69,7 @@ namespace Kafka.Streams.Clients
             return builder.Build();
         }
 
-        public RestoreConsumer GetRestoreConsumer(ConsumerConfig config)
+        public RestoreConsumer GetRestoreConsumer(RestoreConsumerConfig config)
             => new RestoreConsumer(
                 this.loggerFactory.CreateLogger<RestoreConsumer>(),
                 config,

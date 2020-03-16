@@ -49,10 +49,10 @@ namespace Kafka.Streams.Processors.Internals
             List<TopicPartition> partitions,
             IInternalProcessorContext processorContext,
             OffsetCheckpoint checkpointFile,
-            Dictionary<TopicPartition, long> checkpointFileCache)
+            Dictionary<TopicPartition, long?> checkpointFileCache)
         {
             Dictionary<string, string> changelogTopicToStore = inverseOneToOneMap(storeToChangelogTopic);
-            HashSet<string> storesToBeReinitialized = new HashSet<string>();
+            var storesToBeReinitialized = new HashSet<string>();
 
             foreach (TopicPartition topicPartition in partitions)
             {
@@ -65,7 +65,7 @@ namespace Kafka.Streams.Processors.Internals
                 try
                 {
 
-                    checkpointFile.write(checkpointFileCache);
+                    checkpointFile.Write(checkpointFileCache);
                 }
                 catch (IOException fatalException)
                 {
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Processors.Internals
                 }
             }
 
-            foreach (string storeName in storesToBeReinitialized)
+            foreach (var storeName in storesToBeReinitialized)
             {
                 if (!stateStores.ContainsKey(storeName))
                 {
@@ -135,7 +135,7 @@ namespace Kafka.Streams.Processors.Internals
 
         private static Dictionary<string, string> inverseOneToOneMap(Dictionary<string, string> origin)
         {
-            Dictionary<string, string> reversedMap = new Dictionary<string, string>();
+            var reversedMap = new Dictionary<string, string>();
 
             foreach (KeyValuePair<string, string> entry in origin)
             {

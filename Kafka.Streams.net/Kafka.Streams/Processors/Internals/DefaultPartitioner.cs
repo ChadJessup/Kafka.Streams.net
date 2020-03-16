@@ -15,11 +15,12 @@
  * limitations under the License.
  */
 using System;
+using Confluent.Kafka;
 using Kafka.Common;
 
 namespace Kafka.Streams.Processors.Internals
 {
-    public class DefaultPartitioner
+    public class DefaultPartitioner// : IPartitioner
     {
         public int partition<K, V>(string topic, K key, byte[] keyBytes, V value, object p, Cluster cluster)
         {

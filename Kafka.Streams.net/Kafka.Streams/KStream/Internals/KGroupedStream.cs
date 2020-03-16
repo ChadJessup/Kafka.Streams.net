@@ -1,10 +1,6 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State;
-using Kafka.Streams.State.Internals;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -52,7 +48,7 @@ namespace Kafka.Streams.KStream.Internals
             reducer = reducer ?? throw new ArgumentNullException(nameof(reducer));
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
-            MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            var materializedInternal =
                new MaterializedInternal<K, V, IKeyValueStore<Bytes, byte[]>>(materialized, builder, REDUCE_NAME);
 
             if (materializedInternal.KeySerde == null)
@@ -82,7 +78,7 @@ namespace Kafka.Streams.KStream.Internals
             aggregator = aggregator ?? throw new ArgumentNullException(nameof(aggregator));
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 
-            MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            var materializedInternal =
                new MaterializedInternal<K, VR, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
             if (materializedInternal.KeySerde == null)
@@ -127,7 +123,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private IKTable<K, long> doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
-            MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>> materializedInternal =
+            var materializedInternal =
                new MaterializedInternal<K, long, IKeyValueStore<Bytes, byte[]>>(materialized, builder, AGGREGATE_NAME);
 
             if (materializedInternal.KeySerde == null)

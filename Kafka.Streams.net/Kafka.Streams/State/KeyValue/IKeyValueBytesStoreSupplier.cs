@@ -1,8 +1,6 @@
-using Kafka.Common.Utils;
 using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.Internals;
 
-namespace Kafka.Streams.State.KeyValue
+namespace Kafka.Streams.State.KeyValues
 {
     /**
      * A store supplier that can be used to create one or more {@link KeyValueStore KeyValueStore&lt;Byte, byte[]&gt;} instances of type &lt;Byte, byte[]&gt;.

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using Kafka.Streams.State.Interfaces;
-using System;
 
 namespace Kafka.Streams.State.Internals
 {

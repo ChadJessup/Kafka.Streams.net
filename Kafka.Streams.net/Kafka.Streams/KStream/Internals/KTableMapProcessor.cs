@@ -10,7 +10,7 @@ namespace Kafka.Streams.KStream.Internals
          * @throws StreamsException if key is null
          */
 
-        public override void process(K key, Change<V> change)
+        public override void Process(K key, Change<V> change)
         {
             // the original key should never be null
             if (key == null)

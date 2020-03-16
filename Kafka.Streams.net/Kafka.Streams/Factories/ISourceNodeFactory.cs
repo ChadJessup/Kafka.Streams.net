@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Kafka.Streams.Factories
 {
@@ -6,5 +7,6 @@ namespace Kafka.Streams.Factories
     {
         List<string> Topics { get; }
         List<string> GetTopics(List<string> subscribedTopics);
+        Regex Pattern { get; }
     }
 }

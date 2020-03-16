@@ -47,7 +47,7 @@ namespace Kafka.Streams.KStream.Internals
                     + other.GetType() + ".");
             }
 
-            TimeWindow otherWindow = (TimeWindow)other;
+            var otherWindow = (TimeWindow)other;
             return this.Start() < otherWindow.End() && otherWindow.Start() < this.End();
         }
     }

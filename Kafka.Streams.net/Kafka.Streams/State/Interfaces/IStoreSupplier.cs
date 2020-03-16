@@ -1,5 +1,3 @@
-using Kafka.Streams.Processors.Interfaces;
-
 namespace Kafka.Streams.State.Interfaces
 {
 

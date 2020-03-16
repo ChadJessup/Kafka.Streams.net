@@ -1,5 +1,6 @@
 using Confluent.Kafka;
 using Kafka.Common.Extensions;
+using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Errors.Interfaces;
 using Kafka.Streams.Interfaces;
@@ -342,7 +343,7 @@ namespace Kafka.Streams.Configs
 
         protected Dictionary<string, object> PostProcessParsedConfig(Dictionary<string, object> parsedValues)
         {
-            Dictionary<string, object> configUpdates = new Dictionary<string, object>();
+            var configUpdates = new Dictionary<string, object>();
             //   CommonClientConfigs.postProcessReconnectBackoffConfigs(this, parsedValues);
 
             //bool eosEnabled = EXACTLY_ONCE.Equals(parsedValues[PROCESSING_GUARANTEE_CONFIG]);
@@ -375,6 +376,11 @@ namespace Kafka.Streams.Configs
             else
             {
                 consumerProps.Add(StreamsConfigPropertyNames.BootstrapServers, this.properties[StreamsConfigPropertyNames.BootstrapServers]);
+            }
+
+            if (!consumerProps.ContainsKey(StreamsConfigPropertyNames.GroupId))
+            {
+                consumerProps.Add(StreamsConfigPropertyNames.GroupId, this.properties[StreamsConfigPropertyNames.GroupId]);
             }
 
             return new ConsumerConfig(consumerProps);
@@ -494,7 +500,7 @@ namespace Kafka.Streams.Configs
             consumerProps.GroupId = groupId;
             consumerProps.ClientId = clientId;
 
-            string groupInstanceId = consumerProps.GroupId;
+            var groupInstanceId = consumerProps.GroupId;
 
             // Suffix each thread consumer with thread.id to enforce uniqueness of group.instance.id.
             if (groupInstanceId != null)
@@ -511,12 +517,12 @@ namespace Kafka.Streams.Configs
             consumerProps.Set(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG, getString(StreamsConfigPropertyNames.WINDOW_STORE_CHANGE_LOG_ADDITIONAL_RETENTION_MS_CONFIG));
 
             // add admin retries configs for creating topics
-            AdminClientConfig adminClientDefaultConfig = new AdminClientConfig(GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
+            var adminClientDefaultConfig = new AdminClientConfig(GetClientPropsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, new AdminClientConfig()));
             // consumerProps.Set(adminClientPrefix(AdminClientConfig.RETRIES_CONFIG), adminClientDefaultConfig.getInt(AdminClientConfig.RETRIES_CONFIG));
             // consumerProps.Add(adminClientPrefix(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG), adminClientDefaultConfig.getLong(AdminClientConfig.RETRY_BACKOFF_MS_CONFIG));
 
             // verify that producer batch config is no larger than segment size, then.Add topic configs required for creating topics
-            Dictionary<string, string> topicProps = originalsWithPrefix(StreamsConfigPropertyNames.TopicPrefix, strip: false);
+            Dictionary<string, string> topicProps = originalsWithPrefix(StreamsConfigPropertyNames.TopicPrefix, stripPrefix: false);
             Dictionary<string, string> producerProps = GetClientPropsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, new ProducerConfig());
 
             // if (topicProps.ContainsKey(topicPrefix(TopicConfig.SEGMENT_BYTES_CONFIG)) &&
@@ -559,7 +565,7 @@ namespace Kafka.Streams.Configs
          * @param clientId clientId
          * @return Map of the restore consumer configuration.
          */
-        public ConsumerConfig GetRestoreConsumerConfigs(string clientId)
+        public RestoreConsumerConfig GetRestoreConsumerConfigs(string? clientId = null)
         {
             var baseConsumerProps = GetCommonConsumerConfigs();
 
@@ -567,19 +573,16 @@ namespace Kafka.Streams.Configs
             var restoreConsumerProps = originalsWithPrefix(StreamsConfigPropertyNames.RestoreConsumerPrefix);
             baseConsumerProps.SetAll(restoreConsumerProps);
 
-            // no need to set group id for a restore consumer
-            // C# library throws if GroupId isn't set...
-            // if (!string.IsNullOrWhiteSpace(this.GroupId) && baseConsumerProps.ContainsKey(this.GroupId))
-            // {
-            //     baseConsumerProps.Remove(this.GroupId);
-            // }
-
             // add client id with stream client id prefix
             baseConsumerProps.ClientId = clientId;
             baseConsumerProps.AutoOffsetReset = Confluent.Kafka.AutoOffsetReset.Earliest;
-            baseConsumerProps.GroupId = clientId;
 
-            return baseConsumerProps;
+            if (string.IsNullOrWhiteSpace(baseConsumerProps.GroupId))
+            {
+                baseConsumerProps.GroupId = clientId;
+            }
+
+            return new RestoreConsumerConfig(baseConsumerProps);
         }
 
         /**
@@ -697,7 +700,7 @@ namespace Kafka.Streams.Configs
          */
         private Dictionary<string, string> originalsWithPrefix(string prefix)
         {
-            return originalsWithPrefix(prefix, strip: true);
+            return originalsWithPrefix(prefix, stripPrefix: true);
         }
 
         /**
@@ -707,7 +710,7 @@ namespace Kafka.Streams.Configs
          * @param strip strip the prefix before adding to the output if set true
          * @return a Map containing the settings with the prefix
          */
-        private Dictionary<string, string> originalsWithPrefix(string prefix, bool strip)
+        private Dictionary<string, string> originalsWithPrefix(string prefix, bool stripPrefix)
         {
             var result = new Dictionary<string, string>();
 
@@ -715,7 +718,7 @@ namespace Kafka.Streams.Configs
             {
                 if (entry.Key.StartsWith(prefix) && entry.Key.Length > prefix.Length)
                 {
-                    if (strip)
+                    if (stripPrefix)
                     {
                         result.Add(entry.Key.Substring(prefix.Length), entry.Value);
                     }
@@ -744,16 +747,21 @@ namespace Kafka.Streams.Configs
             return new Dictionary<string, string>(this.properties)
                 .RemoveAll(new[]
                 {
+                    // TODO: make this automatic...
+                    "processing.guarantee",
+                    "buffered.records.per.partition",
                     "state.dir",
                     "application.id",
+                    "default.timestamp.extractor",
                     "default.key.serde",
                     "default.value.serde",
                     "num.stream.threads",
                     "cache.max.bytes.buffering",
+                    "commit.interval.ms",
                 })
-                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, false).Keys)
-                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, false).Keys)
-                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, false).Keys);
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ConsumerPrefix, stripPrefix: false).Keys)
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.ProducerPrefix, stripPrefix: false).Keys)
+                .RemoveAll(originalsWithPrefix(StreamsConfigPropertyNames.AdminClientPrefix, stripPrefix: false).Keys);
         }
 
         /**
@@ -824,29 +832,9 @@ namespace Kafka.Streams.Configs
                 StreamsConfigPropertyNames.DefaultProductionExceptionHandlerClass);
         }
 
-        /**
-         * Override any client properties in the original configs with overrides
-         *
-         * @param configNames The given set of configuration names.
-         * @param originals   The original configs to be filtered.
-         * @return client config with any overrides
-         */
-        private Dictionary<string, string> ClientProps(
-            HashSet<string> configNames,
-            IDictionary<string, string> originals)
+        public void SetAll(StreamsConfig additional)
         {
-            // iterate all client config names, filter out non-client configs from the original
-            // property map and use the overridden values when they are not specified by users
-            var parsed = new Dictionary<string, string>();
-            foreach (string configName in configNames)
-            {
-                if (originals.ContainsKey(configName))
-                {
-                    parsed.Add(configName, originals[configName]);
-                }
-            }
-
-            return parsed;
+            this.SetAll(additional.properties);
         }
     }
 }

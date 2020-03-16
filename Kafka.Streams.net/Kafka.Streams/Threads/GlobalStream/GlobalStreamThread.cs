@@ -1,4 +1,3 @@
-using Kafka.Common.Utils.Interfaces;
 using Kafka.Streams.Clients;
 using Kafka.Streams.Clients.Consumers;
 using Kafka.Streams.Configs;
@@ -57,7 +56,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             this.stateDirectory = stateDirectory ?? throw new ArgumentNullException(nameof(stateDirectory));
 
             var topologyBuilder = topology?.internalTopologyBuilder?.SetApplicationId(config.ApplicationId) ?? throw new ArgumentNullException(nameof(topology));
-            this.topology = topologyBuilder.buildGlobalStateTopology();
+            this.topology = topologyBuilder.BuildGlobalStateTopology();
 
             this.ThreadClientId = $"{config.ClientId}-GlobalStreamThread";
             this.logPrefix = this.logger.BeginScope($"global-stream-thread [{this.ThreadClientId}] ");
@@ -163,7 +162,7 @@ namespace Kafka.Streams.Threads.GlobalStream
             }
             catch (LockException fatalException)
             {
-                string errorMsg = "Could not lock global state directory. This could happen if multiple KafkaStreams " +
+                var errorMsg = "Could not lock global state directory. This could happen if multiple KafkaStreams " +
                     "instances are running on the same host using the same state directory.";
 
                 this.logger.LogError(errorMsg, fatalException);

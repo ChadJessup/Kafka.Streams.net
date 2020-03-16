@@ -110,7 +110,7 @@ namespace Kafka.Streams.Tasks
 
                     if (logger.IsEnabled(LogLevel.Trace))
                     {
-                        HashSet<TopicPartition> outstandingPartitions = new HashSet<TopicPartition>(task.changelogPartitions);
+                        var outstandingPartitions = new HashSet<TopicPartition>(task.changelogPartitions);
                         outstandingPartitions.RemoveWhere(op => restoredPartitions.Contains(op));
 
                         logger.LogTrace("Stream task {} cannot resume processing yet since some of its changelog partitions have not completed restoring: {}",
@@ -145,7 +145,7 @@ namespace Kafka.Streams.Tasks
          */
         public int maybeCommitPerUserRequested()
         {
-            int committed = 0;
+            var committed = 0;
             RuntimeException firstException = null;
 
             for (IEnumerator<StreamTask> it = running.Values.GetEnumerator(); it.MoveNext();)
@@ -201,10 +201,10 @@ namespace Kafka.Streams.Tasks
          */
         public Dictionary<TopicPartition, long> recordsToDelete()
         {
-            Dictionary<TopicPartition, long> recordsToDelete = new Dictionary<TopicPartition, long>();
+            var recordsToDelete = new Dictionary<TopicPartition, long>();
             foreach (var task in running.Values)
             {
-                foreach (var record in task.purgableOffsets())
+                foreach (var record in task.PurgableOffsets())
                 {
                     recordsToDelete.Add(record.Key, record.Value);
                 }
@@ -218,7 +218,7 @@ namespace Kafka.Streams.Tasks
          */
         public int process(long now)
         {
-            int processed = 0;
+            var processed = 0;
 
             IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.GetEnumerator();
             while (it.MoveNext())
@@ -227,7 +227,7 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    if (task.isProcessable(now) && task.process())
+                    if (task.IsProcessable(now) && task.Process())
                     {
                         processed++;
                     }
@@ -262,7 +262,7 @@ namespace Kafka.Streams.Tasks
          */
         public int punctuate()
         {
-            int punctuated = 0;
+            var punctuated = 0;
             IEnumerator<KeyValuePair<TaskId, StreamTask>> it = running.GetEnumerator();
             while (it.MoveNext())
             {
@@ -270,11 +270,11 @@ namespace Kafka.Streams.Tasks
                 try
                 {
 
-                    if (task.maybePunctuateStreamTime())
+                    if (task.MaybePunctuateStreamTime())
                     {
                         punctuated++;
                     }
-                    if (task.maybePunctuateSystemTime())
+                    if (task.MaybePunctuateSystemTime())
                     {
                         punctuated++;
                     }
@@ -314,17 +314,10 @@ namespace Kafka.Streams.Tasks
 
         public new string ToString(string indent)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.Append(base.ToString(indent));
             describe(builder, restoring.Values.ToList(), indent, "Restoring:");
             return builder.ToString();
-        }
-
-        // for testing only
-
-        List<StreamTask> RestoringTasks()
-        {
-            return restoring.Values.ToList();
         }
     }
 }

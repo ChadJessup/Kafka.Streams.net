@@ -1,6 +1,5 @@
 using Confluent.Kafka;
 using Kafka.Streams.Interfaces;
-using System;
 
 namespace Kafka.Streams.Processors
 {
@@ -39,7 +38,7 @@ namespace Kafka.Streams.Processors
          */
         public long Extract<K, V>(ConsumeResult<K, V> record, long partitionTime)
         {
-            long timestamp = record.Timestamp.UnixTimestampMs;
+            var timestamp = record.Timestamp.UnixTimestampMs;
 
             if (timestamp < 0)
             {

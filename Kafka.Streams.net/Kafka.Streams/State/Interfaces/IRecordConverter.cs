@@ -18,9 +18,9 @@ namespace Kafka.Streams.State.Interfaces
     {
         public ConsumeResult<byte[], byte[]> convert(ConsumeResult<byte[], byte[]> record)
         {
-            byte[] rawValue = record.Value;
+            var rawValue = record.Value;
             Timestamp timestamp = record.Timestamp;
-            byte[]? recordValue = rawValue == null
+            var recordValue = rawValue == null
                 ? null
                 : new ByteBuffer().allocate(8 + rawValue.Length)
                     .putLong(timestamp.UnixTimestampMs)

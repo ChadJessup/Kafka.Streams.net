@@ -33,7 +33,7 @@ namespace Kafka.Streams.Tests
             throw new System.NotImplementedException();
         }
 
-        public RestoreConsumer GetRestoreConsumer(ConsumerConfig config)
+        public RestoreConsumer GetRestoreConsumer(RestoreConsumerConfig config)
         {
             throw new System.NotImplementedException();
         }

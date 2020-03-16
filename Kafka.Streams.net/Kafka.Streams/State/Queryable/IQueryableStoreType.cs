@@ -1,6 +1,4 @@
-using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.Internals;
 
 namespace Kafka.Streams.State.Queryable
 {

@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.Processors.Internals

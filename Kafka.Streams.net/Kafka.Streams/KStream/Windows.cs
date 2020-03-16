@@ -1,20 +1,4 @@
-﻿/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream
@@ -62,7 +46,7 @@ namespace Kafka.Streams.KStream
          *             or directly configure the retention in a store supplier and use {@link Materialized#as(WindowBytesStoreSupplier)}.
          */
         [Obsolete]
-        public Windows<W> until(TimeSpan duration)
+        public Windows<W> Until(TimeSpan duration)
         {
             if (duration < TimeSpan.Zero)
             {
@@ -81,7 +65,7 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1. Use {@link Materialized#retention} instead.
          */
         [Obsolete]
-        public virtual TimeSpan maintainDuration()
+        public virtual TimeSpan MaintainDuration()
         {
             return maintainRetentionDuration;
         }
@@ -96,7 +80,7 @@ namespace Kafka.Streams.KStream
          * @deprecated since 2.1 Override segmentInterval() instead.
          */
         [Obsolete]
-        protected Windows<W> Segments(int segments)
+        public Windows<W> Segments(int segments)
         {
             if (segments < 2)
             {
@@ -114,14 +98,14 @@ namespace Kafka.Streams.KStream
          * @param timestamp the timestamp window should get created for
          * @return a map of {@code windowStartTimestamp -> Window} entries
          */
-        public abstract Dictionary<long, W> windowsFor(TimeSpan timestamp);
+        public abstract Dictionary<long, W>? WindowsFor(TimeSpan timestamp);
 
         /**
          * Return the size of the specified windows in milliseconds.
          *
          * @return the size of the specified windows
          */
-        public abstract TimeSpan size();
+        public abstract TimeSpan Size();
 
         /**
          * Return the window grace period (the time to admit
@@ -129,6 +113,6 @@ namespace Kafka.Streams.KStream
          *
          * Lateness is defined as (stream_time - record_timestamp).
          */
-        public abstract TimeSpan gracePeriod();
+        public abstract TimeSpan GracePeriod();
     }
 }

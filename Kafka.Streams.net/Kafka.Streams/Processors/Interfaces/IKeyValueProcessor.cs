@@ -8,28 +8,32 @@ namespace Kafka.Streams.Processors
      * @param the type of keys
      * @param the type of values
      */
-    public interface IKeyValueProcessor<K, in V>
+    public interface IKeyValueProcessor<K, V> : IKeyValueProcessor
     {
-        /**
-         * Initialize this processor with the given context. The framework ensures this is called once per processor when the topology
-         * that contains it is initialized. When the framework is done with the processor, {@link #close()} will be called on it; the
-         * framework may later re-use the processor by calling {@code #init()} again.
-         * <p>
-         * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
-         * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
-         * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
-         *
-         * @param context the context; may not be null
-         */
-        void init(IProcessorContext context);
-
         /**
          * Process the record with the given key and value.
          *
          * @param key the key for the record
          * @param value the value for the record
          */
-        void process(K key, V value);
+        void Process(K key, V value);
+    }
+
+    public interface IKeyValueProcessor
+    {
+        /**
+          * Initialize this processor with the given context. The framework ensures this is called once per processor when the topology
+          * that contains it is initialized. When the framework is done with the processor, {@link #close()} will be called on it; the
+          * framework may later re-use the processor by calling {@code #init()} again.
+          * <p>
+          * The provided {@link IProcessorContext<K, V> context} can be used to access topology and record meta data, to
+          * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
+          * {@link Punctuator#punctuate(long) called periodically} and to access attached {@link IStateStore}s.
+          *
+          * @param context the context; may not be null
+          */
+
+        void Init(IProcessorContext context);
 
         /**
          * Close this processor and clean up any resources. Be aware that {@code #close()} is called after an internal cleanup.
@@ -38,6 +42,14 @@ namespace Kafka.Streams.Processors
          * <p>
          * Note: Do not close any streams managed resources, like {@link IStateStore}s here, as they are managed by the library.
          */
-        void close();
+        void Close();
+
+        /**
+         * Process the record with the given key and value.
+         *
+         * @param key the key for the record
+         * @param value the value for the record
+         */
+        void Process<K, V>(K key, V value);
     }
 }

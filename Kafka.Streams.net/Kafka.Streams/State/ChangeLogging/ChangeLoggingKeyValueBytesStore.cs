@@ -1,10 +1,6 @@
-
-using Kafka.Common.Utils;
-using Kafka.Streams.KStream;
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.Processors.Internals;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
@@ -25,7 +21,7 @@ namespace Kafka.Streams.State.Internals
             IStateStore root)
         {
             base.init(context, root);
-            string topic = ProcessorStateManager.storeChangelogTopic(context.applicationId, name);
+            var topic = ProcessorStateManager.storeChangelogTopic(context.applicationId, name);
     //        changeLogger = new StoreChangeLogger<>(
     //            name,
     //            context,
@@ -57,7 +53,7 @@ namespace Kafka.Streams.State.Internals
             Bytes key,
             byte[] value)
         {
-            byte[] previous = wrapped.putIfAbsent(key, value);
+            var previous = wrapped.putIfAbsent(key, value);
             if (previous == null)
             {
                 // then it was absent
@@ -78,7 +74,7 @@ namespace Kafka.Streams.State.Internals
 
         public byte[] delete(Bytes key)
         {
-            byte[] oldValue = wrapped.delete(key);
+            var oldValue = wrapped.delete(key);
             log(key, null);
             return oldValue;
         }

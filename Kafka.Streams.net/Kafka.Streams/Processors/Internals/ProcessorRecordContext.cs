@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processors.Internals
                 foreach (Header header in headers)
                 {
                     size += header.Key.ToCharArray().Length;
-                    byte[] value = header.GetValueBytes();
+                    var value = header.GetValueBytes();
                     if (value != null)
                     {
                         size += value.Length;
@@ -54,12 +54,12 @@ namespace Kafka.Streams.Processors.Internals
 
         public byte[] Serialize()
         {
-            byte[] topicBytes = Encoding.UTF8.GetBytes(Topic);
+            var topicBytes = Encoding.UTF8.GetBytes(Topic);
             byte[][] headerKeysBytes;
             byte[][] headerValuesBytes;
 
 
-            int size = 0;
+            var size = 0;
             size += sizeof(long); // value.context.timestamp
             size += sizeof(long); // value.context.offset
             size += sizeof(int); // size of topic
@@ -77,13 +77,13 @@ namespace Kafka.Streams.Processors.Internals
                 headerKeysBytes = new byte[headers.Length][];
                 headerValuesBytes = new byte[headers.Length][];
 
-                for (int i = 0; i < headers.Length; i++)
+                for (var i = 0; i < headers.Length; i++)
                 {
                     size += 2 * sizeof(int); // sizes of key and value
 
-                    byte[] keyBytes = Encoding.UTF8.GetBytes(headers[i].Key);
+                    var keyBytes = Encoding.UTF8.GetBytes(headers[i].Key);
                     size += keyBytes.Length;
-                    byte[] valueBytes = headers[i].GetValueBytes();
+                    var valueBytes = headers[i].GetValueBytes();
                     if (valueBytes != null)
                     {
                         size += valueBytes.Length;
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Processors.Internals
             {
 
                 buffer.putInt(headerKeysBytes.Length);
-                for (int i = 0; i < headerKeysBytes.Length; i++)
+                for (var i = 0; i < headerKeysBytes.Length; i++)
                 {
                     buffer.putInt(headerKeysBytes[i].Length);
                     buffer.Add(headerKeysBytes[i]);
@@ -134,18 +134,18 @@ namespace Kafka.Streams.Processors.Internals
 
         public static ProcessorRecordContext Deserialize(ByteBuffer buffer)
         {
-            long timestamp = buffer.getLong();
-            long offset = buffer.getLong();
-            int topicSize = buffer.getInt();
+            var timestamp = buffer.getLong();
+            var offset = buffer.getLong();
+            var topicSize = buffer.getInt();
             string topic;
             {
                 // not handling the null topic condition, because we believe the topic will never be null when we serialize
-                byte[] topicBytes = new byte[topicSize];
+                var topicBytes = new byte[topicSize];
                 buffer.get(topicBytes);
                 topic = new string(topicBytes.Cast<char>().ToArray());
             }
-            int partition = buffer.getInt();
-            int headerCount = buffer.getInt();
+            var partition = buffer.getInt();
+            var headerCount = buffer.getInt();
             Headers headers;
             if (headerCount == -1)
             {
@@ -153,15 +153,15 @@ namespace Kafka.Streams.Processors.Internals
             }
             else
             {
-                Header[] headerArr = new Header[headerCount];
+                var headerArr = new Header[headerCount];
 
-                for (int i = 0; i < headerCount; i++)
+                for (var i = 0; i < headerCount; i++)
                 {
-                    int keySize = buffer.getInt();
-                    byte[] keyBytes = new byte[keySize];
+                    var keySize = buffer.getInt();
+                    var keyBytes = new byte[keySize];
                     buffer.get(keyBytes);
 
-                    int valueSize = buffer.getInt();
+                    var valueSize = buffer.getInt();
                     byte[] valueBytes;
                     if (valueSize == -1)
                     {
@@ -199,7 +199,7 @@ namespace Kafka.Streams.Processors.Internals
                 return false;
             }
 
-            ProcessorRecordContext that = (ProcessorRecordContext)o;
+            var that = (ProcessorRecordContext)o;
 
             return timestamp == that.timestamp &&
                 offset == that.offset &&

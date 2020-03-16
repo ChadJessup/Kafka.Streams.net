@@ -15,8 +15,6 @@
  * limitations under the License.
  */
 using Confluent.Kafka;
-using Kafka.Streams.Processors.Interfaces;
-using Kafka.Streams.State;
 using Kafka.Streams.State.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -83,7 +81,7 @@ namespace Kafka.Streams.Processors.Internals
 
         public void restore(List<ConsumeResult<byte[], byte[]>> records)
         {
-            List<ConsumeResult<byte[], byte[]>> convertedRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
+            var convertedRecords = new List<ConsumeResult<byte[], byte[]>>(records.Count);
             foreach (ConsumeResult<byte[], byte[]> record in records)
             {
                 convertedRecords.Add(recordConverter.convert(record));

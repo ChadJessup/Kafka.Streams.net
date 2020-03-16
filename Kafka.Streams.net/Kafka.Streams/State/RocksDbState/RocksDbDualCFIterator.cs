@@ -1,8 +1,7 @@
 ﻿using Kafka.Common.Utils;
 using Kafka.Streams.Errors;
 using Kafka.Streams.Internals;
-using Kafka.Streams.State.Interfaces;
-using Kafka.Streams.State.KeyValue;
+using Kafka.Streams.State.KeyValues;
 using RocksDbSharp;
 using System;
 using System.Collections.Generic;
@@ -24,7 +23,7 @@ namespace Kafka.Streams.State.RocksDbState
 
         private volatile bool open = true;
 
-        private byte[] nextWithTimestamp;
+        private byte[]? nextWithTimestamp;
         private byte[] nextNoTimestamp;
         private KeyValue<Bytes, byte[]> next;
 
@@ -69,7 +68,7 @@ namespace Kafka.Streams.State.RocksDbState
                 }
                 else
                 {
-                    next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                    next = KeyValue.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                     nextWithTimestamp = null;
                     iterWithTimestamp.Next();
                 }
@@ -78,7 +77,7 @@ namespace Kafka.Streams.State.RocksDbState
             {
                 if (nextWithTimestamp == null)
                 {
-                    next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                    next = KeyValue.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                     nextNoTimestamp = null;
                     iterNoTimestamp.Next();
                 }
@@ -86,13 +85,13 @@ namespace Kafka.Streams.State.RocksDbState
                 {
                     if (comparator.Compare(nextNoTimestamp, nextWithTimestamp) <= 0)
                     {
-                        next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                        next = KeyValue.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                         nextNoTimestamp = null;
                         iterNoTimestamp.Next();
                     }
                     else
                     {
-                        next = KeyValue<Bytes, byte[]>.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                        next = KeyValue.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                         nextWithTimestamp = null;
                         iterWithTimestamp.Next();
                     }

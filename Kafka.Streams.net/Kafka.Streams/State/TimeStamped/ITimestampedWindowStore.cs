@@ -1,4 +1,3 @@
-using Kafka.Streams.State.Interfaces;
 using Kafka.Streams.State.Window;
 
 namespace Kafka.Streams.State.TimeStamped
@@ -16,7 +15,7 @@ namespace Kafka.Streams.State.TimeStamped
      * @param Type of keys
      * @param Type of values
      */
-    public interface ITimestampedWindowStore<K, V> : IWindowStore<K, ValueAndTimestamp<V>>
+    public interface ITimestampedWindowStore<K, V> : ITimestampedWindowStore, IWindowStore<K, ValueAndTimestamp<V>>
     {
     }
 }
