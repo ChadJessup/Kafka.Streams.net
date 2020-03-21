@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processors.Internals
                 throw new NotImplementedException();
             }
 
-            public void restoreAll(List<KeyValue<byte[], byte[]>> records)
+            public void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
             {
                 throw new NotImplementedException();
             }

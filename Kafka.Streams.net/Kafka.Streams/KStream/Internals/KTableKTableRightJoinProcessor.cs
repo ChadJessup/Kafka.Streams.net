@@ -48,7 +48,7 @@
 //            R oldValue = null;
 
 //            ValueAndTimestamp<V2> valueAndTimestampLeft = valueGetter.get(key);
-//            V2 valueLeft = getValueOrNull(valueAndTimestampLeft);
+//            V2 valueLeft = ValueAndTimestamp.GetValueOrNull(valueAndTimestampLeft);
 //            if (valueLeft == null)
 //            {
 //                return;

@@ -8,13 +8,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
     public class TableProcessorNode<K, V> : StreamsGraphNode
     {
         private readonly ProcessorParameters<K, V> processorParameters;
-        private readonly IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder;
+        private readonly IStoreBuilder<ITimestampedKeyValueStore<K, V>>? storeBuilder;
         private readonly string[] storeNames;
 
         public TableProcessorNode(
             string nodeName,
             ProcessorParameters<K, V> processorParameters,
-            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder)
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>>? storeBuilder)
             : this(nodeName, processorParameters, storeBuilder, null)
         {
         }
@@ -22,13 +22,13 @@ namespace Kafka.Streams.KStream.Internals.Graph
         public TableProcessorNode(
             string nodeName,
             ProcessorParameters<K, V> processorParameters,
-            IStoreBuilder<ITimestampedKeyValueStore<K, V>> storeBuilder,
-            string[] storeNames)
+            IStoreBuilder<ITimestampedKeyValueStore<K, V>>? storeBuilder,
+            string[]? storeNames)
             : base(nodeName)
         {
             this.processorParameters = processorParameters;
             this.storeBuilder = storeBuilder;
-            this.storeNames = storeNames != null ? storeNames : new string[] { };
+            this.storeNames = storeNames ?? Array.Empty<string>();
         }
 
 

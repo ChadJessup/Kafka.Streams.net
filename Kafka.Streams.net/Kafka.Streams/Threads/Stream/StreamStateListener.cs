@@ -22,13 +22,12 @@ namespace Kafka.Streams.Threads.Stream
         private readonly object threadStatesLock;
 
         public StreamStateListener(
-            ILogger<StreamStateListener>? logger,
+            ILogger<StreamStateListener> logger,
             IGlobalStreamThread? globalThread,
             IKafkaStreamsThread kafkaStreams)
         {
-            this.logger = logger;
-
-            this.kafkaStreams = kafkaStreams;
+            this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this.kafkaStreams = kafkaStreams ?? throw new ArgumentNullException(nameof(kafkaStreams));
             this.globalThread = globalThread;
             
             this.threadStatesLock = new object();
@@ -37,7 +36,7 @@ namespace Kafka.Streams.Threads.Stream
         /**
          * If all threads are dead set to ERROR
          */
-        private void maybeSetError()
+        private void MaybeSetError()
         {
             // check if we have at least one thread running
             foreach (var state in threadStates.Values)
@@ -57,7 +56,7 @@ namespace Kafka.Streams.Threads.Stream
         /**
          * If all threads are up, including the global thread, set to RUNNING
          */
-        private void maybeSetRunning()
+        private void MaybeSetRunning()
         {
             // state can be transferred to RUNNING if all threads are either RUNNING or DEAD
             foreach (var state in threadStates.Values)
@@ -85,7 +84,7 @@ namespace Kafka.Streams.Threads.Stream
             IThread<States> thread,
             States abstractNewState,
             States abstractOldState)
-            where States : Enum
+                where States : Enum
         {
             lock (threadStatesLock)
             {
@@ -104,11 +103,11 @@ namespace Kafka.Streams.Threads.Stream
                     }
                     else if (newState == StreamThreadStates.RUNNING)
                     {
-                        maybeSetRunning();
+                        MaybeSetRunning();
                     }
                     else if (newState == StreamThreadStates.DEAD)
                     {
-                        maybeSetError();
+                        MaybeSetError();
                     }
                 }
                 else if (thread is GlobalStreamThread)

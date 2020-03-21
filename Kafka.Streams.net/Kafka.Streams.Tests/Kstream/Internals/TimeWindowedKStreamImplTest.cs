@@ -123,23 +123,23 @@
 //            processData(driver);
 
 //            IWindowStore<string, long> windowStore = driver.getWindowStore("count-store");
-//            List<KeyValue<Windowed<string>, long>> data =
+//            List<KeyValuePair<Windowed<string>, long>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(0, 500)), 2L),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), 1L),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), 2L)));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), 2L),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), 1L),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), 2L)));
 
 //            IWindowStore<string, ValueAndTimestamp<long>> windowStore =
 //                        driver.getTimestampedWindowStore("count-store");
-//            List<KeyValue<Windowed<string>, ValueAndTimestamp<long>>> data =
+//            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<long>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, equalTo(Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make(2L, 15L)),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make(1L, 500L)),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make(2L, 550L)))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make(2L, 15L)),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make(1L, 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make(2L, 550L)))));
 //        }
 
 //        [Fact]
@@ -154,22 +154,22 @@
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 //            IWindowStore<string, string> windowStore = driver.getWindowStore("reduced");
-//            List<KeyValue<Windowed<string>, string>> data =
+//            List<KeyValuePair<Windowed<string>, string>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, equalTo(Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(0, 500)), "1+2"),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), "3"),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), "10+20"))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "1+2"),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), "3"),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), "10+20"))));
 
 //            IWindowStore<string, ValueAndTimestamp<string>> windowStore = driver.getTimestampedWindowStore("reduced");
-//            List<KeyValue<Windowed<string>, ValueAndTimestamp<string>>> data =
+//            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, equalTo(Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("1+2", 15L)),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("3", 500L)),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("10+20", 550L)))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("1+2", 15L)),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("3", 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("10+20", 550L)))));
 //        }
 
 //        [Fact]
@@ -186,22 +186,22 @@
 //            processData(driver);
 
 //            IWindowStore<string, string> windowStore = driver.getWindowStore("aggregated");
-//            List<KeyValue<Windowed<string>, string>> data =
+//            List<KeyValuePair<Windowed<string>, string>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, equalTo(Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(0, 500)), "0+1+2"),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), "0+3"),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), "0+10+20"))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "0+1+2"),
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), "0+3"),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), "0+10+20"))));
 
 //            IWindowStore<string, ValueAndTimestamp<string>> windowStore = driver.getTimestampedWindowStore("aggregated");
-//            List<KeyValue<Windowed<string>, ValueAndTimestamp<string>>> data =
+//            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
 //            Assert.Equal(data, equalTo(Array.AsReadOnly(
 //                KeyValuePair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("0+1+2", 15L)),
-//                KeyValue.Pair(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+3", 500L)),
-//                KeyValue.Pair(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+10+20", 550L)))));
+//                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+3", 500L)),
+//                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+10+20", 550L)))));
 //        }
 //    }
 

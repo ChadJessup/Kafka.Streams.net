@@ -33,11 +33,11 @@
 
 //        public void testPrintStreamWithProvidedKeyValueMapper()
 //        {
-//            List<KeyValue<int, string>> inputRecords = Array.AsReadOnly(
-//                    new KeyValue<>(0, "zero"),
-//                    new KeyValue<>(1, "one"),
-//                    new KeyValue<>(2, "two"),
-//                    new KeyValue<>(3, "three"));
+//            List<KeyValuePair<int, string>> inputRecords = Array.AsReadOnly(
+//                    new KeyValuePair<>(0, "zero"),
+//                    new KeyValuePair<>(1, "one"),
+//                    new KeyValuePair<>(2, "two"),
+//                    new KeyValuePair<>(3, "three"));
 
 //            string[] expectedResult = {
 //            "[test-stream]: 0, zero",
@@ -45,7 +45,7 @@
 //            "[test-stream]: 2, two",
 //            "[test-stream]: 3, three"};
 
-//            foreach (KeyValue<int, string> record in inputRecords)
+//            foreach (KeyValuePair<int, string> record in inputRecords)
 //            {
 //                printProcessor.process(record.key, record.value);
 //            }

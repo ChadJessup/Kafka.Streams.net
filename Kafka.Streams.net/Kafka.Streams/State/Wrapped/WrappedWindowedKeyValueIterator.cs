@@ -30,14 +30,14 @@
 //            return getWindowedKey();
 //        }
 
-//        public KeyValue<Windowed<Bytes>, byte[]> next()
+//        public KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
 //            if (!hasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValue<Windowed<Bytes>, byte[]> result = new KeyValue<>(getWindowedKey(), base.next.value);
+//            KeyValuePair<Windowed<Bytes>, byte[]> result = new KeyValuePair<>(getWindowedKey(), base.next.value);
 //            base.next = null;
 //            return result;
 //        }

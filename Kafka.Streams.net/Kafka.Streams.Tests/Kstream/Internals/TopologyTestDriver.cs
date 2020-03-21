@@ -90,9 +90,9 @@ namespace Kafka.Streams.Tests
     * TestOutputTopic<string, string> outputTopic1 = driver.createOutputTopic("output-topic-1", stringDeserializer, stringDeserializer);
     * TestOutputTopic<string, string> outputTopic2 = driver.createOutputTopic("output-topic-2", stringDeserializer, stringDeserializer);
     *
-    * KeyValue<string, string> record1 = outputTopic1.readKeyValue();
-    * KeyValue<string, string> record2 = outputTopic2.readKeyValue();
-    * KeyValue<string, string> record3 = outputTopic1.readKeyValue();
+    * KeyValuePair<string, string> record1 = outputTopic1.readKeyValue();
+    * KeyValuePair<string, string> record2 = outputTopic2.readKeyValue();
+    * KeyValuePair<string, string> record3 = outputTopic1.readKeyValue();
     * }</pre>
     *
     * Again, our example topology generates messages with string keys and values, so we supply our string deserializer

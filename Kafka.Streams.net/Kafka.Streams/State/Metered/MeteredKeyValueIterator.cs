@@ -23,10 +23,10 @@
 //        }
 
 
-//        public KeyValue<K, V> next()
+//        public KeyValuePair<K, V> next()
 //        {
-//            KeyValue<Bytes, byte[]> keyValue = iter.next();
-//            return KeyValue.pair(
+//            KeyValuePair<Bytes, byte[]> keyValue = iter.next();
+//            return KeyValuePair.pair(
 //                serdes.keyFrom(keyValue.Key),
 //                outerValue(keyValue.Value));
 //        }

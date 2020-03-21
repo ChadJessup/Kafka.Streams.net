@@ -154,7 +154,7 @@
 //        {
 //            var builder = new StreamsBuilder();
 //            KGroupedTable<string, string> kGroupedTable = builder.< string, string> table("topic")
-//                                                                        .groupBy(KeyValue::pair, Grouped.As("grouping"));
+//                                                                        .groupBy(KeyValuePair::pair, Grouped.As("grouping"));
 //            kGroupedTable.count().toStream().to("output-count");
 //            kGroupedTable.reduce((v, v2) => v2, (v, v2) => v2).toStream().to("output-reduce");
 //            string topologyString = builder.Build().describe().ToString();
@@ -179,7 +179,7 @@
 //        public void shouldNotReuseRepartitionNodeWithUnamedRepartitionTopicsKGroupedTable()
 //        {
 //            var builder = new StreamsBuilder();
-//            KGroupedTable<string, string> kGroupedTable = builder.< string, string> table("topic").groupBy(KeyValue::pair);
+//            KGroupedTable<string, string> kGroupedTable = builder.< string, string> table("topic").groupBy(KeyValuePair::pair);
 //            kGroupedTable.count().toStream().to("output-count");
 //            kGroupedTable.reduce((v, v2) => v2, (v, v2) => v2).toStream().to("output-reduce");
 //            string topologyString = builder.Build().describe().ToString();
@@ -364,11 +364,11 @@
 
 //            if (otherOperations)
 //            {
-//                ktable.filter((k, v) => true).groupBy(KeyValue::pair, Grouped.As(ktableGroupByTopicName)).count();
+//                ktable.filter((k, v) => true).groupBy(KeyValuePair::pair, Grouped.As(ktableGroupByTopicName)).count();
 //            }
 //            else
 //            {
-//                ktable.groupBy(KeyValue::pair, Grouped.As(ktableGroupByTopicName)).count();
+//                ktable.groupBy(KeyValuePair::pair, Grouped.As(ktableGroupByTopicName)).count();
 //            }
 
 //            return builder.Build().describe().ToString();
@@ -531,7 +531,7 @@
 
 //            IKStream<string, string> sourceStream = builder.Stream(INPUT_TOPIC, Consumed.with(Serdes.String(), Serdes.String()));
 
-//            IKStream<string, string> mappedStream = sourceStream.map((k, v) => KeyValue.Pair(k.toUppercase(Locale.getDefault()), v));
+//            IKStream<string, string> mappedStream = sourceStream.map((k, v) => KeyValuePair.Create(k.toUppercase(Locale.getDefault()), v));
 
 //            mappedStream.filter((k, v) => k.equals("B")).mapValues(v => v.toUppercase(Locale.getDefault()))
 //                    .process(() => new SimpleProcessor(processorValueCollector));

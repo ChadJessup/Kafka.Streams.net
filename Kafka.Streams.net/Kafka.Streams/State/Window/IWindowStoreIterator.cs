@@ -4,7 +4,7 @@ using System;
 namespace Kafka.Streams.State.Window
 {
     /**
-     * IEnumerator interface of {@link KeyValue} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}
+     * IEnumerator interface of {@link KeyValuePair} with key typed {@link long} used for {@link WindowStore#fetch(object, long, long)}
      * and {@link WindowStore#fetch(object, Instant, Instant)}
      *
      * Users must call its {@code close} method explicitly upon completeness to release resources,

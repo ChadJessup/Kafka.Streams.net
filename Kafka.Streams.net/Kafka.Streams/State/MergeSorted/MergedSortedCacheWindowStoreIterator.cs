@@ -8,7 +8,7 @@
 //        {
 //        }
 
-//        public KeyValue<long, byte[]> deserializeStorePair(KeyValue<long, byte[]> pair)
+//        public KeyValuePair<long, byte[]> deserializeStorePair(KeyValuePair<long, byte[]> pair)
 //        {
 //            return pair;
 //        }

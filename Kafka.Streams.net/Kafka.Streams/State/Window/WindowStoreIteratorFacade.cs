@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Kafka.Streams.State.KeyValues;
 
 namespace Kafka.Streams.State.Window
@@ -7,7 +8,7 @@ namespace Kafka.Streams.State.Window
     {
         readonly IKeyValueIterator<long, ValueAndTimestamp<V>> innerIterator;
 
-        public KeyValue<long, V> Current { get; }
+        public KeyValuePair<long, V> Current { get; }
         object IEnumerator.Current { get; }
 
         public WindowStoreIteratorFacade(IKeyValueIterator<long, ValueAndTimestamp<V>> iterator)
@@ -29,11 +30,11 @@ namespace Kafka.Streams.State.Window
             return innerIterator.MoveNext();
         }
 
-        public KeyValue<long, V> next()
+        public KeyValuePair<long, V> next()
         {
-            KeyValue<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
+            KeyValuePair<long, ValueAndTimestamp<V>> innerKeyValue = innerIterator.Current;
 
-            return KeyValue.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(innerKeyValue.Value));
+            return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(innerKeyValue.Value));
         }
 
         public bool MoveNext()

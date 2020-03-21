@@ -16,6 +16,7 @@
  */
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -23,9 +24,9 @@ namespace Kafka.Streams.KStream.Internals
     {
 
         private readonly bool forwardDownStream;
-        private readonly IForeachAction<K, V> action;
+        private readonly Action<K, V> action;
 
-        public KStreamPeek(IForeachAction<K, V> action, bool forwardDownStream)
+        public KStreamPeek(Action<K, V> action, bool forwardDownStream)
         {
             this.action = action;
             this.forwardDownStream = forwardDownStream;

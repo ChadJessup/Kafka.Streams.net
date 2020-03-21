@@ -21,7 +21,7 @@
 
 //            MockProcessorSupplier<string, int> supplier = new MockProcessorSupplier<>();
 //            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
-//            stream.map((key, value) => KeyValue.Pair(value, key)).process(supplier);
+//            stream.map((key, value) => KeyValuePair.Create(value, key)).process(supplier);
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            foreach (var expectedKey in expectedKeys)
@@ -46,7 +46,7 @@
 //        {
 //            new StreamsBuilder()
 //                .Stream<int, string>("numbers")
-//                .map((key, value) => KeyValue.Pair(key, key + ":" + value))
+//                .map((key, value) => KeyValuePair.Create(key, key + ":" + value))
 //                .to("strings");
 //        }
 //    }

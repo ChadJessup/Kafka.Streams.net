@@ -59,7 +59,7 @@ namespace Kafka.Streams.Tasks
             try
             {
                 StateMgr = new ProcessorStateManager(
-                    this.logger,
+                    new Logger<ProcessorStateManager>(new LoggerFactory()),
                     id,
                     partitions,
                     isStandby,

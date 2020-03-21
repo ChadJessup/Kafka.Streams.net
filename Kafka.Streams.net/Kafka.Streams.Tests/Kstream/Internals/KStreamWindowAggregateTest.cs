@@ -246,7 +246,7 @@
 //                   Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonicalized").withValueSerde(Serdes.String()).withCachingDisabled().withLoggingDisabled()
 //               )
 //               .toStream()
-//               .map((key, value) => new KeyValue<>(key.ToString(), value))
+//               .map((key, value) => new KeyValuePair<>(key.ToString(), value))
 //               .to("output");
 
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));
@@ -302,7 +302,7 @@
 //                   Materialize.As < string, string, IWindowStore<Bytes, byte[]>("topic1-Canonicalized").withValueSerde(Serdes.String()).withCachingDisabled().withLoggingDisabled()
 //               )
 //               .toStream()
-//               .map((key, value) => new KeyValue<>(key.ToString(), value))
+//               .map((key, value) => new KeyValuePair<>(key.ToString(), value))
 //               .to("output");
 
 //        LogCaptureAppender.setClassLoggerToDebug(KStreamWindowAggregate));

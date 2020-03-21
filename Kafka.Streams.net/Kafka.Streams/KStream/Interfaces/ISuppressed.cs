@@ -1,4 +1,6 @@
 using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.KStream.Internals.Suppress;
+using System;
 
 namespace Kafka.Streams.KStream
 {
@@ -39,10 +41,10 @@ namespace Kafka.Streams.KStream
          * @param The key type for the KTable to apply this suppression to.
          * @return a suppression configuration
          */
-        //static ISuppressed<K> untilTimeLimit(TimeSpan timeToWaitForMoreEvents, IBufferConfig bufferConfig)
-        //{
-        //    return new SuppressedInternal<K>(null, timeToWaitForMoreEvents, bufferConfig, null, false);
-        //}
+        static ISuppressed<K> UntilTimeLimit(TimeSpan timeToWaitForMoreEvents, IBufferConfig bufferConfig)
+        {
+            return new SuppressedInternal<K>(null, timeToWaitForMoreEvents, bufferConfig, null, false);
+        }
 
         /**
          * Use the specified name for the suppression node in the topology.
@@ -56,8 +58,8 @@ namespace Kafka.Streams.KStream
          * A suppression can be "disabled" with the configuration {@code untilTimeLimit(Duration.ZERO, ...}.
          *
          * @param name The name to be used for the suppression node and changelog topic
-         * @return The same configuration with the.Addition of the given {@code name}.
+         * @return The same configuration with the addition of the given {@code name}.
          */
-        ISuppressed<K> withName(string name);
+        ISuppressed<K> WithName(string name);
     }
 }

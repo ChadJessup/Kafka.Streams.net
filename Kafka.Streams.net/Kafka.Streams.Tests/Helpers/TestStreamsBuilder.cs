@@ -1,9 +1,5 @@
-﻿using Kafka.Streams.Configs;
-using Kafka.Streams.Kafka.Streams;
+﻿using Kafka.Streams.Kafka.Streams;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Kafka.Streams.Tests.Helpers
 {

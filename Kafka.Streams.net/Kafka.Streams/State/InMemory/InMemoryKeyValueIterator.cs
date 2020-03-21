@@ -20,10 +20,10 @@
 //        }
 
 
-//        public KeyValue<Bytes, byte[]> next()
+//        public KeyValuePair<Bytes, byte[]> next()
 //        {
 //            KeyValuePair<Bytes, byte[]> entry = iter.next();
-//            return new KeyValue<>(entry.Key, entry.Value);
+//            return new KeyValuePair<>(entry.Key, entry.Value);
 //        }
 
 

@@ -35,10 +35,10 @@
 //            return iter.hasNext();
 //        }
 
-//        public override KeyValue<long, V> next()
+//        public override KeyValuePair<long, V> next()
 //        {
-//            KeyValue<long, byte[]> next = iter.next();
-//            return KeyValue.pair(next.key, serdes.valueFrom(next.value));
+//            KeyValuePair<long, byte[]> next = iter.next();
+//            return KeyValuePair.pair(next.key, serdes.valueFrom(next.value));
 //        }
 
 //        public override void Remove()

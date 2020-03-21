@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 using Kafka.Streams.Errors;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, KeyValue<object, object>>
+    public class KTableValueGetterSupplier<K, V> : IKTableValueGetterSupplier<K, KeyValuePair<object, object>>
     {
         //KTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
-        public IKTableValueGetter<K, KeyValue<object, object>> get()
+        public IKTableValueGetter<K, KeyValuePair<object, object>> get()
         {
             return null; // new KTableMapValueGetter(parentValueGetterSupplier());
         }

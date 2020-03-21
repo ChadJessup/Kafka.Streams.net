@@ -225,13 +225,13 @@
 //       Assert.Equal(((AbstractStream) table1.transformValues(valueTransformerWithKeySupplier, Materialized.with(mySerde, mySerde))).valueSerde(),
 //            mySerde);
 
-//       Assert.Null(((AbstractStream) table1.groupBy(KeyValue::new)).keySerde());
-//       Assert.Null(((AbstractStream) table1.groupBy(KeyValue::new)).valueSerde());
+//       Assert.Null(((AbstractStream) table1.groupBy(KeyValuePair::new)).keySerde());
+//       Assert.Null(((AbstractStream) table1.groupBy(KeyValuePair::new)).valueSerde());
 //       Assert.Equal(
-//            ((AbstractStream) table1.groupBy(KeyValue::new, Grouped.with(mySerde, mySerde))).keySerde(),
+//            ((AbstractStream) table1.groupBy(KeyValuePair::new, Grouped.with(mySerde, mySerde))).keySerde(),
 //            mySerde);
 //       Assert.Equal(
-//            ((AbstractStream) table1.groupBy(KeyValue::new, Grouped.with(mySerde, mySerde))).valueSerde(),
+//            ((AbstractStream) table1.groupBy(KeyValuePair::new, Grouped.with(mySerde, mySerde))).valueSerde(),
 //            mySerde);
 
 //       Assert.Equal(

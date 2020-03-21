@@ -156,13 +156,13 @@
 //            }
 //        }
 
-//        public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+//        public override void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
 //        {
 //            validateStoreOpen();
 //            @lock.writeLock().@lock();
 //            try
 //            {
-//                foreach (KeyValue<Bytes, byte[]> entry in entries)
+//                foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //                {
 //                    entry.key = entry.key ?? throw new ArgumentNullException(nameof(entry.key));
 //                    put(entry.key, entry.value);

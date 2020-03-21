@@ -467,7 +467,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 [Fact]
                 public void shouldUseSpecifiedNameForMapOperation()
                 {
-                    builder.Stream(STREAM_TOPIC).map(KeyValue::pair, Named.As(STREAM_OPERATION_NAME));
+                    builder.Stream(STREAM_TOPIC).map(KeyValuePair::pair, Named.As(STREAM_OPERATION_NAME));
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
                    .AssertSpecifiedNameForOperation(topology, "KSTREAM-SOURCE-0000000000", STREAM_OPERATION_NAME);
@@ -730,7 +730,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 public void shouldUseSpecifiedNameForToStreamWithMapper()
                 {
                     builder.Table(STREAM_TOPIC)
-                            .toStream(KeyValue::pair, Named.As("to-stream"));
+                            .toStream(KeyValuePair::pair, Named.As("to-stream"));
 
                     builder.Build();
                     ProcessorTopology topology = builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();

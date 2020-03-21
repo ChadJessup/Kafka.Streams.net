@@ -9,7 +9,7 @@
 //            base(cacheIterator, storeIterator);
 //        }
 
-//        public override KeyValue<Bytes, byte[]> deserializeStorePair(KeyValue<Bytes, byte[]> pair)
+//        public override KeyValuePair<Bytes, byte[]> deserializeStorePair(KeyValuePair<Bytes, byte[]> pair)
 //        {
 //            return pair;
 //        }

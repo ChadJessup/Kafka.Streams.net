@@ -26,10 +26,10 @@
 //            return bytesIterator.hasNext();
 //        }
 
-//        public override KeyValue<Windowed<Bytes>, byte[]> next()
+//        public override KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
-//            KeyValue<Bytes, byte[]> next = bytesIterator.next();
-//            return KeyValue.pair(SessionKeySchema.from(next.key), next.value);
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
+//            return KeyValuePair.pair(SessionKeySchema.from(next.key), next.value);
 //        }
 
 //        public override void Remove()

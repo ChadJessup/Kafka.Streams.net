@@ -156,7 +156,7 @@
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()))
 //            .toStream()
-//            .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//            .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //            .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //        string anonymousNodeTopology = anonymousNodeBuilder.Build().describe().ToString();
 
@@ -174,7 +174,7 @@
 //            .count(Materialize.As<string, long, ISessionStore<Bytes, byte[]>("counts").withCachingDisabled())
 //            .suppress(untilWindowCloses(unbounded()).withName("myname"))
 //            .toStream()
-//            .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//            .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //            .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //        string namedNodeTopology = namedNodeBuilder.Build().describe().ToString();
 

@@ -1,19 +1,30 @@
-﻿
+﻿using Kafka.Streams.Interfaces;
 
-//namespace Kafka.Streams.KStream.Internals
-//{
-//    public class KTableKTableInnerJoinValueGetterSupplier : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2>
-//    {
+namespace Kafka.Streams.KStream.Internals
+{
+    public class KTableKTableInnerJoinValueGetterSupplier<K, R, V1, V2> : KTableKTableAbstractJoinValueGetterSupplier<K, R, V1, V2>
+    {
+        private readonly IKeyValueMapper<K, V1, K> keyValueMapper;
+        private readonly IValueJoiner<V1, V2, R> joiner;
 
-//        KTableKTableInnerJoinValueGetterSupplier(IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
-//                                                  IKTableValueGetterSupplier<K, V2> valueGetterSupplier2)
-//        {
-//            base(valueGetterSupplier1, valueGetterSupplier2);
-//        }
+        public KTableKTableInnerJoinValueGetterSupplier(
+            IKTableValueGetterSupplier<K, V1> valueGetterSupplier1,
+            IKTableValueGetterSupplier<K, V2> valueGetterSupplier2,
+            IKeyValueMapper<K, V1, K> keyValueMapper,
+            IValueJoiner<V1, V2, R> joiner)
+                : base(valueGetterSupplier1, valueGetterSupplier2)
+        {
+            this.keyValueMapper = keyValueMapper;
+            this.joiner = joiner;
+        }
 
-//        public IKTableValueGetter<K, R> get()
-//        {
-//            return new KTableKTableInnerJoinValueGetter(valueGetterSupplier1(), valueGetterSupplier2());
-//        }
-//    }
-//}
+        public override IKTableValueGetter<K, R> get()
+        {
+            return new KTableKTableInnerJoinValueGetter<K, R, V1, V2>(
+                this.valueGetterSupplier1.get(),
+                this.valueGetterSupplier2.get(),
+                this.keyValueMapper,
+                this.joiner);
+        }
+    }
+}

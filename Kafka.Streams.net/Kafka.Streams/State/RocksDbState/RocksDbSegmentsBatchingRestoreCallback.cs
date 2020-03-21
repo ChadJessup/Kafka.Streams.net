@@ -7,7 +7,7 @@
 //{
 //    public class RocksDbSegmentsBatchingRestoreCallback : AbstractNotifyingBatchingRestoreCallback
 //    {
-//        public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
+//        public override void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
 //        {
 //            restoreAllInternal(records);
 //        }

@@ -13,7 +13,7 @@ namespace Kafka.Streams.State.Internals
 
         private IKeyValueIterator<K, V> current;
 
-        public KeyValue<K, V> Current { get; }
+        public KeyValuePair<K, V> Current { get; }
         object IEnumerator.Current { get; }
 
         public CompositeKeyValueIterator(
@@ -51,7 +51,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public KeyValue<K, V> next()
+        public KeyValuePair<K, V> next()
         {
             if (!hasNext())
             {

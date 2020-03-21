@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.KeyValues
 {
@@ -6,7 +7,7 @@ namespace Kafka.Streams.State.KeyValues
     {
         private readonly IKeyValueIterator<K, V> iterator;
 
-        public KeyValue<K, V> Current { get; }
+        public KeyValuePair<K, V> Current { get; }
         object IEnumerator.Current { get; }
 
         public KeyValueIteratorFacade(IKeyValueIterator<K, V> iterator)
@@ -24,12 +25,12 @@ namespace Kafka.Streams.State.KeyValues
             return iterator.peekNextKey();
         }
 
-        public KeyValue<K, V> next()
+        public KeyValuePair<K, V> next()
         {
             var innerKeyValue = iterator.Current;
 
             var vat = (ValueAndTimestamp<V>)(object)innerKeyValue.Value;
-            return KeyValue.Pair(innerKeyValue.Key, ValueAndTimestamp<V>.GetValueOrNull(vat));
+            return KeyValuePair.Create(innerKeyValue.Key, ValueAndTimestamp.GetValueOrNull(vat));
         }
 
         public void close()

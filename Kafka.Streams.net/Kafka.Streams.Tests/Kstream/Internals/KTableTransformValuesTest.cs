@@ -411,9 +411,9 @@
 //            return capture.capturedProcessors(1).get(0).processed;
 //        }
 
-//        private IKeyValueMapper<string, int, KeyValue<string, int>> toForceSendingOfOldValues()
+//        private IKeyValueMapper<string, int, KeyValuePair<string, int>> toForceSendingOfOldValues()
 //        {
-//            return null; // KeyValue::new;
+//            return null; // KeyValuePair::new;
 //        }
 
 //        private IValueMapper<int, string> mapBackToStrings()

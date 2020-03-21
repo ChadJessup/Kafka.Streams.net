@@ -17,16 +17,16 @@
 //        {
 //            var builder = new StreamsBuilder();
 //            IKStream<int, string> stream = builder.Stream(topicName, Consumed.with(Serdes.Int(), Serdes.String()));
-//            List<KeyValue<int, string>> peekObserved = new List<>(), streamObserved = new List<>();
+//            List<KeyValuePair<int, string>> peekObserved = new List<>(), streamObserved = new List<>();
 //            stream.peek(collect(peekObserved)).ForEach(collect(streamObserved));
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);
-//            List<KeyValue<int, string>> expected = new List<>();
+//            List<KeyValuePair<int, string>> expected = new List<>();
 //            for (var key = 0; key < 32; key++)
 //            {
 //                var value = "V" + key;
 //                driver.pipeInput(recordFactory.create(topicName, key, value));
-//                expected.Add(new KeyValue<>(key, value));
+//                expected.Add(new KeyValuePair<>(key, value));
 //            }
 
 //            Assert.Equal(expected, peekObserved);
@@ -49,9 +49,9 @@
 //            }
 //        }
 
-//        private static ForeachAction<K, V> collect<K, V>(List<KeyValue<K, V>> into)
+//        private static ForeachAction<K, V> collect<K, V>(List<KeyValuePair<K, V>> into)
 //        {
-//            return (key, value) => into.add(new KeyValue<>(key, value));
+//            return (key, value) => into.add(new KeyValuePair<>(key, value));
 //        }
 //    }
 //}

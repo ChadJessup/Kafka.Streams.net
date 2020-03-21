@@ -28,6 +28,7 @@ using Kafka.Streams.State.Internals;
 using Kafka.Streams.Clients.Producers;
 using Kafka.Streams.State.KeyValues;
 using NodaTime;
+using Kafka.Streams.Interfaces;
 
 namespace Kafka.Streams
 {
@@ -133,6 +134,9 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton(typeof(SourceNodeFactory<,>));
                 serviceCollection.TryAddSingleton<DeserializerFactory>();
                 serviceCollection.TryAddSingleton<SerializerFactory>();
+                serviceCollection.TryAddTransient<ISerde<byte[]>>(sp => Serdes.ByteArray());
+                serviceCollection.TryAddTransient<Serde<byte[]>>(sp => Serdes.ByteArray() as Serde<byte[]>);
+                serviceCollection.TryAddTransient<ISerializer<byte[]>>(sp => Serdes.ByteArray().Serializer);
 
                 return serviceCollection;
             }
@@ -333,7 +337,7 @@ namespace Kafka.Streams
              * Create a {@link KTable} for the specified topic.
              * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
              * are defined by the options in {@link Consumed} are used.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * Note that the specified input topic must be partitioned by key.
              * If this is not the case the returned {@link KTable} will be corrupted.
@@ -402,7 +406,7 @@ namespace Kafka.Streams
              * Create a {@link KTable} for the specified topic.
              * The default {@code "auto.offset.reset"} strategy and default key and value deserializers as specified in the
              * {@link StreamsConfig config} are used.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * Note that the specified input topics must be partitioned by key.
              * If this is not the case the returned {@link KTable} will be corrupted.
@@ -426,7 +430,7 @@ namespace Kafka.Streams
              * Create a {@link KTable} for the specified topic.
              * The {@code "auto.offset.reset"} strategy, {@link ITimestampExtractor}, key and value deserializers
              * are defined by the options in {@link Consumed} are used.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * Note that the specified input topics must be partitioned by key.
              * If this is not the case the returned {@link KTable} will be corrupted.
@@ -470,7 +474,7 @@ namespace Kafka.Streams
              * Create a {@link KTable} for the specified topic.
              * The default {@code "auto.offset.reset"} strategy as specified in the {@link StreamsConfig config} are used.
              * Key and value deserializers as defined by the options in {@link Materialized} are used.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * Note that the specified input topics must be partitioned by key.
              * If this is not the case the returned {@link KTable} will be corrupted.
@@ -503,7 +507,7 @@ namespace Kafka.Streams
 
             /**
              * Create a {@link GlobalKTable} for the specified topic.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} with an internal
              * store name. Note that store name may not be queriable through Interactive Queries.
@@ -537,7 +541,7 @@ namespace Kafka.Streams
             /**
              * Create a {@link GlobalKTable} for the specified topic.
              * The default key and value deserializers as specified in the {@link StreamsConfig config} are used.
-             * Input {@link KeyValue records} with {@code null} key will be dropped.
+             * Input {@link KeyValuePair records} with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} with an internal
              * store name. Note that store name may not be queriable through Interactive Queries.
@@ -559,7 +563,7 @@ namespace Kafka.Streams
             /**
              * Create a {@link GlobalKTable} for the specified topic.
              *
-             * Input {@link KeyValue} pairs with {@code null} key will be dropped.
+             * Input {@link KeyValuePair} pairs with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} configured with
              * the provided instance of {@link Materialized}.
@@ -611,7 +615,7 @@ namespace Kafka.Streams
             /**
              * Create a {@link GlobalKTable} for the specified topic.
              *
-             * Input {@link KeyValue} pairs with {@code null} key will be dropped.
+             * Input {@link KeyValuePair} pairs with {@code null} key will be dropped.
              * <p>
              * The resulting {@link GlobalKTable} will be materialized in a local {@link KeyValueStore} configured with
              * the provided instance of {@link Materialized}.

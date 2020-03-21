@@ -1,4 +1,6 @@
-﻿using Kafka.Streams.Configs;
+﻿using Confluent.Kafka;
+using Kafka.Streams.Configs;
+using Kafka.Streams.KStream;
 using Kafka.Streams.Processors;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Threads;
@@ -21,6 +23,9 @@ namespace Kafka.Streams.Tests
 
         public KafkaStreamsTest()
         {
+            // throw if librdkafka won't load
+            Confluent.Kafka.Library.Load();
+
             this.props = StreamsTestConfigs.GetStandardConfig(numberOfMockBrokers: NUM_BROKERS, numberOfThreads: NUM_THREADS);
             globalStreams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
         }
@@ -148,7 +153,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void stateShouldTransitToErrorIfAllThreadsDead() //// throws InterruptedException
-
         //{
         //    StateListenerStub stateListener = new StateListenerStub();
         //    globalStreams.setStateListener(stateListener);
@@ -217,7 +221,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void shouldCleanupResourcesOnCloseWithoutPreviousStart() //// throws Exception
-
         //{
         //    builder.globalTable("anyTopic");
         //    List<Node> nodes = Collections.singletonList(new Node(0, "localhost", 8121));
@@ -243,7 +246,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void testStateThreadClose() //// throws Exception
-
         //{
         //    // make sure we have the global state thread running too
         //    builder.globalTable("anyTopic");
@@ -293,7 +295,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void testStateGlobalThreadClose() //// throws Exception
-
         //{
         //    // make sure we have the global state thread running too
         //    builder.globalTable("anyTopic");
@@ -524,11 +525,11 @@ namespace Kafka.Streams.Tests
         //    globalStreams.allMetadataForStore("store");
         //}
 
-        //[Fact]// (expected = IllegalStateException))
-        //public void shouldNotGetTaskWithKeyAndSerializerWhenNotRunning()
-        //{
-        //    globalStreams.metadataForKey("store", "key", Serdes.String().Serializer);
-        //}
+        // [Fact]// (expected = IllegalStateException))
+        // public void ShouldNotGetTaskWithKeyAndSerializerWhenNotRunning()
+        // {
+        //     globalStreams.metadataForKey("store", "key", Serdes.String().Serializer);
+        // }
 
         //[Fact]// (expected = IllegalStateException))
         //public void shouldNotGetTaskWithKeyAndPartitionerWhenNotRunning()
@@ -568,7 +569,7 @@ namespace Kafka.Streams.Tests
         //        streams = new KafkaStreams(builder.Build(), props);
         //        streams.start();
         //        IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(topic,
-        //            Collections.singletonList(new KeyValue<>("A", "A")),
+        //            Collections.singletonList(new KeyValuePair<>("A", "A")),
         //            TestUtils.producerConfig(
         //                CLUSTER.bootstrapServers(),
         //                StringSerializer,
@@ -630,7 +631,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void shouldThrowOnCleanupWhileRunning() //// throws InterruptedException
-
         //{
         //    globalStreams.start();
         //    TestUtils.waitForCondition(
@@ -650,7 +650,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void shouldCleanupOldStateDirs() //// throws InterruptedException
-
         //{
         //    props.Set(StreamsConfigPropertyNames.StateCleanupDelayMs, "1");
 
@@ -702,7 +701,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void shouldNotBlockInCloseForZeroDuration() //// throws InterruptedException {
-
         //{
         //    var streams = new KafkaStreams(builder.Build(), props);
         //    IThread th = new Thread(() => streams.close(Duration.FromMilliseconds(0L)));
@@ -746,7 +744,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void inMemoryStatefulTopologyShouldNotCreateStateDirectory() //// throws Exception
-
         //{
         //    string inputTopic = testName.getMethodName() + "-input";
         //    string outputTopic = testName.getMethodName() + "-output";
@@ -759,7 +756,6 @@ namespace Kafka.Streams.Tests
 
         //[Fact]
         //public void statefulTopologyShouldCreateStateDirectory() //// throws Exception
-
         //{
         //    string inputTopic = testName.getMethodName() + "-input";
         //    string outputTopic = testName.getMethodName() + "-output";
@@ -776,7 +772,6 @@ namespace Kafka.Streams.Tests
         //                                     string storeName,
         //                                     string globalStoreName,
         //                                     bool isPersistentStore) //// throws Exception
-
         //{
         //    CLUSTER.createTopics(inputTopic, outputTopic, globalTopicName);
         //    IStoreBuilder<IKeyValueStore<string, long>> storeBuilder = Stores.keyValueStoreBuilder(
@@ -819,7 +814,6 @@ namespace Kafka.Streams.Tests
         //                                           List<string> inputTopics,
         //                                           string outputTopic,
         //                                           bool shouldFilesExist) //// throws Exception
-
         //{
         //    File .AseDir = new File(TestUtils.IO_TMP_DIR + File.separator + "kafka-" + TestUtils.randomString(5));
         //    Path .AsePath = .AseDir.toPath();
@@ -838,7 +832,7 @@ namespace Kafka.Streams.Tests
         //    foreach (string topic in inputTopics)
         //    {
         //        IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(topic,
-        //                Collections.singletonList(new KeyValue<>("A", "A")),
+        //                Collections.singletonList(new KeyValuePair<>("A", "A")),
         //                TestUtils.producerConfig(
         //                        CLUSTER.bootstrapServers(),
         //                        StringSerializer,
@@ -890,7 +884,7 @@ namespace Kafka.Streams.Tests
         //    Assert.True(TaskDir.exists());
         //}
 
-        public class KafkaStreamsTestsStateListenerStub : IStateListener
+        internal class KafkaStreamsTestsStateListenerStub : IStateListener
         {
             public int numChanges { get; private set; } = 0;
             object? oldState;

@@ -23,10 +23,10 @@
 //        }
 
 
-//        public KeyValue<Bytes, byte[]> next()
+//        public KeyValuePair<Bytes, byte[]> next()
 //        {
 //            lastKey = keys.next();
-//            return new KeyValue<>(lastKey, entries[lastKey]);
+//            return new KeyValuePair<>(lastKey, entries[lastKey]);
 //        }
 
 

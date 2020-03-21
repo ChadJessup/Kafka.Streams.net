@@ -1,14 +1,15 @@
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamPrint<K, V> : IProcessorSupplier<K, V>
     {
 
-        private readonly IForeachAction<K, V> action;
+        private readonly Action<K, V> action;
 
-        public KStreamPrint(IForeachAction<K, V> action)
+        public KStreamPrint(Action<K, V> action)
         {
             this.action = action;
         }

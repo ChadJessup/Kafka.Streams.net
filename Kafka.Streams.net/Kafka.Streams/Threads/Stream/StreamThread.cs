@@ -381,13 +381,11 @@ namespace Kafka.Streams.Threads.Stream
             Consumer.Subscribe(builder.SourceTopicPattern().ToString());//, rebalanceListener);
         }
 
-        /**
-         * @throws IllegalStateException If store gets registered after initialized is already finished
-         * @throws StreamsException      If the store's change log does not contain the partition
-         * @throws TaskMigratedException If another thread wrote to the changelog topic that is currently restored
-         *                               or if committing offsets failed (non-EOS)
-         *                               or if the task producer got fenced (EOS)
-         */
+        // @throws IllegalStateException If store gets registered after initialized is already finished
+        // @throws StreamsException      If the store's change log does not contain the partition
+        // @throws TaskMigratedException If another thread wrote to the changelog topic that is currently restored
+        //                               or if committing offsets failed (non-EOS)
+        //                               or if the task producer got fenced (EOS)
         public void RunOnce()
         {
             ConsumerRecords<byte[], byte[]>? records;
@@ -460,14 +458,12 @@ namespace Kafka.Streams.Threads.Stream
             // tasks are still being restored.
             if (this.TaskManager.hasActiveRunningTasks())
             {
-                /*
-                 * Within an iteration, after N (N initialized as 1 upon start up) round of processing one-record-each on the applicable tasks, check the current time:
-                 *  1. If it is time to commit, do it;
-                 *  2. If it is time to punctuate, do it;
-                 *  3. If elapsed time is close to consumer's max.poll.interval.ms, end the current iteration immediately.
-                 *  4. If none of the the above happens, increment N.
-                 *  5. If one of the above happens, half the value of N.
-                 */
+                // Within an iteration, after N (N initialized as 1 upon start up) round of processing one-record-each on the applicable tasks, check the current time:
+                // 1. If it is time to commit, do it;
+                // 2. If it is time to punctuate, do it;
+                // 3. If elapsed time is close to consumer's max.poll.interval.ms, end the current iteration immediately.
+                // 4. If none of the the above happens, increment N.
+                // 5. If one of the above happens, half the value of N.
                 var processed = 0;
                 var timeSinceLastPoll = 0L;
 

@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.RocksDbState
 {
-    public class RocksDbIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
+    public class RocksDbIterator : AbstractIterator<KeyValuePair<Bytes, byte[]>>
        , IKeyValueIterator<Bytes, byte[]>
     {
         private readonly string storeName;
@@ -33,7 +33,7 @@ namespace Kafka.Streams.State.RocksDbState
 
         private volatile bool open = true;
 
-        private KeyValue<Bytes, byte[]> next;
+        private KeyValuePair<Bytes, byte[]> next;
 
         public RocksDbIterator(
             string storeName,
@@ -55,7 +55,7 @@ namespace Kafka.Streams.State.RocksDbState
             return base.hasNext();
         }
 
-        public override KeyValue<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> makeNext()
         {
             if (!iter.Valid())
             {
@@ -69,9 +69,9 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        private KeyValue<Bytes, byte[]> getKeyValue()
+        private KeyValuePair<Bytes, byte[]> getKeyValue()
         {
-            return new KeyValue<Bytes, byte[]>(new Bytes(iter.Key()), iter.Value());
+            return new KeyValuePair<Bytes, byte[]>(new Bytes(iter.Key()), iter.Value());
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

@@ -466,11 +466,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult consumer records}
          */
         public List<ConsumeResult<byte[], byte[]>> create(string topicName,
-                                                           List<KeyValue<K, V>> keyValues)
+                                                           List<KeyValuePair<K, V>> keyValues)
         {
             var records = new List<ConsumeResult<byte[], byte[]>>(keyValues.Count);
 
-            foreach (KeyValue<K, V> keyValue in keyValues)
+            foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
                 records.Add(create(topicName, keyValue.Key, keyValue.Value));
             }
@@ -485,12 +485,12 @@ namespace Kafka.Streams.Tests.Helpers
          * @param keyValues the record keys and values
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValue<K, V>> keyValues)
+        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues)
         {
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValue<K, V>> keyValues) instead.");
+                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues) instead.");
             }
 
             return create(topicName, keyValues);
@@ -507,7 +507,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult consumer records}
          */
         public List<ConsumeResult<byte[], byte[]>> create(string topicName,
-                                                           List<KeyValue<K, V>> keyValues,
+                                                           List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp,
                                                            long advanceMs)
         {
@@ -519,7 +519,7 @@ namespace Kafka.Streams.Tests.Helpers
             var records = new List<ConsumeResult<byte[], byte[]>>(keyValues.Count);
 
             var timestamp = startTimestamp;
-            foreach (KeyValue<K, V> keyValue in keyValues)
+            foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
                 records.Add(create(topicName, keyValue.Key, keyValue.Value, new Headers(), timestamp));
                 timestamp += advanceMs;
@@ -537,14 +537,14 @@ namespace Kafka.Streams.Tests.Helpers
          * @param advanceMs the time difference between two consecutive generated records
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValue<K, V>> keyValues,
+        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp,
                                                            long advanceMs)
         {
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValue<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
+                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
             }
 
             return create(topicName, keyValues, startTimestamp, advanceMs);
@@ -561,7 +561,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult consumer records}
          */
         public List<ConsumeResult<byte[], byte[]>> create(string topicName,
-                                                           List<KeyValue<K, V>> keyValues,
+                                                           List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
             return create(topicName, keyValues, startTimestamp, 1);
@@ -576,13 +576,13 @@ namespace Kafka.Streams.Tests.Helpers
          * @param startTimestamp the timestamp for the first generated record
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValue<K, V>> keyValues,
+        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
             if (topicName == null)
             {
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
-                    "Use #create(string topicName, List<KeyValue<K, V>> keyValues, long startTimestamp) instead.");
+                    "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp) instead.");
             }
 
             return create(topicName, keyValues, startTimestamp, 1);

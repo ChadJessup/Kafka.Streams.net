@@ -20,23 +20,23 @@
 //        public void testForeach()
 //        {
 //            // Given
-//            List<KeyValue<int, string>> inputRecords = Array.AsReadOnly(
-//                new KeyValue<>(0, "zero"),
-//                new KeyValue<>(1, "one"),
-//                new KeyValue<>(2, "two"),
-//                new KeyValue<>(3, "three")
+//            List<KeyValuePair<int, string>> inputRecords = Array.AsReadOnly(
+//                new KeyValuePair<>(0, "zero"),
+//                new KeyValuePair<>(1, "one"),
+//                new KeyValuePair<>(2, "two"),
+//                new KeyValuePair<>(3, "three")
 //            );
 
-//            List<KeyValue<int, string>> expectedRecords = Array.AsReadOnly(
-//                new KeyValue<>(0, "ZERO"),
-//                new KeyValue<>(2, "ONE"),
-//                new KeyValue<>(4, "TWO"),
-//                new KeyValue<>(6, "THREE")
+//            List<KeyValuePair<int, string>> expectedRecords = Array.AsReadOnly(
+//                new KeyValuePair<>(0, "ZERO"),
+//                new KeyValuePair<>(2, "ONE"),
+//                new KeyValuePair<>(4, "TWO"),
+//                new KeyValuePair<>(6, "THREE")
 //            );
 
-//            var actualRecords = new List<KeyValue<int, string>>();
+//            var actualRecords = new List<KeyValuePair<int, string>>();
 //            ForeachAction<int, string> action =
-//                (key, value) => actualRecords.add(new KeyValue<>(key * 2, value.toUppercase(Locale.ROOT)));
+//                (key, value) => actualRecords.add(new KeyValuePair<>(key * 2, value.toUppercase(Locale.ROOT)));
 
 //            // When
 //            var builder = new StreamsBuilder();
@@ -45,7 +45,7 @@
 
 //            // Then
 //            var driver = new TopologyTestDriver(builder.Build(), props);
-//            foreach (KeyValue<int, string> record in inputRecords)
+//            foreach (KeyValuePair<int, string> record in inputRecords)
 //            {
 //                driver.pipeInput(recordFactory.create(topicName, record.key, record.value));
 //            }
@@ -53,8 +53,8 @@
 //            Assert.Equal(expectedRecords.Count, actualRecords.Count);
 //            for (var i = 0; i < expectedRecords.Count; i++)
 //            {
-//                KeyValue<int, string> expectedRecord = expectedRecords[i];
-//                KeyValue<int, string> actualRecord = actualRecords[i];
+//                KeyValuePair<int, string> expectedRecord = expectedRecords[i];
+//                KeyValuePair<int, string> actualRecord = actualRecords[i];
 //                Assert.Equal(expectedRecord, actualRecord);
 //            }
 //        }

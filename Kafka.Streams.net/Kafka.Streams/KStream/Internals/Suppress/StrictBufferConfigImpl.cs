@@ -1,69 +1,69 @@
+using Kafka.Streams.KStream.Interfaces;
+using System;
 
-//namespace Kafka.Streams.KStream.Internals.Suppress
-//{
-//    public class StrictBufferConfigImpl : BufferConfigInternal<IStrictBufferConfig>, IStrictBufferConfig
-//    {
-//        private long maxRecords;
-//        private long maxBytes;
-//        private BufferFullStrategy bufferFullStrategy;
+namespace Kafka.Streams.KStream.Internals.Suppress
+{
+    public class StrictBufferConfigImpl : BufferConfigInternal<IStrictBufferConfig>, IStrictBufferConfig
+    {
+        public override long MaxRecords { get; protected set; }
+        public override long MaxBytes { get; protected set; }
 
-//        public StrictBufferConfigImpl(
-//            long maxRecords,
-//            long maxBytes,
-//            BufferFullStrategy bufferFullStrategy)
-//        {
-//            this.maxRecords = maxRecords;
-//            this.maxBytes = maxBytes;
-//            this.bufferFullStrategy = bufferFullStrategy;
-//        }
+        public StrictBufferConfigImpl(
+            long MaxRecords,
+            long MaxBytes,
+            BufferFullStrategy BufferFullStrategy)
+        {
+            this.MaxRecords = MaxRecords;
+            this.MaxBytes = MaxBytes;
+            this.BufferFullStrategy = BufferFullStrategy;
+        }
 
-//        public StrictBufferConfigImpl()
-//        {
-//            this.maxRecords = long.MaxValue;
-//            this.maxBytes = long.MaxValue;
-//            this.bufferFullStrategy = SHUT_DOWN;
-//        }
+        public StrictBufferConfigImpl()
+        {
+            this.MaxRecords = long.MaxValue;
+            this.MaxBytes = long.MaxValue;
+            this.BufferFullStrategy = BufferFullStrategy.SHUT_DOWN;
+        }
 
+        public override IBufferConfig<IStrictBufferConfig> WithMaxRecords(long recordLimit)
+        {
+            return new StrictBufferConfigImpl(recordLimit, MaxBytes, BufferFullStrategy);
+        }
 
-//        public IStrictBufferConfig withMaxRecords(long recordLimit)
-//        {
-//            return new StrictBufferConfigImpl(recordLimit, maxBytes, bufferFullStrategy);
-//        }
+        public override IBufferConfig<IStrictBufferConfig> WithMaxBytes(long byteLimit)
+        {
+            return new StrictBufferConfigImpl(MaxRecords, byteLimit, BufferFullStrategy);
+        }
 
+        public override bool Equals(object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
 
-//        public IStrictBufferConfig withMaxBytes(long byteLimit)
-//        {
-//            return new StrictBufferConfigImpl(maxRecords, byteLimit, bufferFullStrategy);
-//        }
+            if (o == null || GetType() != o.GetType())
+            {
+                return false;
+            }
 
-//        public override bool Equals(object o)
-//        {
-//            if (this == o)
-//            {
-//                return true;
-//            }
-//            if (o == null || GetType() != o.GetType())
-//            {
-//                return false;
-//            }
-//            StrictBufferConfigImpl that = (StrictBufferConfigImpl)o;
-//            return maxRecords == that.maxRecords &&
-//                maxBytes == that.maxBytes &&
-//                bufferFullStrategy == that.bufferFullStrategy;
-//        }
+            StrictBufferConfigImpl that = (StrictBufferConfigImpl)o;
+            return MaxRecords == that.MaxRecords &&
+                MaxBytes == that.MaxBytes &&
+                BufferFullStrategy == that.BufferFullStrategy;
+        }
 
+        public override int GetHashCode()
+            => HashCode.Combine(
+                this.MaxRecords,
+                this.MaxBytes,
+                this.BufferFullStrategy);
 
-//        public override int GetHashCode()
-//        {
-//            return (maxRecords, maxBytes, bufferFullStrategy).GetHashCode();
-//        }
-
-
-//        public override string ToString()
-//        {
-//            return "StrictBufferConfigImpl{maxKeys=" + maxRecords +
-//                ", maxBytes=" + maxBytes +
-//                ", bufferFullStrategy=" + bufferFullStrategy + '}';
-//        }
-//    }
-//}
+        public override string ToString()
+        {
+            return "StrictBufferConfigImpl{maxKeys=" + MaxRecords +
+                ", MaxBytes=" + MaxBytes +
+                ", BufferFullStrategy=" + BufferFullStrategy + '}';
+        }
+    }
+}

@@ -27,11 +27,11 @@
 //        }
 
 
-//        public KeyValue<long, byte[]> next()
+//        public KeyValuePair<long, byte[]> next()
 //        {
-//            KeyValue<Bytes, byte[]> next = bytesIterator.next();
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
 //            long timestamp = WindowKeySchema.extractStoreTimestamp(next.key());
-//            return KeyValue.pair(timestamp, next.value);
+//            return KeyValuePair.pair(timestamp, next.value);
 //        }
 
 

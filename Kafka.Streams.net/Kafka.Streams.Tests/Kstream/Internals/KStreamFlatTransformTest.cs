@@ -42,7 +42,7 @@
 //        private int inputKey;
 //        private int inputValue;
 
-//        private Transformer<int, int, Iterable<KeyValue<int, int>>> transformer;
+//        private Transformer<int, int, Iterable<KeyValuePair<int, int>>> transformer;
 //        private IProcessorContext context;
 
 //        private KStreamFlatTransformProcessor<int, int, int, int> processor;
@@ -71,15 +71,15 @@
 //        [Fact]
 //        public void shouldTransformInputRecordToMultipleOutputRecords()
 //        {
-//            Iterable<KeyValue<int, int>> outputRecords = Array.AsReadOnly(
-//                    KeyValue.Pair(2, 20),
-//                    KeyValue.Pair(3, 30),
-//                    KeyValue.Pair(4, 40));
+//            Iterable<KeyValuePair<int, int>> outputRecords = Array.AsReadOnly(
+//                    KeyValuePair.Create(2, 20),
+//                    KeyValuePair.Create(3, 30),
+//                    KeyValuePair.Create(4, 40));
 //            processor.init(context);
 //            EasyMock.reset(transformer);
 
 //            EasyMock.expect(transformer.transform(inputKey, inputValue)).andReturn(outputRecords);
-//            foreach (KeyValue<int, int> outputRecord in outputRecords)
+//            foreach (KeyValuePair<int, int> outputRecord in outputRecords)
 //            {
 //                context.forward(outputRecord.key, outputRecord.value);
 //            }
@@ -97,7 +97,7 @@
 //            EasyMock.reset(transformer);
 
 //            EasyMock.expect(transformer.transform(inputKey, inputValue))
-//                .andReturn(Collections.< KeyValue<int, int> > emptyList());
+//                .andReturn(Collections.< KeyValuePair<int, int> > emptyList());
 //            replayAll();
 
 //            processor.process(inputKey, inputValue);
@@ -134,7 +134,7 @@
 //        [Fact]
 //        public void shouldGetFlatTransformProcessor()
 //        {
-//            TransformerSupplier<int, int, Iterable<KeyValue<int, int>>> transformerSupplier =
+//            TransformerSupplier<int, int, Iterable<KeyValuePair<int, int>>> transformerSupplier =
 //        mock(TransformerSupplier));
 //            KStreamFlatTransform<int, int, int, int> processorSupplier =
 //                new KStreamFlatTransform<>(transformerSupplier);

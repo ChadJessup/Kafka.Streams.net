@@ -2,6 +2,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.State.KeyValues;
 using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Interfaces
 {
@@ -50,7 +51,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filter} for a <i>changelog stream</i> works differently than {@link KStream#filter(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -61,7 +62,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKTable<K, V> filter(IPredicate<K, V> predicate);
+        IKTable<K, V> filter(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -72,7 +73,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filter} for a <i>changelog stream</i> works differently than {@link KStream#filter(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -84,7 +85,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate)
          */
-        IKTable<K, V> filter(IPredicate<K, V> predicate, Named named);
+        IKTable<K, V> filter(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -96,7 +97,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filter} for a <i>changelog stream</i> works differently than {@link KStream#filter(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -123,8 +124,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #filterNot(Predicate, Materialized)
          */
         IKTable<K, V> filter(
-            IPredicate<K, V> predicate,
+            Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
+
+        IKTableValueGetterSupplier<K, V> valueGetterSupplier<VR>();
 
         /**
          * Create a new {@code KTable} that consists of all records of this {@code KTable} which satisfy the given
@@ -136,7 +139,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filter} for a <i>changelog stream</i> works differently than {@link KStream#filter(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -163,7 +166,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that satisfy the given predicate
          * @see #filterNot(Predicate, Materialized)
          */
-        IKTable<K, V> filter(IPredicate<K, V> predicate,
+        IKTable<K, V> filter(Func<K, V, bool> predicate,
                              Named named,
                              Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -176,7 +179,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filterNot} for a <i>changelog stream</i> works differently than {@link KStream#filterNot(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -187,7 +190,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKTable<K, V> filterNot(IPredicate<K, V> predicate);
+        IKTable<K, V> filterNot(Func<K, V, bool> predicate);
 
         /**
          * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -198,7 +201,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filterNot} for a <i>changelog stream</i> works differently than {@link KStream#filterNot(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -210,7 +213,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@code KTable} that contains only those records that do <em>not</em> satisfy the given predicate
          * @see #filter(Predicate)
          */
-        IKTable<K, V> filterNot(IPredicate<K, V> predicate, Named named);
+        IKTable<K, V> filterNot(Func<K, V, bool> predicate, Named named);
 
         /**
          * Create a new {@code KTable} that consists all records of this {@code KTable} which do <em>not</em> satisfy the
@@ -222,7 +225,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filterNot} for a <i>changelog stream</i> works differently than {@link KStream#filterNot(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -248,7 +251,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #filter(Predicate, Materialized)
          */
         IKTable<K, V> filterNot(
-            IPredicate<K, V> predicate,
+            Func<K, V, bool> predicate,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
@@ -261,7 +264,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * This is a stateless record-by-record operation.
          * <p>
          * Note that {@code filterNot} for a <i>changelog stream</i> works differently than {@link KStream#filterNot(Predicate)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided filter predicate is not evaluated but the tombstone record is forwarded
          * directly if required (i.e., if there is anything to be deleted).
@@ -288,7 +291,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #filter(Predicate, Materialized)
          */
         IKTable<K, V> filterNot(
-            IPredicate<K, V> predicate,
+            Func<K, V, bool> predicate,
             Named named,
             Materialized<K, V, IKeyValueStore<Bytes, byte[]>> materialized);
 
@@ -311,7 +314,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -341,7 +344,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -375,7 +378,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapperWithKey)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -407,7 +410,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapperWithKey)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -452,7 +455,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -467,6 +470,8 @@ namespace Kafka.Streams.KStream.Interfaces
         IKTable<K, VR> mapValues<VR>(
             IValueMapper<V, VR> mapper,
             Materialized<K, VR, IKeyValueStore<Bytes, byte[]>> materialized);
+
+        void enableSendingOldValues();
 
         /**
          * Create a new {@code KTable} by transforming the value of each record in this {@code KTable} into a new value
@@ -500,7 +505,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -550,7 +555,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -598,7 +603,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * the result {@code KTable}.
          * <p>
          * Note that {@code mapValues} for a <i>changelog stream</i> works differently than {@link KStream#mapValues(ValueMapper)
-         * record stream filters}, because {@link KeyValue records} with {@code null} values (so-called tombstone records)
+         * record stream filters}, because {@link KeyValuePair records} with {@code null} values (so-called tombstone records)
          * have delete semantics.
          * Thus, for tombstones the provided value-mapper is not evaluated but the tombstone record is forwarded directly to
          * delete the corresponding record in the result {@code KTable}.
@@ -623,7 +628,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @return a {@link KStream} that contains the same records as this {@code KTable}
          */
-        IKStream<K, V> toStream();
+        IKStream<K, V> ToStream();
 
         /**
          * Convert this changelog stream to a {@link KStream}.
@@ -1040,7 +1045,7 @@ namespace Kafka.Streams.KStream.Interfaces
         /**
          * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper} and default serializers
          * and deserializers.
-         * Each {@link KeyValue} pair of this {@code KTable} is mapped to a new {@link KeyValue} pair by applying the
+         * Each {@link KeyValuePair} pair of this {@code KTable} is mapped to a new {@link KeyValuePair} pair by applying the
          * provided {@link KeyValueMapper}.
          * Re-grouping a {@code KTable} is required before an aggregation operator can be applied to the data
          * (cf. {@link KGroupedTable}).
@@ -1067,12 +1072,12 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the value type of the result {@link KGroupedTable}
          * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
          */
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> selector);
+        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector);
 
         /**
          * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
          * and {@link Serde}s as specified by {@link Serialized}.
-         * Each {@link KeyValue} pair of this {@code KTable} is mapped to a new {@link KeyValue} pair by applying the
+         * Each {@link KeyValuePair} pair of this {@code KTable} is mapped to a new {@link KeyValuePair} pair by applying the
          * provided {@link KeyValueMapper}.
          * Re-grouping a {@code KTable} is required before an aggregation operator can be applied to the data
          * (cf. {@link KGroupedTable}).
@@ -1101,13 +1106,13 @@ namespace Kafka.Streams.KStream.Interfaces
          */
         [Obsolete]
         IKGroupedTable<KR, VR> groupBy<KR, VR>(
-            IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
+            IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector,
             ISerialized<KR, VR> serialized);
 
         /**
          * Re-groups the records of this {@code KTable} using the provided {@link KeyValueMapper}
          * and {@link Serde}s as specified by {@link Grouped}.
-         * Each {@link KeyValue} pair of this {@code KTable} is mapped to a new {@link KeyValue} pair by applying the
+         * Each {@link KeyValuePair} pair of this {@code KTable} is mapped to a new {@link KeyValuePair} pair by applying the
          * provided {@link KeyValueMapper}.
          * Re-grouping a {@code KTable} is required before an aggregation operator can be applied to the data
          * (cf. {@link KGroupedTable}).
@@ -1134,7 +1139,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param          the value type of the result {@link KGroupedTable}
          * @return a {@link KGroupedTable} that contains the re-grouped records of the original {@code KTable}
          */
-        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> selector,
+        IKGroupedTable<KR, VR> groupBy<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> selector,
                                                 Grouped<KR, VR> grouped);
 
         /**
@@ -1153,7 +1158,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded
          * directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1229,7 +1234,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded
          * directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1308,7 +1313,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded
          * directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1388,7 +1393,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * {@link ValueJoiner} will be called to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded
          * directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1474,7 +1479,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * null} to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
          * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
          * deleted).
@@ -1557,7 +1562,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * null} to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
          * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
          * deleted).
@@ -1643,7 +1648,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * null} to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
          * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
          * deleted).
@@ -1730,7 +1735,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * null} to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * For example, for left input tombstones the provided value-joiner is not called but a tombstone record is
          * forwarded directly to delete a record in the result {@code KTable} if required (i.e., if there is anything to be
          * deleted).
@@ -1817,7 +1822,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * corresponding other value to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded directly
          * to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1899,7 +1904,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * corresponding other value to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded directly
          * to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -1983,7 +1988,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * corresponding other value to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded directly
          * to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>
@@ -2069,7 +2074,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * corresponding other value to compute a value (with arbitrary type) for the result record.
          * The key of the result record is the same as for both joining input records.
          * <p>
-         * Note that {@link KeyValue records} with {@code null} values (so-called tombstone records) have delete semantics.
+         * Note that {@link KeyValuePair records} with {@code null} values (so-called tombstone records) have delete semantics.
          * Thus, for input tombstones the provided value-joiner is not called but a tombstone record is forwarded directly
          * to delete a record in the result {@code KTable} if required (i.e., if there is anything to be deleted).
          * <p>

@@ -7,9 +7,9 @@ namespace Kafka.Streams.State.Internals
     public class MemoryLRUCacheBytesIterator : IPeekingKeyValueIterator<Bytes, LRUCacheEntry>
     {
         private readonly IEnumerator<KeyValuePair<Bytes, LRUNode>> underlying;
-        private KeyValue<Bytes, LRUCacheEntry> nextEntry;
+        private KeyValuePair<Bytes, LRUCacheEntry>? nextEntry;
 
-        public KeyValue<Bytes, LRUCacheEntry> Current { get; }
+        public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
         object IEnumerator.Current { get; }
 
         public MemoryLRUCacheBytesIterator()
@@ -21,22 +21,23 @@ namespace Kafka.Streams.State.Internals
             this.underlying = underlying;
         }
 
-        public Bytes peekNextKey()
+        public Bytes? peekNextKey()
         {
             if (!hasNext())
             {
                 throw new IndexOutOfRangeException();
             }
-            return nextEntry.Key;
+
+            return nextEntry?.Key;
         }
 
-
-        public KeyValue<Bytes, LRUCacheEntry> peekNext()
+        public KeyValuePair<Bytes, LRUCacheEntry>? PeekNext()
         {
             if (!hasNext())
             {
                 throw new IndexOutOfRangeException();
             }
+
             return nextEntry;
         }
 
@@ -56,15 +57,16 @@ namespace Kafka.Streams.State.Internals
             return nextEntry != null;
         }
 
-
-        public KeyValue<Bytes, LRUCacheEntry> next()
+        public KeyValuePair<Bytes, LRUCacheEntry>? Next()
         {
             if (!hasNext())
             {
                 throw new IndexOutOfRangeException();
             }
-            KeyValue<Bytes, LRUCacheEntry> result = nextEntry;
+
+            var result = nextEntry;
             nextEntry = null;
+
             return result;
         }
 
@@ -79,9 +81,8 @@ namespace Kafka.Streams.State.Internals
                 return;
             }
 
-            nextEntry = new KeyValue<Bytes, LRUCacheEntry>(cacheKey, entry);
+            nextEntry = new KeyValuePair<Bytes, LRUCacheEntry>(cacheKey, entry);
         }
-
 
         public void Remove()
         {

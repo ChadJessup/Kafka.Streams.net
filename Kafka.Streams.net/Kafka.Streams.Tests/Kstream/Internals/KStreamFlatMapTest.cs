@@ -24,13 +24,13 @@ namespace Kafka.Streams.KStream.Internals
             var builder = new StreamsBuilder();
             var topicName = "topic";
 
-            var mapper = new KeyValueMapper<int, string, IEnumerable<KeyValue<string, string>>>(
+            var mapper = new KeyValueMapper<int, string, IEnumerable<KeyValuePair<string, string>>>(
                 (key, value) =>
                 {
-                    var result = new List<KeyValue<string, string>>();
+                    var result = new List<KeyValuePair<string, string>>();
                     for (var i = 0; i < key; i++)
                     {
-                        result.Add(KeyValue.Pair((key * 10 + i).ToString(), value?.ToString() ?? string.Empty));
+                        result.Add(KeyValuePair.Create((key * 10 + i).ToString(), value?.ToString() ?? string.Empty));
                     }
 
                     return result;
@@ -41,7 +41,7 @@ namespace Kafka.Streams.KStream.Internals
             var supplier = new MockProcessorSupplier<string, string>();
             IKStream<int, string> stream = builder.Stream(topicName, Consumed<int, string>.with(Serdes.Int(), Serdes.String()));
 
-            stream.flatMap(mapper).process(supplier);
+            stream.flatMap(mapper).Process(supplier);
 
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)

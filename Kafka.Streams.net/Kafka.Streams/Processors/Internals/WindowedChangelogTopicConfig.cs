@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for.Additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 using System;
 using System.Collections.Generic;
 
@@ -25,14 +9,15 @@ namespace Kafka.Streams.Processors.Internals
      */
     public class WindowedChangelogTopicConfig : InternalTopicConfig
     {
-        private static readonly Dictionary<string, string> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
-        readonly Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string?> WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES;
+        private readonly Dictionary<string, string> tempTopicDefaultOverrides = new Dictionary<string, string>();
+
         //tempTopicDefaultOverrides.Add(TopicConfig.CLEANUP_POLICY_CONFIG, TopicConfig.CLEANUP_POLICY_COMPACT + "," + TopicConfig.CLEANUP_POLICY_DELETE);
         //WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES = Collections.unmodifiableMap(tempTopicDefaultOverrides);
 
         private readonly long? retentionMs;
 
-        public WindowedChangelogTopicConfig(string name, Dictionary<string, string> topicConfigs)
+        public WindowedChangelogTopicConfig(string name, Dictionary<string, string?> topicConfigs)
         {
             name = name ?? throw new ArgumentNullException(nameof(name));
             //            Topic.validate(name);
@@ -51,7 +36,7 @@ namespace Kafka.Streams.Processors.Internals
         public override Dictionary<string, string?> getProperties(Dictionary<string, string> defaultProperties, long? additionalRetentionMs)
         {
             // internal topic config overridden rule: library overrides < global config overrides < per-topic config overrides
-            var topicConfig = new Dictionary<string, string>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
+            var topicConfig = new Dictionary<string, string?>(WINDOWED_STORE_CHANGELOG_TOPIC_DEFAULT_OVERRIDES);
 
             //topicConfig.putAll(defaultProperties);
             //topicConfig.putAll(topicConfigs);

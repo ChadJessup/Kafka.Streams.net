@@ -16,16 +16,17 @@
  */
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamBranch<K, V> : IProcessorSupplier<K, V>
     {
-        private readonly IPredicate<K, V>[] predicates;
+        private readonly Func<K, V, bool>[] predicates;
         private readonly string[] childNodes;
 
         public KStreamBranch(
-            IPredicate<K, V>[] predicates,
+            Func<K, V, bool>[] predicates,
             string[] childNodes)
         {
             this.predicates = predicates;

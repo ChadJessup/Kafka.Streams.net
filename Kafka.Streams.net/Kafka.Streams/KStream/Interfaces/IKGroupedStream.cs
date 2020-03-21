@@ -3,7 +3,7 @@ using Kafka.Streams.State.KeyValues;
 namespace Kafka.Streams.KStream.Interfaces
 {
     /**
-     * {@code KGroupedStream} is an abstraction of a <i>grouped</i> record stream of {@link KeyValue} pairs.
+     * {@code KGroupedStream} is an abstraction of a <i>grouped</i> record stream of {@link KeyValuePair} pairs.
      * It is an intermediate representation of a {@link KStream} in order to apply an aggregation operation on the original
      * {@link KStream} records.
      * <p>
@@ -89,7 +89,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KTable} that contains "update" records with unmodified keys and {@link long} values that
          * represent the latest (rolling) count (i.e., number of records) for each key
          */
-        IKTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized);
+        IKTable<K, long> Count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized);
 
         /**
          * Combine the values of records in this stream by the grouped key.

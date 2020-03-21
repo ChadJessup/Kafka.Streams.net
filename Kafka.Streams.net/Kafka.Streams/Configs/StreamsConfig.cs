@@ -109,6 +109,11 @@ namespace Kafka.Streams.Configs
             this.SetAll(config);
             this.SetDefaultConfiguration();
         }
+        public string GroupId
+        {
+            get => this.Get(StreamsConfigPropertyNames.GroupId);
+            set => this.SetObject(StreamsConfigPropertyNames.GroupId, value);
+        }
 
         public string ApplicationId
         {

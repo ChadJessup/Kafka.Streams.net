@@ -250,8 +250,6 @@ namespace Kafka.Streams.Tests
             var consumer = new Mock<IConsumer<byte[], byte[]>>();
             var mockTaskManager = TestUtils.GetMockTaskManagerCommit(1);
 
-            mockTaskManager.Verify(tm => tm.commitAll(), Times.Exactly(1));
-
             sc.AddSingleton(mockTaskManager.Object);
 
             var sb = TestUtils.GetStreamsBuilder(sc);

@@ -2,6 +2,7 @@ using Kafka.Streams.Interfaces;
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.KStream.Internals.Graph;
 using Kafka.Streams.State;
+using Kafka.Streams.State.KeyValues;
 using NodaTime;
 using System;
 using System.Collections.Generic;
@@ -95,7 +96,7 @@ namespace Kafka.Streams.KStream.Internals
 
             builder.AddGraphNode<K, V>(parentNode, statefulProcessorNode);
 
-            return new KTable<KR, VR>(
+            return new KTable<KR, IKeyValueStore<Bytes, byte[]>, VR>(
                 this.clock,
                 aggFunctionName,
                 keySerde,

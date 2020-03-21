@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace Kafka.Streams.State.RocksDbState
 {
-    public class RocksDbDualCFIterator : AbstractIterator<KeyValue<Bytes, byte[]>>
+    public class RocksDbDualCFIterator : AbstractIterator<KeyValuePair<Bytes, byte[]>>
         , IKeyValueIterator<Bytes, byte[]>
     {
         // RocksDb's JNI interface does not expose getters/setters that allow the
@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.RocksDbState
 
         private byte[]? nextWithTimestamp;
         private byte[] nextNoTimestamp;
-        private KeyValue<Bytes, byte[]> next;
+        private KeyValuePair<Bytes, byte[]> next;
 
         public RocksDbDualCFIterator(
             string storeName,
@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.RocksDbState
             return base.hasNext();
         }
 
-        public override KeyValue<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> makeNext()
         {
             if (nextNoTimestamp == null && iterNoTimestamp.Valid())
             {
@@ -68,7 +68,7 @@ namespace Kafka.Streams.State.RocksDbState
                 }
                 else
                 {
-                    next = KeyValue.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                    next = KeyValuePair.Create(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                     nextWithTimestamp = null;
                     iterWithTimestamp.Next();
                 }
@@ -77,7 +77,7 @@ namespace Kafka.Streams.State.RocksDbState
             {
                 if (nextWithTimestamp == null)
                 {
-                    next = KeyValue.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                    next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                     nextNoTimestamp = null;
                     iterNoTimestamp.Next();
                 }
@@ -85,13 +85,13 @@ namespace Kafka.Streams.State.RocksDbState
                 {
                     if (comparator.Compare(nextNoTimestamp, nextWithTimestamp) <= 0)
                     {
-                        next = KeyValue.Pair(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
+                        next = KeyValuePair.Create(new Bytes(nextNoTimestamp), ApiUtils.convertToTimestampedFormat(iterNoTimestamp.Value()));
                         nextNoTimestamp = null;
                         iterNoTimestamp.Next();
                     }
                     else
                     {
-                        next = KeyValue.Pair(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
+                        next = KeyValuePair.Create(new Bytes(nextWithTimestamp), iterWithTimestamp.Value());
                         nextWithTimestamp = null;
                         iterWithTimestamp.Next();
                     }

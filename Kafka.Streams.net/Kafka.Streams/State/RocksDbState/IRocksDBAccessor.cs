@@ -8,7 +8,7 @@ namespace Kafka.Streams.State.RocksDbState
     {
         void put(byte[] key, byte[] value);
 
-        void prepareBatch(List<KeyValue<Bytes, byte[]>> entries,
+        void prepareBatch(List<KeyValuePair<Bytes, byte[]>> entries,
                           WriteBatch batch);
 
         byte[] get(byte[] key);
@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.RocksDbState
         void flush();
 
         void prepareBatchForRestore(
-            List<KeyValue<byte[], byte[]>> records,
+            List<KeyValuePair<byte[], byte[]>> records,
             WriteBatch batch);
 
         void addToBatch(

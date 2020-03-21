@@ -173,7 +173,11 @@ namespace Kafka.Streams.Threads.KafkaStreams
             }
 
             var storeProviders = new List<IStateStoreProvider>();
-            var streamStateListener = new StreamStateListener(null, this.globalStreamThread, this);
+            var streamStateListener = new StreamStateListener(
+                this.services.GetRequiredService<ILogger<StreamStateListener>>(),
+                this.globalStreamThread,
+                this);
+
             if (globalTaskTopology != null)
             {
                 globalStreamThread?.SetStateListener(streamStateListener);

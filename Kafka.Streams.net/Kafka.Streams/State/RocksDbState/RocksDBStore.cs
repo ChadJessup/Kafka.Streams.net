@@ -222,7 +222,7 @@ namespace Kafka.Streams.State.RocksDbState
             return originalValue;
         }
 
-        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
         {
             try
             {
@@ -384,7 +384,7 @@ namespace Kafka.Streams.State.RocksDbState
             OpenDB(InternalProcessorContext);
         }
 
-        public void addToBatch(KeyValue<byte[], byte[]> record,
+        public void addToBatch(KeyValuePair<byte[], byte[]> record,
                                WriteBatch batch)
         {
             DbAccessor.addToBatch(record.Key, record.Value, batch);

@@ -4,20 +4,20 @@ using System.Linq;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : ITransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>>
+    public class TransformerSupplierAdapter<KIn, VIn, KOut, VOut> : ITransformerSupplier<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>>
     {
-        private readonly ITransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier;
-        private ITransformer<KIn, VIn, KeyValue<KOut, VOut>> transformer { get; }
+        private readonly ITransformerSupplier<KIn, VIn, KeyValuePair<KOut, VOut>> transformerSupplier;
+        private ITransformer<KIn, VIn, KeyValuePair<KOut, VOut>> transformer { get; }
 
-        public TransformerSupplierAdapter(ITransformerSupplier<KIn, VIn, KeyValue<KOut, VOut>> transformerSupplier)
+        public TransformerSupplierAdapter(ITransformerSupplier<KIn, VIn, KeyValuePair<KOut, VOut>> transformerSupplier)
         {
             this.transformerSupplier = transformerSupplier;
             this.transformer = transformerSupplier.get();
         }
 
-        public ITransformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> get()
+        public ITransformer<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>> get()
         {
-            return null;// new ITransformer<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>>();
+            return null;// new ITransformer<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>>();
         }
 
         public void init(IProcessorContext context)
@@ -26,16 +26,16 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IEnumerable<KeyValue<KOut, VOut>> transform(KIn key, VIn value)
+        public IEnumerable<KeyValuePair<KOut, VOut>> Transform(KIn key, VIn value)
         {
-            KeyValue<KOut, VOut> pair = transformer.transform(key, value);
+            var pair = transformer.Transform(key, value);
 
-            if (pair != null)
-            {
-                return new List<KeyValue<KOut, VOut>> { pair };
-            }
+            // if (pair != null)
+            // {
+            //     return new List<KeyValuePair<KOut, VOut>> { pair };
+            // }
 
-            return Enumerable.Empty<KeyValue<KOut, VOut>>();
+            return Enumerable.Empty<KeyValuePair<KOut, VOut>>();
         }
 
 

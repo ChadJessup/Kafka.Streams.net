@@ -81,8 +81,8 @@ namespace Kafka.Streams.Tests
                 .merge(source3);
 
             merged
-                .groupByKey()
-                .count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>
+                .GroupByKey()
+                .Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>
                 .As("my-table"));
 
             Builder.BuildAndOptimizeTopology();
@@ -235,7 +235,7 @@ namespace Kafka.Streams.Tests
 
             var mapper = new MockMapper.SelectValueKeyValueMapper<string, string>();
             IKStream<string, string> mapped = playEvents.map(mapper);
-            mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>()).groupByKey().count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("count"));
+            mapped.LeftJoin(table, MockValueJoiner.TOSTRING_JOINER<string, string>()).GroupByKey().Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("count"));
             Builder.BuildAndOptimizeTopology();
             Builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(StreamsTestConfigs.GetStandardConfig(APP_ID)));
             Assert.Equal(new[] { "table-topic" }, Builder.InternalTopologyBuilder.StateStoreNameToSourceTopics()["table-store"]);

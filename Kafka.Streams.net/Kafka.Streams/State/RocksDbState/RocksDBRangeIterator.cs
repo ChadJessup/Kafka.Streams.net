@@ -31,9 +31,9 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        public override KeyValue<Bytes, byte[]> makeNext()
+        public override KeyValuePair<Bytes, byte[]> makeNext()
         {
-            KeyValue<Bytes, byte[]> next = base.makeNext();
+            KeyValuePair<Bytes, byte[]>? next = base.makeNext();
 
             if (next == null)
             {
@@ -41,9 +41,9 @@ namespace Kafka.Streams.State.RocksDbState
             }
             else
             {
-                if (comparator.Compare(next.Key.get(), rawToKey) <= 0)
+                if (comparator.Compare(next.Value.Key.get(), rawToKey) <= 0)
                 {
-                    return next;
+                    return next.Value;
                 }
                 else
                 {

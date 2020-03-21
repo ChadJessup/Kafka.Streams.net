@@ -12,7 +12,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * available in every {@link KafkaStreams} instance.
      * This provides the ability to perform joins with {@link KStream} without having to repartition the input stream.
      * All joins with the {@code GlobalKTable} require that a {@link KeyValueMapper} is provided that can map from the
-     * {@link KeyValue} of the left hand side {@link KStream} to the key of the right hand side {@code GlobalKTable}.
+     * {@link KeyValuePair} of the left hand side {@link KStream} to the key of the right hand side {@code GlobalKTable}.
      * <p>
      * A {@code GlobalKTable} is created via a {@link StreamsBuilder}. For example:
      * <pre>{@code

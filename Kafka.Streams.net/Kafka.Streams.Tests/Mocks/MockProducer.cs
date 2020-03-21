@@ -2,7 +2,6 @@
 using Kafka.Streams.Processors.Internals;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,8 +22,8 @@ namespace Kafka.Streams.Tests.Mocks
         private Dictionary<TopicPartition, long> offsets;
         private List<Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsets;
         private Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>> uncommittedConsumerGroupOffsets;
-        private ISerializer<K> keySerializer;
-        private ISerializer<V> valueSerializer;
+        private ISerializer<K>? keySerializer;
+        private ISerializer<V>? valueSerializer;
         private bool autoComplete;
         private bool closed;
         private bool transactionInitialized;
@@ -35,7 +34,6 @@ namespace Kafka.Streams.Tests.Mocks
         private bool producerFencedOnClose;
         private bool sentOffsets;
         private long commitCount = 0L;
-        //private Map<MetricName, Metric> mockMetrics;
 
         /**
          * Create a mock producer
@@ -52,8 +50,8 @@ namespace Kafka.Streams.Tests.Mocks
         public MockProducer(
             bool autoComplete,
             Partitioner? partitioner,
-            ISerializer<K> keySerializer,
-            ISerializer<V> valueSerializer)
+            ISerializer<K>? keySerializer,
+            ISerializer<V>? valueSerializer)
         {
             this.autoComplete = autoComplete;
             this.partitioner = partitioner;
@@ -71,21 +69,11 @@ namespace Kafka.Streams.Tests.Mocks
          *
          * Equivalent to {@link #MockProducer(Cluster, bool, Partitioner, Serializer, Serializer)} new MockProducer(Cluster.empty(), autoComplete, new DefaultPartitioner(), keySerializer, valueSerializer)}
          */
-        public MockProducer(bool autoComplete, ISerializer<K> keySerializer, ISerializer<V> valueSerializer)
+        public MockProducer(
+            bool autoComplete,
+            ISerializer<K> keySerializer,
+            ISerializer<V> valueSerializer)
             : this(autoComplete, null, keySerializer, valueSerializer)
-        {
-        }
-
-        /**
-         * Create a new mock producer with invented metadata the given autoComplete setting, partitioner and key\value serializers.
-         *
-         * Equivalent to {@link #MockProducer(Cluster, bool, Partitioner, Serializer, Serializer)} new MockProducer(Cluster.empty(), autoComplete, partitioner, keySerializer, valueSerializer)}
-         */
-        public MockProducer(bool autoComplete,
-                            Partitioner partitioner,
-                            ISerializer<K> keySerializer,
-                            ISerializer<V> valueSerializer)
-            //: this(autoComplete, partitioner, keySerializer, valueSerializer)
         {
         }
 
@@ -102,7 +90,7 @@ namespace Kafka.Streams.Tests.Mocks
         public Handle Handle { get; }
         public string Name { get; }
 
-        public void initTransactions()
+        public void InitTransactions()
         {
             // verifyProducerState();
             if (this.transactionInitialized)

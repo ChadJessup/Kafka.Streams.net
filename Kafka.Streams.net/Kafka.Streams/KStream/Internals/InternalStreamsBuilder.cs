@@ -132,7 +132,7 @@ namespace Kafka.Streams.KStream.Internals
 
             AddGraphNode<K, V>(root, tableSourceNode);
 
-            return new KTable<K, V>(
+            return new KTable<K, IKeyValueStore<Bytes, byte[]>, V>(
                 this.clock,
                 tableSourceName,
                 consumed.keySerde,

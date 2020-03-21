@@ -6,10 +6,10 @@ namespace Kafka.Streams.KStream.Interfaces
     /**
      * This interface should never be instantiated outside of this.
      */
-    public interface ITimeDefinition<K, V>
+    public interface ITimeDefinition<K>
     {
-        long time(IProcessorContext context, K key);
+        long Time(IProcessorContext context, K key);
 
-        TimeDefinitionType type();
+        TimeDefinitionType Type();
     }
 }

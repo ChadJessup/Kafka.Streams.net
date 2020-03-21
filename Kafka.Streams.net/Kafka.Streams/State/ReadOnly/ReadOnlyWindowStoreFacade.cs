@@ -17,7 +17,7 @@ namespace Kafka.Streams.State.ReadOnly
 
         public V fetch(K key, long time)
         {
-            return ValueAndTimestamp<V>.GetValueOrNull(inner.fetch(key, time));
+            return ValueAndTimestamp.GetValueOrNull(inner.fetch(key, time));
         }
 
         public IWindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo)

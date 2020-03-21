@@ -185,7 +185,7 @@
 
 //        KeyValueIterator<Windowed<string>, long> iterator =
 //            sessionStore.findSessions(sessionId, 0, GAP_MS + 1);
-//        KeyValue<Windowed<string>, long> kv = iterator.next();
+//        KeyValuePair<Windowed<string>, long> kv = iterator.next();
 
 //        Assert.Equal(Long.valueOf(3), kv.value);
 //        Assert.False(iterator..AsNext());
@@ -248,7 +248,7 @@
 //        // first ensure it is in the store
 //        KeyValueIterator<Windowed<string>, long> a1 =
 //            sessionStore.findSessions("a", 0, 0);
-//        Assert.Equal(KeyValue.Pair(new Windowed<>("a", new SessionWindow(0, 0)), 1L), a1.next());
+//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L), a1.next());
 
 //        context.setTime(100);
 //        processor.process("a", "2");
@@ -256,7 +256,7 @@
 //        // should have merged session in store
 //        KeyValueIterator<Windowed<string>, long> a2 =
 //            sessionStore.findSessions("a", 0, 100);
-//        Assert.Equal(KeyValue.Pair(new Windowed<>("a", new SessionWindow(0, 100)), 2L), a2.next());
+//        Assert.Equal(KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 100)), 2L), a2.next());
 //        Assert.False(a2..AsNext());
 //    }
 

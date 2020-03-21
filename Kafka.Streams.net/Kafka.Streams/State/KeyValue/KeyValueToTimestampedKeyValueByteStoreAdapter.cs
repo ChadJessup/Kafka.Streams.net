@@ -30,9 +30,9 @@
 //                : rawValue(valueWithTimestamp)));
 //        }
 
-//        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+//        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
 //        {
-//            foreach (KeyValue<Bytes, byte[]> entry in entries)
+//            foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //            {
 //                byte[] valueWithTimestamp = entry.value;
 //                store.Add(entry.key, valueWithTimestamp == null ? null : rawValue(valueWithTimestamp));

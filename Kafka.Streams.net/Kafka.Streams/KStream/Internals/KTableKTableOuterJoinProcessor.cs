@@ -43,7 +43,7 @@
 //            R oldValue = null;
 
 //            ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter[key];
-//            V2 value2 = getValueOrNull(valueAndTimestamp2);
+//            V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp2);
 //            if (value2 == null)
 //            {
 //                if (change.newValue == null && change.oldValue == null)

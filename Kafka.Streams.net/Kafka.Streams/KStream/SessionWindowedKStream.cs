@@ -3,7 +3,7 @@
 //namespace Kafka.Streams.KStream
 //{
 //    /**
-//     * {@code SessionWindowedKStream} is an abstraction of a <i>windowed</i> record stream of {@link KeyValue} pairs.
+//     * {@code SessionWindowedKStream} is an abstraction of a <i>windowed</i> record stream of {@link KeyValuePair} pairs.
 //     * It is an intermediate representation after a grouping and windowing of a {@link KStream} before an aggregation is applied to the
 //     * new (partitioned) windows resulting in a windowed {@link KTable}
 //     * (a <emph>windowed</emph> {@code KTable} is a {@link KTable} with key type {@link Windowed Windowed<K>}.

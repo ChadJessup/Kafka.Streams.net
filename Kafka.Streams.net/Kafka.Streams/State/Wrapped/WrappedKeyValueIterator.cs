@@ -31,10 +31,10 @@
 //        }
 
 
-//        public KeyValue<Windowed<Bytes>, byte[]> next()
+//        public KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
-//            KeyValue<Bytes, byte[]> next = bytesIterator.next();
-//            return KeyValue.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
+//            KeyValuePair<Bytes, byte[]> next = bytesIterator.next();
+//            return KeyValuePair.pair(WindowKeySchema.fromStoreBytesKey(next.key(), windowSize), next.value);
 //        }
 
 

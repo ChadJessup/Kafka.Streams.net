@@ -1,75 +1,82 @@
-﻿
-//using Kafka.Streams.Processors;
-//using Microsoft.Extensions.Logging;
-//using System;
+﻿using Kafka.Streams.Processors;
+using Kafka.Streams.Processors.Interfaces;
+using Kafka.Streams.State;
+using Microsoft.Extensions.Logging;
+using System;
 
-//namespace Kafka.Streams.KStream.Internals
-//{
-//    public class KTableKTableJoinProcessor : AbstractProcessor<K, Change<V1>>
-//    {
+namespace Kafka.Streams.KStream.Internals
+{
+    public class KTableKTableJoinProcessor<K, R, V1, V2> : AbstractProcessor<K, Change<V1>>
+    {
+        private readonly IKTableValueGetter<K, V2> valueGetter;
+        private readonly string storeName;
+        private readonly bool sendOldValues;
+        private readonly IValueJoiner<V1, V2, R> joiner;
 
-//        private IKTableValueGetter<K, V2> valueGetter;
-//        private StreamsMetricsImpl metrics;
-//        private Sensor skippedRecordsSensor;
+        public KTableKTableJoinProcessor(
+            IKTableValueGetter<K, V2> valueGetter,
+            IValueJoiner<V1, V2, R> joiner,
+            string storeName,
+            bool sendOldValues)
+        {
+            this.sendOldValues = sendOldValues;
+            this.valueGetter = valueGetter;
+            this.storeName = storeName;
+            this.joiner = joiner;
+        }
 
-//        KTableKTableJoinProcessor(IKTableValueGetter<K, V2> valueGetter)
-//        {
-//            this.valueGetter = valueGetter;
-//        }
+        public override void Init(IProcessorContext context)
+        {
+            base.Init(context);
+            valueGetter.init(context, this.storeName);
+        }
 
+        public override void Process(K key, Change<V1> change)
+        {
+            // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
+            if (key == null)
+            {
+                //this.logger.LogWarning(
+                //    "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
+                //    change, context.Topic, context.partition, context.offset);
 
-//        public void init(IProcessorContext context)
-//        {
-//            base.init(context);
-//            metrics = (StreamsMetricsImpl)context.metrics;
-//            skippedRecordsSensor = ThreadMetrics.skipRecordSensor(metrics);
-//            valueGetter.init(context);
-//        }
+                return;
+            }
 
+            if (change is null)
+            {
+                throw new ArgumentNullException(nameof(change));
+            }
 
-//        public void process(K key, Change<V1> change)
-//        {
-//            // we do join iff keys are equal, thus, if key is null we cannot join and just ignore the record
-//            if (key == null)
-//            {
-//                LOG.LogWarning(
-//                    "Skipping record due to null key. change=[{}] topic=[{}] partition=[{}] offset=[{}]",
-//                    change, context.Topic, context.partition(), context.offset()
-//                );
-//                skippedRecordsSensor.record();
-//                return;
-//            }
+            long resultTimestamp;
 
-//            R newValue = null;
-//            long resultTimestamp;
-//            R oldValue = null;
+            var valueAndTimestampRight = valueGetter.get(key);
+            V2 valueRight = ValueAndTimestamp.GetValueOrNull(valueAndTimestampRight);
+            if (valueRight == null)
+            {
+                return;
+            }
 
-//            ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter[key];
-//            V2 valueRight = getValueOrNull(valueAndTimestampRight);
-//            if (valueRight == null)
-//            {
-//                return;
-//            }
+            R newValue = default;
+            R oldValue = default;
+            resultTimestamp = Math.Max(context.timestamp, valueAndTimestampRight.timestamp);
 
-//            resultTimestamp = Math.Max(context.timestamp(), valueAndTimestampRight.timestamp());
+            if (change.newValue != null)
+            {
+                newValue = joiner.apply(change.newValue, valueRight);
+            }
 
-//            if (change.newValue != null)
-//            {
-//                newValue = joiner.apply(change.newValue, valueRight);
-//            }
+            if (sendOldValues && change.oldValue != null)
+            {
+                oldValue = joiner.apply(change.oldValue, valueRight);
+            }
 
-//            if (sendOldValues && change.oldValue != null)
-//            {
-//                oldValue = joiner.apply(change.oldValue, valueRight);
-//            }
+            context.forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));
+        }
 
-//            context.forward(key, new Change<>(newValue, oldValue), To.all().withTimestamp(resultTimestamp));
-//        }
-
-
-//        public void close()
-//        {
-//            valueGetter.close();
-//        }
-//    }
-//}
+        public void close()
+        {
+            valueGetter.close();
+        }
+    }
+}

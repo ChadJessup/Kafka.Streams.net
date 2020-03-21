@@ -40,7 +40,7 @@
 //                        .withCachingDisabled()
 //                        .withLoggingDisabled()
 //                )
-//                .groupBy((k, v) => new KeyValue<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//                .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //                .count();
 
 //            valueCounts
@@ -123,7 +123,7 @@
 //                    .withCachingDisabled()
 //                    .withLoggingDisabled()
 //            )
-//            .groupBy((k, v) => new KeyValue<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//            .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //            .count();
 //        valueCounts
 //            .suppress(untilTimeLimit(Duration.FromMilliseconds(2L), unbounded()))
@@ -198,7 +198,7 @@
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => new KeyValue<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//        .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count(Materialized.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(Long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
@@ -265,7 +265,7 @@
 //                .withCachingDisabled()
 //                .withLoggingDisabled()
 //        )
-//        .groupBy((k, v) => new KeyValue<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
+//        .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count();
 //    valueCounts
 //        // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
@@ -333,11 +333,11 @@
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.println(topology.describe());
@@ -386,11 +386,11 @@
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.println(topology.describe());
@@ -443,11 +443,11 @@
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValue<>(k.ToString(), v))
+//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
 //    System.Console.Out.println(topology.describe());
@@ -495,7 +495,7 @@
 //    builder
 //        .Table("topic", Consumed.with(Serdes.String(), Serdes.String()))
 //        .suppress(untilTimeLimit(Duration.FromMilliseconds(10), unbounded()))
-//        .groupBy(KeyValue.Pair, Grouped.with(Serdes.String(), Serdes.String()))
+//        .groupBy(KeyValuePair.Create, Grouped.with(Serdes.String(), Serdes.String()))
 //        .count()
 //        .toStream()
 //        .to("output", Produced.with(Serdes.String(), Serdes.Long()));

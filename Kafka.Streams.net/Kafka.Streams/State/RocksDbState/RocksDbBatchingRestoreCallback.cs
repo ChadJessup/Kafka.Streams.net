@@ -15,7 +15,7 @@ namespace Kafka.Streams.State.RocksDbState
             this.rocksDBStore = rocksDBStore;
         }
 
-        public override void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        public override void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
             try
             {

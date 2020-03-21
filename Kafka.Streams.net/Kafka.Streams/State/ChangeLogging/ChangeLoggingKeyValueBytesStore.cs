@@ -63,10 +63,10 @@ namespace Kafka.Streams.State.Internals
             return previous;
         }
 
-        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
         {
             wrapped.putAll(entries);
-            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
                 log(entry.Key, entry.Value);
             }

@@ -45,7 +45,7 @@
 //            else
 //            {
 
-//                V1 oldValue = sendOldValues ? getValueOrNull(store[key]) : null;
+//                V1 oldValue = sendOldValues ? ValueAndTimestamp.GetValueOrNull(store[key]) : null;
 //                store.Add(key, ValueAndTimestamp.make(newValue, context.timestamp()));
 //                tupleForwarder.maybeForward(key, newValue, oldValue);
 //            }

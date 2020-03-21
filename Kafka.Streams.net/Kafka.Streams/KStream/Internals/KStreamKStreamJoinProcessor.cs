@@ -2,6 +2,7 @@
 using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State.Window;
 using System;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.KStream.Internals
 {
@@ -59,7 +60,7 @@ namespace Kafka.Streams.KStream.Internals
                 while (iter.MoveNext())
                 {
                     needOuterJoin = false;
-                    KeyValue<long, V2> otherRecord = iter.Current;
+                    KeyValuePair<long, V2> otherRecord = iter.Current;
                     context.forward(
                         key,
                         joiner.apply(value, otherRecord.Value),

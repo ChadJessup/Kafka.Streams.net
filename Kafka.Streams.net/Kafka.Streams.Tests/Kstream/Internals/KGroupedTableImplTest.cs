@@ -128,8 +128,8 @@
 //        [Fact]
 //        public void shouldReduce()
 //        {
-//            IKeyValueMapper<string, int, KeyValue<string, int>> intProjection =
-//                (key, value) => KeyValue.Pair(key, value.intValue());
+//            IKeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
+//                (key, value) => KeyValuePair.Create(key, value.intValue());
 
 //            IKTable<string, int> reduced = builder
 //                .Table(
@@ -156,8 +156,8 @@
 //        [Fact]
 //        public void shouldReduceWithInternalStoreName()
 //        {
-//            IKeyValueMapper<string, int, KeyValue<string, int>> intProjection =
-//                (key, value) => KeyValue.Pair(key, value.intValue());
+//            IKeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
+//                (key, value) => KeyValuePair.Create(key, value.intValue());
 
 //            IKTable<string, int> reduced = builder
 //                .Table(
@@ -184,8 +184,8 @@
 //        [Fact]
 //        public void shouldReduceAndMaterializeResults()
 //        {
-//            IKeyValueMapper<string, int, KeyValue<string, int>> intProjection =
-//                (key, value) => KeyValue.Pair(key, value.intValue());
+//            IKeyValueMapper<string, int, KeyValuePair<string, int>> intProjection =
+//                (key, value) => KeyValuePair.Create(key, value.intValue());
 
 //            IKTable<string, int> reduced = builder
 //                .Table(

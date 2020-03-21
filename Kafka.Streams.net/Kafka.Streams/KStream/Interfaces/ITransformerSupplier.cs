@@ -21,7 +21,7 @@ namespace Kafka.Streams.KStream
      *
      * @param key type
      * @param value type
-     * @param {@link org.apache.kafka.streams.KeyValue KeyValue} return type (both key and value type can be set
+     * @param {@link org.apache.kafka.streams.KeyValuePair KeyValuePair} return type (both key and value type can be set
      *            arbitrarily)
      * @see Transformer
      * @see KStream#transform(TransformerSupplier, string...)

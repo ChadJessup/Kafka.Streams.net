@@ -29,7 +29,7 @@
 //        {
 //            ValueAndTimestamp<V> valueAndTimestamp = parentGetter[key];
 //            return ValueAndTimestamp.make(
-//                valueTransformer.transform(key, getValueOrNull(valueAndTimestamp)),
+//                valueTransformer.transform(key, ValueAndTimestamp.GetValueOrNull(valueAndTimestamp)),
 //                valueAndTimestamp == null ? UNKNOWN : valueAndTimestamp.timestamp());
 //        }
 

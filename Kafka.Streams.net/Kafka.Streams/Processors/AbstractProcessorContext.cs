@@ -184,7 +184,7 @@ namespace Kafka.Streams.Processors
             this.recordContext = recordContext;
         }
 
-        public virtual void SetCurrentNode(IProcessorNode current)
+        public virtual void SetCurrentNode(IProcessorNode? current)
             => this.currentNode = current;
 
         public ThreadCache getCache()

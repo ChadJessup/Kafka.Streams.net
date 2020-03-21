@@ -13,7 +13,7 @@
 //        private IEnumerator<Entry<Bytes, ConcurrentNavigableMap<long, byte[]>>> keyIterator;
 //        private IEnumerator<Entry<long, byte[]>> recordIterator;
 
-//        private KeyValue<Windowed<Bytes>, byte[]> next;
+//        private KeyValuePair<Windowed<Bytes>, byte[]> next;
 //        private Bytes currentKey;
 //        private long currentEndTime;
 
@@ -67,14 +67,14 @@
 //        }
 
 
-//        public KeyValue<Windowed<Bytes>, byte[]> next()
+//        public KeyValuePair<Windowed<Bytes>, byte[]> next()
 //        {
 //            if (!hasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValue<Windowed<Bytes>, byte[]> ret = next;
+//            KeyValuePair<Windowed<Bytes>, byte[]> ret = next;
 //            next = null;
 //            return ret;
 //        }
@@ -94,7 +94,7 @@
 
 //        // getNext is only called when either recordIterator or segmentIterator has a next
 //        // Note this does not guarantee a next record exists as the next segments may not contain any keys in range
-//        private KeyValue<Windowed<Bytes>, byte[]> getNext()
+//        private KeyValuePair<Windowed<Bytes>, byte[]> getNext()
 //        {
 //            if (!recordIterator.hasNext())
 //            {
@@ -110,7 +110,7 @@
 //            SessionWindow sessionWindow = new SessionWindow(nextRecord.Key, currentEndTime);
 //            Windowed<Bytes> windowedKey = new Windowed<>(currentKey, sessionWindow);
 
-//            return new KeyValue<>(windowedKey, nextRecord.Value);
+//            return new KeyValuePair<>(windowedKey, nextRecord.Value);
 //        }
 
 //        // Called when the inner two (key and starttime) iterators are empty to roll to the next endTimestamp

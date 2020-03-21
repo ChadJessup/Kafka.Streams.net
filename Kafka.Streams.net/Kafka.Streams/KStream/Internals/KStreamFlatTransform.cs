@@ -21,9 +21,9 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamFlatTransform<KIn, VIn, KOut, VOut> : IProcessorSupplier<KIn, VIn>
     {
-        private readonly ITransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformerSupplier;
+        private readonly ITransformerSupplier<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>> transformerSupplier;
 
-        public KStreamFlatTransform(ITransformerSupplier<KIn, VIn, IEnumerable<KeyValue<KOut, VOut>>> transformerSupplier)
+        public KStreamFlatTransform(ITransformerSupplier<KIn, VIn, IEnumerable<KeyValuePair<KOut, VOut>>> transformerSupplier)
         {
             this.transformerSupplier = transformerSupplier;
         }

@@ -14,11 +14,11 @@ namespace Kafka.Streams.State.Internals
     {
         private readonly IKeyValueIterator<K, V> underlying;
         private readonly string storeName;
-        private KeyValue<K, V> _next;
+        private KeyValuePair<K, V>? _next;
 
         private volatile bool open = true;
 
-        KeyValue<K, V> IEnumerator<KeyValue<K, V>>.Current { get; }
+        KeyValuePair<K, V> IEnumerator<KeyValuePair<K, V>>.Current { get; }
         object IEnumerator.Current { get; }
 
         public DelegatingPeekingKeyValueIterator(
@@ -30,14 +30,14 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public K peekNextKey()
+        public K PeekNextKey()
         {
             if (!hasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            return _next.Key;
+            return _next.Value.Key;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -70,14 +70,14 @@ namespace Kafka.Streams.State.Internals
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public KeyValue<K, V> next()
+        public KeyValuePair<K, V>? next()
         {
             if (!hasNext())
             {
                 throw new IndexOutOfRangeException();
             }
 
-            KeyValue<K, V> result = _next;
+            var result = _next;
             _next = null;
 
             return result;
@@ -88,7 +88,7 @@ namespace Kafka.Streams.State.Internals
             throw new InvalidOperationException("Remove() is not supported in " + GetType().FullName);
         }
 
-        public KeyValue<K, V> peekNext()
+        public KeyValuePair<K, V>? PeekNext()
         {
             if (!hasNext())
             {

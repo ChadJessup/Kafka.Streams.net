@@ -63,7 +63,7 @@ internal class MockKeyValueStore : IKeyValueStore<int, byte[]>
         throw new System.NotImplementedException();
     }
 
-    public void putAll(List<KeyValue<int, byte[]>> entries)
+    public void putAll(List<KeyValuePair<int, byte[]>> entries)
     {
         throw new System.NotImplementedException();
     }

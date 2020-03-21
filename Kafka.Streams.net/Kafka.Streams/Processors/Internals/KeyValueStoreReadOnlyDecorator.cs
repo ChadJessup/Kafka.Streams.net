@@ -41,7 +41,7 @@ namespace Kafka.Streams.Processors.Internals
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public void putAll(List<KeyValue<K, V>> entries)
+        public void putAll(List<KeyValuePair<K, V>> entries)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }

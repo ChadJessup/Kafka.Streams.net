@@ -81,7 +81,7 @@
 //            return hasNext;
 //        }
 
-//        public KeyValue<Bytes, byte[]> next()
+//        public KeyValuePair<Bytes, byte[]> next()
 //        {
 //            if (!hasNext())
 //            {

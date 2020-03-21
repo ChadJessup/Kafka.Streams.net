@@ -3,25 +3,24 @@ using Kafka.Streams.KStream.Interfaces;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
-
-    public class RecordTimeDefintion<K, V> : ITimeDefinition<K, V>
+    public class RecordTimeDefintion<K> : ITimeDefinition<K>
     {
-        private static readonly RecordTimeDefintion<K, V> INSTANCE = new RecordTimeDefintion<K, V>();
+        private static readonly RecordTimeDefintion<K> INSTANCE = new RecordTimeDefintion<K>();
 
         private RecordTimeDefintion() { }
 
 
-        public static RecordTimeDefintion<K, V> instance()
+        public static RecordTimeDefintion<K> instance()
         {
-            return RecordTimeDefintion<K, V>.INSTANCE;
+            return RecordTimeDefintion<K>.INSTANCE;
         }
 
-        public long time(IProcessorContext context, K key)
+        public long Time(IProcessorContext context, K key)
         {
             return context.timestamp;
         }
 
-        public TimeDefinitionType type()
+        public TimeDefinitionType Type()
         {
             return TimeDefinitionType.RECORD_TIME;
         }

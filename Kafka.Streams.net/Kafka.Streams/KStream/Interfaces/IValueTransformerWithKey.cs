@@ -11,7 +11,7 @@ namespace Kafka.Streams.KStream
      * {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule} a method to be
      * {@link Punctuator#punctuate(long) called periodically} with the provided context.
      * Note that the key is read-only and should not be modified, as this can lead to corrupt partitioning.
-     * If {@code ValueTransformerWithKey} is applied to a {@link KeyValue} pair record the record's key is preserved.
+     * If {@code ValueTransformerWithKey} is applied to a {@link KeyValuePair} pair record the record's key is preserved.
      * <p>
      * Use {@link ValueTransformerWithKeySupplier} to provide new instances of {@link ValueTransformerWithKey} to
      * Kafka Stream's runtime.

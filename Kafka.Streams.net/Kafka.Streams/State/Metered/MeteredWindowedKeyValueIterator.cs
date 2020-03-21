@@ -36,10 +36,10 @@
 //            return iter.hasNext();
 //        }
 
-//        public override KeyValue<Windowed<K>, V> next()
+//        public override KeyValuePair<Windowed<K>, V> next()
 //        {
-//            KeyValue<Windowed<Bytes>, byte[]> next = iter.next();
-//            return KeyValue.pair(windowedKey(next.key), serdes.valueFrom(next.value));
+//            KeyValuePair<Windowed<Bytes>, byte[]> next = iter.next();
+//            return KeyValuePair.pair(windowedKey(next.key), serdes.valueFrom(next.value));
 //        }
 
 //        private Windowed<K> windowedKey(Windowed<Bytes> bytesKey)

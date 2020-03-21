@@ -15,8 +15,8 @@
 //        {
 //            var builder = new StreamsBuilder();
 
-//            ITransformerSupplier<int, int, KeyValue<int, int>> transformerSupplier = null;
-//            //            () => new Transformer<int, int, KeyValue<int, int>>()
+//            ITransformerSupplier<int, int, KeyValuePair<int, int>> transformerSupplier = null;
+//            //            () => new Transformer<int, int, KeyValuePair<int, int>>()
 //            //            {
 //            //                private int total = 0;
 
@@ -31,10 +31,10 @@
 //            //    }
 
 
-//            //    public KeyValue<int, int> transform(int key, int value)
+//            //    public KeyValuePair<int, int> transform(int key, int value)
 //            //    {
 //            //        total += value.intValue();
-//            //        return KeyValue.Pair(key.intValue() * 2, total);
+//            //        return KeyValuePair.Create(key.intValue() * 2, total);
 //            //    }
 
 
@@ -88,8 +88,8 @@
 //        {
 //            var builder = new StreamsBuilder();
 
-//            TransformerSupplier<int, int, KeyValue<int, int>> transformerSupplier =
-//                //() => new Transformer<int, int, KeyValue<int, int>>()
+//            TransformerSupplier<int, int, KeyValuePair<int, int>> transformerSupplier =
+//                //() => new Transformer<int, int, KeyValuePair<int, int>>()
 //                //{
 //                //private int total = 0;
 
@@ -103,10 +103,10 @@
 //                //}
 
 
-//                //public KeyValue<int, int> transform(int key, int value)
+//                //public KeyValuePair<int, int> transform(int key, int value)
 //                //{
 //                //total += value.intValue();
-//                //return KeyValue.Pair(key.intValue() * 2, total);
+//                //return KeyValuePair.Create(key.intValue() * 2, total);
 //                //}
 
 

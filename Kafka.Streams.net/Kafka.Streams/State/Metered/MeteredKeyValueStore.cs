@@ -163,7 +163,7 @@
 //            }
 //        }
 
-//        public void putAll(List<KeyValue<K, V>> entries)
+//        public void putAll(List<KeyValuePair<K, V>> entries)
 //        {
 //            if (putAllTime.shouldRecord())
 //            {
@@ -268,12 +268,12 @@
 //            return Bytes.wrap(serdes.rawKey(key));
 //        }
 
-//        private List<KeyValue<Bytes, byte[]>> innerEntries(List<KeyValue<K, V>> from)
+//        private List<KeyValuePair<Bytes, byte[]>> innerEntries(List<KeyValuePair<K, V>> from)
 //        {
-//            List<KeyValue<Bytes, byte[]>> byteEntries = new List<KeyValue<Bytes, byte[]>>();
-//            foreach (KeyValue<K, V> entry in from)
+//            List<KeyValuePair<Bytes, byte[]>> byteEntries = new List<KeyValuePair<Bytes, byte[]>>();
+//            foreach (KeyValuePair<K, V> entry in from)
 //            {
-//                byteEntries.Add(KeyValue<K, V>.Pair(Bytes.wrap(serdes.rawKey(entry.Key)), serdes.rawValue(entry.Value)));
+//                byteEntries.Add(KeyValuePair<K, V>.Pair(Bytes.wrap(serdes.rawKey(entry.Key)), serdes.rawValue(entry.Value)));
 //            }
 //            return byteEntries;
 //        }

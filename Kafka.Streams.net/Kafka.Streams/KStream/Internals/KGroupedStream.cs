@@ -107,7 +107,7 @@ namespace Kafka.Streams.KStream.Internals
             => doCount(Materialized<K, long, IKeyValueStore<Bytes, byte[]>>.With(keySerde, Serdes.Long()));
 
 
-        public IKTable<K, long> count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
+        public IKTable<K, long> Count(Materialized<K, long, IKeyValueStore<Bytes, byte[]>> materialized)
         {
             materialized = materialized ?? throw new ArgumentNullException(nameof(materialized));
 

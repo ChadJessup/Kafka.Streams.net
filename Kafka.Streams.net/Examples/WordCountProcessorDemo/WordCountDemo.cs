@@ -27,6 +27,7 @@ namespace WordCountProcessorDemo
             var streamsConfig = new StreamsConfig
             {
                 ApplicationId = "streams-wordcount",
+                GroupId = "streams-wordcount",
                 BootstrapServers = "localhost:9092",
                 DefaultKeySerde = Serdes.String().GetType(),
                 DefaultValueSerde = Serdes.String().GetType(),
@@ -60,26 +61,16 @@ namespace WordCountProcessorDemo
 
             StreamsBuilder builder = new StreamsBuilder(services);
 
-            IKStream<string, string> textLines = builder
-                .Stream<string, string>("TextLinesTopic");
-
-            IKStream<string, string> flatMappedValues = textLines
-                .flatMapValues<string>(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()));
-
-            IKGroupedStream<string, string> groupedByValues = flatMappedValues
-                .groupBy<string>((key, word) => word);
-
-            IKTable<string, long> wordCounts = groupedByValues
-                .count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"));
-
-            IKStream<string, long> wordCountsStream = wordCounts
-                .toStream();
-
-            wordCountsStream.to(
-                "WordsWithCountsTopic",
-                Produced<string, long>.with(
-                Serdes.String(),
-                Serdes.Long()));
+            builder
+                .Stream<string, string>("TextLinesTopic")
+                .flatMapValues(new ValueMapper<string, IEnumerable<string>>(textLine => textLine.ToLower().Split("\\W+", RegexOptions.IgnoreCase).ToList()))
+                .GroupBy((key, word) => word)
+                .Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"))
+                .ToStream()
+                .To("WordsWithCountsTopic",
+                    Produced<string, long>.with(
+                    Serdes.String(),
+                    Serdes.Long()));
 
             // Make the topology injectable
             var topology = builder.Build();
@@ -107,7 +98,7 @@ namespace WordCountProcessorDemo
         {
             var builder = new StreamsBuilder(services);
             builder.Stream<string, string>("streams-plaintext-input")
-                .to("streams-pipe-output");
+                .To("streams-pipe-output");
 
             services.AddSingleton(builder.Build());
 

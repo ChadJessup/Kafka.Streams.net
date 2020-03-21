@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream
      * The {@code Reducer} interface for combining two values of the same type into a new value.
      * In contrast to {@link IAggregator} the result type must be the same as the input type.
      * <p>
-     * The provided values can be either original values from input {@link KeyValue} pair records or be a previously
+     * The provided values can be either original values from input {@link KeyValuePair} pair records or be a previously
      * computed result from {@link Reducer#apply(object, object)}.
      * <p>
      * {@code Reducer} can be used to implement aggregation functions like sum, min, or max.

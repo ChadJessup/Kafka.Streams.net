@@ -57,10 +57,10 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         public void prepareBatch(
-            List<KeyValue<Bytes, byte[]>> entries,
+            List<KeyValuePair<Bytes, byte[]>> entries,
             WriteBatch batch)
         {
-            foreach (KeyValue<Bytes, byte[]> entry in entries)
+            foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
                 addToBatch(entry.Key.get(), entry.Value, batch);
             }
@@ -112,10 +112,10 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
 
-        public void prepareBatchForRestore(List<KeyValue<byte[], byte[]>> records,
+        public void prepareBatchForRestore(List<KeyValuePair<byte[], byte[]>> records,
                                            WriteBatch batch)
         {
-            foreach (KeyValue<byte[], byte[]> record in records)
+            foreach (KeyValuePair<byte[], byte[]> record in records)
             {
                 addToBatch(record.Key, record.Value, batch);
             }

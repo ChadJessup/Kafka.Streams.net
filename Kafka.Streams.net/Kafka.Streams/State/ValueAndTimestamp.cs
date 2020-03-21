@@ -2,8 +2,29 @@ using System;
 
 namespace Kafka.Streams.State
 {
+    public static class ValueAndTimestamp
+    {
+        /**
+         * Return the wrapped {@code value} of the given {@code valueAndTimestamp} parameter
+         * if the parameter is not {@code null}.
+         *
+         * @param valueAndTimestamp a {@link ValueAndTimestamp} instance; can be {@code null}
+         * @param <V> the type of the value
+         * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
+         */
+        public static V GetValueOrNull<V>(ValueAndTimestamp<V>? valueAndTimestamp)
+        {
+            if (valueAndTimestamp == null)
+            {
+                return default;
+            }
+
+            return valueAndTimestamp.value;
+        }
+    }
+
     /**
-     * Combines a value from a {@link KeyValue} with a timestamp.
+     * Combines a value from a {@link KeyValuePair} with a timestamp.
      *
      * @param <V>
      */
@@ -34,24 +55,6 @@ namespace Kafka.Streams.State
             return value == null
                 ? null
                 : new ValueAndTimestamp<V>(value, timestamp);
-        }
-
-        /**
-         * Return the wrapped {@code value} of the given {@code valueAndTimestamp} parameter
-         * if the parameter is not {@code null}.
-         *
-         * @param valueAndTimestamp a {@link ValueAndTimestamp} instance; can be {@code null}
-         * @param <V> the type of the value
-         * @return the wrapped {@code value} of {@code valueAndTimestamp} if not {@code null}; otherwise {@code null}
-         */
-        public static V GetValueOrNull(ValueAndTimestamp<V>? valueAndTimestamp)
-        {
-            if(valueAndTimestamp == null)
-            {
-                return default;
-            }
-
-            return valueAndTimestamp.value;
         }
 
         public override string ToString()

@@ -53,7 +53,7 @@
 //            observedStreamTime = Math.Max(observedStreamTime, timestamp);
 //            long closeTime = observedStreamTime - windows.gracePeriodMs();
 
-//            List<KeyValue<Windowed<K>, Agg>> merged = new List<>();
+//            List<KeyValuePair<Windowed<K>, Agg>> merged = new List<>();
 //            SessionWindow newSessionWindow = new SessionWindow(timestamp, timestamp);
 //            SessionWindow mergedWindow = newSessionWindow;
 //            Agg agg = initializer.apply();
@@ -68,7 +68,7 @@
 //            {
 //                while (iterator.hasNext())
 //                {
-//                    KeyValue<Windowed<K>, Agg> next = iterator.next();
+//                    KeyValuePair<Windowed<K>, Agg> next = iterator.next();
 //                    merged.Add(next);
 //                    agg = sessionMerger.apply(key, agg, next.value);
 //                    mergedWindow = mergeSessionWindow(mergedWindow, next.key.window);
@@ -104,7 +104,7 @@
 
 //                if (!mergedWindow.Equals(newSessionWindow))
 //                {
-//                    foreach (KeyValue<Windowed<K>, Agg> session in merged)
+//                    foreach (KeyValuePair<Windowed<K>, Agg> session in merged)
 //                    {
 //                        store.Remove(session.key);
 //                        tupleForwarder.maybeForward(session.key, null, sendOldValues ? session.value : null);

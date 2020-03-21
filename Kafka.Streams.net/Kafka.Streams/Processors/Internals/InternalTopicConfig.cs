@@ -26,7 +26,7 @@ namespace Kafka.Streams.Processors.Internals
     public abstract class InternalTopicConfig
     {
         public string name { get; protected set; }
-        public Dictionary<string, string?> topicConfigs { get; protected set; }
+        public Dictionary<string, string?> topicConfigs { get; protected set; } = new Dictionary<string, string?>();
 
         public int numberOfPartitions { get; private set; } = StreamsPartitionAssignor.UNKNOWN;
 
@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
          * @param.AdditionalRetentionMs -.Added to retention to allow for clock drift etc
          * @return Properties to be used when creating the topic
          */
-        abstract public Dictionary<string, string?> getProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
+        public abstract Dictionary<string, string?> getProperties(Dictionary<string, string?> defaultProperties, long? additionalRetentionMs);
 
         public void setNumberOfPartitions(int numberOfPartitions)
         {

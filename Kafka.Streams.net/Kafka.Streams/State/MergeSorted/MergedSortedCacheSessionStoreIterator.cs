@@ -12,7 +12,7 @@
 //            this.cacheFunction = cacheFunction;
 //        }
 
-//        public override KeyValue<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValue<Windowed<Bytes>, byte[]> pair)
+//        public override KeyValuePair<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<Windowed<Bytes>, byte[]> pair)
 //        {
 //            return pair;
 //        }

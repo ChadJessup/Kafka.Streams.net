@@ -39,7 +39,7 @@ namespace Kafka.Streams.State.KeyValues
          *                if the serialized bytes are also {@code null} it is interpreted as deletes
          * @throws ArgumentNullException If {@code null} is used for key.
          */
-        void putAll(List<KeyValue<K, V>> entries);
+        void putAll(List<KeyValuePair<K, V>> entries);
 
         /**
          * Delete the value from the store (if there is one).

@@ -12,7 +12,7 @@
 //        private HasNextCondition hasNextCondition;
 //        private IPeekingKeyValueIterator<Bytes, LRUCacheEntry> wrappedIterator;
 
-//        public KeyValue<Bytes, LRUCacheEntry> Current { get; }
+//        public KeyValuePair<Bytes, LRUCacheEntry> Current { get; }
 //        object IEnumerator.Current { get; }
 
 //        public FilteredCacheIterator(
@@ -26,7 +26,7 @@
 //                                         //    {
 
 
-//            //    public KeyValue<Bytes, LRUCacheEntry> peekNext()
+//            //    public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
 //            //    {
 //            //        return cachedPair(cacheIterator.peekNext());
 //            //    }
@@ -50,14 +50,14 @@
 //            //    }
 
 
-//            //    public KeyValue<Bytes, LRUCacheEntry> next()
+//            //    public KeyValuePair<Bytes, LRUCacheEntry> next()
 //            //    {
 //            //        return cachedPair(cacheIterator.next());
 //            //    }
 
-//            //    private KeyValue<Bytes, LRUCacheEntry> cachedPair(KeyValue<Bytes, LRUCacheEntry> next)
+//            //    private KeyValuePair<Bytes, LRUCacheEntry> cachedPair(KeyValuePair<Bytes, LRUCacheEntry> next)
 //            //    {
-//            //        return KeyValue.pair(cacheFunction.key(next.key), next.value);
+//            //        return KeyValuePair.pair(cacheFunction.key(next.key), next.value);
 //            //    }
 
 
@@ -87,7 +87,7 @@
 //            return hasNextCondition.hasNext(wrappedIterator);
 //        }
 
-//        public KeyValue<Bytes, LRUCacheEntry> MoveNext()
+//        public KeyValuePair<Bytes, LRUCacheEntry> MoveNext()
 //        {
 //            if (!hasNext())
 //            {
@@ -102,7 +102,7 @@
 //            throw new InvalidOperationException();
 //        }
 
-//        public KeyValue<Bytes, LRUCacheEntry> peekNext()
+//        public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
 //        {
 //            if (!hasNext())
 //            {

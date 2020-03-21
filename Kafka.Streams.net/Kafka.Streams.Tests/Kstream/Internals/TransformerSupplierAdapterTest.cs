@@ -7,8 +7,8 @@
 //    {
 
 //        private IProcessorContext context;
-//        private Transformer<string, string, KeyValue<int, int>> transformer;
-//        private TransformerSupplier<string, string, KeyValue<int, int>> transformerSupplier;
+//        private Transformer<string, string, KeyValuePair<int, int>> transformer;
+//        private TransformerSupplier<string, string, KeyValuePair<int, int>> transformerSupplier;
 
 //        string key = "Hello";
 //        string value = "World";
@@ -30,7 +30,7 @@
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adaptedTransformer = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
 //            adaptedTransformer.init(context);
 
 //            //verifyAll();
@@ -45,7 +45,7 @@
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adaptedTransformer = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
 //            adaptedTransformer.close();
 
 //            //verifyAll();
@@ -55,13 +55,13 @@
 //        public void shouldCallTransformOfAdapteeTransformerAndReturnSingletonIterable()
 //        {
 //            EasyMock.expect(transformerSupplier.get()).andReturn(transformer);
-//            EasyMock.expect(transformer.transform(key, value)).andReturn(KeyValue.Pair(0, 1));
+//            EasyMock.expect(transformer.transform(key, value)).andReturn(KeyValuePair.Create(0, 1));
 //            replayAll();
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adaptedTransformer = adapter.get();
-//            Iterator<KeyValue<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
+//            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
 //            Assert.Equal(iterator..AsNext(), equalTo(true));
@@ -78,8 +78,8 @@
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adaptedTransformer = adapter.get();
-//            Iterator<KeyValue<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adaptedTransformer = adapter.get();
+//            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
 //            Assert.Equal(iterator..AsNext(), equalTo(false));
@@ -88,9 +88,9 @@
 //        [Fact]
 //        public void shouldAlwaysGetNewAdapterTransformer()
 //        {
-//            Transformer<string, string, KeyValue<int, int>> transformer1 = mock(Transformer));
-//            Transformer<string, string, KeyValue<int, int>> transformer2 = mock(Transformer));
-//            Transformer<string, string, KeyValue<int, int>> transformer3 = mock(Transformer));
+//            Transformer<string, string, KeyValuePair<int, int>> transformer1 = mock(Transformer));
+//            Transformer<string, string, KeyValuePair<int, int>> transformer2 = mock(Transformer));
+//            Transformer<string, string, KeyValuePair<int, int>> transformer3 = mock(Transformer));
 //            EasyMock.expect(transformerSupplier.get()).andReturn(transformer1);
 //            transformer1.init(context);
 //            EasyMock.expect(transformerSupplier.get()).andReturn(transformer2);
@@ -101,11 +101,11 @@
 
 //            TransformerSupplierAdapter<string, string, int, int> adapter =
 //                new TransformerSupplierAdapter<>(transformerSupplier);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adapterTransformer1 = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer1 = adapter.get();
 //            adapterTransformer1.init(context);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adapterTransformer2 = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer2 = adapter.get();
 //            adapterTransformer2.init(context);
-//            Transformer<string, string, Iterable<KeyValue<int, int>>> adapterTransformer3 = adapter.get();
+//            Transformer<string, string, Iterable<KeyValuePair<int, int>>> adapterTransformer3 = adapter.get();
 //            adapterTransformer3.init(context);
 
 //            //verifyAll();

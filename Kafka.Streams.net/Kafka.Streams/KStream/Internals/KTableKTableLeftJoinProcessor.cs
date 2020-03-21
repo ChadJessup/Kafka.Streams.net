@@ -43,7 +43,7 @@
 //            R oldValue = null;
 
 //            ValueAndTimestamp<V2> valueAndTimestampRight = valueGetter[key];
-//            V2 value2 = getValueOrNull(valueAndTimestampRight);
+//            V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestampRight);
 //            long timestampRight;
 
 //            if (value2 == null)

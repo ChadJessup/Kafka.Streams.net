@@ -26,12 +26,12 @@
 //        public ValueAndTimestamp<R> get(K key)
 //        {
 //            ValueAndTimestamp<V1> valueAndTimestamp1 = valueGetter1[key];
-//            V1 value1 = getValueOrNull(valueAndTimestamp1);
+//            V1 value1 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp1);
 
 //            if (value1 != null)
 //            {
 //                ValueAndTimestamp<V2> valueAndTimestamp2 = valueGetter2[key];
-//                V2 value2 = getValueOrNull(valueAndTimestamp2);
+//                V2 value2 = ValueAndTimestamp.GetValueOrNull(valueAndTimestamp2);
 //                long resultTimestamp;
 //                if (valueAndTimestamp2 == null)
 //                {

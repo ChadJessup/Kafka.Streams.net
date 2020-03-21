@@ -5,7 +5,7 @@
 
 
 //    using Kafka.Common.Utils.Bytes;
-//    using Kafka.Streams.KeyValue;
+//    using Kafka.Streams.KeyValuePair;
 //    using Kafka.Streams.KStream.Windowed;
 //    using Kafka.Streams.State.IKeyValueIterator;
 //    using Kafka.Streams.State.StateSerdes;
@@ -39,7 +39,7 @@
 //        }
 
 
-//        KeyValue<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValue<Windowed<Bytes>, byte[]> pair)
+//        KeyValuePair<Windowed<Bytes>, byte[]> deserializeStorePair(KeyValuePair<Windowed<Bytes>, byte[]> pair)
 //        {
 //            return pair;
 //        }

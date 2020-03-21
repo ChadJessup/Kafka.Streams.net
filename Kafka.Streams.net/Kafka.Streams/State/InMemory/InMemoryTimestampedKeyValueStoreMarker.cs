@@ -41,7 +41,7 @@
 //        }
 
 
-//        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+//        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
 //        {
 //            wrapped.putAll(entries);
 //        }

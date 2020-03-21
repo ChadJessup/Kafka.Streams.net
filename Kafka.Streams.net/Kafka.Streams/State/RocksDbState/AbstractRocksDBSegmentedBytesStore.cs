@@ -203,7 +203,7 @@
 //        }
 
 //        // Visible for testing
-//        void restoreAllInternal(List<KeyValue<byte[], byte[]>> records)
+//        void restoreAllInternal(List<KeyValuePair<byte[], byte[]>> records)
 //        {
 //            try
 //            {
@@ -223,17 +223,17 @@
 //        }
 
 //        // Visible for testing
-//        Dictionary<S, WriteBatch> getWriteBatches(List<KeyValue<byte[], byte[]>> records)
+//        Dictionary<S, WriteBatch> getWriteBatches(List<KeyValuePair<byte[], byte[]>> records)
 //        {
 //            // advance stream time to the max timestamp in the batch
-//            foreach (KeyValue<byte[], byte[]> record in records)
+//            foreach (KeyValuePair<byte[], byte[]> record in records)
 //            {
 //                long timestamp = keySchema.segmentTimestamp(Bytes.wrap(record.key));
 //                observedStreamTime = Math.Max(observedStreamTime, timestamp);
 //            }
 
 //            Dictionary<S, WriteBatch> writeBatchMap = new Dictionary<S, WriteBatch>();
-//            foreach (KeyValue<byte[], byte[]> record in records)
+//            foreach (KeyValuePair<byte[], byte[]> record in records)
 //            {
 //                long timestamp = keySchema.segmentTimestamp(Bytes.wrap(record.key));
 //                long segmentId = segments.segmentId(timestamp);

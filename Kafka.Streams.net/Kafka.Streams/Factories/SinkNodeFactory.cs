@@ -26,14 +26,16 @@ namespace Kafka.Streams.Factories
             ITopicNameExtractor topicExtractor,
             ISerializer<K> keySerializer,
             ISerializer<V> valSerializer,
-            IStreamPartitioner<K, V> partitioner)
+            IStreamPartitioner<K, V> partitioner,
+            InternalTopologyBuilder internalTopologyBuilder)
             : base(clock, name, predecessors.ToArray())
         {
             this.clock = clock;
-            this.TopicExtractor = topicExtractor;
+            this.partitioner = partitioner;
             this.keySerializer = keySerializer;
             this.valueSerializer = valSerializer;
-            this.partitioner = partitioner;
+            this.TopicExtractor = topicExtractor;
+            this.internalTopologyBuilder = internalTopologyBuilder;
         }
 
         public override IProcessorNode Build()

@@ -9,7 +9,7 @@
 //            }
 
 //            ValueAndTimestamp<T> oldAggAndTimestamp = store[key];
-//            T oldAgg = getValueOrNull(oldAggAndTimestamp);
+//            T oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 //            T intermediateAgg;
 //            long newTimestamp = context.timestamp();
 

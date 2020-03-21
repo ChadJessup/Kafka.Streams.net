@@ -23,10 +23,10 @@
 //            return innerIterator.hasNext();
 //        }
 
-//        public KeyValue<K, byte[]> next()
+//        public KeyValuePair<K, byte[]> next()
 //        {
-//            KeyValue<K, byte[]> plainKeyValue = innerIterator.next();
-//            return KeyValue<K, byte[]>.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
+//            KeyValuePair<K, byte[]> plainKeyValue = innerIterator.next();
+//            return KeyValuePair<K, byte[]>.pair(plainKeyValue.key, convertToTimestampedFormat(plainKeyValue.value));
 //        }
 //    }
 //}

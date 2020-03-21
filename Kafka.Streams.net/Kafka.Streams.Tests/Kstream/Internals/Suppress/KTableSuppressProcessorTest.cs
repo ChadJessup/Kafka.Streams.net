@@ -57,7 +57,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -76,7 +76,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -99,7 +99,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -137,7 +137,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (recordTime));
 //            }
 
@@ -168,7 +168,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -187,7 +187,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -251,7 +251,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -275,7 +275,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -299,7 +299,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -321,7 +321,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 
@@ -343,7 +343,7 @@
 
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
-//                Assert.Equal(capturedForward.keyValue(), (new KeyValue<>(key, value)));
+//                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
 //                Assert.Equal(capturedForward.timestamp(), (timestamp));
 //            }
 

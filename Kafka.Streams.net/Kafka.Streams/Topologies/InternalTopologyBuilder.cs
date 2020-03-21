@@ -376,7 +376,8 @@ namespace Kafka.Streams.Topologies
                     topicExtractor,
                     keySerializer,
                     valSerializer,
-                    partitioner));
+                    partitioner,
+                    this));
 
             nodeGrouper.Add(name);
             nodeGrouper.Unite(name, predecessorNames);

@@ -586,7 +586,7 @@
 //    public void shouldCountWindowedWithInternalStoreName()
 //    {
 //        MockProcessorSupplier<Windowed<string>, long> supplier = new MockProcessorSupplier<>();
-//        List<KeyValue<Windowed<string>, KeyValue<long, long>>> results = new List<>();
+//        List<KeyValuePair<Windowed<string>, KeyValuePair<long, long>>> results = new List<>();
 //        groupedStream
 //            .windowedBy(TimeWindows.of(Duration.FromMilliseconds(500L)))
 //            .count()

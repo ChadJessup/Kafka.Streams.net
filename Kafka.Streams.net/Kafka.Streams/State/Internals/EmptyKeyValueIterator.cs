@@ -1,12 +1,13 @@
 ﻿using Kafka.Streams.State.KeyValues;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Kafka.Streams.State.Internals
 {
     public class EmptyKeyValueIterator<K, V> : IKeyValueIterator<K, V>
     {
-        public KeyValue<K, V> Current { get; }
+        public KeyValuePair<K, V> Current { get; }
         object IEnumerator.Current { get; }
 
         public void close()
@@ -25,7 +26,7 @@ namespace Kafka.Streams.State.Internals
         }
 
 
-        public KeyValue<K, V> next()
+        public KeyValuePair<K, V> next()
         {
             throw new IndexOutOfRangeException();
         }

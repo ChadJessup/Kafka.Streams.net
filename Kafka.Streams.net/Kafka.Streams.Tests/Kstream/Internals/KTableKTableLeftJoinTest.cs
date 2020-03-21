@@ -404,7 +404,7 @@
 //            Consumed<long, string> consumed = Consumed.with(Serdes.Long(), Serdes.String());
 //            IKTable<long, string> aggTable = builder
 //                .Table(agg, consumed, Materialized.As(Stores.inMemoryKeyValueStore("agg-case-store")))
-//                .groupBy(KeyValue, Grouped.with(Serdes.Long(), Serdes.String()))
+//                .groupBy(KeyValuePair, Grouped.with(Serdes.Long(), Serdes.String()))
 //                .reduce(
 //                    MockReducer.STRING_ADDER,
 //                    MockReducer.STRING_ADDER,

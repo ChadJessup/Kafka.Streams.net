@@ -16,13 +16,13 @@
 
 //    abstract K deserializeStoreKey(KS key);
 
-//    abstract KeyValue<K, V> deserializeStorePair(KeyValue<KS, VS> pair);
+//    abstract KeyValuePair<K, V> deserializeStorePair(KeyValuePair<KS, VS> pair);
 
 //    abstract K deserializeCacheKey(Bytes cacheKey);
 
 //    abstract V deserializeCacheValue(LRUCacheEntry cacheEntry);
 
-//    private bool isDeletedCacheEntry(KeyValue<Bytes, LRUCacheEntry> nextFromCache)
+//    private bool isDeletedCacheEntry(KeyValuePair<Bytes, LRUCacheEntry> nextFromCache)
 //{
 //        return nextFromCache.value.value() == null;
 //    }
@@ -47,7 +47,7 @@
 //        return cacheIterator.hasNext() || storeIterator.hasNext();
 //    }
 
-//    public override KeyValue<K, V> next()
+//    public override KeyValuePair<K, V> next()
 //{
 //        if (!hasNext())
 //{
@@ -82,9 +82,9 @@
 //        }
 //    }
 
-//    private KeyValue<K, V> nextStoreValue(KS nextStoreKey)
+//    private KeyValuePair<K, V> nextStoreValue(KS nextStoreKey)
 //{
-//        KeyValue<KS, VS> next = storeIterator.next();
+//        KeyValuePair<KS, VS> next = storeIterator.next();
 
 //        if (!next.key.Equals(nextStoreKey))
 //{
@@ -94,16 +94,16 @@
 //        return deserializeStorePair(next);
 //    }
 
-//    private KeyValue<K, V> nextCacheValue(Bytes nextCacheKey)
+//    private KeyValuePair<K, V> nextCacheValue(Bytes nextCacheKey)
 //{
-//        KeyValue<Bytes, LRUCacheEntry> next = cacheIterator.next();
+//        KeyValuePair<Bytes, LRUCacheEntry> next = cacheIterator.next();
 
 //        if (!next.key.Equals(nextCacheKey))
 //{
 //            throw new InvalidOperationException("Next record key is not the peeked key value; this should not happen");
 //        }
 
-//        return KeyValue.pair(deserializeCacheKey(next.key), deserializeCacheValue(next.value));
+//        return KeyValuePair.pair(deserializeCacheKey(next.key), deserializeCacheValue(next.value));
 //    }
 
 //    public override K peekNextKey()

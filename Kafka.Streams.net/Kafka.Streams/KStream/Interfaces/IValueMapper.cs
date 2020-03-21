@@ -4,7 +4,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * The {@code ValueMapper} interface for mapping a value to a new value of arbitrary type.
      * This is a stateless record-by-record operation, i.e, {@link #apply(object)} is invoked individually for each record
      * of a stream (cf. {@link ValueTransformer} for stateful value transformation).
-     * If {@code ValueMapper} is applied to a {@link org.apache.kafka.streams.KeyValue key-value pair} record the record's
+     * If {@code ValueMapper} is applied to a {@link org.apache.kafka.streams.KeyValuePair key-value pair} record the record's
      * key is preserved.
      * If a record's key and value should be modified {@link KeyValueMapper} can be used.
      *

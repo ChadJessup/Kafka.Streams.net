@@ -1,37 +1,38 @@
+using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using System;
 
 namespace Kafka.Streams.KStream.Internals.Suppress
 {
     public class KTableSuppressProcessorSupplier<K, V, S> : IKTableProcessorSupplier<K, V, V>
     {
-        //private SuppressedInternal<K, V> suppress;
+        private SuppressedInternal<K> suppress;
         private readonly string storeName;
-        private readonly KTable<K, V> parentKTable;
+        private readonly IKTable<K, V> parentKTable;
 
         public KTableSuppressProcessorSupplier(
-//            SuppressedInternal<K, V> suppress,
+            SuppressedInternal<K> suppress,
             string storeName,
-            KTable<K, V> parentKTable)
+            IKTable<K, V> parentKTable)
         {
-  //          this.suppress = suppress;
+            this.suppress = suppress;
             this.storeName = storeName;
-            this.parentKTable = parentKTable;
+            this.parentKTable = parentKTable ?? throw new ArgumentNullException(nameof(parentKTable));
+
             // The suppress buffer requires seeing the old values, to support the prior value view.
             parentKTable.enableSendingOldValues();
         }
 
         public IKeyValueProcessor<K, Change<V>> get()
         {
-            return null;
-            //return new KTableSuppressProcessor<K, Change<V>>(
-            //    suppress, storeName);
+            return (IKeyValueProcessor<K, Change<V>>)new KTableSuppressProcessor<K, Change<V>>(
+                suppress, storeName);
         }
 
 
         public IKTableValueGetterSupplier<K, V> view()
         {
-            //IKTableValueGetterSupplier<K, V> parentValueGetterSupplier = parentKTable.valueGetterSupplier();
-            return null;// parentValueGetterSupplier;
+            return parentKTable.valueGetterSupplier<V>();
         }
 
         //public IKTableValueGetter<K, V> get()

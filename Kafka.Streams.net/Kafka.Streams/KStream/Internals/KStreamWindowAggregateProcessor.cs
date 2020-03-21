@@ -77,7 +77,7 @@ namespace Kafka.Streams.KStream.Internals
                 if (windowEnd > closeTime)
                 {
                     ValueAndTimestamp<Agg> oldAggAndTimestamp = windowStore.fetch(key, windowStart);
-                    Agg oldAgg = ValueAndTimestamp<Agg>.GetValueOrNull(oldAggAndTimestamp);
+                    Agg oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
                     Agg newAgg;
                     long newTimestamp;

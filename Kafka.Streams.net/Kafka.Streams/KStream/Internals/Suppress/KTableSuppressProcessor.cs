@@ -9,30 +9,36 @@ namespace Kafka.Streams.KStream.Internals.Suppress
     public class KTableSuppressProcessor<K, V> : IKeyValueProcessor<K, Change<V>>
     {
         private readonly long suppressDurationMillis;
-        private readonly ITimeDefinition<K, V> bufferTimeDefinition;
+        private readonly ITimeDefinition<K> bufferTimeDefinition;
         private readonly BufferFullStrategy bufferFullStrategy;
         private readonly bool safeToDropTombstones;
+        private readonly string storeName;
 
         // private TimeOrderedKeyValueBuffer<K, V> buffer;
         private IInternalProcessorContext internalProcessorContext;
         private long observedStreamTime = -1L;// ConsumeResult.NO_TIMESTAMP;
 
-        // public KTableSuppressProcessor(SuppressedInternal<K, V> suppress, string storeName)
-        // {
-        //     this.storeName = storeName;
-        //     //requireNonNull(suppress);
-        //     maxRecords = suppress.bufferConfig.maxRecords();
-        //     maxBytes = suppress.bufferConfig.maxBytes();
-        //     suppressDurationMillis = suppress.timeToWaitForMoreEvents().toMillis();
-        //     bufferTimeDefinition = suppress.timeDefinition;
-        //     bufferFullStrategy = suppress.bufferConfig.bufferFullStrategy();
-        //     safeToDropTombstones = suppress.safeToDropTombstones;
-        // }
+        public KTableSuppressProcessor(
+            SuppressedInternal<K> suppress,
+            string storeName)
+        {
+            if (suppress is null)
+            {
+                throw new ArgumentNullException(nameof(suppress));
+            }
+
+            this.storeName = storeName;
+            // this.MaxRecords = suppress.bufferConfig.MaxRecords;
+            // this.MaxBytes = suppress.bufferConfig.MaxBytes;
+            suppressDurationMillis = (long)suppress.TimeToWaitForMoreEvents().TotalMilliseconds;
+            bufferTimeDefinition = suppress.timeDefinition;
+            bufferFullStrategy = suppress.bufferConfig.BufferFullStrategy;
+            safeToDropTombstones = suppress.safeToDropTombstones;
+        }
 
         public void Init(IProcessorContext context)
         {
             internalProcessorContext = (IInternalProcessorContext)context;
-            //            suppressionEmitSensor = Sensors.suppressionEmitSensor(internalProcessorContext);
 
             //buffer = requireNonNull((TimeOrderedKeyValueBuffer<K, V>)context.getStateStore(storeName));
             //buffer.setSerdesIfNull((ISerde<K>)context.keySerde, (ISerde<V>)context.valueSerde);
@@ -48,7 +54,7 @@ namespace Kafka.Streams.KStream.Internals.Suppress
 
         private void buffer(K key, Change<V> value)
         {
-            var bufferTime = bufferTimeDefinition.time(internalProcessorContext, key);
+            var bufferTime = bufferTimeDefinition.Time(internalProcessorContext, key);
 
             // buffer.Add(bufferTime, key, value, internalProcessorContext.recordContext());
         }

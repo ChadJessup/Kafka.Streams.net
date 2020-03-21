@@ -1,19 +1,20 @@
 using Kafka.Streams.KStream.Interfaces;
 using Kafka.Streams.Processors;
+using System;
 
 namespace Kafka.Streams.KStream.Internals
 {
-    public class KTableFilter<K, S, V> : IKTableProcessorSupplier<K, V, V>
+    public class KTableFilter<K, V> : IKTableProcessorSupplier<K, V, V>
     {
-        private readonly KTable<K, V> parent;
-        private readonly IPredicate<K, V> predicate;
+        private readonly IKTable<K, V> parent;
+        private readonly Func<K, V, bool> predicate;
         private readonly bool filterNot;
         private readonly string? queryableName;
         private bool sendOldValues = false;
 
         public KTableFilter(
-            KTable<K, V> parent,
-            IPredicate<K, V> predicate,
+            IKTable<K, V> parent,
+            Func<K, V, bool> predicate,
             bool filterNot,
             string? queryableName)
         {
@@ -23,12 +24,14 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-
         public IKeyValueProcessor<K, Change<V>> get()
         {
-            return null; // new KTableFilterProcessor();
+            return new KTableFilterProcessor<K, V>(
+                this.queryableName,
+                this.sendOldValues,
+                this.filterNot,
+                this.predicate);
         }
-
 
         public void enableSendingOldValues()
         {

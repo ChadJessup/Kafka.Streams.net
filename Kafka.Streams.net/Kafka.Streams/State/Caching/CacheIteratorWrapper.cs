@@ -79,7 +79,7 @@
 //        }
 
 
-//        public KeyValue<Bytes, LRUCacheEntry> peekNext()
+//        public KeyValuePair<Bytes, LRUCacheEntry> peekNext()
 //        {
 //            if (!hasNext())
 //            {
@@ -89,7 +89,7 @@
 //        }
 
 
-//        public KeyValue<Bytes, LRUCacheEntry> next()
+//        public KeyValuePair<Bytes, LRUCacheEntry> next()
 //        {
 //            if (!hasNext())
 //            {

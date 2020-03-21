@@ -63,7 +63,7 @@
 //                .windowedBy(TimeWindows.of(Duration.FromSeconds(5)))
 //                .count(Materialized.As("windowed-count-store"))
 //                .toStream()
-//                .map((k, v) => KeyValue.Pair(k.Key, v)).to("windowed-count", Produced.with(Serdes.String(), Serdes.Long()));
+//                .map((k, v) => KeyValuePair.Create(k.Key, v)).to("windowed-count", Produced.with(Serdes.String(), Serdes.Long()));
 
 //            builder.Build(properties);
 //        }

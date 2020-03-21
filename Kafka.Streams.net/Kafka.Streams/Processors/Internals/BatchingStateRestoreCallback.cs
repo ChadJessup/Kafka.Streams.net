@@ -19,12 +19,12 @@ namespace Kafka.Streams.Processors.Internals
             throw new NotImplementedException();
         }
 
-        public void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        public void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
-            var keyValues = new List<KeyValue<byte[], byte[]>>();
+            var keyValues = new List<KeyValuePair<byte[], byte[]>>();
             foreach (var record in records)
             {
-                keyValues.Add(new KeyValue<byte[], byte[]>(record.Key, record.Value));
+                keyValues.Add(new KeyValuePair<byte[], byte[]>(record.Key, record.Value));
             }
 
             ((IBatchingStateRestoreCallback)restoreCallback).restoreAll(keyValues);

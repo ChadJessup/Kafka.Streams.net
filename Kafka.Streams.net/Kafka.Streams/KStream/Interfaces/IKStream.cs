@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace Kafka.Streams.KStream.Interfaces
 {
     /**
-     * {@code KStream} is an abstraction of a <i>record stream</i> of {@link KeyValue} pairs, i.e., each record is an
+     * {@code KStream} is an abstraction of a <i>record stream</i> of {@link KeyValuePair} pairs, i.e., each record is an
      * independent entity/event in the real world.
      * For example a user X might buy two items I1 and I2, and thus there might be two records {@code <K:I1>, <K:I2>}
      * in the stream.
@@ -160,14 +160,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, int>> {
-         *     KeyValue<string, int> apply(string key, string value)
+         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
+         *     KeyValuePair<string, int> apply(string key, string value)
 {
-         *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
+         *         return new KeyValuePair<>(key.toUpperCase(), value.split(" ").Length);
          *     }
          * });
          * }</pre>
-         * The provided {@link KeyValueMapper} must return a {@link KeyValue} type and must not return {@code null}.
+         * The provided {@link KeyValueMapper} must return a {@link KeyValuePair} type and must not return {@code null}.
          * <p>
          * Mapping records might result in an internal data redistribution if a key based operator (like an aggregation or
          * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
@@ -186,7 +186,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerSupplier, string...)
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper);
+        IKStream<KR, VR> map<KR, VR>(IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper);
 
         /**
          * Transform each record of the input stream into a new record in the output stream (both key and value type can be
@@ -199,14 +199,14 @@ namespace Kafka.Streams.KStream.Interfaces
          * The example below normalizes the string key to upper-case letters and counts the number of token of the value string.
          * <pre>{@code
          * KStream<string, string> inputStream = builder.stream("topic");
-         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValue<string, int>> {
-         *     KeyValue<string, int> apply(string key, string value)
+         * KStream<string, int> outputStream = inputStream.map(new KeyValueMapper<string, string, KeyValuePair<string, int>> {
+         *     KeyValuePair<string, int> apply(string key, string value)
 {
-         *         return new KeyValue<>(key.toUpperCase(), value.split(" ").Length);
+         *         return new KeyValuePair<>(key.toUpperCase(), value.split(" ").Length);
          *     }
          * });
          * }</pre>
-         * The provided {@link KeyValueMapper} must return a {@link KeyValue} type and must not return {@code null}.
+         * The provided {@link KeyValueMapper} must return a {@link KeyValuePair} type and must not return {@code null}.
          * <p>
          * Mapping records might result in an internal data redistribution if a key based operator (like an aggregation or
          * join) is applied to the result {@code KStream}. (cf. {@link #mapValues(ValueMapper)})
@@ -227,7 +227,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          */
         IKStream<KR, VR> map<KR, VR>(
-            IKeyValueMapper<K, V, KeyValue<KR, VR>> mapper,
+            IKeyValueMapper<K, V, KeyValuePair<KR, VR>> mapper,
             Named named);
 
         /**
@@ -392,15 +392,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KStream<byte[], string> inputStream = builder.stream("topic");
          * KStream<string, int> outputStream = inputStream.flatMap(
-         *     new KeyValueMapper<byte[], string, IEnumerable<KeyValue<string, int>>> {
-         *         IEnumerable<KeyValue<string, int>> apply(byte[] key, string value)
+         *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
+         *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
          *             string[] tokens = value.split(" ");
-         *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
+         *             List<KeyValuePair<string, int>> result = new List<>(tokens.Length);
          *
          *             for(string token : tokens)
 {
-         *                 result.Add(new KeyValue<>(token, 1));
+         *                 result.Add(new KeyValuePair<>(token, 1));
          *             }
          *
          *             return result;
@@ -430,7 +430,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerSupplier, string...)
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
-        IKStream<KR, VR> flatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper);
+        IKStream<KR, VR> flatMap<KR, VR>(IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper);
 
         /**
          * Transform each record of the input stream into zero or more records in the output stream (both key and value type
@@ -445,15 +445,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * <pre>{@code
          * KStream<byte[], string> inputStream = builder.stream("topic");
          * KStream<string, int> outputStream = inputStream.flatMap(
-         *     new KeyValueMapper<byte[], string, IEnumerable<KeyValue<string, int>>> {
-         *         IEnumerable<KeyValue<string, int>> apply(byte[] key, string value)
+         *     new KeyValueMapper<byte[], string, IEnumerable<KeyValuePair<string, int>>> {
+         *         IEnumerable<KeyValuePair<string, int>> apply(byte[] key, string value)
 {
          *             string[] tokens = value.split(" ");
-         *             List<KeyValue<string, int>> result = new List<>(tokens.Length);
+         *             List<KeyValuePair<string, int>> result = new List<>(tokens.Length);
          *
          *             for(string token : tokens)
 {
-         *                 result.Add(new KeyValue<>(token, 1));
+         *                 result.Add(new KeyValuePair<>(token, 1));
          *             }
          *
          *             return result;
@@ -485,7 +485,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #flatTransformValues(ValueTransformerWithKeySupplier, string...)
          */
         IKStream<KR, VR> flatMap<KR, VR>(
-            IKeyValueMapper<K, V, IEnumerable<KeyValue<KR, VR>>> mapper,
+            IKeyValueMapper<K, V, IEnumerable<KeyValuePair<KR, VR>>> mapper,
             Named named);
 
         /**
@@ -706,7 +706,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param action an action to perform on each record
          * @see #process(IProcessorSupplier, string...)
          */
-        void ForEach(IForeachAction<K, V> action);
+        void ForEach(Action<K, V> action);
 
         /**
          * Perform an action on each record of {@code KStream}.
@@ -717,7 +717,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param named  a {@link Named} config used to name the processor in the topology
          * @see #process(IProcessorSupplier, string...)
          */
-        void ForEach(IForeachAction<K, V> action, Named named);
+        void ForEach(Action<K, V> action, Named named);
 
         /**
          * Perform an action on each record of {@code KStream}.
@@ -732,7 +732,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #process(IProcessorSupplier, string...)
          * @return itself
          */
-        IKStream<K, V> peek(IForeachAction<K, V> action);
+        IKStream<K, V> Peek(Action<K, V> action);
 
         /**
          * Perform an action on each record of {@code KStream}.
@@ -748,7 +748,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #process(IProcessorSupplier, string...)
          * @return itself
          */
-        IKStream<K, V> peek(IForeachAction<K, V> action, Named named);
+        IKStream<K, V> Peek(Action<K, V> action, Named named);
 
         /**
          * Creates an array of {@code KStream} from this stream by branching the records in the original stream based on
@@ -763,8 +763,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param predicates the ordered list of {@link Predicate} instances
          * @return multiple distinct substreams of this {@code KStream}
          */
-
-        IKStream<K, V>[] branch(IPredicate<K, V>[] predicates);
+        IKStream<K, V>[] Branch(Func<K, V, bool>[] predicates);
 
         /**
          * Creates an array of {@code KStream} from this stream by branching the records in the original stream based on
@@ -781,7 +780,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return multiple distinct substreams of this {@code KStream}
          */
 
-        IKStream<K, V>[] branch(Named named, IPredicate<K, V>[] predicates);
+        IKStream<K, V>[] branch(Named named, Func<K, V, bool>[] predicates);
 
         /**
          * Merge this stream and the given stream into one larger stream.
@@ -854,7 +853,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param topic the topic name
          */
-        void to(string topic);
+        void To(string topic);
 
         /**
          * Materialize this stream to a topic using the provided {@link Produced} instance.
@@ -864,7 +863,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param topic       the topic name
          * @param produced    the options to use when producing to the topic
          */
-        void to(string topic, Produced<K, V> produced);
+        void To(string topic, Produced<K, V> produced);
 
         /**
          * Dynamically materialize this stream to topics using default serializers specified in the config and producer's
@@ -873,7 +872,7 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
          */
-        void to(ITopicNameExtractor topicExtractor);
+        void To(ITopicNameExtractor topicExtractor);
 
         /**
          * Dynamically materialize this stream to topics using the provided {@link Produced} instance.
@@ -882,7 +881,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param topicExtractor    the extractor to determine the name of the Kafka topic to write to for each record
          * @param produced          the options to use when producing to the topic
          */
-        void to(ITopicNameExtractor topicExtractor, Produced<K, V> produced);
+        void To(ITopicNameExtractor topicExtractor, Produced<K, V> produced);
 
         /**
          * Transform each record of the input stream into zero or one record in the output stream (both key and value type
@@ -910,7 +909,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
          * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
          * a schedule must be registered.
-         * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(object, object)
+         * The {@link Transformer} must return a {@link KeyValuePair} type in {@link Transformer#transform(object, object)
          * transform()}.
          * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
          * in which case no record is emitted.
@@ -932,10 +931,10 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
-         *             KeyValue transform(K key, V value)
+         *             KeyValuePair transform(K key, V value)
 {
          *                 // can access this.state
-         *                 return new KeyValue(key, value); // can emit a single value via return -- can also be null
+         *                 return new KeyValuePair(key, value); // can emit a single value via return -- can also be null
          *             }
          *
          *             void close()
@@ -978,8 +977,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          * @see #process(IProcessorSupplier, string...)
          */
-        IKStream<K1, V1> transform<K1, V1>(
-            ITransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
+        IKStream<K1, V1> Transform<K1, V1>(
+            ITransformerSupplier<K, V, KeyValuePair<K1, V1>> transformerSupplier,
             string[] stateStoreNames);
 
         /**
@@ -1008,7 +1007,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * Within the {@link Transformer}, the state is obtained via the {@link IProcessorContext}.
          * To trigger periodic actions via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long) punctuate()},
          * a schedule must be registered.
-         * The {@link Transformer} must return a {@link KeyValue} type in {@link Transformer#transform(object, object)
+         * The {@link Transformer} must return a {@link KeyValuePair} type in {@link Transformer#transform(object, object)
          * transform()}.
          * The return value of {@link Transformer#transform(object, object) Transformer#transform()} may be {@code null},
          * in which case no record is emitted.
@@ -1030,10 +1029,10 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
-         *             KeyValue transform(K key, V value)
+         *             KeyValuePair transform(K key, V value)
 {
          *                 // can access this.state
-         *                 return new KeyValue(key, value); // can emit a single value via return -- can also be null
+         *                 return new KeyValuePair(key, value); // can emit a single value via return -- can also be null
          *             }
          *
          *             void close()
@@ -1077,8 +1076,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          * @see #process(IProcessorSupplier, string...)
          */
-        IKStream<K1, V1> transform<K1, V1>(
-            ITransformerSupplier<K, V, KeyValue<K1, V1>> transformerSupplier,
+        IKStream<K1, V1> Transform<K1, V1>(
+            ITransformerSupplier<K, V, KeyValuePair<K1, V1>> transformerSupplier,
             Named named,
             string[] stateStoreNames);
 
@@ -1131,13 +1130,13 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
-         *             IEnumerable<KeyValue> transform(K key, V value)
+         *             IEnumerable<KeyValuePair> transform(K key, V value)
 {
          *                 // can access this.state
-         *                 List<KeyValue> result = new List<>();
+         *                 List<KeyValuePair> result = new List<>();
          *                 for (int i = 0; i < 3; i++)
 {
-         *                     result.Add(new KeyValue(key, value));
+         *                     result.Add(new KeyValuePair(key, value));
          *                 }
          *                 return result; // emits a list of key-value pairs via return
          *             }
@@ -1178,8 +1177,8 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          * @see #process(IProcessorSupplier, string...)
          */
-        IKStream<K1, V1> flatTransform<K1, V1>(
-            ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
+        IKStream<K1, V1> FlatTransform<K1, V1>(
+            ITransformerSupplier<K, V, IEnumerable<KeyValuePair<K1, V1>>> transformerSupplier,
             string[] stateStoreNames);
 
         /**
@@ -1231,13 +1230,13 @@ namespace Kafka.Streams.KStream.Interfaces
          *                 context.schedule(Duration.ofSeconds(1), PunctuationType.WALL_CLOCK_TIME, new Punctuator(..));
          *             }
          *
-         *             IEnumerable<KeyValue> transform(K key, V value)
+         *             IEnumerable<KeyValuePair> transform(K key, V value)
 {
          *                 // can access this.state
-         *                 List<KeyValue> result = new List<>();
+         *                 List<KeyValuePair> result = new List<>();
          *                 for (int i = 0; i < 3; i++)
 {
-         *                     result.Add(new KeyValue(key, value));
+         *                     result.Add(new KeyValuePair(key, value));
          *                 }
          *                 return result; // emits a list of key-value pairs via return
          *             }
@@ -1279,10 +1278,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transformValues(ValueTransformerWithKeySupplier, string...)
          * @see #process(IProcessorSupplier, string...)
          */
-        IKStream<K1, V1> flatTransform<K1, V1>(
-            ITransformerSupplier<K, V, IEnumerable<KeyValue<K1, V1>>> transformerSupplier,
+        IKStream<K1, V1> FlatTransform<K1, V1>(
+            ITransformerSupplier<K, V, IEnumerable<KeyValuePair<K1, V1>>> transformerSupplier,
             Named named,
-                                                string[] stateStoreNames);
+            string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1312,10 +1311,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(object) transform()}.
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null},
          * no records are emitted.
-         * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValue}
+         * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValuePair}
          * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
-         * emit a {@link KeyValue} pair.
+         * emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerSupplier()
 {
@@ -1394,10 +1393,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * The {@link ValueTransformer} must return the new value in {@link ValueTransformer#transform(object) transform()}.
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is {@code null}, no
          * records are emitted.
-         * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValue}
+         * In contrast to {@link #transform(TransformerSupplier, string...) transform()}, no.Additional {@link KeyValuePair}
          * pairs can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
-         * emit a {@link KeyValue} pair.
+         * emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerSupplier()
 {
@@ -1481,10 +1480,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
          * is {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
-         * to emit a {@link KeyValue} pair.
+         * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerWithKeySupplier()
 {
@@ -1533,8 +1532,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
-                                             string[] stateStoreNames);
+        IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+            string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into a new value (with possibly a new type) of the output record.
@@ -1566,10 +1566,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
          * is {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
-         * to emit a {@link KeyValue} pair.
+         * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerWithKeySupplier()
 {
@@ -1619,9 +1619,11 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #mapValues(ValueMapperWithKey)
          * @see #transform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> transformValues<VR>(IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
-                                             Named named,
-                                             string[] stateStoreNames);
+        IKStream<K, VR> TransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, VR> valueTransformerSupplier,
+            Named named,
+            string[] stateStoreNames);
+
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
          * type) and emit for each new value a record with the same key of the input record and the value.
@@ -1653,10 +1655,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
          * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
-         * emit a {@link KeyValue} pair.
+         * emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerSupplier()
 {
@@ -1746,10 +1748,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformer#transform(object) ValueTransformer#transform()} is an empty
          * {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformer} tries to
-         * emit a {@link KeyValue} pair.
+         * emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerSupplier()
 {
@@ -1841,10 +1843,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
          * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
-         * to emit a {@link KeyValue} pair.
+         * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerWithKeySupplier()
 {
@@ -1901,8 +1903,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
-                                                 string[] stateStoreNames);
+        IKStream<K, VR> FlatTransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+            string[] stateStoreNames);
 
         /**
          * Transform the value of each input record into zero or more new values (with possibly a new
@@ -1935,10 +1938,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * If the return value of {@link ValueTransformerWithKey#transform(object, object) ValueTransformerWithKey#transform()}
          * is an empty {@link java.lang.IEnumerable IEnumerable} or {@code null}, no records are emitted.
          * In contrast to {@link #transform(TransformerSupplier, string...) transform()} and
-         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValue} pairs
+         * {@link #flatTransform(TransformerSupplier, string...) flatTransform()}, no.Additional {@link KeyValuePair} pairs
          * can be emitted via {@link IProcessorContext#forward(object, object) IProcessorContext.forward()}.
          * A {@link org.apache.kafka.streams.errors.StreamsException} is thrown if the {@link ValueTransformerWithKey} tries
-         * to emit a {@link KeyValue} pair.
+         * to emit a {@link KeyValuePair} pair.
          * <pre>{@code
          * new ValueTransformerWithKeySupplier()
 {
@@ -1996,14 +1999,15 @@ namespace Kafka.Streams.KStream.Interfaces
          * @see #transform(TransformerSupplier, string...)
          * @see #flatTransform(TransformerSupplier, string...)
          */
-        IKStream<K, VR> flatTransformValues<VR>(IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
-                                                 Named named,
-                                                 string[] stateStoreNames);
+        IKStream<K, VR> FlatTransformValues<VR>(
+            IValueTransformerWithKeySupplier<K, V, IEnumerable<VR>> valueTransformerSupplier,
+            Named named,
+            string[] stateStoreNames);
 
         /**
          * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
-         * This is a stateful record-by-record operation (cf. {@link #foreach(IForeachAction)}).
+         * This is a stateful record-by-record operation (cf. {@link #foreach(Action)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
          * can be observed and.Additional periodic actions can be performed.
          * Note that this is a terminal operation that returns void.
@@ -2059,15 +2063,15 @@ namespace Kafka.Streams.KStream.Interfaces
          *
          * @param IProcessorSupplier a instance of {@link IProcessorSupplier} that generates a {@link IProcessor}
          * @param stateStoreNames   the names of the state store used by the processor
-         * @see #foreach(IForeachAction)
+         * @see #foreach(Action)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
+        void Process(IProcessorSupplier<K, V> IProcessorSupplier, params string[] stateStoreNames);
 
         /**
          * Process all records in this stream, one record at a time, by applying a {@link IProcessor} (provided by the given
          * {@link IProcessorSupplier}).
-         * This is a stateful record-by-record operation (cf. {@link #foreach(IForeachAction)}).
+         * This is a stateful record-by-record operation (cf. {@link #foreach(Action)}).
          * Furthermore, via {@link org.apache.kafka.streams.processor.Punctuator#punctuate(long)} the processing progress
          * can be observed and.Additional periodic actions can be performed.
          * Note that this is a terminal operation that returns void.
@@ -2124,10 +2128,10 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param IProcessorSupplier a instance of {@link IProcessorSupplier} that generates a {@link IProcessor}
          * @param named             a {@link Named} config used to name the processor in the topology
          * @param stateStoreNames   the names of the state store used by the processor
-         * @see #foreach(IForeachAction)
+         * @see #foreach(Action)
          * @see #transform(TransformerSupplier, string...)
          */
-        void process(
+        void Process(
             IProcessorSupplier<K, V> IProcessorSupplier,
             Named named,
             string[] stateStoreNames);
@@ -2159,7 +2163,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-        IKGroupedStream<K, V> groupByKey();
+        IKGroupedStream<K, V> GroupByKey();
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2189,7 +2193,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @deprecated since 2.1. Use {@link org.apache.kafka.streams.kstream.KStream#groupByKey(Grouped)} instead
          */
         [Obsolete]
-        IKGroupedStream<K, V> groupByKey(ISerialized<K, V> serialized);
+        IKGroupedStream<K, V> GroupByKey(ISerialized<K, V> serialized);
 
         /**
          * Group the records by their current key into a {@link KGroupedStream} while preserving the original values
@@ -2219,7 +2223,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          * @see #groupBy(KeyValueMapper)
          */
-        IKGroupedStream<K, V> groupByKey(Grouped<K, V> grouped);
+        IKGroupedStream<K, V> GroupByKey(Grouped<K, V> grouped);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2248,9 +2252,9 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        IKGroupedStream<KR, V> groupBy<KR>(IKeyValueMapper<K, V, KR> selector);
+        IKGroupedStream<KR, V> GroupBy<KR>(IKeyValueMapper<K, V, KR> selector);
 
-        IKGroupedStream<KR, V> groupBy<KR>(Func<K, V, KR> selector);
+        IKGroupedStream<KR, V> GroupBy<KR>(Func<K, V, KR> selector);
 
         /**
          * Group the records of this {@code KStream} on a new key that is selected using the provided {@link KeyValueMapper}
@@ -2281,7 +2285,7 @@ namespace Kafka.Streams.KStream.Interfaces
          * @param     the key type of the result {@link KGroupedStream}
          * @return a {@link KGroupedStream} that contains the grouped records of the original {@code KStream}
          */
-        IKGroupedStream<KR, V> groupBy<KR>(
+        IKGroupedStream<KR, V> GroupBy<KR>(
             IKeyValueMapper<K, V, KR> selector,
             Grouped<KR, V> grouped);
 

@@ -324,7 +324,7 @@
 
 //            private IEnumerator<KeyValuePair<long, ConcurrentNavigableMap<Bytes, byte[]>>> segmentIterator;
 //            private IEnumerator<KeyValuePair<Bytes, byte[]>> recordIterator;
-//            private KeyValue<Bytes, byte[]> next;
+//            private KeyValuePair<Bytes, byte[]> next;
 //            private long currentTime;
 
 //            private bool allKeys;
@@ -392,7 +392,7 @@
 
 //            // getNext is only called when either recordIterator or segmentIterator has a next
 //            // Note this does not guarantee a next record exists as the next segments may not contain any keys in range
-//            protected KeyValue<Bytes, byte[]> getNext()
+//            protected KeyValuePair<Bytes, byte[]> getNext()
 //            {
 //                while (!recordIterator.hasNext())
 //                {
@@ -403,7 +403,7 @@
 //                    }
 //                }
 //                KeyValuePair<Bytes, byte[]> nextRecord = recordIterator.next();
-//                return new KeyValue<>(nextRecord.Key, nextRecord.Value);
+//                return new KeyValuePair<>(nextRecord.Key, nextRecord.Value);
 //            }
 
 //            // Resets recordIterator to point to the next segment and returns null if there are no more segments

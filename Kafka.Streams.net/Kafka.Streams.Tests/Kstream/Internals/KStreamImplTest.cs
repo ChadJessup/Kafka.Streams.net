@@ -95,20 +95,20 @@
 //            ConsumedInternal<string, string> consumedInternal = new ConsumedInternal<>(stringConsumed);
 
 //            IKeyValueMapper<string, string, string> selector = (key, value) => key;
-//            IKeyValueMapper<string, string, Iterable<KeyValue<string, string>>> flatSelector = (key, value) => Collections.singleton(new KeyValue<>(key, value));
+//            IKeyValueMapper<string, string, Iterable<KeyValuePair<string, string>>> flatSelector = (key, value) => Collections.singleton(new KeyValuePair<>(key, value));
 //            IValueMapper<string, string> mapper = value => value;
 //            IValueMapper<string, Iterable<string>> flatMapper = Collections::singleton;
 //            ValueJoiner<string, string, string> joiner = (value1, value2) => value1;
-//            TransformerSupplier<string, string, KeyValue<string, string>> transformerSupplier = () => new Transformer<string, string, KeyValue<string, string>>()
+//            TransformerSupplier<string, string, KeyValuePair<string, string>> transformerSupplier = () => new Transformer<string, string, KeyValuePair<string, string>>()
 //            {
 
 
 //            public void init(IProcessorContext context) { }
 
 
-//            public KeyValue<string, string> transform(string key, string value)
+//            public KeyValuePair<string, string> transform(string key, string value)
 //            {
-//                return new KeyValue<>(key, value);
+//                return new KeyValuePair<>(key, value);
 //            }
 
 
@@ -139,8 +139,8 @@
 //       Assert.Null(((AbstractStream) stream1.selectKey(selector)).keySerde());
 //       Assert.Equal(((AbstractStream) stream1.selectKey(selector)).valueSerde(), consumedInternal.valueSerde());
 
-//       Assert.Null(((AbstractStream) stream1.map(KeyValue::new)).keySerde());
-//       Assert.Null(((AbstractStream) stream1.map(KeyValue::new)).valueSerde());
+//       Assert.Null(((AbstractStream) stream1.map(KeyValuePair::new)).keySerde());
+//       Assert.Null(((AbstractStream) stream1.map(KeyValuePair::new)).valueSerde());
 
 //       Assert.Equal(((AbstractStream) stream1.mapValues(mapper)).keySerde(), consumedInternal.keySerde());
 //       Assert.Null(((AbstractStream) stream1.mapValues(mapper)).valueSerde());
@@ -288,7 +288,7 @@
 //    ValueJoiner<string, string, string> valueJoiner = MockValueJoiner.instance(":");
 //    long windowSize = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 //    IKStream<string, string> stream = kStream
-//        .map((key, value) => KeyValue.Pair(value, value));
+//        .map((key, value) => KeyValuePair.Create(value, value));
 //    stream.join(kStream,
 //                valueJoiner,
 //                JoinWindows.of(Duration.FromMilliseconds(windowSize)).grace(Duration.FromMilliseconds(3 * windowSize)),
@@ -322,7 +322,7 @@
 //    ValueJoiner<string, string, string> valueJoiner = MockValueJoiner.instance(":");
 //    long windowSize = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS);
 //    IKStream<string, string> stream = kStream
-//        .map((key, value) => KeyValue.Pair(value, value));
+//        .map((key, value) => KeyValuePair.Create(value, value));
 //    stream.join(
 //        kStream,
 //        valueJoiner,

@@ -90,11 +90,11 @@
 //                        switch (key)
 //                        {
 //                            case "null":
-//                                return KeyValue.Pair(null, value);
+//                                return KeyValuePair.Create(null, value);
 //                            case "NULL":
 //                                return null;
 //                            default:
-//                                return KeyValue.Pair(value, value);
+//                                return KeyValuePair.Create(value, value);
 //                        }
 //                    },
 //                stringSerialized)
@@ -215,7 +215,7 @@
 //            builder
 //                .Table(input, consumed)
 //                .groupBy(new KeyValueMapper<string, string, string>(
-//                    (key, value) => KeyValue<string, string>.Pair(
+//                    (key, value) => KeyValuePair<string, string>.Pair(
 //                        key[0].ToString(),
 //                        key[1].ToString())),
 //                    stringSerialized)

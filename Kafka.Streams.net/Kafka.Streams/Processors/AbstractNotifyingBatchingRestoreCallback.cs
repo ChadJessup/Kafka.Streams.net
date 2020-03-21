@@ -66,7 +66,7 @@ namespace Kafka.Streams.Processors
 
         }
 
-        public virtual void restoreAll(List<KeyValue<byte[], byte[]>> records)
+        public virtual void restoreAll(List<KeyValuePair<byte[], byte[]>> records)
         {
         }
     }

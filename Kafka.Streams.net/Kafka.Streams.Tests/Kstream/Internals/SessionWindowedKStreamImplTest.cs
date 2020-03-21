@@ -132,13 +132,13 @@
 //                var driver = new TopologyTestDriver(builder.Build(), props);
 //                processData(driver);
 //                ISessionStore<string, long> store = driver.getSessionStore("count-store");
-//                List<KeyValue<Windowed<string>, long>> data = StreamsTestUtils.toList(store.fetch("1", "2"));
+//                List<KeyValuePair<Windowed<string>, long>> data = StreamsTestUtils.toList(store.fetch("1", "2"));
 //                Assert.Equal(
 //                    data,
 //                    equalTo(Array.AsReadOnly(
-//                        KeyValue.Pair(new Windowed<>("1", new SessionWindow(10, 15)), 2L),
-//                        KeyValue.Pair(new Windowed<>("1", new SessionWindow(600, 600)), 1L),
-//                        KeyValue.Pair(new Windowed<>("2", new SessionWindow(599, 600)), 2L))));
+//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), 2L),
+//                        KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), 1L),
+//                        KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), 2L))));
 //            }
 //    }
 
@@ -150,14 +150,14 @@
 //            var driver = new TopologyTestDriver(builder.Build(), props);
 //            processData(driver);
 //            ISessionStore<string, string> sessionStore = driver.getSessionStore("reduced");
-//            List<KeyValue<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
+//            List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
 
 //            Assert.Equal(
 //                data,
 //                equalTo(Array.AsReadOnly(
-//                    KeyValue.Pair(new Windowed<>("1", new SessionWindow(10, 15)), "1+2"),
-//                    KeyValue.Pair(new Windowed<>("1", new SessionWindow(600, 600)), "3"),
-//                    KeyValue.Pair(new Windowed<>("2", new SessionWindow(599, 600)), "1+2"))));
+//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "1+2"),
+//                    KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "3"),
+//                    KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "1+2"))));
 //        }
 //    }
 
@@ -173,13 +173,13 @@
 //        var driver = new TopologyTestDriver(builder.Build(), props);
 //        processData(driver);
 //        ISessionStore<string, string> sessionStore = driver.getSessionStore("aggregated");
-//        List<KeyValue<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
+//        List<KeyValuePair<Windowed<string>, string>> data = StreamsTestUtils.toList(sessionStore.fetch("1", "2"));
 //        Assert.Equal(
 //            data,
 //            Array.AsReadOnly(
-//                KeyValue.Pair(new Windowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
-//                KeyValue.Pair(new Windowed<>("1", new SessionWindow(600, 600)), "0+3"),
-//                KeyValue.Pair(new Windowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
+//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(10, 15)), "0+0+1+2"),
+//                KeyValuePair.Create(new Windowed<>("1", new SessionWindow(600, 600)), "0+3"),
+//                KeyValuePair.Create(new Windowed<>("2", new SessionWindow(599, 600)), "0+0+1+2")));
 //    }
 //}
 

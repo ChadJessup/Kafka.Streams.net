@@ -17,7 +17,7 @@ namespace Kafka.Streams.KStream
      *
      * @param key type
      * @param value type
-     * @param {@link KeyValue} return type (both key and value type can be set
+     * @param {@link KeyValuePair} return type (both key and value type can be set
      *            arbitrarily)
      * @see TransformerSupplier
      * @see KStream#transform(TransformerSupplier, string...)
@@ -50,26 +50,26 @@ namespace Kafka.Streams.KStream
          * attached} to this operator can be accessed and modified
          * arbitrarily (cf. {@link IProcessorContext#getStateStore(string)}).
          * <p>
-         * If only one record should be forward downstream, {@code transform} can return a new {@link KeyValue}. If
+         * If only one record should be forward downstream, {@code transform} can return a new {@link KeyValuePair}. If
          * more than one output record should be forwarded downstream, {@link IProcessorContext#forward(object, object)}
          * and {@link IProcessorContext#forward(object, object, To)} can be used.
          * If no record should be forwarded downstream, {@code transform} can return {@code null}.
          *
-         * Note that returning a new {@link KeyValue} is merely for convenience. The same can be achieved by using
+         * Note that returning a new {@link KeyValuePair} is merely for convenience. The same can be achieved by using
          * {@link IProcessorContext#forward(object, object)} and returning {@code null}.
          *
          * @param key the key for the record
          * @param value the value for the record
-         * @return new {@link KeyValue} pair&mdash;if {@code null} no key-value pair will
+         * @return new {@link KeyValuePair} pair&mdash;if {@code null} no key-value pair will
          * be forwarded to down stream
          */
-        R transform(K key, V value);
+        R Transform(K key, V value);
 
         /**
          * Close this transformer and clean up any resources. The framework may
          * later re-use this transformer by calling {@link #init(IProcessorContext)} on it again.
          * <p>
-         * To generate new {@link KeyValue} pairs {@link IProcessorContext#forward(object, object)} and
+         * To generate new {@link KeyValuePair} pairs {@link IProcessorContext#forward(object, object)} and
          * {@link IProcessorContext#forward(object, object, To)} can be used.
          */
         void close();

@@ -42,7 +42,7 @@ namespace Kafka.Streams.Processors.Internals
             return wrapped.putIfAbsent(key, value);
         }
 
-        public void putAll(List<KeyValue<K, V>> entries)
+        public void putAll(List<KeyValuePair<K, V>> entries)
         {
             wrapped.putAll(entries);
         }

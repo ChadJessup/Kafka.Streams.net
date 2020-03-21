@@ -106,9 +106,9 @@
 //            //        return originalValue;
 //            //    }
 
-//            //    public override void putAll(List<KeyValue<Bytes, byte[]>> entries)
+//            //    public override void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
 //            //{
-//            //        foreach (KeyValue<Bytes, byte[]> entry in entries)
+//            //        foreach (KeyValuePair<Bytes, byte[]> entry in entries)
 //            //{
 //            //            put(entry.key, entry.value);
 //            //        }
@@ -167,7 +167,7 @@
 //            throw new System.NotImplementedException();
 //        }
 
-//        public void putAll(List<KeyValue<Bytes, byte[]>> entries)
+//        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
 //        {
 //            throw new System.NotImplementedException();
 //        }

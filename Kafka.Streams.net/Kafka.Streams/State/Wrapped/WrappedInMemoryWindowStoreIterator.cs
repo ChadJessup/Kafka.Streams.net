@@ -27,14 +27,14 @@
 //        }
 
 
-//        public KeyValue<long, byte[]> next()
+//        public KeyValuePair<long, byte[]> next()
 //        {
 //            if (!hasNext())
 //            {
 //                throw new NoSuchElementException();
 //            }
 
-//            KeyValue<long, byte[]> result = new KeyValue<>(base.currentTime, base.next.value);
+//            KeyValuePair<long, byte[]> result = new KeyValuePair<>(base.currentTime, base.next.value);
 //            base.next = null;
 //            return result;
 //        }

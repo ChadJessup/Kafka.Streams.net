@@ -9,7 +9,7 @@
 //            }
 
 //            ValueAndTimestamp<V> oldAggAndTimestamp = store[key];
-//            V oldAgg = getValueOrNull(oldAggAndTimestamp);
+//            V oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 //            V intermediateAgg;
 //            long newTimestamp;
 

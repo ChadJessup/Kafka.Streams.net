@@ -9,7 +9,7 @@ namespace Kafka.Streams.KStream.Interfaces
      * {@link #transform(object)} (cf. {@link ValueMapper} for stateless value transformation).
      * Additionally, this {@code ValueTransformer} can {@link IProcessorContext#schedule(Duration, PunctuationType, Punctuator) schedule}
      * a method to be {@link Punctuator#punctuate(long) called periodically} with the provided context.
-     * If {@code ValueTransformer} is applied to a {@link KeyValue} pair record the record's key is preserved.
+     * If {@code ValueTransformer} is applied to a {@link KeyValuePair} pair record the record's key is preserved.
      * <p>
      * Use {@link ValueTransformerSupplier} to provide new instances of {@code ValueTransformer} to Kafka Stream's runtime.
      * <p>

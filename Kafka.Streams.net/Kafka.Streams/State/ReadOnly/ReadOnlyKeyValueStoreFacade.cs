@@ -14,7 +14,7 @@ namespace Kafka.Streams.State.ReadOnly
 
         public V get(K key)
         {
-            return ValueAndTimestamp<V>.GetValueOrNull(inner.get(key));
+            return ValueAndTimestamp.GetValueOrNull(inner.get(key));
         }
 
         public IKeyValueIterator<K, V> range(K from, K to)

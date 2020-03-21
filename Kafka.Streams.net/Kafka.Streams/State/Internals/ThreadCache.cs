@@ -174,9 +174,9 @@ namespace Kafka.Streams.State.Internals
             return result;
         }
 
-        public void putAll(string @namespace, List<KeyValue<Bytes, LRUCacheEntry>> entries)
+        public void putAll(string @namespace, List<KeyValuePair<Bytes, LRUCacheEntry>> entries)
         {
-            foreach (KeyValue<Bytes, LRUCacheEntry> entry in entries ?? Enumerable.Empty<KeyValue<Bytes, LRUCacheEntry>>())
+            foreach (KeyValuePair<Bytes, LRUCacheEntry> entry in entries ?? Enumerable.Empty<KeyValuePair<Bytes, LRUCacheEntry>>())
             {
                 put(@namespace, entry.Key, entry.Value);
             }
