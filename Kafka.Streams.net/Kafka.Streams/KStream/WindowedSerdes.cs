@@ -59,7 +59,7 @@ namespace Kafka.Streams.KStream
 
         // TODO: share internals here, shouldn't be public
         public static void verifyInnerDeserializerNotNull<T>(
-            IDeserializer<T> inner,
+            IDeserializer<T>? inner,
             IDeserializer<T> wrapper)
         {
             if (inner == null)

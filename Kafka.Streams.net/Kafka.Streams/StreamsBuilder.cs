@@ -134,6 +134,15 @@ namespace Kafka.Streams
                 serviceCollection.TryAddSingleton(typeof(SourceNodeFactory<,>));
                 serviceCollection.TryAddSingleton<DeserializerFactory>();
                 serviceCollection.TryAddSingleton<SerializerFactory>();
+                serviceCollection.TryAddTransient(typeof(SerdeFactory<>));
+
+                serviceCollection.TryAddTransient<ISerializer<string>>(_ => Serializers.Utf8);
+                serviceCollection.TryAddTransient<IDeserializer<string>>(_ => Deserializers.Utf8);
+
+                serviceCollection.TryAddTransient<ISerializer<byte[]>>(_ => Serializers.ByteArray);
+                serviceCollection.TryAddTransient<IDeserializer<byte[]>>(_ => Deserializers.ByteArray);
+
+                serviceCollection.TryAddTransient(typeof(ISerde<>), typeof(Serde<>));
                 serviceCollection.TryAddTransient<ISerde<byte[]>>(sp => Serdes.ByteArray());
                 serviceCollection.TryAddTransient<Serde<byte[]>>(sp => Serdes.ByteArray() as Serde<byte[]>);
                 serviceCollection.TryAddTransient<ISerializer<byte[]>>(sp => Serdes.ByteArray().Serializer);

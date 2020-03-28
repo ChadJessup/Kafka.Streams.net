@@ -1,5 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -10,25 +12,32 @@ namespace Kafka.Streams.KStream
         private long windowSize;
         private bool isChangelogTopic;
 
-        private IDeserializer<T> inner;
+        private IDeserializer<T>? inner;
+        private readonly IServiceProvider services;
 
         // Default constructor needed by Kafka
-        public TimeWindowedDeserializer()
-            : this(null, long.MaxValue)
+        public TimeWindowedDeserializer(IServiceProvider services)
+            : this(services, null, long.MaxValue)
         {
         }
 
         // TODO: fix this part as last bits of KAFKA-4468
-        public TimeWindowedDeserializer(IDeserializer<T> inner)
-            : this(inner, long.MaxValue)
+        public TimeWindowedDeserializer(
+            IServiceProvider services,
+            IDeserializer<T>? inner)
+            : this(services, inner, long.MaxValue)
         {
         }
 
-        public TimeWindowedDeserializer(IDeserializer<T> inner, long windowSize)
+        public TimeWindowedDeserializer(
+            IServiceProvider services,
+            IDeserializer<T>? inner,
+            long windowSize)
         {
             this.inner = inner;
             this.windowSize = windowSize;
             this.isChangelogTopic = false;
+            this.services = services;
         }
 
         public long getWindowSize()
@@ -36,31 +45,42 @@ namespace Kafka.Streams.KStream
             return this.windowSize;
         }
 
-        public void configure(Dictionary<string, string> configs, bool isKey)
+        public void Configure(Dictionary<string, string?> configs, bool isKey)
         {
+            if (configs is null)
+            {
+                throw new ArgumentNullException(nameof(configs));
+            }
+
             if (inner == null)
             {
                 string propertyName = isKey
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
                     : StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
 
-                string value = (string)configs[propertyName];
+                string value = configs[propertyName] ?? throw new ArgumentNullException(nameof(configs));
                 try
                 {
-                    //inner = Serde.cast(Utils.newInstance(value, Serde)).Deserializer();
-                    //inner.configure(configs, isKey);
+                    Type serdeDeserializerType = Type.GetType(value);
+                    if (serdeDeserializerType != typeof(Serde<T>))
+                    {
+                        throw new InvalidOperationException("Attempted to retrieve default deserializer, but type doesn't match.");
+                    }
+
+                    var serde = (ISerde<T>)ActivatorUtilities.CreateInstance(this.services, serdeDeserializerType);
+                    serde.Configure(configs, isKey);
+                    this.inner = serde.Deserializer;
                 }
-                catch (TypeAccessException e)
+                catch (TypeAccessException)
                 {
                     //throw new Exception(propertyName, value, "Serde " + value + " could not be found.");
                 }
             }
         }
 
-
-        public Windowed<T> deserialize(string topic, byte[] data)
+        public Windowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
         {
-            // WindowedSerdes.verifyInnerDeserializerNotNull<T>(inner, this);
+            //WindowedSerdes.verifyInnerDeserializerNotNull<T>(inner, this);
 
             if (data == null || data.Length == 0)
             {
@@ -93,12 +113,7 @@ namespace Kafka.Streams.KStream
         // Only for testing
         public IDeserializer<T> innerDeserializer()
         {
-            return inner;
-        }
-
-        public Windowed<T> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
-        {
-            throw new NotImplementedException();
+            return this.inner;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Confluent.Kafka;
 using Kafka.Streams.Configs;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace Kafka.Streams.Factories
@@ -10,12 +11,17 @@ namespace Kafka.Streams.Factories
 
         public SerializerFactory(StreamsConfig config, IServiceProvider services)
         {
-            this.services = services;
+            if (config is null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
         }
 
         public ISerializer<K> GetSerializer<K>()
         {
-            return (ISerializer<K>)this.services.GetService(typeof(ISerializer<K>));
+            return (ISerializer<K>)this.services.GetRequiredService(typeof(ISerializer<K>));
         }
     }
 }

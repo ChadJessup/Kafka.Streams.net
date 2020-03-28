@@ -1,6 +1,7 @@
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Tests.Helpers;
 using System.Collections.Generic;
 using Xunit;
 
@@ -8,12 +9,15 @@ namespace Kafka.Streams.Tests
 {
     public class SessionWindowedDeserializerTest
     {
-        private SessionWindowedDeserializer<object> sessionWindowedDeserializer;
+        private SessionWindowedDeserializer<string> sessionWindowedKeyDeserializer;
+        private SessionWindowedDeserializer<byte[]> sessionWindowedValueDeserializer;
         private Dictionary<string, string?> props = new Dictionary<string, string?>();
 
         public SessionWindowedDeserializerTest()
         {
-            this.sessionWindowedDeserializer = new SessionWindowedDeserializer<object>();
+            var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
+            this.sessionWindowedKeyDeserializer = new SessionWindowedDeserializer<string>(streamsBuilder.Services);
+            this.sessionWindowedValueDeserializer = new SessionWindowedDeserializer<byte[]>(streamsBuilder.Services);
 
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
@@ -22,22 +26,21 @@ namespace Kafka.Streams.Tests
         [Fact]
         public void TestWindowedKeyDeserializerNoArgConstructors()
         {
-            sessionWindowedDeserializer.configure(props, true);
-            var inner = sessionWindowedDeserializer.innerDeserializer();
-            var stringSerType = Serdes.String().GetType();
+            sessionWindowedKeyDeserializer.Configure(props, true);
+            var inner = sessionWindowedKeyDeserializer.innerDeserializer();
 
             Assert.NotNull(inner);
-            Assert.True(inner.GetType().Equals(stringSerType), "Inner deserializer type should be StringDeserializer");
+            Assert.IsAssignableFrom<IDeserializer<string>>(inner);
         }
 
         [Fact]
         public void TestWindowedValueDeserializerNoArgConstructors()
         {
-            sessionWindowedDeserializer.configure(props, false);
-            var inner = sessionWindowedDeserializer.innerDeserializer();
-            Assert.NotNull(inner);
+            sessionWindowedValueDeserializer.Configure(props, false);
+            var inner = sessionWindowedValueDeserializer.innerDeserializer();
 
-            Assert.IsAssignableFrom<IDeserializer<string>>(inner);
+            Assert.NotNull(inner);
+            Assert.IsAssignableFrom<IDeserializer<byte[]>>(inner);
         }
     }
 }

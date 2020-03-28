@@ -127,7 +127,6 @@ namespace Kafka.Streams.Tests
 
         [Fact]
         public void testStateChangeStartClose() //// throws Exception
-
         {
             var streamsBuilder = TestUtils.GetStreamsBuilder(this.config);
             var thread = TestUtils.CreateStreamThread(streamsBuilder, clientId, false);

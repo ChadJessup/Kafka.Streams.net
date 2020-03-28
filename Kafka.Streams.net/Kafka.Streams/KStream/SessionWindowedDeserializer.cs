@@ -1,6 +1,8 @@
 
 using Confluent.Kafka;
 using Kafka.Streams.Configs;
+using Kafka.Streams.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -8,18 +10,21 @@ namespace Kafka.Streams.KStream
 {
     public class SessionWindowedDeserializer<T> : IDeserializer<Windowed<T>>
     {
+        private readonly IServiceProvider services;
+        private IDeserializer<T>? inner;
 
-        private IDeserializer<T> inner;
+        public SessionWindowedDeserializer(IServiceProvider services)
+        {
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
+        }
 
-        // Default constructor needed by Kafka
-        public SessionWindowedDeserializer() { }
-
-        public SessionWindowedDeserializer(IDeserializer<T> inner)
+        public SessionWindowedDeserializer(IServiceProvider services, IDeserializer<T>? inner)
+            : this(services)
         {
             this.inner = inner;
         }
 
-        public void configure(Dictionary<string, string?> configs, bool isKey)
+        public void Configure(Dictionary<string, string?> configs, bool isKey)
         {
             if (configs is null)
             {
@@ -32,17 +37,23 @@ namespace Kafka.Streams.KStream
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
                     : StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
 
-                var value = configs[propertyName];
-                // try
-                // {
-                // 
-                //     inner = Serde.cast(Utils.newInstance(value, Serde)).Deserializer();
-                //     inner.configure(configs, isKey);
-                // }
-                // catch (ClassNotFoundException e)
-                // {
-                //     throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
-                // }
+                string value = configs[propertyName] ?? throw new ArgumentNullException(nameof(configs));
+                try
+                {
+                    Type serdeSerializerType = Type.GetType(value);
+                    if (serdeSerializerType != typeof(Serde<T>))
+                    {
+                        throw new InvalidOperationException("Attempted to retrieve default deserializer, but type doesn't match.");
+                    }
+
+                    var serde = (ISerde<T>)ActivatorUtilities.CreateInstance(this.services, serdeSerializerType);
+                    serde.Configure(configs, isKey);
+                    this.inner = serde.Deserializer;
+                }
+                catch (TypeAccessException)
+                {
+                    //throw new Exception(propertyName, value, "Serde " + value + " could not be found.");
+                }
             }
         }
 

@@ -1,5 +1,7 @@
+using Confluent.Kafka;
 using Kafka.Streams.Configs;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Tests.Helpers;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -9,34 +11,38 @@ namespace Kafka.Streams.Tests
 {
     public class TimeWindowedSerializerTest
     {
-        private TimeWindowedSerializer<object> timeWindowedSerializer;
+        private TimeWindowedSerializer<string> timeWindowedKeySerializer;
+        private TimeWindowedSerializer<byte[]> timeWindowedValueSerializer;
         private Dictionary<string, string?> props = new Dictionary<string, string?>();
 
         public TimeWindowedSerializerTest()
         {
-            this.timeWindowedSerializer = new TimeWindowedSerializer<object>(Mock.Of<IServiceProvider>());
-
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS, Serdes.String().GetType().FullName);
             props.Add(StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS, Serdes.ByteArray().GetType().FullName);
+
+            var streamsBuilder = TestUtils.GetStreamsBuilder(new StreamsConfig(this.props));
+            this.timeWindowedKeySerializer = new TimeWindowedSerializer<string>(streamsBuilder.Services);
+            this.timeWindowedValueSerializer = new TimeWindowedSerializer<byte[]>(streamsBuilder.Services);
         }
 
         [Fact]
         public void TestWindowedKeySerializerNoArgConstructors()
         {
-            timeWindowedSerializer.Configure(props, isKey: true);
-            var inner = timeWindowedSerializer.InnerSerializer();
+            timeWindowedKeySerializer.Configure(props, isKey: true);
+            var inner = this.timeWindowedKeySerializer.InnerSerializer();
+
             Assert.NotNull(inner);
-            var stringType = Serdes.String().GetType();
-            Assert.True(inner.GetType().Equals(stringType), "Inner serializer type should be StringSerializer");
+            Assert.IsAssignableFrom<ISerializer<string>>(inner);
         }
 
         [Fact]
         public void TestWindowedValueSerializerNoArgConstructors()
         {
-            timeWindowedSerializer.Configure(props, false);
-            var inner = timeWindowedSerializer.InnerSerializer();
+            this.timeWindowedValueSerializer.Configure(props, isKey: false);
+            var inner = this.timeWindowedValueSerializer.InnerSerializer();
+
             Assert.NotNull(inner);
-            Assert.IsAssignableFrom<byte[]>(inner);
+            Assert.IsAssignableFrom<ISerializer<byte[]>>(inner);
         }
     }
 }

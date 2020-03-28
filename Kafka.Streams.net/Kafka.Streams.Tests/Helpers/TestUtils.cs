@@ -128,10 +128,5 @@ namespace Kafka.Streams.Tests.Helpers
 
             return mockClientSupplier;
         }
-
-        internal static object GetTempDirectory(string v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

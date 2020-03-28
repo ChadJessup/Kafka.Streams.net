@@ -340,7 +340,7 @@ namespace Kafka.Streams.Configs
          *
          * @param props properties that specify Kafka Streams and internal consumer/producer configuration
          */
-        public StreamsConfig(IDictionary<string, string> config)
+        public StreamsConfig(IDictionary<string, string?> config)
             : base(config)
         {
             //   eosEnabled = EXACTLY_ONCE.Equals(getString(PROCESSING_GUARANTEE_CONFIG));

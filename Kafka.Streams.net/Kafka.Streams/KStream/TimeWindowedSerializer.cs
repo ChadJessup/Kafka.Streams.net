@@ -17,14 +17,14 @@ namespace Kafka.Streams.KStream
     public class TimeWindowedSerializer<T> : IWindowedSerializer<T>
     {
         private readonly IServiceProvider services;
-        private ISerializer<T> inner;
+        private ISerializer<T>? inner;
 
         public TimeWindowedSerializer(IServiceProvider services)
         {
-            this.services = services;
+            this.services = services ?? throw new ArgumentNullException(nameof(services));
         }
 
-        public TimeWindowedSerializer(IServiceProvider services, ISerializer<T> inner)
+        public TimeWindowedSerializer(IServiceProvider services, ISerializer<T>? inner)
             : this(services)
         {
             this.inner = inner;
@@ -32,24 +32,33 @@ namespace Kafka.Streams.KStream
 
         public void Configure(Dictionary<string, string?> configs, bool isKey)
         {
+            if (configs is null)
+            {
+                throw new ArgumentNullException(nameof(configs));
+            }
+
             if (inner == null)
             {
                 string propertyName = isKey
                     ? StreamsConfigPropertyNames.DEFAULT_WINDOWED_KEY_SERDE_INNER_CLASS
                     : StreamsConfigPropertyNames.DEFAULT_WINDOWED_VALUE_SERDE_INNER_CLASS;
 
-                var value = configs[propertyName];
-                var t = Type.GetType(value);
+                string value = configs[propertyName] ?? throw new ArgumentNullException(nameof(configs));
                 try
                 {
-                    var s = (ISerde<T>)ActivatorUtilities.CreateInstance(this.services, t);
-                    inner = s.Serializer;
-                    // inner.Configure(configs, isKey);
+                    Type serdeSerializerType = Type.GetType(value);
+                    if (serdeSerializerType != typeof(Serde<T>))
+                    {
+                        throw new InvalidOperationException("Attempted to retrieve default serializer, but type doesn't match.");
+                    }
+
+                    var serde = (ISerde<T>)ActivatorUtilities.CreateInstance(this.services, serdeSerializerType);
+                    serde.Configure(configs, isKey);
+                    this.inner = serde.Serializer;
                 }
-                catch (TypeAccessException e)
+                catch (TypeAccessException)
                 {
-                    //throw new ConfigException(propertyName, value, "Serde " + value + " could not be found.");
-                    //throw new Exception($"{propertyName}, {value}, Serde {value} could not be found.");
+                    //throw new Exception(propertyName, value, "Serde " + value + " could not be found.");
                 }
             }
         }
