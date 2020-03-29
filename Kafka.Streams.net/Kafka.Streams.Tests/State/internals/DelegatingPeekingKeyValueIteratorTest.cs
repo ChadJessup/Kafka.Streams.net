@@ -1,92 +1,92 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.test.GenericInMemoryKeyValueStore;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
 
 public class DelegatingPeekingKeyValueIteratorTest {
 
-    private final String name = "name";
-    private KeyValueStore<String, String> store;
+    private string name = "name";
+    private KeyValueStore<string, string> store;
 
-    @Before
+    
     public void setUp() {
         store = new GenericInMemoryKeyValueStore<>(name);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPeekNextKey() {
         store.put("A", "A");
-        final DelegatingPeekingKeyValueIterator<String, String> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
-        assertEquals("A", peekingIterator.peekNextKey());
-        assertEquals("A", peekingIterator.peekNextKey());
-        assertTrue(peekingIterator.hasNext());
+        DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
+        Assert.Equal("A", peekingIterator.peekNextKey());
+        Assert.Equal("A", peekingIterator.peekNextKey());
+        Assert.True(peekingIterator.hasNext());
         peekingIterator.close();
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPeekNext() {
         store.put("A", "A");
-        final DelegatingPeekingKeyValueIterator<String, String> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
-        assertEquals(KeyValue.pair("A", "A"), peekingIterator.peekNext());
-        assertEquals(KeyValue.pair("A", "A"), peekingIterator.peekNext());
-        assertTrue(peekingIterator.hasNext());
+        DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
+        Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.peekNext());
+        Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.peekNext());
+        Assert.True(peekingIterator.hasNext());
         peekingIterator.close();
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPeekAndIterate() {
-        final String[] kvs = {"a", "b", "c", "d", "e", "f"};
-        for (final String kv : kvs) {
+        string[] kvs = {"a", "b", "c", "d", "e", "f"};
+        foreach (string kv in kvs) {
             store.put(kv, kv);
         }
 
-        final DelegatingPeekingKeyValueIterator<String, String> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
+        DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         int index = 0;
         while (peekingIterator.hasNext()) {
-            final String peekNext = peekingIterator.peekNextKey();
-            final String key = peekingIterator.next().key;
-            assertEquals(kvs[index], peekNext);
-            assertEquals(kvs[index], key);
+            string peekNext = peekingIterator.peekNextKey();
+            string key = peekingIterator.next().key;
+            Assert.Equal(kvs[index], peekNext);
+            Assert.Equal(kvs[index], key);
             index++;
         }
-        assertEquals(kvs.length, index);
+        Assert.Equal(kvs.Length, index);
         peekingIterator.close();
     }
 
-    [Test](expected = NoSuchElementException.class)
+    [Xunit.Fact]// (expected = NoSuchElementException)
     public void shouldThrowNoSuchElementWhenNoMoreItemsLeftAndNextCalled() {
-        final DelegatingPeekingKeyValueIterator<String, String> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
+        DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         peekingIterator.next();
         peekingIterator.close();
     }
 
-    [Test](expected = NoSuchElementException.class)
+    [Xunit.Fact]// (expected = NoSuchElementException)
     public void shouldThrowNoSuchElementWhenNoMoreItemsLeftAndPeekNextCalled() {
-        final DelegatingPeekingKeyValueIterator<String, String> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
+        DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         peekingIterator.peekNextKey();
         peekingIterator.close();
     }

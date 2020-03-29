@@ -82,7 +82,7 @@
 //                 1 + // to
 //                 2 + // through
 //                 1, // process
-//                 TopologyWrapper.getInternalTopologyBuilder(builder.Build()).setApplicationId("X").Build(null).processors().size());
+//                 TopologyWrapper.getInternalTopologyBuilder(builder.Build()).setApplicationId("X").Build(null).processors().Count);
 //        }
 
 //        [Fact]
@@ -237,7 +237,7 @@
 //var driver = new TopologyTestDriver(builder.Build(), props);
 //        driver.pipeInput(recordFactory.create(input, "a", "b"));
 //    }
-//    Assert.Equal(processorSupplier.theCapturedProcessor().processed, equalTo(Collections.singletonList(new KeyValueTimestamp<>("a", "b", 0))));
+//    Assert.Equal(processorSupplier.theCapturedProcessor().processed, (Collections.singletonList(new KeyValueTimestamp<>("a", "b", 0))));
 //    }
 
 //    [Fact]
@@ -253,7 +253,7 @@
 //var driver = new TopologyTestDriver(builder.Build(), props);
 //        driver.pipeInput(recordFactory.create(input, "e", "f"));
 //    }
-//    Assert.Equal(processorSupplier.theCapturedProcessor().processed, equalTo(Collections.singletonList(new KeyValueTimestamp<>("e", "f", 0))));
+//    Assert.Equal(processorSupplier.theCapturedProcessor().processed, (Collections.singletonList(new KeyValueTimestamp<>("e", "f", 0))));
 //    }
 
 //    [Fact]
@@ -276,7 +276,7 @@
 //    List<MockProcessor<string, string>> mockProcessors = processorSupplier.capturedProcessors(2);
 //    Assert.Equal(mockProcessors.get(0).processed, equalToasList(new KeyValueTimestamp<>("a", "v1", 0),
 //            new KeyValueTimestamp<>("a", "v2", 0))));
-//    Assert.Equal(mockProcessors.get(1).processed, equalTo(Collections.singletonList(new KeyValueTimestamp<>("b", "v1", 0))));
+//    Assert.Equal(mockProcessors.get(1).processed, (Collections.singletonList(new KeyValueTimestamp<>("b", "v1", 0))));
 //    }
 
 //     // specifically testing the deprecated variant
@@ -360,7 +360,7 @@
 //         .groupByKey()
 //         .count();
 
-//    Regex repartitionTopicPattern = Pattern.compile("Sink: .*-repartition");
+//    Regex repartitionTopicPattern = new Regex("Sink: .*-repartition", RegexOptions.Compiled);
 //    string topology = builder.Build().describe().ToString();
 //    Matcher matcher = repartitionTopicPattern.matcher(topology);
 //    Assert.True(matcher.find());
@@ -466,14 +466,14 @@
 //[Fact]
 //public void shouldNotAllowNullTransformerSupplierOnTransform()
 //{
-//    Exception e =Assert.Throws(NullPointerException.class, () => testStream.transform(null));
+//    Exception e =Assert.Throws(NullPointerException, () => testStream.transform(null));
 //       Assert.Equal("transformerSupplier can't be null", e.getMessage());
 //    }
 
 //    [Fact]
 //public void shouldNotAllowNullTransformerSupplierOnFlatTransform()
 //{
-//    Exception e =Assert.Throws(NullPointerException.class, () => testStream.flatTransform(null));
+//    Exception e =Assert.Throws(NullPointerException, () => testStream.flatTransform(null));
 //       Assert.Equal("transformerSupplier can't be null", e.getMessage());
 //    }
 
@@ -482,7 +482,7 @@
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException.class, () => testStream.transformValues((ValueTransformerWithKeySupplier) null));
+//       Assert.Throws(NullPointerException, () => testStream.transformValues((ValueTransformerWithKeySupplier) null));
 //       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
 //    }
 
@@ -491,7 +491,7 @@
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException.class, () => testStream.transformValues((ValueTransformerSupplier) null));
+//       Assert.Throws(NullPointerException, () => testStream.transformValues((ValueTransformerSupplier) null));
 //       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
 //    }
 
@@ -500,7 +500,7 @@
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException.class, () => testStream.flatTransformValues((ValueTransformerWithKeySupplier) null));
+//       Assert.Throws(NullPointerException, () => testStream.flatTransformValues((ValueTransformerWithKeySupplier) null));
 //       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
 //    }
 
@@ -509,7 +509,7 @@
 //{
 //    Exception e =
 
-//       Assert.Throws(NullPointerException.class, () => testStream.flatTransformValues((ValueTransformerSupplier) null));
+//       Assert.Throws(NullPointerException, () => testStream.flatTransformValues((ValueTransformerSupplier) null));
 //       Assert.Equal("valueTransformerSupplier can't be null", e.getMessage());
 //    }
 
@@ -741,7 +741,7 @@
 //    [Fact]
 //public void shouldProcessFromSourceThatMatchPattern()
 //{
-//    IKStream<string, string> pattern2Source = builder.Stream(Pattern.compile("topic-\\d"));
+//    IKStream<string, string> pattern2Source = builder.Stream(new Regex("topic-\\d", RegexOptions.Compiled));
 
 //    pattern2Source.process(processorSupplier);
 
@@ -767,8 +767,8 @@
 //{
 //    string topic3 = "topic-without-pattern";
 
-//    IKStream<string, string> pattern2Source1 = builder.Stream(Pattern.compile("topic-\\d"));
-//    IKStream<string, string> pattern2Source2 = builder.Stream(Pattern.compile("topic-[A-Z]"));
+//    IKStream<string, string> pattern2Source1 = builder.Stream(new Regex("topic-\\d", RegexOptions.Compiled));
+//    IKStream<string, string> pattern2Source2 = builder.Stream(new Regex("topic-[A-Z]", RegexOptions.Compiled));
 //    IKStream<string, string> source3 = builder.Stream(topic3);
 //    IKStream<string, string> merged = pattern2Source1.merge(pattern2Source2).merge(source3);
 

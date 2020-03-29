@@ -48,9 +48,9 @@
 //            }
 
 //            List<MockProcessor<int, string>> processors = supplier.capturedProcessors(3);
-//            Assert.Equal(3, processors[0].processed.size());
-//            Assert.Equal(1, processors[1].processed.size());
-//            Assert.Equal(2, processors[2].processed.size());
+//            Assert.Equal(3, processors[0].processed.Count);
+//            Assert.Equal(1, processors[1].processed.Count);
+//            Assert.Equal(2, processors[2].processed.Count);
 //        }
 
 

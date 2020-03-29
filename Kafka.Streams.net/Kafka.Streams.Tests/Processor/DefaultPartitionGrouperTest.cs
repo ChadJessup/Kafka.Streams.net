@@ -1,40 +1,40 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.Cluster;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static org.apache.kafka.common.utils.Utils.mkSet;
-import static org.junit.Assert.assertEquals;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class DefaultPartitionGrouperTest {
 
-    private final List<PartitionInfo> infos = Arrays.asList(
+    private List<PartitionInfo> infos = Array.asList(
             new PartitionInfo("topic1", 0, Node.noNode(), new Node[0], new Node[0]),
             new PartitionInfo("topic1", 1, Node.noNode(), new Node[0], new Node[0]),
             new PartitionInfo("topic1", 2, Node.noNode(), new Node[0], new Node[0]),
@@ -42,18 +42,18 @@ public class DefaultPartitionGrouperTest {
             new PartitionInfo("topic2", 1, Node.noNode(), new Node[0], new Node[0])
     );
 
-    private final Cluster metadata = new Cluster(
+    private Cluster metadata = new Cluster(
         "cluster",
         Collections.singletonList(Node.noNode()),
         infos,
-        Collections.<String>emptySet(),
-        Collections.<String>emptySet());
+        Collections.<string>emptySet(),
+        Collections.<string>emptySet());
 
-    [Test]
+    [Xunit.Fact]
     public void shouldComputeGroupingForTwoGroups() {
-        final PartitionGrouper grouper = new DefaultPartitionGrouper();
-        final Map<TaskId, Set<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
-        final Map<Integer, Set<String>> topicGroups = new HashMap<>();
+        PartitionGrouper grouper = new DefaultPartitionGrouper();
+        Dictionary<TaskId, HashSet<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
+        Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
 
         int topicGroupId = 0;
 
@@ -66,16 +66,16 @@ public class DefaultPartitionGrouperTest {
         expectedPartitionsForTask.put(new TaskId(topicGroupId, 0), mkSet(new TopicPartition("topic2", 0)));
         expectedPartitionsForTask.put(new TaskId(topicGroupId, 1), mkSet(new TopicPartition("topic2", 1)));
 
-        assertEquals(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
+        Assert.Equal(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldComputeGroupingForSingleGroupWithMultipleTopics() {
-        final PartitionGrouper grouper = new DefaultPartitionGrouper();
-        final Map<TaskId, Set<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
-        final Map<Integer, Set<String>> topicGroups = new HashMap<>();
+        PartitionGrouper grouper = new DefaultPartitionGrouper();
+        Dictionary<TaskId, HashSet<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
+        Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
 
-        final int topicGroupId = 0;
+        int topicGroupId = 0;
 
         topicGroups.put(topicGroupId, mkSet("topic1", "topic2"));
         expectedPartitionsForTask.put(
@@ -88,15 +88,15 @@ public class DefaultPartitionGrouperTest {
             new TaskId(topicGroupId, 2),
             mkSet(new TopicPartition("topic1", 2)));
 
-        assertEquals(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
+        Assert.Equal(expectedPartitionsForTask, grouper.partitionGroups(topicGroups, metadata));
     }
 
-    [Test](expected = RuntimeException.class)
+    [Xunit.Fact]// (expected = RuntimeException)
     public void shouldNotCreateAnyTasksBecauseOneTopicHasUnknownPartitions() {
-        final PartitionGrouper grouper = new DefaultPartitionGrouper();
-        final Map<Integer, Set<String>> topicGroups = new HashMap<>();
+        PartitionGrouper grouper = new DefaultPartitionGrouper();
+        Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
     
-        final int topicGroupId = 0;
+        int topicGroupId = 0;
     
         topicGroups.put(topicGroupId, mkSet("topic1", "unknownTopic", "topic2"));
         grouper.partitionGroups(topicGroups, metadata);

@@ -1,71 +1,71 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.metrics.JmxReporter;
-import org.apache.kafka.common.metrics.KafkaMetric;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.common.utils.MockTime;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.internals.MockStreamsMetrics;
-import org.apache.kafka.streams.state.KeyValueIterator;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.apache.kafka.test.KeyValueIteratorStub;
-import org.easymock.EasyMockRunner;
-import org.easymock.Mock;
-import org.easymock.MockType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
-import static org.apache.kafka.common.utils.Utils.mkEntry;
-import static org.apache.kafka.common.utils.Utils.mkMap;
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-@RunWith(EasyMockRunner.class)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class MeteredTimestampedKeyValueStoreTest {
 
-    private final TaskId taskId = new TaskId(0, 0);
-    private final Map<String, String> tags = mkMap(
+    private TaskId taskId = new TaskId(0, 0);
+    private Dictionary<string, string> tags = mkMap(
         mkEntry("client-id", "test"),
         mkEntry("task-id", taskId.toString()),
         mkEntry("scope-id", "metered")
@@ -75,17 +75,17 @@ public class MeteredTimestampedKeyValueStoreTest {
     @Mock(type = MockType.NICE)
     private ProcessorContext context;
 
-    private MeteredTimestampedKeyValueStore<String, String> metered;
-    private final String key = "key";
-    private final Bytes keyBytes = Bytes.wrap(key.getBytes());
-    private final String value = "value";
-    private final ValueAndTimestamp<String> valueAndTimestamp = ValueAndTimestamp.make("value", 97L);
+    private MeteredTimestampedKeyValueStore<string, string> metered;
+    private string key = "key";
+    private Bytes keyBytes = Bytes.wrap(key.getBytes());
+    private string value = "value";
+    private ValueAndTimestamp<string> valueAndTimestamp = ValueAndTimestamp.make("value", 97L);
     // timestamp is 97 what is ASCII of 'a'
-    private final byte[] valueAndTimestampBytes = "\0\0\0\0\0\0\0avalue".getBytes();
-    private final KeyValue<Bytes, byte[]> byteKeyValueTimestampPair = KeyValue.pair(keyBytes, valueAndTimestampBytes);
-    private final Metrics metrics = new Metrics();
+    private byte[] valueAndTimestampBytes = "\0\0\0\0\0\0\0avalue".getBytes();
+    private KeyValuePair<Bytes, byte[]> byteKeyValueTimestampPair = KeyValuePair.Create(keyBytes, valueAndTimestampBytes);
+    private Metrics metrics = new Metrics();
 
-    @Before
+    
     public void before() {
         metered = new MeteredTimestampedKeyValueStore<>(
             inner,
@@ -105,17 +105,17 @@ public class MeteredTimestampedKeyValueStoreTest {
         metered.init(context, metered);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void testMetrics() {
         init();
-        final JmxReporter reporter = new JmxReporter("kafka.streams");
+        JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
-        assertTrue(reporter.containsMbean(String.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
+        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
                 "scope", "test", taskId.toString(), "scope", "metered")));
-        assertTrue(reporter.containsMbean(String.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
+        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
                 "scope", "test", taskId.toString(), "scope", "all")));
     }
-    [Test]
+    [Xunit.Fact]
     public void shouldWriteBytesToInnerStoreAndRecordPutMetric() {
         inner.put(eq(keyBytes), aryEq(valueAndTimestampBytes));
         expectLastCall();
@@ -123,98 +123,98 @@ public class MeteredTimestampedKeyValueStoreTest {
 
         metered.put(key, valueAndTimestamp);
 
-        final KafkaMetric metric = metric("put-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("put-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldGetBytesFromInnerStoreAndReturnGetMetric() {
         expect(inner.get(keyBytes)).andReturn(valueAndTimestampBytes);
         init();
 
-        assertThat(metered.get(key), equalTo(valueAndTimestamp));
+        Assert.Equal(metered.get(key), (valueAndTimestamp));
 
-        final KafkaMetric metric = metric("get-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("get-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPutIfAbsentAndRecordPutIfAbsentMetric() {
         expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueAndTimestampBytes))).andReturn(null);
         init();
 
         metered.putIfAbsent(key, valueAndTimestamp);
 
-        final KafkaMetric metric = metric("put-if-absent-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("put-if-absent-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    private KafkaMetric metric(final String name) {
+    private KafkaMetric metric(string name) {
         return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
     }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void shouldPutAllToInnerStoreAndRecordPutAllMetric() {
-        inner.putAll(anyObject(List.class));
+        inner.putAll(anyObject(List));
         expectLastCall();
         init();
 
-        metered.putAll(Collections.singletonList(KeyValue.pair(key, valueAndTimestamp)));
+        metered.putAll(Collections.singletonList(KeyValuePair.Create(key, valueAndTimestamp)));
 
-        final KafkaMetric metric = metric("put-all-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("put-all-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldDeleteFromInnerStoreAndRecordDeleteMetric() {
         expect(inner.delete(keyBytes)).andReturn(valueAndTimestampBytes);
         init();
 
         metered.delete(key);
 
-        final KafkaMetric metric = metric("delete-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("delete-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldGetRangeFromInnerStoreAndRecordRangeMetric() {
         expect(inner.range(keyBytes, keyBytes)).andReturn(
             new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValueTimestampPair).iterator()));
         init();
 
-        final KeyValueIterator<String, ValueAndTimestamp<String>> iterator = metered.range(key, key);
-        assertThat(iterator.next().value, equalTo(valueAndTimestamp));
-        assertFalse(iterator.hasNext());
+        KeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.range(key, key);
+        Assert.Equal(iterator.next().value, (valueAndTimestamp));
+        Assert.False(iterator.hasNext());
         iterator.close();
 
-        final KafkaMetric metric = metric("range-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("range-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldGetAllFromInnerStoreAndRecordAllMetric() {
         expect(inner.all())
             .andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValueTimestampPair).iterator()));
         init();
 
-        final KeyValueIterator<String, ValueAndTimestamp<String>> iterator = metered.all();
-        assertThat(iterator.next().value, equalTo(valueAndTimestamp));
-        assertFalse(iterator.hasNext());
+        KeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.all();
+        Assert.Equal(iterator.next().value, (valueAndTimestamp));
+        Assert.False(iterator.hasNext());
         iterator.close();
 
-        final KafkaMetric metric = metric(new MetricName("all-rate", "stream-scope-metrics", "", tags));
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric(new MetricName("all-rate", "stream-scope-metrics", "", tags));
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldFlushInnerWhenFlushTimeRecords() {
         inner.flush();
         expectLastCall().once();
@@ -222,19 +222,19 @@ public class MeteredTimestampedKeyValueStoreTest {
 
         metered.flush();
 
-        final KafkaMetric metric = metric("flush-rate");
-        assertTrue((Double) metric.metricValue() > 0);
+        KafkaMetric metric = metric("flush-rate");
+        Assert.True((Double) metric.metricValue() > 0);
         verify(inner);
     }
 
-    private interface CachedKeyValueStore extends KeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
+    private interface CachedKeyValueStore : KeyValueStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void shouldSetFlushListenerOnWrappedCachingStore() {
-        final CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore.class);
+        CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
 
-        expect(cachedKeyValueStore.setFlushListener(anyObject(CacheFlushListener.class), eq(false))).andReturn(true);
+        expect(cachedKeyValueStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
         replay(cachedKeyValueStore);
 
         metered = new MeteredTimestampedKeyValueStore<>(
@@ -243,26 +243,26 @@ public class MeteredTimestampedKeyValueStoreTest {
             new MockTime(),
             Serdes.String(),
             new ValueAndTimestampSerde<>(Serdes.String()));
-        assertTrue(metered.setFlushListener(null, false));
+        Assert.True(metered.setFlushListener(null, false));
 
         verify(cachedKeyValueStore);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotSetFlushListenerOnWrappedNoneCachingStore() {
-        assertFalse(metered.setFlushListener(null, false));
+        Assert.False(metered.setFlushListener(null, false));
     }
 
-    private KafkaMetric metric(final MetricName metricName) {
+    private KafkaMetric metric(MetricName metricName) {
         return this.metrics.metric(metricName);
     }
 
-    [Test]
-    @SuppressWarnings("unchecked")
+    [Xunit.Fact]
+    
     public void shouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext() {
         expect(context.keySerde()).andStubReturn((Serde) Serdes.String());
         expect(context.valueSerde()).andStubReturn((Serde) Serdes.Long());
-        final MeteredTimestampedKeyValueStore<String, Long> store = new MeteredTimestampedKeyValueStore<>(
+        MeteredTimestampedKeyValueStore<string, long> store = new MeteredTimestampedKeyValueStore<>(
             inner,
             "scope",
             new MockTime(),
@@ -274,20 +274,20 @@ public class MeteredTimestampedKeyValueStoreTest {
 
         try {
             store.put("key", ValueAndTimestamp.make(42L, 60000));
-        } catch (final StreamsException exception) {
-            if (exception.getCause() instanceof ClassCastException) {
-                fail("Serdes are not correctly set from processor context.");
+        } catch (StreamsException exception) {
+            if (exception.getCause() is ClassCastException) {
+                Assert.True(false, "Serdes are not correctly set from processor context.");
             }
             throw exception;
         }
     }
 
-    [Test]
-    @SuppressWarnings("unchecked")
+    [Xunit.Fact]
+    
     public void shouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters() {
         expect(context.keySerde()).andStubReturn((Serde) Serdes.String());
         expect(context.valueSerde()).andStubReturn((Serde) Serdes.Long());
-        final MeteredTimestampedKeyValueStore<String, Long> store = new MeteredTimestampedKeyValueStore<>(
+        MeteredTimestampedKeyValueStore<string, long> store = new MeteredTimestampedKeyValueStore<>(
             inner,
             "scope",
             new MockTime(),
@@ -299,9 +299,9 @@ public class MeteredTimestampedKeyValueStoreTest {
 
         try {
             store.put("key", ValueAndTimestamp.make(42L, 60000));
-        } catch (final StreamsException exception) {
-            if (exception.getCause() instanceof ClassCastException) {
-                fail("Serdes are not correctly set from constructor parameters.");
+        } catch (StreamsException exception) {
+            if (exception.getCause() is ClassCastException) {
+                Assert.True(false, "Serdes are not correctly set from constructor parameters.");
             }
             throw exception;
         }

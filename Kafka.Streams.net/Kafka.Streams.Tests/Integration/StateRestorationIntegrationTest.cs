@@ -1,72 +1,72 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import kafka.utils.MockTime;
-import org.apache.kafka.common.serialization.BytesDeserializer;
-import org.apache.kafka.common.serialization.BytesSerializer;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
-import org.apache.kafka.streams.integration.utils.IntegrationTestUtils;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.state.Stores;
-import org.apache.kafka.test.IntegrationTest;
-import org.apache.kafka.test.StreamsTestUtils;
-import org.apache.kafka.test.TestUtils;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 
-@Category({IntegrationTest.class})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class StateRestorationIntegrationTest {
     private StreamsBuilder builder = new StreamsBuilder();
 
-    private static final String APPLICATION_ID = "restoration-test-app";
-    private static final String STATE_STORE_NAME = "stateStore";
-    private static final String INPUT_TOPIC = "input";
-    private static final String OUTPUT_TOPIC = "output";
+    private static string APPLICATION_ID = "restoration-test-app";
+    private static string STATE_STORE_NAME = "stateStore";
+    private static string INPUT_TOPIC = "input";
+    private static string OUTPUT_TOPIC = "output";
 
     private Properties streamsConfiguration;
 
-    @ClassRule
-    public static final EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
-    private final MockTime mockTime = CLUSTER.time;
+    
+    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
+    private MockTime mockTime = CLUSTER.time;
 
-    @Before
-    public void setUp() throws Exception {
-        final Properties props = new Properties();
+    
+    public void setUp() {// throws Exception
+        Properties props = new Properties();
 
         streamsConfiguration = StreamsTestUtils.getStreamsConfig(
                 APPLICATION_ID,
                 CLUSTER.bootstrapServers(),
-                Serdes.Integer().getClass().getName(),
+                Serdes.Int().getClass().getName(),
                 Serdes.ByteArray().getClass().getName(),
                 props);
 
@@ -76,21 +76,21 @@ public class StateRestorationIntegrationTest {
         IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
     }
 
-    [Test]
-    public void shouldRestoreNullRecord() throws InterruptedException, ExecutionException {
-        builder.table(INPUT_TOPIC, Materialized.<Integer, Bytes>as(
+    [Xunit.Fact]
+    public void shouldRestoreNullRecord() {// throws InterruptedException, ExecutionException
+        builder.table(INPUT_TOPIC, Materialized<int, Bytes>.As(
                 Stores.persistentTimestampedKeyValueStore(STATE_STORE_NAME))
-                .withKeySerde(Serdes.Integer())
+                .withKeySerde(Serdes.Int())
                 .withValueSerde(Serdes.Bytes())
                 .withCachingDisabled()).toStream().to(OUTPUT_TOPIC);
 
-        final Properties producerConfig = TestUtils.producerConfig(
-                CLUSTER.bootstrapServers(), IntegerSerializer.class, BytesSerializer.class);
+        Properties producerConfig = TestUtils.producerConfig(
+                CLUSTER.bootstrapServers(), IntegerSerializer, BytesSerializer);
 
-        final List<KeyValue<Integer, Bytes>> initialKeyValues = Arrays.asList(
-                KeyValue.pair(3, new Bytes(new byte[]{3})),
-                KeyValue.pair(3, null),
-                KeyValue.pair(1, new Bytes(new byte[]{1})));
+        List<KeyValuePair<int, Bytes>> initialKeyValues = Array.asList(
+                KeyValuePair.Create(3, new Bytes(new byte[]{3})),
+                KeyValuePair.Create(3, null),
+                KeyValuePair.Create(1, new Bytes(new byte[]{1})));
 
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 INPUT_TOPIC, initialKeyValues, producerConfig, mockTime);
@@ -98,8 +98,8 @@ public class StateRestorationIntegrationTest {
         KafkaStreams streams = new KafkaStreams(builder.build(streamsConfiguration), streamsConfiguration);
         streams.start();
 
-        final Properties consumerConfig = TestUtils.consumerConfig(
-                CLUSTER.bootstrapServers(), IntegerDeserializer.class, BytesDeserializer.class);
+        Properties consumerConfig = TestUtils.consumerConfig(
+                CLUSTER.bootstrapServers(), IntegerDeserializer, BytesDeserializer);
 
         IntegrationTestUtils.waitUntilFinalKeyValueRecordsReceived(
                 consumerConfig, OUTPUT_TOPIC, initialKeyValues);
@@ -109,8 +109,8 @@ public class StateRestorationIntegrationTest {
         streams.cleanUp();
 
         // Restart the stream instance. There should not be exception handling the null value within changelog topic.
-        final List<KeyValue<Integer, Bytes>> newKeyValues =
-                Collections.singletonList(KeyValue.pair(2, new Bytes(new byte[3])));
+        List<KeyValuePair<int, Bytes>> newKeyValues =
+                Collections.singletonList(KeyValuePair.Create(2, new Bytes(new byte[3])));
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 INPUT_TOPIC, newKeyValues, producerConfig, mockTime);
         streams = new KafkaStreams(builder.build(streamsConfiguration), streamsConfiguration);

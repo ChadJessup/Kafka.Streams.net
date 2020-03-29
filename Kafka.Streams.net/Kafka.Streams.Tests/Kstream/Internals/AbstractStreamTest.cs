@@ -66,7 +66,7 @@
 //                driver.pipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
 //            }
 
-//            Assert.True(supplier.theCapturedProcessor().processed.size() <= expectedKeys.Length);
+//            Assert.True(supplier.theCapturedProcessor().processed.Count <= expectedKeys.Length);
 //        }
 
 //        private class ExtendedKStream<K, V> : AbstractStream<K, V>

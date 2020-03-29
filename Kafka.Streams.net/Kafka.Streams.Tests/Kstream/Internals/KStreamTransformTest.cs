@@ -75,7 +75,7 @@
 //                new KeyValueTimestamp<>(-1, 3, 3)
 //            };
 
-//                Assert.Equal(expected.Length, processor.theCapturedProcessor().processed.size());
+//                Assert.Equal(expected.Length, processor.theCapturedProcessor().processed.Count);
 //                for (var i = 0; i < expected.Length; i++)
 //                {
 //                    Assert.Equal(expected[i], processor.theCapturedProcessor().processed.get(i));
@@ -130,7 +130,7 @@
 //                driver.advanceWallClockTime(1);
 //            }
 
-//            Assert.Equal(6, processor.theCapturedProcessor().processed.size());
+//            Assert.Equal(6, processor.theCapturedProcessor().processed.Count);
 
 //            KeyValueTimestamp[] expected = {new KeyValueTimestamp<>(2, 10, 0),
 //            new KeyValueTimestamp<>(20, 110, 0),

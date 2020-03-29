@@ -16,7 +16,7 @@
 //        private string output = "output";
 //        private Consumed<int, string> consumed = Consumed.with(Serdes.Int(), Serdes.String());
 //        private ConsumerRecordFactory<int, string> recordFactory =
-//                new ConsumerRecordFactory<>(Serdes.Int().serializer(), Serdes.String().serializer(), 0L);
+//                new ConsumerRecordFactory<>(Serdes.Int().Serializer, Serdes.String().Serializer, 0L);
 //        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
 //        [Fact]
@@ -35,10 +35,10 @@
 //            joined = table1.outerJoin(table2, MockValueJoiner.TOSTRING_JOINER);
 //            joined.toStream().to(output);
 
-//            Collection<Set<string>> copartitionGroups =
+//            Collection<HashSet<string>> copartitionGroups =
 //                    TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
-//            Assert.Equal(1, copartitionGroups.size());
+//            Assert.Equal(1, copartitionGroups.Count);
 //            Assert.Equal(new HashSet<>(new List<string> { topic1, topic2 }), copartitionGroups.iterator().next());
 
 //            var driver = new TopologyTestDriver(builder.Build(), props);

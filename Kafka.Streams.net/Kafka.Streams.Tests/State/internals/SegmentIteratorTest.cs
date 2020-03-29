@@ -1,54 +1,54 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.processor.internals.MockStreamsMetrics;
-import org.apache.kafka.test.InternalMockProcessorContext;
-import org.apache.kafka.test.NoOpRecordCollector;
-import org.apache.kafka.test.TestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class SegmentIteratorTest {
 
-    private final KeyValueSegment segmentOne = new KeyValueSegment("one", "one", 0);
-    private final KeyValueSegment segmentTwo = new KeyValueSegment("two", "window", 1);
-    private final HasNextCondition hasNextCondition = Iterator::hasNext;
+    private KeyValueSegment segmentOne = new KeyValueSegment("one", "one", 0);
+    private KeyValueSegment segmentTwo = new KeyValueSegment("two", "window", 1);
+    private HasNextCondition hasNextCondition = Iterator::hasNext;
 
     private SegmentIterator<KeyValueSegment> iterator = null;
 
-    @Before
+    
     public void before() {
-        final InternalMockProcessorContext context = new InternalMockProcessorContext(
+        InternalMockProcessorContext context = new InternalMockProcessorContext(
                 TestUtils.tempDirectory(),
                 Serdes.String(),
                 Serdes.String(),
@@ -65,7 +65,7 @@ public class SegmentIteratorTest {
         segmentTwo.put(Bytes.wrap("d".getBytes()), "4".getBytes());
     }
 
-    @After
+    
     public void closeSegments() {
         if (iterator != null) {
             iterator.close();
@@ -75,34 +75,34 @@ public class SegmentIteratorTest {
         segmentTwo.close();
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldIterateOverAllSegments() {
         iterator = new SegmentIterator<>(
-            Arrays.asList(segmentOne, segmentTwo).iterator(),
+            Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
             Bytes.wrap("a".getBytes()),
             Bytes.wrap("z".getBytes()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("a", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("a", "1"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("a", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.next()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("b", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("b", "2"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("b", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.next()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("c", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("c", "3"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("c", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("c", "3"), toStringKeyValue(iterator.next()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("d", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("d", "4"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("d", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("d", "4"), toStringKeyValue(iterator.next()));
 
-        assertFalse(iterator.hasNext());
+        Assert.False(iterator.hasNext());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotThrowExceptionOnHasNextWhenStoreClosed() {
         iterator = new SegmentIterator<>(
             Collections.singletonList(segmentOne).iterator(),
@@ -112,32 +112,32 @@ public class SegmentIteratorTest {
 
         iterator.currentIterator = segmentOne.all();
         segmentOne.close();
-        assertFalse(iterator.hasNext());
+        Assert.False(iterator.hasNext());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldOnlyIterateOverSegmentsInRange() {
         iterator = new SegmentIterator<>(
-            Arrays.asList(segmentOne, segmentTwo).iterator(),
+            Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
             Bytes.wrap("a".getBytes()),
             Bytes.wrap("b".getBytes()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("a", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("a", "1"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("a", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("a", "1"), toStringKeyValue(iterator.next()));
 
-        assertTrue(iterator.hasNext());
-        assertEquals("b", new String(iterator.peekNextKey().get()));
-        assertEquals(KeyValue.pair("b", "2"), toStringKeyValue(iterator.next()));
+        Assert.True(iterator.hasNext());
+        Assert.Equal("b", new string(iterator.peekNextKey().get()));
+        Assert.Equal(KeyValuePair.Create("b", "2"), toStringKeyValue(iterator.next()));
 
-        assertFalse(iterator.hasNext());
+        Assert.False(iterator.hasNext());
     }
 
-    [Test](expected = NoSuchElementException.class)
+    [Xunit.Fact]// (expected = NoSuchElementException)
     public void shouldThrowNoSuchElementOnPeekNextKeyIfNoNext() {
         iterator = new SegmentIterator<>(
-            Arrays.asList(segmentOne, segmentTwo).iterator(),
+            Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
             Bytes.wrap("f".getBytes()),
             Bytes.wrap("h".getBytes()));
@@ -145,10 +145,10 @@ public class SegmentIteratorTest {
         iterator.peekNextKey();
     }
 
-    [Test](expected = NoSuchElementException.class)
+    [Xunit.Fact]// (expected = NoSuchElementException)
     public void shouldThrowNoSuchElementOnNextIfNoNext() {
         iterator = new SegmentIterator<>(
-            Arrays.asList(segmentOne, segmentTwo).iterator(),
+            Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
             Bytes.wrap("f".getBytes()),
             Bytes.wrap("h".getBytes()));
@@ -156,7 +156,7 @@ public class SegmentIteratorTest {
         iterator.next();
     }
 
-    private KeyValue<String, String> toStringKeyValue(final KeyValue<Bytes, byte[]> binaryKv) {
-        return KeyValue.pair(new String(binaryKv.key.get()), new String(binaryKv.value));
+    private KeyValuePair<string, string> toStringKeyValue(KeyValuePair<Bytes, byte[]> binaryKv) {
+        return KeyValuePair.Create(new string(binaryKv.key.get()), new string(binaryKv.value));
     }
 }

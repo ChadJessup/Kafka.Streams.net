@@ -1,336 +1,310 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+using Confluent.Kafka;
+using Kafka.Streams.Interfaces;
+using Kafka.Streams.KStream;
+using Kafka.Streams.Processors.Internals;
+using System;
+using System.Collections.Generic;
+using Xunit;
 
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+    public class RecordQueueTest
+    {
+        private ISerializer<int> intSerializer = Serializers.Int32;
+        private IDeserializer<int> intDeserializer = Deserializers.Int32;
+        private ITimestampExtractor timestampExtractor = new MockTimestampExtractor();
+        private string[] topics = { "topic" };
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.common.record.TimestampType;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler;
-import org.apache.kafka.streams.errors.LogAndContinueExceptionHandler;
-import org.apache.kafka.streams.errors.LogAndFailExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.FailOnInvalidTimestamp;
-import org.apache.kafka.streams.processor.LogAndSkipOnInvalidTimestamp;
-import org.apache.kafka.streams.processor.TimestampExtractor;
-import org.apache.kafka.streams.state.StateSerdes;
-import org.apache.kafka.test.InternalMockProcessorContext;
-import org.apache.kafka.test.MockSourceNode;
-import org.apache.kafka.test.MockTimestampExtractor;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+        // private Sensor skippedRecordsSensor = new Metrics().sensor("skipped-records");
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class RecordQueueTest {
-    private final Serializer<Integer> intSerializer = new IntegerSerializer();
-    private final Deserializer<Integer> intDeserializer = new IntegerDeserializer();
-    private final TimestampExtractor timestampExtractor = new MockTimestampExtractor();
-    private final String[] topics = {"topic"};
-
-    private final Sensor skippedRecordsSensor = new Metrics().sensor("skipped-records");
-
-    final InternalMockProcessorContext context = new InternalMockProcessorContext(
-        StateSerdes.withBuiltinTypes("anyName", Bytes.class, Bytes.class),
-        new RecordCollectorImpl(
-            null,
-            new LogContext("record-queue-test "),
-            new DefaultProductionExceptionHandler(),
-            skippedRecordsSensor
-        )
-    );
-    private final MockSourceNode mockSourceNodeWithMetrics = new MockSourceNode<>(topics, intDeserializer, intDeserializer);
-    private final RecordQueue queue = new RecordQueue(
-        new TopicPartition(topics[0], 1),
-        mockSourceNodeWithMetrics,
-        timestampExtractor,
-        new LogAndFailExceptionHandler(),
-        context,
-        new LogContext());
-    private final RecordQueue queueThatSkipsDeserializeErrors = new RecordQueue(
-        new TopicPartition(topics[0], 1),
-        mockSourceNodeWithMetrics,
-        timestampExtractor,
-        new LogAndContinueExceptionHandler(),
-        context,
-        new LogContext());
-
-    private final byte[] recordValue = intSerializer.serialize(null, 10);
-    private final byte[] recordKey = intSerializer.serialize(null, 1);
-
-    @Before
-    public void before() {
-        mockSourceNodeWithMetrics.init(context);
-    }
-
-    @After
-    public void after() {
-        mockSourceNodeWithMetrics.close();
-    }
-
-    [Test]
-    public void testTimeTracking() {
-
-        assertTrue(queue.isEmpty());
-        assertEquals(0, queue.size());
-        assertEquals(RecordQueue.UNKNOWN, queue.headRecordTimestamp());
-
-        // add three 3 out-of-order records with timestamp 2, 1, 3
-        final List<ConsumerRecord<byte[], byte[]>> list1 = Arrays.asList(
-            new ConsumerRecord<>("topic", 1, 2, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 3, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        queue.addRawRecords(list1);
-
-        assertEquals(3, queue.size());
-        assertEquals(2L, queue.headRecordTimestamp());
-
-        // poll the first record, now with 1, 3
-        assertEquals(2L, queue.poll().timestamp);
-        assertEquals(2, queue.size());
-        assertEquals(1L, queue.headRecordTimestamp());
-
-        // poll the second record, now with 3
-        assertEquals(1L, queue.poll().timestamp);
-        assertEquals(1, queue.size());
-        assertEquals(3L, queue.headRecordTimestamp());
-
-        // add three 3 out-of-order records with timestamp 4, 1, 2
-        // now with 3, 4, 1, 2
-        final List<ConsumerRecord<byte[], byte[]>> list2 = Arrays.asList(
-            new ConsumerRecord<>("topic", 1, 4, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 2, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        queue.addRawRecords(list2);
-
-        assertEquals(4, queue.size());
-        assertEquals(3L, queue.headRecordTimestamp());
-
-        // poll the third record, now with 4, 1, 2
-        assertEquals(3L, queue.poll().timestamp);
-        assertEquals(3, queue.size());
-        assertEquals(4L, queue.headRecordTimestamp());
-
-        // poll the rest records
-        assertEquals(4L, queue.poll().timestamp);
-        assertEquals(1L, queue.headRecordTimestamp());
-
-        assertEquals(1L, queue.poll().timestamp);
-        assertEquals(2L, queue.headRecordTimestamp());
-
-        assertEquals(2L, queue.poll().timestamp);
-        assertTrue(queue.isEmpty());
-        assertEquals(0, queue.size());
-        assertEquals(RecordQueue.UNKNOWN, queue.headRecordTimestamp());
-
-        // add three more records with 4, 5, 6
-        final List<ConsumerRecord<byte[], byte[]>> list3 = Arrays.asList(
-            new ConsumerRecord<>("topic", 1, 4, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 5, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 6, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        queue.addRawRecords(list3);
-
-        assertEquals(3, queue.size());
-        assertEquals(4L, queue.headRecordTimestamp());
-
-        // poll one record again, the timestamp should advance now
-        assertEquals(4L, queue.poll().timestamp);
-        assertEquals(2, queue.size());
-        assertEquals(5L, queue.headRecordTimestamp());
-
-        // clear the queue
-        queue.clear();
-        assertTrue(queue.isEmpty());
-        assertEquals(0, queue.size());
-        assertEquals(RecordQueue.UNKNOWN, queue.headRecordTimestamp());
-
-        // re-insert the three records with 4, 5, 6
-        queue.addRawRecords(list3);
-
-        assertEquals(3, queue.size());
-        assertEquals(4L, queue.headRecordTimestamp());
-    }
-
-    [Test]
-    public void shouldTrackPartitionTimeAsMaxSeenTimestamp() {
-
-        assertTrue(queue.isEmpty());
-        assertEquals(0, queue.size());
-        assertEquals(RecordQueue.UNKNOWN, queue.headRecordTimestamp());
-
-        // add three 3 out-of-order records with timestamp 2, 1, 3, 4
-        final List<ConsumerRecord<byte[], byte[]>> list1 = Arrays.asList(
-            new ConsumerRecord<>("topic", 1, 2, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 3, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 4, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        assertEquals(queue.partitionTime(), RecordQueue.UNKNOWN);
-
-        queue.addRawRecords(list1);
-
-        assertEquals(queue.partitionTime(), 2L);
-
-        queue.poll();
-        assertEquals(queue.partitionTime(), 2L);
-
-        queue.poll();
-        assertEquals(queue.partitionTime(), 3L);
-    }
-
-    [Test](expected = StreamsException.class)
-    public void shouldThrowStreamsExceptionWhenKeyDeserializationFails() {
-        final byte[] key = Serdes.Long().serializer().serialize("foo", 1L);
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, key, recordValue));
-
-        queue.addRawRecords(records);
-    }
-
-    [Test](expected = StreamsException.class)
-    public void shouldThrowStreamsExceptionWhenValueDeserializationFails() {
-        final byte[] value = Serdes.Long().serializer().serialize("foo", 1L);
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, value));
-
-        queue.addRawRecords(records);
-    }
-
-    [Test]
-    public void shouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler() {
-        final byte[] key = Serdes.Long().serializer().serialize("foo", 1L);
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, key, recordValue));
-
-        queueThatSkipsDeserializeErrors.addRawRecords(records);
-        assertEquals(0, queueThatSkipsDeserializeErrors.size());
-    }
-
-    [Test]
-    public void shouldNotThrowStreamsExceptionWhenValueDeserializationFailsWithSkipHandler() {
-        final byte[] value = Serdes.Long().serializer().serialize("foo", 1L);
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, value));
-
-        queueThatSkipsDeserializeErrors.addRawRecords(records);
-        assertEquals(0, queueThatSkipsDeserializeErrors.size());
-    }
-
-
-    [Test](expected = StreamsException.class)
-    public void shouldThrowOnNegativeTimestamp() {
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, -1L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        final RecordQueue queue = new RecordQueue(
-            new TopicPartition(topics[0], 1),
-            new MockSourceNode<>(topics, intDeserializer, intDeserializer),
-            new FailOnInvalidTimestamp(),
-            new LogAndContinueExceptionHandler(),
-            new InternalMockProcessorContext(),
-            new LogContext());
-
-        queue.addRawRecords(records);
-    }
-
-    [Test]
-    public void shouldDropOnNegativeTimestamp() {
-        final List<ConsumerRecord<byte[], byte[]>> records = Collections.singletonList(
-            new ConsumerRecord<>("topic", 1, 1, -1L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
-
-        final RecordQueue queue = new RecordQueue(
-            new TopicPartition(topics[0], 1),
-            new MockSourceNode<>(topics, intDeserializer, intDeserializer),
-            new LogAndSkipOnInvalidTimestamp(),
-            new LogAndContinueExceptionHandler(),
-            new InternalMockProcessorContext(),
-            new LogContext());
-        queue.addRawRecords(records);
-
-        assertEquals(0, queue.size());
-    }
-
-    [Test]
-    public void shouldPassPartitionTimeToTimestampExtractor() {
-
-        final PartitionTimeTrackingTimestampExtractor timestampExtractor = new PartitionTimeTrackingTimestampExtractor();
-        final RecordQueue queue = new RecordQueue(
+        InternalMockProcessorContext context = new InternalMockProcessorContext(
+            StateSerdes.withBuiltinTypes("anyName", Bytes, Bytes),
+            new RecordCollectorImpl(
+                null,
+                new LogContext("record-queue-test "),
+                new DefaultProductionExceptionHandler(),
+                skippedRecordsSensor
+            )
+        );
+        private MockSourceNode mockSourceNodeWithMetrics = new MockSourceNode<>(topics, intDeserializer, intDeserializer);
+        private RecordQueue queue = new RecordQueue(
             new TopicPartition(topics[0], 1),
             mockSourceNodeWithMetrics,
             timestampExtractor,
             new LogAndFailExceptionHandler(),
             context,
             new LogContext());
+        private RecordQueue queueThatSkipsDeserializeErrors = new RecordQueue(
+            new TopicPartition(topics[0], 1),
+            mockSourceNodeWithMetrics,
+            timestampExtractor,
+            new LogAndContinueExceptionHandler(),
+            context,
+            new LogContext());
 
-        assertTrue(queue.isEmpty());
-        assertEquals(0, queue.size());
-        assertEquals(RecordQueue.UNKNOWN, queue.headRecordTimestamp());
+        private byte[] recordValue = intSerializer.serialize(null, 10);
+        private byte[] recordKey = intSerializer.serialize(null, 1);
 
-        // add three 3 out-of-order records with timestamp 2, 1, 3, 4
-        final List<ConsumerRecord<byte[], byte[]>> list1 = Arrays.asList(
-            new ConsumerRecord<>("topic", 1, 2, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 1, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 3, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue),
-            new ConsumerRecord<>("topic", 1, 4, 0L, TimestampType.CREATE_TIME, 0L, 0, 0, recordKey, recordValue));
 
-        assertEquals(RecordQueue.UNKNOWN, timestampExtractor.partitionTime);
+        public void before()
+        {
+            mockSourceNodeWithMetrics.init(context);
+        }
 
-        queue.addRawRecords(list1);
 
-        // no (known) timestamp has yet been passed to the timestamp extractor
-        assertEquals(RecordQueue.UNKNOWN, timestampExtractor.partitionTime);
+        public void after()
+        {
+            mockSourceNodeWithMetrics.close();
+        }
 
-        queue.poll();
-        assertEquals(2L, timestampExtractor.partitionTime);
+        [Xunit.Fact]
+        public void testTimeTracking()
+        {
 
-        queue.poll();
-        assertEquals(2L, timestampExtractor.partitionTime);
+            Assert.True(queue.isEmpty());
+            Assert.Equal(0, queue.size());
+            Assert.Equal(RecordQueue.UNKNOWN, queue.headRecordTimestamp);
 
-        queue.poll();
-        assertEquals(3L, timestampExtractor.partitionTime);
+            // add three 3 out-of-order records with timestamp 2, 1, 3
+            List<ConsumeResult<byte[], byte[]>> list1 = Array.asList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 2, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 3, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
 
-    }
+            queue.addRawRecords(list1);
 
-    class PartitionTimeTrackingTimestampExtractor implements TimestampExtractor {
-        private long partitionTime = RecordQueue.UNKNOWN;
+            Assert.Equal(3, queue.size());
+            Assert.Equal(2L, queue.headRecordTimestamp);
 
-        public long extract(final ConsumerRecord<Object, Object> record, final long partitionTime) {
-            if (partitionTime < this.partitionTime) {
-                throw new IllegalStateException("Partition time should not decrease");
+            // poll the first record, now with 1, 3
+            Assert.Equal(2L, queue.poll().timestamp);
+            Assert.Equal(2, queue.size());
+            Assert.Equal(1L, queue.headRecordTimestamp);
+
+            // poll the second record, now with 3
+            Assert.Equal(1L, queue.poll().timestamp);
+            Assert.Equal(1, queue.size());
+            Assert.Equal(3L, queue.headRecordTimestamp);
+
+            // add three 3 out-of-order records with timestamp 4, 1, 2
+            // now with 3, 4, 1, 2
+            List<ConsumeResult<byte[], byte[]>> list2 = Array.asList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 4, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 2, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            queue.addRawRecords(list2);
+
+            Assert.Equal(4, queue.size());
+            Assert.Equal(3L, queue.headRecordTimestamp);
+
+            // poll the third record, now with 4, 1, 2
+            Assert.Equal(3L, queue.poll().timestamp);
+            Assert.Equal(3, queue.size());
+            Assert.Equal(4L, queue.headRecordTimestamp);
+
+            // poll the rest records
+            Assert.Equal(4L, queue.poll().timestamp);
+            Assert.Equal(1L, queue.headRecordTimestamp);
+
+            Assert.Equal(1L, queue.poll().timestamp);
+            Assert.Equal(2L, queue.headRecordTimestamp);
+
+            Assert.Equal(2L, queue.poll().timestamp);
+            Assert.True(queue.isEmpty());
+            Assert.Equal(0, queue.size());
+            Assert.Equal(RecordQueue.UNKNOWN, queue.headRecordTimestamp);
+
+            // add three more records with 4, 5, 6
+            List<ConsumeResult<byte[], byte[]>> list3 = Array.asList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 4, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 5, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 6, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            queue.addRawRecords(list3);
+
+            Assert.Equal(3, queue.size());
+            Assert.Equal(4L, queue.headRecordTimestamp);
+
+            // poll one record again, the timestamp should advance now
+            Assert.Equal(4L, queue.poll().timestamp);
+            Assert.Equal(2, queue.size());
+            Assert.Equal(5L, queue.headRecordTimestamp);
+
+            // clear the queue
+            queue.clear();
+            Assert.True(queue.isEmpty());
+            Assert.Equal(0, queue.size());
+            Assert.Equal(RecordQueue.UNKNOWN, queue.headRecordTimestamp);
+
+            // re-insert the three records with 4, 5, 6
+            queue.addRawRecords(list3);
+
+            Assert.Equal(3, queue.size());
+            Assert.Equal(4L, queue.headRecordTimestamp);
+        }
+
+        [Xunit.Fact]
+        public void shouldTrackPartitionTimeAsMaxSeenTimestamp()
+        {
+
+            Assert.True(queue.isEmpty());
+            Assert.Equal(0, queue.size());
+            Assert.Equal(RecordQueue.UNKNOWN, queue.headRecordTimestamp);
+
+            // add three 3 out-of-order records with timestamp 2, 1, 3, 4
+            List<ConsumeResult<byte[], byte[]>> list1 = Array.asList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 2, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 3, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 4, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            Assert.Equal(queue.partitionTime(), RecordQueue.UNKNOWN);
+
+            queue.addRawRecords(list1);
+
+            Assert.Equal(queue.partitionTime(), 2L);
+
+            queue.poll();
+            Assert.Equal(queue.partitionTime(), 2L);
+
+            queue.poll();
+            Assert.Equal(queue.partitionTime(), 3L);
+        }
+
+        [Xunit.Fact]// (expected = StreamsException)
+        public void shouldThrowStreamsExceptionWhenKeyDeserializationFails()
+        {
+            byte[] key = Serdes.Long().Serializer.serialize("foo", 1L);
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, key, recordValue));
+
+            queue.addRawRecords(records);
+        }
+
+        [Xunit.Fact]// (expected = StreamsException)
+        public void shouldThrowStreamsExceptionWhenValueDeserializationFails()
+        {
+            byte[] value = Serdes.Long().Serializer.serialize("foo", 1L);
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, value));
+
+            queue.addRawRecords(records);
+        }
+
+        [Xunit.Fact]
+        public void shouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler()
+        {
+            byte[] key = Serdes.Long().Serializer.serialize("foo", 1L);
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, key, recordValue));
+
+            queueThatSkipsDeserializeErrors.addRawRecords(records);
+            Assert.Equal(0, queueThatSkipsDeserializeErrors.Count);
+        }
+
+        [Xunit.Fact]
+        public void shouldNotThrowStreamsExceptionWhenValueDeserializationFailsWithSkipHandler()
+        {
+            byte[] value = Serdes.Long().Serializer.serialize("foo", 1L);
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, value));
+
+            queueThatSkipsDeserializeErrors.addRawRecords(records);
+            Assert.Equal(0, queueThatSkipsDeserializeErrors.Count);
+        }
+
+
+        [Xunit.Fact]// (expected = StreamsException)
+        public void shouldThrowOnNegativeTimestamp()
+        {
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, -1L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            RecordQueue queue = new RecordQueue(
+                new TopicPartition(topics[0], 1),
+                new MockSourceNode<>(topics, intDeserializer, intDeserializer),
+                new FailOnInvalidTimestamp(),
+                new LogAndContinueExceptionHandler(),
+                new InternalMockProcessorContext(),
+                new LogContext());
+
+            queue.addRawRecords(records);
+        }
+
+        [Xunit.Fact]
+        public void shouldDropOnNegativeTimestamp()
+        {
+            List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, -1L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            RecordQueue queue = new RecordQueue(
+                new TopicPartition(topics[0], 1),
+                new MockSourceNode<>(topics, intDeserializer, intDeserializer),
+                new LogAndSkipOnInvalidTimestamp(),
+                new LogAndContinueExceptionHandler(),
+                new InternalMockProcessorContext(),
+                new LogContext());
+            queue.addRawRecords(records);
+
+            Assert.Equal(0, queue.size());
+        }
+
+        [Xunit.Fact]
+        public void shouldPassPartitionTimeToTimestampExtractor()
+        {
+
+            PartitionTimeTrackingTimestampExtractor timestampExtractor = new PartitionTimeTrackingTimestampExtractor();
+            RecordQueue queue = new RecordQueue(
+                new TopicPartition(topics[0], 1),
+                mockSourceNodeWithMetrics,
+                timestampExtractor,
+                new LogAndFailExceptionHandler(),
+                context,
+                new LogContext());
+
+            Assert.True(queue.isEmpty());
+            Assert.Equal(0, queue.size());
+            Assert.Equal(RecordQueue.UNKNOWN, queue.headRecordTimestamp);
+
+            // add three 3 out-of-order records with timestamp 2, 1, 3, 4
+            List<ConsumeResult<byte[], byte[]>> list1 = Array.asList(
+                new ConsumeResult<byte[], byte[]>("topic", 1, 2, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 1, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 3, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue),
+                new ConsumeResult<byte[], byte[]>("topic", 1, 4, 0L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
+
+            Assert.Equal(RecordQueue.UNKNOWN, timestampExtractor.partitionTime);
+
+            queue.addRawRecords(list1);
+
+            // no (known) timestamp has yet been passed to the timestamp extractor
+            Assert.Equal(RecordQueue.UNKNOWN, timestampExtractor.partitionTime);
+
+            queue.poll();
+            Assert.Equal(2L, timestampExtractor.partitionTime);
+
+            queue.poll();
+            Assert.Equal(2L, timestampExtractor.partitionTime);
+
+            queue.poll();
+            Assert.Equal(3L, timestampExtractor.partitionTime);
+
+        }
+
+        class PartitionTimeTrackingTimestampExtractor : ITimestampExtractor
+        {
+            private long partitionTime = RecordQueue.UNKNOWN;
+
+            public long extract(ConsumeResult<object, object> record, long partitionTime)
+            {
+                if (partitionTime < this.partitionTime)
+                {
+                    throw new IllegalStateException("Partition time should not decrease");
+                }
+                this.partitionTime = partitionTime;
+                return record.Offset;
             }
-            this.partitionTime = partitionTime;
-            return record.offset();
         }
     }
 }

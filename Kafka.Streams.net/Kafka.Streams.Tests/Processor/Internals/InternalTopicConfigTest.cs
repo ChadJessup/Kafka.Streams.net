@@ -1,68 +1,68 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.config.TopicConfig;
-import org.apache.kafka.common.errors.InvalidTopicException;
-import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+
+
+
+
+
+
+
 
 public class InternalTopicConfigTest {
 
-    [Test](expected = NullPointerException.class)
+    [Xunit.Fact]// (expected = NullPointerException)
     public void shouldThrowIfNameIsNull() {
-        new RepartitionTopicConfig(null, Collections.<String, String>emptyMap());
+        new RepartitionTopicConfig(null, Collections.<string, string>emptyMap());
     }
 
-    [Test](expected = InvalidTopicException.class)
+    [Xunit.Fact]// (expected = InvalidTopicException)
     public void shouldThrowIfNameIsInvalid() {
-        new RepartitionTopicConfig("foo bar baz", Collections.<String, String>emptyMap());
+        new RepartitionTopicConfig("foo bar baz", Collections.<string, string>emptyMap());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAugmentRetentionMsWithWindowedChangelog() {
-        final WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("name", Collections.<String, String>emptyMap());
+        WindowedChangelogTopicConfig topicConfig = new WindowedChangelogTopicConfig("name", Collections.<string, string>emptyMap());
         topicConfig.setRetentionMs(10);
-        assertEquals("30", topicConfig.getProperties(Collections.<String, String>emptyMap(), 20).get(TopicConfig.RETENTION_MS_CONFIG));
+        Assert.Equal("30", topicConfig.getProperties(Collections.<string, string>emptyMap(), 20).get(TopicConfig.RETENTION_MS_CONFIG));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldUseSuppliedConfigs() {
-        final Map<String, String> configs = new HashMap<>();
+        Dictionary<string, string> configs = new HashMap<>();
         configs.put("retention.ms", "1000");
         configs.put("retention.bytes", "10000");
 
-        final UnwindowedChangelogTopicConfig topicConfig = new UnwindowedChangelogTopicConfig("name", configs);
+        UnwindowedChangelogTopicConfig topicConfig = new UnwindowedChangelogTopicConfig("name", configs);
 
-        final Map<String, String> properties = topicConfig.getProperties(Collections.<String, String>emptyMap(), 0);
-        assertEquals("1000", properties.get("retention.ms"));
-        assertEquals("10000", properties.get("retention.bytes"));
+        Dictionary<string, string> properties = topicConfig.getProperties(Collections.<string, string>emptyMap(), 0);
+        Assert.Equal("1000", properties.get("retention.ms"));
+        Assert.Equal("10000", properties.get("retention.bytes"));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldUseSuppliedConfigsForRepartitionConfig() {
-        final Map<String, String> configs = new HashMap<>();
+        Dictionary<string, string> configs = new HashMap<>();
         configs.put("retention.ms", "1000");
-        final RepartitionTopicConfig topicConfig = new RepartitionTopicConfig("name", configs);
-        assertEquals("1000", topicConfig.getProperties(Collections.<String, String>emptyMap(), 0).get(TopicConfig.RETENTION_MS_CONFIG));
+        RepartitionTopicConfig topicConfig = new RepartitionTopicConfig("name", configs);
+        Assert.Equal("1000", topicConfig.getProperties(Collections.<string, string>emptyMap(), 0).get(TopicConfig.RETENTION_MS_CONFIG));
     }
 }

@@ -1,70 +1,70 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
-import org.apache.kafka.common.serialization.ByteArraySerializer;
-import org.apache.kafka.common.serialization.IntegerDeserializer;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.ForeachAction;
-import org.apache.kafka.streams.kstream.JoinWindows;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.TimeWindows;
-import org.apache.kafka.streams.kstream.ValueJoiner;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
-import org.apache.kafka.streams.state.KeyValueIterator;
-import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.StoreBuilder;
-import org.apache.kafka.streams.state.Stores;
-import org.apache.kafka.streams.state.WindowStore;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofSeconds;
-import static java.time.Instant.ofEpochMilli;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Class that provides support for a series of benchmarks. It is usually driven by
@@ -82,18 +82,18 @@ import static java.time.Instant.ofEpochMilli;
  * is still running "consume"
  */
 public class SimpleBenchmark {
-    private static final String LOADING_PRODUCER_CLIENT_ID = "simple-benchmark-loading-producer";
+    private static string LOADING_PRODUCER_CLIENT_ID = "simple-benchmark-loading-producer";
 
-    private static final String SOURCE_TOPIC_ONE = "simpleBenchmarkSourceTopic1";
-    private static final String SOURCE_TOPIC_TWO = "simpleBenchmarkSourceTopic2";
-    private static final String SINK_TOPIC = "simpleBenchmarkSinkTopic";
+    private static string SOURCE_TOPIC_ONE = "simpleBenchmarkSourceTopic1";
+    private static string SOURCE_TOPIC_TWO = "simpleBenchmarkSourceTopic2";
+    private static string SINK_TOPIC = "simpleBenchmarkSinkTopic";
 
-    private static final String YAHOO_CAMPAIGNS_TOPIC = "yahooCampaigns";
-    private static final String YAHOO_EVENTS_TOPIC = "yahooEvents";
+    private static string YAHOO_CAMPAIGNS_TOPIC = "yahooCampaigns";
+    private static string YAHOO_EVENTS_TOPIC = "yahooEvents";
 
-    private static final ValueJoiner<byte[], byte[], byte[]> VALUE_JOINER = new ValueJoiner<byte[], byte[], byte[]>() {
-        @Override
-        public byte[] apply(final byte[] value1, final byte[] value2) {
+    private static ValueJoiner<byte[], byte[], byte[]> VALUE_JOINER = new ValueJoiner<byte[], byte[], byte[]>() {
+        
+        public byte[] apply(byte[] value1, byte[] value2) {
             // dump joiner in order to have as less join overhead as possible
             if (value1 != null) {
                 return value1;
@@ -105,54 +105,54 @@ public class SimpleBenchmark {
         }
     };
 
-    private static final Serde<byte[]> BYTE_SERDE = Serdes.ByteArray();
-    private static final Serde<Integer> INTEGER_SERDE = Serdes.Integer();
+    private static Serde<byte[]> BYTE_SERDE = Serdes.ByteArray();
+    private static Serde<int> INTEGER_SERDE = Serdes.Int();
 
     long processedBytes = 0L;
     int processedRecords = 0;
 
-    private static final long POLL_MS = 500L;
-    private static final long COMMIT_INTERVAL_MS = 30000L;
-    private static final int MAX_POLL_RECORDS = 1000;
+    private static long POLL_MS = 500L;
+    private static long COMMIT_INTERVAL_MS = 30000L;
+    private static int MAX_POLL_RECORDS = 1000;
 
     /* ----------- benchmark variables that are hard-coded ----------- */
 
-    private static final int KEY_SPACE_SIZE = 10000;
+    private static int KEY_SPACE_SIZE = 10000;
 
-    private static final long STREAM_STREAM_JOIN_WINDOW = 10000L;
+    private static long STREAM_STREAM_JOIN_WINDOW = 10000L;
 
-    private static final long AGGREGATE_WINDOW_SIZE = 1000L;
+    private static long AGGREGATE_WINDOW_SIZE = 1000L;
 
-    private static final long AGGREGATE_WINDOW_ADVANCE = 500L;
+    private static long AGGREGATE_WINDOW_ADVANCE = 500L;
 
-    private static final int SOCKET_SIZE_BYTES = 1024 * 1024;
+    private static int SOCKET_SIZE_BYTES = 1024 * 1024;
 
     // the following numbers are based on empirical results and should only
     // be considered for updates when perf results have significantly changed
 
     // with at least 10 million records, we run for at most 3 minutes
-    private static final int MAX_WAIT_MS = 3 * 60 * 1000;
+    private static int MAX_WAIT_MS = 3 * 60 * 1000;
 
     /* ----------- benchmark variables that can be specified ----------- */
 
-    final String testName;
+    string testName;
 
-    final int numRecords;
+    int numRecords;
 
-    final Properties props;
+    Properties props;
 
-    private final int valueSize;
+    private int valueSize;
 
-    private final double keySkew;
+    private double keySkew;
 
     /* ----------- ----------------------------------------- ----------- */
 
 
-    private SimpleBenchmark(final Properties props,
-                            final String testName,
-                            final int numRecords,
-                            final double keySkew,
-                            final int valueSize) {
+    private SimpleBenchmark(Properties props,
+                            string testName,
+                            int numRecords,
+                            double keySkew,
+                            int valueSize) {
         super();
         this.props = props;
         this.testName = testName;
@@ -215,46 +215,46 @@ public class SimpleBenchmark {
         }
     }
 
-    public static void main(final String[] args) throws IOException {
-        if (args.length < 5) {
-            System.err.println("Not enough parameters are provided; expecting propFileName, testName, numRecords, keySkew, valueSize");
+    public static void main(string[] args){ //throws IOException
+        if (args.Length < 5) {
+            System.Console.Error.println("Not enough parameters are provided; expecting propFileName, testName, numRecords, keySkew, valueSize");
             System.exit(1);
         }
 
-        final String propFileName = args[0];
-        final String testName = args[1].toLowerCase(Locale.ROOT);
-        final int numRecords = Integer.parseInt(args[2]);
-        final double keySkew = Double.parseDouble(args[3]); // 0d means even distribution
-        final int valueSize = Integer.parseInt(args[4]);
+        string propFileName = args[0];
+        string testName = args[1].toLowerCase(Locale.ROOT);
+        int numRecords = int.parseInt(args[2]);
+        double keySkew = Double.parseDouble(args[3]); // 0d means even distribution
+        int valueSize = int.parseInt(args[4]);
 
-        final Properties props = Utils.loadProps(propFileName);
-        final String kafka = props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+        Properties props = Utils.loadProps(propFileName);
+        string kafka = props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
 
         if (kafka == null) {
-            System.err.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
+            System.Console.Error.println("No bootstrap kafka servers specified in " + StreamsConfig.BOOTSTRAP_SERVERS_CONFIG);
             System.exit(1);
         }
 
         // Note: this output is needed for automated tests and must not be removed
-        System.out.println("StreamsTest instance started");
+        System.Console.Out.WriteLine("StreamsTest instance started");
 
-        System.out.println("testName=" + testName);
-        System.out.println("streamsProperties=" + props);
-        System.out.println("numRecords=" + numRecords);
-        System.out.println("keySkew=" + keySkew);
-        System.out.println("valueSize=" + valueSize);
+        System.Console.Out.WriteLine("testName=" + testName);
+        System.Console.Out.WriteLine("streamsProperties=" + props);
+        System.Console.Out.WriteLine("numRecords=" + numRecords);
+        System.Console.Out.WriteLine("keySkew=" + keySkew);
+        System.Console.Out.WriteLine("valueSize=" + valueSize);
 
-        final SimpleBenchmark benchmark = new SimpleBenchmark(props, testName, numRecords, keySkew, valueSize);
+        SimpleBenchmark benchmark = new SimpleBenchmark(props, testName, numRecords, keySkew, valueSize);
 
         benchmark.run();
     }
 
-    public void setStreamProperties(final String applicationId) {
+    public void setStreamProperties(string applicationId) {
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         props.put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
         props.put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL_MS);
-        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Integer().getClass());
+        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass());
         // the socket buffer needs to be large, especially when running in AWS with
         // high latency. if running locally the default is fine.
@@ -267,8 +267,8 @@ public class SimpleBenchmark {
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
     }
 
-    private Properties setProduceConsumeProperties(final String clientId) {
-        final Properties clientProps = new Properties();
+    private Properties setProduceConsumeProperties(string clientId) {
+        Properties clientProps = new Properties();
         clientProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
         clientProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         // the socket buffer needs to be large, especially when running in AWS with
@@ -276,10 +276,10 @@ public class SimpleBenchmark {
         clientProps.put(ProducerConfig.LINGER_MS_CONFIG, 5000);
         clientProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
         clientProps.put(ProducerConfig.SEND_BUFFER_CONFIG, SOCKET_SIZE_BYTES);
-        clientProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer.class);
-        clientProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-        clientProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer.class);
-        clientProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
+        clientProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, IntegerSerializer);
+        clientProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer);
+        clientProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, IntegerDeserializer);
+        clientProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer);
         clientProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
         // the socket buffer needs to be large, especially when running in AWS with
         // high latency. if running locally the default is fine.
@@ -295,22 +295,23 @@ public class SimpleBenchmark {
 
     /**
      * Produce values to a topic
-     * @param clientId String specifying client ID
+     * @param clientId string specifying client ID
      * @param topic Topic to produce to
      * @param numRecords Number of records to produce
      * @param keySkew Key zipf distribution skewness
      * @param valueSize Size of value in bytes
      */
-    private void produce(final String clientId,
-                         final String topic,
-                         final int numRecords,
-                         final double keySkew,
-                         final int valueSize) {
-        final Properties props = setProduceConsumeProperties(clientId);
-        final ZipfGenerator keyGen = new ZipfGenerator(KEY_SPACE_SIZE, keySkew);
+    private void produce(string clientId,
+                         string topic,
+                         int numRecords,
+                         double keySkew,
+                         int valueSize) {
+        Properties props = setProduceConsumeProperties(clientId);
+        ZipfGenerator keyGen = new ZipfGenerator(KEY_SPACE_SIZE, keySkew);
 
-        try (final KafkaProducer<Integer, byte[]> producer = new KafkaProducer<>(props)) {
-            final byte[] value = new byte[valueSize];
+        try { 
+ (KafkaProducer<int, byte[]> producer = new KafkaProducer<>(props));
+            byte[] value = new byte[valueSize];
             // put some random values to increase entropy. Some devices
             // like SSDs do compression and if the array is all zeros
             // the performance will be too good.
@@ -322,29 +323,29 @@ public class SimpleBenchmark {
         }
     }
 
-    private void consumeAndProduce(final String topic) {
-        final Properties consumerProps = setProduceConsumeProperties("simple-benchmark-consumer");
-        final Properties producerProps = setProduceConsumeProperties("simple-benchmark-producer");
+    private void consumeAndProduce(string topic) {
+        Properties consumerProps = setProduceConsumeProperties("simple-benchmark-consumer");
+        Properties producerProps = setProduceConsumeProperties("simple-benchmark-producer");
 
-        final long startTime = System.currentTimeMillis();
-        try (final KafkaConsumer<Integer, byte[]> consumer = new KafkaConsumer<>(consumerProps);
-             final KafkaProducer<Integer, byte[]> producer = new KafkaProducer<>(producerProps)) {
-            final List<TopicPartition> partitions = getAllPartitions(consumer, topic);
+        long startTime = System.currentTimeMillis();
+        try (KafkaConsumer<int, byte[]> consumer = new KafkaConsumer<>(consumerProps);
+             KafkaProducer<int, byte[]> producer = new KafkaProducer<>(producerProps)) {
+            List<TopicPartition> partitions = getAllPartitions(consumer, topic);
 
             consumer.assign(partitions);
             consumer.seekToBeginning(partitions);
 
             while (true) {
-                final ConsumerRecords<Integer, byte[]> records = consumer.poll(ofMillis(POLL_MS));
+                ConsumerRecords<int, byte[]> records = consumer.poll(ofMillis(POLL_MS));
                 if (records.isEmpty()) {
                     if (processedRecords == numRecords) {
                         break;
                     }
                 } else {
-                    for (final ConsumerRecord<Integer, byte[]> record : records) {
-                        producer.send(new ProducerRecord<>(SINK_TOPIC, record.key(), record.value()));
+                    foreach (ConsumeResult<int, byte[]> record in records) {
+                        producer.send(new ProducerRecord<>(SINK_TOPIC, record.Key, record.Value));
                         processedRecords++;
-                        processedBytes += record.value().length + Integer.SIZE;
+                        processedBytes += record.Value.Length + int.SIZE;
                         if (processedRecords == numRecords) {
                             break;
                         }
@@ -356,32 +357,33 @@ public class SimpleBenchmark {
             }
         }
 
-        final long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
         printResults("ConsumerProducer Performance [records/latency/rec-sec/MB-sec read]: ", endTime - startTime);
     }
 
-    private void consume(final String topic) {
-        final Properties consumerProps = setProduceConsumeProperties("simple-benchmark-consumer");
+    private void consume(string topic) {
+        Properties consumerProps = setProduceConsumeProperties("simple-benchmark-consumer");
 
-        final long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
 
-        try (final KafkaConsumer<Integer, byte[]> consumer = new KafkaConsumer<>(consumerProps)) {
-            final List<TopicPartition> partitions = getAllPartitions(consumer, topic);
+        try { 
+ (KafkaConsumer<int, byte[]> consumer = new KafkaConsumer<>(consumerProps));
+            List<TopicPartition> partitions = getAllPartitions(consumer, topic);
 
             consumer.assign(partitions);
             consumer.seekToBeginning(partitions);
 
             while (true) {
-                final ConsumerRecords<Integer, byte[]> records = consumer.poll(ofMillis(POLL_MS));
+                ConsumerRecords<int, byte[]> records = consumer.poll(ofMillis(POLL_MS));
                 if (records.isEmpty()) {
                     if (processedRecords == numRecords) {
                         break;
                     }
                 } else {
-                    for (final ConsumerRecord<Integer, byte[]> record : records) {
+                    foreach (ConsumeResult<int, byte[]> record in records) {
                         processedRecords++;
-                        processedBytes += record.value().length + Integer.SIZE;
+                        processedBytes += record.Value.Length + int.SIZE;
                         if (processedRecords == numRecords) {
                             break;
                         }
@@ -393,65 +395,65 @@ public class SimpleBenchmark {
             }
         }
 
-        final long endTime = System.currentTimeMillis();
+        long endTime = System.currentTimeMillis();
 
         printResults("Consumer Performance [records/latency/rec-sec/MB-sec read]: ", endTime - startTime);
     }
 
-    private void processStream(final String topic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void processStream(string topic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-source");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
         builder.stream(topic, Consumed.with(INTEGER_SERDE, BYTE_SERDE)).peek(new CountDownAction(latch));
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams Source Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithSink(final String topic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void processStreamWithSink(string topic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-source-sink");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final KStream<Integer, byte[]> source = builder.stream(topic);
+        KStream<int, byte[]> source = builder.stream(topic);
         source.peek(new CountDownAction(latch)).to(SINK_TOPIC);
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams SourceSink Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithStateStore(final String topic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void processStreamWithStateStore(string topic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-with-store");
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        final StoreBuilder<KeyValueStore<Integer, byte[]>> storeBuilder =
+        StreamsBuilder builder = new StreamsBuilder();
+        StoreBuilder<KeyValueStore<int, byte[]>> storeBuilder =
             Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore("store"), INTEGER_SERDE, BYTE_SERDE);
         builder.addStateStore(storeBuilder.withCachingEnabled());
 
-        final KStream<Integer, byte[]> source = builder.stream(topic);
+        KStream<int, byte[]> source = builder.stream(topic);
 
-        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<Integer, byte[]>() {
-            @Override
-            public Processor<Integer, byte[]> get() {
-                return new AbstractProcessor<Integer, byte[]>() {
-                    KeyValueStore<Integer, byte[]> store;
+        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<int, byte[]>() {
+            
+            public Processor<int, byte[]> get() {
+                return new AbstractProcessor<int, byte[]>() {
+                    KeyValueStore<int, byte[]> store;
 
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void init(final ProcessorContext context) {
-                        super.init(context);
-                        store = (KeyValueStore<Integer, byte[]>) context.getStateStore("store");
+                    
+                    
+                    public void init(ProcessorContext context) {
+                        base.init(context);
+                        store = (KeyValueStore<int, byte[]>) context.getStateStore("store");
                     }
 
-                    @Override
-                    public void process(final Integer key, final byte[] value) {
+                    
+                    public void process(int key, byte[] value) {
                         store.get(key);
                         store.put(key, value);
                     }
@@ -459,18 +461,18 @@ public class SimpleBenchmark {
             }
         }, "store");
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams Stateful Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithWindowStore(final String topic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void processStreamWithWindowStore(string topic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-with-store");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final StoreBuilder<WindowStore<Integer, byte[]>> storeBuilder = Stores.windowStoreBuilder(
+        StoreBuilder<WindowStore<int, byte[]>> storeBuilder = Stores.windowStoreBuilder(
             Stores.persistentWindowStore(
                 "store",
                 ofMillis(AGGREGATE_WINDOW_SIZE * 3),
@@ -482,25 +484,25 @@ public class SimpleBenchmark {
         );
         builder.addStateStore(storeBuilder.withCachingEnabled());
 
-        final KStream<Integer, byte[]> source = builder.stream(topic);
+        KStream<int, byte[]> source = builder.stream(topic);
 
-        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<Integer, byte[]>() {
-            @Override
-            public Processor<Integer, byte[]> get() {
-                return new AbstractProcessor<Integer, byte[]>() {
-                    WindowStore<Integer, byte[]> store;
+        source.peek(new CountDownAction(latch)).process(new ProcessorSupplier<int, byte[]>() {
+            
+            public Processor<int, byte[]> get() {
+                return new AbstractProcessor<int, byte[]>() {
+                    WindowStore<int, byte[]> store;
 
-                    @SuppressWarnings("unchecked")
-                    @Override
-                    public void init(final ProcessorContext context) {
-                        super.init(context);
-                        store = (WindowStore<Integer, byte[]>) context.getStateStore("store");
+                    
+                    
+                    public void init(ProcessorContext context) {
+                        base.init(context);
+                        store = (WindowStore<int, byte[]>) context.getStateStore("store");
                     }
 
-                    @Override
-                    public void process(final Integer key, final byte[] value) {
-                        final long timestamp = context().timestamp();
-                        final KeyValueIterator<Windowed<Integer>, byte[]> iter = store.fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
+                    
+                    public void process(int key, byte[] value) {
+                        long timestamp = context().Timestamp;
+                        KeyValueIterator<Windowed<int>, byte[]> iter = store.fetch(key - 10, key + 10, ofEpochMilli(timestamp - 1000L), ofEpochMilli(timestamp));
                         while (iter.hasNext()) {
                             iter.next();
                         }
@@ -512,7 +514,7 @@ public class SimpleBenchmark {
             }
         }, "store");
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams Stateful Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
@@ -521,19 +523,19 @@ public class SimpleBenchmark {
      * Counts the occurrence of numbers (note that normally people count words, this
      * example counts numbers)
      */
-    private void countStreamsNonWindowed(final String sourceTopic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void countStreamsNonWindowed(string sourceTopic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-nonwindowed-count");
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        final KStream<Integer, byte[]> input = builder.stream(sourceTopic);
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream<int, byte[]> input = builder.stream(sourceTopic);
 
         input.peek(new CountDownAction(latch))
                 .groupByKey()
                 .count();
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams Count Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
     }
 
@@ -542,20 +544,20 @@ public class SimpleBenchmark {
      * Counts the occurrence of numbers (note that normally people count words, this
      * example counts numbers)
      */
-    private void countStreamsWindowed(final String sourceTopic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void countStreamsWindowed(string sourceTopic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-windowed-count");
 
-        final StreamsBuilder builder = new StreamsBuilder();
-        final KStream<Integer, byte[]> input = builder.stream(sourceTopic);
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream<int, byte[]> input = builder.stream(sourceTopic);
 
         input.peek(new CountDownAction(latch))
                 .groupByKey()
                 .windowedBy(TimeWindows.of(ofMillis(AGGREGATE_WINDOW_SIZE)).advanceBy(ofMillis(AGGREGATE_WINDOW_ADVANCE)))
                 .count();
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
         runGenericBenchmark(streams, "Streams Count Windowed Performance [records/latency/rec-sec/MB-sec counted]: ", latch);
     }
 
@@ -563,19 +565,19 @@ public class SimpleBenchmark {
      * Measure the performance of a KStream-KTable left join. The setup is such that each
      * KStream record joins to exactly one element in the KTable
      */
-    private void streamTableJoin(final String kStreamTopic, final String kTableTopic) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void streamTableJoin(string kStreamTopic, string kTableTopic) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-stream-table-join");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final KStream<Integer, byte[]> input1 = builder.stream(kStreamTopic);
-        final KTable<Integer, byte[]> input2 = builder.table(kTableTopic);
+        KStream<int, byte[]> input1 = builder.stream(kStreamTopic);
+        KTable<int, byte[]> input2 = builder.table(kTableTopic);
 
         input1.leftJoin(input2, VALUE_JOINER).foreach(new CountDownAction(latch));
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
         // run benchmark
         runGenericBenchmark(streams, "Streams KStreamKTable LeftJoin Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
@@ -585,19 +587,19 @@ public class SimpleBenchmark {
      * Measure the performance of a KStream-KStream left join. The setup is such that each
      * KStream record joins to exactly one element in the other KStream
      */
-    private void streamStreamJoin(final String kStreamTopic1, final String kStreamTopic2) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void streamStreamJoin(string kStreamTopic1, string kStreamTopic2) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-stream-stream-join");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final KStream<Integer, byte[]> input1 = builder.stream(kStreamTopic1);
-        final KStream<Integer, byte[]> input2 = builder.stream(kStreamTopic2);
+        KStream<int, byte[]> input1 = builder.stream(kStreamTopic1);
+        KStream<int, byte[]> input2 = builder.stream(kStreamTopic2);
 
         input1.leftJoin(input2, VALUE_JOINER, JoinWindows.of(ofMillis(STREAM_STREAM_JOIN_WINDOW))).foreach(new CountDownAction(latch));
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
         // run benchmark
         runGenericBenchmark(streams, "Streams KStreamKStream LeftJoin Performance [records/latency/rec-sec/MB-sec  joined]: ", latch);
@@ -607,43 +609,43 @@ public class SimpleBenchmark {
      * Measure the performance of a KTable-KTable left join. The setup is such that each
      * KTable record joins to exactly one element in the other KTable
      */
-    private void tableTableJoin(final String kTableTopic1, final String kTableTopic2) {
-        final CountDownLatch latch = new CountDownLatch(1);
+    private void tableTableJoin(string kTableTopic1, string kTableTopic2) {
+        CountDownLatch latch = new CountDownLatch(1);
 
         // setup join
         setStreamProperties("simple-benchmark-table-table-join");
 
-        final StreamsBuilder builder = new StreamsBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
 
-        final KTable<Integer, byte[]> input1 = builder.table(kTableTopic1);
-        final KTable<Integer, byte[]> input2 = builder.table(kTableTopic2);
+        KTable<int, byte[]> input1 = builder.table(kTableTopic1);
+        KTable<int, byte[]> input2 = builder.table(kTableTopic2);
 
         input1.leftJoin(input2, VALUE_JOINER).toStream().foreach(new CountDownAction(latch));
 
-        final KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
+        KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
         // run benchmark
         runGenericBenchmark(streams, "Streams KTableKTable LeftJoin Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    void printResults(final String nameOfBenchmark, final long latency) {
-        System.out.println(nameOfBenchmark +
+    void printResults(string nameOfBenchmark, long latency) {
+        System.Console.Out.WriteLine(nameOfBenchmark +
             processedRecords + "/" +
             latency + "/" +
             recordsPerSec(latency, processedRecords) + "/" +
             megabytesPerSec(latency, processedBytes));
     }
 
-    void runGenericBenchmark(final KafkaStreams streams, final String nameOfBenchmark, final CountDownLatch latch) {
+    void runGenericBenchmark(KafkaStreams streams, string nameOfBenchmark, CountDownLatch latch) {
         streams.start();
 
-        final long startTime = System.currentTimeMillis();
+        long startTime = System.currentTimeMillis();
         long endTime = startTime;
 
         while (latch.getCount() > 0 && (endTime - startTime < MAX_WAIT_MS)) {
             try {
                 latch.await(1000, TimeUnit.MILLISECONDS);
-            } catch (final InterruptedException ex) {
+            } catch (InterruptedException ex) {
                 Thread.interrupted();
             }
 
@@ -654,17 +656,17 @@ public class SimpleBenchmark {
         printResults(nameOfBenchmark, endTime - startTime);
     }
 
-    private class CountDownAction implements ForeachAction<Integer, byte[]> {
-        private final CountDownLatch latch;
+    private class CountDownAction : ForeachAction<int, byte[]> {
+        private CountDownLatch latch;
 
-        CountDownAction(final CountDownLatch latch) {
+        CountDownAction(CountDownLatch latch) {
             this.latch = latch;
         }
 
-        @Override
-        public void apply(final Integer key, final byte[] value) {
+        
+        public void apply(int key, byte[] value) {
             processedRecords++;
-            processedBytes += Integer.SIZE + value.length;
+            processedBytes += int.SIZE + value.Length;
 
             if (processedRecords == numRecords) {
                 this.latch.countDown();
@@ -672,12 +674,12 @@ public class SimpleBenchmark {
         }
     }
 
-    private KafkaStreams createKafkaStreamsWithExceptionHandler(final StreamsBuilder builder, final Properties props) {
-        final KafkaStreams streamsClient = new KafkaStreams(builder.build(), props);
+    private KafkaStreams createKafkaStreamsWithExceptionHandler(StreamsBuilder builder, Properties props) {
+        KafkaStreams streamsClient = new KafkaStreams(builder.build(), props);
         streamsClient.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
-            public void uncaughtException(final Thread t, final Throwable e) {
-                System.out.println("FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
+            
+            public void uncaughtException(Thread t, Throwable e) {
+                System.Console.Out.WriteLine("FATAL: An unexpected exception is encountered on thread " + t + ": " + e);
 
                 streamsClient.close(ofSeconds(30));
             }
@@ -686,39 +688,39 @@ public class SimpleBenchmark {
         return streamsClient;
     }
     
-    private double megabytesPerSec(final long time, final long processedBytes) {
+    private double megabytesPerSec(long time, long processedBytes) {
         return  (processedBytes / 1024.0 / 1024.0) / (time / 1000.0);
     }
 
-    private double recordsPerSec(final long time, final int numRecords) {
+    private double recordsPerSec(long time, int numRecords) {
         return numRecords / (time / 1000.0);
     }
 
-    private List<TopicPartition> getAllPartitions(final KafkaConsumer<?, ?> consumer, final String... topics) {
-        final ArrayList<TopicPartition> partitions = new ArrayList<>();
+    private List<TopicPartition> getAllPartitions(KafkaConsumer<?, ?> consumer, string... topics) {
+        ArrayList<TopicPartition> partitions = new ArrayList<>();
 
-        for (final String topic : topics) {
-            for (final PartitionInfo info : consumer.partitionsFor(topic)) {
+        foreach (string topic in topics) {
+            foreach (PartitionInfo info in consumer.partitionsFor(topic)) {
                 partitions.add(new TopicPartition(info.topic(), info.partition()));
             }
         }
         return partitions;
     }
 
-    private void yahooBenchmark(final String campaignsTopic, final String eventsTopic) {
-        final YahooBenchmark benchmark = new YahooBenchmark(this, campaignsTopic, eventsTopic);
+    private void yahooBenchmark(string campaignsTopic, string eventsTopic) {
+        YahooBenchmark benchmark = new YahooBenchmark(this, campaignsTopic, eventsTopic);
 
         benchmark.run();
     }
 
     private class ZipfGenerator {
-        final private Random rand = new Random(System.currentTimeMillis());
-        final private int size;
-        final private double skew;
+        private Random rand = new Random(System.currentTimeMillis());
+        private int size;
+        private double skew;
 
         private double bottom = 0.0d;
 
-        ZipfGenerator(final int size, final double skew) {
+        ZipfGenerator(int size, double skew) {
             this.size = size;
             this.skew = skew;
 

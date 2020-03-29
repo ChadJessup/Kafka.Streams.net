@@ -1,237 +1,237 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
-import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.processor.Cancellable;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.StateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.To;
-import org.apache.kafka.streams.state.RocksDBConfigSetter;
-import org.apache.kafka.streams.state.internals.ThreadCache;
-import org.apache.kafka.test.MockKeyValueStore;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.time.Duration;
-import java.util.Properties;
 
-import static org.apache.kafka.test.StreamsTestUtils.getStreamsConfig;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class AbstractProcessorContextTest {
 
-    private final MockStreamsMetrics metrics = new MockStreamsMetrics(new Metrics());
-    private final AbstractProcessorContext context = new TestProcessorContext(metrics);
-    private final MockKeyValueStore stateStore = new MockKeyValueStore("store", false);
-    private final Headers headers = new RecordHeaders(new Header[]{new RecordHeader("key", "value".getBytes())});
-    private final ProcessorRecordContext recordContext = new ProcessorRecordContext(10, System.currentTimeMillis(), 1, "foo", headers);
+    private MockStreamsMetrics metrics = new MockStreamsMetrics(new Metrics());
+    private AbstractProcessorContext context = new TestProcessorContext(metrics);
+    private MockKeyValueStore stateStore = new MockKeyValueStore("store", false);
+    private Headers headers = new Headers(new Header[]{new RecordHeader("key", "value".getBytes())});
+    private ProcessorRecordContext recordContext = new ProcessorRecordContext(10, System.currentTimeMillis(), 1, "foo", headers);
 
-    @Before
+    
     public void before() {
         context.setRecordContext(recordContext);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnRegisterWhenContextIsInitialized() {
         context.initialize();
         try {
             context.register(stateStore, null);
-            fail("should throw illegal state exception when context already initialized");
-        } catch (final IllegalStateException e) {
+            Assert.True(false, "should throw illegal state exception when context already initialized");
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotThrowIllegalStateExceptionOnRegisterWhenContextIsNotInitialized() {
         context.register(stateStore, null);
     }
 
-    [Test](expected = NullPointerException.class)
+    [Xunit.Fact]// (expected = NullPointerException)
     public void shouldThrowNullPointerOnRegisterIfStateStoreIsNull() {
         context.register(null, null);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnTopicIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.topic();
-            fail("should throw illegal state exception when record context is null");
-        } catch (final IllegalStateException e) {
+            Assert.True(false, "should throw illegal state exception when record context is null");
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnTopicFromRecordContext() {
-        assertThat(context.topic(), equalTo(recordContext.topic()));
+        Assert.Equal(context.topic(), (recordContext.topic()));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnNullIfTopicEqualsNonExistTopic() {
         context.setRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
-        assertThat(context.topic(), nullValue());
+        Assert.Equal(context.topic(), nullValue());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnPartitionIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.partition();
-            fail("should throw illegal state exception when record context is null");
-        } catch (final IllegalStateException e) {
+            Assert.True(false, "should throw illegal state exception when record context is null");
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnPartitionFromRecordContext() {
-        assertThat(context.partition(), equalTo(recordContext.partition()));
+        Assert.Equal(context.partition(), (recordContext.partition()));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnOffsetIfNoRecordContext() {
         context.setRecordContext(null);
         try {
-            context.offset();
-        } catch (final IllegalStateException e) {
+            context.Offset;
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnOffsetFromRecordContext() {
-        assertThat(context.offset(), equalTo(recordContext.offset()));
+        Assert.Equal(context.Offset, (recordContext.Offset));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnTimestampIfNoRecordContext() {
         context.setRecordContext(null);
         try {
-            context.timestamp();
-            fail("should throw illegal state exception when record context is null");
-        } catch (final IllegalStateException e) {
+            context.Timestamp;
+            Assert.True(false, "should throw illegal state exception when record context is null");
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnTimestampFromRecordContext() {
-        assertThat(context.timestamp(), equalTo(recordContext.timestamp()));
+        Assert.Equal(context.Timestamp, (recordContext.Timestamp));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnHeadersFromRecordContext() {
-        assertThat(context.headers(), equalTo(recordContext.headers()));
+        Assert.Equal(context.headers(), (recordContext.headers()));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnNullIfHeadersAreNotSet() {
         context.setRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
-        assertThat(context.headers(), nullValue());
+        Assert.Equal(context.headers(), nullValue());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionOnHeadersIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.headers();
-        } catch (final IllegalStateException e) {
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void appConfigsShouldReturnParsedValues() {
-        assertThat(
+        Assert.Equal(
             context.appConfigs().get(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG),
-            equalTo(RocksDBConfigSetter.class));
+            equalTo(RocksDBConfigSetter));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void appConfigsShouldReturnUnrecognizedValues() {
-        assertThat(
+        Assert.Equal(
             context.appConfigs().get("user.supplied.config"),
             equalTo("user-suppplied-value"));
     }
 
 
-    private static class TestProcessorContext extends AbstractProcessorContext {
+    private static class TestProcessorContext : AbstractProcessorContext {
         static Properties config;
         static {
             config = getStreamsConfig();
-            // Value must be a string to test className -> class conversion
-            config.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.class.getName());
+            // Value must be a string to test className => class conversion
+            config.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, RocksDBConfigSetter.getName());
             config.put("user.supplied.config", "user-suppplied-value");
         }
 
-        TestProcessorContext(final MockStreamsMetrics metrics) {
+        TestProcessorContext(MockStreamsMetrics metrics) {
             super(new TaskId(0, 0), new StreamsConfig(config), metrics, new StateManagerStub(), new ThreadCache(new LogContext("name "), 0, metrics));
         }
 
-        @Override
-        public StateStore getStateStore(final String name) {
+        
+        public StateStore getStateStore(string name) {
             return null;
         }
 
-        @Override
+        
         @Deprecated
-        public Cancellable schedule(final long interval,
-                                    final PunctuationType type,
-                                    final Punctuator callback) {
+        public Cancellable schedule(long interval,
+                                    PunctuationType type,
+                                    Punctuator callback) {
             return null;
         }
 
-        @Override
-        public Cancellable schedule(final Duration interval,
-                                    final PunctuationType type,
-                                    final Punctuator callback) throws IllegalArgumentException {
+        
+        public Cancellable schedule(Duration interval,
+                                    PunctuationType type,
+                                    Punctuator callback) {// throws IllegalArgumentException
             return null;
         }
 
-        @Override
-        public <K, V> void forward(final K key, final V value) {}
+        
+        public void forward<K, V>(K key, V value) {}
 
-        @Override
-        public <K, V> void forward(final K key, final V value, final To to) {}
+        
+        public void forward<K, V>(K key, V value, To to) {}
 
-        @Override
+        
         @Deprecated
-        public <K, V> void forward(final K key, final V value, final int childIndex) {}
+        public void forward<K, V>(K key, V value, int childIndex) {}
 
-        @Override
+        
         @Deprecated
-        public <K, V> void forward(final K key, final V value, final String childName) {}
+        public void forward<K, V>(K key, V value, string childName) {}
 
-        @Override
+        
         public void commit() {}
     }
 }

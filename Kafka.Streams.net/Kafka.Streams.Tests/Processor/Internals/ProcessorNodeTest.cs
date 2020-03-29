@@ -1,97 +1,97 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.metrics.JmxReporter;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.state.StateSerdes;
-import org.apache.kafka.test.InternalMockProcessorContext;
-import org.apache.kafka.test.StreamsTestUtils;
-import org.junit.Test;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class ProcessorNodeTest {
 
-    @SuppressWarnings("unchecked")
-    [Test](expected = StreamsException.class)
+    
+    [Xunit.Fact]// (expected = StreamsException)
     public void shouldThrowStreamsExceptionIfExceptionCaughtDuringInit() {
-        final ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
+        ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
         node.init(null);
     }
 
-    @SuppressWarnings("unchecked")
-    [Test](expected = StreamsException.class)
+    
+    [Xunit.Fact]// (expected = StreamsException)
     public void shouldThrowStreamsExceptionIfExceptionCaughtDuringClose() {
-        final ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
+        ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
         node.close();
     }
 
-    private static class ExceptionalProcessor implements Processor {
-        @Override
-        public void init(final ProcessorContext context) {
+    private static class ExceptionalProcessor : Processor {
+        
+        public void init(ProcessorContext context) {
             throw new RuntimeException();
         }
 
-        @Override
-        public void process(final Object key, final Object value) {
+        
+        public void process(object key, object value) {
             throw new RuntimeException();
         }
 
-        @Override
+        
         public void close() {
             throw new RuntimeException();
         }
     }
 
-    private static class NoOpProcessor implements Processor<Object, Object> {
-        @Override
-        public void init(final ProcessorContext context) {
+    private static class NoOpProcessor : Processor<object, object> {
+        
+        public void init(ProcessorContext context) {
 
         }
 
-        @Override
-        public void process(final Object key, final Object value) {
+        
+        public void process(object key, object value) {
 
         }
 
-        @Override
+        
         public void close() {
 
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void testMetrics() {
-        final StateSerdes anyStateSerde = StateSerdes.withBuiltinTypes("anyName", Bytes.class, Bytes.class);
+        StateSerdes anyStateSerde = StateSerdes.withBuiltinTypes("anyName", Bytes, Bytes);
 
-        final Metrics metrics = new Metrics();
-        final InternalMockProcessorContext context = new InternalMockProcessorContext(
+        Metrics metrics = new Metrics();
+        InternalMockProcessorContext context = new InternalMockProcessorContext(
             anyStateSerde,
             new RecordCollectorImpl(
                 null,
@@ -101,18 +101,18 @@ public class ProcessorNodeTest {
             ),
             metrics
         );
-        final ProcessorNode<Object, Object> node = new ProcessorNode<>("name", new NoOpProcessor(), Collections.<String>emptySet());
+        ProcessorNode<object, object> node = new ProcessorNode<>("name", new NoOpProcessor(), Collections.<string>emptySet());
         node.init(context);
 
-        final String[] latencyOperations = {"process", "punctuate", "create", "destroy"};
-        final String throughputOperation = "forward";
-        final String groupName = "stream-processor-node-metrics";
-        final Map<String, String> metricTags = new LinkedHashMap<>();
+        string[] latencyOperations = {"process", "punctuate", "create", "destroy"};
+        string throughputOperation = "forward";
+        string groupName = "stream-processor-node-metrics";
+        Dictionary<string, string> metricTags = new LinkedHashMap<>();
         metricTags.put("processor-node-id", node.name());
         metricTags.put("task-id", context.taskId().toString());
         metricTags.put("client-id", "mock");
 
-        for (final String opName : latencyOperations) {
+        foreach (string opName in latencyOperations) {
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-latency-avg", groupName, metricTags);
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-latency-max", groupName, metricTags);
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-rate", groupName, metricTags);
@@ -124,7 +124,7 @@ public class ProcessorNodeTest {
 
         // test "all"
         metricTags.put("processor-node-id", "all");
-        for (final String opName : latencyOperations) {
+        foreach (string opName in latencyOperations) {
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-latency-avg", groupName, metricTags);
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-latency-max", groupName, metricTags);
             StreamsTestUtils.getMetricByNameFilterByTags(metrics.metrics(), opName + "-rate", groupName, metricTags);
@@ -135,9 +135,9 @@ public class ProcessorNodeTest {
                                                                "The average number of occurrence of " + throughputOperation + " operation per second.",
                                                                metricTags)));
 
-        final JmxReporter reporter = new JmxReporter("kafka.streams");
+        JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
-        assertTrue(reporter.containsMbean(String.format("kafka.streams:type=%s,client-id=mock,task-id=%s,processor-node-id=%s",
+        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=%s,client-id=mock,task-id=%s,processor-node-id=%s",
                 groupName, context.taskId().toString(), node.name())));
     }
 

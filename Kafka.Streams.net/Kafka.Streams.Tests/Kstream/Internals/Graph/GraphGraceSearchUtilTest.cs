@@ -37,7 +37,7 @@
 //            //            public void init(IProcessorContext context) { }
 
 
-//            //    public void process(string key, Long value) { }
+//            //    public void process(string key, long value) { }
 
 
 //            //    public void close() { }
@@ -136,7 +136,7 @@
 //            //            public void init(IProcessorContext context) { }
 
 
-//            //    public void process(string key, Long value) { }
+//            //    public void process(string key, long value) { }
 
 
 //            //    public void close() { }

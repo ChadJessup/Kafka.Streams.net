@@ -1,131 +1,134 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+using Confluent.Kafka;
+using Xunit;
+using System;
+
+namespace Kafka.Streams.Tests.State
+{
+    public class NoOpWindowStore : ReadOnlyWindowStore, StateStore
+    {
+
+        private static class EmptyWindowStoreIterator : WindowStoreIterator<KeyValue>
+        {
 
 
-import java.time.Instant;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.StateStore;
+            public void close()
+            {
+            }
 
-import java.util.NoSuchElementException;
 
-public class NoOpWindowStore implements ReadOnlyWindowStore, StateStore {
+            public long peekNextKey()
+            {
+                throw new NoSuchElementException();
+            }
 
-    private static class EmptyWindowStoreIterator implements WindowStoreIterator<KeyValue> {
 
-        @Override
-        public void close() {
+            public bool hasNext()
+            {
+                return false;
+            }
+
+
+            public KeyValuePair<long, KeyValue> next()
+            {
+                throw new NoSuchElementException();
+            }
+
+
+            public void remove()
+            {
+            }
         }
 
-        @Override
-        public Long peekNextKey() {
-            throw new NoSuchElementException();
+        private static WindowStoreIterator<KeyValue> EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
+
+
+        public string name()
+        {
+            return "";
         }
 
-        @Override
-        public boolean hasNext() {
+
+        public void init(ProcessorContext context, StateStore root)
+        {
+
+        }
+
+
+        public void flush()
+        {
+
+        }
+
+
+        public void close()
+        {
+
+        }
+
+
+        public bool persistent()
+        {
             return false;
         }
 
-        @Override
-        public KeyValue<Long, KeyValue> next() {
-            throw new NoSuchElementException();
+
+        public bool isOpen()
+        {
+            return false;
         }
 
-        @Override
-        public void remove() {
+
+        public object fetch(object key, long time)
+        {
+            return null;
         }
-    }
 
-    private static final WindowStoreIterator<KeyValue> EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
-    @Override
-    public String name() {
-        return "";
-    }
 
-    @Override
-    public void init(final ProcessorContext context, final StateStore root) {
+        public WindowStoreIterator fetch(object key, long timeFrom, long timeTo)
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    }
 
-    @Override
-    public void flush() {
+        public WindowStoreIterator fetch(object key, Instant from, Instant to)
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    }
 
-    @Override
-    public void close() {
 
-    }
+        public WindowStoreIterator<KeyValue> fetch(object from, object to, long timeFrom, long timeTo)
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    @Override
-    public boolean persistent() {
-        return false;
-    }
 
-    @Override
-    public boolean isOpen() {
-        return false;
-    }
+        public KeyValueIterator fetch(object from,
+                                      object to,
+                                      Instant fromTime,
+                                      Instant toTime)
+        {// throws IllegalArgumentException
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    @Override
-    public Object fetch(final Object key, final long time) {
-        return null;
-    }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public WindowStoreIterator fetch(final Object key, final long timeFrom, final long timeTo) {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
+        public WindowStoreIterator<KeyValue> all()
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    @Override
-    public WindowStoreIterator fetch(final Object key, final Instant from, final Instant to) {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public WindowStoreIterator<KeyValue> fetch(final Object from, final Object to, final long timeFrom, final long timeTo) {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
 
-    @Override
-    public KeyValueIterator fetch(final Object from,
-                                  final Object to,
-                                  final Instant fromTime,
-                                  final Instant toTime) throws IllegalArgumentException {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
+        public WindowStoreIterator<KeyValue> fetchAll(long timeFrom, long timeTo)
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
 
-    @Override
-    public WindowStoreIterator<KeyValue> all() {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
-    
-    @Override
-    @SuppressWarnings("deprecation")
-    public WindowStoreIterator<KeyValue> fetchAll(final long timeFrom, final long timeTo) {
-        return EMPTY_WINDOW_STORE_ITERATOR;
-    }
 
-    @Override
-    public KeyValueIterator fetchAll(final Instant from, final Instant to) {
-        return EMPTY_WINDOW_STORE_ITERATOR;
+        public KeyValueIterator fetchAll(Instant from, Instant to)
+        {
+            return EMPTY_WINDOW_STORE_ITERATOR;
+        }
     }
 }

@@ -44,7 +44,7 @@
 //        private string secondRepartitionTopicName = "aggregate-stream";
 //        private string thirdRepartitionTopicName = "reduced-stream";
 //        private string fourthRepartitionTopicName = "joined-stream";
-//        private Regex repartitionTopicPattern = Pattern.compile("Sink: .*-repartition");
+//        private Regex repartitionTopicPattern = new Regex("Sink: .*-repartition", RegexOptions.Compiled);
 
 
 //        [Fact]
@@ -491,8 +491,8 @@
 //            if (includeOtherOperations)
 //            {
 //                // without naming the join, the repartition topic name would change due to operator changing before join performed
-//                updatedStreamOne = initialStreamOne.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.println(k + v));
-//                updatedStreamTwo = initialStreamTwo.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.println(k + v));
+//                updatedStreamOne = initialStreamOne.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
+//                updatedStreamTwo = initialStreamTwo.selectKey((k, v) => k + v).filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + v));
 //            }
 //            else
 //            {
@@ -516,7 +516,7 @@
 //            {
 //                repartitionTopicsFound.add(matcher.group());
 //            }
-//            return repartitionTopicsFound.size();
+//            return repartitionTopicsFound.Count;
 //        }
 
 
@@ -546,7 +546,7 @@
 //                    .toStream().to(AGGREGATION_TOPIC, Produced.with(Serdes.String(), Serdes.Int()));
 
 //            // adding operators for case where the repartition node is further downstream
-//            mappedStream.filter((k, v) => true).peek((k, v) => System.Console.Out.println(k + ":" + v)).groupByKey(Grouped.As(thirdRepartitionTopicName))
+//            mappedStream.filter((k, v) => true).peek((k, v) => System.Console.Out.WriteLine(k + ":" + v)).groupByKey(Grouped.As(thirdRepartitionTopicName))
 //                    .reduce(reducer, Materialized.with(Serdes.String(), Serdes.String()))
 //                    .toStream().to(REDUCE_TOPIC, Produced.with(Serdes.String(), Serdes.String()));
 

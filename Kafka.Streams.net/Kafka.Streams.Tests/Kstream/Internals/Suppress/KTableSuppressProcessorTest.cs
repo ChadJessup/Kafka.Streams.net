@@ -46,7 +46,7 @@
 //            public void zeroTimeLimitShouldImmediatelyEmit()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), string(), Long());
+//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = ARBITRARY_LONG;
@@ -58,14 +58,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void windowedZeroTimeLimitShouldImmediatelyEmit()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), timeWindowedSerdeFrom<string>(), 100L), Long());
+//                    new Harness<>(untilTimeLimit(ZERO, unbounded()), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = ARBITRARY_LONG;
@@ -77,14 +77,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void intermediateSuppressionShouldBufferAndEmitLater()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(1), unbounded()), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(1), unbounded()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 0L;
@@ -100,14 +100,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void finalResultsSuppressionShouldBufferAndEmitAtGraceExpiration()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(finalResults(Duration.FromMilliseconds(1L)), timeWindowedSerdeFrom<string>(), 1L), Long());
+//                    new Harness<>(finalResults(Duration.FromMilliseconds(1L)), timeWindowedSerdeFrom<string>(), 1L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var windowStart = 99L;
@@ -138,7 +138,7 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (recordTime));
+//                Assert.Equal(capturedForward.Timestamp, (recordTime));
 //            }
 
 //            /**
@@ -150,7 +150,7 @@
 //            public void finalResultsWithZeroGraceShouldStillBufferUntilTheWindowEnd()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//                    new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), Long());
+//                    new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                // note the record is in the .Ast, but the window end is in the future, so we still have to buffer,
@@ -169,14 +169,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void finalResultsWithZeroGraceAtWindowEndShouldImmediatelyEmit()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), Long());
+//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -188,7 +188,7 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            /**
@@ -199,7 +199,7 @@
 //            public void finalResultsShouldDropTombstonesForTimeWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom<string>(), 100L), Long());
+//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), timeWindowedSerdeFrom<string>(), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -220,7 +220,7 @@
 //            public void finalResultsShouldDropTombstonesForSessionWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), Long());
+//        new Harness<>(finalResults(Duration.FromMilliseconds(0L)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -240,7 +240,7 @@
 //            public void suppressShouldNotDropTombstonesForTimeWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), timeWindowedSerdeFrom(string), 100L), Long());
+//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), timeWindowedSerdeFrom(string), 100L), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -252,7 +252,7 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 
@@ -264,7 +264,7 @@
 //            public void suppressShouldNotDropTombstonesForSessionWindows()
 //            {
 //                Harness<Windowed<string>, long> harness =
-//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), Long());
+//        new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), sessionWindowedSerdeFrom(string)), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -276,7 +276,7 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 
@@ -288,7 +288,7 @@
 //            public void suppressShouldNotDropTombstonesForKTable()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromMilliseconds(0), maxRecords(0)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -300,14 +300,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void suppressShouldEmitWhenOverRecordCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1)), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -322,14 +322,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void suppressShouldEmitWhenOverByteCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L)), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L)), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -344,14 +344,14 @@
 //                Assert.Equal(context.forwarded(), asSize(1));
 //                MockProcessorContext.CapturedForward capturedForward = context.forwarded().get(0);
 //                Assert.Equal(capturedForward.keyValue(), (new KeyValuePair<>(key, value)));
-//                Assert.Equal(capturedForward.timestamp(), (timestamp));
+//                Assert.Equal(capturedForward.Timestamp, (timestamp));
 //            }
 
 //            [Fact]
 //            public void suppressShouldShutDownWhenOverRecordCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxRecords(1).shutDownWhenFull()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -377,7 +377,7 @@
 //            public void suppressShouldShutDownWhenOverByteCapacity()
 //            {
 //                Harness<string, long> harness =
-//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), Long());
+//                    new Harness<>(untilTimeLimit(Duration.FromDays(100), maxBytes(60L).shutDownWhenFull()), string(), long());
 //                MockInternalProcessorContext context = harness.context;
 
 //                var timestamp = 100L;
@@ -427,7 +427,7 @@
 //                    }
 //                    else
 //                    {
-//                        return ((Collection<E>)item).size() == i;
+//                        return ((Collection<E>)item).Count == i;
 //                    }
 //                }
 
@@ -438,7 +438,7 @@
 //        {
 //            ISerde<K> kSerde = Serdes.serdeFrom(rawType);
 //            return new Serdes.WrapperSerde<>(
-//                new TimeWindowedSerializer<>(kSerde.serializer()),
+//                new TimeWindowedSerializer<>(kSerde.Serializer),
 //                new TimeWindowedDeserializer<>(kSerde.deserializer(), windowSize)
 //            );
 //        }

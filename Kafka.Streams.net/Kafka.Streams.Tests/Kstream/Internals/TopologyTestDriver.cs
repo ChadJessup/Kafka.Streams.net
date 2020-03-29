@@ -60,9 +60,9 @@ namespace Kafka.Streams.Tests
     * <pre>{@code
     * StreamsConfig props = new StreamsConfig();
     * props.setProperty(StreamsConfigPropertyNames.BOOTSTRAP_SERVERS_CONFIG, "localhost:9091");
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.class.getName());
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.string().getClass().getName());
-    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.string().getClass().getName());
+    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, CustomTimestampExtractor.getName());
+    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
+    * props.setProperty(StreamsConfigPropertyNames.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
     * Topology topology = ...
     * TopologyTestDriver driver = new TopologyTestDriver(topology, props);
     * }</pre>
@@ -78,7 +78,7 @@ namespace Kafka.Streams.Tests
     * inputTopic.pipeInput("key1", "value1");
     * }</pre>
     *
-    * When {@link TestInputTopic#pipeInput(Object, Object)} is called, the driver passes the input message through to the appropriate source that
+    * When {@link TestInputTopic#pipeInput(object, object)} is called, the driver passes the input message through to the appropriate source that
     * consumes the named topic, and will invoke the processor(s) downstream of the source.
     * If your topology's processors forward messages to sinks, your test can then consume these output messages to verify
     * they match the expected outcome.
@@ -408,7 +408,7 @@ namespace Kafka.Streams.Tests
          *
          * @return Map of all metrics.
          */
-        // public Dictionary<MetricName, ? extends Metric> metrics()
+        // public Dictionary<MetricName, ? : Metric> metrics()
         // {
         //     return Collections.unmodifiableMap(metrics.metrics());
         // }
@@ -581,7 +581,7 @@ namespace Kafka.Streams.Tests
         {
             // Capture all the records sent to the producer ...
             // List<Message<byte[], byte[]>> output = producer.history();
-            // producer.clear();
+            // producer.Clear();
             // 
             // foreach (Message<byte[], byte[]> record in output)
             // {
@@ -598,7 +598,7 @@ namespace Kafka.Streams.Tests
             //         enqueueTaskRecord(
             //             outputTopicName,
             //             inputTopicOrPatternPartition,
-            //             record.timestamp(),
+            //             record.Timestamp,
             //             record.Key,
             //             record.Value,
             //             record.Headers);
@@ -708,7 +708,7 @@ namespace Kafka.Streams.Tests
         //     }
         //     K key = keyDeserializer.Deserialize(record.Topic, record.Key);
         //     V value = valueDeserializer.Deserialize(record.Topic, record.Value);
-        //     return new Message<>(record.Topic, record.Partition, record.timestamp(), key, value, record.Headers);
+        //     return new Message<>(record.Topic, record.Partition, record.Timestamp, key, value, record.Headers);
         // }
         // 
         // private Queue<Message<byte[], byte[]>> getRecordsQueue(string topicName)
@@ -716,7 +716,7 @@ namespace Kafka.Streams.Tests
         //     Queue<Message<byte[], byte[]>> outputRecords = outputRecordsByTopic[topicName];
         //     if (outputRecords == null)
         //     {
-        //         if (!processorTopology.SinkTopics.SinkTopics.contains(topicName))
+        //         if (!processorTopology.SinkTopics.SinkTopics.Contains(topicName))
         //         {
         //             throw new ArgumentException("Unknown topic: " + topicName);
         //         }
@@ -815,7 +815,7 @@ namespace Kafka.Streams.Tests
         //     }
         //     K key = keyDeserializer.Deserialize(record.Topic, record.Key);
         //     V value = valueDeserializer.Deserialize(record.Topic, record.Value);
-        //     return new TestRecord<>(key, value, record.Headers, record.timestamp());
+        //     return new TestRecord<>(key, value, record.Headers, record.Timestamp);
         // }
 
         void PipeRecord<K, V>(
@@ -854,7 +854,7 @@ namespace Kafka.Streams.Tests
             //    return 0;
             //}
             //
-            //return queue.Count;
+            //return queue.size();
             return 0;
         }
 
@@ -1200,7 +1200,7 @@ namespace Kafka.Streams.Tests
             //    highResTimeNs.addAndGet(TimeUnit.MILLISECONDS.toNanos(ms));
             //}
 
-            //public void waitObject(Object obj, Supplier<Boolean> condition, long timeoutMs)
+            //public void waitObject(object obj, Supplier<Boolean> condition, long timeoutMs)
             //{
             //    throw new UnsupportedOperationException();
             //}

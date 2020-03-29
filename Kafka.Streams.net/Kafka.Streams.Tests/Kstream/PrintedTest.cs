@@ -57,7 +57,7 @@
 
 //            processor.process("good", 2);
 //            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), equalTo("[processor]: good, 2\n"));
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[processor]: good, 2\n"));
 //        }
 
 //        [Fact]
@@ -70,7 +70,7 @@
 
 //            processor.process("hello", 3);
 //            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), equalTo("[label]: hello, 3\n"));
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[label]: hello, 3\n"));
 //        }
 
 //        [Fact]
@@ -90,7 +90,7 @@
 //            //.get();
 //            processor.process("hello", 1);
 //            processor.close();
-//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), equalTo("[processor]: hello => 1\n"));
+//            Assert.Equal(sysOut.ToString(StandardCharsets.UTF_8.name()), ("[processor]: hello => 1\n"));
 //        }
 
 //        [Fact]

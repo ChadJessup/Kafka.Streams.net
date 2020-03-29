@@ -395,15 +395,15 @@
 
 //            IKeyValueStore<string, long> count = driver.getKeyValueStore("count");
 
-//            Assert.Equal(count.get("1"), equalTo(3L));
-//            Assert.Equal(count.get("2"), equalTo(1L));
-//            Assert.Equal(count.get("3"), equalTo(2L));
+//            Assert.Equal(count.get("1"), (3L));
+//            Assert.Equal(count.get("2"), (1L));
+//            Assert.Equal(count.get("3"), (2L));
 
 //            IKeyValueStore<string, ValueAndTimestamp<long>> count = driver.getTimestampedKeyValueStore("count");
 
-//            Assert.Equal(count.get("1"), equalTo(ValueAndTimestamp.make(3L, 10L)));
-//            Assert.Equal(count.get("2"), equalTo(ValueAndTimestamp.make(1L, 1L)));
-//            Assert.Equal(count.get("3"), equalTo(ValueAndTimestamp.make(2L, 9L)));
+//            Assert.Equal(count.get("1"), (ValueAndTimestamp.make(3L, 10L)));
+//            Assert.Equal(count.get("2"), (ValueAndTimestamp.make(1L, 1L)));
+//            Assert.Equal(count.get("3"), (ValueAndTimestamp.make(2L, 9L)));
 //        }
 //    }
 
@@ -437,14 +437,14 @@
 
 //        IKeyValueStore<string, string> reduced = driver.getKeyValueStore("reduce");
 
-//        Assert.Equal(reduced.get("1"), equalTo("A+C+D"));
-//        Assert.Equal(reduced.get("2"), equalTo("B"));
-//        Assert.Equal(reduced.get("3"), equalTo("E+F"));
+//        Assert.Equal(reduced.get("1"), ("A+C+D"));
+//        Assert.Equal(reduced.get("2"), ("B"));
+//        Assert.Equal(reduced.get("3"), ("E+F"));
 //        IKeyValueStore<string, ValueAndTimestamp<string>> reduced = driver.getTimestampedKeyValueStore("reduce");
 
-//        Assert.Equal(reduced.get("1"), equalTo(ValueAndTimestamp.make("A+C+D", 10L)));
-//        Assert.Equal(reduced.get("2"), equalTo(ValueAndTimestamp.make("B", 1L)));
-//        Assert.Equal(reduced.get("3"), equalTo(ValueAndTimestamp.make("E+F", 9L)));
+//        Assert.Equal(reduced.get("1"), (ValueAndTimestamp.make("A+C+D", 10L)));
+//        Assert.Equal(reduced.get("2"), (ValueAndTimestamp.make("B", 1L)));
+//        Assert.Equal(reduced.get("3"), (ValueAndTimestamp.make("E+F", 9L)));
 
 //    }
 
@@ -463,7 +463,7 @@
 //    //        processData(driver);
 //    //        LogCaptureAppender.unregister(appender);
 //    //
-//    //        Dictionary < MetricName, ? : Metric > metrics = driver.metrics();
+//    //        Dictionary metrics = driver.metrics< MetricName, ? : Metric >();
 //    //        Assert.Equal(1.0, getMetricByName(metrics, "skipped-records-total", "stream-metrics").metricValue());
 //    //        Assert.NotEqual(0.0, getMetricByName(metrics, "skipped-records-rate", "stream-metrics").metricValue());
 //    //        Assert.Equal(appender.getMessages(), asItem("Skipping record due to null key or value. key=[3] value=[null] topic=[topic] partition=[0] offset=[6]"));
@@ -487,16 +487,16 @@
 //        {
 //            IKeyValueStore<string, string> aggregate = driver.getKeyValueStore("aggregate");
 
-//            Assert.Equal(aggregate.get("1"), equalTo("0+A+C+D"));
-//            Assert.Equal(aggregate.get("2"), equalTo("0+B"));
-//            Assert.Equal(aggregate.get("3"), equalTo("0+E+F"));
+//            Assert.Equal(aggregate.get("1"), ("0+A+C+D"));
+//            Assert.Equal(aggregate.get("2"), ("0+B"));
+//            Assert.Equal(aggregate.get("3"), ("0+E+F"));
 //        }
 //        {
 //            IKeyValueStore<string, ValueAndTimestamp<string>> aggregate = driver.getTimestampedKeyValueStore("aggregate");
 
-//            Assert.Equal(aggregate.get("1"), equalTo(ValueAndTimestamp.make("0+A+C+D", 10L)));
-//            Assert.Equal(aggregate.get("2"), equalTo(ValueAndTimestamp.make("0+B", 1L)));
-//            Assert.Equal(aggregate.get("3"), equalTo(ValueAndTimestamp.make("0+E+F", 9L)));
+//            Assert.Equal(aggregate.get("1"), (ValueAndTimestamp.make("0+A+C+D", 10L)));
+//            Assert.Equal(aggregate.get("2"), (ValueAndTimestamp.make("0+B", 1L)));
+//            Assert.Equal(aggregate.get("3"), (ValueAndTimestamp.make("0+E+F", 9L)));
 //        }
 //    }
 
@@ -553,7 +553,7 @@
 //            driver.pipeInput(recordFactory.create(TOPIC, "2", "B", 500L));
 //            driver.pipeInput(recordFactory.create(TOPIC, "3", "B", 100L));
 //        }
-//        Assert.Equal(supplier.theCapturedProcessor().processed, equalTo(Array.AsReadOnly(
+//        Assert.Equal(supplier.theCapturedProcessor().processed, (Array.AsReadOnly(
 //            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 1L, 0L),
 //            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 2L, 499L),
 //            new KeyValueTimestamp<>(new Windowed<>("1", new TimeWindow(0L, 500L)), 3L, 499L),

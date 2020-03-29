@@ -1,84 +1,84 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
 
-import org.apache.log4j.AppenderSkeleton;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggingEvent;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
-public class LogCaptureAppender extends AppenderSkeleton {
-    private final LinkedList<LoggingEvent> events = new LinkedList<>();
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+
+
+
+
+
+
+public class LogCaptureAppender : AppenderSkeleton {
+    private LinkedList<LoggingEvent> events = new LinkedList<>();
+
+    
     public static class Event {
-        private String level;
-        private String message;
-        private Optional<String> throwableInfo;
+        private string level;
+        private string message;
+        private Optional<string> throwableInfo;
 
-        Event(final String level, final String message, final Optional<String> throwableInfo) {
+        Event(string level, string message, Optional<string> throwableInfo) {
             this.level = level;
             this.message = message;
             this.throwableInfo = throwableInfo;
         }
 
-        public String getLevel() {
+        public string getLevel() {
             return level;
         }
 
-        public String getMessage() {
+        public string getMessage() {
             return message;
         }
 
-        public Optional<String> getThrowableInfo() {
+        public Optional<string> getThrowableInfo() {
             return throwableInfo;
         }
     }
 
     public static LogCaptureAppender createAndRegister() {
-        final LogCaptureAppender logCaptureAppender = new LogCaptureAppender();
+        LogCaptureAppender logCaptureAppender = new LogCaptureAppender();
         Logger.getRootLogger().addAppender(logCaptureAppender);
         return logCaptureAppender;
     }
 
-    public static void setClassLoggerToDebug(final Class<?> clazz) {
+    public static void setClassLoggerToDebug(Class<?> clazz) {
         Logger.getLogger(clazz).setLevel(Level.DEBUG);
     }
 
-    public static void unregister(final LogCaptureAppender logCaptureAppender) {
+    public static void unregister(LogCaptureAppender logCaptureAppender) {
         Logger.getRootLogger().removeAppender(logCaptureAppender);
     }
 
-    @Override
-    protected void append(final LoggingEvent event) {
+    
+    protected void append(LoggingEvent event) {
         synchronized (events) {
             events.add(event);
         }
     }
 
-    public List<String> getMessages() {
-        final LinkedList<String> result = new LinkedList<>();
+    public List<string> getMessages() {
+        LinkedList<string> result = new LinkedList<>();
         synchronized (events) {
-            for (final LoggingEvent event : events) {
+            foreach (LoggingEvent event in events) {
                 result.add(event.getRenderedMessage());
             }
         }
@@ -86,17 +86,17 @@ public class LogCaptureAppender extends AppenderSkeleton {
     }
 
     public List<Event> getEvents() {
-        final LinkedList<Event> result = new LinkedList<>();
+        LinkedList<Event> result = new LinkedList<>();
         synchronized (events) {
-            for (final LoggingEvent event : events) {
-                final String[] throwableStrRep = event.getThrowableStrRep();
-                final Optional<String> throwableString;
+            foreach (LoggingEvent event in events) {
+                string[] throwableStrRep = event.getThrowableStrRep();
+                Optional<string> throwableString;
                 if (throwableStrRep == null) {
                     throwableString = Optional.empty();
                 } else {
-                    final StringBuilder throwableStringBuilder = new StringBuilder();
+                    StringBuilder throwableStringBuilder = new StringBuilder();
 
-                    for (final String s : throwableStrRep) {
+                    foreach (string s in throwableStrRep) {
                         throwableStringBuilder.append(s);
                     }
 
@@ -109,13 +109,13 @@ public class LogCaptureAppender extends AppenderSkeleton {
         return result;
     }
 
-    @Override
+    
     public void close() {
 
     }
 
-    @Override
-    public boolean requiresLayout() {
+    
+    public bool requiresLayout() {
         return false;
     }
 }

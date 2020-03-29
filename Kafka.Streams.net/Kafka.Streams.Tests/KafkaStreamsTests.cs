@@ -779,7 +779,7 @@ namespace Kafka.Streams.Tests
         //                Stores.persistentKeyValueStore(storeName)
         //                : Stores.inMemoryKeyValueStore(storeName),
         //            Serdes.String(),
-        //            Serdes.long());
+        //            Serdes.Long());
         //    Topology topology = new Topology();
         //    topology.addSource("source", Serdes.String().deserializer(), Serdes.String().deserializer(), inputTopic)
         //                    .addProcessor("process", () => new AbstractProcessor<string, string>()
@@ -854,16 +854,16 @@ namespace Kafka.Streams.Tests
         //        List<Path> files = Files.find(.AsePath, 999, (p, bfa) => !p.equals(.AsePath)).collect(Collectors.toList());
         //        if (shouldFilesExist && files.isEmpty())
         //        {
-        //            Assert.Assert.False(true, "Files should have existed, but it didn't: " + files);
+        //            Assert.False(true, "Files should have existed, but it didn't: " + files);
         //        }
         //        if (!shouldFilesExist && !files.isEmpty())
         //        {
-        //            Assert.Assert.False(true, "Files should not have existed, but it did: " + files);
+        //            Assert.False(true, "Files should not have existed, but it did: " + files);
         //        }
         //    }
         //    catch (IOException e)
         //    {
-        //        Assert.Assert.False(true, "Couldn't read the state directory : " + .AseDir.getPath());
+        //        Assert.False(true, "Couldn't read the state directory : " + .AseDir.getPath());
         //    }
         //    finally
         //    {

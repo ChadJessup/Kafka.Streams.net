@@ -1,65 +1,65 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.processor.BatchingStateRestoreCallback;
-import org.apache.kafka.streams.processor.StateRestoreCallback;
-import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
-import static java.util.Arrays.asList;
-import static org.apache.kafka.streams.processor.internals.StateRestoreCallbackAdapter.adapt;
-import static org.easymock.EasyMock.mock;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StateRestoreCallbackAdapterTest {
-    [Test](expected = UnsupportedOperationException.class)
+    [Xunit.Fact]// (expected = UnsupportedOperationException)
     public void shouldThrowOnRestoreAll() {
-        adapt(mock(StateRestoreCallback.class)).restoreAll(null);
+        adapt(mock(StateRestoreCallback)).restoreAll(null);
     }
 
-    [Test](expected = UnsupportedOperationException.class)
+    [Xunit.Fact]// (expected = UnsupportedOperationException)
     public void shouldThrowOnRestore() {
-        adapt(mock(StateRestoreCallback.class)).restore(null, null);
+        adapt(mock(StateRestoreCallback)).restore(null, null);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPassRecordsThrough() {
-        final ArrayList<ConsumerRecord<byte[], byte[]>> actual = new ArrayList<>();
-        final RecordBatchingStateRestoreCallback callback = actual::addAll;
+        ArrayList<ConsumeResult<byte[], byte[]>> actual = new ArrayList<>();
+        RecordBatchingStateRestoreCallback callback = actual::addAll;
 
-        final RecordBatchingStateRestoreCallback adapted = adapt(callback);
+        RecordBatchingStateRestoreCallback adapted = adapt(callback);
 
-        final byte[] key1 = {1};
-        final byte[] value1 = {2};
-        final byte[] key2 = {3};
-        final byte[] value2 = {4};
+        byte[] key1 = {1};
+        byte[] value1 = {2};
+        byte[] key2 = {3};
+        byte[] value2 = {4};
 
-        final List<ConsumerRecord<byte[], byte[]>> recordList = asList(
-            new ConsumerRecord<>("topic1", 0, 0L, key1, value1),
-            new ConsumerRecord<>("topic2", 1, 1L, key2, value2)
+        List<ConsumeResult<byte[], byte[]>> recordList = asList(
+            new ConsumeResult<>("topic1", 0, 0L, key1, value1),
+            new ConsumeResult<>("topic2", 1, 1L, key2, value2)
         );
 
         adapted.restoreBatch(recordList);
@@ -67,79 +67,79 @@ public class StateRestoreCallbackAdapterTest {
         validate(actual, recordList);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldConvertToKeyValueBatches() {
-        final ArrayList<KeyValue<byte[], byte[]>> actual = new ArrayList<>();
-        final BatchingStateRestoreCallback callback = new BatchingStateRestoreCallback() {
-            @Override
-            public void restoreAll(final Collection<KeyValue<byte[], byte[]>> records) {
+        ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
+        BatchingStateRestoreCallback callback = new BatchingStateRestoreCallback() {
+            
+            public void restoreAll(Collection<KeyValuePair<byte[], byte[]>> records) {
                 actual.addAll(records);
             }
 
-            @Override
-            public void restore(final byte[] key, final byte[] value) {
+            
+            public void restore(byte[] key, byte[] value) {
                 // unreachable
             }
         };
 
-        final RecordBatchingStateRestoreCallback adapted = adapt(callback);
+        RecordBatchingStateRestoreCallback adapted = adapt(callback);
 
-        final byte[] key1 = {1};
-        final byte[] value1 = {2};
-        final byte[] key2 = {3};
-        final byte[] value2 = {4};
+        byte[] key1 = {1};
+        byte[] value1 = {2};
+        byte[] key2 = {3};
+        byte[] value2 = {4};
         adapted.restoreBatch(asList(
-            new ConsumerRecord<>("topic1", 0, 0L, key1, value1),
-            new ConsumerRecord<>("topic2", 1, 1L, key2, value2)
+            new ConsumeResult<>("topic1", 0, 0L, key1, value1),
+            new ConsumeResult<>("topic2", 1, 1L, key2, value2)
         ));
 
-        assertThat(
+        Assert.Equal(
             actual,
             is(asList(
-                new KeyValue<>(key1, value1),
-                new KeyValue<>(key2, value2)
+                new KeyValuePair<>(key1, value1),
+                new KeyValuePair<>(key2, value2)
             ))
         );
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldConvertToKeyValue() {
-        final ArrayList<KeyValue<byte[], byte[]>> actual = new ArrayList<>();
-        final StateRestoreCallback callback = (key, value) -> actual.add(new KeyValue<>(key, value));
+        ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
+        StateRestoreCallback callback = (key, value) => actual.add(new KeyValuePair<>(key, value));
 
-        final RecordBatchingStateRestoreCallback adapted = adapt(callback);
+        RecordBatchingStateRestoreCallback adapted = adapt(callback);
 
-        final byte[] key1 = {1};
-        final byte[] value1 = {2};
-        final byte[] key2 = {3};
-        final byte[] value2 = {4};
+        byte[] key1 = {1};
+        byte[] value1 = {2};
+        byte[] key2 = {3};
+        byte[] value2 = {4};
         adapted.restoreBatch(asList(
-            new ConsumerRecord<>("topic1", 0, 0L, key1, value1),
-            new ConsumerRecord<>("topic2", 1, 1L, key2, value2)
+            new ConsumeResult<>("topic1", 0, 0L, key1, value1),
+            new ConsumeResult<>("topic2", 1, 1L, key2, value2)
         ));
 
-        assertThat(
+        Assert.Equal(
             actual,
             is(asList(
-                new KeyValue<>(key1, value1),
-                new KeyValue<>(key2, value2)
+                new KeyValuePair<>(key1, value1),
+                new KeyValuePair<>(key2, value2)
             ))
         );
     }
 
-    private void validate(final List<ConsumerRecord<byte[], byte[]>> actual,
-                          final List<ConsumerRecord<byte[], byte[]>> expected) {
-        assertThat(actual.size(), is(expected.size()));
-        for (int i = 0; i < actual.size(); i++) {
-            final ConsumerRecord<byte[], byte[]> actual1 = actual.get(i);
-            final ConsumerRecord<byte[], byte[]> expected1 = expected.get(i);
-            assertThat(actual1.topic(), is(expected1.topic()));
-            assertThat(actual1.partition(), is(expected1.partition()));
-            assertThat(actual1.offset(), is(expected1.offset()));
-            assertThat(actual1.key(), is(expected1.key()));
-            assertThat(actual1.value(), is(expected1.value()));
-            assertThat(actual1.timestamp(), is(expected1.timestamp()));
-            assertThat(actual1.headers(), is(expected1.headers()));
+    private void validate(List<ConsumeResult<byte[], byte[]>> actual,
+                          List<ConsumeResult<byte[], byte[]>> expected) {
+        Assert.Equal(actual.Count, is(expected.Count));
+        for (int i = 0; i < actual.Count; i++) {
+            ConsumeResult<byte[], byte[]> actual1 = actual.get(i);
+            ConsumeResult<byte[], byte[]> expected1 = expected.get(i);
+            Assert.Equal(actual1.topic(), is(expected1.topic()));
+            Assert.Equal(actual1.partition(), is(expected1.partition()));
+            Assert.Equal(actual1.Offset, is(expected1.Offset));
+            Assert.Equal(actual1.Key, is(expected1.Key));
+            Assert.Equal(actual1.Value, is(expected1.Value));
+            Assert.Equal(actual1.Timestamp, is(expected1.Timestamp));
+            Assert.Equal(actual1.headers(), is(expected1.headers()));
         }
     }
 

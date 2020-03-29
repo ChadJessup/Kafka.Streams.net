@@ -201,14 +201,14 @@
 //        .groupBy((k, v) => new KeyValuePair<>(v, k), Grouped.with(STRING_SERDE, STRING_SERDE))
 //        .count(Materialized.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(Long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
+//        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxRecords(1L).emitEarlyWhenFull()))
 //        .toStream()
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
-//    System.Console.Out.println(topology.describe());
+//    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
@@ -269,7 +269,7 @@
 //        .count();
 //    valueCounts
 //        // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
-//        .suppress(untilTimeLimit(Duration.FromMilliseconds(Long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
+//        .suppress(untilTimeLimit(Duration.FromMilliseconds(long.MaxValue), maxBytes(200L).emitEarlyWhenFull()))
 //        .toStream()
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
@@ -340,7 +340,7 @@
 //        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
-//    System.Console.Out.println(topology.describe());
+//    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
@@ -386,14 +386,14 @@
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
-//    System.Console.Out.println(topology.describe());
+//    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
@@ -443,14 +443,14 @@
 //    valueCounts
 //        .suppress(untilWindowCloses(unbounded()))
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-suppressed", Produced.with(STRING_SERDE, Serdes.Long()));
 //    valueCounts
 //        .toStream()
-//        .map((Windowed<string> k, Long v) => new KeyValuePair<>(k.ToString(), v))
+//        .map((Windowed<string> k, long v) => new KeyValuePair<>(k.ToString(), v))
 //        .to("output-raw", Produced.with(STRING_SERDE, Serdes.Long()));
 //    Topology topology = builder.Build();
-//    System.Console.Out.println(topology.describe());
+//    System.Console.Out.WriteLine(topology.describe());
 //    ConsumerRecordFactory<string, string> recordFactory =
 //        new ConsumerRecordFactory<>(STRING_SERIALIZER, STRING_SERIALIZER);
 
@@ -696,7 +696,7 @@
 //private static void verify<K, V>(List<Message<K, V>> results,
 //                                  List<KeyValueTimestamp<K, V>> expectedResults)
 //{
-//    if (results.size() != expectedResults.size())
+//    if (results.Count != expectedResults.Count)
 //    {
 //        throw new AssertionError(printRecords(results) + " != " + expectedResults);
 //    }
@@ -706,7 +706,7 @@
 //        KeyValueTimestamp<K, V> expected = expectedIterator.next();
 //        try
 //        {
-//            OutputVerifier.compareKeyValueTimestamp(result, expected.Key, expected.Value, expected.timestamp());
+//            OutputVerifier.compareKeyValueTimestamp(result, expected.Key, expected.Value, expected.Timestamp);
 //        }
 //        catch (AssertionError e)
 //        {

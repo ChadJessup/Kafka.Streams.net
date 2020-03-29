@@ -1,54 +1,54 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.MockConsumer;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.common.utils.MockTime;
-import org.apache.kafka.common.utils.Utils;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.io.IOException;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 public class StateConsumerTest {
 
-    private static final long FLUSH_INTERVAL = 1000L;
-    private final TopicPartition topicOne = new TopicPartition("topic-one", 1);
-    private final TopicPartition topicTwo = new TopicPartition("topic-two", 1);
-    private final MockTime time = new MockTime();
-    private final MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
-    private final Map<TopicPartition, Long> partitionOffsets = new HashMap<>();
-    private final LogContext logContext = new LogContext("test ");
+    private static long FLUSH_INTERVAL = 1000L;
+    private TopicPartition topicOne = new TopicPartition("topic-one", 1);
+    private TopicPartition topicTwo = new TopicPartition("topic-two", 1);
+    private MockTime time = new MockTime();
+    private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+    private Dictionary<TopicPartition, long> partitionOffsets = new HashMap<>();
+    private LogContext logContext = new LogContext("test ");
     private GlobalStreamThread.StateConsumer stateConsumer;
     private StateMaintainerStub stateMaintainer;
 
-    @Before
+    
     public void setUp() {
         partitionOffsets.put(topicOne, 20L);
         partitionOffsets.put(topicTwo, 30L);
@@ -56,83 +56,83 @@ public class StateConsumerTest {
         stateConsumer = new GlobalStreamThread.StateConsumer(logContext, consumer, stateMaintainer, time, Duration.ofMillis(10L), FLUSH_INTERVAL);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAssignPartitionsToConsumer() {
         stateConsumer.initialize();
-        assertEquals(Utils.mkSet(topicOne, topicTwo), consumer.assignment());
+        Assert.Equal(Utils.mkSet(topicOne, topicTwo), consumer.assignment());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSeekToInitialOffsets() {
         stateConsumer.initialize();
-        assertEquals(20L, consumer.position(topicOne));
-        assertEquals(30L, consumer.position(topicTwo));
+        Assert.Equal(20L, consumer.position(topicOne));
+        Assert.Equal(30L, consumer.position(topicTwo));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldUpdateStateWithReceivedRecordsForPartition() {
         stateConsumer.initialize();
-        consumer.addRecord(new ConsumerRecord<>("topic-one", 1, 20L, new byte[0], new byte[0]));
-        consumer.addRecord(new ConsumerRecord<>("topic-one", 1, 21L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-one", 1, 21L, new byte[0], new byte[0]));
         stateConsumer.pollAndUpdate();
-        assertEquals(2, stateMaintainer.updatedPartitions.get(topicOne).intValue());
+        Assert.Equal(2, stateMaintainer.updatedPartitions.get(topicOne).intValue());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldUpdateStateWithReceivedRecordsForAllTopicPartition() {
         stateConsumer.initialize();
-        consumer.addRecord(new ConsumerRecord<>("topic-one", 1, 20L, new byte[0], new byte[0]));
-        consumer.addRecord(new ConsumerRecord<>("topic-two", 1, 31L, new byte[0], new byte[0]));
-        consumer.addRecord(new ConsumerRecord<>("topic-two", 1, 32L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-two", 1, 31L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-two", 1, 32L, new byte[0], new byte[0]));
         stateConsumer.pollAndUpdate();
-        assertEquals(1, stateMaintainer.updatedPartitions.get(topicOne).intValue());
-        assertEquals(2, stateMaintainer.updatedPartitions.get(topicTwo).intValue());
+        Assert.Equal(1, stateMaintainer.updatedPartitions.get(topicOne).intValue());
+        Assert.Equal(2, stateMaintainer.updatedPartitions.get(topicTwo).intValue());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldFlushStoreWhenFlushIntervalHasLapsed() {
         stateConsumer.initialize();
-        consumer.addRecord(new ConsumerRecord<>("topic-one", 1, 20L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         time.sleep(FLUSH_INTERVAL);
 
         stateConsumer.pollAndUpdate();
-        assertTrue(stateMaintainer.flushed);
+        Assert.True(stateMaintainer.flushed);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotFlushOffsetsWhenFlushIntervalHasNotLapsed() {
         stateConsumer.initialize();
-        consumer.addRecord(new ConsumerRecord<>("topic-one", 1, 20L, new byte[0], new byte[0]));
+        consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         time.sleep(FLUSH_INTERVAL / 2);
         stateConsumer.pollAndUpdate();
-        assertFalse(stateMaintainer.flushed);
+        Assert.False(stateMaintainer.flushed);
     }
 
-    [Test]
-    public void shouldCloseConsumer() throws IOException {
+    [Xunit.Fact]
+    public void shouldCloseConsumer(){ //throws IOException
         stateConsumer.close();
-        assertTrue(consumer.closed());
+        Assert.True(consumer.closed());
     }
 
-    [Test]
-    public void shouldCloseStateMaintainer() throws IOException {
+    [Xunit.Fact]
+    public void shouldCloseStateMaintainer(){ //throws IOException
         stateConsumer.close();
-        assertTrue(stateMaintainer.closed);
+        Assert.True(stateMaintainer.closed);
     }
 
 
-    private static class StateMaintainerStub implements GlobalStateMaintainer {
-        private final Map<TopicPartition, Long> partitionOffsets;
-        private final Map<TopicPartition, Integer> updatedPartitions = new HashMap<>();
-        private boolean flushed;
-        private boolean closed;
+    private static class StateMaintainerStub : GlobalStateMaintainer {
+        private Dictionary<TopicPartition, long> partitionOffsets;
+        private Dictionary<TopicPartition, int> updatedPartitions = new HashMap<>();
+        private bool flushed;
+        private bool closed;
 
-        StateMaintainerStub(final Map<TopicPartition, Long> partitionOffsets) {
+        StateMaintainerStub(Dictionary<TopicPartition, long> partitionOffsets) {
             this.partitionOffsets = partitionOffsets;
         }
 
-        @Override
-        public Map<TopicPartition, Long> initialize() {
+        
+        public Dictionary<TopicPartition, long> initialize() {
             return partitionOffsets;
         }
 
@@ -140,14 +140,14 @@ public class StateConsumerTest {
             flushed = true;
         }
 
-        @Override
+        
         public void close() {
             closed = true;
         }
 
-        @Override
-        public void update(final ConsumerRecord<byte[], byte[]> record) {
-            final TopicPartition tp = new TopicPartition(record.topic(), record.partition());
+        
+        public void update(ConsumeResult<byte[], byte[]> record) {
+            TopicPartition tp = new TopicPartition(record.topic(), record.partition());
             if (!updatedPartitions.containsKey(tp)) {
                 updatedPartitions.put(tp, 0);
             }

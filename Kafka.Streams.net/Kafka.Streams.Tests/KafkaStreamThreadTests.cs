@@ -73,13 +73,13 @@ namespace Kafka.Streams.Tests
             var sp = new ServiceCollection();
             sp.AddSingleton(this.config);
 
-            var mockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties().Object;
+            var mockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties().object;
 
             Mock<IKafkaClientSupplier> mockClientSupplier = TestUtils.GetMockClientSupplier(
                 mockConsumer: new MockConsumer<byte[], byte[]>(mockConsumer),
                 mockRestoreConsumer: new MockRestoreConsumer(mockConsumer));
 
-            sp.AddSingleton(mockClientSupplier.Object);
+            sp.AddSingleton(mockClientSupplier.GetType());
             this.streamsBuilder = new StreamsBuilder(sp);
 
             internalTopologyBuilder.AddSource<string, string>(
@@ -248,7 +248,7 @@ namespace Kafka.Streams.Tests
 
         //    StreamsConfig config = new StreamsConfig(props);
         //    var consumer = new Mock<IConsumer<byte[], byte[]>>();
-        //    TaskManager TaskManager = mockTaskManagerCommit(consumer.Object, 1, 1);
+        //    TaskManager TaskManager = mockTaskManagerCommit(consumer.object, 1, 1);
 
         //    //var streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         //    var thread = new KafkaStreamThread(
@@ -482,7 +482,7 @@ namespace Kafka.Streams.Tests
                     mockConsumer.UpdateBeginningOffsets(beginOffsets);
                     thread.RebalanceListener.OnPartitionsAssigned(null, new List<TopicPartition>assignedPartitions));
 
-                    Assert.Equal(1, clientSupplier.producers.size());
+                    Assert.Equal(1, clientSupplier.producers.Count);
                     var globalProducer = clientSupplier.producers.get(0);
 
                     foreach (StreamTask Task in thread.Tasks().Values)
@@ -526,7 +526,7 @@ namespace Kafka.Streams.Tests
 
                     thread.RunOnce();
 
-                    Assert.Equal(thread.Tasks().Count, clientSupplier.producers.size());
+                    Assert.Equal(thread.Tasks().Count, clientSupplier.producers.Count);
                     Assert.Same(clientSupplier.Consumer, thread.Consumer);
                     Assert.Same(clientSupplier.RestoreConsumer, thread.RestoreConsumer);
                 }
@@ -576,7 +576,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.Object.Shutdown(true);
+                    TaskManager.object.Shutdown(true);
                     // EasyMock.expect.AstCall();
                     // EasyMock.replay(TaskManager, consumer);
 
@@ -614,7 +614,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.Object.Shutdown(true);
+                    TaskManager.object.Shutdown(true);
                     TaskManager.VerifyNoOtherCalls();
 
                     StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -705,7 +705,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.Object.Shutdown(clean: true);
+                    TaskManager.object.Shutdown(clean: true);
                     TaskManager.VerifyNoOtherCalls();
 
                     StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -793,7 +793,7 @@ namespace Kafka.Streams.Tests
                     consumer.AddRecord(new ConsumeResult<>(topic1, 1, 0, Array.Empty<byte>(), Array.Empty<byte>()));
                     mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1);
                     thread.RunOnce();
-                    Assert.Equal(1, producer.history().size());
+                    Assert.Equal(1, producer.history().Count);
 
                     Assert.False(producer.transactionCommitted());
                     mockTime.sleep(config.getLong(StreamsConfigPropertyNames.COMMIT_INTERVAL_MS_CONFIG) + 1L);

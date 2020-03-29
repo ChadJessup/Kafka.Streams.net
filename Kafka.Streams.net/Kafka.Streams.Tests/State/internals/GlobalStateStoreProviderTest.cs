@@ -1,59 +1,59 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.errors.InvalidStateStoreException;
-import org.apache.kafka.streams.processor.StateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.internals.ProcessorContextImpl;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.state.QueryableStoreTypes;
-import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
-import org.apache.kafka.streams.state.ReadOnlyWindowStore;
-import org.apache.kafka.streams.state.Stores;
-import org.apache.kafka.streams.state.TimestampedKeyValueStore;
-import org.apache.kafka.streams.state.TimestampedWindowStore;
-import org.apache.kafka.streams.state.ValueAndTimestamp;
-import org.apache.kafka.test.NoOpReadOnlyStore;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.time.Duration;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.mock;
-import static org.easymock.EasyMock.replay;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 public class GlobalStateStoreProviderTest {
-    private final Map<String, StateStore> stores = new HashMap<>();
+    private Dictionary<string, StateStore> stores = new HashMap<>();
 
-    @Before
+    
     public void before() {
         stores.put(
             "kv-store",
@@ -88,96 +88,96 @@ public class GlobalStateStoreProviderTest {
                 Serdes.String(),
                 Serdes.String()).build());
 
-        final ProcessorContextImpl mockContext = mock(ProcessorContextImpl.class);
+        ProcessorContextImpl mockContext = mock(ProcessorContextImpl);
         expect(mockContext.applicationId()).andReturn("appId").anyTimes();
         expect(mockContext.metrics()).andReturn(new StreamsMetricsImpl(new Metrics(), "threadName")).anyTimes();
         expect(mockContext.taskId()).andReturn(new TaskId(0, 0)).anyTimes();
         expect(mockContext.recordCollector()).andReturn(null).anyTimes();
         replay(mockContext);
-        for (final StateStore store : stores.values()) {
+        foreach (StateStore store in stores.values()) {
             store.init(mockContext, null);
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnSingleItemListIfStoreExists() {
-        final GlobalStateStoreProvider provider =
+        GlobalStateStoreProvider provider =
             new GlobalStateStoreProvider(Collections.singletonMap("global", new NoOpReadOnlyStore<>()));
-        final List<ReadOnlyKeyValueStore<Object, Object>> stores =
+        List<ReadOnlyKeyValueStore<object, object>> stores =
             provider.stores("global", QueryableStoreTypes.keyValueStore());
-        assertEquals(stores.size(), 1);
+        Assert.Equal(stores.Count, 1);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnEmptyItemListIfStoreDoesntExist() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(Collections.emptyMap());
-        final List<ReadOnlyKeyValueStore<Object, Object>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(Collections.emptyMap());
+        List<ReadOnlyKeyValueStore<object, object>> stores =
             provider.stores("global", QueryableStoreTypes.keyValueStore());
-        assertTrue(stores.isEmpty());
+        Assert.True(stores.isEmpty());
     }
 
-    [Test](expected = InvalidStateStoreException.class)
+    [Xunit.Fact]// (expected = InvalidStateStoreException)
     public void shouldThrowExceptionIfStoreIsntOpen() {
-        final NoOpReadOnlyStore<Object, Object> store = new NoOpReadOnlyStore<>();
+        NoOpReadOnlyStore<object, object> store = new NoOpReadOnlyStore<>();
         store.close();
-        final GlobalStateStoreProvider provider =
+        GlobalStateStoreProvider provider =
             new GlobalStateStoreProvider(Collections.singletonMap("global", store));
         provider.stores("global", QueryableStoreTypes.keyValueStore());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnKeyValueStore() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-        final List<ReadOnlyKeyValueStore<String, String>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
+        List<ReadOnlyKeyValueStore<string, string>> stores =
             provider.stores("kv-store", QueryableStoreTypes.keyValueStore());
-        assertEquals(1, stores.size());
-        for (final ReadOnlyKeyValueStore<String, String> store : stores) {
-            assertThat(store, instanceOf(ReadOnlyKeyValueStore.class));
-            assertThat(store, not(instanceOf(TimestampedKeyValueStore.class)));
+        Assert.Equal(1, stores.Count);
+        foreach (ReadOnlyKeyValueStore<string, string> store in stores) {
+            Assert.Equal(store, instanceOf(ReadOnlyKeyValueStore));
+            Assert.Equal(store, not(instanceOf(TimestampedKeyValueStore)));
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnTimestampedKeyValueStore() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-        final List<ReadOnlyKeyValueStore<String, ValueAndTimestamp<String>>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
+        List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-kv-store", QueryableStoreTypes.timestampedKeyValueStore());
-        assertEquals(1, stores.size());
-        for (final ReadOnlyKeyValueStore<String, ValueAndTimestamp<String>> store : stores) {
-            assertThat(store, instanceOf(ReadOnlyKeyValueStore.class));
-            assertThat(store, instanceOf(TimestampedKeyValueStore.class));
+        Assert.Equal(1, stores.Count);
+        foreach (ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in stores) {
+            Assert.Equal(store, instanceOf(ReadOnlyKeyValueStore));
+            Assert.Equal(store, instanceOf(TimestampedKeyValueStore));
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotReturnKeyValueStoreAsTimestampedStore() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-        final List<ReadOnlyKeyValueStore<String, ValueAndTimestamp<String>>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
+        List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("kv-store", QueryableStoreTypes.timestampedKeyValueStore());
-        assertEquals(0, stores.size());
+        Assert.Equal(0, stores.Count);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnTimestampedKeyValueStoreAsKeyValueStore() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-        final List<ReadOnlyKeyValueStore<String, ValueAndTimestamp<String>>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
+        List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-kv-store", QueryableStoreTypes.keyValueStore());
-        assertEquals(1, stores.size());
-        for (final ReadOnlyKeyValueStore<String, ValueAndTimestamp<String>> store : stores) {
-            assertThat(store, instanceOf(ReadOnlyKeyValueStore.class));
-            assertThat(store, not(instanceOf(TimestampedKeyValueStore.class)));
+        Assert.Equal(1, stores.Count);
+        foreach (ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>> store in stores) {
+            Assert.Equal(store, instanceOf(ReadOnlyKeyValueStore));
+            Assert.Equal(store, not(instanceOf(TimestampedKeyValueStore)));
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnTimestampedWindowStoreAsWindowStore() {
-        final GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
-        final List<ReadOnlyWindowStore<String, ValueAndTimestamp<String>>> stores =
+        GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
+        List<ReadOnlyWindowStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-w-store", QueryableStoreTypes.windowStore());
-        assertEquals(1, stores.size());
-        for (final ReadOnlyWindowStore<String, ValueAndTimestamp<String>> store : stores) {
-            assertThat(store, instanceOf(ReadOnlyWindowStore.class));
-            assertThat(store, not(instanceOf(TimestampedWindowStore.class)));
+        Assert.Equal(1, stores.Count);
+        foreach (ReadOnlyWindowStore<string, ValueAndTimestamp<string>> store in stores) {
+            Assert.Equal(store, instanceOf(ReadOnlyWindowStore));
+            Assert.Equal(store, not(instanceOf(TimestampedWindowStore)));
         }
     }
 }

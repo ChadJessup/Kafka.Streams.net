@@ -64,9 +64,9 @@
 //            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
-//            Assert.Equal(iterator..AsNext(), equalTo(true));
+//            Assert.Equal(iterator..AsNext(), (true));
 //            iterator.next();
-//            Assert.Equal(iterator..AsNext(), equalTo(false));
+//            Assert.Equal(iterator..AsNext(), (false));
 //        }
 
 //        [Fact]
@@ -82,7 +82,7 @@
 //            Iterator<KeyValuePair<int, int>> iterator = adaptedTransformer.transform(key, value).iterator();
 
 //            //verifyAll();
-//            Assert.Equal(iterator..AsNext(), equalTo(false));
+//            Assert.Equal(iterator..AsNext(), (false));
 //        }
 
 //        [Fact]

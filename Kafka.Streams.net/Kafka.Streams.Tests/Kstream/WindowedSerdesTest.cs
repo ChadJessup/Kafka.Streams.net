@@ -14,9 +14,9 @@
 //        public void shouldWrapForTimeWindowedSerde()
 //        {
 //            ISerde<Windowed<string>> serde = WindowedSerdes.timeWindowedSerdeFrom(string));
-//            Assert.True(serde.serializer() is TimeWindowedSerializer);
+//            Assert.True(serde.Serializer is TimeWindowedSerializer);
 //            Assert.True(serde.deserializer() is TimeWindowedDeserializer);
-//            Assert.True(((TimeWindowedSerializer)serde.serializer()).innerSerializer() is StringSerializer);
+//            Assert.True(((TimeWindowedSerializer)serde.Serializer).innerSerializer() is StringSerializer);
 //            Assert.True(((TimeWindowedDeserializer)serde.deserializer()).innerDeserializer() is StringDeserializer);
 //        }
 
@@ -24,9 +24,9 @@
 //        public void shouldWrapForSessionWindowedSerde()
 //        {
 //            ISerde<Windowed<string>> serde = WindowedSerdes.sessionWindowedSerdeFrom<string>());
-//            Assert.True(serde.serializer() is SessionWindowedSerializer);
+//            Assert.True(serde.Serializer is SessionWindowedSerializer);
 //            Assert.True(serde.deserializer() is SessionWindowedDeserializer);
-//            Assert.True(((SessionWindowedSerializer)serde.serializer()).innerSerializer() is StringSerializer);
+//            Assert.True(((SessionWindowedSerializer)serde.Serializer).innerSerializer() is StringSerializer);
 //            Assert.True(((SessionWindowedDeserializer)serde.deserializer()).innerDeserializer() is StringDeserializer);
 //        }
 
@@ -35,7 +35,7 @@
 //        {
 //            Windowed<int> timeWindowed = new Windowed<>(10, new TimeWindow(0, long.MaxValue));
 //            ISerde<Windowed<int>> timeWindowedSerde = WindowedSerdes.timeWindowedSerdeFrom<int>();
-//            byte[] bytes = timeWindowedSerde.serializer().serialize(topic, timeWindowed);
+//            byte[] bytes = timeWindowedSerde.Serializer.serialize(topic, timeWindowed);
 //            Windowed<int> windowed = timeWindowedSerde.deserializer().Deserialize(topic, bytes);
 //            Assert.Equal(timeWindowed, windowed);
 //        }
@@ -45,7 +45,7 @@
 //        {
 //            Windowed<int> sessionWindowed = new Windowed<>(10, new SessionWindow(0, 1));
 //            ISerde<Windowed<int>> sessionWindowedSerde = WindowedSerdes.sessionWindowedSerdeFrom(int));
-//            byte[] bytes = sessionWindowedSerde.serializer().serialize(topic, sessionWindowed);
+//            byte[] bytes = sessionWindowedSerde.Serializer.serialize(topic, sessionWindowed);
 //            Windowed<int> windowed = sessionWindowedSerde.deserializer().Deserialize(topic, bytes);
 //            Assert.Equal(sessionWindowed, windowed);
 //        }

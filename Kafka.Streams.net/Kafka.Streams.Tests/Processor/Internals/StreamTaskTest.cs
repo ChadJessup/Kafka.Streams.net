@@ -1,160 +1,160 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.MockConsumer;
-import org.apache.kafka.clients.consumer.OffsetResetStrategy;
-import org.apache.kafka.clients.producer.MockProducer;
-import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.MetricName;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ProducerFencedException;
-import org.apache.kafka.common.errors.TimeoutException;
-import org.apache.kafka.common.metrics.JmxReporter;
-import org.apache.kafka.common.metrics.KafkaMetric;
-import org.apache.kafka.common.metrics.MetricConfig;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.metrics.Sensor;
-import org.apache.kafka.common.record.TimestampType;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.apache.kafka.common.serialization.IntegerSerializer;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.Serializer;
-import org.apache.kafka.common.utils.LogContext;
-import org.apache.kafka.common.utils.MockTime;
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.errors.DefaultProductionExceptionHandler;
-import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.errors.TaskMigratedException;
-import org.apache.kafka.streams.processor.PunctuationType;
-import org.apache.kafka.streams.processor.Punctuator;
-import org.apache.kafka.streams.processor.StateRestoreListener;
-import org.apache.kafka.streams.processor.StateStore;
-import org.apache.kafka.streams.processor.TaskId;
-import org.apache.kafka.streams.processor.internals.metrics.StreamsMetricsImpl;
-import org.apache.kafka.streams.processor.internals.testutil.LogCaptureAppender;
-import org.apache.kafka.streams.state.internals.OffsetCheckpoint;
-import org.apache.kafka.test.MockKeyValueStore;
-import org.apache.kafka.test.MockProcessorNode;
-import org.apache.kafka.test.MockSourceNode;
-import org.apache.kafka.test.MockStateRestoreListener;
-import org.apache.kafka.test.MockTimestampExtractor;
-import org.apache.kafka.test.NoOpRecordCollector;
-import org.apache.kafka.test.TestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.time.Duration;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.apache.kafka.common.utils.Utils.mkEntry;
-import static org.apache.kafka.common.utils.Utils.mkMap;
-import static org.apache.kafka.common.utils.Utils.mkProperties;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class StreamTaskTest {
 
-    private final Serializer<Integer> intSerializer = Serdes.Integer().serializer();
-    private final Serializer<byte[]> bytesSerializer = Serdes.ByteArray().serializer();
-    private final Deserializer<Integer> intDeserializer = Serdes.Integer().deserializer();
-    private final String topic1 = "topic1";
-    private final String topic2 = "topic2";
-    private final TopicPartition partition1 = new TopicPartition(topic1, 1);
-    private final TopicPartition partition2 = new TopicPartition(topic2, 1);
-    private final Set<TopicPartition> partitions = Utils.mkSet(partition1, partition2);
+    private Serializer<int> intSerializer = Serdes.Int().Serializer;
+    private Serializer<byte[]> bytesSerializer = Serdes.ByteArray().Serializer;
+    private Deserializer<int> intDeserializer = Serdes.Int().deserializer();
+    private string topic1 = "topic1";
+    private string topic2 = "topic2";
+    private TopicPartition partition1 = new TopicPartition(topic1, 1);
+    private TopicPartition partition2 = new TopicPartition(topic2, 1);
+    private HashSet<TopicPartition> partitions = Utils.mkSet(partition1, partition2);
 
-    private final MockSourceNode<Integer, Integer> source1 = new MockSourceNode<>(new String[]{topic1}, intDeserializer, intDeserializer);
-    private final MockSourceNode<Integer, Integer> source2 = new MockSourceNode<>(new String[]{topic2}, intDeserializer, intDeserializer);
-    private final MockSourceNode<Integer, Integer> source3 = new MockSourceNode<Integer, Integer>(new String[]{topic2}, intDeserializer, intDeserializer) {
-        @Override
-        public void process(final Integer key, final Integer value) {
+    private MockSourceNode<int, int> source1 = new MockSourceNode<>(new string[]{topic1}, intDeserializer, intDeserializer);
+    private MockSourceNode<int, int> source2 = new MockSourceNode<>(new string[]{topic2}, intDeserializer, intDeserializer);
+    private MockSourceNode<int, int> source3 = new MockSourceNode<int, int>(new string[]{topic2}, intDeserializer, intDeserializer) {
+        
+        public void process(int key, int value) {
             throw new RuntimeException("KABOOM!");
         }
 
-        @Override
+        
         public void close() {
             throw new RuntimeException("KABOOM!");
         }
     };
-    private final MockProcessorNode<Integer, Integer> processorStreamTime = new MockProcessorNode<>(10L);
-    private final MockProcessorNode<Integer, Integer> processorSystemTime = new MockProcessorNode<>(10L, PunctuationType.WALL_CLOCK_TIME);
+    private MockProcessorNode<int, int> processorStreamTime = new MockProcessorNode<>(10L);
+    private MockProcessorNode<int, int> processorSystemTime = new MockProcessorNode<>(10L, PunctuationType.WALL_CLOCK_TIME);
 
-    private final String storeName = "store";
-    private final StateStore stateStore = new MockKeyValueStore(storeName, false);
-    private final TopicPartition changelogPartition = new TopicPartition("store-changelog", 0);
-    private final Long offset = 543L;
+    private string storeName = "store";
+    private StateStore stateStore = new MockKeyValueStore(storeName, false);
+    private TopicPartition changelogPartition = new TopicPartition("store-changelog", 0);
+    private long offset = 543L;
 
-    private final ProcessorTopology topology = withSources(
+    private ProcessorTopology topology = withSources(
         asList(source1, source2, processorStreamTime, processorSystemTime),
         mkMap(mkEntry(topic1, source1), mkEntry(topic2, source2))
     );
 
-    private final MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+    private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
     private MockProducer<byte[], byte[]> producer;
-    private final MockConsumer<byte[], byte[]> restoreStateConsumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
-    private final StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
-    private final StoreChangelogReader changelogReader = new StoreChangelogReader(restoreStateConsumer, Duration.ZERO, stateRestoreListener, new LogContext("stream-task-test ")) {
-        @Override
-        public Map<TopicPartition, Long> restoredOffsets() {
+    private MockConsumer<byte[], byte[]> restoreStateConsumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+    private StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
+    private StoreChangelogReader changelogReader = new StoreChangelogReader(restoreStateConsumer, Duration.ZERO, stateRestoreListener, new LogContext("stream-task-test ")) {
+        
+        public Dictionary<TopicPartition, long> restoredOffsets() {
             return Collections.singletonMap(changelogPartition, offset);
         }
     };
-    private final byte[] recordValue = intSerializer.serialize(null, 10);
-    private final byte[] recordKey = intSerializer.serialize(null, 1);
-    private final Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
-    private final StreamsMetricsImpl streamsMetrics = new MockStreamsMetrics(metrics);
-    private final TaskId taskId00 = new TaskId(0, 0);
-    private final MockTime time = new MockTime();
-    private final File baseDir = TestUtils.tempDirectory();
+    private byte[] recordValue = intSerializer.serialize(null, 10);
+    private byte[] recordKey = intSerializer.serialize(null, 1);
+    private Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
+    private StreamsMetricsImpl streamsMetrics = new MockStreamsMetrics(metrics);
+    private TaskId taskId00 = new TaskId(0, 0);
+    private MockTime time = new MockTime();
+    private File baseDir = TestUtils.tempDirectory();
     private StateDirectory stateDirectory;
     private StreamTask task;
     private long punctuatedAt;
 
-    private final Punctuator punctuator = new Punctuator() {
-        @Override
-        public void punctuate(final long timestamp) {
+    private Punctuator punctuator = new Punctuator() {
+        
+        public void punctuate(long timestamp) {
             punctuatedAt = timestamp;
         }
     };
 
-    static ProcessorTopology withRepartitionTopics(final List<ProcessorNode> processorNodes,
-                                                   final Map<String, SourceNode> sourcesByTopic,
-                                                   final Set<String> repartitionTopics) {
+    static ProcessorTopology withRepartitionTopics(List<ProcessorNode> processorNodes,
+                                                   Dictionary<string, SourceNode> sourcesByTopic,
+                                                   HashSet<string> repartitionTopics) {
         return new ProcessorTopology(processorNodes,
                                      sourcesByTopic,
                                      Collections.emptyMap(),
@@ -164,8 +164,8 @@ public class StreamTaskTest {
                                      repartitionTopics);
     }
 
-    static ProcessorTopology withSources(final List<ProcessorNode> processorNodes,
-                                         final Map<String, SourceNode> sourcesByTopic) {
+    static ProcessorTopology withSources(List<ProcessorNode> processorNodes,
+                                         Dictionary<string, SourceNode> sourcesByTopic) {
         return new ProcessorTopology(processorNodes,
                                      sourcesByTopic,
                                      Collections.emptyMap(),
@@ -175,11 +175,11 @@ public class StreamTaskTest {
                                      Collections.emptySet());
     }
 
-    private StreamsConfig createConfig(final boolean enableEoS) {
-        final String canonicalPath;
+    private StreamsConfig createConfig(bool enableEoS) {
+        string canonicalPath;
         try {
             canonicalPath = baseDir.getCanonicalPath();
-        } catch (final IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
         return new StreamsConfig(mkProperties(mkMap(
@@ -187,25 +187,25 @@ public class StreamTaskTest {
             mkEntry(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:2171"),
             mkEntry(StreamsConfig.BUFFERED_RECORDS_PER_PARTITION_CONFIG, "3"),
             mkEntry(StreamsConfig.STATE_DIR_CONFIG, canonicalPath),
-            mkEntry(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor.class.getName()),
+            mkEntry(StreamsConfig.DEFAULT_TIMESTAMP_EXTRACTOR_CLASS_CONFIG, MockTimestampExtractor.getName()),
             mkEntry(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, enableEoS ? StreamsConfig.EXACTLY_ONCE : StreamsConfig.AT_LEAST_ONCE),
             mkEntry(StreamsConfig.MAX_TASK_IDLE_MS_CONFIG, "100")
         )));
     }
 
-    @Before
+    
     public void setup() {
         consumer.assign(asList(partition1, partition2));
         stateDirectory = new StateDirectory(createConfig(false), new MockTime(), true);
     }
 
-    @After
-    public void cleanup() throws IOException {
+    
+    public void cleanup(){ //throws IOException
         try {
             if (task != null) {
                 try {
                     task.close(true, false);
-                } catch (final Exception e) {
+                } catch (Exception e) {
                     // swallow
                 }
             }
@@ -214,11 +214,11 @@ public class StreamTaskTest {
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldHandleInitTransactionsTimeoutExceptionOnCreation() {
-        final LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
-        final ProcessorTopology topology = withSources(
+        ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, (SourceNode) source1), mkEntry(topic2, (SourceNode) source2))
         );
@@ -240,34 +240,34 @@ public class StreamTaskTest {
                 stateDirectory,
                 null,
                 time,
-                () -> producer = new MockProducer<byte[], byte[]>(false, bytesSerializer, bytesSerializer) {
-                    @Override
+                () => producer = new MockProducer<byte[], byte[]>(false, bytesSerializer, bytesSerializer) {
+                    
                     public void initTransactions() {
                         throw new TimeoutException("test");
                     }
                 },
                 null
             );
-            fail("Expected an exception");
-        } catch (final StreamsException expected) {
+            Assert.True(false, "Expected an exception");
+        } catch (StreamsException expected) {
             // make sure we log the explanation as an ERROR
             assertTimeoutErrorLog(appender);
 
             // make sure we report the correct message
-            assertThat(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
+            Assert.Equal(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
             // make sure we preserve the cause
-            assertEquals(expected.getCause().getClass(), TimeoutException.class);
-            assertThat(expected.getCause().getMessage(), is("test"));
+            Assert.Equal(expected.getCause().getClass(), TimeoutException);
+            Assert.Equal(expected.getCause().getMessage(), is("test"));
         }
         LogCaptureAppender.unregister(appender);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldHandleInitTransactionsTimeoutExceptionOnResume() {
-        final LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
 
-        final ProcessorTopology topology = withSources(
+        ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, (SourceNode) source1), mkEntry(topic2, (SourceNode) source2))
         );
@@ -277,9 +277,9 @@ public class StreamTaskTest {
         source1.addChild(processorSystemTime);
         source2.addChild(processorSystemTime);
 
-        final AtomicBoolean timeOut = new AtomicBoolean(false);
+        AtomicBoolean timeOut = new AtomicBoolean(false);
 
-        final StreamTask testTask = new StreamTask(
+        StreamTask testTask = new StreamTask(
             taskId00,
             partitions,
             topology,
@@ -290,13 +290,13 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<byte[], byte[]>(false, bytesSerializer, bytesSerializer) {
-                @Override
+            () => producer = new MockProducer<byte[], byte[]>(false, bytesSerializer, bytesSerializer) {
+                
                 public void initTransactions() {
                     if (timeOut.get()) {
                         throw new TimeoutException("test");
                     } else {
-                        super.initTransactions();
+                        base.initTransactions();
                     }
                 }
             },
@@ -307,41 +307,41 @@ public class StreamTaskTest {
         timeOut.set(true);
         try {
             testTask.resume();
-            fail("Expected an exception");
-        } catch (final StreamsException expected) {
+            Assert.True(false, "Expected an exception");
+        } catch (StreamsException expected) {
             // make sure we log the explanation as an ERROR
             assertTimeoutErrorLog(appender);
 
             // make sure we report the correct message
-            assertThat(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
+            Assert.Equal(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
             // make sure we preserve the cause
-            assertEquals(expected.getCause().getClass(), TimeoutException.class);
-            assertThat(expected.getCause().getMessage(), is("test"));
+            Assert.Equal(expected.getCause().getClass(), TimeoutException);
+            Assert.Equal(expected.getCause().getMessage(), is("test"));
         }
         LogCaptureAppender.unregister(appender);
     }
 
-    private void assertTimeoutErrorLog(final LogCaptureAppender appender) {
+    private void assertTimeoutErrorLog(LogCaptureAppender appender) {
 
-        final String expectedErrorLogMessage =
+        string expectedErrorLogMessage =
             "task [0_0] Timeout exception caught when initializing transactions for task 0_0. " +
                 "This might happen if the broker is slow to respond, if the network " +
                 "connection to the broker was interrupted, or if similar circumstances arise. " +
                 "You can increase producer parameter `max.block.ms` to increase this timeout.";
 
-        final List<String> expectedError =
+        List<string> expectedError =
             appender
                 .getEvents()
                 .stream()
-                .filter(event -> event.getMessage().equals(expectedErrorLogMessage))
+                .filter(event => event.getMessage().equals(expectedErrorLogMessage))
                 .map(LogCaptureAppender.Event::getLevel)
                 .collect(Collectors.toList());
-        assertThat(expectedError, is(singletonList("ERROR")));
+        Assert.Equal(expectedError, is(singletonList("ERROR")));
     }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void testProcessOrder() {
         task = createStatelessTask(createConfig(false));
 
@@ -357,39 +357,39 @@ public class StreamTaskTest {
             getConsumerRecord(partition2, 45)
         ));
 
-        assertTrue(task.process());
-        assertEquals(5, task.numBuffered());
-        assertEquals(1, source1.numReceived);
-        assertEquals(0, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(5, task.numBuffered());
+        Assert.Equal(1, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
 
-        assertTrue(task.process());
-        assertEquals(4, task.numBuffered());
-        assertEquals(2, source1.numReceived);
-        assertEquals(0, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(4, task.numBuffered());
+        Assert.Equal(2, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
 
-        assertTrue(task.process());
-        assertEquals(3, task.numBuffered());
-        assertEquals(2, source1.numReceived);
-        assertEquals(1, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(3, task.numBuffered());
+        Assert.Equal(2, source1.numReceived);
+        Assert.Equal(1, source2.numReceived);
 
-        assertTrue(task.process());
-        assertEquals(2, task.numBuffered());
-        assertEquals(3, source1.numReceived);
-        assertEquals(1, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(2, task.numBuffered());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(1, source2.numReceived);
 
-        assertTrue(task.process());
-        assertEquals(1, task.numBuffered());
-        assertEquals(3, source1.numReceived);
-        assertEquals(2, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(1, task.numBuffered());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(2, source2.numReceived);
 
-        assertTrue(task.process());
-        assertEquals(0, task.numBuffered());
-        assertEquals(3, source1.numReceived);
-        assertEquals(3, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(0, task.numBuffered());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(3, source2.numReceived);
     }
 
 
-    [Test]
+    [Xunit.Fact]
     public void testMetrics() {
         task = createStatelessTask(createConfig(false));
 
@@ -401,23 +401,23 @@ public class StreamTaskTest {
         assertNotNull(getMetric("%s-latency-max", "The max latency of %s operation.", "all"));
         assertNotNull(getMetric("%s-rate", "The average number of occurrence of %s operation per second.", "all"));
 
-        final JmxReporter reporter = new JmxReporter("kafka.streams");
+        JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
-        assertTrue(reporter.containsMbean(String.format("kafka.streams:type=stream-task-metrics,client-id=test,task-id=%s", task.id.toString())));
-        assertTrue(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=test,task-id=all"));
+        Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-task-metrics,client-id=test,task-id=%s", task.id.toString())));
+        Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=test,task-id=all"));
     }
 
-    private KafkaMetric getMetric(final String nameFormat, final String descriptionFormat, final String taskId) {
+    private KafkaMetric getMetric(string nameFormat, string descriptionFormat, string taskId) {
         return metrics.metrics().get(metrics.metricName(
-            String.format(nameFormat, "commit"),
+            string.format(nameFormat, "commit"),
             "stream-task-metrics",
-            String.format(descriptionFormat, "commit"),
+            string.format(descriptionFormat, "commit"),
             mkMap(mkEntry("task-id", taskId), mkEntry("client-id", "test"))
         ));
     }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void testPauseResume() {
         task = createStatelessTask(createConfig(false));
 
@@ -433,12 +433,12 @@ public class StreamTaskTest {
             getConsumerRecord(partition2, 65)
         ));
 
-        assertTrue(task.process());
-        assertEquals(1, source1.numReceived);
-        assertEquals(0, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(1, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
 
-        assertEquals(1, consumer.paused().size());
-        assertTrue(consumer.paused().contains(partition2));
+        Assert.Equal(1, consumer.paused().Count);
+        Assert.True(consumer.paused().Contains(partition2));
 
         task.addRecords(partition1, asList(
             getConsumerRecord(partition1, 30),
@@ -446,33 +446,33 @@ public class StreamTaskTest {
             getConsumerRecord(partition1, 50)
         ));
 
-        assertEquals(2, consumer.paused().size());
-        assertTrue(consumer.paused().contains(partition1));
-        assertTrue(consumer.paused().contains(partition2));
+        Assert.Equal(2, consumer.paused().Count);
+        Assert.True(consumer.paused().Contains(partition1));
+        Assert.True(consumer.paused().Contains(partition2));
 
-        assertTrue(task.process());
-        assertEquals(2, source1.numReceived);
-        assertEquals(0, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(2, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
 
-        assertEquals(1, consumer.paused().size());
-        assertTrue(consumer.paused().contains(partition2));
+        Assert.Equal(1, consumer.paused().Count);
+        Assert.True(consumer.paused().Contains(partition2));
 
-        assertTrue(task.process());
-        assertEquals(3, source1.numReceived);
-        assertEquals(0, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
 
-        assertEquals(1, consumer.paused().size());
-        assertTrue(consumer.paused().contains(partition2));
+        Assert.Equal(1, consumer.paused().Count);
+        Assert.True(consumer.paused().Contains(partition2));
 
-        assertTrue(task.process());
-        assertEquals(3, source1.numReceived);
-        assertEquals(1, source2.numReceived);
+        Assert.True(task.process());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(1, source2.numReceived);
 
-        assertEquals(0, consumer.paused().size());
+        Assert.Equal(0, consumer.paused().Count);
     }
 
-    @SuppressWarnings("unchecked")
-    [Test]
+    
+    [Xunit.Fact]
     public void shouldPunctuateOnceStreamTimeAfterGap() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
@@ -493,71 +493,71 @@ public class StreamTaskTest {
         ));
 
         // st: -1
-        assertFalse(task.maybePunctuateStreamTime()); // punctuate at 20
+        Assert.False(task.maybePunctuateStreamTime()); // punctuate at 20
 
         // st: 20
-        assertTrue(task.process());
-        assertEquals(7, task.numBuffered());
-        assertEquals(1, source1.numReceived);
-        assertEquals(0, source2.numReceived);
-        assertTrue(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(7, task.numBuffered());
+        Assert.Equal(1, source1.numReceived);
+        Assert.Equal(0, source2.numReceived);
+        Assert.True(task.maybePunctuateStreamTime());
 
         // st: 25
-        assertTrue(task.process());
-        assertEquals(6, task.numBuffered());
-        assertEquals(1, source1.numReceived);
-        assertEquals(1, source2.numReceived);
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(6, task.numBuffered());
+        Assert.Equal(1, source1.numReceived);
+        Assert.Equal(1, source2.numReceived);
+        Assert.False(task.maybePunctuateStreamTime());
 
         // st: 142
         // punctuate at 142
-        assertTrue(task.process());
-        assertEquals(5, task.numBuffered());
-        assertEquals(2, source1.numReceived);
-        assertEquals(1, source2.numReceived);
-        assertTrue(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(5, task.numBuffered());
+        Assert.Equal(2, source1.numReceived);
+        Assert.Equal(1, source2.numReceived);
+        Assert.True(task.maybePunctuateStreamTime());
 
         // st: 145
         // only one punctuation after 100ms gap
-        assertTrue(task.process());
-        assertEquals(4, task.numBuffered());
-        assertEquals(2, source1.numReceived);
-        assertEquals(2, source2.numReceived);
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(4, task.numBuffered());
+        Assert.Equal(2, source1.numReceived);
+        Assert.Equal(2, source2.numReceived);
+        Assert.False(task.maybePunctuateStreamTime());
 
         // st: 155
         // punctuate at 155
-        assertTrue(task.process());
-        assertEquals(3, task.numBuffered());
-        assertEquals(3, source1.numReceived);
-        assertEquals(2, source2.numReceived);
-        assertTrue(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(3, task.numBuffered());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(2, source2.numReceived);
+        Assert.True(task.maybePunctuateStreamTime());
 
         // st: 159
-        assertTrue(task.process());
-        assertEquals(2, task.numBuffered());
-        assertEquals(3, source1.numReceived);
-        assertEquals(3, source2.numReceived);
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(2, task.numBuffered());
+        Assert.Equal(3, source1.numReceived);
+        Assert.Equal(3, source2.numReceived);
+        Assert.False(task.maybePunctuateStreamTime());
 
         // st: 160, aligned at 0
-        assertTrue(task.process());
-        assertEquals(1, task.numBuffered());
-        assertEquals(4, source1.numReceived);
-        assertEquals(3, source2.numReceived);
-        assertTrue(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(1, task.numBuffered());
+        Assert.Equal(4, source1.numReceived);
+        Assert.Equal(3, source2.numReceived);
+        Assert.True(task.maybePunctuateStreamTime());
 
         // st: 161
-        assertTrue(task.process());
-        assertEquals(0, task.numBuffered());
-        assertEquals(4, source1.numReceived);
-        assertEquals(4, source2.numReceived);
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.True(task.process());
+        Assert.Equal(0, task.numBuffered());
+        Assert.Equal(4, source1.numReceived);
+        Assert.Equal(4, source2.numReceived);
+        Assert.False(task.maybePunctuateStreamTime());
 
         processorStreamTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.STREAM_TIME, 20L, 142L, 155L, 160L);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldRespectPunctuateCancellationStreamTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
@@ -575,203 +575,203 @@ public class StreamTaskTest {
             getConsumerRecord(partition2, 45)
         ));
 
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.False(task.maybePunctuateStreamTime());
 
         // st is now 20
-        assertTrue(task.process());
+        Assert.True(task.process());
 
-        assertTrue(task.maybePunctuateStreamTime());
+        Assert.True(task.maybePunctuateStreamTime());
 
         // st is now 25
-        assertTrue(task.process());
+        Assert.True(task.process());
 
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.False(task.maybePunctuateStreamTime());
 
         // st is now 30
-        assertTrue(task.process());
+        Assert.True(task.process());
 
         processorStreamTime.mockProcessor.scheduleCancellable.cancel();
 
-        assertFalse(task.maybePunctuateStreamTime());
+        Assert.False(task.maybePunctuateStreamTime());
 
         processorStreamTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.STREAM_TIME, 20L);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldRespectPunctuateCancellationSystemTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
-        final long now = time.milliseconds();
+        long now = time.milliseconds();
         time.sleep(10);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         processorSystemTime.mockProcessor.scheduleCancellable.cancel();
         time.sleep(10);
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 10);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldRespectCommitNeeded() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
 
-        assertFalse(task.commitNeeded());
+        Assert.False(task.commitNeeded());
 
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 0)));
-        assertTrue(task.process());
-        assertTrue(task.commitNeeded());
+        Assert.True(task.process());
+        Assert.True(task.commitNeeded());
 
         task.commit();
-        assertFalse(task.commitNeeded());
+        Assert.False(task.commitNeeded());
 
-        assertTrue(task.maybePunctuateStreamTime());
-        assertTrue(task.commitNeeded());
+        Assert.True(task.maybePunctuateStreamTime());
+        Assert.True(task.commitNeeded());
 
         task.commit();
-        assertFalse(task.commitNeeded());
+        Assert.False(task.commitNeeded());
 
         time.sleep(10);
-        assertTrue(task.maybePunctuateSystemTime());
-        assertTrue(task.commitNeeded());
+        Assert.True(task.maybePunctuateSystemTime());
+        Assert.True(task.commitNeeded());
 
         task.commit();
-        assertFalse(task.commitNeeded());
+        Assert.False(task.commitNeeded());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldRespectCommitRequested() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
 
         task.requestCommit();
-        assertTrue(task.commitRequested());
+        Assert.True(task.commitRequested());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeProcessableIfAllPartitionsBuffered() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
 
-        assertFalse(task.isProcessable(0L));
+        Assert.False(task.isProcessable(0L));
 
-        final byte[] bytes = ByteBuffer.allocate(4).putInt(1).array();
+        byte[] bytes = ByteBuffer.allocate(4).putInt(1).array();
 
-        task.addRecords(partition1, Collections.singleton(new ConsumerRecord<>(topic1, 1, 0, bytes, bytes)));
+        task.addRecords(partition1, Collections.singleton(new ConsumeResult<>(topic1, 1, 0, bytes, bytes)));
 
-        assertFalse(task.isProcessable(0L));
+        Assert.False(task.isProcessable(0L));
 
-        task.addRecords(partition2, Collections.singleton(new ConsumerRecord<>(topic2, 1, 0, bytes, bytes)));
+        task.addRecords(partition2, Collections.singleton(new ConsumeResult<>(topic2, 1, 0, bytes, bytes)));
 
-        assertTrue(task.isProcessable(0L));
+        Assert.True(task.isProcessable(0L));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeProcessableIfWaitedForTooLong() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
 
-        final MetricName enforcedProcessMetric = metrics.metricName("enforced-processing-total", "stream-task-metrics", mkMap(mkEntry("client-id", "test"), mkEntry("task-id", taskId00.toString())));
+        MetricName enforcedProcessMetric = metrics.metricName("enforced-processing-total", "stream-task-metrics", mkMap(mkEntry("client-id", "test"), mkEntry("task-id", taskId00.toString())));
 
-        assertFalse(task.isProcessable(0L));
-        assertEquals(0.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.False(task.isProcessable(0L));
+        Assert.Equal(0.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-        final byte[] bytes = ByteBuffer.allocate(4).putInt(1).array();
+        byte[] bytes = ByteBuffer.allocate(4).putInt(1).array();
 
-        task.addRecords(partition1, Collections.singleton(new ConsumerRecord<>(topic1, 1, 0, bytes, bytes)));
+        task.addRecords(partition1, Collections.singleton(new ConsumeResult<>(topic1, 1, 0, bytes, bytes)));
 
-        assertFalse(task.isProcessable(time.milliseconds()));
+        Assert.False(task.isProcessable(time.milliseconds()));
 
-        assertFalse(task.isProcessable(time.milliseconds() + 50L));
+        Assert.False(task.isProcessable(time.milliseconds() + 50L));
 
-        assertTrue(task.isProcessable(time.milliseconds() + 100L));
-        assertEquals(1.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.True(task.isProcessable(time.milliseconds() + 100L));
+        Assert.Equal(1.0, metrics.metric(enforcedProcessMetric).metricValue());
 
         // once decided to enforce, continue doing that
-        assertTrue(task.isProcessable(time.milliseconds() + 101L));
-        assertEquals(2.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.True(task.isProcessable(time.milliseconds() + 101L));
+        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-        task.addRecords(partition2, Collections.singleton(new ConsumerRecord<>(topic2, 1, 0, bytes, bytes)));
+        task.addRecords(partition2, Collections.singleton(new ConsumeResult<>(topic2, 1, 0, bytes, bytes)));
 
-        assertTrue(task.isProcessable(time.milliseconds() + 130L));
-        assertEquals(2.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.True(task.isProcessable(time.milliseconds() + 130L));
+        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
         // one resumed to normal processing, the timer should be reset
         task.process();
 
-        assertFalse(task.isProcessable(time.milliseconds() + 150L));
-        assertEquals(2.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.False(task.isProcessable(time.milliseconds() + 150L));
+        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-        assertFalse(task.isProcessable(time.milliseconds() + 249L));
-        assertEquals(2.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.False(task.isProcessable(time.milliseconds() + 249L));
+        Assert.Equal(2.0, metrics.metric(enforcedProcessMetric).metricValue());
 
-        assertTrue(task.isProcessable(time.milliseconds() + 250L));
-        assertEquals(3.0, metrics.metric(enforcedProcessMetric).metricValue());
+        Assert.True(task.isProcessable(time.milliseconds() + 250L));
+        Assert.Equal(3.0, metrics.metric(enforcedProcessMetric).metricValue());
     }
 
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPunctuateSystemTimeWhenIntervalElapsed() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
-        final long now = time.milliseconds();
+        long now = time.milliseconds();
         time.sleep(10);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(10);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(9);
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         time.sleep(1);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(20);
-        assertTrue(task.maybePunctuateSystemTime());
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 10, now + 20, now + 30, now + 50);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotPunctuateSystemTimeWhenIntervalNotElapsed() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         time.sleep(9);
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldPunctuateOnceSystemTimeAfterGap() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
-        final long now = time.milliseconds();
+        long now = time.milliseconds();
         time.sleep(100);
-        assertTrue(task.maybePunctuateSystemTime());
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         time.sleep(10);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(12);
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(7);
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         time.sleep(1); // punctuate at now + 130
-        assertTrue(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
         time.sleep(105); // punctuate at now + 235
-        assertTrue(task.maybePunctuateSystemTime());
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         time.sleep(5); // punctuate at now + 240, still aligned on the initial punctuation
-        assertTrue(task.maybePunctuateSystemTime());
-        assertFalse(task.maybePunctuateSystemTime());
+        Assert.True(task.maybePunctuateSystemTime());
+        Assert.False(task.maybePunctuateSystemTime());
         processorSystemTime.mockProcessor.checkAndClearPunctuateResult(PunctuationType.WALL_CLOCK_TIME, now + 100, now + 110, now + 122, now + 130, now + 235, now + 240);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContext() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
@@ -780,13 +780,13 @@ public class StreamTaskTest {
 
         try {
             task.process();
-            fail("Should've thrown StreamsException");
-        } catch (final Exception e) {
-            assertThat(task.processorContext.currentNode(), nullValue());
+            Assert.True(false, "Should've thrown StreamsException");
+        } catch (Exception e) {
+            Assert.Equal(task.processorContext.currentNode(), nullValue());
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingStreamTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
@@ -794,20 +794,20 @@ public class StreamTaskTest {
 
         try {
             task.punctuate(processorStreamTime, 1, PunctuationType.STREAM_TIME, new Punctuator() {
-                @Override
-                public void punctuate(final long timestamp) {
+                
+                public void punctuate(long timestamp) {
                     throw new KafkaException("KABOOM!");
                 }
             });
-            fail("Should've thrown StreamsException");
-        } catch (final StreamsException e) {
-            final String message = e.getMessage();
-            assertTrue("message=" + message + " should contain processor", message.contains("processor '" + processorStreamTime.name() + "'"));
-            assertThat(task.processorContext.currentNode(), nullValue());
+            Assert.True(false, "Should've thrown StreamsException");
+        } catch (StreamsException e) {
+            string message = e.getMessage();
+            Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorStreamTime.name() + "'"));
+            Assert.Equal(task.processorContext.currentNode(), nullValue());
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingWallClockTimeTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
@@ -815,24 +815,24 @@ public class StreamTaskTest {
 
         try {
             task.punctuate(processorSystemTime, 1, PunctuationType.WALL_CLOCK_TIME, new Punctuator() {
-                @Override
-                public void punctuate(final long timestamp) {
+                
+                public void punctuate(long timestamp) {
                     throw new KafkaException("KABOOM!");
                 }
             });
-            fail("Should've thrown StreamsException");
-        } catch (final StreamsException e) {
-            final String message = e.getMessage();
-            assertTrue("message=" + message + " should contain processor", message.contains("processor '" + processorSystemTime.name() + "'"));
-            assertThat(task.processorContext.currentNode(), nullValue());
+            Assert.True(false, "Should've thrown StreamsException");
+        } catch (StreamsException e) {
+            string message = e.getMessage();
+            Assert.True("message=" + message + " should contain processor", message.Contains("processor '" + processorSystemTime.name() + "'"));
+            Assert.Equal(task.processorContext.currentNode(), nullValue());
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldFlushRecordCollectorOnFlushState() {
-        final AtomicBoolean flushed = new AtomicBoolean(false);
-        final StreamsMetricsImpl streamsMetrics = new MockStreamsMetrics(new Metrics());
-        final StreamTask streamTask = new StreamTask(
+        AtomicBoolean flushed = new AtomicBoolean(false);
+        StreamsMetricsImpl streamsMetrics = new MockStreamsMetrics(new Metrics());
+        StreamTask streamTask = new StreamTask(
             taskId00,
             partitions,
             topology,
@@ -843,45 +843,45 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer),
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer),
             new NoOpRecordCollector() {
-                @Override
+                
                 public void flush() {
                     flushed.set(true);
                 }
             });
         streamTask.flushState();
-        assertTrue(flushed.get());
+        Assert.True(flushed.get());
     }
 
-    [Test]
-    public void shouldCheckpointOffsetsOnCommit() throws IOException {
+    [Xunit.Fact]
+    public void shouldCheckpointOffsetsOnCommit(){ //throws IOException
         task = createStatefulTask(createConfig(false), true);
         task.initializeStateStores();
         task.initializeTopology();
         task.commit();
-        final OffsetCheckpoint checkpoint = new OffsetCheckpoint(
+        OffsetCheckpoint checkpoint = new OffsetCheckpoint(
             new File(stateDirectory.directoryForTask(taskId00), StateManagerUtil.CHECKPOINT_FILE_NAME)
         );
 
-        assertThat(checkpoint.read(), equalTo(Collections.singletonMap(changelogPartition, offset)));
+        Assert.Equal(checkpoint.read(), (Collections.singletonMap(changelogPartition, offset)));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCheckpointOffsetsOnCommitIfEosIsEnabled() {
         task = createStatefulTask(createConfig(true), true);
         task.initializeStateStores();
         task.initializeTopology();
         task.commit();
-        final File checkpointFile = new File(
+        File checkpointFile = new File(
             stateDirectory.directoryForTask(taskId00),
             StateManagerUtil.CHECKPOINT_FILE_NAME
         );
 
-        assertFalse(checkpointFile.exists());
+        Assert.False(checkpointFile.exists());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowIllegalStateExceptionIfCurrentNodeIsNotNullWhenPunctuateCalled() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
@@ -889,98 +889,98 @@ public class StreamTaskTest {
         task.processorContext.setCurrentNode(processorStreamTime);
         try {
             task.punctuate(processorStreamTime, 10, PunctuationType.STREAM_TIME, punctuator);
-            fail("Should throw illegal state exception as current node is not null");
-        } catch (final IllegalStateException e) {
+            Assert.True(false, "Should throw illegal state exception as current node is not null");
+        } catch (IllegalStateException e) {
             // pass
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCallPunctuateOnPassedInProcessorNode() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
         task.punctuate(processorStreamTime, 5, PunctuationType.STREAM_TIME, punctuator);
-        assertThat(punctuatedAt, equalTo(5L));
+        Assert.Equal(punctuatedAt, (5L));
         task.punctuate(processorStreamTime, 10, PunctuationType.STREAM_TIME, punctuator);
-        assertThat(punctuatedAt, equalTo(10L));
+        Assert.Equal(punctuatedAt, (10L));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSetProcessorNodeOnContextBackToNullAfterSuccessfulPunctuate() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
         task.punctuate(processorStreamTime, 5, PunctuationType.STREAM_TIME, punctuator);
-        assertThat(((ProcessorContextImpl) task.context()).currentNode(), nullValue());
+        Assert.Equal(((ProcessorContextImpl) task.context()).currentNode(), nullValue());
     }
 
-    [Test](expected = IllegalStateException.class)
+    [Xunit.Fact]// (expected = IllegalStateException)
     public void shouldThrowIllegalStateExceptionOnScheduleIfCurrentNodeIsNull() {
         task = createStatelessTask(createConfig(false));
         task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator() {
-            @Override
-            public void punctuate(final long timestamp) {
+            
+            public void punctuate(long timestamp) {
                 // no-op
             }
         });
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotThrowExceptionOnScheduleIfCurrentNodeIsNotNull() {
         task = createStatelessTask(createConfig(false));
         task.processorContext.setCurrentNode(processorStreamTime);
         task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator() {
-            @Override
-            public void punctuate(final long timestamp) {
+            
+            public void punctuate(long timestamp) {
                 // no-op
             }
         });
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseProducerOnCleanCloseWithEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(true, false);
         task = null;
 
-        assertFalse(producer.closed());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseProducerOnUncleanCloseWithEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(false, false);
         task = null;
 
-        assertFalse(producer.closed());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseProducerOnErrorDuringCleanCloseWithEosDisabled() {
         task = createTaskThatThrowsException(false);
 
         try {
             task.close(true, false);
-            fail("should have thrown runtime exception");
-        } catch (final RuntimeException expected) {
+            Assert.True(false, "should have thrown runtime exception");
+        } catch (RuntimeException expected) {
             task = null;
         }
 
-        assertFalse(producer.closed());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseProducerOnErrorDuringUncleanCloseWithEosDisabled() {
         task = createTaskThatThrowsException(false);
 
         task.close(false, false);
         task = null;
 
-        assertFalse(producer.closed());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCommitTransactionAndCloseProducerOnCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -988,28 +988,28 @@ public class StreamTaskTest {
         task.close(true, false);
         task = null;
 
-        assertTrue(producer.transactionCommitted());
-        assertFalse(producer.transactionInFlight());
-        assertTrue(producer.closed());
+        Assert.True(producer.transactionCommitted());
+        Assert.False(producer.transactionInFlight());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotAbortTransactionAndNotCloseProducerOnErrorDuringCleanCloseWithEosEnabled() {
         task = createTaskThatThrowsException(true);
         task.initializeTopology();
 
         try {
             task.close(true, false);
-            fail("should have thrown runtime exception");
-        } catch (final RuntimeException expected) {
+            Assert.True(false, "should have thrown runtime exception");
+        } catch (RuntimeException expected) {
             task = null;
         }
 
-        assertTrue(producer.transactionInFlight());
-        assertFalse(producer.closed());
+        Assert.True(producer.transactionInFlight());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldOnlyCloseProducerIfFencedOnCommitDuringCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1017,20 +1017,20 @@ public class StreamTaskTest {
 
         try {
             task.close(true, false);
-            fail("should have thrown TaskMigratedException");
-        } catch (final TaskMigratedException expected) {
+            Assert.True(false, "should have thrown TaskMigratedException");
+        } catch (TaskMigratedException expected) {
             task = null;
-            assertTrue(expected.getCause() instanceof ProducerFencedException);
+            Assert.True(expected.getCause() is ProducerFencedException);
         }
 
-        assertFalse(producer.transactionCommitted());
-        assertTrue(producer.transactionInFlight());
-        assertFalse(producer.transactionAborted());
-        assertFalse(producer.transactionCommitted());
-        assertTrue(producer.closed());
+        Assert.False(producer.transactionCommitted());
+        Assert.True(producer.transactionInFlight());
+        Assert.False(producer.transactionAborted());
+        Assert.False(producer.transactionCommitted());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseProducerIfFencedOnCloseDuringCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1038,18 +1038,18 @@ public class StreamTaskTest {
 
         try {
             task.close(true, false);
-            fail("should have thrown TaskMigratedException");
-        } catch (final TaskMigratedException expected) {
+            Assert.True(false, "should have thrown TaskMigratedException");
+        } catch (TaskMigratedException expected) {
             task = null;
-            assertTrue(expected.getCause() instanceof ProducerFencedException);
+            Assert.True(expected.getCause() is ProducerFencedException);
         }
 
-        assertTrue(producer.transactionCommitted());
-        assertFalse(producer.transactionInFlight());
-        assertFalse(producer.closed());
+        Assert.True(producer.transactionCommitted());
+        Assert.False(producer.transactionInFlight());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAbortTransactionAndCloseProducerOnUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1057,23 +1057,23 @@ public class StreamTaskTest {
         task.close(false, false);
         task = null;
 
-        assertTrue(producer.transactionAborted());
-        assertFalse(producer.transactionInFlight());
-        assertTrue(producer.closed());
+        Assert.True(producer.transactionAborted());
+        Assert.False(producer.transactionInFlight());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAbortTransactionAndCloseProducerOnErrorDuringUncleanCloseWithEosEnabled() {
         task = createTaskThatThrowsException(true);
         task.initializeTopology();
 
         task.close(false, false);
 
-        assertTrue(producer.transactionAborted());
-        assertTrue(producer.closed());
+        Assert.True(producer.transactionAborted());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldOnlyCloseProducerIfFencedOnAbortDuringUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1082,13 +1082,13 @@ public class StreamTaskTest {
         task.close(false, false);
         task = null;
 
-        assertTrue(producer.transactionInFlight());
-        assertFalse(producer.transactionAborted());
-        assertFalse(producer.transactionCommitted());
-        assertTrue(producer.closed());
+        Assert.True(producer.transactionInFlight());
+        Assert.False(producer.transactionAborted());
+        Assert.False(producer.transactionCommitted());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldOnlyCloseFencedProducerOnUncleanClosedWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1097,11 +1097,11 @@ public class StreamTaskTest {
         task.close(false, true);
         task = null;
 
-        assertFalse(producer.transactionAborted());
-        assertTrue(producer.closed());
+        Assert.False(producer.transactionAborted());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAbortTransactionButNotCloseProducerIfFencedOnCloseDuringUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1110,65 +1110,65 @@ public class StreamTaskTest {
         task.close(false, false);
         task = null;
 
-        assertTrue(producer.transactionAborted());
-        assertFalse(producer.closed());
+        Assert.True(producer.transactionAborted());
+        Assert.False(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowExceptionIfAnyExceptionsRaisedDuringCloseButStillCloseAllProcessorNodesTopology() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
         task.initializeTopology();
         try {
             task.close(true, false);
-            fail("should have thrown runtime exception");
-        } catch (final RuntimeException expected) {
+            Assert.True(false, "should have thrown runtime exception");
+        } catch (RuntimeException expected) {
             task = null;
         }
-        assertTrue(processorSystemTime.closed);
-        assertTrue(processorStreamTime.closed);
-        assertTrue(source1.closed);
+        Assert.True(processorSystemTime.closed);
+        Assert.True(processorStreamTime.closed);
+        Assert.True(source1.closed);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldInitAndBeginTransactionOnCreateIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
-        assertTrue(producer.transactionInitialized());
-        assertTrue(producer.transactionInFlight());
+        Assert.True(producer.transactionInitialized());
+        Assert.True(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapProducerFencedExceptionWithTaskMigratedExceptionForBeginTransaction() {
         task = createStatelessTask(createConfig(true));
         producer.fenceProducer();
 
         try {
             task.initializeTopology();
-            fail("Should have throws TaskMigratedException");
-        } catch (final TaskMigratedException expected) {
-            assertTrue(expected.getCause() instanceof ProducerFencedException);
+            Assert.True(false, "Should have throws TaskMigratedException");
+        } catch (TaskMigratedException expected) {
+            Assert.True(expected.getCause() is ProducerFencedException);
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotThrowOnCloseIfTaskWasNotInitializedWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
 
-        assertFalse(producer.transactionInFlight());
+        Assert.False(producer.transactionInFlight());
         task.close(false, false);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotInitOrBeginTransactionOnCreateIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
-        assertFalse(producer.transactionInitialized());
-        assertFalse(producer.transactionInFlight());
+        Assert.False(producer.transactionInitialized());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSendOffsetsAndCommitTransactionButNotStartNewTransactionOnSuspendIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1177,50 +1177,50 @@ public class StreamTaskTest {
         task.process();
 
         task.suspend();
-        assertTrue(producer.sentOffsets());
-        assertTrue(producer.transactionCommitted());
-        assertFalse(producer.transactionInFlight());
+        Assert.True(producer.sentOffsets());
+        Assert.True(producer.transactionCommitted());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCommitTransactionOnSuspendEvenIfTransactionIsEmptyIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.suspend();
 
-        assertTrue(producer.transactionCommitted());
-        assertFalse(producer.transactionInFlight());
+        Assert.True(producer.transactionCommitted());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotSendOffsetsAndCommitTransactionNorStartNewTransactionOnSuspendIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 0)));
         task.process();
         task.suspend();
 
-        assertFalse(producer.sentOffsets());
-        assertFalse(producer.transactionCommitted());
-        assertFalse(producer.transactionInFlight());
+        Assert.False(producer.sentOffsets());
+        Assert.False(producer.transactionCommitted());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenCommitting() {
         task = createStatelessTask(createConfig(true));
         producer.fenceProducer();
 
         try {
             task.suspend();
-            fail("Should have throws TaskMigratedException");
-        } catch (final TaskMigratedException expected) {
-            assertTrue(expected.getCause() instanceof ProducerFencedException);
+            Assert.True(false, "Should have throws TaskMigratedException");
+        } catch (TaskMigratedException expected) {
+            Assert.True(expected.getCause() is ProducerFencedException);
         }
         task = null;
 
-        assertFalse(producer.transactionCommitted());
+        Assert.False(producer.transactionCommitted());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenClosingProducer() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1228,15 +1228,15 @@ public class StreamTaskTest {
         producer.fenceProducerOnClose();
         try {
             task.suspend();
-            fail("Should have throws TaskMigratedException");
-        } catch (final TaskMigratedException expected) {
-            assertTrue(expected.getCause() instanceof ProducerFencedException);
+            Assert.True(false, "Should have throws TaskMigratedException");
+        } catch (TaskMigratedException expected) {
+            Assert.True(expected.getCause() is ProducerFencedException);
         }
 
-        assertTrue(producer.transactionCommitted());
+        Assert.True(producer.transactionCommitted());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldStartNewTransactionOnResumeIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1247,10 +1247,10 @@ public class StreamTaskTest {
 
         task.resume();
         task.initializeTopology();
-        assertTrue(producer.transactionInFlight());
+        Assert.True(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotStartNewTransactionOnResumeIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
@@ -1259,10 +1259,10 @@ public class StreamTaskTest {
         task.suspend();
 
         task.resume();
-        assertFalse(producer.transactionInFlight());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldStartNewTransactionOnCommitIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
@@ -1271,10 +1271,10 @@ public class StreamTaskTest {
         task.process();
 
         task.commit();
-        assertTrue(producer.transactionInFlight());
+        Assert.True(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotStartNewTransactionOnCommitIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
@@ -1282,58 +1282,58 @@ public class StreamTaskTest {
         task.process();
 
         task.commit();
-        assertFalse(producer.transactionInFlight());
+        Assert.False(producer.transactionInFlight());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotAbortTransactionOnZombieClosedIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.close(false, true);
         task = null;
 
-        assertFalse(producer.transactionAborted());
+        Assert.False(producer.transactionAborted());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotAbortTransactionOnDirtyClosedIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(false, false);
         task = null;
 
-        assertFalse(producer.transactionAborted());
+        Assert.False(producer.transactionAborted());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCloseProducerOnCloseWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(true, false);
         task = null;
 
-        assertTrue(producer.closed());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCloseProducerOnUncleanCloseNotZombieWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(false, false);
         task = null;
 
-        assertTrue(producer.closed());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCloseProducerOnUncleanCloseIsZombieWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(false, true);
         task = null;
 
-        assertTrue(producer.closed());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotViolateAtLeastOnceWhenExceptionOccursDuringFlushing() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
@@ -1341,27 +1341,27 @@ public class StreamTaskTest {
 
         try {
             task.commit();
-            fail("should have thrown an exception");
-        } catch (final Exception e) {
+            Assert.True(false, "should have thrown an exception");
+        } catch (Exception e) {
             // all good
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotViolateAtLeastOnceWhenExceptionOccursDuringTaskSuspension() {
-        final StreamTask task = createTaskThatThrowsException(false);
+        StreamTask task = createTaskThatThrowsException(false);
 
         task.initializeStateStores();
         task.initializeTopology();
         try {
             task.suspend();
-            fail("should have thrown an exception");
-        } catch (final Exception e) {
+            Assert.True(false, "should have thrown an exception");
+        } catch (Exception e) {
             // all good
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCloseStateManagerIfFailureOnTaskClose() {
         task = createStatefulTaskThatThrowsExceptionOnClose();
         task.initializeStateStores();
@@ -1369,44 +1369,44 @@ public class StreamTaskTest {
 
         try {
             task.close(true, false);
-            fail("should have thrown an exception");
-        } catch (final Exception e) {
+            Assert.True(false, "should have thrown an exception");
+        } catch (Exception e) {
             // all good
         }
 
         task = null;
-        assertFalse(stateStore.isOpen());
+        Assert.False(stateStore.isOpen());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotCloseTopologyProcessorNodesIfNotInitialized() {
-        final StreamTask task = createTaskThatThrowsException(false);
+        StreamTask task = createTaskThatThrowsException(false);
         try {
             task.close(false, false);
-        } catch (final Exception e) {
-            fail("should have not closed non-initialized topology");
+        } catch (Exception e) {
+            Assert.True(false, "should have not closed non-initialized topology");
         }
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeInitializedIfChangelogPartitionsIsEmpty() {
-        final StreamTask task = createStatefulTask(createConfig(false), false);
+        StreamTask task = createStatefulTask(createConfig(false), false);
 
-        assertTrue(task.initializeStateStores());
+        Assert.True(task.initializeStateStores());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldNotBeInitializedIfChangelogPartitionsIsNonEmpty() {
-        final StreamTask task = createStatefulTask(createConfig(false), true);
+        StreamTask task = createStatefulTask(createConfig(false), true);
 
-        assertFalse(task.initializeStateStores());
+        Assert.False(task.initializeStateStores());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnOffsetsForRepartitionTopicsForPurging() {
-        final TopicPartition repartition = new TopicPartition("repartition", 1);
+        TopicPartition repartition = new TopicPartition("repartition", 1);
 
-        final ProcessorTopology topology = withRepartitionTopics(
+        ProcessorTopology topology = withRepartitionTopics(
             asList(source1, source2),
             mkMap(mkEntry(topic1, source1), mkEntry(repartition.topic(), source2)),
             Collections.singleton(repartition.topic())
@@ -1424,62 +1424,62 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
         task.initializeStateStores();
         task.initializeTopology();
 
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 5L)));
         task.addRecords(repartition, singletonList(getConsumerRecord(repartition, 10L)));
 
-        assertTrue(task.process());
-        assertTrue(task.process());
+        Assert.True(task.process());
+        Assert.True(task.process());
 
         task.commit();
 
-        final Map<TopicPartition, Long> map = task.purgableOffsets();
+        Dictionary<TopicPartition, long> map = task.purgableOffsets();
 
-        assertThat(map, equalTo(Collections.singletonMap(repartition, 11L)));
+        Assert.Equal(map, (Collections.singletonMap(repartition, 11L)));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldThrowOnCleanCloseTaskWhenEosEnabledIfTransactionInFlight() {
         task = createStatelessTask(createConfig(true));
         try {
             task.close(true, false);
-            fail("should have throw IllegalStateException");
-        } catch (final IllegalStateException expected) {
+            Assert.True(false, "should have throw IllegalStateException");
+        } catch (IllegalStateException expected) {
             // pass
         }
         task = null;
 
-        assertTrue(producer.closed());
+        Assert.True(producer.closed());
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldAlwaysCommitIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
 
-        final RecordCollectorImpl recordCollector =  new RecordCollectorImpl("StreamTask",
+        RecordCollectorImpl recordCollector =  new RecordCollectorImpl("StreamTask",
                 new LogContext("StreamTaskTest "), new DefaultProductionExceptionHandler(), new Metrics().sensor("skipped-records"));
         recordCollector.init(producer);
 
         task.initializeStateStores();
         task.initializeTopology();
         task.punctuate(processorSystemTime, 5, PunctuationType.WALL_CLOCK_TIME, new Punctuator() {
-            @Override
-            public void punctuate(final long timestamp) {
+            
+            public void punctuate(long timestamp) {
                 recordCollector.send("result-topic1", 3, 5, null, 0, time.milliseconds(),
                         new IntegerSerializer(),  new IntegerSerializer());
             }
         });
         task.commit();
-        assertEquals(1, producer.history().size());
+        Assert.Equal(1, producer.history().Count);
     }
 
-    private StreamTask createStatefulTask(final StreamsConfig config, final boolean logged) {
-        final StateStore stateStore = new MockKeyValueStore(storeName, logged);
+    private StreamTask createStatefulTask(StreamsConfig config, bool logged) {
+        StateStore stateStore = new MockKeyValueStore(storeName, logged);
 
-        final ProcessorTopology topology = ProcessorTopologyFactories.with(
+        ProcessorTopology topology = ProcessorTopologyFactories.with(
             asList(source1, source2),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source2)),
             singletonList(stateStore),
@@ -1496,11 +1496,11 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
     }
 
     private StreamTask createStatefulTaskThatThrowsExceptionOnClose() {
-        final ProcessorTopology topology = ProcessorTopologyFactories.with(
+        ProcessorTopology topology = ProcessorTopologyFactories.with(
             asList(source1, source3),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source3)),
             singletonList(stateStore),
@@ -1517,11 +1517,11 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
     }
 
-    private StreamTask createStatelessTask(final StreamsConfig streamsConfig) {
-        final ProcessorTopology topology = withSources(
+    private StreamTask createStatelessTask(StreamsConfig streamsConfig) {
+        ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source2))
         );
@@ -1542,12 +1542,12 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
     }
 
     // this task will throw exception when processing (on partition2), flushing, suspending and closing
-    private StreamTask createTaskThatThrowsException(final boolean enableEos) {
-        final ProcessorTopology topology = withSources(
+    private StreamTask createTaskThatThrowsException(bool enableEos) {
+        ProcessorTopology topology = withSources(
             asList(source1, source3, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source3))
         );
@@ -1568,21 +1568,21 @@ public class StreamTaskTest {
             stateDirectory,
             null,
             time,
-            () -> producer = new MockProducer<>(false, bytesSerializer, bytesSerializer)) {
-            @Override
+            () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer)) {
+            
             protected void flushState() {
                 throw new RuntimeException("KABOOM!");
             }
         };
     }
 
-    private ConsumerRecord<byte[], byte[]> getConsumerRecord(final TopicPartition topicPartition, final long offset) {
-        return new ConsumerRecord<>(
+    private ConsumeResult<byte[], byte[]> getConsumerRecord(TopicPartition topicPartition, long offset) {
+        return new ConsumeResult<>(
             topicPartition.topic(),
             topicPartition.partition(),
             offset,
             offset, // use the offset as the timestamp
-            TimestampType.CREATE_TIME,
+            TimestampType.CreateTime,
             0L,
             0,
             0,

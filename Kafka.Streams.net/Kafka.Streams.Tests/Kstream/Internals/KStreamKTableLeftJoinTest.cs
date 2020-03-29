@@ -77,10 +77,10 @@
 //        [Fact]
 //        public void shouldRequireCopartitionedStreams()
 //        {
-//            Collection<Set<string>> copartitionGroups =
+//            Collection<HashSet<string>> copartitionGroups =
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
-//            Assert.Equal(1, copartitionGroups.size());
+//            Assert.Equal(1, copartitionGroups.Count);
 //            Assert.Equal(new HashSet<>(new List<string> { streamTopic, tableTopic }), copartitionGroups.iterator().next());
 //        }
 

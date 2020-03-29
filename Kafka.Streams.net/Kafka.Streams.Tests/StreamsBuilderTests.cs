@@ -76,7 +76,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
@@ -101,7 +101,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
@@ -125,7 +125,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000005"),
@@ -149,7 +149,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         2);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
@@ -174,7 +174,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         3);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KSTREAM-JOIN-0000000010"),
@@ -195,7 +195,7 @@ namespace Kafka.Streams.Tests
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
                     Assert.Equal(
-                        topology.StateStores.size(),
+                        topology.StateStores.Count,
                         1);
                     Assert.Equal(
                         topology.processorConnectedStateStores("KTABLE-SOURCE-0000000002"),
@@ -224,7 +224,7 @@ namespace Kafka.Streams.Tests
                         }
 
                         // no exception .As thrown
-                        Assert.Equals(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)),
+                        Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)),
                                  processorSupplier.theCapturedProcessor().processed);
                     }
 
@@ -248,8 +248,8 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                         driver.pipeInput(recordFactory.create("topic-source", "A", "aa"));
                     }
 
-                    Assert.Equals(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.theCapturedProcessor().processed);
-                    Assert.Equals(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), throughProcessorSupplier.theCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), sourceProcessorSupplier.theCapturedProcessor().processed);
+                    Assert.Equal(Collections.singletonList(new KeyValueTimestamp<>("A", "aa", 0)), throughProcessorSupplier.theCapturedProcessor().processed);
                     }
 
                 [Fact]
@@ -341,7 +341,7 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                     ProcessorTopology topology =
                         builder.InternalTopologyBuilder.RewriteTopology(new StreamsConfig(props)).Build();
 
-                    Assert.Equal(0, topology.StateStores.size());
+                    Assert.Equal(0, topology.StateStores.Count);
                 }
 
                 [Fact]
@@ -744,19 +744,19 @@ var driver = new TopologyTestDriver(builder.Build(), props);
                 private static void assertSpecifiedNameForOperation(ProcessorTopology topology, params string[] expected)
                 {
                     List<ProcessorNode> processors = topology.processors();
-                    Assert.Equals("Invalid number of expected processors", expected.Length, processors.size());
+                    Assert.Equal("Invalid number of expected processors", expected.Length, processors.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equals(expected[i], processors.get(i).name());
+                        Assert.Equal(expected[i], processors.get(i).name());
                     }
                 }
 
                 private static void assertSpecifiedNameForStateStore(List<IStateStore> stores, params string[] expected)
                 {
-                    Assert.Equals("Invalid number of expected state stores", expected.Length, stores.size());
+                    Assert.Equal("Invalid number of expected state stores", expected.Length, stores.Count);
                     for (int i = 0; i < expected.Length; i++)
                     {
-                        Assert.Equals(expected[i], stores.get(i).name());
+                        Assert.Equal(expected[i], stores.get(i).name());
                     }
                 }
                 */

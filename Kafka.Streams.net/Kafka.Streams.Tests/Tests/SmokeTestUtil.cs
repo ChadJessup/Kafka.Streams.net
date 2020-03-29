@@ -1,137 +1,141 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+//using Confluent.Kafka;
+//using Xunit;
+
+//namespace Kafka.Streams.Tests.Tools
+//{
+//    public class SmokeTestUtil
+//    {
+
+//        static int END = int.MaxValue;
+
+//        static ProcessorSupplier<object, object> printProcessorSupplier(string topic)
+//        {
+//            return printProcessorSupplier(topic, "");
+//        }
+
+//        static ProcessorSupplier<object, object> printProcessorSupplier(string topic, string name)
+//        {
+//            return new ProcessorSupplier<object, object>()
+//            {
 
 
-import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.streams.KeyValue;
-import org.apache.kafka.streams.kstream.Aggregator;
-import org.apache.kafka.streams.kstream.Initializer;
-import org.apache.kafka.streams.kstream.KeyValueMapper;
-import org.apache.kafka.streams.kstream.Windowed;
-import org.apache.kafka.streams.processor.AbstractProcessor;
-import org.apache.kafka.streams.processor.Processor;
-import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.ProcessorSupplier;
+//            public Processor<object, object> get()
+//            {
+//                return new AbstractProcessor<object, object>()
+//                {
+//                    private int numRecordsProcessed = 0;
 
-import java.io.File;
-import java.time.Instant;
 
-public class SmokeTestUtil {
+//        public void init(ProcessorContext context)
+//        {
+//            base.init(context);
+//            System.Console.Out.WriteLine("[DEV] initializing processor: topic=" + topic + " taskId=" + context.taskId());
+//            numRecordsProcessed = 0;
+//        }
 
-    final static int END = Integer.MAX_VALUE;
 
-    static ProcessorSupplier<Object, Object> printProcessorSupplier(final String topic) {
-        return printProcessorSupplier(topic, "");
-    }
+//        public void process(object key, object value)
+//        {
+//            numRecordsProcessed++;
+//            if (numRecordsProcessed % 100 == 0)
+//            {
+//                System.Console.Out.printf("%s: %s%n", name, Instant.now());
+//                System.Console.Out.WriteLine("processed " + numRecordsProcessed + " records from topic=" + topic);
+//            }
+//        }
+//    };
+//}
+//        };
+//    }
 
-    static ProcessorSupplier<Object, Object> printProcessorSupplier(final String topic, final String name) {
-        return new ProcessorSupplier<Object, Object>() {
-            @Override
-            public Processor<Object, Object> get() {
-                return new AbstractProcessor<Object, Object>() {
-                    private int numRecordsProcessed = 0;
+//    public static class Unwindow<K, V> : KeyValueMapper<Windowed<K>, V, K> {
 
-                    @Override
-                    public void init(final ProcessorContext context) {
-                        super.init(context);
-                        System.out.println("[DEV] initializing processor: topic=" + topic + " taskId=" + context.taskId());
-                        numRecordsProcessed = 0;
-                    }
+//    public K apply(Windowed<K> winKey, V value)
+//    {
+//        return winKey.Key;
+//    }
+//}
 
-                    @Override
-                    public void process(final Object key, final Object value) {
-                        numRecordsProcessed++;
-                        if (numRecordsProcessed % 100 == 0) {
-                            System.out.printf("%s: %s%n", name, Instant.now());
-                            System.out.println("processed " + numRecordsProcessed + " records from topic=" + topic);
-                        }
-                    }
-                };
-            }
-        };
-    }
+//public static class Agg
+//{
 
-    public static final class Unwindow<K, V> implements KeyValueMapper<Windowed<K>, V, K> {
-        @Override
-        public K apply(final Windowed<K> winKey, final V value) {
-            return winKey.key();
-        }
-    }
+//    KeyValueMapper<string, long, KeyValuePair<string, long>> selector()
+//    {
+//        return new KeyValueMapper<string, long, KeyValuePair<string, long>>()
+//        {
 
-    public static class Agg {
 
-        KeyValueMapper<String, Long, KeyValue<String, Long>> selector() {
-            return new KeyValueMapper<String, Long, KeyValue<String, Long>>() {
-                @Override
-                public KeyValue<String, Long> apply(final String key, final Long value) {
-                    return new KeyValue<>(value == null ? null : Long.toString(value), 1L);
-                }
-            };
-        }
+//                public KeyValuePair<string, long> apply(string key, long value)
+//        {
+//            return new KeyValuePair<>(value == null ? null : long.toString(value), 1L);
+//        }
+//    };
+//}
 
-        public Initializer<Long> init() {
-            return new Initializer<Long>() {
-                @Override
-                public Long apply() {
-                    return 0L;
-                }
-            };
-        }
+//public Initializer<long> init()
+//{
+//    return new Initializer<long>()
+//    {
 
-        Aggregator<String, Long, Long> adder() {
-            return new Aggregator<String, Long, Long>() {
-                @Override
-                public Long apply(final String aggKey, final Long value, final Long aggregate) {
-                    return aggregate + value;
-                }
-            };
-        }
 
-        Aggregator<String, Long, Long> remover() {
-            return new Aggregator<String, Long, Long>() {
-                @Override
-                public Long apply(final String aggKey, final Long value, final Long aggregate) {
-                    return aggregate - value;
-                }
-            };
-        }
-    }
+//                public long apply()
+//    {
+//        return 0L;
+//    }
+//};
+//        }
 
-    public static Serde<String> stringSerde = Serdes.String();
+//        Aggregator<string, long, long> adder()
+//{
+//    return new Aggregator<string, long, long>()
+//    {
 
-    public static Serde<Integer> intSerde = Serdes.Integer();
 
-    static Serde<Long> longSerde = Serdes.Long();
+//                public long apply(string aggKey, long value, long aggregate)
+//    {
+//        return aggregate + value;
+//    }
+//};
+//        }
 
-    static Serde<Double> doubleSerde = Serdes.Double();
+//        Aggregator<string, long, long> remover()
+//{
+//    return new Aggregator<string, long, long>()
+//    {
 
-    static File createDir(final File parent, final String child) {
-        final File dir = new File(parent, child);
 
-        dir.mkdir();
+//                public long apply(string aggKey, long value, long aggregate)
+//    {
+//        return aggregate - value;
+//    }
+//};
+//        }
+//    }
 
-        return dir;
-    }
+//    public static Serde<string> stringSerde = Serdes.String();
 
-    public static void sleep(final long duration) {
-        try {
-            Thread.sleep(duration);
-        } catch (final Exception ignore) { }
-    }
+//public static Serde<int> intSerde = Serdes.Int();
 
-}
+//static Serde<long> longSerde = Serdes.Long();
+
+//static Serde<Double> doubleSerde = Serdes.Double();
+
+//static File createDir(File parent, string child)
+//{
+//    File dir = new File(parent, child);
+
+//    dir.mkdir();
+
+//    return dir;
+//}
+
+//public static void sleep(long duration)
+//{
+//    try
+//    {
+//        Thread.sleep(duration);
+//    }
+//    catch (Exception ignore) { }
+//}
+
+//}

@@ -93,10 +93,10 @@
 //        [Fact]
 //        public void shouldNotRequireCopartitioning()
 //        {
-//            Collection<Set<string>> copartitionGroups =
+//            Collection<HashSet<string>> copartitionGroups =
 //                TopologyWrapper.getInternalTopologyBuilder(builder.Build()).copartitionGroups();
 
-//            Assert.Equal("KStream-GlobalKTable joins do not need to be co-partitioned", 0, copartitionGroups.size());
+//            Assert.Equal("KStream-GlobalKTable joins do not need to be co-partitioned", 0, copartitionGroups.Count);
 //        }
 
 //        [Fact]

@@ -54,7 +54,7 @@
 //            Dictionary<Windowed<string>, ValueAndTimestamp<long>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
-//            Assert.Equal(result.size(), equalTo(3));
+//            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
 //                result.get(new Windowed<>("1", new SessionWindow(10L, 15L))),
 //                equalTo(ValueAndTimestamp.make(2L, 15L)));
@@ -82,7 +82,7 @@
 //            Dictionary<Windowed<string>, ValueAndTimestamp<string>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
-//            Assert.Equal(result.size(), equalTo(3));
+//            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
 //                result.get(new Windowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.make("1+2", 15L)));
@@ -110,7 +110,7 @@
 //            Dictionary<Windowed<string>, ValueAndTimestamp<string>> result =
 //                supplier.theCapturedProcessor().lastValueAndTimestampPerKey;
 
-//            Assert.Equal(result.size(), equalTo(3));
+//            Assert.Equal(result.Count, (3));
 //            Assert.Equal(
 //                result.get(new Windowed<>("1", new SessionWindow(10, 15))),
 //                equalTo(ValueAndTimestamp.make("0+0+1+2", 15L)));

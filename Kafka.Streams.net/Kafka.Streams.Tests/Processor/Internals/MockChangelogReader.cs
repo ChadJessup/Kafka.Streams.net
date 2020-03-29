@@ -1,58 +1,42 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+
+using Confluent.Kafka;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.Tasks;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace Kafka.Streams.Tests.Internal
+{
+    public class MockChangelogReader : IChangelogReader
+    {
+        private List<TopicPartition> registered = new List<TopicPartition>();
+        public Dictionary<TopicPartition, long> RestoredOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
+
+        public void register(StateRestorer restorer)
+        {
+            registered.Add(restorer.partition);
+        }
 
 
-import org.apache.kafka.common.TopicPartition;
+        public List<TopicPartition> restore(IRestoringTasks active)
+        {
+            return registered;
+        }
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+        void setRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
+        {
+            this.RestoredOffsets = restoredOffsets;
+        }
 
-public class MockChangelogReader implements ChangelogReader {
-    private final Set<TopicPartition> registered = new HashSet<>();
-    private Map<TopicPartition, Long> restoredOffsets = Collections.emptyMap();
 
-    @Override
-    public void register(final StateRestorer restorer) {
-        registered.add(restorer.partition());
-    }
+        public void reset()
+        {
+            registered.Clear();
+        }
 
-    @Override
-    public Collection<TopicPartition> restore(final RestoringTasks active) {
-        return registered;
-    }
-
-    @Override
-    public Map<TopicPartition, Long> restoredOffsets() {
-        return restoredOffsets;
-    }
-
-    void setRestoredOffsets(final Map<TopicPartition, Long> restoredOffsets) {
-        this.restoredOffsets = restoredOffsets;
-    }
-
-    @Override
-    public void reset() {
-        registered.clear();
-    }
-
-    public boolean wasRegistered(final TopicPartition partition) {
-        return registered.contains(partition);
+        public bool wasRegistered(TopicPartition partition)
+        {
+            return registered.Contains(partition);
+        }
     }
 }

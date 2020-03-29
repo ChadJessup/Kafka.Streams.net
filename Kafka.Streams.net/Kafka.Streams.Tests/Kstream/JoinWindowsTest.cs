@@ -64,7 +64,7 @@
 //        public void untilShouldSetGraceDuration()
 //        {
 //            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
-//            long windowSize = windowSpec.size();
+//            long windowSize = windowSpec.Count;
 //            Assert.Equal(windowSize, windowSpec.grace(Duration.FromMilliseconds(windowSize)).gracePeriodMs());
 //        }
 
@@ -73,7 +73,7 @@
 //        public void retentionTimeMustNoBeSmallerThanWindowSize()
 //        {
 //            JoinWindows windowSpec = JoinWindows.of(Duration.FromMilliseconds(ANY_SIZE));
-//            long windowSize = windowSpec.size();
+//            long windowSize = windowSpec.Count;
 //            try
 //            {
 //                windowSpec.until(windowSize - 1);

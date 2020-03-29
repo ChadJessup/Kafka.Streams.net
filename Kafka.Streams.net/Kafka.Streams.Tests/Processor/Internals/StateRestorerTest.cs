@@ -1,42 +1,42 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.test.MockRestoreCallback;
-import org.apache.kafka.test.MockStateRestoreListener;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.Collections;
 
-import static org.apache.kafka.streams.state.internals.RecordConverters.identity;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
 
 public class StateRestorerTest {
 
-    private static final long OFFSET_LIMIT = 50;
-    private final MockRestoreCallback callback = new MockRestoreCallback();
-    private final MockStateRestoreListener reportingListener = new MockStateRestoreListener();
-    private final CompositeRestoreListener compositeRestoreListener = new CompositeRestoreListener(callback);
-    private final StateRestorer restorer = new StateRestorer(
+    private static long OFFSET_LIMIT = 50;
+    private MockRestoreCallback callback = new MockRestoreCallback();
+    private MockStateRestoreListener reportingListener = new MockStateRestoreListener();
+    private CompositeRestoreListener compositeRestoreListener = new CompositeRestoreListener(callback);
+    private StateRestorer restorer = new StateRestorer(
         new TopicPartition("topic", 1),
         compositeRestoreListener,
         null,
@@ -45,35 +45,35 @@ public class StateRestorerTest {
         "storeName",
         identity());
 
-    @Before
+    
     public void setUp() {
         compositeRestoreListener.setUserRestoreListener(reportingListener);
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldCallRestoreOnRestoreCallback() {
-        restorer.restore(Collections.singletonList(new ConsumerRecord<>("", 0, 0L, new byte[0], new byte[0])));
-        assertThat(callback.restored.size(), equalTo(1));
+        restorer.restore(Collections.singletonList(new ConsumeResult<>("", 0, 0L, new byte[0], new byte[0])));
+        Assert.Equal(callback.restored.Count, (1));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeCompletedIfRecordOffsetGreaterThanEndOffset() {
-        assertTrue(restorer.hasCompleted(11, 10));
+        Assert.True(restorer.hasCompleted(11, 10));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeCompletedIfRecordOffsetGreaterThanOffsetLimit() {
-        assertTrue(restorer.hasCompleted(51, 100));
+        Assert.True(restorer.hasCompleted(51, 100));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeCompletedIfEndOffsetAndRecordOffsetAreZero() {
-        assertTrue(restorer.hasCompleted(0, 0));
+        Assert.True(restorer.hasCompleted(0, 0));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldBeCompletedIfOffsetAndOffsetLimitAreZero() {
-        final StateRestorer restorer = new StateRestorer(
+        StateRestorer restorer = new StateRestorer(
             new TopicPartition("topic", 1),
             compositeRestoreListener,
             null,
@@ -81,31 +81,31 @@ public class StateRestorerTest {
             true,
             "storeName",
             identity());
-        assertTrue(restorer.hasCompleted(0, 10));
+        Assert.True(restorer.hasCompleted(0, 10));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSetRestoredOffsetToMinOfLimitAndOffset() {
         restorer.setRestoredOffset(20);
-        assertThat(restorer.restoredOffset(), equalTo(20L));
+        Assert.Equal(restorer.restoredOffset(), (20L));
         restorer.setRestoredOffset(100);
-        assertThat(restorer.restoredOffset(), equalTo(OFFSET_LIMIT));
+        Assert.Equal(restorer.restoredOffset(), (OFFSET_LIMIT));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSetStartingOffsetToMinOfLimitAndOffset() {
         restorer.setStartingOffset(20);
-        assertThat(restorer.startingOffset(), equalTo(20L));
+        Assert.Equal(restorer.startingOffset(), (20L));
         restorer.setRestoredOffset(100);
-        assertThat(restorer.restoredOffset(), equalTo(OFFSET_LIMIT));
+        Assert.Equal(restorer.restoredOffset(), (OFFSET_LIMIT));
     }
 
-    [Test]
+    [Xunit.Fact]
     public void shouldReturnCorrectNumRestoredRecords() {
         restorer.setStartingOffset(20);
         restorer.setRestoredOffset(40);
-        assertThat(restorer.restoredNumRecords(), equalTo(20L));
+        Assert.Equal(restorer.restoredNumRecords(), (20L));
         restorer.setRestoredOffset(100);
-        assertThat(restorer.restoredNumRecords(), equalTo(OFFSET_LIMIT - 20));
+        Assert.Equal(restorer.restoredNumRecords(), (OFFSET_LIMIT - 20));
     }
 }

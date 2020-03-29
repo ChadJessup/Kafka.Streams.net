@@ -1,18 +1,18 @@
 ///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements. See the NOTICE file distributed with
-// * this work for additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License. You may obtain a copy of the License at
+//
+//
+//
+//
+//
+//
 // *
-// *    http://www.apache.org/licenses/LICENSE-2.0
+//
 // *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
+//
+//
+//
+//
+//
 // */
 //namespace Kafka.Streams.KStream.Internals.suppress
 //{
@@ -146,7 +146,7 @@
 //                .withLoggingDisabled()
 //                .Build();
 
-//            KTable < string, ?, long> mock = EasyMock.mock(KTable));
+//            KTable mock = EasyMock.mock< string, ?, long>(KTable));
 //            Processor<string, Change<long>> processor =
 //                new KTableSuppressProcessorSupplier<>(
 //                    (SuppressedInternal<string>)Suppressed.< string > untilTimeLimit(Duration.ofDays(100), maxRecords(1)),
@@ -167,7 +167,7 @@
 //            processor.process(key, value);
 
 //            {
-//                Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
+//                Dictionary metrics = context.metrics().metrics< MetricName, ? : Metric >();
 
 //                verifyMetric(metrics, EVICTION_RATE_METRIC, (0.0));
 //                verifyMetric(metrics, EVICTION_TOTAL_METRIC, (0.0));
@@ -183,7 +183,7 @@
 //            processor.process("key", value);
 
 //            {
-//                Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
+//                Dictionary metrics = context.metrics().metrics< MetricName, ? : Metric >();
 
 //                verifyMetric(metrics, EVICTION_RATE_METRIC, greaterThan(0.0));
 //                verifyMetric(metrics, EVICTION_TOTAL_METRIC, (1.0));

@@ -1,18 +1,18 @@
 ///*
-// * Licensed to the Apache Software Foundation (ASF) under one or more
-// * contributor license agreements. See the NOTICE file distributed with
-// * this work for additional information regarding copyright ownership.
-// * The ASF licenses this file to You under the Apache License, Version 2.0
-// * (the "License"); you may not use this file except in compliance with
-// * the License. You may obtain a copy of the License at
+//
+//
+//
+//
+//
+//
 // *
-// *    http://www.apache.org/licenses/LICENSE-2.0
+//
 // *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
+//
+//
+//
+//
+//
 // */
 //using Kafka.Streams.Kafka.Streams;
 //using Kafka.Streams.Topologies;
@@ -284,7 +284,7 @@
 
 //        try {
 
-//           Assert.Equal(0, driver.getAllStateStores().size());
+//           Assert.Equal(0, driver.getAllStateStores().Count);
 //        }
 //    }
 
@@ -307,13 +307,13 @@
 
 //        try {
 
-//           Assert.Equal(2, driver.getAllStateStores().size());
+//           Assert.Equal(2, driver.getAllStateStores().Count);
 //        }
 //    }
 
 //    private void assertTopologyContainsProcessor(Topology topology, string processorName) {
-//        for (TopologyDescription.Subtopology subtopology: topology.describe().subtopologies()) {
-//            for (TopologyDescription.Node node: subtopology.nodes()) {
+//        foreach (TopologyDescription.Subtopology subtopology in topology.describe().subtopologies()) {
+//            foreach (TopologyDescription.Node node in subtopology.nodes()) {
 //                if (node.name().equals(processorName)) {
 //                    return;
 //                }
@@ -356,7 +356,7 @@
 //        try {
 
 
-//           Assert.Equal(3, driver.getAllStateStores().size());
+//           Assert.Equal(3, driver.getAllStateStores().Count);
 
 //           .AssertTopologyContainsProcessor(topology, "KSTREAM-SINK-0000000003");
 //           .AssertTopologyContainsProcessor(topology, "KSTREAM-SOURCE-0000000004");

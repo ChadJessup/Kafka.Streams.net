@@ -46,7 +46,7 @@
 //                }
 //            }
 
-//       Assert.Equal(3, supplier.theCapturedProcessor().processed.size());
+//       Assert.Equal(3, supplier.theCapturedProcessor().processed.Count);
 //            for (var i = 0; i < expected.Length; i++)
 //            {
 //                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.get(i));

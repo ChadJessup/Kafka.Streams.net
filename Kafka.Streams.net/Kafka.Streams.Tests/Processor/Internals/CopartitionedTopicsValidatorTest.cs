@@ -1,44 +1,44 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.common.Cluster;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.utils.Utils;
-import org.apache.kafka.streams.errors.TopologyException;
-import org.junit.Before;
-import org.junit.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
+
+
+
+
+
+
+
+
+
+
+
+
 
 public class CopartitionedTopicsValidatorTest {
 
-    private final StreamsPartitionAssignor.CopartitionedTopicsValidator validator =
+    private StreamsPartitionAssignor.CopartitionedTopicsValidator validator =
         new StreamsPartitionAssignor.CopartitionedTopicsValidator("thread");
-    private final Map<TopicPartition, PartitionInfo> partitions = new HashMap<>();
-    private final Cluster cluster = Cluster.empty();
+    private Dictionary<TopicPartition, PartitionInfo> partitions = new HashMap<>();
+    private Cluster cluster = Cluster.empty();
 
-    @Before
+    
     public void before() {
         partitions.put(
             new TopicPartition("first", 0),
@@ -54,14 +54,14 @@ public class CopartitionedTopicsValidatorTest {
             new PartitionInfo("second", 1, null, null, null));
     }
 
-    [Test](expected = IllegalStateException.class)
+    [Xunit.Fact]// (expected = IllegalStateException)
     public void shouldThrowTopologyBuilderExceptionIfNoPartitionsFoundForCoPartitionedTopic() {
         validator.validate(Collections.singleton("topic"),
                            Collections.emptyMap(),
                            cluster);
     }
 
-    [Test](expected = TopologyException.class)
+    [Xunit.Fact]// (expected = TopologyException)
     public void shouldThrowTopologyBuilderExceptionIfPartitionCountsForCoPartitionedTopicsDontMatch() {
         partitions.remove(new TopicPartition("second", 0));
         validator.validate(Utils.mkSet("first", "second"),
@@ -70,24 +70,24 @@ public class CopartitionedTopicsValidatorTest {
     }
 
 
-    [Test]
+    [Xunit.Fact]
     public void shouldEnforceCopartitioningOnRepartitionTopics() {
-        final InternalTopicConfig config = createTopicConfig("repartitioned", 10);
+        InternalTopicConfig config = createTopicConfig("repartitioned", 10);
 
         validator.validate(Utils.mkSet("first", "second", config.name()),
                            Collections.singletonMap(config.name(), config),
                            cluster.withPartitions(partitions));
 
-        assertThat(config.numberOfPartitions(), equalTo(2));
+        Assert.Equal(config.numberOfPartitions(), (2));
     }
 
 
-    [Test]
+    [Xunit.Fact]
     public void shouldSetNumPartitionsToMaximumPartitionsWhenAllTopicsAreRepartitionTopics() {
-        final InternalTopicConfig one = createTopicConfig("one", 1);
-        final InternalTopicConfig two = createTopicConfig("two", 15);
-        final InternalTopicConfig three = createTopicConfig("three", 5);
-        final Map<String, InternalTopicConfig> repartitionTopicConfig = new HashMap<>();
+        InternalTopicConfig one = createTopicConfig("one", 1);
+        InternalTopicConfig two = createTopicConfig("two", 15);
+        InternalTopicConfig three = createTopicConfig("three", 5);
+        Dictionary<string, InternalTopicConfig> repartitionTopicConfig = new HashMap<>();
 
         repartitionTopicConfig.put(one.name(), one);
         repartitionTopicConfig.put(two.name(), two);
@@ -100,14 +100,14 @@ public class CopartitionedTopicsValidatorTest {
                            cluster
         );
 
-        assertThat(one.numberOfPartitions(), equalTo(15));
-        assertThat(two.numberOfPartitions(), equalTo(15));
-        assertThat(three.numberOfPartitions(), equalTo(15));
+        Assert.Equal(one.numberOfPartitions(), (15));
+        Assert.Equal(two.numberOfPartitions(), (15));
+        Assert.Equal(three.numberOfPartitions(), (15));
     }
 
-    private InternalTopicConfig createTopicConfig(final String repartitionTopic,
-                                                                               final int partitions) {
-        final InternalTopicConfig repartitionTopicConfig =
+    private InternalTopicConfig createTopicConfig(string repartitionTopic,
+                                                                               int partitions) {
+        InternalTopicConfig repartitionTopicConfig =
             new RepartitionTopicConfig(repartitionTopic, Collections.emptyMap());
 
         repartitionTopicConfig.setNumberOfPartitions(partitions);

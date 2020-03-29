@@ -1,89 +1,89 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import kafka.log.LogConfig;
-import kafka.utils.MockTime;
-import org.apache.kafka.clients.admin.Admin;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.config.ConfigResource;
-import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.integration.utils.EmbeddedKafkaCluster;
-import org.apache.kafka.streams.integration.utils.IntegrationTestUtils;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.TimeWindows;
-import org.apache.kafka.streams.processor.internals.ProcessorStateManager;
-import org.apache.kafka.streams.state.WindowStore;
-import org.apache.kafka.test.IntegrationTest;
-import org.apache.kafka.test.MockMapper;
-import org.apache.kafka.test.TestUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
-import static java.time.Duration.ofMillis;
-import static java.time.Duration.ofSeconds;
-import static org.apache.kafka.streams.integration.utils.IntegrationTestUtils.waitForCompletion;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Tests related to internal topics in streams
  */
-@Category({IntegrationTest.class})
+
 public class InternalTopicIntegrationTest {
-    @ClassRule
-    public static final EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
+    
+    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
 
-    private static final String APP_ID = "internal-topics-integration-test";
-    private static final String DEFAULT_INPUT_TOPIC = "inputTopic";
+    private static string APP_ID = "internal-topics-integration-test";
+    private static string DEFAULT_INPUT_TOPIC = "inputTopic";
 
-    private final MockTime mockTime = CLUSTER.time;
+    private MockTime mockTime = CLUSTER.time;
 
     private Properties streamsProp;
 
-    @BeforeClass
-    public static void startKafkaCluster() throws InterruptedException {
+    
+    public static void startKafkaCluster() {// throws InterruptedException
         CLUSTER.createTopics(DEFAULT_INPUT_TOPIC);
     }
 
-    @Before
+    
     public void before() {
         streamsProp = new Properties();
         streamsProp.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
@@ -95,69 +95,70 @@ public class InternalTopicIntegrationTest {
         streamsProp.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     }
 
-    @After
-    public void after() throws IOException {
+    
+    public void after(){ //throws IOException
         // Remove any state from previous test runs
         IntegrationTestUtils.purgeLocalStreamsState(streamsProp);
     }
 
-    private void produceData(final List<String> inputValues) throws Exception {
-        final Properties producerProp = new Properties();
+    private void produceData(List<string> inputValues) {// throws Exception
+        Properties producerProp = new Properties();
         producerProp.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
         producerProp.put(ProducerConfig.ACKS_CONFIG, "all");
         producerProp.put(ProducerConfig.RETRIES_CONFIG, 0);
-        producerProp.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerProp.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProp.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer);
+        producerProp.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer);
 
         IntegrationTestUtils.produceValuesSynchronously(DEFAULT_INPUT_TOPIC, inputValues, producerProp, mockTime);
     }
 
-    private Properties getTopicProperties(final String changelog) {
-        try (final Admin adminClient = createAdminClient()) {
-            final ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, changelog);
+    private Properties getTopicProperties(string changelog) {
+        try { 
+ (Admin adminClient = createAdminClient());
+            ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, changelog);
             try {
-                final Config config = adminClient.describeConfigs(Collections.singletonList(configResource)).values().get(configResource).get();
-                final Properties properties = new Properties();
-                for (final ConfigEntry configEntry : config.entries()) {
+                Config config = adminClient.describeConfigs(Collections.singletonList(configResource)).values().get(configResource).get();
+                Properties properties = new Properties();
+                foreach (ConfigEntry configEntry in config.entries()) {
                     if (configEntry.source() == ConfigEntry.ConfigSource.DYNAMIC_TOPIC_CONFIG) {
-                        properties.put(configEntry.name(), configEntry.value());
+                        properties.put(configEntry.name(), configEntry.Value);
                     }
                 }
                 return properties;
-            } catch (final InterruptedException | ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
         }
     }
 
     private Admin createAdminClient() {
-        final Properties adminClientConfig = new Properties();
+        Properties adminClientConfig = new Properties();
         adminClientConfig.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
         return Admin.create(adminClientConfig);
     }
 
-    [Test]
-    public void shouldCompactTopicsForKeyValueStoreChangelogs() throws Exception {
-        final String appID = APP_ID + "-compact";
+    [Xunit.Fact]
+    public void shouldCompactTopicsForKeyValueStoreChangelogs() {// throws Exception
+        string appID = APP_ID + "-compact";
         streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
         //
         // Step 1: Configure and start a simple word count topology
         //
-        final StreamsBuilder builder = new StreamsBuilder();
-        final KStream<String, String> textLines = builder.stream(DEFAULT_INPUT_TOPIC);
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream<string, string> textLines = builder.stream(DEFAULT_INPUT_TOPIC);
 
-        textLines.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
+        textLines.flatMapValues(value => Array.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
             .groupBy(MockMapper.selectValueMapper())
-            .count(Materialized.as("Counts"));
+            .count(Materialized.As("Counts"));
 
-        final KafkaStreams streams = new KafkaStreams(builder.build(), streamsProp);
+        KafkaStreams streams = new KafkaStreams(builder.build(), streamsProp);
         streams.start();
 
         //
         // Step 2: Produce some input data to the input topic.
         //
-        produceData(Arrays.asList("hello", "world", "world", "hello world"));
+        produceData(Array.asList("hello", "world", "world", "hello world"));
 
         //
         // Step 3: Verify the state changelog topics are compact
@@ -165,56 +166,56 @@ public class InternalTopicIntegrationTest {
         waitForCompletion(streams, 2, 30000);
         streams.close();
 
-        final Properties changelogProps = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "Counts"));
-        assertEquals(LogConfig.Compact(), changelogProps.getProperty(LogConfig.CleanupPolicyProp()));
+        Properties changelogProps = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "Counts"));
+        Assert.Equal(LogConfig.Compact(), changelogProps.getProperty(LogConfig.CleanupPolicyProp()));
 
-        final Properties repartitionProps = getTopicProperties(appID + "-Counts-repartition");
-        assertEquals(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
-        assertEquals(3, repartitionProps.size());
+        Properties repartitionProps = getTopicProperties(appID + "-Counts-repartition");
+        Assert.Equal(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
+        Assert.Equal(3, repartitionProps.Count);
     }
 
-    [Test]
-    public void shouldCompactAndDeleteTopicsForWindowStoreChangelogs() throws Exception {
-        final String appID = APP_ID + "-compact-delete";
+    [Xunit.Fact]
+    public void shouldCompactAndDeleteTopicsForWindowStoreChangelogs() {// throws Exception
+        string appID = APP_ID + "-compact-delete";
         streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
         //
         // Step 1: Configure and start a simple word count topology
         //
-        final StreamsBuilder builder = new StreamsBuilder();
-        final KStream<String, String> textLines = builder.stream(DEFAULT_INPUT_TOPIC);
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream<string, string> textLines = builder.stream(DEFAULT_INPUT_TOPIC);
 
-        final int durationMs = 2000;
+        int durationMs = 2000;
 
-        textLines.flatMapValues(value -> Arrays.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
+        textLines.flatMapValues(value => Array.asList(value.toLowerCase(Locale.getDefault()).split("\\W+")))
             .groupBy(MockMapper.selectValueMapper())
             .windowedBy(TimeWindows.of(ofSeconds(1L)).grace(ofMillis(0L)))
-            .count(Materialized.<String, Long, WindowStore<Bytes, byte[]>>as("CountWindows").withRetention(ofSeconds(2L)));
+            .count(Materialized<string, long, WindowStore<Bytes, byte[]>>.As("CountWindows").withRetention(ofSeconds(2L)));
 
-        final KafkaStreams streams = new KafkaStreams(builder.build(), streamsProp);
+        KafkaStreams streams = new KafkaStreams(builder.build(), streamsProp);
         streams.start();
 
         //
         // Step 2: Produce some input data to the input topic.
         //
-        produceData(Arrays.asList("hello", "world", "world", "hello world"));
+        produceData(Array.asList("hello", "world", "world", "hello world"));
 
         //
         // Step 3: Verify the state changelog topics are compact
         //
         waitForCompletion(streams, 2, 30000);
         streams.close();
-        final Properties properties = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "CountWindows"));
-        final List<String> policies = Arrays.asList(properties.getProperty(LogConfig.CleanupPolicyProp()).split(","));
-        assertEquals(2, policies.size());
-        assertTrue(policies.contains(LogConfig.Compact()));
-        assertTrue(policies.contains(LogConfig.Delete()));
+        Properties properties = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "CountWindows"));
+        List<string> policies = Array.asList(properties.getProperty(LogConfig.CleanupPolicyProp()).split(","));
+        Assert.Equal(2, policies.Count);
+        Assert.True(policies.Contains(LogConfig.Compact()));
+        Assert.True(policies.Contains(LogConfig.Delete()));
         // retention should be 1 day + the window duration
-        final long retention = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS) + durationMs;
-        assertEquals(retention, Long.parseLong(properties.getProperty(LogConfig.RetentionMsProp())));
+        long retention = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS) + durationMs;
+        Assert.Equal(retention, long.parseLong(properties.getProperty(LogConfig.RetentionMsProp())));
 
-        final Properties repartitionProps = getTopicProperties(appID + "-CountWindows-repartition");
-        assertEquals(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
-        assertEquals(3, repartitionProps.size());
+        Properties repartitionProps = getTopicProperties(appID + "-CountWindows-repartition");
+        Assert.Equal(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
+        Assert.Equal(3, repartitionProps.Count);
     }
 }

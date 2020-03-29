@@ -1,56 +1,56 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.streams.KeyValueTimestamp;
-import org.apache.kafka.streams.StreamsBuilder;
-import org.apache.kafka.streams.StreamsConfig;
-import org.apache.kafka.streams.kstream.JoinWindows;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.test.IntegrationTest;
-import org.apache.kafka.test.MockMapper;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import static java.time.Duration.ofSeconds;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * Tests all available joins of Kafka Streams DSL.
  */
-@Category({IntegrationTest.class})
-@RunWith(value = Parameterized.class)
-public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest {
-    private KStream<Long, String> leftStream;
-    private KStream<Long, String> rightStream;
 
-    public StreamStreamJoinIntegrationTest(final boolean cacheEnabled) {
+
+public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
+    private KStream<long, string> leftStream;
+    private KStream<long, string> rightStream;
+
+    public StreamStreamJoinIntegrationTest(bool cacheEnabled) {
         super(cacheEnabled);
     }
 
-    @Before
-    public void prepareTopology() throws InterruptedException {
-        super.prepareEnvironment();
+    
+    public void prepareTopology() {// throws InterruptedException
+        base.prepareEnvironment();
 
         appID = "stream-stream-join-integration-test";
 
@@ -59,36 +59,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         rightStream = builder.stream(INPUT_TOPIC_RIGHT);
     }
 
-    [Test]
-    public void testInner() throws Exception {
+    [Xunit.Fact]
+    public void testInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -100,36 +100,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testInnerRepartitioned() throws Exception {
+    [Xunit.Fact]
+    public void testInnerRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -144,36 +144,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testLeft() throws Exception {
+    [Xunit.Fact]
+    public void testLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-null", 3L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -185,36 +185,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testLeftRepartitioned() throws Exception {
+    [Xunit.Fact]
+    public void testLeftRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-null", 3L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -229,36 +229,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testOuter() throws Exception {
+    [Xunit.Fact]
+    public void testOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-null", 3L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -270,36 +270,36 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testOuterRepartitioned() throws Exception {
+    [Xunit.Fact]
+    public void testOuterRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-null", 3L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-c", 10L)),
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-c", 15L),
@@ -314,17 +314,17 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
         runTest(expectedResult);
     }
 
-    [Test]
-    public void testMultiInner() throws Exception {
+    [Xunit.Fact]
+    public void testMultiInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");
 
-        final List<List<KeyValueTimestamp<Long, String>>> expectedResult = Arrays.asList(
+        List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
             null,
             null,
             null,
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a-a", 4L)),
             Collections.singletonList(new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-a-a", 5L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-b-a", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b-a", 6L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-a-b", 6L),
@@ -333,12 +333,12 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-b-b", 6L)),
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-a-b", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b-a", 9L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-b-b", 9L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c-a", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-c-b", 10L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-c-a", 10L),
@@ -357,7 +357,7 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
             null,
             null,
             null,
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d-a", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d-b", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d-c", 14L),
@@ -379,7 +379,7 @@ public class StreamStreamJoinIntegrationTest extends AbstractJoinIntegrationTest
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "A-d-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "B-d-d", 14L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "C-d-d", 14L)),
-            Arrays.asList(
+            Array.asList(
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a-a", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a-b", 15L),
                 new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-a-c", 15L),

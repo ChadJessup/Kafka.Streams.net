@@ -1,74 +1,74 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.easymock.EasyMockRunner;
-import org.easymock.Mock;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.rocksdb.AbstractCompactionFilter;
-import org.rocksdb.AbstractCompactionFilter.Context;
-import org.rocksdb.AbstractCompactionFilterFactory;
-import org.rocksdb.AccessHint;
-import org.rocksdb.BuiltinComparator;
-import org.rocksdb.ColumnFamilyOptions;
-import org.rocksdb.CompactionPriority;
-import org.rocksdb.CompactionStyle;
-import org.rocksdb.ComparatorOptions;
-import org.rocksdb.CompressionType;
-import org.rocksdb.DBOptions;
-import org.rocksdb.Env;
-import org.rocksdb.InfoLogLevel;
-import org.rocksdb.LRUCache;
-import org.rocksdb.Logger;
-import org.rocksdb.Options;
-import org.rocksdb.PlainTableConfig;
-import org.rocksdb.RateLimiter;
-import org.rocksdb.RemoveEmptyValueCompactionFilter;
-import org.rocksdb.RocksDB;
-import org.rocksdb.SstFileManager;
-import org.rocksdb.StringAppendOperator;
-import org.rocksdb.VectorMemTableConfig;
-import org.rocksdb.WALRecoveryMode;
-import org.rocksdb.WriteBufferManager;
-import org.rocksdb.util.BytewiseComparator;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.junit.Assert.fail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /**
  * The purpose of this test is, to catch interface changes if we upgrade {@link RocksDB}.
  * Using reflections, we make sure the {@link RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter} maps all
  * methods from {@link DBOptions} and {@link ColumnFamilyOptions} to/from {@link Options} correctly.
  */
-@RunWith(EasyMockRunner.class)
+
 public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
-    private final List<String> ignoreMethods = new LinkedList<String>() {
+    private List<string> ignoreMethods = new LinkedList<string>() {
         {
             add("isOwningHandle");
             add("dispose");
@@ -87,53 +87,53 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
     @Mock
     private ColumnFamilyOptions columnFamilyOptions;
 
-    [Test]
-    public void shouldOverwriteAllOptionsMethods() throws Exception {
-        for (final Method method : Options.class.getMethods()) {
-            if (!ignoreMethods.contains(method.getName())) {
-                RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter.class
+    [Xunit.Fact]
+    public void shouldOverwriteAllOptionsMethods() {// throws Exception
+        foreach (Method method in Options.getMethods()) {
+            if (!ignoreMethods.Contains(method.getName())) {
+                RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter
                     .getDeclaredMethod(method.getName(), method.getParameterTypes());
             }
         }
     }
 
-    [Test]
-    public void shouldForwardAllDbOptionsCalls() throws Exception {
-        for (final Method method : Options.class.getMethods()) {
-            if (!ignoreMethods.contains(method.getName())) {
+    [Xunit.Fact]
+    public void shouldForwardAllDbOptionsCalls() {// throws Exception
+        foreach (Method method in Options.getMethods()) {
+            if (!ignoreMethods.Contains(method.getName())) {
                 try {
-                    DBOptions.class.getMethod(method.getName(), method.getParameterTypes());
+                    DBOptions.getMethod(method.getName(), method.getParameterTypes());
                     verifyDBOptionsMethodCall(method);
-                } catch (final NoSuchMethodException expectedAndSwallow) { }
+                } catch (NoSuchMethodException expectedAndSwallow) { }
             }
         }
     }
 
-    private void verifyDBOptionsMethodCall(final Method method) throws Exception {
-        final RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeDbOptions
+    private void verifyDBOptionsMethodCall(Method method) {// throws Exception
+        RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeDbOptions
             = new RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(dbOptions, new ColumnFamilyOptions());
 
-        final Object[] parameters = getDBOptionsParameters(method.getParameterTypes());
+        object[] parameters = getDBOptionsParameters(method.getParameterTypes());
 
         try {
             reset(dbOptions);
             replay(dbOptions);
             method.invoke(optionsFacadeDbOptions, parameters);
             verify();
-            fail("Should have called DBOptions." + method.getName() + "()");
-        } catch (final InvocationTargetException undeclaredMockMethodCall) {
-            assertThat(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError.class));
-            assertThat(undeclaredMockMethodCall.getCause().getMessage().trim(),
+            Assert.True(false, "Should have called DBOptions." + method.getName() + "()");
+        } catch (InvocationTargetException undeclaredMockMethodCall) {
+            Assert.Equal(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError));
+            Assert.Equal(undeclaredMockMethodCall.getCause().getMessage().trim(),
                 matchesPattern("Unexpected method call DBOptions\\." + method.getName() + "((.*\n*)*):"));
         }
     }
 
-    private Object[] getDBOptionsParameters(final Class<?>[] parameterTypes) throws Exception {
-        final Object[] parameters = new Object[parameterTypes.length];
+    private object[] getDBOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
+        object[] parameters = new object[parameterTypes.Length];
 
-        for (int i = 0; i < parameterTypes.length; ++i) {
+        for (int i = 0; i < parameterTypes.Length; ++i) {
             switch (parameterTypes[i].getName()) {
-                case "boolean":
+                case "bool":
                     parameters[i] = true;
                     break;
                 case "int":
@@ -159,8 +159,8 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
                     break;
                 case "org.rocksdb.Logger":
                     parameters[i] = new Logger(new Options()) {
-                        @Override
-                        protected void log(final InfoLogLevel infoLogLevel, final String logMsg) {}
+                        
+                        protected void log(InfoLogLevel infoLogLevel, string logMsg) {}
                     };
                     break;
                 case "org.rocksdb.RateLimiter":
@@ -183,43 +183,43 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         return parameters;
     }
 
-    [Test]
-    public void shouldForwardAllColumnFamilyCalls() throws Exception {
-        for (final Method method : Options.class.getMethods()) {
-            if (!ignoreMethods.contains(method.getName())) {
+    [Xunit.Fact]
+    public void shouldForwardAllColumnFamilyCalls() {// throws Exception
+        foreach (Method method in Options.getMethods()) {
+            if (!ignoreMethods.Contains(method.getName())) {
                 try {
-                    ColumnFamilyOptions.class.getMethod(method.getName(), method.getParameterTypes());
+                    ColumnFamilyOptions.getMethod(method.getName(), method.getParameterTypes());
                     verifyColumnFamilyOptionsMethodCall(method);
-                } catch (final NoSuchMethodException expectedAndSwallow) { }
+                } catch (NoSuchMethodException expectedAndSwallow) { }
             }
         }
     }
 
-    private void verifyColumnFamilyOptionsMethodCall(final Method method) throws Exception {
-        final RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeColumnFamilyOptions
+    private void verifyColumnFamilyOptionsMethodCall(Method method) {// throws Exception
+        RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeColumnFamilyOptions
             = new RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(new DBOptions(), columnFamilyOptions);
 
-        final Object[] parameters = getColumnFamilyOptionsParameters(method.getParameterTypes());
+        object[] parameters = getColumnFamilyOptionsParameters(method.getParameterTypes());
 
         try {
             reset(columnFamilyOptions);
             replay(columnFamilyOptions);
             method.invoke(optionsFacadeColumnFamilyOptions, parameters);
             verify();
-            fail("Should have called ColumnFamilyOptions." + method.getName() + "()");
-        } catch (final InvocationTargetException undeclaredMockMethodCall) {
-            assertThat(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError.class));
-            assertThat(undeclaredMockMethodCall.getCause().getMessage().trim(),
+            Assert.True(false, "Should have called ColumnFamilyOptions." + method.getName() + "()");
+        } catch (InvocationTargetException undeclaredMockMethodCall) {
+            Assert.Equal(undeclaredMockMethodCall.getCause(), instanceOf(AssertionError));
+            Assert.Equal(undeclaredMockMethodCall.getCause().getMessage().trim(),
                 matchesPattern("Unexpected method call ColumnFamilyOptions\\." + method.getName() +  "(.*)"));
         }
     }
 
-    private Object[] getColumnFamilyOptionsParameters(final Class<?>[] parameterTypes) throws Exception {
-        final Object[] parameters = new Object[parameterTypes.length];
+    private object[] getColumnFamilyOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
+        object[] parameters = new object[parameterTypes.Length];
 
-        for (int i = 0; i < parameterTypes.length; ++i) {
+        for (int i = 0; i < parameterTypes.Length; ++i) {
             switch (parameterTypes[i].getName()) {
-                case "boolean":
+                case "bool":
                     parameters[i] = true;
                     break;
                 case "double":
@@ -243,13 +243,13 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
                 case "org.rocksdb.AbstractCompactionFilterFactory":
                     parameters[i] = new AbstractCompactionFilterFactory() {
 
-                        @Override
-                        public AbstractCompactionFilter<?> createCompactionFilter(final Context context) {
+                        
+                        public AbstractCompactionFilter<?> createCompactionFilter(Context context) {
                             return null;
                         }
 
-                        @Override
-                        public String name() {
+                        
+                        public string name() {
                             return "AbstractCompactionFilterFactory";
                         }
                     };

@@ -136,7 +136,7 @@
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<long>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
-//            Assert.Equal(data, equalTo(Array.AsReadOnly(
+//            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make(2L, 15L)),
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make(1L, 500L)),
 //                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make(2L, 550L)))));
@@ -157,7 +157,7 @@
 //            List<KeyValuePair<Windowed<string>, string>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
-//            Assert.Equal(data, equalTo(Array.AsReadOnly(
+//            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "1+2"),
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), "3"),
 //                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), "10+20"))));
@@ -166,7 +166,7 @@
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
-//            Assert.Equal(data, equalTo(Array.AsReadOnly(
+//            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("1+2", 15L)),
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("3", 500L)),
 //                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("10+20", 550L)))));
@@ -189,7 +189,7 @@
 //            List<KeyValuePair<Windowed<string>, string>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
-//            Assert.Equal(data, equalTo(Array.AsReadOnly(
+//            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(0, 500)), "0+1+2"),
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), "0+3"),
 //                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), "0+10+20"))));
@@ -198,7 +198,7 @@
 //            List<KeyValuePair<Windowed<string>, ValueAndTimestamp<string>>> data =
 //                StreamsTestUtils.toList(windowStore.fetch("1", "2", ofEpochMilli(0), ofEpochMilli(1000L)));
 
-//            Assert.Equal(data, equalTo(Array.AsReadOnly(
+//            Assert.Equal(data, (Array.AsReadOnly(
 //                KeyValuePair(new Windowed<>("1", new TimeWindow(0, 500)), ValueAndTimestamp.make("0+1+2", 15L)),
 //                KeyValuePair.Create(new Windowed<>("1", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+3", 500L)),
 //                KeyValuePair.Create(new Windowed<>("2", new TimeWindow(500, 1000)), ValueAndTimestamp.make("0+10+20", 550L)))));

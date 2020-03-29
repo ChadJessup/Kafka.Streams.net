@@ -1,39 +1,39 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
+
+
+
+
+
+
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+
+
+
+
+
  */
 
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
-import org.apache.kafka.common.header.internals.RecordHeader;
-import org.apache.kafka.common.header.internals.RecordHeaders;
-import org.apache.kafka.common.metrics.Metrics;
-import org.apache.kafka.common.record.TimestampType;
-import org.apache.kafka.common.utils.LogContext;
-import org.junit.Test;
 
-import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
+
+
+
+
+
+
+
+
+
+
+
 
 public class RecordDeserializerTest {
 
-    private final RecordHeaders headers = new RecordHeaders(new Header[] {new RecordHeader("key", "value".getBytes())});
-    private final ConsumerRecord<byte[], byte[]> rawRecord = new ConsumerRecord<>("topic",
+    private Headers headers = new Headers(new Header[] {new RecordHeader("key", "value".getBytes())});
+    private ConsumeResult<byte[], byte[]> rawRecord = new ConsumeResult<>("topic",
         1,
         1,
         10,
@@ -45,10 +45,10 @@ public class RecordDeserializerTest {
         new byte[0],
         headers);
 
-    @SuppressWarnings("deprecation")
-    [Test]
+    
+    [Xunit.Fact]
     public void shouldReturnConsumerRecordWithDeserializedValueWhenNoExceptions() {
-        final RecordDeserializer recordDeserializer = new RecordDeserializer(
+        RecordDeserializer recordDeserializer = new RecordDeserializer(
             new TheSourceNode(
                 false,
                 false,
@@ -58,28 +58,28 @@ public class RecordDeserializerTest {
             new LogContext(),
             new Metrics().sensor("skipped-records")
         );
-        final ConsumerRecord<Object, Object> record = recordDeserializer.deserialize(null, rawRecord);
-        assertEquals(rawRecord.topic(), record.topic());
-        assertEquals(rawRecord.partition(), record.partition());
-        assertEquals(rawRecord.offset(), record.offset());
-        assertEquals(rawRecord.checksum(), record.checksum());
-        assertEquals("key", record.key());
-        assertEquals("value", record.value());
-        assertEquals(rawRecord.timestamp(), record.timestamp());
-        assertEquals(TimestampType.CREATE_TIME, record.timestampType());
-        assertEquals(rawRecord.headers(), record.headers());
+        ConsumeResult<object, object> record = recordDeserializer.deserialize(null, rawRecord);
+        Assert.Equal(rawRecord.topic(), record.topic());
+        Assert.Equal(rawRecord.partition(), record.partition());
+        Assert.Equal(rawRecord.Offset, record.Offset);
+        Assert.Equal(rawRecord.checksum(), record.checksum());
+        Assert.Equal("key", record.Key);
+        Assert.Equal("value", record.Value);
+        Assert.Equal(rawRecord.Timestamp, record.Timestamp);
+        Assert.Equal(TimestampType.CreateTime, record.timestampType());
+        Assert.Equal(rawRecord.headers(), record.headers());
     }
 
-    static class TheSourceNode extends SourceNode<Object, Object> {
-        private final boolean keyThrowsException;
-        private final boolean valueThrowsException;
-        private final Object key;
-        private final Object value;
+    static class TheSourceNode : SourceNode<object, object> {
+        private bool keyThrowsException;
+        private bool valueThrowsException;
+        private object key;
+        private object value;
 
-        TheSourceNode(final boolean keyThrowsException,
-                      final boolean valueThrowsException,
-                      final Object key,
-                      final Object value) {
+        TheSourceNode(bool keyThrowsException,
+                      bool valueThrowsException,
+                      object key,
+                      object value) {
             super("", Collections.emptyList(), null, null);
             this.keyThrowsException = keyThrowsException;
             this.valueThrowsException = valueThrowsException;
@@ -87,16 +87,16 @@ public class RecordDeserializerTest {
             this.value = value;
         }
 
-        @Override
-        public Object deserializeKey(final String topic, final Headers headers, final byte[] data) {
+        
+        public object deserializeKey(string topic, Headers headers, byte[] data) {
             if (keyThrowsException) {
                 throw new RuntimeException();
             }
             return key;
         }
 
-        @Override
-        public Object deserializeValue(final String topic, final Headers headers, final byte[] data) {
+        
+        public object deserializeValue(string topic, Headers headers, byte[] data) {
             if (valueThrowsException) {
                 throw new RuntimeException();
             }

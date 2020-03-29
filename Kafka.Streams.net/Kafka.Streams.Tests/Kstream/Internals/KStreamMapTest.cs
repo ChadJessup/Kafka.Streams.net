@@ -34,7 +34,7 @@
 //            new KeyValueTimestamp<>("V1", 1, 9),
 //            new KeyValueTimestamp<>("V2", 2, 8),
 //            new KeyValueTimestamp<>("V3", 3, 7)};
-//            Assert.Equal(4, supplier.theCapturedProcessor().processed.size());
+//            Assert.Equal(4, supplier.theCapturedProcessor().processed.Count);
 //            for (var i = 0; i < expected.Length; i++)
 //            {
 //                Assert.Equal(expected[i], supplier.theCapturedProcessor().processed.get(i));

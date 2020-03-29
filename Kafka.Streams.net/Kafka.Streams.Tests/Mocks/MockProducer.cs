@@ -44,8 +44,8 @@ namespace Kafka.Streams.Tests.Mocks
          *        {@link #send(Message) send()} to complete the call and unblock the {@link
          *        java.util.concurrent.Future Future&lt;RecordMetadata&gt;} that is returned.
          * @param partitioner The partition strategy
-         * @param keySerializer The serializer for key that implements {@link Serializer}.
-         * @param valueSerializer The serializer for value that implements {@link Serializer}.
+         * @param keySerializer The serializer for key that : {@link Serializer}.
+         * @param valueSerializer The serializer for value that : {@link Serializer}.
          */
         public MockProducer(
             bool autoComplete,
@@ -156,18 +156,18 @@ namespace Kafka.Streams.Tests.Mocks
         //     this.sentOffsets = false;
         // }
 
-        // @Override
-        // public void sendOffsetsToTransaction(Map<TopicPartition, OffsetAndMetadata> offsets,
+        // 
+        // public void sendOffsetsToTransaction(Dictionary<TopicPartition, OffsetAndMetadata> offsets,
         //                                      string consumerGroupId) throws ProducerFencedException
         // {
         //     verifyProducerState();
         //     verifyTransactionsInitialized();
         //     verifyNoTransactionInFlight();
         //     Objects.requireNonNull(consumerGroupId);
-        //     if (offsets.size() == 0) {
+        //     if (offsets.Count == 0) {
         //         return;
         //     }
-        //     Map<TopicPartition, OffsetAndMetadata> uncommittedOffsets = this.uncommittedConsumerGroupOffsets.get(consumerGroupId);
+        //     Dictionary<TopicPartition, OffsetAndMetadata> uncommittedOffsets = this.uncommittedConsumerGroupOffsets.get(consumerGroupId);
         //     if (uncommittedOffsets == null)
         //     {
         //         uncommittedOffsets = new HashMap<>();
@@ -177,7 +177,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     this.sentOffsets = true;
         //     }
         // 
-        //     @Override
+        //     
         // public void commitTransaction() throws ProducerFencedException
         // {
         //     verifyProducerState();
@@ -190,7 +190,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     if (!this.uncommittedConsumerGroupOffsets.isEmpty())
         //         this.consumerGroupOffsets.add(this.uncommittedConsumerGroupOffsets);
         // 
-        //     this.uncommittedSends.clear();
+        //     this.uncommittedSends.Clear();
         //     this.uncommittedConsumerGroupOffsets = new HashMap<>();
         //     this.transactionCommitted = true;
         //     this.transactionAborted = false;
@@ -199,15 +199,15 @@ namespace Kafka.Streams.Tests.Mocks
         //     ++this.commitCount;
         //     }
         // 
-        //     @Override
+        //     
         // public void abortTransaction() throws ProducerFencedException
         // {
         //     verifyProducerState();
         //     verifyTransactionsInitialized();
         //     verifyNoTransactionInFlight();
         //     flush();
-        //     this.uncommittedSends.clear();
-        //     this.uncommittedConsumerGroupOffsets.clear();
+        //     this.uncommittedSends.Clear();
+        //     this.uncommittedConsumerGroupOffsets.Clear();
         //     this.transactionCommitted = false;
         //     this.transactionAborted = true;
         //     this.transactionInFlight = false;
@@ -246,7 +246,7 @@ namespace Kafka.Streams.Tests.Mocks
         //  * 
         //  * @see #history()
         //  */
-        // @Override
+        // 
         // public synchronized Future<RecordMetadata> send(Message<K, V> record) {
         //     return send(record, null);
         // }
@@ -256,7 +256,7 @@ namespace Kafka.Streams.Tests.Mocks
         //  *
         //  * @see #history()
         //  */
-        // @Override
+        // 
         // public synchronized Future<RecordMetadata> send(Message<K, V> record, Callback callback) {
         //     if (this.closed)
         //     {
@@ -321,7 +321,7 @@ namespace Kafka.Streams.Tests.Mocks
         //     return this.cluster.partitionsForTopic(topic);
         // }
         // 
-        // public Map<MetricName, Metric> metrics()
+        // public Dictionary<MetricName, Metric> metrics()
         // {
         //     return mockMetrics;
         // }
@@ -334,13 +334,13 @@ namespace Kafka.Streams.Tests.Mocks
         //     mockMetrics.put(name, metric);
         // }
         // 
-        // @Override
+        // 
         // public void close()
         // {
         //     close(Duration.ofMillis(0));
         // }
         // 
-        // @Override
+        // 
         // public void close(Duration timeout)
         // {
         //     if (producerFencedOnClose)
@@ -414,7 +414,7 @@ namespace Kafka.Streams.Tests.Mocks
         // /**
         //  * Get the list of committed consumer group offsets since the last call to {@link #clear()}
         //  */
-        // public synchronized List<Map<string, Map<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsetsHistory() {
+        // public synchronized List<Dictionary<string, Map<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsetsHistory() {
         //     return new ArrayList<>(this.consumerGroupOffsets);
         // }
         // /**
@@ -423,11 +423,11 @@ namespace Kafka.Streams.Tests.Mocks
         //  */
         // public synchronized void clear()
         // {
-        //     this.sent.clear();
-        //     this.uncommittedSends.clear();
-        //     this.completions.clear();
-        //     this.consumerGroupOffsets.clear();
-        //     this.uncommittedConsumerGroupOffsets.clear();
+        //     this.sent.Clear();
+        //     this.uncommittedSends.Clear();
+        //     this.completions.Clear();
+        //     this.consumerGroupOffsets.Clear();
+        //     this.uncommittedConsumerGroupOffsets.Clear();
         //     this.transactionInitialized = false;
         //     this.transactionInFlight = false;
         //     this.transactionCommitted = false;
@@ -469,12 +469,12 @@ namespace Kafka.Streams.Tests.Mocks
          */
         //private int partition(Message<K, V> record, Cluster cluster)
         //{
-        //    Integer partition = record.partition();
+        //    int partition = record.partition();
         //    string topic = record.topic();
         //    if (partition != null)
         //    {
         //        List<PartitionInfo> partitions = cluster.partitionsForTopic(topic);
-        //        int numPartitions = partitions.size();
+        //        int numPartitions = partitions.Count;
         //        // they have given us a partition, use it
         //        if (partition < 0 || partition >= numPartitions)
         //            throw new IllegalArgumentException("Invalid partition given with record: " + partition
@@ -483,9 +483,9 @@ namespace Kafka.Streams.Tests.Mocks
         //                                               + "].");
         //        return partition;
         //    }
-        //    byte[] keyBytes = keySerializer.serialize(topic, record.headers(), record.key());
-        //    byte[] valueBytes = valueSerializer.serialize(topic, record.headers(), record.value());
-        //    return this.partitioner.partition(topic, record.key(), keyBytes, record.value(), valueBytes, cluster);
+        //    byte[] keyBytes = keySerializer.serialize(topic, record.headers(), record.Key);
+        //    byte[] valueBytes = valueSerializer.serialize(topic, record.headers(), record.Value);
+        //    return this.partitioner.partition(topic, record.Key, keyBytes, record.Value, valueBytes, cluster);
         //}
         //
         //private static class Completion
