@@ -58,7 +58,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 
-        public static void startKafkaCluster()
+        public static void StartKafkaCluster()
         {// throws InterruptedException
             CLUSTER.createTopics(
                 TOPIC_1_0,
@@ -87,7 +87,7 @@ namespace Kafka.Streams.Tests.Integration
         }
 
 
-        public void setUp(){ //throws IOException
+        public void SetUp(){ //throws IOException
 
         Properties props = new Properties();
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
@@ -107,31 +107,31 @@ namespace Kafka.Streams.Tests.Integration
     }
 
     [Xunit.Fact]
-    public void shouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithGlobalAutoOffsetResetLatest()
+    public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithGlobalAutoOffsetResetLatest()
     {// throws Exception
         streamsConfiguration.put(StreamsConfig.consumerPrefix(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG), "latest");
 
         List<string> expectedReceivedValues = Array.asList(topic1TestMessage, topic2TestMessage);
-        shouldOnlyReadForEarliest("_0", TOPIC_1_0, TOPIC_2_0, TOPIC_A_0, TOPIC_C_0, TOPIC_Y_0, TOPIC_Z_0, OUTPUT_TOPIC_0, expectedReceivedValues);
+        ShouldOnlyReadForEarliest("_0", TOPIC_1_0, TOPIC_2_0, TOPIC_A_0, TOPIC_C_0, TOPIC_Y_0, TOPIC_Z_0, OUTPUT_TOPIC_0, expectedReceivedValues);
     }
 
     [Xunit.Fact]
-    public void shouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithDefaultGlobalAutoOffsetResetEarliest()
+    public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithNoCommittedOffsetsWithDefaultGlobalAutoOffsetResetEarliest()
     {// throws Exception
         List<string> expectedReceivedValues = Array.asList(topic1TestMessage, topic2TestMessage, topicYTestMessage, topicZTestMessage);
-        shouldOnlyReadForEarliest("_1", TOPIC_1_1, TOPIC_2_1, TOPIC_A_1, TOPIC_C_1, TOPIC_Y_1, TOPIC_Z_1, OUTPUT_TOPIC_1, expectedReceivedValues);
+        ShouldOnlyReadForEarliest("_1", TOPIC_1_1, TOPIC_2_1, TOPIC_A_1, TOPIC_C_1, TOPIC_Y_1, TOPIC_Z_1, OUTPUT_TOPIC_1, expectedReceivedValues);
     }
 
     [Xunit.Fact]
-    public void shouldOnlyReadRecordsWhereEarliestSpecifiedWithInvalidCommittedOffsets()
+    public void ShouldOnlyReadRecordsWhereEarliestSpecifiedWithInvalidCommittedOffsets()
     {// throws Exception
-        commitInvalidOffsets();
+        CommitInvalidOffsets();
 
         List<string> expectedReceivedValues = Array.asList(topic1TestMessage, topic2TestMessage, topicYTestMessage, topicZTestMessage);
-        shouldOnlyReadForEarliest("_2", TOPIC_1_2, TOPIC_2_2, TOPIC_A_2, TOPIC_C_2, TOPIC_Y_2, TOPIC_Z_2, OUTPUT_TOPIC_2, expectedReceivedValues);
+        ShouldOnlyReadForEarliest("_2", TOPIC_1_2, TOPIC_2_2, TOPIC_A_2, TOPIC_C_2, TOPIC_Y_2, TOPIC_Z_2, OUTPUT_TOPIC_2, expectedReceivedValues);
     }
 
-    private void shouldOnlyReadForEarliest(
+    private void ShouldOnlyReadForEarliest(
         string topicSuffix,
         string topic1,
         string topic2,
@@ -182,7 +182,7 @@ namespace Kafka.Streams.Tests.Integration
         Assert.Equal(actualValues, (expectedReceivedValues));
     }
 
-    private void commitInvalidOffsets()
+    private void CommitInvalidOffsets()
     {
         KafkaConsumer<string, string> consumer = new KafkaConsumer<>(TestUtils.consumerConfig(
             CLUSTER.bootstrapServers(),
@@ -204,7 +204,7 @@ namespace Kafka.Streams.Tests.Integration
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionOverlappingPattern()
+    public void ShouldThrowExceptionOverlappingPattern()
     {
         StreamsBuilder builder = new StreamsBuilder();
         //NOTE this would realistically get caught when building topology, the test is for completeness
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests.Integration
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionOverlappingTopic()
+    public void ShouldThrowExceptionOverlappingTopic()
     {
         StreamsBuilder builder = new StreamsBuilder();
         //NOTE this would realistically get caught when building topology, the test is for completeness
@@ -241,7 +241,7 @@ namespace Kafka.Streams.Tests.Integration
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionNoResetSpecified()
+    public void ShouldThrowStreamsExceptionNoResetSpecified()
     {// throws InterruptedException
         Properties props = new Properties();
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 0);
@@ -278,7 +278,7 @@ namespace Kafka.Streams.Tests.Integration
         bool correctExceptionThrown = false;
 
 
-        public void uncaughtException(Thread t, Throwable e)
+        public void UncaughtException(Thread t, Throwable e)
         {
             Assert.Equal(e.getClass().getSimpleName(), ("StreamsException"));
             Assert.Equal(e.getCause().getClass().getSimpleName(), ("NoOffsetForPartitionException"));

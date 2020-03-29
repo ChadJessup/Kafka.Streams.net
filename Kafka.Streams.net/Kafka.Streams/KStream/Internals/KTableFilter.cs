@@ -24,7 +24,7 @@ namespace Kafka.Streams.KStream.Internals
             this.queryableName = queryableName;
         }
 
-        public IKeyValueProcessor<K, Change<V>> get()
+        public IKeyValueProcessor<K, Change<V>> Get()
         {
             return new KTableFilterProcessor<K, V>(
                 this.queryableName,

@@ -56,7 +56,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     private byte[] rawWorld = "\0\0\0\0\0\0\0bworld".getBytes();
 
     
-    public void before() {
+    public void Before() {
         NoOpRecordCollector collector = new NoOpRecordCollector() {
             
             public void send<K, V>(string topic,
@@ -81,18 +81,18 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     
-    public void after() {
+    public void After() {
         store.close();
     }
 
     [Xunit.Fact]
-    public void shouldWriteKeyValueBytesToInnerStoreOnPut() {
+    public void ShouldWriteKeyValueBytesToInnerStoreOnPut() {
         store.put(hi, rawThere);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void shouldLogChangeOnPut() {
+    public void ShouldLogChangeOnPut() {
         store.put(hi, rawThere);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
         Assert.Equal(logged.Value, (there.Value));
@@ -100,7 +100,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldWriteAllKeyValueToInnerStoreOnPutAll() {
+    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll() {
         store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
                                    KeyValuePair.Create(hello, rawWorld)));
         Assert.Equal(root.get(hi), (rawThere));
@@ -108,7 +108,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogChangesOnPutAll() {
+    public void ShouldLogChangesOnPutAll() {
         store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
                                    KeyValuePair.Create(hello, rawWorld)));
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
@@ -120,7 +120,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPropagateDelete() {
+    public void ShouldPropagateDelete() {
         store.put(hi, rawThere);
         store.delete(hi);
         Assert.Equal(root.approximateNumEntries(), (0L));
@@ -128,13 +128,13 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnOldValueOnDelete() {
+    public void ShouldReturnOldValueOnDelete() {
         store.put(hi, rawThere);
         Assert.Equal(store.delete(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void shouldLogKeyNullOnDelete() {
+    public void ShouldLogKeyNullOnDelete() {
         store.put(hi, rawThere);
         store.delete(hi);
         Assert.Equal(sent.containsKey(hi), is(true));
@@ -142,20 +142,20 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldWriteToInnerOnPutIfAbsentNoPreviousValue() {
+    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue() {
         store.putIfAbsent(hi, rawThere);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void shouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists() {
         store.put(hi, rawThere);
         store.putIfAbsent(hi, rawWorld);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void shouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue() {
         store.putIfAbsent(hi, rawThere);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
         Assert.Equal(logged.Value, (there.Value));
@@ -163,7 +163,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists() {
         store.put(hi, rawThere);
         store.putIfAbsent(hi, rawWorld);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
@@ -172,24 +172,24 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnCurrentValueOnPutIfAbsent() {
+    public void ShouldReturnCurrentValueOnPutIfAbsent() {
         store.put(hi, rawThere);
         Assert.Equal(store.putIfAbsent(hi, rawWorld), (rawThere));
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
         Assert.Equal(store.putIfAbsent(hi, rawThere), is(nullValue()));
     }
 
     [Xunit.Fact]
-    public void shouldReturnValueOnGetWhenExists() {
+    public void ShouldReturnValueOnGetWhenExists() {
         store.put(hello, rawWorld);
         Assert.Equal(store.get(hello), (rawWorld));
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullOnGetWhenDoesntExist() {
+    public void ShouldReturnNullOnGetWhenDoesntExist() {
         Assert.Equal(store.get(hello), is(nullValue()));
     }
 }

@@ -52,44 +52,44 @@ public class AssignmentInfoTest {
     };
 
     [Xunit.Fact]
-    public void shouldUseLatestSupportedVersionByDefault() {
+    public void ShouldUseLatestSupportedVersionByDefault() {
         AssignmentInfo info = new AssignmentInfo(activeTasks, standbyTasks, globalAssignment);
         Assert.Equal(AssignmentInfo.LATEST_SUPPORTED_VERSION, info.version());
     }
 
     [Xunit.Fact]// (expected = IllegalArgumentException)
-    public void shouldThrowForUnknownVersion1() {
+    public void ShouldThrowForUnknownVersion1() {
         new AssignmentInfo(0, activeTasks, standbyTasks, globalAssignment, 0);
     }
 
     [Xunit.Fact]// (expected = IllegalArgumentException)
-    public void shouldThrowForUnknownVersion2() {
+    public void ShouldThrowForUnknownVersion2() {
         new AssignmentInfo(AssignmentInfo.LATEST_SUPPORTED_VERSION + 1, activeTasks, standbyTasks, globalAssignment, 0);
     }
 
     [Xunit.Fact]
-    public void shouldEncodeAndDecodeVersion1() {
+    public void ShouldEncodeAndDecodeVersion1() {
         AssignmentInfo info = new AssignmentInfo(1, activeTasks, standbyTasks, globalAssignment, 0);
         AssignmentInfo expectedInfo = new AssignmentInfo(1, AssignmentInfo.UNKNOWN, activeTasks, standbyTasks, Collections.<HostInfo, HashSet<TopicPartition>>emptyMap(), 0);
         Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
     }
 
     [Xunit.Fact]
-    public void shouldEncodeAndDecodeVersion2() {
+    public void ShouldEncodeAndDecodeVersion2() {
         AssignmentInfo info = new AssignmentInfo(2, activeTasks, standbyTasks, globalAssignment, 0);
         AssignmentInfo expectedInfo = new AssignmentInfo(2, AssignmentInfo.UNKNOWN, activeTasks, standbyTasks, globalAssignment, 0);
         Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
     }
 
     [Xunit.Fact]
-    public void shouldEncodeAndDecodeVersion3() {
+    public void ShouldEncodeAndDecodeVersion3() {
         AssignmentInfo info = new AssignmentInfo(3, activeTasks, standbyTasks, globalAssignment, 0);
         AssignmentInfo expectedInfo = new AssignmentInfo(3, AssignmentInfo.LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, globalAssignment, 0);
         Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));
     }
 
     [Xunit.Fact]
-    public void shouldEncodeAndDecodeVersion4() {
+    public void ShouldEncodeAndDecodeVersion4() {
         AssignmentInfo info = new AssignmentInfo(4, activeTasks, standbyTasks, globalAssignment, 2);
         AssignmentInfo expectedInfo = new AssignmentInfo(4, AssignmentInfo.LATEST_SUPPORTED_VERSION, activeTasks, standbyTasks, globalAssignment, 2);
         Assert.Equal(expectedInfo, AssignmentInfo.decode(info.encode()));

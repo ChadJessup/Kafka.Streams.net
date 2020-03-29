@@ -48,7 +48,7 @@ public class TimestampedKeyValueStoreBuilderTest {
     private TimestampedKeyValueStoreBuilder<string, string> builder;
 
     
-    public void setUp() {
+    public void SetUp() {
         expect(supplier.get()).andReturn(inner);
         expect(supplier.name()).andReturn("name");
         expect(inner.persistent()).andReturn(true).anyTimes();
@@ -63,13 +63,13 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveMeteredStoreAsOuterStore() {
+    public void ShouldHaveMeteredStoreAsOuterStore() {
         TimestampedKeyValueStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredTimestampedKeyValueStore));
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreByDefault() {
+    public void ShouldHaveChangeLoggingStoreByDefault() {
         TimestampedKeyValueStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredTimestampedKeyValueStore));
         StateStore next = ((WrappedStateStore) store).wrapped();
@@ -77,14 +77,14 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveChangeLoggingStoreWhenDisabled() {
+    public void ShouldNotHaveChangeLoggingStoreWhenDisabled() {
         TimestampedKeyValueStore<string, string> store = builder.withLoggingDisabled().build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, CoreMatchers.equalTo(inner));
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingStoreWhenEnabled() {
+    public void ShouldHaveCachingStoreWhenEnabled() {
         TimestampedKeyValueStore<string, string> store = builder.withCachingEnabled().build();
         StateStore wrapped = ((WrappedStateStore) store).wrapped();
         Assert.Equal(store, instanceOf(MeteredTimestampedKeyValueStore));
@@ -92,7 +92,7 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreWhenLoggingEnabled() {
+    public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled() {
         TimestampedKeyValueStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .build();
@@ -103,7 +103,7 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingAndChangeLoggingWhenBothEnabled() {
+    public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled() {
         TimestampedKeyValueStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .withCachingEnabled()
@@ -117,7 +117,7 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotWrapTimestampedByteStore() {
+    public void ShouldNotWrapTimestampedByteStore() {
         reset(supplier);
         expect(supplier.get()).andReturn(new RocksDBTimestampedStore("name"));
         expect(supplier.name()).andReturn("name");
@@ -131,7 +131,7 @@ public class TimestampedKeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapPlainKeyValueStoreAsTimestampStore() {
+    public void ShouldWrapPlainKeyValueStoreAsTimestampStore() {
         reset(supplier);
         expect(supplier.get()).andReturn(new RocksDBStore("name"));
         expect(supplier.name()).andReturn("name");
@@ -146,27 +146,27 @@ public class TimestampedKeyValueStoreBuilderTest {
 
     
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfInnerIsNull() {
+    public void ShouldThrowNullPointerIfInnerIsNull() {
         new TimestampedKeyValueStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfKeySerdeIsNull() {
+    public void ShouldThrowNullPointerIfKeySerdeIsNull() {
         new TimestampedKeyValueStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfValueSerdeIsNull() {
+    public void ShouldThrowNullPointerIfValueSerdeIsNull() {
         new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfTimeIsNull() {
+    public void ShouldThrowNullPointerIfTimeIsNull() {
         new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfMetricsScopeIsNull() {
+    public void ShouldThrowNullPointerIfMetricsScopeIsNull() {
         new TimestampedKeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime());
     }
 

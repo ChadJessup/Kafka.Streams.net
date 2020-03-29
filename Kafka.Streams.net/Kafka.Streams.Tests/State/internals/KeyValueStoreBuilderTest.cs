@@ -47,7 +47,7 @@ public class KeyValueStoreBuilderTest {
     private KeyValueStoreBuilder<string, string> builder;
 
     
-    public void setUp() {
+    public void SetUp() {
         EasyMock.expect(supplier.get()).andReturn(inner);
         EasyMock.expect(supplier.name()).andReturn("name");
         EasyMock.replay(supplier);
@@ -60,13 +60,13 @@ public class KeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveMeteredStoreAsOuterStore() {
+    public void ShouldHaveMeteredStoreAsOuterStore() {
         KeyValueStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredKeyValueStore));
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreByDefault() {
+    public void ShouldHaveChangeLoggingStoreByDefault() {
         KeyValueStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredKeyValueStore));
         StateStore next = ((WrappedStateStore) store).wrapped();
@@ -74,14 +74,14 @@ public class KeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveChangeLoggingStoreWhenDisabled() {
+    public void ShouldNotHaveChangeLoggingStoreWhenDisabled() {
         KeyValueStore<string, string> store = builder.withLoggingDisabled().build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, CoreMatchers.equalTo(inner));
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingStoreWhenEnabled() {
+    public void ShouldHaveCachingStoreWhenEnabled() {
         KeyValueStore<string, string> store = builder.withCachingEnabled().build();
         StateStore wrapped = ((WrappedStateStore) store).wrapped();
         Assert.Equal(store, instanceOf(MeteredKeyValueStore));
@@ -89,7 +89,7 @@ public class KeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreWhenLoggingEnabled() {
+    public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled() {
         KeyValueStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .build();
@@ -100,7 +100,7 @@ public class KeyValueStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingAndChangeLoggingWhenBothEnabled() {
+    public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled() {
         KeyValueStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .withCachingEnabled()
@@ -115,27 +115,27 @@ public class KeyValueStoreBuilderTest {
 
     
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfInnerIsNull() {
+    public void ShouldThrowNullPointerIfInnerIsNull() {
         new KeyValueStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfKeySerdeIsNull() {
+    public void ShouldThrowNullPointerIfKeySerdeIsNull() {
         new KeyValueStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfValueSerdeIsNull() {
+    public void ShouldThrowNullPointerIfValueSerdeIsNull() {
         new KeyValueStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfTimeIsNull() {
+    public void ShouldThrowNullPointerIfTimeIsNull() {
         new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfMetricsScopeIsNull() {
+    public void ShouldThrowNullPointerIfMetricsScopeIsNull() {
         new KeyValueStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime());
     }
 

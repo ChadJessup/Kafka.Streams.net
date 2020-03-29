@@ -93,7 +93,7 @@ public class SimpleBenchmark {
 
     private static ValueJoiner<byte[], byte[], byte[]> VALUE_JOINER = new ValueJoiner<byte[], byte[], byte[]>() {
         
-        public byte[] apply(byte[] value1, byte[] value2) {
+        public byte[] Apply(byte[] value1, byte[] value2) {
             // dump joiner in order to have as less join overhead as possible
             if (value1 != null) {
                 return value1;
@@ -161,7 +161,7 @@ public class SimpleBenchmark {
         this.numRecords = numRecords;
     }
 
-    private void run() {
+    private void Run() {
         switch (testName) {
             // loading phases
             case "load-one":
@@ -215,7 +215,7 @@ public class SimpleBenchmark {
         }
     }
 
-    public static void main(string[] args){ //throws IOException
+    public static void Main(string[] args){ //throws IOException
         if (args.Length < 5) {
             System.Console.Error.println("Not enough parameters are provided; expecting propFileName, testName, numRecords, keySkew, valueSize");
             System.exit(1);
@@ -249,7 +249,7 @@ public class SimpleBenchmark {
         benchmark.run();
     }
 
-    public void setStreamProperties(string applicationId) {
+    public void SetStreamProperties(string applicationId) {
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         props.put(StreamsConfig.CLIENT_ID_CONFIG, "simple-benchmark");
         props.put(StreamsConfig.POLL_MS_CONFIG, POLL_MS);
@@ -267,7 +267,7 @@ public class SimpleBenchmark {
         props.put(ProducerConfig.BATCH_SIZE_CONFIG, 128 * 1024);
     }
 
-    private Properties setProduceConsumeProperties(string clientId) {
+    private Properties SetProduceConsumeProperties(string clientId) {
         Properties clientProps = new Properties();
         clientProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, props.getProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG));
         clientProps.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
@@ -288,7 +288,7 @@ public class SimpleBenchmark {
         return clientProps;
     }
 
-    void resetStats() {
+    void ResetStats() {
         processedRecords = 0;
         processedBytes = 0L;
     }
@@ -301,7 +301,7 @@ public class SimpleBenchmark {
      * @param keySkew Key zipf distribution skewness
      * @param valueSize Size of value in bytes
      */
-    private void produce(string clientId,
+    private void Produce(string clientId,
                          string topic,
                          int numRecords,
                          double keySkew,
@@ -318,12 +318,12 @@ public class SimpleBenchmark {
             new Random(System.currentTimeMillis()).nextBytes(value);
 
             for (int i = 0; i < numRecords; i++) {
-                producer.send(new ProducerRecord<>(topic, keyGen.next(), value));
+                producer.send(new ProducerRecord<>(topic, keyGen.Next(), value));
             }
         }
     }
 
-    private void consumeAndProduce(string topic) {
+    private void ConsumeAndProduce(string topic) {
         Properties consumerProps = setProduceConsumeProperties("simple-benchmark-consumer");
         Properties producerProps = setProduceConsumeProperties("simple-benchmark-producer");
 
@@ -400,7 +400,7 @@ public class SimpleBenchmark {
         printResults("Consumer Performance [records/latency/rec-sec/MB-sec read]: ", endTime - startTime);
     }
 
-    private void processStream(string topic) {
+    private void ProcessStream(string topic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-source");
@@ -413,7 +413,7 @@ public class SimpleBenchmark {
         runGenericBenchmark(streams, "Streams Source Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithSink(string topic) {
+    private void ProcessStreamWithSink(string topic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-source-sink");
@@ -427,7 +427,7 @@ public class SimpleBenchmark {
         runGenericBenchmark(streams, "Streams SourceSink Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithStateStore(string topic) {
+    private void ProcessStreamWithStateStore(string topic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-with-store");
@@ -465,7 +465,7 @@ public class SimpleBenchmark {
         runGenericBenchmark(streams, "Streams Stateful Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    private void processStreamWithWindowStore(string topic) {
+    private void ProcessStreamWithWindowStore(string topic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-streams-with-store");
@@ -523,7 +523,7 @@ public class SimpleBenchmark {
      * Counts the occurrence of numbers (note that normally people count words, this
      * example counts numbers)
      */
-    private void countStreamsNonWindowed(string sourceTopic) {
+    private void CountStreamsNonWindowed(string sourceTopic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-nonwindowed-count");
@@ -544,7 +544,7 @@ public class SimpleBenchmark {
      * Counts the occurrence of numbers (note that normally people count words, this
      * example counts numbers)
      */
-    private void countStreamsWindowed(string sourceTopic) {
+    private void CountStreamsWindowed(string sourceTopic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-windowed-count");
@@ -565,7 +565,7 @@ public class SimpleBenchmark {
      * Measure the performance of a KStream-KTable left join. The setup is such that each
      * KStream record joins to exactly one element in the KTable
      */
-    private void streamTableJoin(string kStreamTopic, string kTableTopic) {
+    private void StreamTableJoin(string kStreamTopic, string kTableTopic) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-stream-table-join");
@@ -587,7 +587,7 @@ public class SimpleBenchmark {
      * Measure the performance of a KStream-KStream left join. The setup is such that each
      * KStream record joins to exactly one element in the other KStream
      */
-    private void streamStreamJoin(string kStreamTopic1, string kStreamTopic2) {
+    private void StreamStreamJoin(string kStreamTopic1, string kStreamTopic2) {
         CountDownLatch latch = new CountDownLatch(1);
 
         setStreamProperties("simple-benchmark-stream-stream-join");
@@ -609,7 +609,7 @@ public class SimpleBenchmark {
      * Measure the performance of a KTable-KTable left join. The setup is such that each
      * KTable record joins to exactly one element in the other KTable
      */
-    private void tableTableJoin(string kTableTopic1, string kTableTopic2) {
+    private void TableTableJoin(string kTableTopic1, string kTableTopic2) {
         CountDownLatch latch = new CountDownLatch(1);
 
         // setup join
@@ -628,7 +628,7 @@ public class SimpleBenchmark {
         runGenericBenchmark(streams, "Streams KTableKTable LeftJoin Performance [records/latency/rec-sec/MB-sec joined]: ", latch);
     }
 
-    void printResults(string nameOfBenchmark, long latency) {
+    void PrintResults(string nameOfBenchmark, long latency) {
         System.Console.Out.WriteLine(nameOfBenchmark +
             processedRecords + "/" +
             latency + "/" +
@@ -636,7 +636,7 @@ public class SimpleBenchmark {
             megabytesPerSec(latency, processedBytes));
     }
 
-    void runGenericBenchmark(KafkaStreams streams, string nameOfBenchmark, CountDownLatch latch) {
+    void RunGenericBenchmark(KafkaStreams streams, string nameOfBenchmark, CountDownLatch latch) {
         streams.start();
 
         long startTime = System.currentTimeMillis();
@@ -664,7 +664,7 @@ public class SimpleBenchmark {
         }
 
         
-        public void apply(int key, byte[] value) {
+        public void Apply(int key, byte[] value) {
             processedRecords++;
             processedBytes += int.SIZE + value.Length;
 
@@ -674,7 +674,7 @@ public class SimpleBenchmark {
         }
     }
 
-    private KafkaStreams createKafkaStreamsWithExceptionHandler(StreamsBuilder builder, Properties props) {
+    private KafkaStreams CreateKafkaStreamsWithExceptionHandler(StreamsBuilder builder, Properties props) {
         KafkaStreams streamsClient = new KafkaStreams(builder.build(), props);
         streamsClient.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             
@@ -688,15 +688,15 @@ public class SimpleBenchmark {
         return streamsClient;
     }
     
-    private double megabytesPerSec(long time, long processedBytes) {
+    private double MegabytesPerSec(long time, long processedBytes) {
         return  (processedBytes / 1024.0 / 1024.0) / (time / 1000.0);
     }
 
-    private double recordsPerSec(long time, int numRecords) {
+    private double RecordsPerSec(long time, int numRecords) {
         return numRecords / (time / 1000.0);
     }
 
-    private List<TopicPartition> getAllPartitions(KafkaConsumer<?, ?> consumer, string... topics) {
+    private List<TopicPartition> GetAllPartitions(KafkaConsumer<?, ?> consumer, string... topics) {
         ArrayList<TopicPartition> partitions = new ArrayList<>();
 
         foreach (string topic in topics) {
@@ -707,7 +707,7 @@ public class SimpleBenchmark {
         return partitions;
     }
 
-    private void yahooBenchmark(string campaignsTopic, string eventsTopic) {
+    private void YahooBenchmark(string campaignsTopic, string eventsTopic) {
         YahooBenchmark benchmark = new YahooBenchmark(this, campaignsTopic, eventsTopic);
 
         benchmark.run();
@@ -729,7 +729,7 @@ public class SimpleBenchmark {
             }
         }
 
-        int next() {
+        int Next() {
             if (skew == 0.0d) {
                 return rand.nextInt(size);
             } else {

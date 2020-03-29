@@ -89,7 +89,7 @@ public class YahooBenchmark {
     }
 
     // just for Yahoo benchmark
-    private bool maybeSetupPhaseCampaigns(string topic,
+    private bool MaybeSetupPhaseCampaigns(string topic,
                                              string clientId,
                                              bool skipIfAllTests,
                                              int numCampaigns,
@@ -123,7 +123,7 @@ public class YahooBenchmark {
     }
 
     // just for Yahoo benchmark
-    private void maybeSetupPhaseEvents(string topic,
+    private void MaybeSetupPhaseEvents(string topic,
                                        string clientId,
                                        int numRecords,
                                        List<string> ads) {
@@ -165,7 +165,7 @@ public class YahooBenchmark {
     }
 
 
-    public void run() {
+    public void Run() {
         int numCampaigns = 100;
         int adsPerCampaign = 10;
 
@@ -191,7 +191,7 @@ public class YahooBenchmark {
         public JsonPOJOSerializer() {}
 
         
-        public byte[] serialize(string topic, T data) {
+        public byte[] Serialize(string topic, T data) {
             if (data == null) {
                 return null;
             }
@@ -218,12 +218,12 @@ public class YahooBenchmark {
 
         
         
-        public void configure(Dictionary<string, ?> props, bool isKey) {
+        public void Configure(Dictionary<string, ?> props, bool isKey) {
             tClass = (Class<T>) props.get("JsonPOJOClass");
         }
 
         
-        public T deserialize(string topic, byte[] bytes) {
+        public T Deserialize(string topic, byte[] bytes) {
             if (bytes == null) {
                 return null;
             }
@@ -239,7 +239,7 @@ public class YahooBenchmark {
         }
     }
 
-    private KafkaStreams createYahooBenchmarkStreams(Properties streamConfig, string campaignsTopic, string eventsTopic,
+    private KafkaStreams CreateYahooBenchmarkStreams(Properties streamConfig, string campaignsTopic, string eventsTopic,
                                                      CountDownLatch latch, int numRecords) {
         Dictionary<string, object> serdeProps = new HashMap<>();
         Serializer<ProjectedEvent> projectedEventSerializer = new JsonPOJOSerializer<>();

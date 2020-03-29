@@ -59,7 +59,7 @@ public class KStreamTransformIntegrationTest {
     private KStream<int, int> stream;
 
     
-    public void before() {
+    public void Before() {
         builder = new StreamsBuilder();
         StoreBuilder<KeyValueStore<int, int>> keyValueStoreBuilder =
                 Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(stateStoreName),
@@ -69,7 +69,7 @@ public class KStreamTransformIntegrationTest {
         stream = builder.stream(topic, Consumed.with(Serdes.Int(), Serdes.Int()));
     }
 
-    private void verifyResult(List<KeyValuePair<int, int>> expected) {
+    private void VerifyResult(List<KeyValuePair<int, int>> expected) {
         ConsumerRecordFactory<int, int> recordFactory =
             new ConsumerRecordFactory<>(new IntegerSerializer(), new IntegerSerializer());
         Properties props = StreamsTestUtils.getStreamsConfig(Serdes.Int(), Serdes.Int());
@@ -86,19 +86,19 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldTransform() {
+    public void ShouldTransform() {
         stream
             .transform(() => new Transformer<int, int, KeyValuePair<int, int>>() {
                 private KeyValueStore<int, int> state;
 
                 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore(stateStoreName);
                 }
 
                 
-                public KeyValuePair<int, int> transform(int key, int value) {
+                public KeyValuePair<int, int> Transform(int key, int value) {
                     state.putIfAbsent(key, 0);
                     int storedValue = state.get(key);
                     KeyValuePair<int, int> result = new KeyValuePair<>(key + 1, value + storedValue++);
@@ -107,7 +107,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);
@@ -123,19 +123,19 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlatTransform() {
+    public void ShouldFlatTransform() {
         stream
             .flatTransform(() => new Transformer<int, int, Iterable<KeyValuePair<int, int>>>() {
                 private KeyValueStore<int, int> state;
 
                 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore(stateStoreName);
                 }
 
                 
-                public Iterable<KeyValuePair<int, int>> transform(int key, int value) {
+                public Iterable<KeyValuePair<int, int>> Transform(int key, int value) {
                     List<KeyValuePair<int, int>> result = new ArrayList<>();
                     state.putIfAbsent(key, 0);
                     int storedValue = state.get(key);
@@ -147,7 +147,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);
@@ -175,18 +175,18 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldTransformValuesWithValueTransformerWithKey() {
+    public void ShouldTransformValuesWithValueTransformerWithKey() {
         stream
             .transformValues(() => new ValueTransformerWithKey<int, int, int>() {
                 private KeyValueStore<int, int> state;
 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore("myTransformState");
                 }
 
                 
-                public int transform(int key, int value) {
+                public int Transform(int key, int value) {
                     state.putIfAbsent(key, 0);
                     int storedValue = state.get(key);
                     int result = value + storedValue++;
@@ -195,7 +195,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);
@@ -211,18 +211,18 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldTransformValuesWithValueTransformerWithoutKey() {
+    public void ShouldTransformValuesWithValueTransformerWithoutKey() {
         stream
             .transformValues(() => new ValueTransformer<int, int>() {
                 private KeyValueStore<int, int> state;
 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore("myTransformState");
                 }
 
                 
-                public int transform(int value) {
+                public int Transform(int value) {
                     state.putIfAbsent(value, 0);
                     int counter = state.get(value);
                     state.put(value, ++counter);
@@ -230,7 +230,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);
@@ -246,18 +246,18 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlatTransformValuesWithKey() {
+    public void ShouldFlatTransformValuesWithKey() {
         stream
             .flatTransformValues(() => new ValueTransformerWithKey<int, int, Iterable<int>>() {
                 private KeyValueStore<int, int> state;
 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore("myTransformState");
                 }
 
                 
-                public Iterable<int> transform(int key, int value) {
+                public Iterable<int> Transform(int key, int value) {
                     List<int> result = new ArrayList<>();
                     state.putIfAbsent(key, 0);
                     int storedValue = state.get(key);
@@ -269,7 +269,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);
@@ -297,18 +297,18 @@ public class KStreamTransformIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlatTransformValuesWithValueTransformerWithoutKey() {
+    public void ShouldFlatTransformValuesWithValueTransformerWithoutKey() {
         stream
             .flatTransformValues(() => new ValueTransformer<int, Iterable<int>>() {
                 private KeyValueStore<int, int> state;
 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     state = (KeyValueStore<int, int>) context.getStateStore("myTransformState");
                 }
 
                 
-                public Iterable<int> transform(int value) {
+                public Iterable<int> Transform(int value) {
                     List<int> result = new ArrayList<>();
                     state.putIfAbsent(value, 0);
                     int counter = state.get(value);
@@ -320,7 +320,7 @@ public class KStreamTransformIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
                 }
             }, "myTransformState")
             .foreach(action);

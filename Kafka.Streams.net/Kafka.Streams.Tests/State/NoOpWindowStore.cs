@@ -11,30 +11,30 @@ namespace Kafka.Streams.Tests.State
         {
 
 
-            public void close()
+            public void Close()
             {
             }
 
 
-            public long peekNextKey()
+            public long PeekNextKey()
             {
                 throw new NoSuchElementException();
             }
 
 
-            public bool hasNext()
+            public bool HasNext()
             {
                 return false;
             }
 
 
-            public KeyValuePair<long, KeyValue> next()
+            public KeyValuePair<long, KeyValue> Next()
             {
                 throw new NoSuchElementException();
             }
 
 
-            public void remove()
+            public void Remove()
             {
             }
         }
@@ -42,69 +42,69 @@ namespace Kafka.Streams.Tests.State
         private static WindowStoreIterator<KeyValue> EMPTY_WINDOW_STORE_ITERATOR = new EmptyWindowStoreIterator();
 
 
-        public string name()
+        public string Name()
         {
             return "";
         }
 
 
-        public void init(ProcessorContext context, StateStore root)
+        public void Init(ProcessorContext context, StateStore root)
         {
 
         }
 
 
-        public void flush()
+        public void Flush()
         {
 
         }
 
 
-        public void close()
+        public void Close()
         {
 
         }
 
 
-        public bool persistent()
-        {
-            return false;
-        }
-
-
-        public bool isOpen()
+        public bool Persistent()
         {
             return false;
         }
 
 
-        public object fetch(object key, long time)
+        public bool IsOpen()
+        {
+            return false;
+        }
+
+
+        public object Fetch(object key, long time)
         {
             return null;
         }
 
 
 
-        public WindowStoreIterator fetch(object key, long timeFrom, long timeTo)
+        public WindowStoreIterator Fetch(object key, long timeFrom, long timeTo)
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }
 
 
-        public WindowStoreIterator fetch(object key, Instant from, Instant to)
+        public WindowStoreIterator Fetch(object key, Instant from, Instant to)
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }
 
 
 
-        public WindowStoreIterator<KeyValue> fetch(object from, object to, long timeFrom, long timeTo)
+        public WindowStoreIterator<KeyValue> Fetch(object from, object to, long timeFrom, long timeTo)
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }
 
 
-        public KeyValueIterator fetch(object from,
+        public KeyValueIterator Fetch(object from,
                                       object to,
                                       Instant fromTime,
                                       Instant toTime)
@@ -113,20 +113,20 @@ namespace Kafka.Streams.Tests.State
         }
 
 
-        public WindowStoreIterator<KeyValue> all()
+        public WindowStoreIterator<KeyValue> All()
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }
 
 
 
-        public WindowStoreIterator<KeyValue> fetchAll(long timeFrom, long timeTo)
+        public WindowStoreIterator<KeyValue> FetchAll(long timeFrom, long timeTo)
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }
 
 
-        public KeyValueIterator fetchAll(Instant from, Instant to)
+        public KeyValueIterator FetchAll(Instant from, Instant to)
         {
             return EMPTY_WINDOW_STORE_ITERATOR;
         }

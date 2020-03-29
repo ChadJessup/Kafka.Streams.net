@@ -51,7 +51,7 @@ public class SessionStoreBuilderTest {
     private SessionStoreBuilder<string, string> builder;
 
     
-    public void setUp() {// throws Exception
+    public void SetUp() {// throws Exception
 
         expect(supplier.get()).andReturn(inner);
         expect(supplier.name()).andReturn("name");
@@ -65,27 +65,27 @@ public class SessionStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveMeteredStoreAsOuterStore() {
+    public void ShouldHaveMeteredStoreAsOuterStore() {
         SessionStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredSessionStore));
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreByDefault() {
+    public void ShouldHaveChangeLoggingStoreByDefault() {
         SessionStore<string, string> store = builder.build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, instanceOf(ChangeLoggingSessionBytesStore));
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveChangeLoggingStoreWhenDisabled() {
+    public void ShouldNotHaveChangeLoggingStoreWhenDisabled() {
         SessionStore<string, string> store = builder.withLoggingDisabled().build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, CoreMatchers.<StateStore>equalTo(inner));
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingStoreWhenEnabled() {
+    public void ShouldHaveCachingStoreWhenEnabled() {
         SessionStore<string, string> store = builder.withCachingEnabled().build();
         StateStore wrapped = ((WrappedStateStore) store).wrapped();
         Assert.Equal(store, instanceOf(MeteredSessionStore));
@@ -93,7 +93,7 @@ public class SessionStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreWhenLoggingEnabled() {
+    public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled() {
         SessionStore<string, string> store = builder
                 .withLoggingEnabled(Collections.<string, string>emptyMap())
                 .build();
@@ -104,7 +104,7 @@ public class SessionStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingAndChangeLoggingWhenBothEnabled() {
+    public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled() {
         SessionStore<string, string> store = builder
                 .withLoggingEnabled(Collections.<string, string>emptyMap())
                 .withCachingEnabled()
@@ -118,25 +118,25 @@ public class SessionStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerIfInnerIsNull() {
+    public void ShouldThrowNullPointerIfInnerIsNull() {
         Exception e = assertThrows(NullPointerException, () => new SessionStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime()));
         Assert.Equal(e.getMessage(), ("supplier cannot be null"));
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerIfKeySerdeIsNull() {
+    public void ShouldThrowNullPointerIfKeySerdeIsNull() {
         Exception e = assertThrows(NullPointerException, () => new SessionStoreBuilder<>(supplier, null, Serdes.String(), new MockTime()));
         Assert.Equal(e.getMessage(), ("name cannot be null"));
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerIfValueSerdeIsNull() {
+    public void ShouldThrowNullPointerIfValueSerdeIsNull() {
         Exception e = assertThrows(NullPointerException, () => new SessionStoreBuilder<>(supplier, Serdes.String(), null, new MockTime()));
         Assert.Equal(e.getMessage(), ("name cannot be null"));
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerIfTimeIsNull() {
+    public void ShouldThrowNullPointerIfTimeIsNull() {
         reset(supplier);
         expect(supplier.name()).andReturn("name");
         replay(supplier);
@@ -145,7 +145,7 @@ public class SessionStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerIfMetricsScopeIsNull() {
+    public void ShouldThrowNullPointerIfMetricsScopeIsNull() {
         Exception e = assertThrows(NullPointerException, () => new SessionStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), new MockTime()));
         Assert.Equal(e.getMessage(), ("name cannot be null"));
     }

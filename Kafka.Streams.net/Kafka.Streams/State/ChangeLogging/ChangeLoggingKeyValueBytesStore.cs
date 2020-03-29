@@ -16,11 +16,11 @@ namespace Kafka.Streams.State.Internals
         {
         }
 
-        public override void init(
+        public override void Init(
             IProcessorContext context,
             IStateStore root)
         {
-            base.init(context, root);
+            base.Init(context, root);
             var topic = ProcessorStateManager.storeChangelogTopic(context.applicationId, name);
     //        changeLogger = new StoreChangeLogger<>(
     //            name,
@@ -49,11 +49,11 @@ namespace Kafka.Streams.State.Internals
             log(key, value);
         }
 
-        public byte[] putIfAbsent(
+        public byte[] PutIfAbsent(
             Bytes key,
             byte[] value)
         {
-            var previous = wrapped.putIfAbsent(key, value);
+            var previous = wrapped.PutIfAbsent(key, value);
             if (previous == null)
             {
                 // then it was absent
@@ -63,37 +63,37 @@ namespace Kafka.Streams.State.Internals
             return previous;
         }
 
-        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
+        public void PutAll(List<KeyValuePair<Bytes, byte[]>> entries)
         {
-            wrapped.putAll(entries);
+            wrapped.PutAll(entries);
             foreach (KeyValuePair<Bytes, byte[]> entry in entries)
             {
                 log(entry.Key, entry.Value);
             }
         }
 
-        public byte[] delete(Bytes key)
+        public byte[] Delete(Bytes key)
         {
-            var oldValue = wrapped.delete(key);
+            var oldValue = wrapped.Delete(key);
             log(key, null);
             return oldValue;
         }
 
-        public byte[] get(Bytes key)
+        public byte[] Get(Bytes key)
         {
-            return wrapped.get(key);
+            return wrapped.Get(key);
         }
 
-        public IKeyValueIterator<Bytes, byte[]> range(
+        public IKeyValueIterator<Bytes, byte[]> Range(
             Bytes from,
             Bytes to)
         {
-            return wrapped.range(from, to);
+            return wrapped.Range(from, to);
         }
 
-        public IKeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> All()
         {
-            return wrapped.all();
+            return wrapped.All();
         }
 
         void log(Bytes key, byte[] value)

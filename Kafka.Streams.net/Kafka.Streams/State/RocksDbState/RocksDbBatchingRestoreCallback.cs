@@ -31,7 +31,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        public override void onRestoreStart(
+        public override void OnRestoreStart(
             TopicPartition topicPartition,
             string storeName,
             long startingOffset,
@@ -40,7 +40,7 @@ namespace Kafka.Streams.State.RocksDbState
             rocksDBStore.toggleDbForBulkLoading(true);
         }
 
-        public override void onRestoreEnd(
+        public override void OnRestoreEnd(
             TopicPartition topicPartition,
             string storeName,
             long totalRestored)

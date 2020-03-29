@@ -52,7 +52,7 @@ public class CompositeReadOnlyWindowStoreTest {
     private ReadOnlyWindowStoreStub<string, string> otherUnderlyingStore;
 
     
-    public void before() {
+    public void Before() {
         stubProviderOne = new StateStoreProviderStub(false);
         stubProviderTwo = new StateStoreProviderStub(false);
         underlyingWindowStore = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
@@ -69,7 +69,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchValuesFromWindowStore() {
+    public void ShouldFetchValuesFromWindowStore() {
         underlyingWindowStore.put("my-key", "my-value", 0L);
         underlyingWindowStore.put("my-key", "my-later-value", 10L);
 
@@ -82,13 +82,13 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnEmptyIteratorIfNoData() {
+    public void ShouldReturnEmptyIteratorIfNoData() {
         WindowStoreIterator<string> iterator = windowStore.fetch("my-key", ofEpochMilli(0L), ofEpochMilli(25L));
         Assert.Equal(false, iterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldFindValueForKeyWhenMultiStores() {
+    public void ShouldFindValueForKeyWhenMultiStores() {
         ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
             ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
         stubProviderTwo.addStore(storeName, secondUnderlying);
@@ -106,7 +106,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotGetValuesFromOtherStores() {
+    public void ShouldNotGetValuesFromOtherStores() {
         otherUnderlyingStore.put("some-key", "some-value", 0L);
         underlyingWindowStore.put("some-key", "my-value", 1L);
 
@@ -115,13 +115,13 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStateStoreExceptionOnRebalance() {
+    public void ShouldThrowInvalidStateStoreExceptionOnRebalance() {
         CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new StateStoreProviderStub(true), QueryableStoreTypes.windowStore(), "foo");
         store.fetch("key", ofEpochMilli(1), ofEpochMilli(10));
     }
 
     [Xunit.Fact]
-    public void shouldThrowInvalidStateStoreExceptionIfFetchThrows() {
+    public void ShouldThrowInvalidStateStoreExceptionIfFetchThrows() {
         underlyingWindowStore.setOpen(false);
         CompositeReadOnlyWindowStore<object, object> store =
                 new CompositeReadOnlyWindowStore<>(stubProviderOne, QueryableStoreTypes.windowStore(), "window-store");
@@ -135,7 +135,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void emptyIteratorAlwaysReturnsFalse() {
+    public void EmptyIteratorAlwaysReturnsFalse() {
         CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
                 StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
         WindowStoreIterator<object> windowStoreIterator = store.fetch("key", ofEpochMilli(1), ofEpochMilli(10));
@@ -144,7 +144,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void emptyIteratorPeekNextKeyShouldThrowNoSuchElementException() {
+    public void EmptyIteratorPeekNextKeyShouldThrowNoSuchElementException() {
         CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
                 StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
         WindowStoreIterator<object> windowStoreIterator = store.fetch("key", ofEpochMilli(1), ofEpochMilli(10));
@@ -152,7 +152,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void emptyIteratorNextShouldThrowNoSuchElementException() {
+    public void EmptyIteratorNextShouldThrowNoSuchElementException() {
         CompositeReadOnlyWindowStore<object, object> store = new CompositeReadOnlyWindowStore<>(new
                 StateStoreProviderStub(false), QueryableStoreTypes.windowStore(), "foo");
         WindowStoreIterator<object> windowStoreIterator = store.fetch("key", ofEpochMilli(1), ofEpochMilli(10));
@@ -160,7 +160,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchKeyRangeAcrossStores() {
+    public void ShouldFetchKeyRangeAcrossStores() {
         ReadOnlyWindowStoreStub<string, string> secondUnderlying = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
         stubProviderTwo.addStore(storeName, secondUnderlying);
         underlyingWindowStore.put("a", "a", 0L);
@@ -172,7 +172,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchKeyValueAcrossStores() {
+    public void ShouldFetchKeyValueAcrossStores() {
         ReadOnlyWindowStoreStub<string, string> secondUnderlyingWindowStore = new ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
         stubProviderTwo.addStore(storeName, secondUnderlyingWindowStore);
         underlyingWindowStore.put("a", "a", 0L);
@@ -185,7 +185,7 @@ public class CompositeReadOnlyWindowStoreTest {
 
 
     [Xunit.Fact]
-    public void shouldGetAllAcrossStores() {
+    public void ShouldGetAllAcrossStores() {
         ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
                 ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
         stubProviderTwo.addStore(storeName, secondUnderlying);
@@ -198,7 +198,7 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllAcrossStores() {
+    public void ShouldFetchAllAcrossStores() {
         ReadOnlyWindowStoreStub<string, string> secondUnderlying = new
                 ReadOnlyWindowStoreStub<>(WINDOW_SIZE);
         stubProviderTwo.addStore(storeName, secondUnderlying);
@@ -211,17 +211,17 @@ public class CompositeReadOnlyWindowStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfKeyIsNull() {
+    public void ShouldThrowNPEIfKeyIsNull() {
         windowStore.fetch(null, ofEpochMilli(0), ofEpochMilli(0));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfFromKeyIsNull() {
+    public void ShouldThrowNPEIfFromKeyIsNull() {
         windowStore.fetch(null, "a", ofEpochMilli(0), ofEpochMilli(0));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfToKeyIsNull() {
+    public void ShouldThrowNPEIfToKeyIsNull() {
         windowStore.fetch("a", null, ofEpochMilli(0), ofEpochMilli(0));
     }
 

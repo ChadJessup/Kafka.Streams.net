@@ -51,59 +51,59 @@ public class ResetIntegrationTest : AbstractResetIntegrationTest {
     }
 
     
-    Dictionary<string, object> getClientSslConfig() {
+    Dictionary<string, object> GetClientSslConfig() {
         return null;
     }
 
     
-    public void before() {// throws Exception
+    public void Before() {// throws Exception
         testId = TEST_ID;
         cluster = CLUSTER;
         prepareTest();
     }
 
     
-    public void after() {// throws Exception
+    public void After() {// throws Exception
         cleanupTest();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromScratchAfterResetWithIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromScratchAfterResetWithIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromFileAfterResetWithoutIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromFileAfterResetWithoutIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromFileAfterResetWithoutIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromDateTimeAfterResetWithoutIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void testReprocessingByDurationAfterResetWithoutIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingByDurationAfterResetWithoutIntermediateUserTopic() {// throws Exception
         base.testReprocessingByDurationAfterResetWithoutIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowToResetWhileStreamsRunning() {// throws Exception
+    public void ShouldNotAllowToResetWhileStreamsRunning() {// throws Exception
         base.shouldNotAllowToResetWhileStreamsIsRunning();
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowToResetWhenInputTopicAbsent() {// throws Exception
+    public void ShouldNotAllowToResetWhenInputTopicAbsent() {// throws Exception
         base.shouldNotAllowToResetWhenInputTopicAbsent();
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowToResetWhenIntermediateTopicAbsent() {// throws Exception
+    public void ShouldNotAllowToResetWhenIntermediateTopicAbsent() {// throws Exception
         base.shouldNotAllowToResetWhenIntermediateTopicAbsent();
     }
 }

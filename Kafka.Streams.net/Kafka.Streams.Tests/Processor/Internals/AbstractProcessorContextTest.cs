@@ -53,12 +53,12 @@ public class AbstractProcessorContextTest {
     private ProcessorRecordContext recordContext = new ProcessorRecordContext(10, System.currentTimeMillis(), 1, "foo", headers);
 
     
-    public void before() {
+    public void Before() {
         context.setRecordContext(recordContext);
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnRegisterWhenContextIsInitialized() {
+    public void ShouldThrowIllegalStateExceptionOnRegisterWhenContextIsInitialized() {
         context.initialize();
         try {
             context.register(stateStore, null);
@@ -69,17 +69,17 @@ public class AbstractProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowIllegalStateExceptionOnRegisterWhenContextIsNotInitialized() {
+    public void ShouldNotThrowIllegalStateExceptionOnRegisterWhenContextIsNotInitialized() {
         context.register(stateStore, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnRegisterIfStateStoreIsNull() {
+    public void ShouldThrowNullPointerOnRegisterIfStateStoreIsNull() {
         context.register(null, null);
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnTopicIfNoRecordContext() {
+    public void ShouldThrowIllegalStateExceptionOnTopicIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.topic();
@@ -90,18 +90,18 @@ public class AbstractProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnTopicFromRecordContext() {
+    public void ShouldReturnTopicFromRecordContext() {
         Assert.Equal(context.topic(), (recordContext.topic()));
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullIfTopicEqualsNonExistTopic() {
+    public void ShouldReturnNullIfTopicEqualsNonExistTopic() {
         context.setRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
         Assert.Equal(context.topic(), nullValue());
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnPartitionIfNoRecordContext() {
+    public void ShouldThrowIllegalStateExceptionOnPartitionIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.partition();
@@ -112,12 +112,12 @@ public class AbstractProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPartitionFromRecordContext() {
+    public void ShouldReturnPartitionFromRecordContext() {
         Assert.Equal(context.partition(), (recordContext.partition()));
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnOffsetIfNoRecordContext() {
+    public void ShouldThrowIllegalStateExceptionOnOffsetIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.Offset;
@@ -127,12 +127,12 @@ public class AbstractProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnOffsetFromRecordContext() {
+    public void ShouldReturnOffsetFromRecordContext() {
         Assert.Equal(context.Offset, (recordContext.Offset));
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnTimestampIfNoRecordContext() {
+    public void ShouldThrowIllegalStateExceptionOnTimestampIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.Timestamp;
@@ -143,23 +143,23 @@ public class AbstractProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnTimestampFromRecordContext() {
+    public void ShouldReturnTimestampFromRecordContext() {
         Assert.Equal(context.Timestamp, (recordContext.Timestamp));
     }
 
     [Xunit.Fact]
-    public void shouldReturnHeadersFromRecordContext() {
+    public void ShouldReturnHeadersFromRecordContext() {
         Assert.Equal(context.headers(), (recordContext.headers()));
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullIfHeadersAreNotSet() {
+    public void ShouldReturnNullIfHeadersAreNotSet() {
         context.setRecordContext(new ProcessorRecordContext(0, 0, 0, AbstractProcessorContext.NONEXIST_TOPIC, null));
         Assert.Equal(context.headers(), nullValue());
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionOnHeadersIfNoRecordContext() {
+    public void ShouldThrowIllegalStateExceptionOnHeadersIfNoRecordContext() {
         context.setRecordContext(null);
         try {
             context.headers();
@@ -170,14 +170,14 @@ public class AbstractProcessorContextTest {
 
     
     [Xunit.Fact]
-    public void appConfigsShouldReturnParsedValues() {
+    public void AppConfigsShouldReturnParsedValues() {
         Assert.Equal(
             context.appConfigs().get(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG),
             equalTo(RocksDBConfigSetter));
     }
 
     [Xunit.Fact]
-    public void appConfigsShouldReturnUnrecognizedValues() {
+    public void AppConfigsShouldReturnUnrecognizedValues() {
         Assert.Equal(
             context.appConfigs().get("user.supplied.config"),
             equalTo("user-suppplied-value"));
@@ -198,40 +198,40 @@ public class AbstractProcessorContextTest {
         }
 
         
-        public StateStore getStateStore(string name) {
+        public StateStore GetStateStore(string name) {
             return null;
         }
 
         
         @Deprecated
-        public Cancellable schedule(long interval,
+        public Cancellable Schedule(long interval,
                                     PunctuationType type,
                                     Punctuator callback) {
             return null;
         }
 
         
-        public Cancellable schedule(Duration interval,
+        public Cancellable Schedule(Duration interval,
                                     PunctuationType type,
                                     Punctuator callback) {// throws IllegalArgumentException
             return null;
         }
 
         
-        public void forward<K, V>(K key, V value) {}
+        public void Forward<K, V>(K key, V value) {}
 
         
-        public void forward<K, V>(K key, V value, To to) {}
-
-        
-        @Deprecated
-        public void forward<K, V>(K key, V value, int childIndex) {}
+        public void Forward<K, V>(K key, V value, To to) {}
 
         
         @Deprecated
-        public void forward<K, V>(K key, V value, string childName) {}
+        public void Forward<K, V>(K key, V value, int childIndex) {}
 
         
-        public void commit() {}
+        @Deprecated
+        public void Forward<K, V>(K key, V value, string childName) {}
+
+        
+        public void Commit() {}
     }
 }

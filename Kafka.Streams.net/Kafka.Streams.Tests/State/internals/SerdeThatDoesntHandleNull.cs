@@ -24,12 +24,12 @@
 
 class SerdeThatDoesntHandleNull : Serde<string> {
     
-    public Serializer<string> serializer() {
+    public Serializer<string> Serializer() {
         return new StringSerializer();
     }
 
     
-    public Deserializer<string> deserializer() {
+    public Deserializer<string> Deserializer() {
         return new StringDeserializer() {
             
             public string deserialize(string topic, byte[] data) {

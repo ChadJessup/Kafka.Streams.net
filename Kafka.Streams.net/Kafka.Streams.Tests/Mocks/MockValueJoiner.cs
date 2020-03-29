@@ -16,20 +16,20 @@ namespace Kafka.Streams.Tests.Mocks
                 this.separator = separator;
             }
 
-            public string apply(V1 value1, V2 value2)
+            public string Apply(V1 value1, V2 value2)
             {
                 return $"{value1}{this.separator}{value2}";
             }
 
-            public string apply(V1 value1)
+            public string Apply(V1 value1)
             {
                 throw new NotImplementedException();
             }
         }
 
-        public static IValueJoiner<V1, V2, string> TOSTRING_JOINER<V1, V2>() => instance<V1, V2>("+");
+        public static IValueJoiner<V1, V2, string> TOSTRING_JOINER<V1, V2>() => Instance<V1, V2>("+");
 
-        public static IValueJoiner<V1, V2, string> instance<V1, V2>(string separator)
+        public static IValueJoiner<V1, V2, string> Instance<V1, V2>(string separator)
         {
             return new ToStringJoiner<V1, V2, string>(separator);
         }

@@ -44,7 +44,7 @@ public class ThreadCacheTest {
     private LogContext logContext = new LogContext("testCache ");
 
     [Xunit.Fact]
-    public void basicPutGet(){ //throws IOException
+    public void BasicPutGet(){ //throws IOException
         List<KeyValuePair<string, string>> toInsert = Array.asList(
                 new KeyValuePair<>("K1", "V1"),
                 new KeyValuePair<>("K2", "V2"),
@@ -74,7 +74,7 @@ public class ThreadCacheTest {
         Assert.Equal(cache.flushes(), 0);
     }
 
-    private void checkOverheads(double entryFactor,
+    private void CheckOverheads(double entryFactor,
                                 double systemFactor,
                                 long desiredCacheSize,
                                 int keySizeBytes,
@@ -106,7 +106,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void cacheOverheadsSmallValues() {
+    public void CacheOverheadsSmallValues() {
         Runtime runtime = Runtime.getRuntime();
         double factor = 0.05;
         double systemFactor = 3; // if I ask for a cache size of 10 MB, accept an overhead of 3x, i.e., 30 MBs might be allocated
@@ -118,7 +118,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void cacheOverheadsLargeValues() {
+    public void CacheOverheadsLargeValues() {
         Runtime runtime = Runtime.getRuntime();
         double factor = 0.05;
         double systemFactor = 2; // if I ask for a cache size of 10 MB, accept an overhead of 2x, i.e., 20 MBs might be allocated
@@ -130,7 +130,7 @@ public class ThreadCacheTest {
     }
 
 
-    static int memoryCacheEntrySize(byte[] key, byte[] value, string topic) {
+    static int MemoryCacheEntrySize(byte[] key, byte[] value, string topic) {
         return key.Length +
                 value.Length +
                 1 + // isDirty
@@ -146,7 +146,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void evict() {
+    public void Evict() {
         List<KeyValuePair<string, string>> received = new ArrayList<>();
         List<KeyValuePair<string, string>> expected = Collections.singletonList(
                 new KeyValuePair<>("K1", "V1"));
@@ -182,7 +182,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelete() {
+    public void ShouldDelete() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         Bytes key = Bytes.wrap(new byte[]{0});
 
@@ -192,7 +192,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotFlushAfterDelete() {
+    public void ShouldNotFlushAfterDelete() {
         Bytes key = Bytes.wrap(new byte[]{0});
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         List<ThreadCache.DirtyEntry> received = new ArrayList<>();
@@ -207,7 +207,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotBlowUpOnNonExistentKeyWhenDeleting() {
+    public void ShouldNotBlowUpOnNonExistentKeyWhenDeleting() {
         Bytes key = Bytes.wrap(new byte[]{0});
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
 
@@ -216,13 +216,13 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotBlowUpOnNonExistentNamespaceWhenDeleting() {
+    public void ShouldNotBlowUpOnNonExistentNamespaceWhenDeleting() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         assertNull(cache.delete(namespace, Bytes.wrap(new byte[]{1})));
     }
 
     [Xunit.Fact]
-    public void shouldNotClashWithOverlappingNames() {
+    public void ShouldNotClashWithOverlappingNames() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         Bytes nameByte = Bytes.wrap(new byte[]{0});
         Bytes name1Byte = Bytes.wrap(new byte[]{1});
@@ -234,7 +234,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextKey() {
+    public void ShouldPeekNextKey() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         Bytes theByte = Bytes.wrap(new byte[]{0});
         cache.put(namespace, theByte, dirtyEntry(theByte.get()));
@@ -244,7 +244,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSameKeyAsPeekNext() {
+    public void ShouldGetSameKeyAsPeekNext() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         Bytes theByte = Bytes.wrap(new byte[]{0});
         cache.put(namespace, theByte, dirtyEntry(theByte.get()));
@@ -253,21 +253,21 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]// (expected = NoSuchElementException)
-    public void shouldThrowIfNoPeekNextKey() {
+    public void ShouldThrowIfNoPeekNextKey() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.range(namespace, Bytes.wrap(new byte[]{0}), Bytes.wrap(new byte[]{1}));
         iterator.peekNextKey();
     }
 
     [Xunit.Fact]
-    public void shouldReturnFalseIfNoNextKey() {
+    public void ShouldReturnFalseIfNoNextKey() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         ThreadCache.MemoryLRUCacheBytesIterator iterator = cache.range(namespace, Bytes.wrap(new byte[]{0}), Bytes.wrap(new byte[]{1}));
         Assert.False(iterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldPeekAndIterateOverRange() {
+    public void ShouldPeekAndIterateOverRange() {
         ThreadCache cache = new ThreadCache(logContext, 10000L, new MockStreamsMetrics(new Metrics()));
         byte[][] bytes = {{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}};
         foreach (byte[] aByte in bytes) {
@@ -286,7 +286,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldSkipEntriesWhereValueHasBeenEvictedFromCache() {
+    public void ShouldSkipEntriesWhereValueHasBeenEvictedFromCache() {
         int entrySize = memoryCacheEntrySize(new byte[1], new byte[1], "");
         ThreadCache cache = new ThreadCache(logContext, entrySize * 5, new MockStreamsMetrics(new Metrics()));
         cache.addDirtyEntryFlushListener(namespace, dirty => { });
@@ -306,7 +306,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushDirtyEntriesForNamespace() {
+    public void ShouldFlushDirtyEntriesForNamespace() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
         List<byte[]> received = new ArrayList<>();
         cache.addDirtyEntryFlushListener(namespace1, dirty => {
@@ -325,7 +325,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotFlushCleanEntriesForNamespace() {
+    public void ShouldNotFlushCleanEntriesForNamespace() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
         List<byte[]> received = new ArrayList<>();
         cache.addDirtyEntryFlushListener(namespace1, dirty => {
@@ -344,7 +344,7 @@ public class ThreadCacheTest {
     }
 
 
-    private void shouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(ThreadCache cache) {
+    private void ShouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(ThreadCache cache) {
         List<ThreadCache.DirtyEntry> received = new ArrayList<>();
 
         cache.addDirtyEntryFlushListener(namespace, received::addAll);
@@ -357,19 +357,19 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldEvictImmediatelyIfCacheSizeIsVerySmall() {
+    public void ShouldEvictImmediatelyIfCacheSizeIsVerySmall() {
         ThreadCache cache = new ThreadCache(logContext, 1, new MockStreamsMetrics(new Metrics()));
         shouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(cache);
     }
 
     [Xunit.Fact]
-    public void shouldEvictImmediatelyIfCacheSizeIsZero() {
+    public void ShouldEvictImmediatelyIfCacheSizeIsZero() {
         ThreadCache cache = new ThreadCache(logContext, 0, new MockStreamsMetrics(new Metrics()));
         shouldEvictImmediatelyIfCacheSizeIsZeroOrVerySmall(cache);
     }
 
     [Xunit.Fact]
-    public void shouldEvictAfterPutAll() {
+    public void ShouldEvictAfterPutAll() {
         List<ThreadCache.DirtyEntry> received = new ArrayList<>();
         ThreadCache cache = new ThreadCache(logContext, 1, new MockStreamsMetrics(new Metrics()));
         cache.addDirtyEntryFlushListener(namespace, received::addAll);
@@ -382,7 +382,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutAll() {
+    public void ShouldPutAll() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
 
         cache.putAll(namespace, Array.asList(KeyValuePair.Create(Bytes.wrap(new byte[]{0}), dirtyEntry(new byte[]{5})),
@@ -393,7 +393,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotForwardCleanEntryOnEviction() {
+    public void ShouldNotForwardCleanEntryOnEviction() {
         ThreadCache cache = new ThreadCache(logContext, 0, new MockStreamsMetrics(new Metrics()));
         List<ThreadCache.DirtyEntry> received = new ArrayList<>();
         cache.addDirtyEntryFlushListener(namespace, received::addAll);
@@ -401,7 +401,7 @@ public class ThreadCacheTest {
         Assert.Equal(0, received.Count);
     }
     [Xunit.Fact]
-    public void shouldPutIfAbsent() {
+    public void ShouldPutIfAbsent() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
         Bytes key = Bytes.wrap(new byte[]{10});
         byte[] value = {30};
@@ -411,7 +411,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldEvictAfterPutIfAbsent() {
+    public void ShouldEvictAfterPutIfAbsent() {
         List<ThreadCache.DirtyEntry> received = new ArrayList<>();
         ThreadCache cache = new ThreadCache(logContext, 1, new MockStreamsMetrics(new Metrics()));
         cache.addDirtyEntryFlushListener(namespace, received::addAll);
@@ -425,7 +425,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotLoopForEverWhenEvictingAndCurrentCacheIsEmpty() {
+    public void ShouldNotLoopForEverWhenEvictingAndCurrentCacheIsEmpty() {
         int maxCacheSizeInBytes = 100;
         ThreadCache threadCache = new ThreadCache(logContext, maxCacheSizeInBytes, new MockStreamsMetrics(new Metrics()));
         // trigger a put into another cache on eviction from "name"
@@ -446,7 +446,7 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldCleanupNamedCacheOnClose() {
+    public void ShouldCleanupNamedCacheOnClose() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
         cache.put(namespace1, Bytes.wrap(new byte[]{1}), cleanEntry(new byte[] {1}));
         cache.put(namespace2, Bytes.wrap(new byte[]{1}), cleanEntry(new byte[] {1}));
@@ -457,25 +457,25 @@ public class ThreadCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullIfKeyIsNull() {
+    public void ShouldReturnNullIfKeyIsNull() {
         ThreadCache threadCache = new ThreadCache(logContext, 10, new MockStreamsMetrics(new Metrics()));
         threadCache.put(namespace, Bytes.wrap(new byte[]{1}), cleanEntry(new byte[] {1}));
         assertNull(threadCache.get(namespace, null));
     }
 
     [Xunit.Fact]
-    public void shouldCalculateSizeInBytes() {
+    public void ShouldCalculateSizeInBytes() {
         ThreadCache cache = new ThreadCache(logContext, 100000, new MockStreamsMetrics(new Metrics()));
         NamedCache.LRUNode node = new NamedCache.LRUNode(Bytes.wrap(new byte[]{1}), dirtyEntry(new byte[]{0}));
         cache.put(namespace1, Bytes.wrap(new byte[]{1}), cleanEntry(new byte[]{0}));
         Assert.Equal(cache.sizeBytes(), node.Count);
     }
 
-    private LRUCacheEntry dirtyEntry(byte[] key) {
+    private LRUCacheEntry DirtyEntry(byte[] key) {
         return new LRUCacheEntry(key, null, true, -1, -1, -1, "");
     }
 
-    private LRUCacheEntry cleanEntry(byte[] key) {
+    private LRUCacheEntry CleanEntry(byte[] key) {
         return new LRUCacheEntry(key);
     }
 

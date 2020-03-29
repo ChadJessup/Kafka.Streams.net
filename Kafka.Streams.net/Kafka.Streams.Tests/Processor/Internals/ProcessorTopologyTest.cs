@@ -84,7 +84,7 @@ public class ProcessorTopologyTest {
 
 
     
-    public void setup() {
+    public void Setup() {
         // Create a new directory in which we'll put all of the state for this test, enabling running tests in parallel ...
         File localState = TestUtils.tempDirectory();
         props.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, "processor-topology-test");
@@ -96,7 +96,7 @@ public class ProcessorTopologyTest {
     }
 
     
-    public void cleanup() {
+    public void Cleanup() {
         props.Clear();
         if (driver != null) {
             driver.close();
@@ -105,7 +105,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void testTopologyMetadata() {
+    public void TestTopologyMetadata() {
         topology.addSource("source-1", "topic-1");
         topology.addSource("source-2", "topic-2", "topic-3");
         topology.addProcessor("processor-1", new MockProcessorSupplier<>(), "source-1");
@@ -131,80 +131,80 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void testDrivingSimpleTopology() {
+    public void TestDrivingSimpleTopology() {
         int partition = 10;
-        driver = new TopologyTestDriver(createSimpleTopology(partition), props);
+        driver = new TopologyTestDriver(CreateSimpleTopology(partition), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition);
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition);
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key4", "value4"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key5", "value5"));
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4", partition);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5", partition);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4", partition);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5", partition);
     }
 
 
     [Xunit.Fact]
-    public void testDrivingMultiplexingTopology() {
-        driver = new TopologyTestDriver(createMultiplexingTopology(), props);
+    public void TestDrivingMultiplexingTopology() {
+        driver = new TopologyTestDriver(CreateMultiplexingTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1(2)");
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2(2)");
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key4", "value4"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key5", "value5"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3(2)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key4", "value4(2)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key4", "value4(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
     }
 
     [Xunit.Fact]
-    public void testDrivingMultiplexByNameTopology() {
-        driver = new TopologyTestDriver(createMultiplexByNameTopology(), props);
+    public void TestDrivingMultiplexByNameTopology() {
+        driver = new TopologyTestDriver(CreateMultiplexByNameTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1(2)");
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2(2)");
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key4", "value4"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key5", "value5"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5(1)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3(2)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key4", "value4(2)");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key4", "value4(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key5", "value5(1)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key4", "value4(2)");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key5", "value5(2)");
     }
 
     [Xunit.Fact]
-    public void testDrivingStatefulTopology() {
+    public void TestDrivingStatefulTopology() {
         string storeName = "entries";
-        driver = new TopologyTestDriver(createStatefulTopology(storeName), props);
+        driver = new TopologyTestDriver(CreateStatefulTopology(storeName), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value4"));
-        assertNoOutputRecord(OUTPUT_TOPIC_1);
+        AssertNoOutputRecord(OUTPUT_TOPIC_1);
 
         KeyValueStore<string, string> store = driver.getKeyValueStore(storeName);
         Assert.Equal("value4", store.get("key1"));
@@ -214,7 +214,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldDriveGlobalStore() {
+    public void ShouldDriveGlobalStore() {
         string storeName = "my-store";
         string global = "global";
         string topic = "topic";
@@ -231,44 +231,44 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void testDrivingSimpleMultiSourceTopology() {
+    public void TestDrivingSimpleMultiSourceTopology() {
         int partition = 10;
-        driver = new TopologyTestDriver(createSimpleMultiSourceTopology(partition), props);
+        driver = new TopologyTestDriver(CreateSimpleMultiSourceTopology(partition), props);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition);
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_2, "key2", "value2"));
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition);
-        assertNoOutputRecord(OUTPUT_TOPIC_1);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition);
+        AssertNoOutputRecord(OUTPUT_TOPIC_1);
     }
 
     [Xunit.Fact]
-    public void testDrivingForwardToSourceTopology() {
-        driver = new TopologyTestDriver(createForwardToSourceTopology(), props);
+    public void TestDrivingForwardToSourceTopology() {
+        driver = new TopologyTestDriver(CreateForwardToSourceTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2");
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2");
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key3", "value3");
     }
 
     [Xunit.Fact]
-    public void testDrivingInternalRepartitioningTopology() {
-        driver = new TopologyTestDriver(createInternalRepartitioningTopology(), props);
+    public void TestDrivingInternalRepartitioningTopology() {
+        driver = new TopologyTestDriver(CreateInternalRepartitioningTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3"));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2");
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2");
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3");
     }
 
     [Xunit.Fact]
-    public void testDrivingInternalRepartitioningForwardingTimestampTopology() {
-        driver = new TopologyTestDriver(createInternalRepartitioningWithValueTimestampTopology(), props);
+    public void TestDrivingInternalRepartitioningForwardingTimestampTopology() {
+        driver = new TopologyTestDriver(CreateInternalRepartitioningWithValueTimestampTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1@1000"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2@2000"));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3@3000"));
@@ -281,7 +281,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateStringWithSourceAndTopics() {
+    public void ShouldCreateStringWithSourceAndTopics() {
         topology.addSource("source", "topic1", "topic2");
         ProcessorTopology processorTopology = topology.getInternalBuilder().build();
         string result = processorTopology.toString();
@@ -289,7 +289,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateStringWithMultipleSourcesAndTopics() {
+    public void ShouldCreateStringWithMultipleSourcesAndTopics() {
         topology.addSource("source", "topic1", "topic2");
         topology.addSource("source2", "t", "t1", "t2");
         ProcessorTopology processorTopology = topology.getInternalBuilder().build();
@@ -299,7 +299,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateStringWithProcessors() {
+    public void ShouldCreateStringWithProcessors() {
         topology.addSource("source", "t")
                 .addProcessor("processor", mockProcessorSupplier, "source")
                 .addProcessor("other", mockProcessorSupplier, "source");
@@ -311,7 +311,7 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecursivelyPrintChildren() {
+    public void ShouldRecursivelyPrintChildren() {
         topology.addSource("source", "t")
                 .addProcessor("processor", mockProcessorSupplier, "source")
                 .addProcessor("child-one", mockProcessorSupplier, "processor")
@@ -325,80 +325,80 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void shouldConsiderTimeStamps() {
+    public void ShouldConsiderTimeStamps() {
         int partition = 10;
-        driver = new TopologyTestDriver(createSimpleTopology(partition), props);
+        driver = new TopologyTestDriver(CreateSimpleTopology(partition), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1", 10L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2", 20L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3", 30L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 10L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 10L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 30L);
     }
 
     [Xunit.Fact]
-    public void shouldConsiderModifiedTimeStamps() {
+    public void ShouldConsiderModifiedTimeStamps() {
         int partition = 10;
-        driver = new TopologyTestDriver(createTimestampTopology(partition), props);
+        driver = new TopologyTestDriver(CreateTimestampTopology(partition), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1", 10L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2", 20L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3", 30L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 30L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 40L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", partition, 40L);
     }
 
     [Xunit.Fact]
-    public void shouldConsiderModifiedTimeStampsForMultipleProcessors() {
+    public void ShouldConsiderModifiedTimeStampsForMultipleProcessors() {
         int partition = 10;
-        driver = new TopologyTestDriver(createMultiProcessorTimestampTopology(partition), props);
+        driver = new TopologyTestDriver(CreateMultiProcessorTimestampTopology(partition), props);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1", 10L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 10L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 15L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 12L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 22L);
-        assertNoOutputRecord(OUTPUT_TOPIC_1);
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 10L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 15L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", partition, 12L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key1", "value1", partition, 22L);
+        AssertNoOutputRecord(OUTPUT_TOPIC_1);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
 
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2", 20L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 30L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 25L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 30L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 22L);
-        assertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 32L);
-        assertNoOutputRecord(OUTPUT_TOPIC_1);
-        assertNoOutputRecord(OUTPUT_TOPIC_2);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 25L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", partition, 22L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_2, "key2", "value2", partition, 32L);
+        AssertNoOutputRecord(OUTPUT_TOPIC_1);
+        AssertNoOutputRecord(OUTPUT_TOPIC_2);
     }
 
     [Xunit.Fact]
-    public void shouldConsiderHeaders() {
+    public void ShouldConsiderHeaders() {
         int partition = 10;
-        driver = new TopologyTestDriver(createSimpleTopology(partition), props);
+        driver = new TopologyTestDriver(CreateSimpleTopology(partition), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1", HEADERS, 10L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2", HEADERS, 20L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3", HEADERS, 30L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", HEADERS, partition, 10L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", HEADERS, partition, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, partition, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", HEADERS, partition, 10L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", HEADERS, partition, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, partition, 30L);
     }
 
     [Xunit.Fact]
-    public void shouldAddHeaders() {
-        driver = new TopologyTestDriver(createAddHeaderTopology(), props);
+    public void ShouldAddHeaders() {
+        driver = new TopologyTestDriver(CreateAddHeaderTopology(), props);
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key1", "value1", 10L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key2", "value2", 20L));
         driver.pipeInput(recordFactory.create(INPUT_TOPIC_1, "key3", "value3", 30L));
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", HEADERS, 10L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", HEADERS, 20L);
-        assertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, 30L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key1", "value1", HEADERS, 10L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key2", "value2", HEADERS, 20L);
+        AssertNextOutputRecord(OUTPUT_TOPIC_1, "key3", "value3", HEADERS, 30L);
     }
 
     [Xunit.Fact]
-    public void statelessTopologyShouldNotHavePersistentStore() {
+    public void StatelessTopologyShouldNotHavePersistentStore() {
         TopologyWrapper topology = new TopologyWrapper();
         ProcessorTopology processorTopology = topology.getInternalBuilder("anyAppId").build();
         Assert.False(processorTopology.hasPersistentLocalStore());
@@ -406,30 +406,30 @@ public class ProcessorTopologyTest {
     }
 
     [Xunit.Fact]
-    public void inMemoryStoreShouldNotResultInPersistentLocalStore() {
+    public void InMemoryStoreShouldNotResultInPersistentLocalStore() {
         ProcessorTopology processorTopology = createLocalStoreTopology(Stores.inMemoryKeyValueStore("my-store"));
         Assert.False(processorTopology.hasPersistentLocalStore());
     }
 
     [Xunit.Fact]
-    public void persistentLocalStoreShouldBeDetected() {
+    public void PersistentLocalStoreShouldBeDetected() {
         ProcessorTopology processorTopology = createLocalStoreTopology(Stores.persistentKeyValueStore("my-store"));
         Assert.True(processorTopology.hasPersistentLocalStore());
     }
 
     [Xunit.Fact]
-    public void inMemoryStoreShouldNotResultInPersistentGlobalStore() {
+    public void InMemoryStoreShouldNotResultInPersistentGlobalStore() {
         ProcessorTopology processorTopology = createGlobalStoreTopology(Stores.inMemoryKeyValueStore("my-store"));
         Assert.False(processorTopology.hasPersistentGlobalStore());
     }
 
     [Xunit.Fact]
-    public void persistentGlobalStoreShouldBeDetected() {
+    public void PersistentGlobalStoreShouldBeDetected() {
         ProcessorTopology processorTopology = createGlobalStoreTopology(Stores.persistentKeyValueStore("my-store"));
         Assert.True(processorTopology.hasPersistentGlobalStore());
     }
 
-    private ProcessorTopology createLocalStoreTopology(KeyValueBytesStoreSupplier storeSupplier) {
+    private ProcessorTopology CreateLocalStoreTopology(KeyValueBytesStoreSupplier storeSupplier) {
         TopologyWrapper topology = new TopologyWrapper();
         string processor = "processor";
         StoreBuilder<KeyValueStore<string, string>> storeBuilder =
@@ -440,7 +440,7 @@ public class ProcessorTopologyTest {
         return topology.getInternalBuilder("anyAppId").build();
     }
 
-    private ProcessorTopology createGlobalStoreTopology(KeyValueBytesStoreSupplier storeSupplier) {
+    private ProcessorTopology CreateGlobalStoreTopology(KeyValueBytesStoreSupplier storeSupplier) {
         TopologyWrapper topology = new TopologyWrapper();
         StoreBuilder<KeyValueStore<string, string>> storeBuilder =
                 Stores.keyValueStoreBuilder(storeSupplier, Serdes.String(), Serdes.String()).withLoggingDisabled();
@@ -449,20 +449,20 @@ public class ProcessorTopologyTest {
         return topology.getInternalBuilder("anyAppId").build();
     }
 
-    private void assertNextOutputRecord(string topic,
+    private void AssertNextOutputRecord(string topic,
                                         string key,
                                         string value) {
-        assertNextOutputRecord(topic, key, value, (int) null, 0L);
+        AssertNextOutputRecord(topic, key, value, (int) null, 0L);
     }
 
-    private void assertNextOutputRecord(string topic,
+    private void AssertNextOutputRecord(string topic,
                                         string key,
                                         string value,
                                         int partition) {
-        assertNextOutputRecord(topic, key, value, partition, 0L);
+        AssertNextOutputRecord(topic, key, value, partition, 0L);
     }
 
-    private void assertNextOutputRecord(string topic,
+    private void AssertNextOutputRecord(string topic,
                                         string key,
                                         string value,
                                         Headers headers,
@@ -470,15 +470,15 @@ public class ProcessorTopologyTest {
         assertNextOutputRecord(topic, key, value, headers, null, timestamp);
     }
 
-    private void assertNextOutputRecord(string topic,
+    private void AssertNextOutputRecord(string topic,
                                         string key,
                                         string value,
                                         int partition,
                                         long timestamp) {
-        assertNextOutputRecord(topic, key, value, new Headers(), partition, timestamp);
+        AssertNextOutputRecord(topic, key, value, new Headers(), partition, timestamp);
     }
 
-    private void assertNextOutputRecord(string topic,
+    private void AssertNextOutputRecord(string topic,
                                         string key,
                                         string value,
                                         Headers headers,
@@ -493,39 +493,39 @@ public class ProcessorTopologyTest {
         Assert.Equal(headers, record.headers());
     }
 
-    private void assertNoOutputRecord(string topic) {
+    private void AssertNoOutputRecord(string topic) {
         assertNull(driver.readOutput(topic));
     }
 
-    private StreamPartitioner<object, object> constantPartitioner(int partition) {
+    private StreamPartitioner<object, object> ConstantPartitioner(int partition) {
         return (topic, key, value, numPartitions) => partition;
     }
 
-    private Topology createSimpleTopology(int partition) {
+    private Topology CreateSimpleTopology(int partition) {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new ForwardingProcessor()), "source")
-            .addSink("sink", OUTPUT_TOPIC_1, constantPartitioner(partition), "processor");
+            .addSink("sink", OUTPUT_TOPIC_1, ConstantPartitioner(partition), "processor");
     }
 
-    private Topology createTimestampTopology(int partition) {
+    private Topology CreateTimestampTopology(int partition) {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new TimestampProcessor()), "source")
-            .addSink("sink", OUTPUT_TOPIC_1, constantPartitioner(partition), "processor");
+            .addSink("sink", OUTPUT_TOPIC_1, ConstantPartitioner(partition), "processor");
     }
 
-    private Topology createMultiProcessorTimestampTopology(int partition) {
+    private Topology CreateMultiProcessorTimestampTopology(int partition) {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new FanOutTimestampProcessor("child1", "child2")), "source")
             .addProcessor("child1", define(new ForwardingProcessor()), "processor")
             .addProcessor("child2", define(new TimestampProcessor()), "processor")
-            .addSink("sink1", OUTPUT_TOPIC_1, constantPartitioner(partition), "child1")
-            .addSink("sink2", OUTPUT_TOPIC_2, constantPartitioner(partition), "child2");
+            .addSink("sink1", OUTPUT_TOPIC_1, ConstantPartitioner(partition), "child1")
+            .addSink("sink2", OUTPUT_TOPIC_2, ConstantPartitioner(partition), "child2");
     }
 
-    private Topology createMultiplexingTopology() {
+    private Topology CreateMultiplexingTopology() {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new MultiplexingProcessor(2)), "source")
@@ -533,7 +533,7 @@ public class ProcessorTopologyTest {
             .addSink("sink2", OUTPUT_TOPIC_2, "processor");
     }
 
-    private Topology createMultiplexByNameTopology() {
+    private Topology CreateMultiplexByNameTopology() {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new MultiplexByNameProcessor(2)), "source")
@@ -541,7 +541,7 @@ public class ProcessorTopologyTest {
             .addSink("sink1", OUTPUT_TOPIC_2, "processor");
     }
 
-    private Topology createStatefulTopology(string storeName) {
+    private Topology CreateStatefulTopology(string storeName) {
         return topology
             .addSource("source", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
             .addProcessor("processor", define(new StatefulProcessor(storeName)), "source")
@@ -549,7 +549,7 @@ public class ProcessorTopologyTest {
             .addSink("counts", OUTPUT_TOPIC_1, "processor");
     }
 
-    private Topology createInternalRepartitioningTopology() {
+    private Topology CreateInternalRepartitioningTopology() {
         topology.addSource("source", INPUT_TOPIC_1)
             .addSink("sink0", THROUGH_TOPIC_1, "source")
             .addSource("source1", THROUGH_TOPIC_1)
@@ -562,7 +562,7 @@ public class ProcessorTopologyTest {
         return topology;
     }
 
-    private Topology createInternalRepartitioningWithValueTimestampTopology() {
+    private Topology CreateInternalRepartitioningWithValueTimestampTopology() {
         topology.addSource("source", INPUT_TOPIC_1)
                 .addProcessor("processor", define(new ValueTimestampProcessor()), "source")
                 .addSink("sink0", THROUGH_TOPIC_1, "processor")
@@ -576,23 +576,23 @@ public class ProcessorTopologyTest {
         return topology;
     }
 
-    private Topology createForwardToSourceTopology() {
+    private Topology CreateForwardToSourceTopology() {
         return topology.addSource("source-1", INPUT_TOPIC_1)
                 .addSink("sink-1", OUTPUT_TOPIC_1, "source-1")
                 .addSource("source-2", OUTPUT_TOPIC_1)
                 .addSink("sink-2", OUTPUT_TOPIC_2, "source-2");
     }
 
-    private Topology createSimpleMultiSourceTopology(int partition) {
+    private Topology CreateSimpleMultiSourceTopology(int partition) {
         return topology.addSource("source-1", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
                 .addProcessor("processor-1", define(new ForwardingProcessor()), "source-1")
-                .addSink("sink-1", OUTPUT_TOPIC_1, constantPartitioner(partition), "processor-1")
+                .addSink("sink-1", OUTPUT_TOPIC_1, ConstantPartitioner(partition), "processor-1")
                 .addSource("source-2", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_2)
                 .addProcessor("processor-2", define(new ForwardingProcessor()), "source-2")
-                .addSink("sink-2", OUTPUT_TOPIC_2, constantPartitioner(partition), "processor-2");
+                .addSink("sink-2", OUTPUT_TOPIC_2, ConstantPartitioner(partition), "processor-2");
     }
 
-    private Topology createAddHeaderTopology() {
+    private Topology CreateAddHeaderTopology() {
         return topology.addSource("source-1", STRING_DESERIALIZER, STRING_DESERIALIZER, INPUT_TOPIC_1)
                 .addProcessor("processor-1", define(new AddHeaderProcessor()), "source-1")
                 .addSink("sink-1", OUTPUT_TOPIC_1, "processor-1");
@@ -603,7 +603,7 @@ public class ProcessorTopologyTest {
      */
     protected static class ForwardingProcessor : AbstractProcessor<string, string> {
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             context().forward(key, value);
         }
     }
@@ -613,7 +613,7 @@ public class ProcessorTopologyTest {
      */
     protected static class TimestampProcessor : AbstractProcessor<string, string> {
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             context().forward(key, value, To.all().withTimestamp(context().Timestamp + 10));
         }
     }
@@ -629,7 +629,7 @@ public class ProcessorTopologyTest {
         }
 
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             context().forward(key, value);
             context().forward(key, value, To.child(firstChild).withTimestamp(context().Timestamp + 5));
             context().forward(key, value, To.child(secondChild));
@@ -639,7 +639,7 @@ public class ProcessorTopologyTest {
 
     protected static class AddHeaderProcessor : AbstractProcessor<string, string> {
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             context().headers().add(HEADER);
             context().forward(key, value);
         }
@@ -651,7 +651,7 @@ public class ProcessorTopologyTest {
      */
     protected static class ValueTimestampProcessor : AbstractProcessor<string, string> {
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             context().forward(key, value.split("@")[0]);
         }
     }
@@ -668,7 +668,7 @@ public class ProcessorTopologyTest {
 
          // need to test deprecated code until removed
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             for (int i = 0; i != numChildren; ++i) {
                 context().forward(key, value + "(" + (i + 1) + ")", i);
             }
@@ -688,7 +688,7 @@ public class ProcessorTopologyTest {
 
          // need to test deprecated code until removed
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             for (int i = 0; i != numChildren; ++i) {
                 context().forward(key, value + "(" + (i + 1) + ")",  "sink" + i);
             }
@@ -708,18 +708,18 @@ public class ProcessorTopologyTest {
 
         
         
-        public void init(ProcessorContext context) {
+        public void Init(ProcessorContext context) {
             base.init(context);
             store = (KeyValueStore<string, string>) context.getStateStore(storeName);
         }
 
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             store.put(key, value);
         }
     }
 
-    private ProcessorSupplier<K, V> define<K, V>(Processor<K, V> processor) {
+    private ProcessorSupplier<K, V> Define<K, V>(Processor<K, V> processor) {
         return () => processor;
     }
 
@@ -731,7 +731,7 @@ public class ProcessorTopologyTest {
         private static long DEFAULT_TIMESTAMP = 1000L;
 
         
-        public long extract(ConsumeResult<object, object> record, long partitionTime) {
+        public long Extract(ConsumeResult<object, object> record, long partitionTime) {
             if (record.Value.toString().matches(".*@[0-9]+")) {
                 return long.parseLong(record.Value.toString().split("@")[1]);
             }

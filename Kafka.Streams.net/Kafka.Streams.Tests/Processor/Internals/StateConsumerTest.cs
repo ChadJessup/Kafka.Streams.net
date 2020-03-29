@@ -49,7 +49,7 @@ public class StateConsumerTest {
     private StateMaintainerStub stateMaintainer;
 
     
-    public void setUp() {
+    public void SetUp() {
         partitionOffsets.put(topicOne, 20L);
         partitionOffsets.put(topicTwo, 30L);
         stateMaintainer = new StateMaintainerStub(partitionOffsets);
@@ -57,20 +57,20 @@ public class StateConsumerTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignPartitionsToConsumer() {
+    public void ShouldAssignPartitionsToConsumer() {
         stateConsumer.initialize();
         Assert.Equal(Utils.mkSet(topicOne, topicTwo), consumer.assignment());
     }
 
     [Xunit.Fact]
-    public void shouldSeekToInitialOffsets() {
+    public void ShouldSeekToInitialOffsets() {
         stateConsumer.initialize();
         Assert.Equal(20L, consumer.position(topicOne));
         Assert.Equal(30L, consumer.position(topicTwo));
     }
 
     [Xunit.Fact]
-    public void shouldUpdateStateWithReceivedRecordsForPartition() {
+    public void ShouldUpdateStateWithReceivedRecordsForPartition() {
         stateConsumer.initialize();
         consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         consumer.addRecord(new ConsumeResult<>("topic-one", 1, 21L, new byte[0], new byte[0]));
@@ -79,7 +79,7 @@ public class StateConsumerTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateStateWithReceivedRecordsForAllTopicPartition() {
+    public void ShouldUpdateStateWithReceivedRecordsForAllTopicPartition() {
         stateConsumer.initialize();
         consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         consumer.addRecord(new ConsumeResult<>("topic-two", 1, 31L, new byte[0], new byte[0]));
@@ -90,7 +90,7 @@ public class StateConsumerTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushStoreWhenFlushIntervalHasLapsed() {
+    public void ShouldFlushStoreWhenFlushIntervalHasLapsed() {
         stateConsumer.initialize();
         consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         time.sleep(FLUSH_INTERVAL);
@@ -100,7 +100,7 @@ public class StateConsumerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotFlushOffsetsWhenFlushIntervalHasNotLapsed() {
+    public void ShouldNotFlushOffsetsWhenFlushIntervalHasNotLapsed() {
         stateConsumer.initialize();
         consumer.addRecord(new ConsumeResult<>("topic-one", 1, 20L, new byte[0], new byte[0]));
         time.sleep(FLUSH_INTERVAL / 2);
@@ -109,13 +109,13 @@ public class StateConsumerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseConsumer(){ //throws IOException
+    public void ShouldCloseConsumer(){ //throws IOException
         stateConsumer.close();
         Assert.True(consumer.closed());
     }
 
     [Xunit.Fact]
-    public void shouldCloseStateMaintainer(){ //throws IOException
+    public void ShouldCloseStateMaintainer(){ //throws IOException
         stateConsumer.close();
         Assert.True(stateMaintainer.closed);
     }
@@ -132,21 +132,21 @@ public class StateConsumerTest {
         }
 
         
-        public Dictionary<TopicPartition, long> initialize() {
+        public Dictionary<TopicPartition, long> Initialize() {
             return partitionOffsets;
         }
 
-        public void flushState() {
+        public void FlushState() {
             flushed = true;
         }
 
         
-        public void close() {
+        public void Close() {
             closed = true;
         }
 
         
-        public void update(ConsumeResult<byte[], byte[]> record) {
+        public void Update(ConsumeResult<byte[], byte[]> record) {
             TopicPartition tp = new TopicPartition(record.topic(), record.partition());
             if (!updatedPartitions.containsKey(tp)) {
                 updatedPartitions.put(tp, 0);

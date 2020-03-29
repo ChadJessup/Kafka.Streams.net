@@ -39,7 +39,7 @@ public class MergedSortedCacheWrappedWindowStoreIteratorTest {
 
     private static SegmentedCacheFunction SINGLE_SEGMENT_CACHE_FUNCTION = new SegmentedCacheFunction(null, -1) {
         
-        public long segmentId(Bytes key) {
+        public long SegmentId(Bytes key) {
             return 0;
         }
     };
@@ -50,7 +50,7 @@ public class MergedSortedCacheWrappedWindowStoreIteratorTest {
     private StateSerdes<string, string> stateSerdes = new StateSerdes<>("foo", Serdes.String(), Serdes.String());
 
     [Xunit.Fact]
-    public void shouldIterateOverValueFromBothIterators() {
+    public void ShouldIterateOverValueFromBothIterators() {
         List<KeyValuePair<long, byte[]>> expectedKvPairs = new ArrayList<>();
         for (long t = 0; t < 100; t += 20) {
             byte[] v1Bytes = string.valueOf(t).getBytes();
@@ -85,7 +85,7 @@ public class MergedSortedCacheWrappedWindowStoreIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextStoreKey() {
+    public void ShouldPeekNextStoreKey() {
         windowStoreKvPairs.add(KeyValuePair.Create(10L, "a".getBytes()));
         cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
         Bytes fromBytes = WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes);
@@ -104,7 +104,7 @@ public class MergedSortedCacheWrappedWindowStoreIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextCacheKey() {
+    public void ShouldPeekNextCacheKey() {
         windowStoreKvPairs.add(KeyValuePair.Create(0L, "a".getBytes()));
         cache.put(namespace, SINGLE_SEGMENT_CACHE_FUNCTION.cacheKey(WindowKeySchema.toStoreKeyBinary("a", 10L, 0, stateSerdes)), new LRUCacheEntry("b".getBytes()));
         Bytes fromBytes = WindowKeySchema.toStoreKeyBinary("a", 0, 0, stateSerdes);

@@ -60,7 +60,7 @@ public class StateRestorationIntegrationTest {
     private MockTime mockTime = CLUSTER.time;
 
     
-    public void setUp() {// throws Exception
+    public void SetUp() {// throws Exception
         Properties props = new Properties();
 
         streamsConfiguration = StreamsTestUtils.getStreamsConfig(
@@ -77,7 +77,7 @@ public class StateRestorationIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreNullRecord() {// throws InterruptedException, ExecutionException
+    public void ShouldRestoreNullRecord() {// throws InterruptedException, ExecutionException
         builder.table(INPUT_TOPIC, Materialized<int, Bytes>.As(
                 Stores.persistentTimestampedKeyValueStore(STATE_STORE_NAME))
                 .withKeySerde(Serdes.Int())

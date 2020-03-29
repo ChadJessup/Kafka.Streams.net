@@ -85,7 +85,7 @@ public class CachingWindowStoreTest {
     private WindowKeySchema keySchema;
 
     
-    public void setUp() {
+    public void SetUp() {
         keySchema = new WindowKeySchema();
         underlying = new RocksDBSegmentedBytesStore("test", "metrics-scope", 0, SEGMENT_INTERVAL, keySchema);
         RocksDBWindowStore windowStore = new RocksDBWindowStore(
@@ -105,12 +105,12 @@ public class CachingWindowStoreTest {
     }
 
     
-    public void closeStore() {
+    public void CloseStore() {
         cachingStore.close();
     }
 
     [Xunit.Fact]
-    public void shouldNotReturnDuplicatesInRanges() {
+    public void ShouldNotReturnDuplicatesInRanges() {
         StreamsBuilder builder = new StreamsBuilder();
 
         StoreBuilder<WindowStore<string, string>> storeBuilder = Stores.windowStoreBuilder(
@@ -129,7 +129,7 @@ public class CachingWindowStoreTest {
 
                 
                 
-                public void init(ProcessorContext processorContext) {
+                public void Init(ProcessorContext processorContext) {
                     this.store = (WindowStore<string, string>) processorContext.getStateStore("store-name");
                     int count = 0;
 
@@ -143,7 +143,7 @@ public class CachingWindowStoreTest {
                 }
 
                 
-                public KeyValuePair<string, string> transform(string key, string value) {
+                public KeyValuePair<string, string> Transform(string key, string value) {
                     int count = 0;
 
                     KeyValueIterator<Windowed<string>, string> all = store.all();
@@ -161,7 +161,7 @@ public class CachingWindowStoreTest {
                 }
 
                 
-                public void close() {}
+                public void Close() {}
             }, "store-name");
 
         string bootstrapServers = "localhost:9092";
@@ -203,7 +203,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutFetchFromCache() {
+    public void ShouldPutFetchFromCache() {
         cachingStore.put(bytesKey("a"), bytesValue("a"));
         cachingStore.put(bytesKey("b"), bytesValue("b"));
 
@@ -221,27 +221,27 @@ public class CachingWindowStoreTest {
         Assert.Equal(2, cache.Count);
     }
 
-    private void verifyKeyValue(KeyValuePair<long, byte[]> next,
+    private void VerifyKeyValue(KeyValuePair<long, byte[]> next,
                                 long expectedKey,
                                 string expectedValue) {
         Assert.Equal(next.key, (expectedKey));
         Assert.Equal(next.value, (bytesValue(expectedValue)));
     }
 
-    private static byte[] bytesValue(string value) {
+    private static byte[] BytesValue(string value) {
         return value.getBytes();
     }
 
-    private static Bytes bytesKey(string key) {
+    private static Bytes BytesKey(string key) {
         return Bytes.wrap(key.getBytes());
     }
 
-    private string stringFrom(byte[] from) {
+    private string StringFrom(byte[] from) {
         return Serdes.String().deserializer().deserialize("", from);
     }
 
     [Xunit.Fact]
-    public void shouldPutFetchRangeFromCache() {
+    public void ShouldPutFetchRangeFromCache() {
         cachingStore.put(bytesKey("a"), bytesValue("a"));
         cachingStore.put(bytesKey("b"), bytesValue("b"));
 
@@ -260,7 +260,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetAllFromCache() {
+    public void ShouldGetAllFromCache() {
         cachingStore.put(bytesKey("a"), bytesValue("a"));
         cachingStore.put(bytesKey("b"), bytesValue("b"));
         cachingStore.put(bytesKey("c"), bytesValue("c"));
@@ -282,7 +282,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllWithinTimestampRange() {
+    public void ShouldFetchAllWithinTimestampRange() {
         string[] array = {"a", "b", "c", "d", "e", "f", "g", "h"};
         for (int i = 0; i < array.Length; i++) {
             context.setTime(i);
@@ -324,7 +324,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushEvictedItemsIntoUnderlyingStore() {
+    public void ShouldFlushEvictedItemsIntoUnderlyingStore() {
         int added = addItemsToCache();
         // all dirty entries should have been flushed
         KeyValueIterator<Bytes, byte[]> iter = underlying.fetch(
@@ -339,7 +339,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardDirtyItemsWhenFlushCalled() {
+    public void ShouldForwardDirtyItemsWhenFlushCalled() {
         Windowed<string> windowedKey =
             new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
         cachingStore.put(bytesKey("1"), bytesValue("a"));
@@ -349,13 +349,13 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSetFlushListener() {
+    public void ShouldSetFlushListener() {
         Assert.True(cachingStore.setFlushListener(null, true));
         Assert.True(cachingStore.setFlushListener(null, false));
     }
 
     [Xunit.Fact]
-    public void shouldForwardOldValuesWhenEnabled() {
+    public void ShouldForwardOldValuesWhenEnabled() {
         cachingStore.setFlushListener(cacheListener, true);
         Windowed<string> windowedKey =
             new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
@@ -383,7 +383,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardOldValuesWhenDisabled() {
+    public void ShouldForwardOldValuesWhenDisabled() {
         Windowed<string> windowedKey =
             new Windowed<>("1", new TimeWindow(DEFAULT_TIMESTAMP, DEFAULT_TIMESTAMP + WINDOW_SIZE));
         cachingStore.put(bytesKey("1"), bytesValue("a"));
@@ -409,13 +409,13 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardDirtyItemToListenerWhenEvicted() {
+    public void ShouldForwardDirtyItemToListenerWhenEvicted() {
         int numRecords = addItemsToCache();
         Assert.Equal(numRecords, cacheListener.forwarded.Count);
     }
 
     [Xunit.Fact]
-    public void shouldTakeValueFromCacheIfSameTimestampFlushedToRocks() {
+    public void ShouldTakeValueFromCacheIfSameTimestampFlushedToRocks() {
         cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
         cachingStore.flush();
         cachingStore.put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP);
@@ -427,7 +427,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldIterateAcrossWindows() {
+    public void ShouldIterateAcrossWindows() {
         cachingStore.put(bytesKey("1"), bytesValue("a"), DEFAULT_TIMESTAMP);
         cachingStore.put(bytesKey("1"), bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
 
@@ -439,7 +439,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldIterateCacheAndStore() {
+    public void ShouldIterateCacheAndStore() {
         Bytes key = Bytes.wrap("1".getBytes());
         underlying.put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
         cachingStore.put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
@@ -451,7 +451,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldIterateCacheAndStoreKeyRange() {
+    public void ShouldIterateCacheAndStoreKeyRange() {
         Bytes key = Bytes.wrap("1".getBytes());
         underlying.put(WindowKeySchema.toStoreKeyBinary(key, DEFAULT_TIMESTAMP, 0), "a".getBytes());
         cachingStore.put(key, bytesValue("b"), DEFAULT_TIMESTAMP + WINDOW_SIZE);
@@ -470,7 +470,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldClearNamespaceCacheOnClose() {
+    public void ShouldClearNamespaceCacheOnClose() {
         cachingStore.put(bytesKey("a"), bytesValue("a"));
         Assert.Equal(1, cache.Count);
         cachingStore.close();
@@ -478,25 +478,25 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToFetchFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToFetchFromClosedCachingStore() {
         cachingStore.close();
         cachingStore.fetch(bytesKey("a"), ofEpochMilli(0), ofEpochMilli(10));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToFetchRangeFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToFetchRangeFromClosedCachingStore() {
         cachingStore.close();
         cachingStore.fetch(bytesKey("a"), bytesKey("b"), ofEpochMilli(0), ofEpochMilli(10));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToWriteToClosedCachingStore() {
+    public void ShouldThrowIfTryingToWriteToClosedCachingStore() {
         cachingStore.close();
         cachingStore.put(bytesKey("a"), bytesValue("a"));
     }
 
     [Xunit.Fact]
-    public void shouldFetchAndIterateOverExactKeys() {
+    public void ShouldFetchAndIterateOverExactKeys() {
         cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
         cachingStore.put(bytesKey("aa"), bytesValue("0002"), 0);
         cachingStore.put(bytesKey("a"), bytesValue("0003"), 1);
@@ -514,7 +514,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAndIterateOverKeyRange() {
+    public void ShouldFetchAndIterateOverKeyRange() {
         cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
         cachingStore.put(bytesKey("aa"), bytesValue("0002"), 0);
         cachingStore.put(bytesKey("a"), bytesValue("0003"), 1);
@@ -550,7 +550,7 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch() {
+    public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch() {
         cachingStore.put(bytesKey("a"), bytesValue("0001"), 0);
         cachingStore.put(bytesKey("aa"), bytesValue("0002"), 1);
         cachingStore.put(bytesKey("aa"), bytesValue("0003"), 2);
@@ -566,34 +566,34 @@ public class CachingWindowStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
         cachingStore.put(null, bytesValue("anyValue"));
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionOnPutNullValue() {
+    public void ShouldNotThrowNullPointerExceptionOnPutNullValue() {
         cachingStore.put(bytesKey("a"), null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFetchNullKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullKey() {
         cachingStore.fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey() {
         cachingStore.fetch(null, bytesKey("anyTo"), ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullToKey() {
         cachingStore.fetch(bytesKey("anyFrom"), null, ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
         LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         Bytes keyFrom = Bytes.wrap(Serdes.Int().Serializer.serialize("", -1));
         Bytes keyTo = Bytes.wrap(Serdes.Int().Serializer.serialize("", 1));
@@ -607,13 +607,13 @@ public class CachingWindowStoreTest {
             + "Note that the built-in numerical serdes do not follow this for negative numbers"));
     }
 
-    private static KeyValuePair<Windowed<Bytes>, byte[]> windowedPair(string key, string value, long timestamp) {
+    private static KeyValuePair<Windowed<Bytes>, byte[]> WindowedPair(string key, string value, long timestamp) {
         return KeyValuePair.Create(
             new Windowed<>(bytesKey(key), new TimeWindow(timestamp, timestamp + WINDOW_SIZE)),
             bytesValue(value));
     }
 
-    private int addItemsToCache() {
+    private int AddItemsToCache() {
         int cachedSize = 0;
         int i = 0;
         while (cachedSize < MAX_CACHE_SIZE_BYTES) {

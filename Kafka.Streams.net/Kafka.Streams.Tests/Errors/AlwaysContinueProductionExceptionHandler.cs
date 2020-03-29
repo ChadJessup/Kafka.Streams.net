@@ -25,13 +25,13 @@
  */
 public class AlwaysContinueProductionExceptionHandler : ProductionExceptionHandler {
     
-    public ProductionExceptionHandlerResponse handle(ProducerRecord<byte[], byte[]> record,
+    public ProductionExceptionHandlerResponse Handle(ProducerRecord<byte[], byte[]> record,
                                                      Exception exception) {
         return ProductionExceptionHandlerResponse.CONTINUE;
     }
 
     
-    public void configure(Dictionary<string, ?> configs) {
+    public void Configure(Dictionary<string, ?> configs) {
         // ignore
     }
 }

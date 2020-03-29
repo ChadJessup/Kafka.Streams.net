@@ -121,7 +121,7 @@ public class StreamsPartitionAssignorTest {
 
     private TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
 
-    private Dictionary<string, object> configProps() {
+    private Dictionary<string, object> ConfigProps() {
         Dictionary<string, object> configurationMap = new HashMap<>();
         configurationMap.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         configurationMap.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, userEndPoint);
@@ -130,13 +130,13 @@ public class StreamsPartitionAssignorTest {
         return configurationMap;
     }
 
-    private void configurePartitionAssignor(Dictionary<string, object> props) {
-        Dictionary<string, object> configurationMap = configProps();
+    private void ConfigurePartitionAssignor(Dictionary<string, object> props) {
+        Dictionary<string, object> configurationMap = ConfigProps();
         configurationMap.putAll(props);
         partitionAssignor.configure(configurationMap);
     }
 
-    private void mockTaskManager(HashSet<TaskId> prevTasks,
+    private void MockTaskManager(HashSet<TaskId> prevTasks,
                                  HashSet<TaskId> cachedTasks,
                                  UUID processId,
                                  InternalTopologyBuilder builder) {
@@ -150,7 +150,7 @@ public class StreamsPartitionAssignorTest {
     private Dictionary<string, ConsumerPartitionAssignor.Subscription> subscriptions;
 
     
-    public void setUp() {
+    public void SetUp() {
         if (subscriptions != null) {
             subscriptions.Clear();
         } else {
@@ -159,7 +159,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldInterleaveTasksByGroupId() {
+    public void ShouldInterleaveTasksByGroupId() {
         TaskId taskIdA0 = new TaskId(0, 0);
         TaskId taskIdA1 = new TaskId(0, 1);
         TaskId taskIdA2 = new TaskId(0, 2);
@@ -186,7 +186,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testSubscription() {
+    public void TestSubscription() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source1", "source2");
@@ -198,7 +198,7 @@ public class StreamsPartitionAssignorTest {
                 new TaskId(0, 2), new TaskId(1, 2), new TaskId(2, 2));
 
         UUID processId = UUID.randomUUID();
-        mockTaskManager(prevTasks, cachedTasks, processId, builder);
+        MockTaskManager(prevTasks, cachedTasks, processId, builder);
 
         configurePartitionAssignor(Collections.emptyMap());
 
@@ -216,7 +216,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignBasic() {
+    public void TestAssignBasic() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source1", "source2");
@@ -233,7 +233,7 @@ public class StreamsPartitionAssignorTest {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
 
-        mockTaskManager(prevTasks10, standbyTasks10, uuid1, builder);
+        MockTaskManager(prevTasks10, standbyTasks10, uuid1, builder);
         configurePartitionAssignor(Collections.emptyMap());
 
         partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
@@ -279,7 +279,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignEvenlyAcrossConsumersOneClientMultipleThreads() {
+    public void ShouldAssignEvenlyAcrossConsumersOneClientMultipleThreads() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source1");
@@ -349,7 +349,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithPartialTopology() {
+    public void TestAssignWithPartialTopology() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addProcessor("processor1", new MockProcessorSupplier(), "source1");
         builder.addStateStore(new MockKeyValueStoreBuilder("store1", false), "processor1");
@@ -361,7 +361,7 @@ public class StreamsPartitionAssignorTest {
 
         UUID uuid1 = UUID.randomUUID();
 
-        mockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
+        MockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
         configurePartitionAssignor(Collections.singletonMap(StreamsConfig.PARTITION_GROUPER_CLASS_CONFIG, SingleGroupPartitionGrouperStub));
 
         partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
@@ -383,7 +383,7 @@ public class StreamsPartitionAssignorTest {
 
 
     [Xunit.Fact]
-    public void testAssignEmptyMetadata() {
+    public void TestAssignEmptyMetadata() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source1", "source2");
@@ -398,7 +398,7 @@ public class StreamsPartitionAssignorTest {
             Collections.emptySet());
         UUID uuid1 = UUID.randomUUID();
 
-        mockTaskManager(prevTasks10, standbyTasks10, uuid1, builder);
+        MockTaskManager(prevTasks10, standbyTasks10, uuid1, builder);
         configurePartitionAssignor(Collections.emptyMap());
 
         subscriptions.put("consumer10",
@@ -437,7 +437,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithNewTasks() {
+    public void TestAssignWithNewTasks() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addSource(null, "source3", null, null, null, "topic3");
@@ -452,7 +452,7 @@ public class StreamsPartitionAssignorTest {
 
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
-        mockTaskManager(prevTasks10, emptyTasks, uuid1, builder);
+        MockTaskManager(prevTasks10, emptyTasks, uuid1, builder);
         configurePartitionAssignor(Collections.emptyMap());
 
         partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
@@ -489,7 +489,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithStates() {
+    public void TestAssignWithStates() {
         builder.setApplicationId(applicationId);
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
@@ -514,7 +514,7 @@ public class StreamsPartitionAssignorTest {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
 
-        mockTaskManager(
+        MockTaskManager(
             emptyTasks,
             emptyTasks,
             uuid1,
@@ -557,12 +557,12 @@ public class StreamsPartitionAssignorTest {
         // check tasks for state topics
         Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups = builder.topicGroups();
 
-        Assert.Equal(Utils.mkSet(task00, task01, task02), tasksForState("store1", tasks, topicGroups));
-        Assert.Equal(Utils.mkSet(task10, task11, task12), tasksForState("store2", tasks, topicGroups));
-        Assert.Equal(Utils.mkSet(task10, task11, task12), tasksForState("store3", tasks, topicGroups));
+        Assert.Equal(Utils.mkSet(task00, task01, task02), TasksForState("store1", tasks, topicGroups));
+        Assert.Equal(Utils.mkSet(task10, task11, task12), TasksForState("store2", tasks, topicGroups));
+        Assert.Equal(Utils.mkSet(task10, task11, task12), TasksForState("store3", tasks, topicGroups));
     }
 
-    private HashSet<TaskId> tasksForState(string storeName,
+    private HashSet<TaskId> TasksForState(string storeName,
                                       List<TaskId> tasks,
                                       Dictionary<int, InternalTopologyBuilder.TopicsInfo> topicGroups) {
         string changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, storeName);
@@ -583,8 +583,8 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithStandbyReplicas() {
-        Dictionary<string, object> props = configProps();
+    public void TestAssignWithStandbyReplicas() {
+        Dictionary<string, object> props = ConfigProps();
         props.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, "1");
         StreamsConfig streamsConfig = new StreamsConfig(props);
 
@@ -605,7 +605,7 @@ public class StreamsPartitionAssignorTest {
         UUID uuid1 = UUID.randomUUID();
         UUID uuid2 = UUID.randomUUID();
 
-        mockTaskManager(prevTasks00, standbyTasks01, uuid1, builder);
+        MockTaskManager(prevTasks00, standbyTasks01, uuid1, builder);
 
         configurePartitionAssignor(Collections.singletonMap(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1));
 
@@ -654,7 +654,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testOnAssignment() {
+    public void TestOnAssignment() {
         configurePartitionAssignor(Collections.emptyMap());
 
         List<TaskId> activeTaskList = asList(task0, task3);
@@ -689,7 +689,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithInternalTopics() {
+    public void TestAssignWithInternalTopics() {
         builder.setApplicationId(applicationId);
         builder.addInternalTopic("topicX");
         builder.addSource(null, "source1", null, null, null, "topic1");
@@ -701,7 +701,7 @@ public class StreamsPartitionAssignorTest {
         HashSet<TaskId> allTasks = Utils.mkSet(task0, task1, task2);
 
         UUID uuid1 = UUID.randomUUID();
-        mockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
+        MockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
         configurePartitionAssignor(Collections.emptyMap());
         MockInternalTopicManager internalTopicManager = new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer);
         partitionAssignor.setInternalTopicManager(internalTopicManager);
@@ -718,7 +718,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void testAssignWithInternalTopicThatsSourceIsAnotherInternalTopic() {
+    public void TestAssignWithInternalTopicThatsSourceIsAnotherInternalTopic() {
         string applicationId = "test";
         builder.setApplicationId(applicationId);
         builder.addInternalTopic("topicX");
@@ -734,7 +734,7 @@ public class StreamsPartitionAssignorTest {
         HashSet<TaskId> allTasks = Utils.mkSet(task0, task1, task2);
 
         UUID uuid1 = UUID.randomUUID();
-        mockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
+        MockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
 
         configurePartitionAssignor(Collections.emptyMap());
         MockInternalTopicManager internalTopicManager = new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer);
@@ -752,7 +752,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldGenerateTasksForAllCreatedPartitions() {
+    public void ShouldGenerateTasksForAllCreatedPartitions() {
         StreamsBuilder builder = new StreamsBuilder();
 
         // KStream with 3 partitions
@@ -831,14 +831,14 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddUserDefinedEndPointToSubscription() {
+    public void ShouldAddUserDefinedEndPointToSubscription() {
         builder.setApplicationId(applicationId);
         builder.addSource(null, "source", null, null, null, "input");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
         builder.addSink("sink", "output", null, null, null, "processor");
 
         UUID uuid1 = UUID.randomUUID();
-        mockTaskManager(
+        MockTaskManager(
             emptyTasks,
             emptyTasks,
             uuid1,
@@ -851,7 +851,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldMapUserEndPointToTopicPartitions() {
+    public void ShouldMapUserEndPointToTopicPartitions() {
         builder.setApplicationId(applicationId);
         builder.addSource(null, "source", null, null, null, "topic1");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
@@ -861,7 +861,7 @@ public class StreamsPartitionAssignorTest {
 
         UUID uuid1 = UUID.randomUUID();
 
-        mockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
+        MockTaskManager(emptyTasks, emptyTasks, uuid1, builder);
         configurePartitionAssignor(Collections.singletonMap(StreamsConfig.APPLICATION_SERVER_CONFIG, userEndPoint));
 
         partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(streamsConfig, mockClientSupplier.restoreConsumer));
@@ -883,7 +883,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionIfApplicationServerConfigIsNotHostPortPair() {
+    public void ShouldThrowExceptionIfApplicationServerConfigIsNotHostPortPair() {
         builder.setApplicationId(applicationId);
 
         mockTaskManager(emptyTasks, emptyTasks, UUID.randomUUID(), builder);
@@ -898,7 +898,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionIfApplicationServerConfigPortIsNotAnInteger() {
+    public void ShouldThrowExceptionIfApplicationServerConfigPortIsNotAnInteger() {
         builder.setApplicationId(applicationId);
 
         try {
@@ -910,7 +910,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotLoopInfinitelyOnMissingMetadataAndShouldNotCreateRelatedTasks() {
+    public void ShouldNotLoopInfinitelyOnMissingMetadataAndShouldNotCreateRelatedTasks() {
         StreamsBuilder builder = new StreamsBuilder();
 
         KStream<object, object> stream1 = builder
@@ -977,7 +977,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateClusterMetadataAndHostInfoOnAssignment() {
+    public void ShouldUpdateClusterMetadataAndHostInfoOnAssignment() {
         TopicPartition partitionOne = new TopicPartition("topic", 1);
         TopicPartition partitionTwo = new TopicPartition("topic", 2);
         Dictionary<HostInfo, HashSet<TopicPartition>> hostState = Collections.singletonMap(
@@ -995,7 +995,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAddStandbyTaskPartitionsToPartitionsForHost() {
+    public void ShouldNotAddStandbyTaskPartitionsToPartitionsForHost() {
         StreamsBuilder builder = new StreamsBuilder();
 
         builder.stream("topic1").groupByKey().count();
@@ -1004,7 +1004,7 @@ public class StreamsPartitionAssignorTest {
 
 
         UUID uuid = UUID.randomUUID();
-        mockTaskManager(
+        MockTaskManager(
             emptyTasks,
             emptyTasks,
             uuid,
@@ -1013,7 +1013,7 @@ public class StreamsPartitionAssignorTest {
         Dictionary<string, object> props = new HashMap<>();
         props.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
         props.put(StreamsConfig.APPLICATION_SERVER_CONFIG, userEndPoint);
-        configurePartitionAssignor(props);
+        ConfigurePartitionAssignor(props);
         partitionAssignor.setInternalTopicManager(new MockInternalTopicManager(
             streamsConfig,
             mockClientSupplier.restoreConsumer));
@@ -1042,8 +1042,8 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowKafkaExceptionIfTaskMangerNotConfigured() {
-        Dictionary<string, object> config = configProps();
+    public void ShouldThrowKafkaExceptionIfTaskMangerNotConfigured() {
+        Dictionary<string, object> config = ConfigProps();
         config.remove(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR);
 
         try {
@@ -1055,8 +1055,8 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowKafkaExceptionIfTaskMangerConfigIsNotTaskManagerInstance() {
-        Dictionary<string, object> config = configProps();
+    public void ShouldThrowKafkaExceptionIfTaskMangerConfigIsNotTaskManagerInstance() {
+        Dictionary<string, object> config = ConfigProps();
         config.put(StreamsConfig.InternalConfig.TASK_MANAGER_FOR_PARTITION_ASSIGNOR, "i am not a task manager");
 
         try {
@@ -1069,8 +1069,8 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowKafkaExceptionAssignmentErrorCodeNotConfigured() {
-        Dictionary<string, object> config = configProps();
+    public void ShouldThrowKafkaExceptionAssignmentErrorCodeNotConfigured() {
+        Dictionary<string, object> config = ConfigProps();
         config.remove(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE);
 
         try {
@@ -1082,8 +1082,8 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowKafkaExceptionIfVersionProbingFlagConfigIsNotAtomicInteger() {
-        Dictionary<string, object> config = configProps();
+    public void ShouldThrowKafkaExceptionIfVersionProbingFlagConfigIsNotAtomicInteger() {
+        Dictionary<string, object> config = ConfigProps();
         config.put(StreamsConfig.InternalConfig.ASSIGNMENT_ERROR_CODE, "i am not an AtomicInteger");
 
         try {
@@ -1096,21 +1096,21 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V2() {
-        shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 2);
+    public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V2() {
+        ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 2);
     }
 
     [Xunit.Fact]
-    public void shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V3() {
-        shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 3);
+    public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV1V3() {
+        ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(1, 3);
     }
 
     [Xunit.Fact]
-    public void shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV2V3() {
-        shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(2, 3);
+    public void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersionsV2V3() {
+        ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(2, 3);
     }
 
-    private void shouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(int smallestVersion,
+    private void ShouldReturnLowestAssignmentVersionForDifferentSubscriptionVersions(int smallestVersion,
                                                                                      int otherVersion) {
         subscriptions.put("consumer1",
                 new ConsumerPartitionAssignor.Subscription(
@@ -1129,7 +1129,7 @@ public class StreamsPartitionAssignorTest {
             emptyTasks,
             UUID.randomUUID(),
             builder);
-        partitionAssignor.configure(configProps());
+        partitionAssignor.configure(ConfigProps());
         Dictionary<string, ConsumerPartitionAssignor.Assignment> assignment = partitionAssignor.assign(metadata, new GroupSubscription(subscriptions)).groupAssignment();
 
         Assert.Equal(assignment.Count, (2));
@@ -1138,7 +1138,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion1() {
+    public void ShouldDownGradeSubscriptionToVersion1() {
         mockTaskManager(
             emptyTasks,
             emptyTasks,
@@ -1153,31 +1153,31 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion2For0101() {
+    public void ShouldDownGradeSubscriptionToVersion2For0101() {
         shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0101);
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion2For0102() {
+    public void ShouldDownGradeSubscriptionToVersion2For0102() {
         shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0102);
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion2For0110() {
+    public void ShouldDownGradeSubscriptionToVersion2For0110() {
         shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_0110);
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion2For10() {
+    public void ShouldDownGradeSubscriptionToVersion2For10() {
         shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_10);
     }
 
     [Xunit.Fact]
-    public void shouldDownGradeSubscriptionToVersion2For11() {
+    public void ShouldDownGradeSubscriptionToVersion2For11() {
         shouldDownGradeSubscriptionToVersion2(StreamsConfig.UPGRADE_FROM_11);
     }
 
-    private void shouldDownGradeSubscriptionToVersion2(object upgradeFromValue) {
+    private void ShouldDownGradeSubscriptionToVersion2(object upgradeFromValue) {
         mockTaskManager(
             emptyTasks,
             emptyTasks,
@@ -1192,7 +1192,7 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnUnchangedAssignmentForOldInstancesAndEmptyAssignmentForFutureInstances() {
+    public void ShouldReturnUnchangedAssignmentForOldInstancesAndEmptyAssignmentForFutureInstances() {
         builder.addSource(null, "source1", null, null, null, "topic1");
 
         HashSet<TaskId> allTasks = Utils.mkSet(task0, task1, task2);
@@ -1239,16 +1239,16 @@ public class StreamsPartitionAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowIfV1SubscriptionAndFutureSubscriptionIsMixed() {
+    public void ShouldThrowIfV1SubscriptionAndFutureSubscriptionIsMixed() {
         shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(1);
     }
 
     [Xunit.Fact]
-    public void shouldThrowIfV2SubscriptionAndFutureSubscriptionIsMixed() {
+    public void ShouldThrowIfV2SubscriptionAndFutureSubscriptionIsMixed() {
         shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(2);
     }
 
-    private ByteBuffer encodeFutureSubscription() {
+    private ByteBuffer EncodeFutureSubscription() {
         ByteBuffer buf = ByteBuffer.allocate(4 /* used version */
                                                    + 4 /* supported version */);
         buf.putInt(SubscriptionInfo.LATEST_SUPPORTED_VERSION + 1);
@@ -1256,7 +1256,7 @@ public class StreamsPartitionAssignorTest {
         return buf;
     }
 
-    private void shouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(int oldVersion) {
+    private void ShouldThrowIfPreVersionProbingSubscriptionAndFutureSubscriptionIsMixed(int oldVersion) {
         subscriptions.put("consumer1",
                 new ConsumerPartitionAssignor.Subscription(
                         Collections.singletonList("topic1"),
@@ -1283,7 +1283,7 @@ public class StreamsPartitionAssignorTest {
         }
     }
 
-    private ConsumerPartitionAssignor.Assignment createAssignment(Dictionary<HostInfo, HashSet<TopicPartition>> firstHostState) {
+    private ConsumerPartitionAssignor.Assignment CreateAssignment(Dictionary<HostInfo, HashSet<TopicPartition>> firstHostState) {
         AssignmentInfo info = new AssignmentInfo(Collections.emptyList(),
                                                        Collections.emptyMap(),
                                                        firstHostState);
@@ -1292,7 +1292,7 @@ public class StreamsPartitionAssignorTest {
                 Collections.emptyList(), info.encode());
     }
 
-    private AssignmentInfo checkAssignment(HashSet<string> expectedTopics,
+    private AssignmentInfo CheckAssignment(HashSet<string> expectedTopics,
                                            ConsumerPartitionAssignor.Assignment assignment) {
 
         // This assumed 1) DefaultPartitionGrouper is used, and 2) there is an only one topic group.

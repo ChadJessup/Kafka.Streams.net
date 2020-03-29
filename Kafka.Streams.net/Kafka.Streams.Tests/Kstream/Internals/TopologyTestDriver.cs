@@ -449,17 +449,17 @@ namespace Kafka.Streams.Tests
 
             if (inputTopicOrPatternPartition != null)
             {
-                enqueueTaskRecord(topicName, inputTopicOrPatternPartition, timestamp, key, value, headers);
-                completeAllProcessableWork();
+                EnqueueTaskRecord(topicName, inputTopicOrPatternPartition, timestamp, key, value, headers);
+                CompleteAllProcessableWork();
             }
 
             if (globalInputTopicPartition != null)
             {
-                processGlobalRecord(globalInputTopicPartition, timestamp, key, value, headers);
+                ProcessGlobalRecord(globalInputTopicPartition, timestamp, key, value, headers);
             }
         }
 
-        private void enqueueTaskRecord(
+        private void EnqueueTaskRecord(
             string inputTopic,
             TopicPartition topicOrPatternPartition,
             long timestamp,
@@ -488,14 +488,14 @@ namespace Kafka.Streams.Tests
             //);
         }
 
-        private void completeAllProcessableWork()
+        private void CompleteAllProcessableWork()
         {
             // for internally triggered processing (like wall-clock punctuations),
             // we might have buffered some records to internal topics that need to
             // be piped back in to kick-start the processing loop. This is idempotent
             // and therefore harmless in the case where all we've done is enqueued an
             // input record from the user.
-            captureOutputsAndReEnqueueInternalResults();
+            CaptureOutputsAndReEnqueueInternalResults();
 
             // If the topology only has global tasks, then `task` would be null.
             // For this method, it just means there's nothing to do.
@@ -507,7 +507,7 @@ namespace Kafka.Streams.Tests
                     //  task.process(mockWallClockTime.GetCurrentInstant().ToUnixTimeMilliseconds());
                     task.MaybePunctuateStreamTime();
                     task.commit();
-                    captureOutputsAndReEnqueueInternalResults();
+                    CaptureOutputsAndReEnqueueInternalResults();
                 }
 
                 //if (task.hasRecordsQueued())
@@ -521,7 +521,7 @@ namespace Kafka.Streams.Tests
             }
         }
 
-        private void processGlobalRecord(TopicPartition globalInputTopicPartition,
+        private void ProcessGlobalRecord(TopicPartition globalInputTopicPartition,
                                          long timestamp,
                                          byte[] key,
                                          byte[] value,
@@ -542,7 +542,7 @@ namespace Kafka.Streams.Tests
             globalStateTask.flushState();
         }
 
-        private void validateSourceTopicNameRegexPattern(string inputRecordTopic)
+        private void ValidateSourceTopicNameRegexPattern(string inputRecordTopic)
         {
             foreach (var sourceTopicName in internalTopologyBuilder.getSourceTopicNames())
             {
@@ -559,7 +559,7 @@ namespace Kafka.Streams.Tests
         {
             if (internalTopologyBuilder.getSourceTopicNames().Any())
             {
-                validateSourceTopicNameRegexPattern(topicName);
+                ValidateSourceTopicNameRegexPattern(topicName);
             }
 
             TopicPartition topicPartition = partitionsByInputTopic[topicName];
@@ -577,7 +577,7 @@ namespace Kafka.Streams.Tests
             return topicPartition;
         }
 
-        private void captureOutputsAndReEnqueueInternalResults()
+        private void CaptureOutputsAndReEnqueueInternalResults()
         {
             // Capture all the records sent to the producer ...
             // List<Message<byte[], byte[]>> output = producer.history();
@@ -642,9 +642,9 @@ namespace Kafka.Streams.Tests
          * @param advanceMs the amount of time to advance wall-clock time in milliseconds
          */
         [Obsolete]
-        public void advanceWallClockTime(long advanceMs)
+        public void AdvanceWallClockTime(long advanceMs)
         {
-            advanceWallClockTime(Duration.FromMilliseconds(advanceMs));
+            AdvanceWallClockTime(Duration.FromMilliseconds(advanceMs));
         }
 
         /**
@@ -654,7 +654,7 @@ namespace Kafka.Streams.Tests
          *
          * @param advance the amount of time to advance wall-clock time
          */
-        public void advanceWallClockTime(Duration advance)
+        public void AdvanceWallClockTime(Duration advance)
         {
             //mockWallClockTime.sleep(advance);
             if (task != null)
@@ -662,7 +662,7 @@ namespace Kafka.Streams.Tests
                 task.MaybePunctuateSystemTime();
                 task.commit();
             }
-            completeAllProcessableWork();
+            CompleteAllProcessableWork();
         }
 
         /**
@@ -845,7 +845,7 @@ namespace Kafka.Streams.Tests
             this.PipeRecord(topic, timestamp, serializedKey, serializedValue, record.Headers);
         }
 
-        long getQueueSize(string topic)
+        long GetQueueSize(string topic)
         {
             //Queue<Message<byte[], byte[]>> queue = getRecordsQueue(topic);
             //if (queue == null)
@@ -858,9 +858,9 @@ namespace Kafka.Streams.Tests
             return 0;
         }
 
-        bool isEmpty(string topic)
+        bool IsEmpty(string topic)
         {
-            return getQueueSize(topic) == 0;
+            return GetQueueSize(topic) == 0;
         }
 
         /**
@@ -884,12 +884,12 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public Dictionary<string, IStateStore> getAllStateStores()
+        public Dictionary<string, IStateStore> GetAllStateStores()
         {
             var allStores = new Dictionary<string, IStateStore>();
             foreach (var storeName in internalTopologyBuilder.AllStateStoreName())
             {
-                allStores.Add(storeName, getStateStore(storeName, false));
+                allStores.Add(storeName, GetStateStore(storeName, false));
             }
 
             return allStores;
@@ -917,12 +917,12 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IStateStore getStateStore(string name)// throws ArgumentException
+        public IStateStore GetStateStore(string name)// throws ArgumentException
         {
-            return getStateStore(name, true);
+            return GetStateStore(name, true);
         }
 
-        private IStateStore getStateStore(string name, bool throwForBuiltInStores)
+        private IStateStore GetStateStore(string name, bool throwForBuiltInStores)
         {
             if (task != null)
             {
@@ -944,7 +944,7 @@ namespace Kafka.Streams.Tests
                 {
                     if (throwForBuiltInStores)
                     {
-                        throwIfBuiltInStore(stateStore);
+                        ThrowIfBuiltInStore(stateStore);
                     }
                     return stateStore;
                 }
@@ -954,7 +954,7 @@ namespace Kafka.Streams.Tests
             return null;
         }
 
-        private void throwIfBuiltInStore(IStateStore stateStore)
+        private void ThrowIfBuiltInStore(IStateStore stateStore)
         {
             if (stateStore is ITimestampedKeyValueStore)
             {
@@ -1004,9 +1004,9 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IKeyValueStore<K, V>? getKeyValueStore<K, V>(string name)
+        public IKeyValueStore<K, V>? GetKeyValueStore<K, V>(string name)
         {
-            IStateStore store = getStateStore(name, false);
+            IStateStore store = GetStateStore(name, false);
             // if (store is ITimestampedKeyValueStore<K, V>)
             // {
             //     this.logger.info("Method #getTimestampedKeyValueStore() should be used to access a ITimestampedKeyValueStore.");
@@ -1034,9 +1034,9 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IKeyValueStore<K, ValueAndTimestamp<V>>? getTimestampedKeyValueStore<K, V>(string name)
+        public IKeyValueStore<K, ValueAndTimestamp<V>>? GetTimestampedKeyValueStore<K, V>(string name)
         {
-            IStateStore store = getStateStore(name, false);
+            IStateStore store = GetStateStore(name, false);
             return store is ITimestampedKeyValueStore
                 ? (ITimestampedKeyValueStore<K, V>)store
                 : null;
@@ -1063,9 +1063,9 @@ namespace Kafka.Streams.Tests
          * @see #getTimestampedWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IWindowStore<K, V>? getWindowStore<K, V>(string name)
+        public IWindowStore<K, V>? GetWindowStore<K, V>(string name)
         {
-            IStateStore store = getStateStore(name, false);
+            IStateStore store = GetStateStore(name, false);
             if (store is ITimestampedWindowStore)
             {
                 //       this.logger.info("Method #getTimestampedWindowStore() should be used to access a TimestampedWindowStore.");
@@ -1092,9 +1092,9 @@ namespace Kafka.Streams.Tests
          * @see #getWindowStore(string)
          * @see #getSessionStore(string)
          */
-        public IWindowStore<K, ValueAndTimestamp<V>>? getTimestampedWindowStore<K, V>(string name)
+        public IWindowStore<K, ValueAndTimestamp<V>>? GetTimestampedWindowStore<K, V>(string name)
         {
-            var store = getStateStore(name, false);
+            var store = GetStateStore(name, false);
             return store is ITimestampedWindowStore<K, V>
                 ? (ITimestampedWindowStore<K, V>)store
                 : null;
@@ -1116,9 +1116,9 @@ namespace Kafka.Streams.Tests
          * @see #getWindowStore(string)
          * @see #getTimestampedWindowStore(string)
          */
-        public ISessionStore<K, V>? getSessionStore<K, V>(string name)
+        public ISessionStore<K, V>? GetSessionStore<K, V>(string name)
         {
-            IStateStore store = getStateStore(name, false);
+            IStateStore store = GetStateStore(name, false);
             return store is ISessionStore<K, V>
                 ? (ISessionStore<K, V>)store
                 : null;
@@ -1127,7 +1127,7 @@ namespace Kafka.Streams.Tests
         /**
          * Close the driver, its topology, and all processors.
          */
-        public void close()
+        public void Close()
         {
             if (task != null)
             {
@@ -1146,7 +1146,7 @@ namespace Kafka.Streams.Tests
                 }
             }
 
-            completeAllProcessableWork();
+            CompleteAllProcessableWork();
             //if (task != null && task.hasRecordsQueued())
             //{
             //    this.logger.Warning("Found some records that cannot be processed due to the" +

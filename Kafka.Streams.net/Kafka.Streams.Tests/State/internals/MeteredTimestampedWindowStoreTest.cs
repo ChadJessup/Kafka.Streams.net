@@ -58,7 +58,7 @@ public class MeteredTimestampedWindowStoreTest {
     }
 
     
-    public void setUp() {
+    public void SetUp() {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, "test");
 
         context = new InternalMockProcessorContext(
@@ -73,7 +73,7 @@ public class MeteredTimestampedWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseUnderlyingStore() {
+    public void ShouldCloseUnderlyingStore() {
         innerStoreMock.close();
         EasyMock.expectLastCall();
         EasyMock.replay(innerStoreMock);
@@ -84,7 +84,7 @@ public class MeteredTimestampedWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotExceptionIfFetchReturnsNull() {
+    public void ShouldNotExceptionIfFetchReturnsNull() {
         EasyMock.expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 0)).andReturn(null);
         EasyMock.replay(innerStoreMock);
 
@@ -93,7 +93,7 @@ public class MeteredTimestampedWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext() {
+    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext() {
         EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");
         EasyMock.replay(innerStoreMock);
         MeteredTimestampedWindowStore<string, long> store = new MeteredTimestampedWindowStore<>(
@@ -117,7 +117,7 @@ public class MeteredTimestampedWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters() {
+    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters() {
         EasyMock.expect(innerStoreMock.name()).andStubReturn("mocked-store");
         EasyMock.replay(innerStoreMock);
         MeteredTimestampedWindowStore<string, long> store = new MeteredTimestampedWindowStore<>(

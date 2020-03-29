@@ -63,10 +63,10 @@ public class StickyTaskAssignorTest {
     private int p4 = 4;
 
     [Xunit.Fact]
-    public void shouldAssignOneActiveTaskToEachProcessWhenTaskCountSameAsProcessCount() {
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p3, 1);
+    public void ShouldAssignOneActiveTaskToEachProcessWhenTaskCountSameAsProcessCount() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(0);
@@ -77,29 +77,29 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTopicGroupIdEvenlyAcrossClientsWithNoStandByTasks() {
-        createClient(p1, 2);
-        createClient(p2, 2);
-        createClient(p3, 2);
+    public void ShouldAssignTopicGroupIdEvenlyAcrossClientsWithNoStandByTasks() {
+        CreateClient(p1, 2);
+        CreateClient(p2, 2);
+        CreateClient(p3, 2);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task10, task11, task22, task20, task21, task12);
         taskAssignor.assign(0);
-        assertActiveTaskTopicGroupIdsEvenlyDistributed();
+        AssertActiveTaskTopicGroupIdsEvenlyDistributed();
     }
 
     [Xunit.Fact]
-    public void shouldAssignTopicGroupIdEvenlyAcrossClientsWithStandByTasks() {
-        createClient(p1, 2);
-        createClient(p2, 2);
-        createClient(p3, 2);
+    public void ShouldAssignTopicGroupIdEvenlyAcrossClientsWithStandByTasks() {
+        CreateClient(p1, 2);
+        CreateClient(p2, 2);
+        CreateClient(p3, 2);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task20, task11, task12, task10, task21, task22);
         taskAssignor.assign(1);
-        assertActiveTaskTopicGroupIdsEvenlyDistributed();
+        AssertActiveTaskTopicGroupIdsEvenlyDistributed();
     }
 
     [Xunit.Fact]
-    public void shouldNotMigrateActiveTaskToOtherProcess() {
+    public void ShouldNotMigrateActiveTaskToOtherProcess() {
         createClientWithPreviousActiveTasks(p1, 1, task00);
         createClientWithPreviousActiveTasks(p2, 1, task01);
 
@@ -108,7 +108,7 @@ public class StickyTaskAssignorTest {
 
         Assert.Equal(clients.get(p1).activeTasks(), hasItems(task00));
         Assert.Equal(clients.get(p2).activeTasks(), hasItems(task01));
-        Assert.Equal(allActiveTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
 
         clients.Clear();
 
@@ -121,14 +121,14 @@ public class StickyTaskAssignorTest {
 
         Assert.Equal(clients.get(p1).activeTasks(), hasItems(task01));
         Assert.Equal(clients.get(p2).activeTasks(), hasItems(task02));
-        Assert.Equal(allActiveTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
     }
 
     [Xunit.Fact]
-    public void shouldMigrateActiveTasksToNewProcessWithoutChangingAllAssignments() {
+    public void ShouldMigrateActiveTasksToNewProcessWithoutChangingAllAssignments() {
         createClientWithPreviousActiveTasks(p1, 1, task00, task02);
         createClientWithPreviousActiveTasks(p2, 1, task01);
-        createClient(p3, 1);
+        CreateClient(p3, 1);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
 
@@ -137,13 +137,13 @@ public class StickyTaskAssignorTest {
         Assert.Equal(clients.get(p2).activeTasks(), (Collections.singleton(task01)));
         Assert.Equal(clients.get(p1).activeTasks().Count, (1));
         Assert.Equal(clients.get(p3).activeTasks().Count, (1));
-        Assert.Equal(allActiveTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
     }
 
     [Xunit.Fact]
-    public void shouldAssignBasedOnCapacity() {
-        createClient(p1, 1);
-        createClient(p2, 2);
+    public void ShouldAssignBasedOnCapacity() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 2);
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
 
         taskAssignor.assign(0);
@@ -152,12 +152,12 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksEvenlyWithUnequalTopicGroupSizes() {
+    public void ShouldAssignTasksEvenlyWithUnequalTopicGroupSizes() {
 
         createClientWithPreviousActiveTasks(p1, 1, task00, task01, task02, task03,
                                                             task04, task05, task10);
 
-        createClient(p2, 1);
+        CreateClient(p2, 1);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task10, task00, task01, task02, task03, task04, task05);
 
@@ -171,13 +171,13 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldKeepActiveTaskStickynessWhenMoreClientThanActiveTasks() {
+    public void ShouldKeepActiveTaskStickynessWhenMoreClientThanActiveTasks() {
         int p5 = 5;
         createClientWithPreviousActiveTasks(p1, 1, task00);
         createClientWithPreviousActiveTasks(p2, 1, task02);
         createClientWithPreviousActiveTasks(p3, 1, task01);
-        createClient(p4, 1);
-        createClient(p5, 1);
+        CreateClient(p4, 1);
+        CreateClient(p5, 1);
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(0);
@@ -188,9 +188,9 @@ public class StickyTaskAssignorTest {
 
         // change up the assignment and make sure it is still sticky
         clients.Clear();
-        createClient(p1, 1);
+        CreateClient(p1, 1);
         createClientWithPreviousActiveTasks(p2, 1, task00);
-        createClient(p3, 1);
+        CreateClient(p3, 1);
         createClientWithPreviousActiveTasks(p4, 1, task02);
         createClientWithPreviousActiveTasks(p5, 1, task01);
 
@@ -205,12 +205,12 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksToClientWithPreviousStandbyTasks() {
-        ClientState client1 = createClient(p1, 1);
+    public void ShouldAssignTasksToClientWithPreviousStandbyTasks() {
+        ClientState client1 = CreateClient(p1, 1);
         client1.addPreviousStandbyTasks(Utils.mkSet(task02));
-        ClientState client2 = createClient(p2, 1);
+        ClientState client2 = CreateClient(p2, 1);
         client2.addPreviousStandbyTasks(Utils.mkSet(task01));
-        ClientState client3 = createClient(p3, 1);
+        ClientState client3 = CreateClient(p3, 1);
         client3.addPreviousStandbyTasks(Utils.mkSet(task00));
 
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00, task01, task02);
@@ -223,7 +223,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignBasedOnCapacityWhenMultipleClientHaveStandbyTasks() {
+    public void ShouldAssignBasedOnCapacityWhenMultipleClientHaveStandbyTasks() {
         ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00);
         c1.addPreviousStandbyTasks(Utils.mkSet(task01));
         ClientState c2 = createClientWithPreviousActiveTasks(p2, 2, task02);
@@ -238,7 +238,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignStandbyTasksToDifferentClientThanCorrespondingActiveTaskIsAssingedTo() {
+    public void ShouldAssignStandbyTasksToDifferentClientThanCorrespondingActiveTaskIsAssingedTo() {
         createClientWithPreviousActiveTasks(p1, 1, task00);
         createClientWithPreviousActiveTasks(p2, 1, task01);
         createClientWithPreviousActiveTasks(p3, 1, task02);
@@ -262,13 +262,13 @@ public class StickyTaskAssignorTest {
         }
 
         Assert.True(nonEmptyStandbyTaskCount >= 3);
-        Assert.Equal(allStandbyTasks(), (Array.asList(task00, task01, task02, task03)));
+        Assert.Equal(AllStandbyTasks(), (Array.asList(task00, task01, task02, task03)));
     }
 
 
 
     [Xunit.Fact]
-    public void shouldAssignMultipleReplicasOfStandbyTask() {
+    public void ShouldAssignMultipleReplicasOfStandbyTask() {
         createClientWithPreviousActiveTasks(p1, 1, task00);
         createClientWithPreviousActiveTasks(p2, 1, task01);
         createClientWithPreviousActiveTasks(p3, 1, task02);
@@ -282,32 +282,32 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAssignStandbyTaskReplicasWhenNoClientAvailableWithoutHavingTheTaskAssigned() {
-        createClient(p1, 1);
+    public void ShouldNotAssignStandbyTaskReplicasWhenNoClientAvailableWithoutHavingTheTaskAssigned() {
+        CreateClient(p1, 1);
         StickyTaskAssignor taskAssignor = createTaskAssignor(task00);
         taskAssignor.assign(1);
         Assert.Equal(clients.get(p1).standbyTasks().Count, (0));
     }
 
     [Xunit.Fact]
-    public void shouldAssignActiveAndStandbyTasks() {
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p3, 1);
+    public void ShouldAssignActiveAndStandbyTasks() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(1);
 
-        Assert.Equal(allActiveTasks(), (Array.asList(task00, task01, task02)));
-        Assert.Equal(allStandbyTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllStandbyTasks(), (Array.asList(task00, task01, task02)));
     }
 
 
     [Xunit.Fact]
-    public void shouldAssignAtLeastOneTaskToEachClientIfPossible() {
-        createClient(p1, 3);
-        createClient(p2, 1);
-        createClient(p3, 1);
+    public void ShouldAssignAtLeastOneTaskToEachClientIfPossible() {
+        CreateClient(p1, 3);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(0);
@@ -317,28 +317,28 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignEachActiveTaskToOneClientWhenMoreClientsThanTasks() {
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p3, 1);
-        createClient(p4, 1);
-        createClient(5, 1);
-        createClient(6, 1);
+    public void ShouldAssignEachActiveTaskToOneClientWhenMoreClientsThanTasks() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
+        CreateClient(p4, 1);
+        CreateClient(5, 1);
+        CreateClient(6, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(0);
 
-        Assert.Equal(allActiveTasks(), (Array.asList(task00, task01, task02)));
+        Assert.Equal(AllActiveTasks(), (Array.asList(task00, task01, task02)));
     }
 
     [Xunit.Fact]
-    public void shouldBalanceActiveAndStandbyTasksAcrossAvailableClients() {
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p3, 1);
-        createClient(p4, 1);
-        createClient(5, 1);
-        createClient(6, 1);
+    public void ShouldBalanceActiveAndStandbyTasksAcrossAvailableClients() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
+        CreateClient(p4, 1);
+        CreateClient(5, 1);
+        CreateClient(6, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02);
         taskAssignor.assign(1);
@@ -349,9 +349,9 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignMoreTasksToClientWithMoreCapacity() {
-        createClient(p2, 2);
-        createClient(p1, 1);
+    public void ShouldAssignMoreTasksToClientWithMoreCapacity() {
+        CreateClient(p2, 2);
+        CreateClient(p1, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00,
                                                                             task01,
@@ -372,11 +372,11 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldEvenlyDistributeByTaskIdAndPartition() {
-        createClient(p1, 4);
-        createClient(p2, 4);
-        createClient(p3, 4);
-        createClient(p4, 4);
+    public void ShouldEvenlyDistributeByTaskIdAndPartition() {
+        CreateClient(p1, 4);
+        CreateClient(p2, 4);
+        CreateClient(p3, 4);
+        CreateClient(p4, 4);
 
         List<TaskId> taskIds = new ArrayList<>();
         TaskId[] taskIdArray = new TaskId[16];
@@ -409,11 +409,11 @@ public class StickyTaskAssignorTest {
 
 
     [Xunit.Fact]
-    public void shouldNotHaveSameAssignmentOnAnyTwoHosts() {
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p3, 1);
-        createClient(p4, 1);
+    public void ShouldNotHaveSameAssignmentOnAnyTwoHosts() {
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p3, 1);
+        CreateClient(p4, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
         taskAssignor.assign(1);
@@ -431,11 +431,11 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousActiveTasks() {
+    public void ShouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousActiveTasks() {
         createClientWithPreviousActiveTasks(p1, 1, task01, task02);
         createClientWithPreviousActiveTasks(p2, 1, task03);
         createClientWithPreviousActiveTasks(p3, 1, task00);
-        createClient(p4, 1);
+        CreateClient(p4, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
         taskAssignor.assign(1);
@@ -453,14 +453,14 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousStandbyTasks() {
+    public void ShouldNotHaveSameAssignmentOnAnyTwoHostsWhenThereArePreviousStandbyTasks() {
         ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task01, task02);
         c1.addPreviousStandbyTasks(Utils.mkSet(task03, task00));
         ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task03, task00);
         c2.addPreviousStandbyTasks(Utils.mkSet(task01, task02));
 
-        createClient(p3, 1);
-        createClient(p4, 1);
+        CreateClient(p3, 1);
+        CreateClient(p4, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
         taskAssignor.assign(1);
@@ -478,11 +478,11 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldReBalanceTasksAcrossAllClientsWhenCapacityAndTaskCountTheSame() {
+    public void ShouldReBalanceTasksAcrossAllClientsWhenCapacityAndTaskCountTheSame() {
         createClientWithPreviousActiveTasks(p3, 1, task00, task01, task02, task03);
-        createClient(p1, 1);
-        createClient(p2, 1);
-        createClient(p4, 1);
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
+        CreateClient(p4, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
         taskAssignor.assign(0);
@@ -494,10 +494,10 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldReBalanceTasksAcrossClientsWhenCapacityLessThanTaskCount() {
+    public void ShouldReBalanceTasksAcrossClientsWhenCapacityLessThanTaskCount() {
         createClientWithPreviousActiveTasks(p3, 1, task00, task01, task02, task03);
-        createClient(p1, 1);
-        createClient(p2, 1);
+        CreateClient(p1, 1);
+        CreateClient(p2, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task01, task03);
         taskAssignor.assign(0);
@@ -508,9 +508,9 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldRebalanceTasksToClientsBasedOnCapacity() {
+    public void ShouldRebalanceTasksToClientsBasedOnCapacity() {
         createClientWithPreviousActiveTasks(p2, 1, task00, task03, task02);
-        createClient(p3, 2);
+        CreateClient(p3, 2);
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task02, task03);
         taskAssignor.assign(0);
         Assert.Equal(clients.get(p2).assignedTaskCount(), (1));
@@ -518,7 +518,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldMoveMinimalNumberOfTasksWhenPreviouslyAboveCapacityAndNewClientAdded() {
+    public void ShouldMoveMinimalNumberOfTasksWhenPreviouslyAboveCapacityAndNewClientAdded() {
         HashSet<TaskId> p1PrevTasks = Utils.mkSet(task00, task02);
         HashSet<TaskId> p2PrevTasks = Utils.mkSet(task01, task03);
 
@@ -539,7 +539,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotMoveAnyTasksWhenNewTasksAdded() {
+    public void ShouldNotMoveAnyTasksWhenNewTasksAdded() {
         createClientWithPreviousActiveTasks(p1, 1, task00, task01);
         createClientWithPreviousActiveTasks(p2, 1, task02, task03);
 
@@ -551,11 +551,11 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignNewTasksToNewClientWhenPreviousTasksAssignedToOldClients() {
+    public void ShouldAssignNewTasksToNewClientWhenPreviousTasksAssignedToOldClients() {
 
         createClientWithPreviousActiveTasks(p1, 1, task02, task01);
         createClientWithPreviousActiveTasks(p2, 1, task00, task03);
-        createClient(p3, 1);
+        CreateClient(p3, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task03, task01, task04, task02, task00, task05);
         taskAssignor.assign(0);
@@ -566,7 +566,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksNotPreviouslyActiveToNewClient() {
+    public void ShouldAssignTasksNotPreviouslyActiveToNewClient() {
         TaskId task10 = new TaskId(0, 10);
         TaskId task11 = new TaskId(0, 11);
         TaskId task12 = new TaskId(1, 2);
@@ -583,7 +583,7 @@ public class StickyTaskAssignorTest {
         ClientState c3 = createClientWithPreviousActiveTasks(p3, 1, task20, task21, task23);
         c3.addPreviousStandbyTasks(Utils.mkSet(task02, task12));
 
-        ClientState newClient = createClient(p4, 1);
+        ClientState newClient = CreateClient(p4, 1);
         newClient.addPreviousStandbyTasks(Utils.mkSet(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23));
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23);
@@ -596,7 +596,7 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksNotPreviouslyActiveToMultipleNewClients() {
+    public void ShouldAssignTasksNotPreviouslyActiveToMultipleNewClients() {
         TaskId task10 = new TaskId(0, 10);
         TaskId task11 = new TaskId(0, 11);
         TaskId task12 = new TaskId(1, 2);
@@ -611,10 +611,10 @@ public class StickyTaskAssignorTest {
         ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task00, task11, task22);
         c2.addPreviousStandbyTasks(Utils.mkSet(task01, task10, task02, task20, task03, task12, task21, task13, task23));
 
-        ClientState bounce1 = createClient(p3, 1);
+        ClientState bounce1 = CreateClient(p3, 1);
         bounce1.addPreviousStandbyTasks(Utils.mkSet(task20, task21, task23));
 
-        ClientState bounce2 = createClient(p4, 1);
+        ClientState bounce2 = CreateClient(p4, 1);
         bounce2.addPreviousStandbyTasks(Utils.mkSet(task02, task03, task10));
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task10, task01, task02, task11, task20, task03, task12, task21, task13, task22, task23);
@@ -627,18 +627,18 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksToNewClient() {
+    public void ShouldAssignTasksToNewClient() {
         createClientWithPreviousActiveTasks(p1, 1, task01, task02);
-        createClient(p2, 1);
+        CreateClient(p2, 1);
         createTaskAssignor(task01, task02).assign(0);
         Assert.Equal(clients.get(p1).activeTaskCount(), (1));
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingClients() {
+    public void ShouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingClients() {
         ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00, task01, task02);
         ClientState c2 = createClientWithPreviousActiveTasks(p2, 1, task03, task04, task05);
-        ClientState newClient = createClient(p3, 1);
+        ClientState newClient = CreateClient(p3, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02, task03, task04, task05);
         taskAssignor.assign(0);
@@ -654,12 +654,12 @@ public class StickyTaskAssignorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingAndBouncedClients() {
+    public void ShouldAssignTasksToNewClientWithoutFlippingAssignmentBetweenExistingAndBouncedClients() {
         TaskId task06 = new TaskId(0, 6);
         ClientState c1 = createClientWithPreviousActiveTasks(p1, 1, task00, task01, task02, task06);
-        ClientState c2 = createClient(p2, 1);
+        ClientState c2 = CreateClient(p2, 1);
         c2.addPreviousStandbyTasks(Utils.mkSet(task03, task04, task05));
-        ClientState newClient = createClient(p3, 1);
+        ClientState newClient = CreateClient(p3, 1);
 
         StickyTaskAssignor<int> taskAssignor = createTaskAssignor(task00, task01, task02, task03, task04, task05, task06);
         taskAssignor.assign(0);
@@ -674,14 +674,14 @@ public class StickyTaskAssignorTest {
         Assert.Equal(newClient.activeTaskCount(), (2));
     }
 
-    private StickyTaskAssignor<int> createTaskAssignor(TaskId... tasks) {
+    private StickyTaskAssignor<int> CreateTaskAssignor(TaskId... tasks) {
         List<TaskId> taskIds = Array.asList(tasks);
         Collections.shuffle(taskIds);
         return new StickyTaskAssignor<>(clients,
                                         new HashSet<>(taskIds));
     }
 
-    private List<TaskId> allActiveTasks() {
+    private List<TaskId> AllActiveTasks() {
         List<TaskId> allActive = new ArrayList<>();
         foreach (ClientState client in clients.values()) {
             allActive.addAll(client.activeTasks());
@@ -690,7 +690,7 @@ public class StickyTaskAssignorTest {
         return allActive;
     }
 
-    private List<TaskId> allStandbyTasks() {
+    private List<TaskId> AllStandbyTasks() {
         List<TaskId> tasks = new ArrayList<>();
         foreach (ClientState client in clients.values()) {
             tasks.addAll(client.standbyTasks());
@@ -699,18 +699,18 @@ public class StickyTaskAssignorTest {
         return tasks;
     }
 
-    private ClientState createClient(int processId, int capacity) {
+    private ClientState CreateClient(int processId, int capacity) {
         return createClientWithPreviousActiveTasks(processId, capacity);
     }
 
-    private ClientState createClientWithPreviousActiveTasks(int processId, int capacity, TaskId... taskIds) {
+    private ClientState CreateClientWithPreviousActiveTasks(int processId, int capacity, TaskId... taskIds) {
         ClientState clientState = new ClientState(capacity);
         clientState.addPreviousActiveTasks(Utils.mkSet(taskIds));
         clients.put(processId, clientState);
         return clientState;
     }
 
-    private void assertActiveTaskTopicGroupIdsEvenlyDistributed() {
+    private void AssertActiveTaskTopicGroupIdsEvenlyDistributed() {
         foreach (Map.Entry<int, ClientState> clientStateEntry in clients.entrySet()) {
             List<int> topicGroupIds = new ArrayList<>();
             HashSet<TaskId> activeTasks = clientStateEntry.getValue().activeTasks();
@@ -722,7 +722,7 @@ public class StickyTaskAssignorTest {
         }
     }
 
-    private Dictionary<int, HashSet<TaskId>> sortClientAssignments(Map<int, ClientState> clients) {
+    private Dictionary<int, HashSet<TaskId>> SortClientAssignments(Map<int, ClientState> clients) {
         Dictionary<int, HashSet<TaskId>> sortedAssignments = new HashMap<>();
         foreach (Map.Entry<int, ClientState> entry in clients.entrySet()) {
             HashSet<TaskId> sorted = new TreeSet<>(entry.getValue().activeTasks());
@@ -731,7 +731,7 @@ public class StickyTaskAssignorTest {
         return sortedAssignments;
     }
 
-    private HashSet<TaskId> getExpectedTaskIdAssignment(List<TaskId> tasks, int... indices) {
+    private HashSet<TaskId> GetExpectedTaskIdAssignment(List<TaskId> tasks, int... indices) {
         HashSet<TaskId> sortedAssignment = new TreeSet<>();
         foreach (int index in indices) {
             sortedAssignment.add(tasks.get(index));

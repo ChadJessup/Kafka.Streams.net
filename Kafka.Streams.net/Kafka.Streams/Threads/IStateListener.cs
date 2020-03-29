@@ -15,7 +15,7 @@ namespace Kafka.Streams.Threads
          * @param newState new state
          * @param oldState previous state
          */
-        void onChange<States>(
+        void OnChange<States>(
             IThread<States> thread, 
             States newState,
             States oldState)

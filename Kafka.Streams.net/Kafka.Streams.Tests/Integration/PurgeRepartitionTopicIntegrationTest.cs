@@ -77,7 +77,7 @@ public class PurgeRepartitionTopicIntegrationTest {
 
     private class RepartitionTopicCreatedWithExpectedConfigs : TestCondition {
         
-        public bool conditionMet() {
+        public bool ConditionMet() {
             try {
                 HashSet<string> topics = adminClient.listTopics().names().get();
 
@@ -105,7 +105,7 @@ public class PurgeRepartitionTopicIntegrationTest {
     }
 
     private interface TopicSizeVerifier {
-        bool verify(long currentSize);
+        bool Verify(long currentSize);
     }
 
     private class RepartitionTopicVerified : TestCondition {
@@ -116,7 +116,7 @@ public class PurgeRepartitionTopicIntegrationTest {
         }
 
         
-        public bool conditionMet() {
+        public bool ConditionMet() {
             time.sleep(PURGE_INTERVAL_MS);
 
             try {
@@ -126,7 +126,7 @@ public class PurgeRepartitionTopicIntegrationTest {
                 foreach (DescribeLogDirsResponse.LogDirInfo partitionInfo in logDirInfo) {
                     DescribeLogDirsResponse.ReplicaInfo replicaInfo =
                         partitionInfo.replicaInfos.get(new TopicPartition(REPARTITION_TOPIC, 0));
-                    if (replicaInfo != null && verifier.verify(replicaInfo.size)) {
+                    if (replicaInfo != null && verifier.Verify(replicaInfo.size)) {
                         return true;
                     }
                 }
@@ -139,12 +139,12 @@ public class PurgeRepartitionTopicIntegrationTest {
     }
 
     
-    public static void createTopics() {// throws Exception
+    public static void CreateTopics() {// throws Exception
         CLUSTER.createTopic(INPUT_TOPIC, 1, 1);
     }
 
     
-    public void setup() {
+    public void Setup() {
         // create admin client for verification
         Properties adminConfig = new Properties();
         adminConfig.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
@@ -170,14 +170,14 @@ public class PurgeRepartitionTopicIntegrationTest {
     }
 
     
-    public void shutdown() {
+    public void Shutdown() {
         if (kafkaStreams != null) {
             kafkaStreams.close(Duration.ofSeconds(30));
         }
     }
 
     [Xunit.Fact]
-    public void shouldRestoreState() {// throws Exception
+    public void ShouldRestoreState() {// throws Exception
         // produce some data to input topic
         List<KeyValuePair<int, int>> messages = new ArrayList<>();
         for (int i = 0; i < 1000; i++) {

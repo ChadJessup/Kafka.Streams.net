@@ -210,7 +210,7 @@ namespace Kafka.Streams.Tasks
             {
                 logger.LogTrace("Initializing store {}", store.name);
                 processorContext.uninitialize();
-                store.init(processorContext, store);
+                store.Init(processorContext, store);
             }
         }
 

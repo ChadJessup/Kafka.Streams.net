@@ -63,7 +63,7 @@ public class CompositeRestoreListenerTest {
 
 
     [Xunit.Fact]
-    public void shouldRestoreInNonBatchMode() {
+    public void ShouldRestoreInNonBatchMode() {
         setUpCompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.restoreBatch(consumerRecords);
         Assert.Equal(stateRestoreCallback.restoredKey, is(key));
@@ -71,62 +71,62 @@ public class CompositeRestoreListenerTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreInBatchMode() {
+    public void ShouldRestoreInBatchMode() {
         setUpCompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.restoreBatch(consumerRecords);
         Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), is(records));
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreStartNonBatchMode() {
+    public void ShouldNotifyRestoreStartNonBatchMode() {
         setUpCompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.onRestoreStart(topicPartition, storeName, startOffset, endOffset);
         assertStateRestoreListenerOnStartNotification(stateRestoreCallback);
-        assertStateRestoreListenerOnStartNotification(reportingStoreListener);
+        AssertStateRestoreListenerOnStartNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreStartBatchMode() {
+    public void ShouldNotifyRestoreStartBatchMode() {
         setUpCompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.onRestoreStart(topicPartition, storeName, startOffset, endOffset);
         assertStateRestoreListenerOnStartNotification(batchingStateRestoreCallback);
-        assertStateRestoreListenerOnStartNotification(reportingStoreListener);
+        AssertStateRestoreListenerOnStartNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreProgressNonBatchMode() {
+    public void ShouldNotifyRestoreProgressNonBatchMode() {
         setUpCompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.onBatchRestored(topicPartition, storeName, endOffset, numberRestored);
         assertStateRestoreListenerOnBatchCompleteNotification(stateRestoreCallback);
-        assertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
+        AssertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreProgressBatchMode() {
+    public void ShouldNotifyRestoreProgressBatchMode() {
         setUpCompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.onBatchRestored(topicPartition, storeName, endOffset, numberRestored);
         assertStateRestoreListenerOnBatchCompleteNotification(batchingStateRestoreCallback);
-        assertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
+        AssertStateRestoreListenerOnBatchCompleteNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreEndInNonBatchMode() {
+    public void ShouldNotifyRestoreEndInNonBatchMode() {
         setUpCompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.onRestoreEnd(topicPartition, storeName, numberRestored);
         assertStateRestoreOnEndNotification(stateRestoreCallback);
-        assertStateRestoreOnEndNotification(reportingStoreListener);
+        AssertStateRestoreOnEndNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldNotifyRestoreEndInBatchMode() {
+    public void ShouldNotifyRestoreEndInBatchMode() {
         setUpCompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.onRestoreEnd(topicPartition, storeName, numberRestored);
         assertStateRestoreOnEndNotification(batchingStateRestoreCallback);
-        assertStateRestoreOnEndNotification(reportingStoreListener);
+        AssertStateRestoreOnEndNotification(reportingStoreListener);
     }
 
     [Xunit.Fact]
-    public void shouldHandleNullReportStoreListener() {
+    public void ShouldHandleNullReportStoreListener() {
         compositeRestoreListener = new CompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.setUserRestoreListener(null);
 
@@ -140,7 +140,7 @@ public class CompositeRestoreListenerTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleNoRestoreListener() {
+    public void ShouldHandleNoRestoreListener() {
         compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);
         compositeRestoreListener.setUserRestoreListener(null);
 
@@ -153,39 +153,39 @@ public class CompositeRestoreListenerTest {
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldThrowExceptionWhenSinglePutDirectlyCalled() {
+    public void ShouldThrowExceptionWhenSinglePutDirectlyCalled() {
         compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);
         compositeRestoreListener.restore(key, value);
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldThrowExceptionWhenRestoreAllDirectlyCalled() {
+    public void ShouldThrowExceptionWhenRestoreAllDirectlyCalled() {
         compositeRestoreListener = new CompositeRestoreListener(noListenBatchingStateRestoreCallback);
         compositeRestoreListener.restoreAll(Collections.emptyList());
     }
 
-    private void assertStateRestoreListenerOnStartNotification(MockStateRestoreListener restoreListener) {
+    private void AssertStateRestoreListenerOnStartNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_START));
         Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
         Assert.Equal(restoreListener.restoreStartOffset, is(startOffset));
         Assert.Equal(restoreListener.restoreEndOffset, is(endOffset));
     }
 
-    private void assertStateRestoreListenerOnBatchCompleteNotification(MockStateRestoreListener restoreListener) {
+    private void AssertStateRestoreListenerOnBatchCompleteNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_BATCH));
         Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
         Assert.Equal(restoreListener.restoredBatchOffset, is(batchOffset));
         Assert.Equal(restoreListener.numBatchRestored, is(numberRestored));
     }
 
-    private void assertStateRestoreOnEndNotification(MockStateRestoreListener restoreListener) {
+    private void AssertStateRestoreOnEndNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_END));
         Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
         Assert.Equal(restoreListener.totalNumRestored, is(numberRestored));
     }
 
 
-    private void setUpCompositeRestoreListener(StateRestoreCallback stateRestoreCallback) {
+    private void SetUpCompositeRestoreListener(StateRestoreCallback stateRestoreCallback) {
         compositeRestoreListener = new CompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.setUserRestoreListener(reportingStoreListener);
     }
@@ -197,7 +197,7 @@ public class CompositeRestoreListenerTest {
         byte[] restoredValue;
 
         
-        public void restore(byte[] key, byte[] value) {
+        public void Restore(byte[] key, byte[] value) {
             restoredKey = key;
             restoredValue = value;
         }
@@ -208,12 +208,12 @@ public class CompositeRestoreListenerTest {
         Collection<KeyValuePair<byte[], byte[]>> restoredRecords;
 
         
-        public void restoreAll(Collection<KeyValuePair<byte[], byte[]>> records) {
+        public void RestoreAll(Collection<KeyValuePair<byte[], byte[]>> records) {
             restoredRecords = records;
         }
 
         
-        public void restore(byte[] key, byte[] value) {
+        public void Restore(byte[] key, byte[] value) {
             throw new IllegalStateException("Should not be called");
 
         }

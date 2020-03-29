@@ -139,7 +139,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param advanceMs the amount of time to advance
          */
 
-        public void advanceTimeMs(long advanceMs)
+        public void AdvanceTimeMs(long advanceMs)
         {
             if (advanceMs < 0)
             {
@@ -161,7 +161,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      K key,
                                                      V value,
                                                      Headers headers,
@@ -198,12 +198,12 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      K Key,
                                                      V value,
                                                      long timestampMs)
         {
-            return create(topicName, Key, value, new Headers(), timestampMs);
+            return Create(topicName, Key, value, new Headers(), timestampMs);
         }
 
         /**
@@ -216,11 +216,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(K Key,
+        public ConsumeResult<byte[], byte[]> Create(K Key,
                                                      V value,
                                                      long timestampMs)
         {
-            return create(Key, value, new Headers(), timestampMs);
+            return Create(Key, value, new Headers(), timestampMs);
         }
 
         /**
@@ -234,7 +234,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(K Key,
+        public ConsumeResult<byte[], byte[]> Create(K Key,
                                                      V value,
                                                      Headers headers,
                                                      long timestampMs)
@@ -245,7 +245,7 @@ namespace Kafka.Streams.Tests.Helpers
                     "Use #create(string topicName, K Key, V value, long timestampMs) instead.");
             }
 
-            return create(topicName, Key, value, headers, timestampMs);
+            return Create(topicName, Key, value, headers, timestampMs);
         }
 
         /**
@@ -258,13 +258,13 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      K Key,
                                                      V value)
         {
             var timestamp = timeMs;
             timeMs += advanceMs;
-            return create(topicName, Key, value, new Headers(), timestamp);
+            return Create(topicName, Key, value, new Headers(), timestamp);
         }
 
         /**
@@ -278,14 +278,14 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      K Key,
                                                      V value,
                                                      Headers headers)
         {
             var timestamp = timeMs;
             timeMs += advanceMs;
-            return create(topicName, Key, value, headers, timestamp);
+            return Create(topicName, Key, value, headers, timestamp);
         }
 
         /**
@@ -297,10 +297,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(K Key,
+        public ConsumeResult<byte[], byte[]> Create(K Key,
                                                      V value)
         {
-            return create(Key, value, new Headers());
+            return Create(Key, value, new Headers());
         }
 
         /**
@@ -313,7 +313,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(K Key,
+        public ConsumeResult<byte[], byte[]> Create(K Key,
                                                      V value,
                                                      Headers headers)
         {
@@ -323,7 +323,7 @@ namespace Kafka.Streams.Tests.Helpers
                     "Use #create(string topicName, K Key, V value) instead.");
             }
 
-            return create(topicName, Key, value, headers);
+            return Create(topicName, Key, value, headers);
         }
 
         /**
@@ -336,11 +336,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      V value,
                                                      long timestampMs)
         {
-            return create(topicName, default, value, new Headers(), timestampMs);
+            return Create(topicName, default, value, new Headers(), timestampMs);
         }
 
         /**
@@ -354,12 +354,12 @@ namespace Kafka.Streams.Tests.Helpers
          * @return the generated {@link ConsumeResult}
          */
 
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      V value,
                                                      Headers headers,
                                                      long timestampMs)
         {
-            return create(topicName, default, value, headers, timestampMs);
+            return Create(topicName, default, value, headers, timestampMs);
         }
 
         /**
@@ -370,10 +370,10 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(V value,
+        public ConsumeResult<byte[], byte[]> Create(V value,
                                                      long timestampMs)
         {
-            return create(value, new Headers(), timestampMs);
+            return Create(value, new Headers(), timestampMs);
         }
 
         /**
@@ -385,7 +385,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param timestampMs the record timestamp
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(V value,
+        public ConsumeResult<byte[], byte[]> Create(V value,
                                                      Headers headers,
                                                      long timestampMs)
         {
@@ -394,7 +394,7 @@ namespace Kafka.Streams.Tests.Helpers
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #create(string topicName, V value, long timestampMs) instead.");
             }
-            return create(topicName, value, headers, timestampMs);
+            return Create(topicName, value, headers, timestampMs);
         }
 
         /**
@@ -406,11 +406,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @param headers the record headers
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(string topicName,
+        public ConsumeResult<byte[], byte[]> Create(string topicName,
                                                      V value,
                                                      Headers headers)
         {
-            return create(topicName, default, value, headers);
+            return Create(topicName, default, value, headers);
         }
 
         /**
@@ -421,9 +421,9 @@ namespace Kafka.Streams.Tests.Helpers
          * @param value the record value
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(string topicName, V value)
+        public ConsumeResult<byte[], byte[]> Create(string topicName, V value)
         {
-            return create(topicName, default, value, new Headers());
+            return Create(topicName, default, value, new Headers());
         }
 
         /**
@@ -433,9 +433,9 @@ namespace Kafka.Streams.Tests.Helpers
          * @param value the record value
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(V value)
+        public ConsumeResult<byte[], byte[]> Create(V value)
         {
-            return create(value, new Headers());
+            return Create(value, new Headers());
         }
 
         /**
@@ -446,7 +446,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param headers the record headers
          * @return the generated {@link ConsumeResult}
          */
-        public ConsumeResult<byte[], byte[]> create(V value,
+        public ConsumeResult<byte[], byte[]> Create(V value,
                                                      Headers headers)
         {
             if (topicName == null)
@@ -454,7 +454,7 @@ namespace Kafka.Streams.Tests.Helpers
                 throw new Exception("ConsumerRecordFactory was created without defaultTopicName. " +
                     "Use #create(string topicName, V value, long timestampMs) instead.");
             }
-            return create(topicName, value, headers);
+            return Create(topicName, value, headers);
         }
 
         /**
@@ -465,14 +465,14 @@ namespace Kafka.Streams.Tests.Helpers
          * @param keyValues the record keys and values
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(string topicName,
+        public List<ConsumeResult<byte[], byte[]>> Create(string topicName,
                                                            List<KeyValuePair<K, V>> keyValues)
         {
             var records = new List<ConsumeResult<byte[], byte[]>>(keyValues.Count);
 
             foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
-                records.Add(create(topicName, keyValue.Key, keyValue.Value));
+                records.Add(Create(topicName, keyValue.Key, keyValue.Value));
             }
 
             return records;
@@ -485,7 +485,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param keyValues the record keys and values
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues)
+        public List<ConsumeResult<byte[], byte[]>> Create(List<KeyValuePair<K, V>> keyValues)
         {
             if (topicName == null)
             {
@@ -493,7 +493,7 @@ namespace Kafka.Streams.Tests.Helpers
                     "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues) instead.");
             }
 
-            return create(topicName, keyValues);
+            return Create(topicName, keyValues);
         }
 
         /**
@@ -506,7 +506,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param advanceMs the time difference between two consecutive generated records
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(string topicName,
+        public List<ConsumeResult<byte[], byte[]>> Create(string topicName,
                                                            List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp,
                                                            long advanceMs)
@@ -521,7 +521,7 @@ namespace Kafka.Streams.Tests.Helpers
             var timestamp = startTimestamp;
             foreach (KeyValuePair<K, V> keyValue in keyValues)
             {
-                records.Add(create(topicName, keyValue.Key, keyValue.Value, new Headers(), timestamp));
+                records.Add(Create(topicName, keyValue.Key, keyValue.Value, new Headers(), timestamp));
                 timestamp += advanceMs;
             }
 
@@ -537,7 +537,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param advanceMs the time difference between two consecutive generated records
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues,
+        public List<ConsumeResult<byte[], byte[]>> Create(List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp,
                                                            long advanceMs)
         {
@@ -547,7 +547,7 @@ namespace Kafka.Streams.Tests.Helpers
                     "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp, long advanceMs) instead.");
             }
 
-            return create(topicName, keyValues, startTimestamp, advanceMs);
+            return Create(topicName, keyValues, startTimestamp, advanceMs);
         }
 
         /**
@@ -560,11 +560,11 @@ namespace Kafka.Streams.Tests.Helpers
          * @param startTimestamp the timestamp for the first generated record
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(string topicName,
+        public List<ConsumeResult<byte[], byte[]>> Create(string topicName,
                                                            List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
-            return create(topicName, keyValues, startTimestamp, 1);
+            return Create(topicName, keyValues, startTimestamp, 1);
         }
 
         /**
@@ -576,7 +576,7 @@ namespace Kafka.Streams.Tests.Helpers
          * @param startTimestamp the timestamp for the first generated record
          * @return the generated {@link ConsumeResult consumer records}
          */
-        public List<ConsumeResult<byte[], byte[]>> create(List<KeyValuePair<K, V>> keyValues,
+        public List<ConsumeResult<byte[], byte[]>> Create(List<KeyValuePair<K, V>> keyValues,
                                                            long startTimestamp)
         {
             if (topicName == null)
@@ -585,7 +585,7 @@ namespace Kafka.Streams.Tests.Helpers
                     "Use #create(string topicName, List<KeyValuePair<K, V>> keyValues, long startTimestamp) instead.");
             }
 
-            return create(topicName, keyValues, startTimestamp, 1);
+            return Create(topicName, keyValues, startTimestamp, 1);
         }
     }
 }

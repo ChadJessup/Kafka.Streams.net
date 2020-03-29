@@ -88,7 +88,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
     private ColumnFamilyOptions columnFamilyOptions;
 
     [Xunit.Fact]
-    public void shouldOverwriteAllOptionsMethods() {// throws Exception
+    public void ShouldOverwriteAllOptionsMethods() {// throws Exception
         foreach (Method method in Options.getMethods()) {
             if (!ignoreMethods.Contains(method.getName())) {
                 RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter
@@ -98,7 +98,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardAllDbOptionsCalls() {// throws Exception
+    public void ShouldForwardAllDbOptionsCalls() {// throws Exception
         foreach (Method method in Options.getMethods()) {
             if (!ignoreMethods.Contains(method.getName())) {
                 try {
@@ -109,7 +109,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         }
     }
 
-    private void verifyDBOptionsMethodCall(Method method) {// throws Exception
+    private void VerifyDBOptionsMethodCall(Method method) {// throws Exception
         RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeDbOptions
             = new RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(dbOptions, new ColumnFamilyOptions());
 
@@ -128,7 +128,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         }
     }
 
-    private object[] getDBOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
+    private object[] GetDBOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
         object[] parameters = new object[parameterTypes.Length];
 
         for (int i = 0; i < parameterTypes.Length; ++i) {
@@ -184,7 +184,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardAllColumnFamilyCalls() {// throws Exception
+    public void ShouldForwardAllColumnFamilyCalls() {// throws Exception
         foreach (Method method in Options.getMethods()) {
             if (!ignoreMethods.Contains(method.getName())) {
                 try {
@@ -195,7 +195,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         }
     }
 
-    private void verifyColumnFamilyOptionsMethodCall(Method method) {// throws Exception
+    private void VerifyColumnFamilyOptionsMethodCall(Method method) {// throws Exception
         RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter optionsFacadeColumnFamilyOptions
             = new RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapter(new DBOptions(), columnFamilyOptions);
 
@@ -214,7 +214,7 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         }
     }
 
-    private object[] getColumnFamilyOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
+    private object[] GetColumnFamilyOptionsParameters(Class<?>[] parameterTypes) {// throws Exception
         object[] parameters = new object[parameterTypes.Length];
 
         for (int i = 0; i < parameterTypes.Length; ++i) {

@@ -39,7 +39,7 @@ public class InMemorySessionStoreTest : SessionBytesStoreTest {
     private static string STORE_NAME = "in-memory session store";
 
     
-    SessionStore<K, V> buildSessionStore<K, V>(long retentionPeriod,
+    SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,
                                                  Serde<K> keySerde,
                                                  Serde<V> valueSerde) {
         return Stores.sessionStoreBuilder(
@@ -51,17 +51,17 @@ public class InMemorySessionStoreTest : SessionBytesStoreTest {
     }
 
     
-    string getMetricsScope() {
+    string GetMetricsScope() {
         return new InMemorySessionBytesStoreSupplier(null, 0).metricsScope();
     }
 
     
-    void setClassLoggerToDebug() {
+    void SetClassLoggerToDebug() {
         LogCaptureAppender.setClassLoggerToDebug(InMemorySessionStore);
     }
 
     [Xunit.Fact]
-    public void shouldRemoveExpired() {
+    public void ShouldRemoveExpired() {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 10)), 2L);
         sessionStore.put(new Windowed<>("a", new SessionWindow(10, 20)), 3L);
@@ -77,7 +77,7 @@ public class InMemorySessionStoreTest : SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotExpireFromOpenIterator() {
+    public void ShouldNotExpireFromOpenIterator() {
 
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 10)), 2L);

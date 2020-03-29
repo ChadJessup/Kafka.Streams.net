@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tests
         public object? OldState { get; private set; } = null;
         public object? NewState { get; private set; } = null;
         public ConcurrentDictionary<object, long> mapStates = new ConcurrentDictionary<object, long>();
-        public void onChange<States>(
+        public void OnChange<States>(
             IThread<States> thread,
             States newState,
             States oldState)

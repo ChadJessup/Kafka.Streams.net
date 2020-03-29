@@ -12,29 +12,29 @@ namespace Kafka.Streams.Tests.Internal
         private List<TopicPartition> registered = new List<TopicPartition>();
         public Dictionary<TopicPartition, long> RestoredOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
 
-        public void register(StateRestorer restorer)
+        public void Register(StateRestorer restorer)
         {
             registered.Add(restorer.partition);
         }
 
 
-        public List<TopicPartition> restore(IRestoringTasks active)
+        public List<TopicPartition> Restore(IRestoringTasks active)
         {
             return registered;
         }
 
-        void setRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
+        void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
         {
             this.RestoredOffsets = restoredOffsets;
         }
 
 
-        public void reset()
+        public void Reset()
         {
             registered.Clear();
         }
 
-        public bool wasRegistered(TopicPartition partition)
+        public bool WasRegistered(TopicPartition partition)
         {
             return registered.Contains(partition);
         }

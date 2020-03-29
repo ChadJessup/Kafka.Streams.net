@@ -124,7 +124,7 @@ public class QueryableStateIntegrationTest {
     private Comparator<KeyValuePair<string, long>> stringLongComparator;
     private static volatile AtomicInteger testNo = new AtomicInteger(0);
 
-    private void createTopics() {// throws Exception
+    private void CreateTopics() {// throws Exception
         streamOne = streamOne + "-" + testNo;
         streamConcurrent = streamConcurrent + "-" + testNo;
         streamThree = streamThree + "-" + testNo;
@@ -144,7 +144,7 @@ public class QueryableStateIntegrationTest {
      * for larger scale testing. In case of exception, for instance if no such file can be read, return a small list
      * which satisfies all the prerequisites of the tests.
      */
-    private List<string> getInputValues() {
+    private List<string> GetInputValues() {
         List<string> input = new ArrayList<>();
         ClassLoader classLoader = getClass().getClassLoader();
         string fileName = "QueryableStateIntegrationTest" + File.separator + "inputValues.txt";
@@ -176,8 +176,8 @@ public class QueryableStateIntegrationTest {
     }
 
     
-    public void before() {// throws Exception
-        createTopics();
+    public void Before() {// throws Exception
+        CreateTopics();
         streamsConfiguration = new Properties();
         string applicationId = "queryable-state-" + testNo.incrementAndGet();
 
@@ -191,7 +191,7 @@ public class QueryableStateIntegrationTest {
 
         stringComparator = Comparator.comparing((KeyValuePair<string, string> o) => o.key).thenComparing(o => o.value);
         stringLongComparator = Comparator.comparing((KeyValuePair<string, long> o) => o.key).thenComparingLong(o => o.value);
-        inputValues = getInputValues();
+        inputValues = GetInputValues();
         inputValuesKeys = new HashSet<>();
         foreach (string sentence in inputValues) {
             string[] words = sentence.split("\\W+");
@@ -201,7 +201,7 @@ public class QueryableStateIntegrationTest {
     }
 
     
-    public void shutdown() {// throws Exception
+    public void Shutdown() {// throws Exception
         if (kafkaStreams != null) {
             kafkaStreams.close(ofSeconds(30));
         }
@@ -211,7 +211,7 @@ public class QueryableStateIntegrationTest {
     /**
      * Creates a typical word count topology
      */
-    private KafkaStreams createCountStream(string inputTopic,
+    private KafkaStreams CreateCountStream(string inputTopic,
                                            string outputTopic,
                                            string windowOutputTopic,
                                            string storeName,
@@ -254,36 +254,36 @@ public class QueryableStateIntegrationTest {
                        int queryPort) {
             Properties props = (Properties) streamsConfiguration.clone();
             props.put(StreamsConfig.APPLICATION_SERVER_CONFIG, "localhost:" + queryPort);
-            myStream = createCountStream(inputTopic, outputTopic, outputTopicWindowed, storeName, windowStoreName, props);
+            myStream = CreateCountStream(inputTopic, outputTopic, outputTopicWindowed, storeName, windowStoreName, props);
             myStream.setStateListener(stateListener);
         }
 
         
-        public void run() {
+        public void Run() {
             myStream.start();
         }
 
-        public void close() {
+        public void Close() {
             if (!closed) {
                 myStream.close();
                 closed = true;
             }
         }
 
-        public bool isClosed() {
+        public bool IsClosed() {
             return closed;
         }
 
-        public KafkaStreams getStream() {
+        public KafkaStreams GetStream() {
             return myStream;
         }
 
-        KafkaStreamsTest.StateListenerStub getStateListener() {
+        KafkaStreamsTest.StateListenerStub GetStateListener() {
             return stateListener;
         }
     }
 
-    private void verifyAllKVKeys(StreamRunnable[] streamRunnables,
+    private void VerifyAllKVKeys(StreamRunnable[] streamRunnables,
                                  KafkaStreams streams,
                                  KafkaStreamsTest.StateListenerStub stateListenerStub,
                                  HashSet<string> keys,
@@ -298,7 +298,7 @@ public class QueryableStateIntegrationTest {
                             return false;
                         }
                         int index = metadata.hostInfo().port();
-                        KafkaStreams streamsWithKey = streamRunnables[index].getStream();
+                        KafkaStreams streamsWithKey = streamRunnables[index].GetStream();
                         ReadOnlyKeyValueStore<string, long> store =
                             streamsWithKey.store(storeName, QueryableStoreTypes.keyValueStore());
 
@@ -317,7 +317,7 @@ public class QueryableStateIntegrationTest {
         }
     }
 
-    private void verifyAllWindowedKeys(StreamRunnable[] streamRunnables,
+    private void VerifyAllWindowedKeys(StreamRunnable[] streamRunnables,
                                        KafkaStreams streams,
                                        KafkaStreamsTest.StateListenerStub stateListenerStub,
                                        HashSet<string> keys,
@@ -333,7 +333,7 @@ public class QueryableStateIntegrationTest {
                             return false;
                         }
                         int index = metadata.hostInfo().port();
-                        KafkaStreams streamsWithKey = streamRunnables[index].getStream();
+                        KafkaStreams streamsWithKey = streamRunnables[index].GetStream();
                         ReadOnlyWindowStore<string, long> store =
                             streamsWithKey.store(storeName, QueryableStoreTypes.windowStore());
                         return store != null && store.fetch(key, ofEpochMilli(from), ofEpochMilli(to)) != null;
@@ -352,13 +352,13 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void queryOnRebalance() {// throws Exception
+    public void QueryOnRebalance() {// throws Exception
         int numThreads = STREAM_TWO_PARTITIONS;
         StreamRunnable[] streamRunnables = new StreamRunnable[numThreads];
         Thread[] streamThreads = new Thread[numThreads];
 
         ProducerRunnable producerRunnable = new ProducerRunnable(streamThree, inputValues, 1);
-        producerRunnable.run();
+        producerRunnable.Run();
 
         // create stream threads
         string storeName = "word-count-store";
@@ -376,53 +376,53 @@ public class QueryableStateIntegrationTest {
         }
 
         try {
-            waitUntilAtLeastNumRecordProcessed(outputTopicThree, 1);
+            WaitUntilAtLeastNumRecordProcessed(outputTopicThree, 1);
 
             for (int i = 0; i < numThreads; i++) {
-                verifyAllKVKeys(
+                VerifyAllKVKeys(
                     streamRunnables,
-                    streamRunnables[i].getStream(),
-                    streamRunnables[i].getStateListener(),
+                    streamRunnables[i].GetStream(),
+                    streamRunnables[i].GetStateListener(),
                     inputValuesKeys,
                     storeName + "-" + streamThree);
-                verifyAllWindowedKeys(
+                VerifyAllWindowedKeys(
                     streamRunnables,
-                    streamRunnables[i].getStream(),
-                    streamRunnables[i].getStateListener(),
+                    streamRunnables[i].GetStream(),
+                    streamRunnables[i].GetStateListener(),
                     inputValuesKeys,
                     windowStoreName + "-" + streamThree,
                     0L,
                     WINDOW_SIZE);
-                Assert.Equal(KafkaStreams.State.RUNNING, streamRunnables[i].getStream().state());
+                Assert.Equal(KafkaStreams.State.RUNNING, streamRunnables[i].GetStream().state());
             }
 
             // kill N-1 threads
             for (int i = 1; i < numThreads; i++) {
-                streamRunnables[i].close();
+                streamRunnables[i].Close();
                 streamThreads[i].interrupt();
                 streamThreads[i].join();
             }
 
             // query from the remaining thread
-            verifyAllKVKeys(
+            VerifyAllKVKeys(
                 streamRunnables,
-                streamRunnables[0].getStream(),
-                streamRunnables[0].getStateListener(),
+                streamRunnables[0].GetStream(),
+                streamRunnables[0].GetStateListener(),
                 inputValuesKeys,
                 storeName + "-" + streamThree);
-            verifyAllWindowedKeys(
+            VerifyAllWindowedKeys(
                 streamRunnables,
-                streamRunnables[0].getStream(),
-                streamRunnables[0].getStateListener(),
+                streamRunnables[0].GetStream(),
+                streamRunnables[0].GetStateListener(),
                 inputValuesKeys,
                 windowStoreName + "-" + streamThree,
                 0L,
                 WINDOW_SIZE);
-            Assert.Equal(KafkaStreams.State.RUNNING, streamRunnables[0].getStream().state());
+            Assert.Equal(KafkaStreams.State.RUNNING, streamRunnables[0].GetStream().state());
         } finally {
             for (int i = 0; i < numThreads; i++) {
-                if (!streamRunnables[i].isClosed()) {
-                    streamRunnables[i].close();
+                if (!streamRunnables[i].IsClosed()) {
+                    streamRunnables[i].Close();
                     streamThreads[i].interrupt();
                     streamThreads[i].join();
                 }
@@ -431,14 +431,14 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void concurrentAccesses() {// throws Exception
+    public void ConcurrentAccesses() {// throws Exception
         int numIterations = 500000;
         string storeName = "word-count-store";
         string windowStoreName = "windowed-word-count-store";
 
         ProducerRunnable producerRunnable = new ProducerRunnable(streamConcurrent, inputValues, numIterations);
         Thread producerThread = new Thread(producerRunnable);
-        kafkaStreams = createCountStream(
+        kafkaStreams = CreateCountStream(
             streamConcurrent,
             outputTopicConcurrent,
             outputTopicConcurrentWindowed,
@@ -450,8 +450,8 @@ public class QueryableStateIntegrationTest {
         producerThread.start();
 
         try {
-            waitUntilAtLeastNumRecordProcessed(outputTopicConcurrent, numberOfWordsPerIteration);
-            waitUntilAtLeastNumRecordProcessed(outputTopicConcurrentWindowed, numberOfWordsPerIteration);
+            WaitUntilAtLeastNumRecordProcessed(outputTopicConcurrent, numberOfWordsPerIteration);
+            WaitUntilAtLeastNumRecordProcessed(outputTopicConcurrentWindowed, numberOfWordsPerIteration);
 
             ReadOnlyKeyValueStore<string, long> keyValueStore =
                 kafkaStreams.store(storeName + "-" + streamConcurrent, QueryableStoreTypes.keyValueStore());
@@ -461,7 +461,7 @@ public class QueryableStateIntegrationTest {
 
             Dictionary<string, long> expectedWindowState = new HashMap<>();
             Dictionary<string, long> expectedCount = new HashMap<>();
-            while (producerRunnable.getCurrIteration() < numIterations) {
+            while (producerRunnable.GetCurrIteration() < numIterations) {
                 verifyGreaterOrEqual(inputValuesKeys.toArray(new string[0]), expectedWindowState,
                     expectedCount, windowStore, keyValueStore, true);
             }
@@ -473,17 +473,17 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToQueryStateWithZeroSizedCache() {// throws Exception
-        verifyCanQueryState(0);
+    public void ShouldBeAbleToQueryStateWithZeroSizedCache() {// throws Exception
+        VerifyCanQueryState(0);
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToQueryStateWithNonZeroSizedCache() {// throws Exception
-        verifyCanQueryState(10 * 1024 * 1024);
+    public void ShouldBeAbleToQueryStateWithNonZeroSizedCache() {// throws Exception
+        VerifyCanQueryState(10 * 1024 * 1024);
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToQueryFilterState() {// throws Exception
+    public void ShouldBeAbleToQueryFilterState() {// throws Exception
         streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Long().getClass());
         StreamsBuilder builder = new StreamsBuilder();
@@ -517,7 +517,7 @@ public class QueryableStateIntegrationTest {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
 
-        waitUntilAtLeastNumRecordProcessed(outputTopic, 1);
+        WaitUntilAtLeastNumRecordProcessed(outputTopic, 1);
 
         ReadOnlyKeyValueStore<string, long>
             myFilterStore = kafkaStreams.store("queryFilter", QueryableStoreTypes.keyValueStore());
@@ -548,7 +548,7 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToQueryMapValuesState() {// throws Exception
+    public void ShouldBeAbleToQueryMapValuesState() {// throws Exception
         streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         StreamsBuilder builder = new StreamsBuilder();
@@ -583,7 +583,7 @@ public class QueryableStateIntegrationTest {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
 
-        waitUntilAtLeastNumRecordProcessed(outputTopic, 5);
+        WaitUntilAtLeastNumRecordProcessed(outputTopic, 5);
 
         ReadOnlyKeyValueStore<string, long> myMapStore =
             kafkaStreams.store("queryMapValues", QueryableStoreTypes.keyValueStore());
@@ -593,7 +593,7 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToQueryMapValuesAfterFilterState() {// throws Exception
+    public void ShouldBeAbleToQueryMapValuesAfterFilterState() {// throws Exception
         streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
         StreamsBuilder builder = new StreamsBuilder();
@@ -631,7 +631,7 @@ public class QueryableStateIntegrationTest {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
 
-        waitUntilAtLeastNumRecordProcessed(outputTopic, 1);
+        WaitUntilAtLeastNumRecordProcessed(outputTopic, 1);
 
         ReadOnlyKeyValueStore<string, long>
             myMapStore = kafkaStreams.store("queryMapValues",
@@ -648,7 +648,7 @@ public class QueryableStateIntegrationTest {
         }
     }
 
-    private void verifyCanQueryState(int cacheSizeBytes) {// throws Exception
+    private void VerifyCanQueryState(int cacheSizeBytes) {// throws Exception
         streamsConfiguration.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, cacheSizeBytes);
         StreamsBuilder builder = new StreamsBuilder();
         string[] keys = {"hello", "goodbye", "welcome", "go", "kafka"};
@@ -692,24 +692,24 @@ public class QueryableStateIntegrationTest {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
 
-        waitUntilAtLeastNumRecordProcessed(outputTopic, 1);
+        WaitUntilAtLeastNumRecordProcessed(outputTopic, 1);
 
         ReadOnlyKeyValueStore<string, long>
             myCount = kafkaStreams.store(storeName, QueryableStoreTypes.keyValueStore());
 
         ReadOnlyWindowStore<string, long> windowStore =
             kafkaStreams.store(windowStoreName, QueryableStoreTypes.windowStore());
-        verifyCanGetByKey(keys,
+        VerifyCanGetByKey(keys,
             expectedCount,
             expectedCount,
             windowStore,
             myCount);
 
-        verifyRangeAndAll(expectedCount, myCount);
+        VerifyRangeAndAll(expectedCount, myCount);
     }
 
     [Xunit.Fact]
-    public void shouldNotMakeStoreAvailableUntilAllStoresAvailable() {// throws Exception
+    public void ShouldNotMakeStoreAvailableUntilAllStoresAvailable() {// throws Exception
         StreamsBuilder builder = new StreamsBuilder();
         KStream<string, string> stream = builder.stream(streamThree);
 
@@ -776,7 +776,7 @@ public class QueryableStateIntegrationTest {
         }
 
         
-        public bool conditionMet() {
+        public bool ConditionMet() {
             try {
                 kafkaStreams.store(storeName, QueryableStoreTypes.<string, long>keyValueStore());
                 return true;
@@ -787,7 +787,7 @@ public class QueryableStateIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldAllowToQueryAfterThreadDied() {// throws Exception
+    public void ShouldAllowToQueryAfterThreadDied() {// throws Exception
         AtomicBoolean beforeFailure = new AtomicBoolean(true);
         AtomicBoolean failed = new AtomicBoolean(false);
         string storeName = "store";
@@ -879,7 +879,7 @@ public class QueryableStateIntegrationTest {
         }
     }
 
-    private void verifyRangeAndAll(HashSet<KeyValuePair<string, long>> expectedCount,
+    private void VerifyRangeAndAll(HashSet<KeyValuePair<string, long>> expectedCount,
                                    ReadOnlyKeyValueStore<string, long> myCount) {
         HashSet<KeyValuePair<string, long>> countRangeResults = new TreeSet<>(stringLongComparator);
         HashSet<KeyValuePair<string, long>> countAllResults = new TreeSet<>(stringLongComparator);
@@ -910,7 +910,7 @@ public class QueryableStateIntegrationTest {
         Assert.Equal(countAllResults, (expectedCount));
     }
 
-    private void verifyCanGetByKey(string[] keys,
+    private void VerifyCanGetByKey(string[] keys,
                                    HashSet<KeyValuePair<string, long>> expectedWindowState,
                                    HashSet<KeyValuePair<string, long>> expectedCount,
                                    ReadOnlyWindowStore<string, long> windowStore,
@@ -924,7 +924,7 @@ public class QueryableStateIntegrationTest {
             System.currentTimeMillis() < timeout) {
             Thread.sleep(10);
             foreach (string key in keys) {
-                windowState.addAll(fetch(windowStore, key));
+                windowState.addAll(Fetch(windowStore, key));
                 long value = myCount.get(key);
                 if (value != null) {
                     countState.add(new KeyValuePair<>(key, value));
@@ -948,7 +948,7 @@ public class QueryableStateIntegrationTest {
      *                              the method merely inserts the new found key into the list of
      *                              expected keys.
      */
-    private void verifyGreaterOrEqual(string[] keys,
+    private void VerifyGreaterOrEqual(string[] keys,
                                       Dictionary<string, long> expectedWindowedCount,
                                       Dictionary<string, long> expectedCount,
                                       ReadOnlyWindowStore<string, long> windowStore,
@@ -958,7 +958,7 @@ public class QueryableStateIntegrationTest {
         Dictionary<string, long> countState = new HashMap<>();
 
         foreach (string key in keys) {
-            Dictionary<string, long> map = fetchMap(windowStore, key);
+            Dictionary<string, long> map = FetchMap(windowStore, key);
             if (map.equals(Collections.<string, long>emptyMap()) && failIfKeyNotFound) {
                 Assert.True(false, "Key in windowed-store not found " + key);
             }
@@ -991,7 +991,7 @@ public class QueryableStateIntegrationTest {
 
     }
 
-    private void waitUntilAtLeastNumRecordProcessed(string topic,
+    private void WaitUntilAtLeastNumRecordProcessed(string topic,
                                                     int numRecs) {// throws Exception
         Properties config = new Properties();
         config.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
@@ -1006,7 +1006,7 @@ public class QueryableStateIntegrationTest {
             120 * 1000);
     }
 
-    private HashSet<KeyValuePair<string, long>> fetch(ReadOnlyWindowStore<string, long> store,
+    private HashSet<KeyValuePair<string, long>> Fetch(ReadOnlyWindowStore<string, long> store,
                                               string key) {
         WindowStoreIterator<long> fetch =
             store.fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
@@ -1017,7 +1017,7 @@ public class QueryableStateIntegrationTest {
         return Collections.emptySet();
     }
 
-    private Dictionary<string, long> fetchMap(ReadOnlyWindowStore<string, long> store,
+    private Dictionary<string, long> FetchMap(ReadOnlyWindowStore<string, long> store,
                                        string key) {
         WindowStoreIterator<long> fetch =
             store.fetch(key, ofEpochMilli(0), ofEpochMilli(System.currentTimeMillis()));
@@ -1046,20 +1046,20 @@ public class QueryableStateIntegrationTest {
             this.numIterations = numIterations;
         }
 
-        private synchronized void incrementIteration() {
+        private synchronized void IncrementIteration() {
             currIteration++;
         }
 
-        synchronized int getCurrIteration() {
+        synchronized int GetCurrIteration() {
             return currIteration;
         }
 
-        synchronized void shutdown() {
+        synchronized void Shutdown() {
             shutdown = true;
         }
 
         
-        public void run() {
+        public void Run() {
             Properties producerConfig = new Properties();
             producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
             producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -1069,11 +1069,11 @@ public class QueryableStateIntegrationTest {
             try (KafkaProducer<string, string> producer =
                      new KafkaProducer<>(producerConfig, new StringSerializer(), new StringSerializer())) {
 
-                while (getCurrIteration() < numIterations && !shutdown) {
+                while (GetCurrIteration() < numIterations && !shutdown) {
                     foreach (string value in inputValues) {
                         producer.send(new ProducerRecord<>(topic, value));
                     }
-                    incrementIteration();
+                    IncrementIteration();
                 }
             }
         }

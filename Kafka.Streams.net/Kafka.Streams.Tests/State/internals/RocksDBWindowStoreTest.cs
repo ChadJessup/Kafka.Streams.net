@@ -48,7 +48,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
     private KeyValueSegments segments = new KeyValueSegments(STORE_NAME, RETENTION_PERIOD, SEGMENT_INTERVAL);
 
     
-    WindowStore<K, V> buildWindowStore<K, V>(long retentionPeriod,
+    WindowStore<K, V> BuildWindowStore<K, V>(long retentionPeriod,
                                               long windowSize,
                                               bool retainDuplicates,
                                               Serde<K> keySerde,
@@ -65,17 +65,17 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
     }
 
     
-    string getMetricsScope() {
+    string GetMetricsScope() {
         return new RocksDbWindowBytesStoreSupplier(null, 0, 0, 0, false, false).metricsScope();
     }
 
     
-    void setClassLoggerToDebug() {
+    void SetClassLoggerToDebug() {
         LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);
     }
 
     [Xunit.Fact]
-    public void shouldOnlyIterateOpenSegments() {
+    public void ShouldOnlyIterateOpenSegments() {
         long currentTime = 0;
         setCurrentTime(currentTime);
         windowStore.put(1, "one");
@@ -102,18 +102,18 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testRolling() {
+    public void TestRolling() {
 
         // to validate segments
         long startTime = SEGMENT_INTERVAL * 2;
         long increment = SEGMENT_INTERVAL / 2;
         setCurrentTime(startTime);
         windowStore.put(0, "zero");
-        Assert.Equal(Utils.mkSet(segments.segmentName(2)), segmentDirs(baseDir));
+        Assert.Equal(Utils.mkSet(segments.segmentName(2)), SegmentDirs(baseDir));
 
         setCurrentTime(startTime + increment);
         windowStore.put(1, "one");
-        Assert.Equal(Utils.mkSet(segments.segmentName(2)), segmentDirs(baseDir));
+        Assert.Equal(Utils.mkSet(segments.segmentName(2)), SegmentDirs(baseDir));
 
         setCurrentTime(startTime + increment * 2);
         windowStore.put(2, "two");
@@ -122,7 +122,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(2),
                 segments.segmentName(3)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(startTime + increment * 4);
@@ -133,7 +133,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(3),
                 segments.segmentName(4)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(startTime + increment * 5);
@@ -144,7 +144,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(3),
                 segments.segmentName(4)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         Assert.Equal(
@@ -192,7 +192,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(4),
                 segments.segmentName(5)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         Assert.Equal(
@@ -246,7 +246,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(4),
                 segments.segmentName(5)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         Assert.Equal(
@@ -306,7 +306,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(5),
                 segments.segmentName(6)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         Assert.Equal(
@@ -372,12 +372,12 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(5),
                 segments.segmentName(6)
             ),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
     }
 
     [Xunit.Fact]
-    public void testSegmentMaintenance() {
+    public void TestSegmentMaintenance() {
 
         windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, true, Serdes.Int(),
             Serdes.String());
@@ -388,7 +388,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
         windowStore.put(0, "v");
         Assert.Equal(
             Utils.mkSet(segments.segmentName(0L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(SEGMENT_INTERVAL - 1);
@@ -396,14 +396,14 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
         windowStore.put(0, "v");
         Assert.Equal(
             Utils.mkSet(segments.segmentName(0L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(SEGMENT_INTERVAL);
         windowStore.put(0, "v");
         Assert.Equal(
             Utils.mkSet(segments.segmentName(0L), segments.segmentName(1L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         WindowStoreIterator iter;
@@ -419,7 +419,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
 
         Assert.Equal(
             Utils.mkSet(segments.segmentName(0L), segments.segmentName(1L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(SEGMENT_INTERVAL * 3);
@@ -435,7 +435,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
 
         Assert.Equal(
             Utils.mkSet(segments.segmentName(1L), segments.segmentName(3L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
         setCurrentTime(SEGMENT_INTERVAL * 5);
@@ -451,14 +451,14 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
 
         Assert.Equal(
             Utils.mkSet(segments.segmentName(3L), segments.segmentName(5L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
 
     }
 
     
     [Xunit.Fact]
-    public void testInitialLoading() {
+    public void TestInitialLoading() {
         File storeDir = new File(baseDir, STORE_NAME);
 
         new File(storeDir, segments.segmentName(0L)).mkdir();
@@ -482,7 +482,7 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
             segments.segmentName(6L));
         expected.sort(string::compareTo);
 
-        List<string> actual = Utils.toList(segmentDirs(baseDir).iterator());
+        List<string> actual = Utils.toList(SegmentDirs(baseDir).iterator());
         actual.sort(string::compareTo);
 
         Assert.Equal(expected, actual);
@@ -499,12 +499,12 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(4L),
                 segments.segmentName(5L),
                 segments.segmentName(6L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
     }
 
     [Xunit.Fact]
-    public void testRestore() {// throws Exception
+    public void TestRestore() {// throws Exception
         long startTime = SEGMENT_INTERVAL * 2;
         long increment = SEGMENT_INTERVAL / 2;
 
@@ -659,11 +659,11 @@ public class RocksDBWindowStoreTest : WindowBytesStoreTest {
                 segments.segmentName(4L),
                 segments.segmentName(5L),
                 segments.segmentName(6L)),
-            segmentDirs(baseDir)
+            SegmentDirs(baseDir)
         );
     }
 
-    private HashSet<string> segmentDirs(File baseDir) {
+    private HashSet<string> SegmentDirs(File baseDir) {
         File windowDir = new File(baseDir, windowStore.name());
 
         return new HashSet<>(asList(requireNonNull(windowDir.list())));

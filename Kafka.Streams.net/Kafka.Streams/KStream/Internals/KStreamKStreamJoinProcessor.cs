@@ -63,13 +63,13 @@ namespace Kafka.Streams.KStream.Internals
                     KeyValuePair<long, V2> otherRecord = iter.Current;
                     context.forward(
                         key,
-                        joiner.apply(value, otherRecord.Value),
+                        joiner.Apply(value, otherRecord.Value),
                         To.All().WithTimestamp(Math.Max(inputRecordTimestamp, otherRecord.Key)));
                 }
 
                 if (needOuterJoin)
                 {
-                    context.forward(key, joiner.apply(value, default));
+                    context.forward(key, joiner.Apply(value, default));
                 }
             }
         }

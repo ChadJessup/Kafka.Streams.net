@@ -8,7 +8,7 @@ namespace Kafka.Streams.Tests.Tests
         private Dictionary<string, string> expectedParsedMap = new TreeMap<>();
 
 
-        public void setUp()
+        public void SetUp()
         {
             expectedParsedMap.put("foo", "foo1");
             expectedParsedMap.put("bar", "bar1");
@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Tests
         }
 
         [Xunit.Fact]
-        public void shouldParseCorrectMap()
+        public void ShouldParseCorrectMap()
         {
             string formattedConfigs = "foo=foo1,bar=bar1,baz=baz1";
             Dictionary<string, string> parsedMap = SystemTestUtil.parseConfigs(formattedConfigs);
@@ -25,27 +25,27 @@ namespace Kafka.Streams.Tests.Tests
         }
 
         [Xunit.Fact]// // (expected = NullPointerException)
-        public void shouldThrowExceptionOnNull()
+        public void ShouldThrowExceptionOnNull()
         {
             SystemTestUtil.parseConfigs(null);
         }
 
         [Xunit.Fact]// // (expected = IllegalStateException)
-        public void shouldThrowExceptionIfNotCorrectKeyValueSeparator()
+        public void ShouldThrowExceptionIfNotCorrectKeyValueSeparator()
         {
             string badString = "foo:bar,baz:boo";
             SystemTestUtil.parseConfigs(badString);
         }
 
         [Xunit.Fact]// // (expected = IllegalStateException)
-        public void shouldThrowExceptionIfNotCorrectKeyValuePairSeparator()
+        public void ShouldThrowExceptionIfNotCorrectKeyValuePairSeparator()
         {
             string badString = "foo=bar;baz=boo";
             SystemTestUtil.parseConfigs(badString);
         }
 
         [Xunit.Fact]
-        public void shouldParseSingleKeyValuePairString()
+        public void ShouldParseSingleKeyValuePairString()
         {
             Dictionary<string, string> expectedSinglePairMap = new HashMap<>();
             expectedSinglePairMap.put("foo", "bar");

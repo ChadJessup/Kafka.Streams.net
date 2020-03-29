@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
             this.sendOldValues = false;
         }
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return ActivatorUtilities.CreateInstance<KTableSourceProcessor<K, V>>(
                 this.services,

@@ -104,7 +104,7 @@ namespace Kafka.Streams.Tests.State
          *                   {@code long}, or {@code byte[]}
          * @return the test driver; never null
          */
-        public static KeyValueStoreTestDriver<K, V> create<K, V>(Class<K> keyClass, Class<V> valueClass)
+        public static KeyValueStoreTestDriver<K, V> Create<K, V>(Class<K> keyClass, Class<V> valueClass)
         {
             StateSerdes<K, V> serdes = StateSerdes.withBuiltinTypes("unexpected", keyClass, valueClass);
             return new KeyValueStoreTestDriver<>(serdes);
@@ -122,7 +122,7 @@ namespace Kafka.Streams.Tests.State
          * @param valueDeserializer the value deserializer for the {@link ProcessorContext}; may not be null
          * @return the test driver; never null
          */
-        public static KeyValueStoreTestDriver<K, V> create<K, V>(Serializer<K> keySerializer,
+        public static KeyValueStoreTestDriver<K, V> Create<K, V>(Serializer<K> keySerializer,
                                                                   Deserializer<K> keyDeserializer,
                                                                   Serializer<V> valueSerializer,
                                                                   Deserializer<V> valueDeserializer)
@@ -222,7 +222,7 @@ namespace Kafka.Streams.Tests.State
         };
     }
 
-    private void recordFlushed(K key, V value)
+    private void RecordFlushed(K key, V value)
     {
         if (value == null)
         {
@@ -244,7 +244,7 @@ namespace Kafka.Streams.Tests.State
      *
      * @return the restore entries; never null but possibly a null iterator
      */
-    public Iterable<KeyValuePair<byte[], byte[]>> restoredEntries()
+    public Iterable<KeyValuePair<byte[], byte[]>> RestoredEntries()
     {
         return restorableEntries;
     }
@@ -278,7 +278,7 @@ namespace Kafka.Streams.Tests.State
      * @param value the value for the entry
      * @see #checkForRestoredEntries(KeyValueStore)
      */
-    public void addEntryToRestoreLog(K key, V value)
+    public void AddEntryToRestoreLog(K key, V value)
     {
         restorableEntries.add(new KeyValuePair<>(stateSerdes.rawKey(key), stateSerdes.rawValue(value)));
     }
@@ -294,7 +294,7 @@ namespace Kafka.Streams.Tests.State
      * @return the processing context; never null
      * @see #addEntryToRestoreLog(object, object)
      */
-    public ProcessorContext context()
+    public ProcessorContext Context()
     {
         return context;
     }
@@ -307,7 +307,7 @@ namespace Kafka.Streams.Tests.State
      * @return the number of restore entries missing from the store, or 0 if all restore entries were found
      * @see #addEntryToRestoreLog(object, object)
      */
-    public int checkForRestoredEntries(KeyValueStore<K, V> store)
+    public int CheckForRestoredEntries(KeyValueStore<K, V> store)
     {
         int missing = 0;
         foreach (KeyValuePair<byte[], byte[]> kv in restorableEntries)
@@ -330,7 +330,7 @@ namespace Kafka.Streams.Tests.State
      * @param store the key value store using this {@link #context()}.
      * @return the number of entries
      */
-    public int sizeOf(KeyValueStore<K, V> store)
+    public int SizeOf(KeyValueStore<K, V> store)
     {
         int size = 0;
         try
@@ -352,7 +352,7 @@ namespace Kafka.Streams.Tests.State
      * @return the value that was flushed with the key, or {@code null} if no such key was flushed or if the entry with this
      * key was removed upon flush
      */
-    public V flushedEntryStored(K key)
+    public V FlushedEntryStored(K key)
     {
         return flushedEntries.get(key);
     }
@@ -364,7 +364,7 @@ namespace Kafka.Streams.Tests.State
      * @return {@code true} if the entry with the given key was removed when flushed, or {@code false} if the entry was not
      * removed when last flushed
      */
-    public bool flushedEntryRemoved(K key)
+    public bool FlushedEntryRemoved(K key)
     {
         return flushedRemovals.Contains(key);
     }
@@ -372,7 +372,7 @@ namespace Kafka.Streams.Tests.State
     /**
      * Return number of removed entry
      */
-    public int numFlushedEntryStored()
+    public int NumFlushedEntryStored()
     {
         return flushedEntries.Count;
     }
@@ -380,7 +380,7 @@ namespace Kafka.Streams.Tests.State
     /**
      * Return number of removed entry
      */
-    public int numFlushedEntryRemoved()
+    public int NumFlushedEntryRemoved()
     {
         return flushedRemovals.Count;
     }
@@ -388,7 +388,7 @@ namespace Kafka.Streams.Tests.State
     /**
      * Remove all {@link #flushedEntryStored(object) flushed entries}, {@link #flushedEntryRemoved(object) flushed removals},
      */
-    public void clear()
+    public void Clear()
     {
         restorableEntries.Clear();
         flushedEntries.Clear();

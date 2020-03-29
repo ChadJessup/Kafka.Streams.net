@@ -46,19 +46,19 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private byte[] recordKey = intSerializer.serialize(null, 1);
 
 
-        public void before()
+        public void Before()
         {
             mockSourceNodeWithMetrics.init(context);
         }
 
 
-        public void after()
+        public void After()
         {
             mockSourceNodeWithMetrics.close();
         }
 
         [Xunit.Fact]
-        public void testTimeTracking()
+        public void TestTimeTracking()
         {
 
             Assert.True(queue.isEmpty());
@@ -145,7 +145,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldTrackPartitionTimeAsMaxSeenTimestamp()
+        public void ShouldTrackPartitionTimeAsMaxSeenTimestamp()
         {
 
             Assert.True(queue.isEmpty());
@@ -173,7 +173,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]// (expected = StreamsException)
-        public void shouldThrowStreamsExceptionWhenKeyDeserializationFails()
+        public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails()
         {
             byte[] key = Serdes.Long().Serializer.serialize("foo", 1L);
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -183,7 +183,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]// (expected = StreamsException)
-        public void shouldThrowStreamsExceptionWhenValueDeserializationFails()
+        public void ShouldThrowStreamsExceptionWhenValueDeserializationFails()
         {
             byte[] value = Serdes.Long().Serializer.serialize("foo", 1L);
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -193,7 +193,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler()
+        public void ShouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler()
         {
             byte[] key = Serdes.Long().Serializer.serialize("foo", 1L);
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -204,7 +204,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldNotThrowStreamsExceptionWhenValueDeserializationFailsWithSkipHandler()
+        public void ShouldNotThrowStreamsExceptionWhenValueDeserializationFailsWithSkipHandler()
         {
             byte[] value = Serdes.Long().Serializer.serialize("foo", 1L);
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
@@ -216,7 +216,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 
         [Xunit.Fact]// (expected = StreamsException)
-        public void shouldThrowOnNegativeTimestamp()
+        public void ShouldThrowOnNegativeTimestamp()
         {
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
                 new ConsumeResult<byte[], byte[]>("topic", 1, 1, -1L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
@@ -233,7 +233,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldDropOnNegativeTimestamp()
+        public void ShouldDropOnNegativeTimestamp()
         {
             List<ConsumeResult<byte[], byte[]>> records = Collections.singletonList(
                 new ConsumeResult<byte[], byte[]>("topic", 1, 1, -1L, TimestampType.CreateTime, 0L, 0, 0, recordKey, recordValue));
@@ -251,7 +251,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldPassPartitionTimeToTimestampExtractor()
+        public void ShouldPassPartitionTimeToTimestampExtractor()
         {
 
             PartitionTimeTrackingTimestampExtractor timestampExtractor = new PartitionTimeTrackingTimestampExtractor();
@@ -296,7 +296,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         {
             private long partitionTime = RecordQueue.UNKNOWN;
 
-            public long extract(ConsumeResult<object, object> record, long partitionTime)
+            public long Extract(ConsumeResult<object, object> record, long partitionTime)
             {
                 if (partitionTime < this.partitionTime)
                 {

@@ -41,41 +41,41 @@ public class LogCaptureAppender : AppenderSkeleton {
             this.throwableInfo = throwableInfo;
         }
 
-        public string getLevel() {
+        public string GetLevel() {
             return level;
         }
 
-        public string getMessage() {
+        public string GetMessage() {
             return message;
         }
 
-        public Optional<string> getThrowableInfo() {
+        public Optional<string> GetThrowableInfo() {
             return throwableInfo;
         }
     }
 
-    public static LogCaptureAppender createAndRegister() {
+    public static LogCaptureAppender CreateAndRegister() {
         LogCaptureAppender logCaptureAppender = new LogCaptureAppender();
         Logger.getRootLogger().addAppender(logCaptureAppender);
         return logCaptureAppender;
     }
 
-    public static void setClassLoggerToDebug(Class<?> clazz) {
+    public static void SetClassLoggerToDebug(Class<?> clazz) {
         Logger.getLogger(clazz).setLevel(Level.DEBUG);
     }
 
-    public static void unregister(LogCaptureAppender logCaptureAppender) {
+    public static void Unregister(LogCaptureAppender logCaptureAppender) {
         Logger.getRootLogger().removeAppender(logCaptureAppender);
     }
 
     
-    protected void append(LoggingEvent event) {
+    protected void Append(LoggingEvent event) {
         synchronized (events) {
             events.add(event);
         }
     }
 
-    public List<string> getMessages() {
+    public List<string> GetMessages() {
         LinkedList<string> result = new LinkedList<>();
         synchronized (events) {
             foreach (LoggingEvent event in events) {
@@ -85,7 +85,7 @@ public class LogCaptureAppender : AppenderSkeleton {
         return result;
     }
 
-    public List<Event> getEvents() {
+    public List<Event> GetEvents() {
         LinkedList<Event> result = new LinkedList<>();
         synchronized (events) {
             foreach (LoggingEvent event in events) {
@@ -110,12 +110,12 @@ public class LogCaptureAppender : AppenderSkeleton {
     }
 
     
-    public void close() {
+    public void Close() {
 
     }
 
     
-    public bool requiresLayout() {
+    public bool RequiresLayout() {
         return false;
     }
 }

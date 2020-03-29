@@ -66,7 +66,7 @@ public class InternalTopologyBuilderTest {
     private StoreBuilder storeBuilder = new MockKeyValueStoreBuilder("store", false);
 
     [Xunit.Fact]
-    public void shouldAddSourceWithOffsetReset() {
+    public void ShouldAddSourceWithOffsetReset() {
         string earliestTopic = "earliestTopic";
         string latestTopic = "latestTopic";
 
@@ -78,7 +78,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddSourcePatternWithOffsetReset() {
+    public void ShouldAddSourcePatternWithOffsetReset() {
         string earliestTopicPattern = "earliest.*Topic";
         string latestTopicPattern = "latest.*Topic";
 
@@ -90,7 +90,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddSourceWithoutOffsetReset() {
+    public void ShouldAddSourceWithoutOffsetReset() {
         Pattern expectedPattern = new Regex("test-topic", RegexOptions.Compiled);
 
         builder.addSource(null, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "test-topic");
@@ -101,7 +101,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddPatternSourceWithoutOffsetReset() {
+    public void ShouldAddPatternSourceWithoutOffsetReset() {
         Pattern expectedPattern = new Regex("test-.*", RegexOptions.Compiled);
 
         builder.addSource(null, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), new Regex("test-.*", RegexOptions.Compiled));
@@ -112,12 +112,12 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void shouldNotAllowOffsetResetSourceWithoutTopics() {
+    public void ShouldNotAllowOffsetResetSourceWithoutTopics() {
         builder.addSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer());
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowOffsetResetSourceWithDuplicateSourceName() {
+    public void ShouldNotAllowOffsetResetSourceWithDuplicateSourceName() {
         builder.addSource(Topology.AutoOffsetReset.EARLIEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-1");
         try {
             builder.addSource(Topology.AutoOffsetReset.LATEST, "source", null, stringSerde.deserializer(), stringSerde.deserializer(), "topic-2");
@@ -126,7 +126,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddSourceWithSameName() {
+    public void TestAddSourceWithSameName() {
         builder.addSource(null, "source", null, null, null, "topic-1");
         try {
             builder.addSource(null, "source", null, null, null, "topic-2");
@@ -135,7 +135,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddSourceWithSameTopic() {
+    public void TestAddSourceWithSameTopic() {
         builder.addSource(null, "source", null, null, null, "topic-1");
         try {
             builder.addSource(null, "source-2", null, null, null, "topic-1");
@@ -144,7 +144,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddProcessorWithSameName() {
+    public void TestAddProcessorWithSameName() {
         builder.addSource(null, "source", null, null, null, "topic-1");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
         try {
@@ -154,27 +154,27 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddProcessorWithWrongParent() {
+    public void TestAddProcessorWithWrongParent() {
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddProcessorWithSelfParent() {
+    public void TestAddProcessorWithSelfParent() {
         builder.addProcessor("processor", new MockProcessorSupplier(), "processor");
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddProcessorWithEmptyParents() {
+    public void TestAddProcessorWithEmptyParents() {
         builder.addProcessor("processor", new MockProcessorSupplier());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void testAddProcessorWithNullParents() {
+    public void TestAddProcessorWithNullParents() {
         builder.addProcessor("processor", new MockProcessorSupplier(), (string) null);
     }
 
     [Xunit.Fact]
-    public void testAddSinkWithSameName() {
+    public void TestAddSinkWithSameName() {
         builder.addSource(null, "source", null, null, null, "topic-1");
         builder.addSink("sink", "topic-2", null, null, null, "source");
         try {
@@ -184,28 +184,28 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddSinkWithWrongParent() {
+    public void TestAddSinkWithWrongParent() {
         builder.addSink("sink", "topic-2", null, null, null, "source");
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddSinkWithSelfParent() {
+    public void TestAddSinkWithSelfParent() {
         builder.addSink("sink", "topic-2", null, null, null, "sink");
     }
 
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddSinkWithEmptyParents() {
+    public void TestAddSinkWithEmptyParents() {
         builder.addSink("sink", "topic", null, null, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void testAddSinkWithNullParents() {
+    public void TestAddSinkWithNullParents() {
         builder.addSink("sink", "topic", null, null, null, (string) null);
     }
 
     [Xunit.Fact]
-    public void testAddSinkConnectedWithParent() {
+    public void TestAddSinkConnectedWithParent() {
         builder.addSource(null, "source", null, null, null, "source-topic");
         builder.addSink("sink", "dest-topic", null, null, null, "source");
 
@@ -217,7 +217,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddSinkConnectedWithMultipleParent() {
+    public void TestAddSinkConnectedWithMultipleParent() {
         builder.addSource(null, "source", null, null, null, "source-topic");
         builder.addSource(null, "sourceII", null, null, null, "source-topicII");
         builder.addSink("sink", "dest-topic", null, null, null, "source", "sourceII");
@@ -231,7 +231,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testSourceTopics() {
+    public void TestSourceTopics() {
         builder.setApplicationId("X");
         builder.addSource(null, "source-1", null, null, null, "topic-1");
         builder.addSource(null, "source-2", null, null, null, "topic-2");
@@ -244,14 +244,14 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testPatternSourceTopic() {
+    public void TestPatternSourceTopic() {
         Pattern expectedPattern = new Regex("topic-\\d", RegexOptions.Compiled);
         builder.addSource(null, "source-1", null, null, null, expectedPattern);
         Assert.Equal(expectedPattern.pattern(), builder.sourceTopicPattern().pattern());
     }
 
     [Xunit.Fact]
-    public void testAddMoreThanOnePatternSourceNode() {
+    public void TestAddMoreThanOnePatternSourceNode() {
         Pattern expectedPattern = new Regex("topics[A-Z]|.*-\\d", RegexOptions.Compiled);
         builder.addSource(null, "source-1", null, null, null, new Regex("topics[A-Z]", RegexOptions.Compiled));
         builder.addSource(null, "source-2", null, null, null, new Regex(".*-\\d", RegexOptions.Compiled));
@@ -259,7 +259,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testSubscribeTopicNameAndPattern() {
+    public void TestSubscribeTopicNameAndPattern() {
         Pattern expectedPattern = new Regex("topic-bar|topic-foo|.*-\\d", RegexOptions.Compiled);
         builder.addSource(null, "source-1", null, null, null, "topic-foo", "topic-bar");
         builder.addSource(null, "source-2", null, null, null, new Regex(".*-\\d", RegexOptions.Compiled));
@@ -267,7 +267,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testPatternMatchesAlreadyProvidedTopicSource() {
+    public void TestPatternMatchesAlreadyProvidedTopicSource() {
         builder.addSource(null, "source-1", null, null, null, "foo");
         try {
             builder.addSource(null, "source-2", null, null, null, new Regex("f.*", RegexOptions.Compiled));
@@ -276,7 +276,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testNamedTopicMatchesAlreadyProvidedPattern() {
+    public void TestNamedTopicMatchesAlreadyProvidedPattern() {
         builder.addSource(null, "source-1", null, null, null, new Regex("f.*", RegexOptions.Compiled));
         try {
             builder.addSource(null, "source-2", null, null, null, "foo");
@@ -285,12 +285,12 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void testAddStateStoreWithNonExistingProcessor() {
+    public void TestAddStateStoreWithNonExistingProcessor() {
         builder.addStateStore(storeBuilder, "no-such-processor");
     }
 
     [Xunit.Fact]
-    public void testAddStateStoreWithSource() {
+    public void TestAddStateStoreWithSource() {
         builder.addSource(null, "source-1", null, null, null, "topic-1");
         try {
             builder.addStateStore(storeBuilder, "source-1");
@@ -299,7 +299,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddStateStoreWithSink() {
+    public void TestAddStateStoreWithSink() {
         builder.addSource(null, "source-1", null, null, null, "topic-1");
         builder.addSink("sink-1", "topic-1", null, null, null, "source-1");
         try {
@@ -309,7 +309,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddStateStoreWithDuplicates() {
+    public void TestAddStateStoreWithDuplicates() {
         builder.addStateStore(storeBuilder);
         try {
             builder.addStateStore(storeBuilder);
@@ -318,7 +318,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testAddStateStore() {
+    public void TestAddStateStore() {
         builder.addStateStore(storeBuilder);
         builder.setApplicationId("X");
         builder.addSource(null, "source-1", null, null, null, "topic-1");
@@ -334,7 +334,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testTopicGroups() {
+    public void TestTopicGroups() {
         builder.setApplicationId("X");
         builder.addInternalTopic("topic-1x");
         builder.addSource(null, "source-1", null, null, null, "topic-1", "topic-1x");
@@ -366,7 +366,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testTopicGroupsByStateStore() {
+    public void TestTopicGroupsByStateStore() {
         builder.setApplicationId("X");
         builder.addSource(null, "source-1", null, null, null, "topic-1", "topic-1x");
         builder.addSource(null, "source-2", null, null, null, "topic-2");
@@ -410,7 +410,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void testBuild() {
+    public void TestBuild() {
         builder.addSource(null, "source-1", null, null, null, "topic-1", "topic-1x");
         builder.addSource(null, "source-2", null, null, null, "topic-2");
         builder.addSource(null, "source-3", null, null, null, "topic-3");
@@ -432,7 +432,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAllowIncrementalBuilds() {
+    public void ShouldAllowIncrementalBuilds() {
         Dictionary<int, HashSet<string>> oldNodeGroups, newNodeGroups;
 
         oldNodeGroups = builder.nodeGroups();
@@ -483,61 +483,61 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullNameWhenAddingSink() {
+    public void ShouldNotAllowNullNameWhenAddingSink() {
         builder.addSink(null, "topic", null, null, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullTopicWhenAddingSink() {
+    public void ShouldNotAllowNullTopicWhenAddingSink() {
         builder.addSink("name", (string) null, null, null, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullTopicChooserWhenAddingSink() {
+    public void ShouldNotAllowNullTopicChooserWhenAddingSink() {
         builder.addSink("name", (TopicNameExtractor<object, object>) null, null, null, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullNameWhenAddingProcessor() {
+    public void ShouldNotAllowNullNameWhenAddingProcessor() {
         builder.addProcessor(null, () => null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullProcessorSupplier() {
+    public void ShouldNotAllowNullProcessorSupplier() {
         builder.addProcessor("name", null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullNameWhenAddingSource() {
+    public void ShouldNotAllowNullNameWhenAddingSource() {
         builder.addSource(null, null, null, null, null, new Regex(".*", RegexOptions.Compiled));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullProcessorNameWhenConnectingProcessorAndStateStores() {
+    public void ShouldNotAllowNullProcessorNameWhenConnectingProcessorAndStateStores() {
         builder.connectProcessorAndStateStores(null, "store");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAllowNullStateStoreNameWhenConnectingProcessorAndStateStores() {
+    public void ShouldNotAllowNullStateStoreNameWhenConnectingProcessorAndStateStores() {
         builder.connectProcessorAndStateStores("processor", new string[]{null});
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAddNullInternalTopic() {
+    public void ShouldNotAddNullInternalTopic() {
         builder.addInternalTopic(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotSetApplicationIdToNull() {
+    public void ShouldNotSetApplicationIdToNull() {
         builder.setApplicationId(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldNotAddNullStateStoreSupplier() {
+    public void ShouldNotAddNullStateStoreSupplier() {
         builder.addStateStore(null);
     }
 
-    private HashSet<string> nodeNames(Collection<ProcessorNode> nodes) {
+    private HashSet<string> NodeNames(Collection<ProcessorNode> nodes) {
         HashSet<string> nodeNames = new HashSet<>();
         foreach (ProcessorNode node in nodes) {
             nodeNames.add(node.name());
@@ -546,7 +546,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssociateStateStoreNameWhenStateStoreSupplierIsInternal() {
+    public void ShouldAssociateStateStoreNameWhenStateStoreSupplierIsInternal() {
         builder.addSource(null, "source", null, null, null, "topic");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
         builder.addStateStore(storeBuilder, "processor");
@@ -556,7 +556,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAssociateStateStoreNameWhenStateStoreSupplierIsExternal() {
+    public void ShouldAssociateStateStoreNameWhenStateStoreSupplierIsExternal() {
         builder.addSource(null, "source", null, null, null, "topic");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
         builder.addStateStore(storeBuilder, "processor");
@@ -566,7 +566,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldCorrectlyMapStateStoreToInternalTopics() {
+    public void ShouldCorrectlyMapStateStoreToInternalTopics() {
         builder.setApplicationId("appId");
         builder.addInternalTopic("internal-topic");
         builder.addSource(null, "source", null, null, null, "internal-topic");
@@ -578,7 +578,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddInternalTopicConfigForWindowStores() {
+    public void ShouldAddInternalTopicConfigForWindowStores() {
         builder.setApplicationId("appId");
         builder.addSource(null, "source", null, null, null, "topic");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
@@ -615,7 +615,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddInternalTopicConfigForNonWindowStores() {
+    public void ShouldAddInternalTopicConfigForNonWindowStores() {
         builder.setApplicationId("appId");
         builder.addSource(null, "source", null, null, null, "topic");
         builder.addProcessor("processor", new MockProcessorSupplier(), "source");
@@ -631,7 +631,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddInternalTopicConfigForRepartitionTopics() {
+    public void ShouldAddInternalTopicConfigForRepartitionTopics() {
         builder.setApplicationId("appId");
         builder.addInternalTopic("foo");
         builder.addSource(null, "source", null, null, null, "foo");
@@ -647,7 +647,7 @@ public class InternalTopologyBuilderTest {
 
     
     [Xunit.Fact]
-    public void shouldSetCorrectSourceNodesWithRegexUpdatedTopics() {// throws Exception
+    public void ShouldSetCorrectSourceNodesWithRegexUpdatedTopics() {// throws Exception
         builder.addSource(null, "source-1", null, null, null, "topic-foo");
         builder.addSource(null, "source-2", null, null, null, new Regex("topic-[A-C]", RegexOptions.Compiled));
         builder.addSource(null, "source-3", null, null, null, new Regex("topic-\\d", RegexOptions.Compiled));
@@ -674,14 +674,14 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddTimestampExtractorPerSource() {
+    public void ShouldAddTimestampExtractorPerSource() {
         builder.addSource(null, "source", new MockTimestampExtractor(), null, null, "topic");
         ProcessorTopology processorTopology = builder.rewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig())).build(null);
         Assert.Equal(processorTopology.source("topic").getTimestampExtractor(), instanceOf(MockTimestampExtractor));
     }
 
     [Xunit.Fact]
-    public void shouldAddTimestampExtractorWithPatternPerSource() {
+    public void ShouldAddTimestampExtractorWithPatternPerSource() {
         Pattern pattern = new Regex("t.*", RegexOptions.Compiled);
         builder.addSource(null, "source", new MockTimestampExtractor(), null, null, pattern);
         ProcessorTopology processorTopology = builder.rewriteTopology(new StreamsConfig(StreamsTestUtils.getStreamsConfig())).build(null);
@@ -689,7 +689,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldSortProcessorNodesCorrectly() {
+    public void ShouldSortProcessorNodesCorrectly() {
         builder.addSource(null, "source1", null, null, null, "topic1");
         builder.addSource(null, "source2", null, null, null, "topic2");
         builder.addProcessor("processor1", new MockProcessorSupplier(), "source1");
@@ -734,7 +734,7 @@ public class InternalTopologyBuilderTest {
 
     
     [Xunit.Fact]
-    public void shouldConnectRegexMatchedTopicsToStateStore() {// throws Exception
+    public void ShouldConnectRegexMatchedTopicsToStateStore() {// throws Exception
         builder.addSource(null, "ingest", null, null, null, new Regex("topic-\\d+", RegexOptions.Compiled));
         builder.addProcessor("my-processor", new MockProcessorSupplier(), "ingest");
         builder.addStateStore(storeBuilder, "my-processor");
@@ -764,7 +764,7 @@ public class InternalTopologyBuilderTest {
 
     
     [Xunit.Fact]// (expected = TopologyException)
-    public void shouldNotAllowToAddGlobalStoreWithSourceNameEqualsProcessorName() {
+    public void ShouldNotAllowToAddGlobalStoreWithSourceNameEqualsProcessorName() {
         string sameNameForSourceAndProcessor = "sameName";
         builder.addGlobalStore(
             (StoreBuilder<KeyValueStore>) storeBuilder,
@@ -778,25 +778,25 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowIfNameIsNull() {
+    public void ShouldThrowIfNameIsNull() {
         Exception e = assertThrows(NullPointerException, () => new InternalTopologyBuilder.Source(null, Collections.emptySet(), null));
         Assert.Equal("name cannot be null", e.getMessage());
     }
 
     [Xunit.Fact]
-    public void shouldThrowIfTopicAndPatternAreNull() {
+    public void ShouldThrowIfTopicAndPatternAreNull() {
         Exception e = assertThrows(IllegalArgumentException, () => new InternalTopologyBuilder.Source("name", null, null));
         Assert.Equal("Either topics or pattern must be not-null, but both are null.", e.getMessage());
     }
 
     [Xunit.Fact]
-    public void shouldThrowIfBothTopicAndPatternAreNotNull() {
+    public void ShouldThrowIfBothTopicAndPatternAreNotNull() {
         Exception e = assertThrows(IllegalArgumentException, () => new InternalTopologyBuilder.Source("name", Collections.emptySet(), new Regex("", RegexOptions.Compiled)));
         Assert.Equal("Either topics or pattern must be null, but both are not null.", e.getMessage());
     }
 
     [Xunit.Fact]
-    public void sourceShouldBeEqualIfNameAndTopicListAreTheSame() {
+    public void SourceShouldBeEqualIfNameAndTopicListAreTheSame() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
         InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
 
@@ -804,7 +804,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void sourceShouldBeEqualIfNameAndPatternAreTheSame() {
+    public void SourceShouldBeEqualIfNameAndPatternAreTheSame() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
         InternalTopologyBuilder.Source sameAsBase = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
 
@@ -812,7 +812,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void sourceShouldNotBeEqualForDifferentNamesWithSameTopicList() {
+    public void SourceShouldNotBeEqualForDifferentNamesWithSameTopicList() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
         InternalTopologyBuilder.Source differentName = new InternalTopologyBuilder.Source("name2", Collections.singleton("topic"), null);
 
@@ -820,7 +820,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void sourceShouldNotBeEqualForDifferentNamesWithSamePattern() {
+    public void SourceShouldNotBeEqualForDifferentNamesWithSamePattern() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
         InternalTopologyBuilder.Source differentName = new InternalTopologyBuilder.Source("name2", null, new Regex("topic", RegexOptions.Compiled));
 
@@ -828,7 +828,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void sourceShouldNotBeEqualForDifferentTopicList() {
+    public void SourceShouldNotBeEqualForDifferentTopicList() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", Collections.singleton("topic"), null);
         InternalTopologyBuilder.Source differentTopicList = new InternalTopologyBuilder.Source("name", Collections.emptySet(), null);
         InternalTopologyBuilder.Source differentTopic = new InternalTopologyBuilder.Source("name", Collections.singleton("topic2"), null);
@@ -838,7 +838,7 @@ public class InternalTopologyBuilderTest {
     }
 
     [Xunit.Fact]
-    public void sourceShouldNotBeEqualForDifferentPattern() {
+    public void SourceShouldNotBeEqualForDifferentPattern() {
         InternalTopologyBuilder.Source base = new InternalTopologyBuilder.Source("name", null, new Regex("topic", RegexOptions.Compiled));
         InternalTopologyBuilder.Source differentPattern = new InternalTopologyBuilder.Source("name", null, new Regex("topic2", RegexOptions.Compiled));
         InternalTopologyBuilder.Source overlappingPattern = new InternalTopologyBuilder.Source("name", null, new Regex("top*", RegexOptions.Compiled));

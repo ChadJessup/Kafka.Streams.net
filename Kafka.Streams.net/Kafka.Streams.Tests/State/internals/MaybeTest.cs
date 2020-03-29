@@ -27,20 +27,20 @@
 
 public class MaybeTest {
     [Xunit.Fact]
-    public void shouldReturnDefinedValue() {
+    public void ShouldReturnDefinedValue() {
         Assert.Equal(Maybe.defined(null).getNullableValue(), nullValue());
         Assert.Equal(Maybe.defined("ASDF").getNullableValue(), is("ASDF"));
     }
 
     [Xunit.Fact]
-    public void shouldAnswerIsDefined() {
+    public void ShouldAnswerIsDefined() {
         Assert.Equal(Maybe.defined(null).isDefined(), is(true));
         Assert.Equal(Maybe.defined("ASDF").isDefined(), is(true));
         Assert.Equal(Maybe.undefined().isDefined(), is(false));
     }
 
     [Xunit.Fact]
-    public void shouldThrowOnGetUndefinedValue() {
+    public void ShouldThrowOnGetUndefinedValue() {
         Maybe<object> undefined = Maybe.undefined();
         try {
             undefined.getNullableValue();
@@ -51,7 +51,7 @@ public class MaybeTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpholdEqualityCorrectness() {
+    public void ShouldUpholdEqualityCorrectness() {
         Assert.Equal(Maybe.undefined().equals(Maybe.undefined()), is(true));
         Assert.Equal(Maybe.defined(null).equals(Maybe.defined(null)), is(true));
         Assert.Equal(Maybe.defined("q").equals(Maybe.defined("q")), is(true));
@@ -68,7 +68,7 @@ public class MaybeTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpholdHashCodeCorrectness() {
+    public void ShouldUpholdHashCodeCorrectness() {
         // This specifies the current implementation, which is simpler to write than an exhaustive test.
         // As long as this implementation doesn't change, then the equals/hashcode contract is upheld.
 

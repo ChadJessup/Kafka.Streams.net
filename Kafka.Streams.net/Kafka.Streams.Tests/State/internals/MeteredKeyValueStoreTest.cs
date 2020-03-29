@@ -81,7 +81,7 @@ public class MeteredKeyValueStoreTest {
     private Metrics metrics = new Metrics();
 
     
-    public void before() {
+    public void Before() {
         metered = new MeteredKeyValueStore<>(
             inner,
             "scope",
@@ -95,14 +95,14 @@ public class MeteredKeyValueStoreTest {
         expect(inner.name()).andReturn("metered").anyTimes();
     }
 
-    private void init() {
+    private void Init() {
         replay(inner, context);
         metered.init(context, metered);
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
-        init();
+    public void TestMetrics() {
+        Init();
         JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
         Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
@@ -112,10 +112,10 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldWriteBytesToInnerStoreAndRecordPutMetric() {
+    public void ShouldWriteBytesToInnerStoreAndRecordPutMetric() {
         inner.put(eq(keyBytes), aryEq(valueBytes));
         expectLastCall();
-        init();
+        Init();
 
         metered.put(key, value);
 
@@ -125,9 +125,9 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetBytesFromInnerStoreAndReturnGetMetric() {
+    public void ShouldGetBytesFromInnerStoreAndReturnGetMetric() {
         expect(inner.get(keyBytes)).andReturn(valueBytes);
-        init();
+        Init();
 
         Assert.Equal(metered.get(key), (value));
 
@@ -137,9 +137,9 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutIfAbsentAndRecordPutIfAbsentMetric() {
+    public void ShouldPutIfAbsentAndRecordPutIfAbsentMetric() {
         expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueBytes))).andReturn(null);
-        init();
+        Init();
 
         metered.putIfAbsent(key, value);
 
@@ -148,16 +148,16 @@ public class MeteredKeyValueStoreTest {
         verify(inner);
     }
 
-    private KafkaMetric metric(string name) {
+    private KafkaMetric Metric(string name) {
         return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
     }
 
     
     [Xunit.Fact]
-    public void shouldPutAllToInnerStoreAndRecordPutAllMetric() {
+    public void ShouldPutAllToInnerStoreAndRecordPutAllMetric() {
         inner.putAll(anyObject(List));
         expectLastCall();
-        init();
+        Init();
 
         metered.putAll(Collections.singletonList(KeyValuePair.Create(key, value)));
 
@@ -167,9 +167,9 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteFromInnerStoreAndRecordDeleteMetric() {
+    public void ShouldDeleteFromInnerStoreAndRecordDeleteMetric() {
         expect(inner.delete(keyBytes)).andReturn(valueBytes);
-        init();
+        Init();
 
         metered.delete(key);
 
@@ -179,10 +179,10 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetRangeFromInnerStoreAndRecordRangeMetric() {
+    public void ShouldGetRangeFromInnerStoreAndRecordRangeMetric() {
         expect(inner.range(keyBytes, keyBytes))
             .andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValuePair).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<string, string> iterator = metered.range(key, key);
         Assert.Equal(iterator.next().value, (value));
@@ -195,9 +195,9 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetAllFromInnerStoreAndRecordAllMetric() {
+    public void ShouldGetAllFromInnerStoreAndRecordAllMetric() {
         expect(inner.all()).andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValuePair).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<string, string> iterator = metered.all();
         Assert.Equal(iterator.next().value, (value));
@@ -210,10 +210,10 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushInnerWhenFlushTimeRecords() {
+    public void ShouldFlushInnerWhenFlushTimeRecords() {
         inner.flush();
         expectLastCall().once();
-        init();
+        Init();
 
         metered.flush();
 
@@ -226,7 +226,7 @@ public class MeteredKeyValueStoreTest {
 
     
     [Xunit.Fact]
-    public void shouldSetFlushListenerOnWrappedCachingStore() {
+    public void ShouldSetFlushListenerOnWrappedCachingStore() {
         CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
 
         expect(cachedKeyValueStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
@@ -245,19 +245,19 @@ public class MeteredKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionIfGetReturnsNull() {
+    public void ShouldNotThrowNullPointerExceptionIfGetReturnsNull() {
         expect(inner.get(Bytes.wrap("a".getBytes()))).andReturn(null);
 
-        init();
+        Init();
         assertNull(metered.get("a"));
     }
 
     [Xunit.Fact]
-    public void shouldNotSetFlushListenerOnWrappedNoneCachingStore() {
+    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore() {
         Assert.False(metered.setFlushListener(null, false));
     }
 
-    private KafkaMetric metric(MetricName metricName) {
+    private KafkaMetric Metric(MetricName metricName) {
         return this.metrics.metric(metricName);
     }
 

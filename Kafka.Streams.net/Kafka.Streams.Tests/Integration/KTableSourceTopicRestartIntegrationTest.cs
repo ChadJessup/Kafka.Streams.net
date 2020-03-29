@@ -69,7 +69,7 @@ public class KTableSourceTopicRestartIntegrationTest {
     private Dictionary<string, string> expectedResultsWithDataWrittenDuringRestoreMap;
 
     
-    public static void setUpBeforeAllTests() {// throws Exception
+    public static void SetUpBeforeAllTests() {// throws Exception
         CLUSTER.createTopic(SOURCE_TOPIC);
 
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, "ktable-restore-from-source");
@@ -89,7 +89,7 @@ public class KTableSourceTopicRestartIntegrationTest {
     }
 
     
-    public void before() {
+    public void Before() {
         KTable<string, string> kTable = streamsBuilder.table(SOURCE_TOPIC, Materialized.As("store"));
         kTable.toStream().foreach(readKeyValues::put);
 
@@ -98,19 +98,19 @@ public class KTableSourceTopicRestartIntegrationTest {
     }
 
     
-    public void after() {// throws Exception
+    public void After() {// throws Exception
         IntegrationTestUtils.purgeLocalStreamsState(STREAMS_CONFIG);
     }
 
     [Xunit.Fact]
-    public void shouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosDisabled() {// throws Exception
+    public void ShouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosDisabled() {// throws Exception
         try {
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
             streamsOne.start();
 
             produceKeyValues("a", "b", "c");
 
-            assertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+            AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
 
             streamsOne.close();
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
@@ -120,7 +120,7 @@ public class KTableSourceTopicRestartIntegrationTest {
 
             produceKeyValues("f", "g", "h");
 
-            assertNumberValuesRead(
+            AssertNumberValuesRead(
                 readKeyValues,
                 expectedResultsWithDataWrittenDuringRestoreMap,
                 "Table did not get all values after restart");
@@ -130,7 +130,7 @@ public class KTableSourceTopicRestartIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosEnabled() {// throws Exception
+    public void ShouldRestoreAndProgressWhenTopicWrittenToDuringRestorationWithEosEnabled() {// throws Exception
         try {
             STREAMS_CONFIG.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG, StreamsConfig.EXACTLY_ONCE);
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
@@ -138,7 +138,7 @@ public class KTableSourceTopicRestartIntegrationTest {
 
             produceKeyValues("a", "b", "c");
 
-            assertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+            AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
 
             streamsOne.close();
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
@@ -148,7 +148,7 @@ public class KTableSourceTopicRestartIntegrationTest {
 
             produceKeyValues("f", "g", "h");
 
-            assertNumberValuesRead(
+            AssertNumberValuesRead(
                 readKeyValues,
                 expectedResultsWithDataWrittenDuringRestoreMap,
                 "Table did not get all values after restart");
@@ -158,14 +158,14 @@ public class KTableSourceTopicRestartIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreAndProgressWhenTopicNotWrittenToDuringRestoration() {// throws Exception
+    public void ShouldRestoreAndProgressWhenTopicNotWrittenToDuringRestoration() {// throws Exception
         try {
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
             streamsOne.start();
 
             produceKeyValues("a", "b", "c");
 
-            assertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
+            AssertNumberValuesRead(readKeyValues, expectedInitialResultsMap, "Table did not read all values");
 
             streamsOne.close();
             streamsOne = new KafkaStreams(streamsBuilder.build(), STREAMS_CONFIG);
@@ -175,13 +175,13 @@ public class KTableSourceTopicRestartIntegrationTest {
 
             Dictionary<string, string> expectedValues = createExpectedResultsMap("a", "b", "c", "f", "g", "h");
 
-            assertNumberValuesRead(readKeyValues, expectedValues, "Table did not get all values after restart");
+            AssertNumberValuesRead(readKeyValues, expectedValues, "Table did not get all values after restart");
         } finally {
             streamsOne.close(Duration.ofSeconds(5));
         }
     }
 
-    private void assertNumberValuesRead(Dictionary<string, string> valueMap,
+    private void AssertNumberValuesRead(Dictionary<string, string> valueMap,
                                         Dictionary<string, string> expectedMap,
                                         string errorMessage) {// throws InterruptedException
         TestUtils.waitForCondition(
@@ -190,7 +190,7 @@ public class KTableSourceTopicRestartIntegrationTest {
             errorMessage);
     }
 
-    private void produceKeyValues(string... keys) {// throws ExecutionException, InterruptedException
+    private void ProduceKeyValues(string... keys) {// throws ExecutionException, InterruptedException
         List<KeyValuePair<string, string>> keyValueList = new ArrayList<>();
 
         foreach (string key in keys) {
@@ -203,7 +203,7 @@ public class KTableSourceTopicRestartIntegrationTest {
                                                            time);
     }
 
-    private Dictionary<string, string> createExpectedResultsMap(string... keys) {
+    private Dictionary<string, string> CreateExpectedResultsMap(string... keys) {
         Dictionary<string, string> expectedMap = new HashMap<>();
         foreach (string key in keys) {
             expectedMap.put(key, key + "1");
@@ -214,7 +214,7 @@ public class KTableSourceTopicRestartIntegrationTest {
     private class UpdatingSourceTopicOnRestoreStartStateRestoreListener : StateRestoreListener {
 
         
-        public void onRestoreStart(TopicPartition topicPartition,
+        public void OnRestoreStart(TopicPartition topicPartition,
                                    string storeName,
                                    long startingOffset,
                                    long endingOffset) {

@@ -65,7 +65,7 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     private string topic;
 
     
-    public void setUp() {
+    public void SetUp() {
         string storeName = "store";
         underlyingStore = new InMemoryKeyValueStore(storeName);
         cacheFlushListener = new CacheFlushListenerStub<>(new StringDeserializer(), new StringDeserializer());
@@ -79,13 +79,13 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     
-    public void after() {
-        base.after();
+    public void After() {
+        base.After();
     }
 
     
     
-    protected KeyValueStore<K, V> createKeyValueStore<K, V>(ProcessorContext context) {
+    protected KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context) {
         StoreBuilder storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("cache-store"),
                 (Serde<K>) context.keySerde(),
@@ -98,30 +98,30 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSetFlushListener() {
+    public void ShouldSetFlushListener() {
         Assert.True(store.setFlushListener(null, true));
         Assert.True(store.setFlushListener(null, false));
     }
 
     [Xunit.Fact]
-    public void shouldAvoidFlushingDeletionsWithoutDirtyKeys() {
-        int added = addItemsToCache();
+    public void ShouldAvoidFlushingDeletionsWithoutDirtyKeys() {
+        int added = AddItemsToCache();
         // all dirty entries should have been flushed
         Assert.Equal(added, underlyingStore.approximateNumEntries());
         Assert.Equal(added, cacheFlushListener.forwarded.Count);
 
-        store.put(bytesKey("key"), bytesValue("value"));
+        store.put(BytesKey("key"), BytesValue("value"));
         Assert.Equal(added, underlyingStore.approximateNumEntries());
         Assert.Equal(added, cacheFlushListener.forwarded.Count);
 
-        store.put(bytesKey("key"), null);
+        store.put(BytesKey("key"), null);
         store.flush();
         Assert.Equal(added, underlyingStore.approximateNumEntries());
         Assert.Equal(added, cacheFlushListener.forwarded.Count);
     }
 
     [Xunit.Fact]
-    public void shouldCloseAfterErrorWithFlush() {
+    public void ShouldCloseAfterErrorWithFlush() {
         try {
             cache = EasyMock.niceMock(ThreadCache);
             context = new InternalMockProcessorContext(null, null, null, null, cache);
@@ -137,27 +137,27 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutGetToFromCache() {
-        store.put(bytesKey("key"), bytesValue("value"));
-        store.put(bytesKey("key2"), bytesValue("value2"));
-        Assert.Equal(store.get(bytesKey("key")), (bytesValue("value")));
-        Assert.Equal(store.get(bytesKey("key2")), (bytesValue("value2")));
+    public void ShouldPutGetToFromCache() {
+        store.put(BytesKey("key"), BytesValue("value"));
+        store.put(BytesKey("key2"), BytesValue("value2"));
+        Assert.Equal(store.get(BytesKey("key")), (BytesValue("value")));
+        Assert.Equal(store.get(BytesKey("key2")), (BytesValue("value2")));
         // nothing evicted so underlying store should be empty
         Assert.Equal(2, cache.Count);
         Assert.Equal(0, underlyingStore.approximateNumEntries());
     }
 
-    private byte[] bytesValue(string value) {
+    private byte[] BytesValue(string value) {
         return value.getBytes();
     }
 
-    private Bytes bytesKey(string key) {
+    private Bytes BytesKey(string key) {
         return Bytes.wrap(key.getBytes());
     }
 
     [Xunit.Fact]
-    public void shouldFlushEvictedItemsIntoUnderlyingStore() {
-        int added = addItemsToCache();
+    public void ShouldFlushEvictedItemsIntoUnderlyingStore() {
+        int added = AddItemsToCache();
         // all dirty entries should have been flushed
         Assert.Equal(added, underlyingStore.approximateNumEntries());
         Assert.Equal(added, store.approximateNumEntries());
@@ -165,70 +165,70 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardDirtyItemToListenerWhenEvicted() {
-        int numRecords = addItemsToCache();
+    public void ShouldForwardDirtyItemToListenerWhenEvicted() {
+        int numRecords = AddItemsToCache();
         Assert.Equal(numRecords, cacheFlushListener.forwarded.Count);
     }
 
     [Xunit.Fact]
-    public void shouldForwardDirtyItemsWhenFlushCalled() {
-        store.put(bytesKey("1"), bytesValue("a"));
+    public void ShouldForwardDirtyItemsWhenFlushCalled() {
+        store.put(BytesKey("1"), BytesValue("a"));
         store.flush();
         Assert.Equal("a", cacheFlushListener.forwarded.get("1").newValue);
         assertNull(cacheFlushListener.forwarded.get("1").oldValue);
     }
 
     [Xunit.Fact]
-    public void shouldForwardOldValuesWhenEnabled() {
+    public void ShouldForwardOldValuesWhenEnabled() {
         store.setFlushListener(cacheFlushListener, true);
-        store.put(bytesKey("1"), bytesValue("a"));
+        store.put(BytesKey("1"), BytesValue("a"));
         store.flush();
         Assert.Equal("a", cacheFlushListener.forwarded.get("1").newValue);
         assertNull(cacheFlushListener.forwarded.get("1").oldValue);
-        store.put(bytesKey("1"), bytesValue("b"));
-        store.put(bytesKey("1"), bytesValue("c"));
+        store.put(BytesKey("1"), BytesValue("b"));
+        store.put(BytesKey("1"), BytesValue("c"));
         store.flush();
         Assert.Equal("c", cacheFlushListener.forwarded.get("1").newValue);
         Assert.Equal("a", cacheFlushListener.forwarded.get("1").oldValue);
-        store.put(bytesKey("1"), null);
+        store.put(BytesKey("1"), null);
         store.flush();
         assertNull(cacheFlushListener.forwarded.get("1").newValue);
         Assert.Equal("c", cacheFlushListener.forwarded.get("1").oldValue);
         cacheFlushListener.forwarded.Clear();
-        store.put(bytesKey("1"), bytesValue("a"));
-        store.put(bytesKey("1"), bytesValue("b"));
-        store.put(bytesKey("1"), null);
+        store.put(BytesKey("1"), BytesValue("a"));
+        store.put(BytesKey("1"), BytesValue("b"));
+        store.put(BytesKey("1"), null);
         store.flush();
         assertNull(cacheFlushListener.forwarded.get("1"));
         cacheFlushListener.forwarded.Clear();
     }
 
     [Xunit.Fact]
-    public void shouldNotForwardOldValuesWhenDisabled() {
-        store.put(bytesKey("1"), bytesValue("a"));
+    public void ShouldNotForwardOldValuesWhenDisabled() {
+        store.put(BytesKey("1"), BytesValue("a"));
         store.flush();
         Assert.Equal("a", cacheFlushListener.forwarded.get("1").newValue);
         assertNull(cacheFlushListener.forwarded.get("1").oldValue);
-        store.put(bytesKey("1"), bytesValue("b"));
+        store.put(BytesKey("1"), BytesValue("b"));
         store.flush();
         Assert.Equal("b", cacheFlushListener.forwarded.get("1").newValue);
         assertNull(cacheFlushListener.forwarded.get("1").oldValue);
-        store.put(bytesKey("1"), null);
+        store.put(BytesKey("1"), null);
         store.flush();
         assertNull(cacheFlushListener.forwarded.get("1").newValue);
         assertNull(cacheFlushListener.forwarded.get("1").oldValue);
         cacheFlushListener.forwarded.Clear();
-        store.put(bytesKey("1"), bytesValue("a"));
-        store.put(bytesKey("1"), bytesValue("b"));
-        store.put(bytesKey("1"), null);
+        store.put(BytesKey("1"), BytesValue("a"));
+        store.put(BytesKey("1"), BytesValue("b"));
+        store.put(BytesKey("1"), null);
         store.flush();
         assertNull(cacheFlushListener.forwarded.get("1"));
         cacheFlushListener.forwarded.Clear();
     }
 
     [Xunit.Fact]
-    public void shouldIterateAllStoredItems() {
-        int items = addItemsToCache();
+    public void ShouldIterateAllStoredItems() {
+        int items = AddItemsToCache();
         KeyValueIterator<Bytes, byte[]> all = store.all();
         List<Bytes> results = new ArrayList<>();
         while (all.hasNext()) {
@@ -238,8 +238,8 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldIterateOverRange() {
-        int items = addItemsToCache();
+    public void ShouldIterateOverRange() {
+        int items = AddItemsToCache();
         KeyValueIterator<Bytes, byte[]> range = store.range(bytesKey(string.valueOf(0)), bytesKey(string.valueOf(items)));
         List<Bytes> results = new ArrayList<>();
         while (range.hasNext()) {
@@ -249,88 +249,88 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteItemsFromCache() {
-        store.put(bytesKey("a"), bytesValue("a"));
-        store.delete(bytesKey("a"));
-        assertNull(store.get(bytesKey("a")));
-        Assert.False(store.range(bytesKey("a"), bytesKey("b")).hasNext());
+    public void ShouldDeleteItemsFromCache() {
+        store.put(BytesKey("a"), BytesValue("a"));
+        store.delete(BytesKey("a"));
+        assertNull(store.get(BytesKey("a")));
+        Assert.False(store.range(BytesKey("a"), BytesKey("b")).hasNext());
         Assert.False(store.all().hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldNotShowItemsDeletedFromCacheButFlushedToStoreBeforeDelete() {
-        store.put(bytesKey("a"), bytesValue("a"));
+    public void ShouldNotShowItemsDeletedFromCacheButFlushedToStoreBeforeDelete() {
+        store.put(BytesKey("a"), BytesValue("a"));
         store.flush();
-        store.delete(bytesKey("a"));
-        assertNull(store.get(bytesKey("a")));
-        Assert.False(store.range(bytesKey("a"), bytesKey("b")).hasNext());
+        store.delete(BytesKey("a"));
+        assertNull(store.get(BytesKey("a")));
+        Assert.False(store.range(BytesKey("a"), BytesKey("b")).hasNext());
         Assert.False(store.all().hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldClearNamespaceCacheOnClose() {
-        store.put(bytesKey("a"), bytesValue("a"));
+    public void ShouldClearNamespaceCacheOnClose() {
+        store.put(BytesKey("a"), BytesValue("a"));
         Assert.Equal(1, cache.Count);
         store.close();
         Assert.Equal(0, cache.Count);
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToGetFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToGetFromClosedCachingStore() {
         store.close();
-        store.get(bytesKey("a"));
+        store.get(BytesKey("a"));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToWriteToClosedCachingStore() {
+    public void ShouldThrowIfTryingToWriteToClosedCachingStore() {
         store.close();
-        store.put(bytesKey("a"), bytesValue("a"));
+        store.put(BytesKey("a"), BytesValue("a"));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDoRangeQueryOnClosedCachingStore() {
+    public void ShouldThrowIfTryingToDoRangeQueryOnClosedCachingStore() {
         store.close();
-        store.range(bytesKey("a"), bytesKey("b"));
+        store.range(BytesKey("a"), BytesKey("b"));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDoAllQueryOnClosedCachingStore() {
+    public void ShouldThrowIfTryingToDoAllQueryOnClosedCachingStore() {
         store.close();
         store.all();
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDoGetApproxSizeOnClosedCachingStore() {
+    public void ShouldThrowIfTryingToDoGetApproxSizeOnClosedCachingStore() {
         store.close();
         store.approximateNumEntries();
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDoPutAllClosedCachingStore() {
+    public void ShouldThrowIfTryingToDoPutAllClosedCachingStore() {
         store.close();
-        store.putAll(Collections.singletonList(KeyValuePair.Create(bytesKey("a"), bytesValue("a"))));
+        store.putAll(Collections.singletonList(KeyValuePair.Create(BytesKey("a"), BytesValue("a"))));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDoPutIfAbsentClosedCachingStore() {
+    public void ShouldThrowIfTryingToDoPutIfAbsentClosedCachingStore() {
         store.close();
-        store.putIfAbsent(bytesKey("b"), bytesValue("c"));
+        store.putIfAbsent(BytesKey("b"), BytesValue("c"));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutWithNullKey() {
-        store.put(null, bytesValue("c"));
+    public void ShouldThrowNullPointerExceptionOnPutWithNullKey() {
+        store.put(null, BytesValue("c"));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutIfAbsentWithNullKey() {
-        store.putIfAbsent(null, bytesValue("c"));
+    public void ShouldThrowNullPointerExceptionOnPutIfAbsentWithNullKey() {
+        store.putIfAbsent(null, BytesValue("c"));
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnPutAllWithNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutAllWithNullKey() {
         List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
-        entries.add(new KeyValuePair<>(null, bytesValue("a")));
+        entries.add(new KeyValuePair<>(null, BytesValue("a")));
         try {
             store.putAll(entries);
             Assert.True(false, "Should have thrown NullPointerException while putAll null key");
@@ -339,41 +339,41 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutIfAbsent() {
-        store.putIfAbsent(bytesKey("b"), bytesValue("2"));
-        Assert.Equal(store.get(bytesKey("b")), (bytesValue("2")));
+    public void ShouldPutIfAbsent() {
+        store.putIfAbsent(BytesKey("b"), BytesValue("2"));
+        Assert.Equal(store.get(BytesKey("b")), (BytesValue("2")));
 
-        store.putIfAbsent(bytesKey("b"), bytesValue("3"));
-        Assert.Equal(store.get(bytesKey("b")), (bytesValue("2")));
+        store.putIfAbsent(BytesKey("b"), BytesValue("3"));
+        Assert.Equal(store.get(BytesKey("b")), (BytesValue("2")));
     }
 
     [Xunit.Fact]
-    public void shouldPutAll() {
+    public void ShouldPutAll() {
         List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
-        entries.add(new KeyValuePair<>(bytesKey("a"), bytesValue("1")));
-        entries.add(new KeyValuePair<>(bytesKey("b"), bytesValue("2")));
+        entries.add(new KeyValuePair<>(BytesKey("a"), BytesValue("1")));
+        entries.add(new KeyValuePair<>(BytesKey("b"), BytesValue("2")));
         store.putAll(entries);
-        Assert.Equal(store.get(bytesKey("a")), (bytesValue("1")));
-        Assert.Equal(store.get(bytesKey("b")), (bytesValue("2")));
+        Assert.Equal(store.get(BytesKey("a")), (BytesValue("1")));
+        Assert.Equal(store.get(BytesKey("b")), (BytesValue("2")));
     }
 
     [Xunit.Fact]
-    public void shouldReturnUnderlying() {
+    public void ShouldReturnUnderlying() {
         Assert.Equal(underlyingStore, store.wrapped());
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToDeleteFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToDeleteFromClosedCachingStore() {
         store.close();
-        store.delete(bytesKey("key"));
+        store.delete(BytesKey("key"));
     }
 
-    private int addItemsToCache() {
+    private int AddItemsToCache() {
         int cachedSize = 0;
         int i = 0;
         while (cachedSize < maxCacheSizeBytes) {
             string kv = string.valueOf(i++);
-            store.put(bytesKey(kv), bytesValue(kv));
+            store.put(BytesKey(kv), BytesValue(kv));
             cachedSize += memoryCacheEntrySize(kv.getBytes(), kv.getBytes(), topic);
         }
         return i;
@@ -391,7 +391,7 @@ public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
         }
 
         
-        public void apply(byte[] key,
+        public void Apply(byte[] key,
                           byte[] newValue,
                           byte[] oldValue,
                           long timestamp) {

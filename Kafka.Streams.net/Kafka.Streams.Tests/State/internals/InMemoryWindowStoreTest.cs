@@ -40,7 +40,7 @@ public class InMemoryWindowStoreTest : WindowBytesStoreTest {
     private static string STORE_NAME = "InMemoryWindowStore";
 
     
-    WindowStore<K, V> buildWindowStore<K, V>(long retentionPeriod,
+    WindowStore<K, V> BuildWindowStore<K, V>(long retentionPeriod,
         long windowSize,
         bool retainDuplicates,
         Serde<K> keySerde,
@@ -57,17 +57,17 @@ public class InMemoryWindowStoreTest : WindowBytesStoreTest {
     }
 
     
-    string getMetricsScope() {
+    string GetMetricsScope() {
         return new InMemoryWindowBytesStoreSupplier(null, 0, 0, false).metricsScope();
     }
 
     
-    void setClassLoggerToDebug() {
+    void SetClassLoggerToDebug() {
         LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
     }
 
     [Xunit.Fact]
-    public void shouldRestore() {
+    public void ShouldRestore() {
         // should be empty initially
         Assert.False(windowStore.all().hasNext());
 
@@ -94,7 +94,7 @@ public class InMemoryWindowStoreTest : WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotExpireFromOpenIterator() {
+    public void ShouldNotExpireFromOpenIterator() {
 
         windowStore.put(1, "one", 0L);
         windowStore.put(1, "two", 10L);
@@ -125,7 +125,7 @@ public class InMemoryWindowStoreTest : WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testExpiration() {
+    public void TestExpiration() {
 
         long currentTime = 0;
         setCurrentTime(currentTime);

@@ -50,14 +50,14 @@
 
 public abstract class AbstractKeyValueStoreTest {
 
-    protected abstract KeyValueStore<K, V> createKeyValueStore<K, V>(ProcessorContext context);
+    protected abstract KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context);
 
     protected InternalMockProcessorContext context;
     protected KeyValueStore<int, string> store;
     protected KeyValueStoreTestDriver<int, string> driver;
 
     
-    public void before() {
+    public void Before() {
         driver = KeyValueStoreTestDriver.create(int, string);
         context = (InternalMockProcessorContext) driver.context();
         context.setTime(10);
@@ -65,12 +65,12 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     
-    public void after() {
+    public void After() {
         store.close();
         driver.Clear();
     }
 
-    private static Dictionary<int, string> getContents(KeyValueIterator<int, string> iter) {
+    private static Dictionary<int, string> GetContents(KeyValueIterator<int, string> iter) {
         HashDictionary<int, string> result = new HashMap<>();
         while (iter.hasNext()) {
             KeyValuePair<int, string> entry = iter.next();
@@ -80,14 +80,14 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotIncludeDeletedFromRangeResult() {
+    public void ShouldNotIncludeDeletedFromRangeResult() {
         store.close();
 
         Serializer<string> serializer = new StringSerializer() {
             private int numCalls = 0;
 
             
-            public byte[] serialize(string topic, string data) {
+            public byte[] Serialize(string topic, string data) {
                 if (++numCalls > 3) {
                     Assert.True(false, "Value serializer is called; it should never happen");
                 }
@@ -111,7 +111,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteIfSerializedValueIsNull() {
+    public void ShouldDeleteIfSerializedValueIsNull() {
         store.close();
 
         Serializer<string> serializer = new StringSerializer() {
@@ -140,7 +140,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutGetRange() {
+    public void TestPutGetRange() {
         // Verify that the store reads and writes correctly ...
         store.put(0, "zero");
         store.put(1, "one");
@@ -188,7 +188,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutGetRangeWithDefaultSerdes() {
+    public void TestPutGetRangeWithDefaultSerdes() {
         // Verify that the store reads and writes correctly ...
         store.put(0, "zero");
         store.put(1, "one");
@@ -221,7 +221,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testRestore() {
+    public void TestRestore() {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...
@@ -243,7 +243,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testRestoreWithDefaultSerdes() {
+    public void TestRestoreWithDefaultSerdes() {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...
@@ -264,7 +264,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutIfAbsent() {
+    public void TestPutIfAbsent() {
         // Verify that the store reads and writes correctly ...
         assertNull(store.putIfAbsent(0, "zero"));
         assertNull(store.putIfAbsent(1, "one"));
@@ -292,57 +292,57 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
         store.put(null, "anyValue");
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionOnPutNullValue() {
+    public void ShouldNotThrowNullPointerExceptionOnPutNullValue() {
         store.put(1, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutIfAbsentNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey() {
         store.putIfAbsent(null, "anyValue");
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue() {
+    public void ShouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue() {
         store.putIfAbsent(1, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutAllNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutAllNullKey() {
         store.putAll(Collections.singletonList(new KeyValuePair<>(null, "anyValue")));
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionOnPutAllNullKey() {
+    public void ShouldNotThrowNullPointerExceptionOnPutAllNullKey() {
         store.putAll(Collections.singletonList(new KeyValuePair<>(1, null)));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnDeleteNullKey() {
+    public void ShouldThrowNullPointerExceptionOnDeleteNullKey() {
         store.delete(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnGetNullKey() {
+    public void ShouldThrowNullPointerExceptionOnGetNullKey() {
         store.get(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey() {
         store.range(null, 2);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullToKey() {
         store.range(2, null);
     }
 
     [Xunit.Fact]
-    public void testSize() {
+    public void TestSize() {
         Assert.Equal("A newly created store should have no entries", 0, store.approximateNumEntries());
 
         store.put(0, "zero");
@@ -355,7 +355,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutAll() {
+    public void ShouldPutAll() {
         List<KeyValuePair<int, string>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>(1, "one"));
         entries.add(new KeyValuePair<>(2, "two"));
@@ -374,7 +374,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteFromStore() {
+    public void ShouldDeleteFromStore() {
         store.put(1, "one");
         store.put(2, "two");
         store.delete(2);
@@ -382,7 +382,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnSameResultsForGetAndRangeWithEqualKeys() {
+    public void ShouldReturnSameResultsForGetAndRangeWithEqualKeys() {
         List<KeyValuePair<int, string>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>(1, "one"));
         entries.add(new KeyValuePair<>(2, "two"));
@@ -397,7 +397,7 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowConcurrentModificationException() {
+    public void ShouldNotThrowConcurrentModificationException() {
         store.put(0, "zero");
 
         KeyValueIterator<int, string> results = store.range(0, 2);
@@ -408,9 +408,9 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
         LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         KeyValueIterator<int, string> iterator = store.range(-1, 1);
         Assert.False(iterator.hasNext());

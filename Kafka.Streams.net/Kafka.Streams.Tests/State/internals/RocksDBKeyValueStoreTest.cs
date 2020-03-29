@@ -39,7 +39,7 @@ public class RocksDBKeyValueStoreTest : AbstractKeyValueStoreTest {
 
     
     
-    protected KeyValueStore<K, V> createKeyValueStore<K, V>(ProcessorContext context) {
+    protected KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context) {
         StoreBuilder storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("my-store"),
                 (Serde<K>) context.keySerde(),
@@ -54,18 +54,18 @@ public class RocksDBKeyValueStoreTest : AbstractKeyValueStoreTest {
         static bool called = false;
 
         
-        public void setConfig(string storeName, Options options, Dictionary<string, object> configs) {
+        public void SetConfig(string storeName, Options options, Dictionary<string, object> configs) {
             called = true;
         }
     }
 
     [Xunit.Fact]
-    public void shouldUseCustomRocksDbConfigSetter() {
+    public void ShouldUseCustomRocksDbConfigSetter() {
         Assert.True(TheRocksDbConfigSetter.called);
     }
 
     [Xunit.Fact]
-    public void shouldPerformRangeQueriesWithCachingDisabled() {
+    public void ShouldPerformRangeQueriesWithCachingDisabled() {
         context.setTime(1L);
         store.put(1, "hi");
         store.put(2, "goodbye");
@@ -76,7 +76,7 @@ public class RocksDBKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPerformAllQueriesWithCachingDisabled() {
+    public void ShouldPerformAllQueriesWithCachingDisabled() {
         context.setTime(1L);
         store.put(1, "hi");
         store.put(2, "goodbye");
@@ -87,7 +87,7 @@ public class RocksDBKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseOpenIteratorsWhenStoreClosedAndThrowInvalidStateStoreOnHasNextAndNext() {
+    public void ShouldCloseOpenIteratorsWhenStoreClosedAndThrowInvalidStateStoreOnHasNextAndNext() {
         context.setTime(1L);
         store.put(1, "hi");
         store.put(2, "goodbye");

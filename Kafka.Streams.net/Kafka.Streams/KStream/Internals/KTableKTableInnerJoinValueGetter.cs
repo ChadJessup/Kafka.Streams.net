@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
                 if (value2 != null)
                 {
                     return ValueAndTimestamp<R>.make(
-                        joiner.apply(value1, value2),
+                        joiner.Apply(value1, value2),
                         Math.Max(valueAndTimestamp1?.timestamp ?? 0, valueAndTimestamp2.timestamp));
                 }
                 else

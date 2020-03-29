@@ -53,7 +53,7 @@ namespace Kafka.Streams.KStream.Internals
 
             if (queryableName != null)
             {
-                ValueAndTimestamp<V> oldValueAndTimestamp = store.get(key);
+                ValueAndTimestamp<V> oldValueAndTimestamp = store.Get(key);
 
                 V oldValue;
                 if (oldValueAndTimestamp != null)

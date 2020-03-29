@@ -22,7 +22,7 @@ namespace Kafka.Streams.Tests.Tools
          * @param formattedConfigs the formatted config string
          * @return HashMap with keys and values inserted
          */
-        public static Dictionary<string, string> parseConfigs(string formattedConfigs) {
+        public static Dictionary<string, string> ParseConfigs(string formattedConfigs) {
             Objects.requireNonNull(formattedConfigs, "Formatted config string can't be null");
 
             if (formattedConfigs.indexOf('=') == -1) {

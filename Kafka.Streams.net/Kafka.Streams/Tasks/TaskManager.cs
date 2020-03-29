@@ -258,7 +258,7 @@ namespace Kafka.Streams.Tasks
             // for those restoring and still assigned tasks, they will be re-created
             // in.AddStreamTasks.
             firstException = Interlocked.Exchange(ref firstException, active.closeAllRestoringTasks());
-            changelogReader.reset();
+            changelogReader.Reset();
 
             firstException = Interlocked.Exchange(ref firstException, standby.Suspend());
 
@@ -361,7 +361,7 @@ namespace Kafka.Streams.Tasks
             active.initializeNewTasks();
             standby.initializeNewTasks();
 
-            List<TopicPartition> restored = changelogReader.restore(active);
+            List<TopicPartition> restored = changelogReader.Restore(active);
 
             active.UpdateRestored(restored);
 

@@ -26,12 +26,12 @@
 public class LogAndSkipOnInvalidTimestampTest : TimestampExtractorTest {
 
     [Xunit.Fact]
-    public void extractMetadataTimestamp() {
-        testExtractMetadataTimestamp(new LogAndSkipOnInvalidTimestamp());
+    public void ExtractMetadataTimestamp() {
+        TestExtractMetadataTimestamp(new LogAndSkipOnInvalidTimestamp());
     }
 
     [Xunit.Fact]
-    public void logAndSkipOnInvalidTimestamp() {
+    public void LogAndSkipOnInvalidTimestamp() {
         long invalidMetadataTimestamp = -42;
 
         TimestampExtractor extractor = new LogAndSkipOnInvalidTimestamp();

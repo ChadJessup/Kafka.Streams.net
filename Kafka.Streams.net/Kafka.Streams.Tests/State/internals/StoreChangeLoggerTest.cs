@@ -52,7 +52,7 @@ public class StoreChangeLoggerTest {
             new Metrics().sensor("skipped-records")) {
 
             
-            public void send<K1, V1>(string topic,
+            public void Send<K1, V1>(string topic,
                                       K1 key,
                                       V1 value,
                                       Headers headers,
@@ -65,7 +65,7 @@ public class StoreChangeLoggerTest {
             }
 
             
-            public void send<K1, V1>(string topic,
+            public void Send<K1, V1>(string topic,
                                       K1 key,
                                       V1 value,
                                       Headers headers,
@@ -82,7 +82,7 @@ public class StoreChangeLoggerTest {
         new StoreChangeLogger<>(topic, context, StateSerdes.withBuiltinTypes(topic, int, string));
 
     [Xunit.Fact]
-    public void testAddRemove() {
+    public void TestAddRemove() {
         context.setTime(1);
         changeLogger.logChange(0, "zero");
         context.setTime(5);
@@ -100,7 +100,7 @@ public class StoreChangeLoggerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSendRecordHeadersToChangelogTopic() {
+    public void ShouldNotSendRecordHeadersToChangelogTopic() {
         context.headers().add(new RecordHeader("key", "value".getBytes()));
         changeLogger.logChange(0, "zero");
         changeLogger.logChange(0, "zero", 42L);

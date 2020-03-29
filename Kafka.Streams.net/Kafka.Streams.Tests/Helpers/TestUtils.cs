@@ -18,18 +18,18 @@ namespace Kafka.Streams.Tests.Helpers
 {
     internal static class TestUtils
     {
-        internal static void waitForCondition(
+        internal static void WaitForCondition(
             Func<bool> condition,
             string errorMessage)
-            => waitForCondition(condition, TimeSpan.FromSeconds(20.0), errorMessage);
+            => WaitForCondition(condition, TimeSpan.FromSeconds(20.0), errorMessage);
 
-        internal static void waitForCondition(
+        internal static void WaitForCondition(
             Func<bool> condition,
             long timeoutMs,
             string errorMessage)
-            => waitForCondition(condition, TimeSpan.FromMilliseconds(timeoutMs), errorMessage);
+            => WaitForCondition(condition, TimeSpan.FromMilliseconds(timeoutMs), errorMessage);
 
-        internal static void waitForCondition(
+        internal static void WaitForCondition(
             Func<bool> condition,
             TimeSpan? timeout,
             string errorMessage)

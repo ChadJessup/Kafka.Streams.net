@@ -39,7 +39,7 @@ public class CopartitionedTopicsValidatorTest {
     private Cluster cluster = Cluster.empty();
 
     
-    public void before() {
+    public void Before() {
         partitions.put(
             new TopicPartition("first", 0),
             new PartitionInfo("first", 0, null, null, null));
@@ -55,14 +55,14 @@ public class CopartitionedTopicsValidatorTest {
     }
 
     [Xunit.Fact]// (expected = IllegalStateException)
-    public void shouldThrowTopologyBuilderExceptionIfNoPartitionsFoundForCoPartitionedTopic() {
+    public void ShouldThrowTopologyBuilderExceptionIfNoPartitionsFoundForCoPartitionedTopic() {
         validator.validate(Collections.singleton("topic"),
                            Collections.emptyMap(),
                            cluster);
     }
 
     [Xunit.Fact]// (expected = TopologyException)
-    public void shouldThrowTopologyBuilderExceptionIfPartitionCountsForCoPartitionedTopicsDontMatch() {
+    public void ShouldThrowTopologyBuilderExceptionIfPartitionCountsForCoPartitionedTopicsDontMatch() {
         partitions.remove(new TopicPartition("second", 0));
         validator.validate(Utils.mkSet("first", "second"),
                            Collections.emptyMap(),
@@ -71,8 +71,8 @@ public class CopartitionedTopicsValidatorTest {
 
 
     [Xunit.Fact]
-    public void shouldEnforceCopartitioningOnRepartitionTopics() {
-        InternalTopicConfig config = createTopicConfig("repartitioned", 10);
+    public void ShouldEnforceCopartitioningOnRepartitionTopics() {
+        InternalTopicConfig config = CreateTopicConfig("repartitioned", 10);
 
         validator.validate(Utils.mkSet("first", "second", config.name()),
                            Collections.singletonMap(config.name(), config),
@@ -83,10 +83,10 @@ public class CopartitionedTopicsValidatorTest {
 
 
     [Xunit.Fact]
-    public void shouldSetNumPartitionsToMaximumPartitionsWhenAllTopicsAreRepartitionTopics() {
-        InternalTopicConfig one = createTopicConfig("one", 1);
-        InternalTopicConfig two = createTopicConfig("two", 15);
-        InternalTopicConfig three = createTopicConfig("three", 5);
+    public void ShouldSetNumPartitionsToMaximumPartitionsWhenAllTopicsAreRepartitionTopics() {
+        InternalTopicConfig one = CreateTopicConfig("one", 1);
+        InternalTopicConfig two = CreateTopicConfig("two", 15);
+        InternalTopicConfig three = CreateTopicConfig("three", 5);
         Dictionary<string, InternalTopicConfig> repartitionTopicConfig = new HashMap<>();
 
         repartitionTopicConfig.put(one.name(), one);
@@ -105,7 +105,7 @@ public class CopartitionedTopicsValidatorTest {
         Assert.Equal(three.numberOfPartitions(), (15));
     }
 
-    private InternalTopicConfig createTopicConfig(string repartitionTopic,
+    private InternalTopicConfig CreateTopicConfig(string repartitionTopic,
                                                                                int partitions) {
         InternalTopicConfig repartitionTopicConfig =
             new RepartitionTopicConfig(repartitionTopic, Collections.emptyMap());

@@ -74,7 +74,7 @@ public class MeteredWindowStoreTest {
     }
 
     
-    public void setUp() {
+    public void SetUp() {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, "test");
 
         context = new InternalMockProcessorContext(
@@ -89,7 +89,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
+    public void TestMetrics() {
         replay(innerStoreMock);
         store.init(context, store);
         JmxReporter reporter = new JmxReporter("kafka.streams");
@@ -101,7 +101,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordRestoreLatencyOnInit() {
+    public void ShouldRecordRestoreLatencyOnInit() {
         innerStoreMock.init(context, store);
         expectLastCall();
         replay(innerStoreMock);
@@ -112,7 +112,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordPutLatency() {
+    public void ShouldRecordPutLatency() {
         byte[] bytes = "a".getBytes();
         innerStoreMock.put(eq(Bytes.wrap(bytes)), anyObject(), eq(context.Timestamp));
         expectLastCall();
@@ -127,7 +127,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordFetchLatency() {
+    public void ShouldRecordFetchLatency() {
         expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 1, 1)).andReturn(KeyValueIterators.<byte[]>emptyWindowStoreIterator());
         replay(innerStoreMock);
 
@@ -140,7 +140,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordFetchRangeLatency() {
+    public void ShouldRecordFetchRangeLatency() {
         expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), Bytes.wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
         replay(innerStoreMock);
 
@@ -153,7 +153,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordFlushLatency() {
+    public void ShouldRecordFlushLatency() {
         innerStoreMock.flush();
         expectLastCall();
         replay(innerStoreMock);
@@ -167,7 +167,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseUnderlyingStore() {
+    public void ShouldCloseUnderlyingStore() {
         innerStoreMock.close();
         expectLastCall();
         replay(innerStoreMock);
@@ -178,7 +178,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionIfFetchReturnsNull() {
+    public void ShouldNotThrowNullPointerExceptionIfFetchReturnsNull() {
         expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 0)).andReturn(null);
         replay(innerStoreMock);
 
@@ -190,7 +190,7 @@ public class MeteredWindowStoreTest {
 
     
     [Xunit.Fact]
-    public void shouldSetFlushListenerOnWrappedCachingStore() {
+    public void ShouldSetFlushListenerOnWrappedCachingStore() {
         CachedWindowStore cachedWindowStore = mock(CachedWindowStore);
 
         expect(cachedWindowStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
@@ -210,7 +210,7 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSetFlushListenerOnWrappedNoneCachingStore() {
+    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore() {
         Assert.False(store.setFlushListener(null, false));
     }
 

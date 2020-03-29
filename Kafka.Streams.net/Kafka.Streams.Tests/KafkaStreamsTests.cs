@@ -30,7 +30,7 @@ namespace Kafka.Streams.Tests
             globalStreams = TestUtils.GetStreamsBuilder(this.props).BuildKafkaStreams();
         }
 
-        public void cleanup()
+        public void Cleanup()
         {
             if (globalStreams != null)
             {
@@ -86,7 +86,7 @@ namespace Kafka.Streams.Tests
 
             globalStreams.Start();
 
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => stateListener.numChanges == 2,
                 timeout: TimeSpan.FromSeconds(5.0),
                 "Streams never started.");
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests
 
             foreach (StreamThread thread in globalStreams.Threads)
             {
-                thread.StateListener.onChange(
+                thread.StateListener.OnChange(
                     thread,
                     StreamThreadStates.PARTITIONS_REVOKED,
                     StreamThreadStates.RUNNING);
@@ -106,7 +106,7 @@ namespace Kafka.Streams.Tests
 
             foreach (var thread in globalStreams.Threads)
             {
-                thread.StateListener.onChange(
+                thread.StateListener.OnChange(
                     thread,
                     StreamThreadStates.PARTITIONS_ASSIGNED,
                     StreamThreadStates.PARTITIONS_REVOKED);
@@ -115,12 +115,12 @@ namespace Kafka.Streams.Tests
             Assert.Equal(3, stateListener.numChanges);
             Assert.Equal(KafkaStreamsThreadStates.REBALANCING, globalStreams.State.CurrentState);
 
-            globalStreams.Threads[NUM_THREADS - 1].StateListener.onChange(
+            globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
                 globalStreams.Threads[NUM_THREADS - 1],
                 StreamThreadStates.PENDING_SHUTDOWN,
                 StreamThreadStates.PARTITIONS_ASSIGNED);
 
-            globalStreams.Threads[NUM_THREADS - 1].StateListener.onChange(
+            globalStreams.Threads[NUM_THREADS - 1].StateListener.OnChange(
                 globalStreams.Threads[NUM_THREADS - 1],
                 StreamThreadStates.DEAD,
                 StreamThreadStates.PENDING_SHUTDOWN);
@@ -132,7 +132,7 @@ namespace Kafka.Streams.Tests
             {
                 if (thread != globalStreams.Threads[NUM_THREADS - 1])
                 {
-                    thread.StateListener.onChange(
+                    thread.StateListener.OnChange(
                         thread,
                         StreamThreadStates.RUNNING,
                         StreamThreadStates.PARTITIONS_ASSIGNED);
@@ -144,7 +144,7 @@ namespace Kafka.Streams.Tests
 
             globalStreams.Close();
 
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => stateListener.numChanges == 6,
                 "Streams never closed.");
 
@@ -891,7 +891,7 @@ namespace Kafka.Streams.Tests
             object? newState;
             public ConcurrentDictionary<object, long> mapStates = new ConcurrentDictionary<object, long>();
 
-            public void onChange<States>(IThread<States> thread, States newState, States oldState)
+            public void OnChange<States>(IThread<States> thread, States newState, States oldState)
                 where States : Enum
             {
 

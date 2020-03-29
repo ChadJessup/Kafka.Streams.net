@@ -25,7 +25,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentNullException If null is used for key.
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        V get(K key);
+        V Get(K key);
 
         /**
          * Get an iterator over a given range of keys. This iterator must be closed after use.
@@ -37,7 +37,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @throws ArgumentNullException If null is used for from or to.
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        IKeyValueIterator<K, V> range(K from, K to);
+        IKeyValueIterator<K, V> Range(K from, K to);
 
         /**
          * Return an iterator over all keys in this store. This iterator must be closed after use.
@@ -46,7 +46,7 @@ namespace Kafka.Streams.State.ReadOnly
          * @return An iterator of all key/value pairs in the store.
          * @throws InvalidStateStoreException if the store is not initialized
          */
-        IKeyValueIterator<K, V> all();
+        IKeyValueIterator<K, V> All();
 
         /**
          * Return an approximate count of key-value mappings in this store.

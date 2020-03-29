@@ -29,7 +29,7 @@ namespace Kafka.Streams.KStream.Internals
             this.outer = outer;
         }
 
-        public IKeyValueProcessor<K, V1> get()
+        public IKeyValueProcessor<K, V1> Get()
         {
             return new KStreamKStreamJoinProcessor<K, V1, V2, R>(
                 outer: this.outer,

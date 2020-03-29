@@ -49,7 +49,7 @@ public class CompositeReadOnlySessionStoreTest {
     private CompositeReadOnlySessionStore<string, long> sessionStore;
 
     
-    public void before() {
+    public void Before() {
         stubProviderOne.addStore(storeName, underlyingSessionStore);
         stubProviderOne.addStore("other-session-store", otherUnderlyingStore);
 
@@ -60,7 +60,7 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchResulstFromUnderlyingSessionStore() {
+    public void ShouldFetchResulstFromUnderlyingSessionStore() {
         underlyingSessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         underlyingSessionStore.put(new Windowed<>("a", new SessionWindow(10, 10)), 2L);
 
@@ -71,13 +71,13 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnEmptyIteratorIfNoData() {
+    public void ShouldReturnEmptyIteratorIfNoData() {
         KeyValueIterator<Windowed<string>, long> result = sessionStore.fetch("b");
         Assert.False(result.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldFindValueForKeyWhenMultiStores() {
+    public void ShouldFindValueForKeyWhenMultiStores() {
         ReadOnlySessionStoreStub<string, long> secondUnderlying = new
                 ReadOnlySessionStoreStub<>();
         stubProviderTwo.addStore(storeName, secondUnderlying);
@@ -95,7 +95,7 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotGetValueFromOtherStores() {
+    public void ShouldNotGetValueFromOtherStores() {
         Windowed<string> expectedKey = new Windowed<>("foo", new SessionWindow(0, 0));
         otherUnderlyingStore.put(new Windowed<>("foo", new SessionWindow(10, 10)), 10L);
         underlyingSessionStore.put(expectedKey, 1L);
@@ -106,7 +106,7 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStateStoreExceptionOnRebalance() {
+    public void ShouldThrowInvalidStateStoreExceptionOnRebalance() {
         CompositeReadOnlySessionStore<string, string> store =
             new CompositeReadOnlySessionStore<>(
                 new StateStoreProviderStub(true),
@@ -117,7 +117,7 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowInvalidStateStoreExceptionIfSessionFetchThrows() {
+    public void ShouldThrowInvalidStateStoreExceptionIfSessionFetchThrows() {
         underlyingSessionStore.setOpen(false);
         try {
             sessionStore.fetch("key");
@@ -126,12 +126,12 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionIfFetchingNullKey() {
+    public void ShouldThrowNullPointerExceptionIfFetchingNullKey() {
         sessionStore.fetch(null);
     }
 
     [Xunit.Fact]
-    public void shouldFetchKeyRangeAcrossStores() {
+    public void ShouldFetchKeyRangeAcrossStores() {
         ReadOnlySessionStoreStub<string, long> secondUnderlying = new
                 ReadOnlySessionStoreStub<>();
         stubProviderTwo.addStore(storeName, secondUnderlying);
@@ -142,17 +142,17 @@ public class CompositeReadOnlySessionStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfKeyIsNull() {
+    public void ShouldThrowNPEIfKeyIsNull() {
         underlyingSessionStore.fetch(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfFromKeyIsNull() {
+    public void ShouldThrowNPEIfFromKeyIsNull() {
         underlyingSessionStore.fetch(null, "a");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNPEIfToKeyIsNull() {
+    public void ShouldThrowNPEIfToKeyIsNull() {
         underlyingSessionStore.fetch("a", null);
     }
 }

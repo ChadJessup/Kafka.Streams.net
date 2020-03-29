@@ -31,26 +31,26 @@
 
 public class BufferValueTest {
     [Xunit.Fact]
-    public void shouldDeduplicateNullValues() {
+    public void ShouldDeduplicateNullValues() {
         BufferValue bufferValue = new BufferValue(null, null, null, null);
         assertSame(bufferValue.priorValue(), bufferValue.oldValue());
     }
 
     [Xunit.Fact]
-    public void shouldDeduplicateIndenticalValues() {
+    public void ShouldDeduplicateIndenticalValues() {
         byte[] bytes = {(byte) 0};
         BufferValue bufferValue = new BufferValue(bytes, bytes, null, null);
         assertSame(bufferValue.priorValue(), bufferValue.oldValue());
     }
 
     [Xunit.Fact]
-    public void shouldDeduplicateEqualValues() {
+    public void ShouldDeduplicateEqualValues() {
         BufferValue bufferValue = new BufferValue(new byte[] {(byte) 0}, new byte[] {(byte) 0}, null, null);
         assertSame(bufferValue.priorValue(), bufferValue.oldValue());
     }
 
     [Xunit.Fact]
-    public void shouldStoreDifferentValues() {
+    public void ShouldStoreDifferentValues() {
         byte[] priorValue = {(byte) 0};
         byte[] oldValue = {(byte) 1};
         BufferValue bufferValue = new BufferValue(priorValue, oldValue, null, null);
@@ -60,7 +60,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldStoreDifferentValuesWithPriorNull() {
+    public void ShouldStoreDifferentValuesWithPriorNull() {
         byte[] priorValue = null;
         byte[] oldValue = {(byte) 1};
         BufferValue bufferValue = new BufferValue(priorValue, oldValue, null, null);
@@ -70,7 +70,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldStoreDifferentValuesWithOldNull() {
+    public void ShouldStoreDifferentValuesWithOldNull() {
         byte[] priorValue = {(byte) 0};
         byte[] oldValue = null;
         BufferValue bufferValue = new BufferValue(priorValue, oldValue, null, null);
@@ -80,7 +80,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldAccountForDeduplicationInSizeEstimate() {
+    public void ShouldAccountForDeduplicationInSizeEstimate() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         Assert.Equal(25L, new BufferValue(null, null, null, context).residentMemorySizeEstimate());
         Assert.Equal(26L, new BufferValue(new byte[] {(byte) 0}, null, null, context).residentMemorySizeEstimate());
@@ -93,7 +93,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeNulls() {
+    public void ShouldSerializeNulls() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] bytes = new BufferValue(null, null, null, context).serialize(0).array();
@@ -103,7 +103,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializePrior() {
+    public void ShouldSerializePrior() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] priorValue = {(byte) 5};
@@ -114,7 +114,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeOld() {
+    public void ShouldSerializeOld() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] oldValue = {(byte) 5};
@@ -125,7 +125,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeNew() {
+    public void ShouldSerializeNew() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] newValue = {(byte) 5};
@@ -136,7 +136,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldCompactDuplicates() {
+    public void ShouldCompactDuplicates() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] duplicate = {(byte) 5};
@@ -147,7 +147,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeserializePrior() {
+    public void ShouldDeserializePrior() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] priorValue = {(byte) 5};
@@ -162,7 +162,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeserializeOld() {
+    public void ShouldDeserializeOld() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] oldValue = {(byte) 5};
@@ -176,7 +176,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeserializeNew() {
+    public void ShouldDeserializeNew() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] newValue = {(byte) 5};
@@ -190,7 +190,7 @@ public class BufferValueTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeserializeCompactedDuplicates() {
+    public void ShouldDeserializeCompactedDuplicates() {
         ProcessorRecordContext context = new ProcessorRecordContext(0L, 0L, 0, "topic", null);
         byte[] serializedContext = context.serialize();
         byte[] duplicate = {(byte) 5};

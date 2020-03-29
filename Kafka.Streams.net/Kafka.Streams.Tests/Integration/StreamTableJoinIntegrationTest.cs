@@ -51,7 +51,7 @@ public class StreamTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     
-    public void prepareTopology() {// throws InterruptedException
+    public void PrepareTopology() {// throws InterruptedException
         base.prepareEnvironment();
 
         appID = "stream-table-join-integration-test";
@@ -62,7 +62,7 @@ public class StreamTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testShouldAutoShutdownOnIncompleteMetadata() {// throws InterruptedException
+    public void TestShouldAutoShutdownOnIncompleteMetadata() {// throws InterruptedException
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-incomplete");
 
         KStream<long, string> notExistStream = builder.stream(INPUT_TOPIC_LEFT + "-not-existed");
@@ -87,7 +87,7 @@ public class StreamTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInner() {// throws Exception
+    public void TestInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -114,7 +114,7 @@ public class StreamTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeft() {// throws Exception
+    public void TestLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(

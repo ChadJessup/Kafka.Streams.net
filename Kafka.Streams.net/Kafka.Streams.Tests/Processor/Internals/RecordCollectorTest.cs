@@ -76,7 +76,7 @@ public class RecordCollectorTest {
     };
 
     [Xunit.Fact]
-    public void testSpecificPartition() {
+    public void TestSpecificPartition() {
 
         RecordCollectorImpl collector = new RecordCollectorImpl(
             "RecordCollectorTest-TestSpecificPartition",
@@ -114,7 +114,7 @@ public class RecordCollectorTest {
     }
 
     [Xunit.Fact]
-    public void testStreamPartitioner() {
+    public void TestStreamPartitioner() {
 
         RecordCollectorImpl collector = new RecordCollectorImpl(
             "RecordCollectorTest-TestStreamPartitioner",
@@ -147,7 +147,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowStreamsExceptionOnAnyExceptionButProducerFencedException() {
+    public void ShouldThrowStreamsExceptionOnAnyExceptionButProducerFencedException() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -165,7 +165,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnSubsequentCallIfASendFailsWithDefaultExceptionHandler() {
+    public void ShouldThrowStreamsExceptionOnSubsequentCallIfASendFailsWithDefaultExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -189,7 +189,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldNotThrowStreamsExceptionOnSubsequentCallIfASendFailsWithContinueExceptionHandler() {
+    public void ShouldNotThrowStreamsExceptionOnSubsequentCallIfASendFailsWithContinueExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -210,10 +210,10 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldRecordSkippedMetricAndLogWarningIfSendFailsWithContinueExceptionHandler() {
+    public void ShouldRecordSkippedMetricAndLogWarningIfSendFailsWithContinueExceptionHandler() {
         Metrics metrics = new Metrics();
         Sensor sensor = metrics.sensor("skipped-records");
-        LogCaptureAppender logCaptureAppender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender logCaptureAppender = LogCaptureAppender.CreateAndRegister();
         MetricName metricName = new MetricName("name", "group", "description", Collections.emptyMap());
         sensor.add(metricName, new WindowedSum());
         RecordCollector collector = new RecordCollectorImpl(
@@ -236,7 +236,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnFlushIfASendFailedWithDefaultExceptionHandler() {
+    public void ShouldThrowStreamsExceptionOnFlushIfASendFailedWithDefaultExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -260,7 +260,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldNotThrowStreamsExceptionOnFlushIfASendFailedWithContinueExceptionHandler() {
+    public void ShouldNotThrowStreamsExceptionOnFlushIfASendFailedWithContinueExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -281,7 +281,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnCloseIfASendFailedWithDefaultExceptionHandler() {
+    public void ShouldThrowStreamsExceptionOnCloseIfASendFailedWithDefaultExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -305,7 +305,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]
-    public void shouldNotThrowStreamsExceptionOnCloseIfASendFailedWithContinueExceptionHandler() {
+    public void ShouldNotThrowStreamsExceptionOnCloseIfASendFailedWithContinueExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -326,7 +326,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowIfTopicIsUnknownWithDefaultExceptionHandler() {
+    public void ShouldThrowIfTopicIsUnknownWithDefaultExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -344,7 +344,7 @@ public class RecordCollectorTest {
 
     
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowIfTopicIsUnknownWithContinueExceptionHandler() {
+    public void ShouldThrowIfTopicIsUnknownWithContinueExceptionHandler() {
         RecordCollector collector = new RecordCollectorImpl(
             "test",
             logContext,
@@ -361,10 +361,10 @@ public class RecordCollectorTest {
     }
 
     [Xunit.Fact]
-    public void testRecordHeaderPassThroughSerializer() {
+    public void TestRecordHeaderPassThroughSerializer() {
         CustomStringSerializer keySerializer = new CustomStringSerializer();
         CustomStringSerializer valueSerializer = new CustomStringSerializer();
-        keySerializer.configure(Collections.emptyMap(), true);
+        keySerializer.Configure(Collections.emptyMap(), true);
 
         RecordCollectorImpl collector = new RecordCollectorImpl(
                 "test",
@@ -388,7 +388,7 @@ public class RecordCollectorTest {
     }
 
     [Xunit.Fact]
-    public void testShouldNotThrowNPEOnCloseIfProducerIsNotInitialized() {
+    public void TestShouldNotThrowNPEOnCloseIfProducerIsNotInitialized() {
         RecordCollectorImpl collector = new RecordCollectorImpl(
                 "NoNPE",
                 logContext,
@@ -407,13 +407,13 @@ public class RecordCollectorTest {
         }
 
         
-        public void configure(Dictionary<string, ?> configs, bool isKey) {
+        public void Configure(Dictionary<string, ?> configs, bool isKey) {
             this.isKey = isKey;
             base.configure(configs, isKey);
         }
 
         
-        public byte[] serialize(string topic, Headers headers, string data) {
+        public byte[] Serialize(string topic, Headers headers, string data) {
             if (isKey) {
                 headers.add(new RecordHeader("key", "key".getBytes()));
             } else {

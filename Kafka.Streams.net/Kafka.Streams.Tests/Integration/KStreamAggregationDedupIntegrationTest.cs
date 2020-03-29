@@ -30,10 +30,10 @@ namespace Kafka.Streams.Tests.Integration
         private KStream<int, string> stream;
 
 
-        public void before()
+        public void Before()
         {// throws InterruptedException
             builder = new StreamsBuilder();
-            createTopics();
+            CreateTopics();
             streamsConfiguration = new Properties();
             string applicationId = "kgrouped-stream-test-" + testNo.incrementAndGet();
             streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
@@ -51,7 +51,7 @@ namespace Kafka.Streams.Tests.Integration
         }
 
 
-        public void whenShuttingDown(){ //throws IOException
+        public void WhenShuttingDown(){ //throws IOException
         if (kafkaStreams != null) {
             kafkaStreams.close();
         }
@@ -60,7 +60,7 @@ namespace Kafka.Streams.Tests.Integration
 
 
 [Xunit.Fact]
-public void shouldReduce()
+public void ShouldReduce()
 {// throws Exception
     produceMessages(System.currentTimeMillis());
     groupedStream
@@ -68,10 +68,10 @@ public void shouldReduce()
             .toStream()
             .to(outputTopic, Produced.with(Serdes.String(), Serdes.String()));
 
-    startStreams();
+    StartStreams();
 
     long timestamp = System.currentTimeMillis();
-    produceMessages(timestamp);
+    ProduceMessages(timestamp);
 
     validateReceivedMessages(
             new StringDeserializer(),
@@ -85,13 +85,13 @@ public void shouldReduce()
 }
 
 [Xunit.Fact]
-public void shouldReduceWindowed()
+public void ShouldReduceWindowed()
 {// throws Exception
     long firstBatchTimestamp = System.currentTimeMillis() - 1000;
-    produceMessages(firstBatchTimestamp);
+    ProduceMessages(firstBatchTimestamp);
     long secondBatchTimestamp = System.currentTimeMillis();
-    produceMessages(secondBatchTimestamp);
-    produceMessages(secondBatchTimestamp);
+    ProduceMessages(secondBatchTimestamp);
+    ProduceMessages(secondBatchTimestamp);
 
     groupedStream
         .windowedBy(TimeWindows.of(ofMillis(500L)))
@@ -99,7 +99,7 @@ public void shouldReduceWindowed()
             .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().start())
             .to(outputTopic, Produced.with(Serdes.String(), Serdes.String()));
 
-    startStreams();
+    StartStreams();
 
     long firstBatchWindow = firstBatchTimestamp / 500 * 500;
     long secondBatchWindow = secondBatchTimestamp / 500 * 500;
@@ -123,11 +123,11 @@ public void shouldReduceWindowed()
 }
 
 [Xunit.Fact]
-public void shouldGroupByKey()
+public void ShouldGroupByKey()
 {// throws Exception
     long timestamp = mockTime.milliseconds();
-    produceMessages(timestamp);
-    produceMessages(timestamp);
+    ProduceMessages(timestamp);
+    ProduceMessages(timestamp);
 
     stream.groupByKey(Grouped.with(Serdes.Int(), Serdes.String()))
         .windowedBy(TimeWindow.of(ofMillis(500L)))
@@ -135,7 +135,7 @@ public void shouldGroupByKey()
             .toStream((windowedKey, value) => windowedKey.Key + "@" + windowedKey.window().start())
             .to(outputTopic, Produced.with(Serdes.String(), Serdes.Long()));
 
-    startStreams();
+    StartStreams();
 
     long window = timestamp / 500 * 500;
 
@@ -153,7 +153,7 @@ public void shouldGroupByKey()
 }
 
 
-private void produceMessages(long timestamp)
+private void ProduceMessages(long timestamp)
 {// throws Exception
     IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(
         streamOneInput,
@@ -172,7 +172,7 @@ private void produceMessages(long timestamp)
 }
 
 
-private void createTopics()
+private void CreateTopics()
 {// throws InterruptedException
     streamOneInput = "stream-one-" + testNo;
     outputTopic = "output-" + testNo;
@@ -180,14 +180,14 @@ private void createTopics()
     CLUSTER.createTopic(outputTopic);
 }
 
-private void startStreams()
+private void StartStreams()
 {
     kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
     kafkaStreams.start();
 }
 
 
-private void validateReceivedMessages<K, V>(IDeserializer<K> keyDeserializer,
+private void ValidateReceivedMessages<K, V>(IDeserializer<K> keyDeserializer,
                                              IDeserializer<V> valueDeserializer,
                                              List<KeyValueTimestamp<K, V>> expectedRecords)
         // throws InterruptedException

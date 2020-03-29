@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
             this.valueTransformerSupplier = valueTransformerWithKeySupplier;
         }
 
-        public IKeyValueProcessor<KIn, VIn> get()
+        public IKeyValueProcessor<KIn, VIn> Get()
         {
             return new KStreamFlatTransformValuesProcessor<KIn, VIn, VOut>(this.valueTransformerSupplier.get());
         }

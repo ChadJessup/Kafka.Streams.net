@@ -69,7 +69,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
 
     // As we add more buffer implementations/configurations, we can add them here
     // @Parameterized.Parameters(name = "{index}: test={0}")
-    public static Collection<object[]> parameters() {
+    public static Collection<object[]> Parameters() {
         return singletonList(
             new object[] {
                 "in-memory buffer",
@@ -86,7 +86,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         this.bufferSupplier = bufferSupplier;
     }
 
-    private static MockInternalProcessorContext makeContext() {
+    private static MockInternalProcessorContext MakeContext() {
         Properties properties = new Properties();
         properties.setProperty(StreamsConfig.APPLICATION_ID_CONFIG, APP_ID);
         properties.setProperty(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "");
@@ -100,7 +100,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
     }
 
 
-    private static void cleanup(MockInternalProcessorContext context, TimeOrderedKeyValueBuffer<string, string> buffer) {
+    private static void Cleanup(MockInternalProcessorContext context, TimeOrderedKeyValueBuffer<string, string> buffer) {
         try {
             buffer.close();
             Utils.delete(context.stateDir());
@@ -110,117 +110,117 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
     }
 
     [Xunit.Fact]
-    public void shouldInit() {
+    public void ShouldInit() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldAcceptData() {
+    public void ShouldAcceptData() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 0L, 0L, "asdf", "2p93nf");
-        cleanup(context, buffer);
+        PutRecord(buffer, context, 0L, 0L, "asdf", "2p93nf");
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRejectNullValues() {
+    public void ShouldRejectNullValues() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
         try {
-            buffer.put(0, "asdf", null, getContext(0));
+            buffer.put(0, "asdf", null, GetContext(0));
             Assert.True(false, "expected an exception");
         } catch (NullPointerException expected) {
             // expected
         }
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRemoveData() {
+    public void ShouldRemoveData() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 0L, 0L, "asdf", "qwer");
+        PutRecord(buffer, context, 0L, 0L, "asdf", "qwer");
         Assert.Equal(buffer.numRecords(), is(1));
         buffer.evictWhile(() => true, kv => { });
         Assert.Equal(buffer.numRecords(), is(0));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRespectEvictionPredicate() {
+    public void ShouldRespectEvictionPredicate() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 0L, 0L, "asdf", "eyt");
-        putRecord(buffer, context, 1L, 0L, "zxcv", "rtg");
+        PutRecord(buffer, context, 0L, 0L, "asdf", "eyt");
+        PutRecord(buffer, context, 1L, 0L, "zxcv", "rtg");
         Assert.Equal(buffer.numRecords(), is(2));
         List<Eviction<string, string>> evicted = new LinkedList<>();
         buffer.evictWhile(() => buffer.numRecords() > 1, evicted::add);
         Assert.Equal(buffer.numRecords(), is(1));
         Assert.Equal(evicted, is(singletonList(
-            new Eviction<>("asdf", new Change<>("eyt", null), getContext(0L))
+            new Eviction<>("asdf", new Change<>("eyt", null), GetContext(0L))
         )));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldTrackCount() {
+    public void ShouldTrackCount() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 0L, 0L, "asdf", "oin");
+        PutRecord(buffer, context, 0L, 0L, "asdf", "oin");
         Assert.Equal(buffer.numRecords(), is(1));
-        putRecord(buffer, context, 1L, 0L, "asdf", "wekjn");
+        PutRecord(buffer, context, 1L, 0L, "asdf", "wekjn");
         Assert.Equal(buffer.numRecords(), is(1));
-        putRecord(buffer, context, 0L, 0L, "zxcv", "24inf");
+        PutRecord(buffer, context, 0L, 0L, "zxcv", "24inf");
         Assert.Equal(buffer.numRecords(), is(2));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldTrackSize() {
+    public void ShouldTrackSize() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 0L, 0L, "asdf", "23roni");
+        PutRecord(buffer, context, 0L, 0L, "asdf", "23roni");
         Assert.Equal(buffer.bufferSize(), is(43L));
-        putRecord(buffer, context, 1L, 0L, "asdf", "3l");
+        PutRecord(buffer, context, 1L, 0L, "asdf", "3l");
         Assert.Equal(buffer.bufferSize(), is(39L));
-        putRecord(buffer, context, 0L, 0L, "zxcv", "qfowin");
+        PutRecord(buffer, context, 0L, 0L, "zxcv", "qfowin");
         Assert.Equal(buffer.bufferSize(), is(82L));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldTrackMinTimestamp() {
+    public void ShouldTrackMinTimestamp() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 1L, 0L, "asdf", "2093j");
+        PutRecord(buffer, context, 1L, 0L, "asdf", "2093j");
         Assert.Equal(buffer.minTimestamp(), is(1L));
-        putRecord(buffer, context, 0L, 0L, "zxcv", "3gon4i");
+        PutRecord(buffer, context, 0L, 0L, "zxcv", "3gon4i");
         Assert.Equal(buffer.minTimestamp(), is(0L));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldEvictOldestAndUpdateSizeAndCountAndMinTimestamp() {
+    public void ShouldEvictOldestAndUpdateSizeAndCountAndMinTimestamp() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
-        putRecord(buffer, context, 1L, 0L, "zxcv", "o23i4");
+        PutRecord(buffer, context, 1L, 0L, "zxcv", "o23i4");
         Assert.Equal(buffer.numRecords(), is(1));
         Assert.Equal(buffer.bufferSize(), is(42L));
         Assert.Equal(buffer.minTimestamp(), is(1L));
 
-        putRecord(buffer, context, 0L, 0L, "asdf", "3ng");
+        PutRecord(buffer, context, 0L, 0L, "asdf", "3ng");
         Assert.Equal(buffer.numRecords(), is(2));
         Assert.Equal(buffer.bufferSize(), is(82L));
         Assert.Equal(buffer.minTimestamp(), is(0L));
@@ -252,25 +252,25 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         Assert.Equal(buffer.numRecords(), is(0));
         Assert.Equal(buffer.bufferSize(), is(0L));
         Assert.Equal(buffer.minTimestamp(), is(long.MaxValue));
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldReturnUndefinedOnPriorValueForNotBufferedKey() {
+    public void ShouldReturnUndefinedOnPriorValueForNotBufferedKey() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
         Assert.Equal(buffer.priorValueForBuffered("ASDF"), is(Maybe.undefined()));
     }
 
     [Xunit.Fact]
-    public void shouldReturnPriorValueForBufferedKey() {
+    public void ShouldReturnPriorValueForBufferedKey() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
-        ProcessorRecordContext recordContext = getContext(0L);
+        ProcessorRecordContext recordContext = GetContext(0L);
         context.setRecordContext(recordContext);
         buffer.put(1L, "A", new Change<>("new-value", "old-value"), recordContext);
         buffer.put(1L, "B", new Change<>("new-value", null), recordContext);
@@ -279,13 +279,13 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
     }
 
     [Xunit.Fact]
-    public void shouldFlush() {
+    public void ShouldFlush() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
-        putRecord(buffer, context, 2L, 0L, "asdf", "2093j");
-        putRecord(buffer, context, 1L, 1L, "zxcv", "3gon4i");
-        putRecord(buffer, context, 0L, 2L, "deleteme", "deadbeef");
+        PutRecord(buffer, context, 2L, 0L, "asdf", "2093j");
+        PutRecord(buffer, context, 1L, 1L, "zxcv", "3gon4i");
+        PutRecord(buffer, context, 0L, 2L, "deleteme", "deadbeef");
 
         // replace "deleteme" with a tombstone
         buffer.evictWhile(() => buffer.minTimestamp() < 1, kv => { });
@@ -334,25 +334,25 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  0,
                                  null,
                                  "zxcv",
-                                 new KeyValuePair<>(1L, getBufferValue("3gon4i", 1)),
+                                 new KeyValuePair<>(1L, GetBufferValue("3gon4i", 1)),
                                  V_2_CHANGELOG_HEADERS
             ),
             new ProducerRecord<>(APP_ID + "-" + testName + "-changelog",
                                  0,
                                  null,
                                  "asdf",
-                                 new KeyValuePair<>(2L, getBufferValue("2093j", 0)),
+                                 new KeyValuePair<>(2L, GetBufferValue("2093j", 0)),
                                  V_2_CHANGELOG_HEADERS
             )
         )));
 
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRestoreOldFormat() {
+    public void ShouldRestoreOldFormat() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
         RecordBatchingStateRestoreCallback stateRestoreCallback =
@@ -458,13 +458,13 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                 new ProcessorRecordContext(1L, 1, 0, "changelog-topic", new Headers()))
         )));
 
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRestoreV1Format() {
+    public void ShouldRestoreV1Format() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
         RecordBatchingStateRestoreCallback stateRestoreCallback =
@@ -474,16 +474,16 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
 
         Headers v1FlagHeaders = new Headers(new Header[] {new RecordHeader("v", new byte[] {(byte) 1})});
 
-        byte[] todeleteValue = getContextualRecord("doomed", 0).serialize(0).array();
-        byte[] asdfValue = getContextualRecord("qwer", 1).serialize(0).array();
+        byte[] todeleteValue = GetContextualRecord("doomed", 0).serialize(0).array();
+        byte[] asdfValue = GetContextualRecord("qwer", 1).serialize(0).array();
         FullChangeSerde<string> fullChangeSerde = FullChangeSerde.wrap(Serdes.String());
         byte[] zxcvValue1 = new ContextualRecord(
             FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>("3o4im", "previous"))),
-            getContext(2L)
+            GetContext(2L)
         ).serialize(0).array();
         byte[] zxcvValue2 = new ContextualRecord(
             FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>("next", "3o4im"))),
-            getContext(3L)
+            GetContext(3L)
         ).serialize(0).array();
         stateRestoreCallback.restoreBatch(asList(
             new ConsumeResult<>("changelog-topic",
@@ -574,20 +574,20 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
             new Eviction<>(
                 "zxcv",
                 new Change<>("next", "3o4im"),
-                getContext(3L)),
+                GetContext(3L)),
             new Eviction<>(
                 "asdf",
                 new Change<>("qwer", null),
-                getContext(1L)
+                GetContext(1L)
             ))));
 
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldRestoreV2Format() {
+    public void ShouldRestoreV2Format() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
         RecordBatchingStateRestoreCallback stateRestoreCallback =
@@ -597,15 +597,15 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
 
         Headers v2FlagHeaders = new Headers(new Header[] {new RecordHeader("v", new byte[] {(byte) 2})});
 
-        byte[] todeleteValue = getBufferValue("doomed", 0).serialize(0).array();
-        byte[] asdfValue = getBufferValue("qwer", 1).serialize(0).array();
+        byte[] todeleteValue = GetBufferValue("doomed", 0).serialize(0).array();
+        byte[] asdfValue = GetBufferValue("qwer", 1).serialize(0).array();
         FullChangeSerde<string> fullChangeSerde = FullChangeSerde.wrap(Serdes.String());
         byte[] zxcvValue1 =
             new BufferValue(
                 Serdes.String().Serializer.serialize(null, "previous"),
                 Serdes.String().Serializer.serialize(null, "IGNORED"),
                 Serdes.String().Serializer.serialize(null, "3o4im"),
-                getContext(2L)
+                GetContext(2L)
             ).serialize(0).array();
         FullChangeSerde<string> fullChangeSerde1 = FullChangeSerde.wrap(Serdes.String());
         byte[] zxcvValue2 =
@@ -613,7 +613,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                 Serdes.String().Serializer.serialize(null, "previous"),
                 Serdes.String().Serializer.serialize(null, "3o4im"),
                 Serdes.String().Serializer.serialize(null, "next"),
-                getContext(3L)
+                GetContext(3L)
             ).serialize(0).array();
         stateRestoreCallback.restoreBatch(asList(
             new ConsumeResult<>("changelog-topic",
@@ -704,20 +704,20 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
             new Eviction<>(
                 "zxcv",
                 new Change<>("next", "3o4im"),
-                getContext(3L)),
+                GetContext(3L)),
             new Eviction<>(
                 "asdf",
                 new Change<>("qwer", null),
-                getContext(1L)
+                GetContext(1L)
             ))));
 
-        cleanup(context, buffer);
+        Cleanup(context, buffer);
     }
 
     [Xunit.Fact]
-    public void shouldNotRestoreUnrecognizedVersionRecord() {
+    public void ShouldNotRestoreUnrecognizedVersionRecord() {
         TimeOrderedKeyValueBuffer<string, string> buffer = bufferSupplier.apply(testName);
-        MockInternalProcessorContext context = makeContext();
+        MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
         RecordBatchingStateRestoreCallback stateRestoreCallback =
@@ -727,7 +727,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
 
         Headers unknownFlagHeaders = new Headers(new Header[] {new RecordHeader("v", new byte[] {(byte) -1})});
 
-        byte[] todeleteValue = getBufferValue("doomed", 0).serialize(0).array();
+        byte[] todeleteValue = GetBufferValue("doomed", 0).serialize(0).array();
         try {
             stateRestoreCallback.restoreBatch(singletonList(
                 new ConsumeResult<>("changelog-topic",
@@ -746,39 +746,39 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         } catch (IllegalArgumentException expected) {
             // nothing to do.
         } finally {
-            cleanup(context, buffer);
+            Cleanup(context, buffer);
         }
     }
 
-    private static void putRecord(TimeOrderedKeyValueBuffer<string, string> buffer,
+    private static void PutRecord(TimeOrderedKeyValueBuffer<string, string> buffer,
                                   MockInternalProcessorContext context,
                                   long streamTime,
                                   long recordTimestamp,
                                   string key,
                                   string value) {
-        ProcessorRecordContext recordContext = getContext(recordTimestamp);
+        ProcessorRecordContext recordContext = GetContext(recordTimestamp);
         context.setRecordContext(recordContext);
         buffer.put(streamTime, key, new Change<>(value, null), recordContext);
     }
 
-    private static BufferValue getBufferValue(string value, long timestamp) {
+    private static BufferValue GetBufferValue(string value, long timestamp) {
         return new BufferValue(
             null,
             null,
             Serdes.String().Serializer.serialize(null, value),
-            getContext(timestamp)
+            GetContext(timestamp)
         );
     }
 
-    private static ContextualRecord getContextualRecord(string value, long timestamp) {
+    private static ContextualRecord GetContextualRecord(string value, long timestamp) {
         FullChangeSerde<string> fullChangeSerde = FullChangeSerde.wrap(Serdes.String());
         return new ContextualRecord(
             FullChangeSerde.mergeChangeArraysIntoSingleLegacyFormattedArray(fullChangeSerde.serializeParts(null, new Change<>(value, null))),
-            getContext(timestamp)
+            GetContext(timestamp)
         );
     }
 
-    private static ProcessorRecordContext getContext(long recordTimestamp) {
+    private static ProcessorRecordContext GetContext(long recordTimestamp) {
         return new ProcessorRecordContext(recordTimestamp, 0, 0, "topic", null);
     }
 }

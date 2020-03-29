@@ -72,7 +72,7 @@ namespace Kafka.Streams.Tasks
                 logger.LogInformation($"Creating producer client for task {id}");
                 producerConfigs.Set(StreamsConfigPropertyNames.TRANSACTIONAL_ID_CONFIG, $"{applicationId}-{id}");
 
-                return clientSupplier.getProducer(producerConfigs);
+                return clientSupplier.GetProducer(producerConfigs);
             }
 
             return threadProducer;

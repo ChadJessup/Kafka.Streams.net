@@ -44,7 +44,7 @@ namespace Kafka.Streams.Clients
                 //    log.LogInformation("Creating producer client for task {}", id);
                 producerConfigs.Set("transactional.id", $"{applicationId}-{id}");
 
-                return clientSupplier.getProducer(producerConfigs);
+                return clientSupplier.GetProducer(producerConfigs);
             }
 
             return threadProducer;

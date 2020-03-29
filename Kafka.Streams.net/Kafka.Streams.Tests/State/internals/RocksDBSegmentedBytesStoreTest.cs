@@ -21,7 +21,7 @@
 public class RocksDBSegmentedBytesStoreTest : AbstractRocksDBSegmentedBytesStoreTest<KeyValueSegment> {
 
     
-    RocksDBSegmentedBytesStore getBytesStore() {
+    RocksDBSegmentedBytesStore GetBytesStore() {
         return new RocksDBSegmentedBytesStore(
             storeName,
             "metrics-scope",
@@ -32,12 +32,12 @@ public class RocksDBSegmentedBytesStoreTest : AbstractRocksDBSegmentedBytesStore
     }
 
     
-    KeyValueSegments newSegments() {
+    KeyValueSegments NewSegments() {
         return new KeyValueSegments(storeName, retention, segmentInterval);
     }
 
     
-    Options getOptions(KeyValueSegment segment) {
+    Options GetOptions(KeyValueSegment segment) {
         return segment.getOptions();
     }
 }

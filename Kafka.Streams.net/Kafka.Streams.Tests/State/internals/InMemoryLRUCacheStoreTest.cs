@@ -38,7 +38,7 @@ public class InMemoryLRUCacheStoreTest : AbstractKeyValueStoreTest {
 
     
     
-    protected KeyValueStore<K, V> createKeyValueStore<K, V>(ProcessorContext context) {
+    protected KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context) {
 
         StoreBuilder storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.lruMap("my-store", 10),
@@ -52,7 +52,7 @@ public class InMemoryLRUCacheStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutAllKeyValuePairs() {
+    public void ShouldPutAllKeyValuePairs() {
         List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
                 KeyValuePair.Create(2, "2"),
                 KeyValuePair.Create(3, "3"));
@@ -67,7 +67,7 @@ public class InMemoryLRUCacheStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateValuesForExistingKeysOnPutAll() {
+    public void ShouldUpdateValuesForExistingKeysOnPutAll() {
         List<KeyValuePair<int, string>> kvPairs = Array.asList(KeyValuePair.Create(1, "1"),
                 KeyValuePair.Create(2, "2"),
                 KeyValuePair.Create(3, "3"));
@@ -89,7 +89,7 @@ public class InMemoryLRUCacheStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testEvict() {
+    public void TestEvict() {
         // Create the test driver ...
         store.put(0, "zero");
         store.put(1, "one");
@@ -136,7 +136,7 @@ public class InMemoryLRUCacheStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void testRestoreEvict() {
+    public void TestRestoreEvict() {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...

@@ -74,17 +74,17 @@ public class PartitionGroupTest {
 
     private PartitionGroup group = new PartitionGroup(
         mkMap(mkEntry(partition1, queue1), mkEntry(partition2, queue2)),
-        getValueSensor(metrics, lastLatenessValue)
+        GetValueSensor(metrics, lastLatenessValue)
     );
 
-    private static Sensor getValueSensor(Metrics metrics, MetricName metricName) {
+    private static Sensor GetValueSensor(Metrics metrics, MetricName metricName) {
         Sensor lastRecordedValue = metrics.sensor(metricName.name());
         lastRecordedValue.add(metricName, new Value());
         return lastRecordedValue;
     }
 
     [Xunit.Fact]
-    public void testTimeTracking() {
+    public void TestTimeTracking() {
         Assert.Equal(0, group.numBuffered());
 
         // add three 3 records with timestamp 1, 3, 5 to partition-1
@@ -106,7 +106,7 @@ public class PartitionGroupTest {
         // 2:[2, 4, 6]
         // st: -1 since no records was being processed yet
 
-        verifyBuffered(6, 3, 3);
+        VerifyBuffered(6, 3, 3);
         Assert.Equal(-1L, group.streamTime());
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
@@ -119,8 +119,8 @@ public class PartitionGroupTest {
         // 2:[2, 4, 6]
         // st: 1
         Assert.Equal(partition1, info.partition());
-        verifyTimes(record, 1L, 1L);
-        verifyBuffered(5, 2, 3);
+        VerifyTimes(record, 1L, 1L);
+        VerifyBuffered(5, 2, 3);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one record, now the time should be advanced
@@ -129,8 +129,8 @@ public class PartitionGroupTest {
         // 2:[4, 6]
         // st: 2
         Assert.Equal(partition2, info.partition());
-        verifyTimes(record, 2L, 2L);
-        verifyBuffered(4, 2, 2);
+        VerifyTimes(record, 2L, 2L);
+        VerifyBuffered(4, 2, 2);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
         // add 2 more records with timestamp 2, 4 to partition-1
@@ -142,7 +142,7 @@ public class PartitionGroupTest {
         // 1:[3, 5, 2, 4]
         // 2:[4, 6]
         // st: 2 (just adding records shouldn't change it)
-        verifyBuffered(6, 4, 2);
+        VerifyBuffered(6, 4, 2);
         Assert.Equal(2L, group.streamTime());
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
@@ -152,8 +152,8 @@ public class PartitionGroupTest {
         // 2:[4, 6]
         // st: 3
         Assert.Equal(partition1, info.partition());
-        verifyTimes(record, 3L, 3L);
-        verifyBuffered(5, 3, 2);
+        VerifyTimes(record, 3L, 3L);
+        VerifyBuffered(5, 3, 2);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one record, time should be advanced
@@ -162,8 +162,8 @@ public class PartitionGroupTest {
         // 2:[6]
         // st: 4
         Assert.Equal(partition2, info.partition());
-        verifyTimes(record, 4L, 4L);
-        verifyBuffered(4, 3, 1);
+        VerifyTimes(record, 4L, 4L);
+        VerifyBuffered(4, 3, 1);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one more record, time should be advanced
@@ -172,8 +172,8 @@ public class PartitionGroupTest {
         // 2:[6]
         // st: 5
         Assert.Equal(partition1, info.partition());
-        verifyTimes(record, 5L, 5L);
-        verifyBuffered(3, 2, 1);
+        VerifyTimes(record, 5L, 5L);
+        VerifyBuffered(3, 2, 1);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one more record, time should not be advanced
@@ -182,8 +182,8 @@ public class PartitionGroupTest {
         // 2:[6]
         // st: 5
         Assert.Equal(partition1, info.partition());
-        verifyTimes(record, 2L, 5L);
-        verifyBuffered(2, 1, 1);
+        VerifyTimes(record, 2L, 5L);
+        VerifyBuffered(2, 1, 1);
         Assert.Equal(3.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one more record, time should not be advanced
@@ -192,8 +192,8 @@ public class PartitionGroupTest {
         // 2:[6]
         // st: 5
         Assert.Equal(partition1, info.partition());
-        verifyTimes(record, 4L, 5L);
-        verifyBuffered(1, 0, 1);
+        VerifyTimes(record, 4L, 5L);
+        VerifyBuffered(1, 0, 1);
         Assert.Equal(1.0, metrics.metric(lastLatenessValue).metricValue());
 
         // get one more record, time should be advanced
@@ -202,14 +202,14 @@ public class PartitionGroupTest {
         // 2:[]
         // st: 6
         Assert.Equal(partition2, info.partition());
-        verifyTimes(record, 6L, 6L);
-        verifyBuffered(0, 0, 0);
+        VerifyTimes(record, 6L, 6L);
+        VerifyBuffered(0, 0, 0);
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
     }
 
     [Xunit.Fact]
-    public void shouldChooseNextRecordBasedOnHeadTimestamp() {
+    public void ShouldChooseNextRecordBasedOnHeadTimestamp() {
         Assert.Equal(0, group.numBuffered());
 
         // add three 3 records with timestamp 1, 5, 3 to partition-1
@@ -220,7 +220,7 @@ public class PartitionGroupTest {
 
         group.addRawRecords(partition1, list1);
 
-        verifyBuffered(3, 3, 0);
+        VerifyBuffered(3, 3, 0);
         Assert.Equal(-1L, group.streamTime());
         Assert.Equal(0.0, metrics.metric(lastLatenessValue).metricValue());
 
@@ -256,12 +256,12 @@ public class PartitionGroupTest {
         Assert.Equal(record.timestamp, 3L);
     }
 
-    private void verifyTimes(StampedRecord record, long recordTime, long streamTime) {
+    private void VerifyTimes(StampedRecord record, long recordTime, long streamTime) {
         Assert.Equal(recordTime, record.timestamp);
         Assert.Equal(streamTime, group.streamTime());
     }
 
-    private void verifyBuffered(int totalBuffered, int partitionOneBuffered, int partitionTwoBuffered) {
+    private void VerifyBuffered(int totalBuffered, int partitionOneBuffered, int partitionTwoBuffered) {
         Assert.Equal(totalBuffered, group.numBuffered());
         Assert.Equal(partitionOneBuffered, group.numBuffered(partition1));
         Assert.Equal(partitionTwoBuffered, group.numBuffered(partition2));

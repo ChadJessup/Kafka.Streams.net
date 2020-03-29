@@ -86,7 +86,7 @@ public class MeteredTimestampedKeyValueStoreTest {
     private Metrics metrics = new Metrics();
 
     
-    public void before() {
+    public void Before() {
         metered = new MeteredTimestampedKeyValueStore<>(
             inner,
             "scope",
@@ -100,14 +100,14 @@ public class MeteredTimestampedKeyValueStoreTest {
         expect(inner.name()).andReturn("metered").anyTimes();
     }
 
-    private void init() {
+    private void Init() {
         replay(inner, context);
         metered.init(context, metered);
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
-        init();
+    public void TestMetrics() {
+        Init();
         JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
         Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
@@ -116,10 +116,10 @@ public class MeteredTimestampedKeyValueStoreTest {
                 "scope", "test", taskId.toString(), "scope", "all")));
     }
     [Xunit.Fact]
-    public void shouldWriteBytesToInnerStoreAndRecordPutMetric() {
+    public void ShouldWriteBytesToInnerStoreAndRecordPutMetric() {
         inner.put(eq(keyBytes), aryEq(valueAndTimestampBytes));
         expectLastCall();
-        init();
+        Init();
 
         metered.put(key, valueAndTimestamp);
 
@@ -129,9 +129,9 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetBytesFromInnerStoreAndReturnGetMetric() {
+    public void ShouldGetBytesFromInnerStoreAndReturnGetMetric() {
         expect(inner.get(keyBytes)).andReturn(valueAndTimestampBytes);
-        init();
+        Init();
 
         Assert.Equal(metered.get(key), (valueAndTimestamp));
 
@@ -141,9 +141,9 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutIfAbsentAndRecordPutIfAbsentMetric() {
+    public void ShouldPutIfAbsentAndRecordPutIfAbsentMetric() {
         expect(inner.putIfAbsent(eq(keyBytes), aryEq(valueAndTimestampBytes))).andReturn(null);
-        init();
+        Init();
 
         metered.putIfAbsent(key, valueAndTimestamp);
 
@@ -152,16 +152,16 @@ public class MeteredTimestampedKeyValueStoreTest {
         verify(inner);
     }
 
-    private KafkaMetric metric(string name) {
+    private KafkaMetric Metric(string name) {
         return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
     }
 
     
     [Xunit.Fact]
-    public void shouldPutAllToInnerStoreAndRecordPutAllMetric() {
+    public void ShouldPutAllToInnerStoreAndRecordPutAllMetric() {
         inner.putAll(anyObject(List));
         expectLastCall();
-        init();
+        Init();
 
         metered.putAll(Collections.singletonList(KeyValuePair.Create(key, valueAndTimestamp)));
 
@@ -171,9 +171,9 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteFromInnerStoreAndRecordDeleteMetric() {
+    public void ShouldDeleteFromInnerStoreAndRecordDeleteMetric() {
         expect(inner.delete(keyBytes)).andReturn(valueAndTimestampBytes);
-        init();
+        Init();
 
         metered.delete(key);
 
@@ -183,10 +183,10 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetRangeFromInnerStoreAndRecordRangeMetric() {
+    public void ShouldGetRangeFromInnerStoreAndRecordRangeMetric() {
         expect(inner.range(keyBytes, keyBytes)).andReturn(
             new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValueTimestampPair).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.range(key, key);
         Assert.Equal(iterator.next().value, (valueAndTimestamp));
@@ -199,10 +199,10 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetAllFromInnerStoreAndRecordAllMetric() {
+    public void ShouldGetAllFromInnerStoreAndRecordAllMetric() {
         expect(inner.all())
             .andReturn(new KeyValueIteratorStub<>(Collections.singletonList(byteKeyValueTimestampPair).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<string, ValueAndTimestamp<string>> iterator = metered.all();
         Assert.Equal(iterator.next().value, (valueAndTimestamp));
@@ -215,10 +215,10 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushInnerWhenFlushTimeRecords() {
+    public void ShouldFlushInnerWhenFlushTimeRecords() {
         inner.flush();
         expectLastCall().once();
-        init();
+        Init();
 
         metered.flush();
 
@@ -231,7 +231,7 @@ public class MeteredTimestampedKeyValueStoreTest {
 
     
     [Xunit.Fact]
-    public void shouldSetFlushListenerOnWrappedCachingStore() {
+    public void ShouldSetFlushListenerOnWrappedCachingStore() {
         CachedKeyValueStore cachedKeyValueStore = mock(CachedKeyValueStore);
 
         expect(cachedKeyValueStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
@@ -249,17 +249,17 @@ public class MeteredTimestampedKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSetFlushListenerOnWrappedNoneCachingStore() {
+    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore() {
         Assert.False(metered.setFlushListener(null, false));
     }
 
-    private KafkaMetric metric(MetricName metricName) {
+    private KafkaMetric Metric(MetricName metricName) {
         return this.metrics.metric(metricName);
     }
 
     [Xunit.Fact]
     
-    public void shouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext() {
+    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromProcessorContext() {
         expect(context.keySerde()).andStubReturn((Serde) Serdes.String());
         expect(context.valueSerde()).andStubReturn((Serde) Serdes.Long());
         MeteredTimestampedKeyValueStore<string, long> store = new MeteredTimestampedKeyValueStore<>(
@@ -284,7 +284,7 @@ public class MeteredTimestampedKeyValueStoreTest {
 
     [Xunit.Fact]
     
-    public void shouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters() {
+    public void ShouldNotThrowExceptionIfSerdesCorrectlySetFromConstructorParameters() {
         expect(context.keySerde()).andStubReturn((Serde) Serdes.String());
         expect(context.valueSerde()).andStubReturn((Serde) Serdes.Long());
         MeteredTimestampedKeyValueStore<string, long> store = new MeteredTimestampedKeyValueStore<>(

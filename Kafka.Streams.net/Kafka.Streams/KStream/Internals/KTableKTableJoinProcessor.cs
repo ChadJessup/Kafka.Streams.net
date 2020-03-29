@@ -63,12 +63,12 @@ namespace Kafka.Streams.KStream.Internals
 
             if (change.newValue != null)
             {
-                newValue = joiner.apply(change.newValue, valueRight);
+                newValue = joiner.Apply(change.newValue, valueRight);
             }
 
             if (sendOldValues && change.oldValue != null)
             {
-                oldValue = joiner.apply(change.oldValue, valueRight);
+                oldValue = joiner.Apply(change.oldValue, valueRight);
             }
 
             context.forward(key, new Change<R>(newValue, oldValue), To.All().WithTimestamp(resultTimestamp));

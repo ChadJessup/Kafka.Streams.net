@@ -79,9 +79,9 @@ public class GlobalKTableIntegrationTest {
     private MockProcessorSupplier<string, string> supplier;
 
     
-    public void before() {// throws Exception
+    public void Before() {// throws Exception
         builder = new StreamsBuilder();
-        createTopics();
+        CreateTopics();
         streamsConfiguration = new Properties();
         string applicationId = "globalTableTopic-table-test-" + testNo.incrementAndGet();
         streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
@@ -100,7 +100,7 @@ public class GlobalKTableIntegrationTest {
     }
 
     
-    public void whenShuttingDown() {// throws Exception
+    public void WhenShuttingDown() {// throws Exception
         if (kafkaStreams != null) {
             kafkaStreams.close();
         }
@@ -108,13 +108,13 @@ public class GlobalKTableIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldKStreamGlobalKTableLeftJoin() {// throws Exception
+    public void ShouldKStreamGlobalKTableLeftJoin() {// throws Exception
         KStream<string, string> streamTableJoin = stream.leftJoin(globalTable, keyMapper, joiner);
         streamTableJoin.process(supplier);
-        produceInitialGlobalTableValues();
-        startStreams();
+        ProduceInitialGlobalTableValues();
+        StartStreams();
         long firstTimestamp = mockTime.milliseconds();
-        produceTopicValues(streamTopic);
+        ProduceTopicValues(streamTopic);
 
         Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
         expected.put("a", ValueAndTimestamp.make("1+A", firstTimestamp));
@@ -138,7 +138,7 @@ public class GlobalKTableIntegrationTest {
 
 
         firstTimestamp = mockTime.milliseconds();
-        produceGlobalTableValues();
+        ProduceGlobalTableValues();
 
         ReadOnlyKeyValueStore<long, string> replicatedStore =
             kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
@@ -153,7 +153,7 @@ public class GlobalKTableIntegrationTest {
         Assert.Equal(replicatedStoreWithTimestamp.get(5L), (ValueAndTimestamp.make("J", firstTimestamp + 4L)));
 
         firstTimestamp = mockTime.milliseconds();
-        produceTopicValues(streamTopic);
+        ProduceTopicValues(streamTopic);
 
         expected.put("a", ValueAndTimestamp.make("1+F", firstTimestamp));
         expected.put("b", ValueAndTimestamp.make("2+G", firstTimestamp + 1L));
@@ -176,13 +176,13 @@ public class GlobalKTableIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldKStreamGlobalKTableJoin() {// throws Exception
+    public void ShouldKStreamGlobalKTableJoin() {// throws Exception
         KStream<string, string> streamTableJoin = stream.join(globalTable, keyMapper, joiner);
         streamTableJoin.process(supplier);
-        produceInitialGlobalTableValues();
-        startStreams();
+        ProduceInitialGlobalTableValues();
+        StartStreams();
         long firstTimestamp = mockTime.milliseconds();
-        produceTopicValues(streamTopic);
+        ProduceTopicValues(streamTopic);
 
         Dictionary<string, ValueAndTimestamp<string>> expected = new HashMap<>();
         expected.put("a", ValueAndTimestamp.make("1+A", firstTimestamp));
@@ -205,7 +205,7 @@ public class GlobalKTableIntegrationTest {
 
 
         firstTimestamp = mockTime.milliseconds();
-        produceGlobalTableValues();
+        ProduceGlobalTableValues();
 
         ReadOnlyKeyValueStore<long, string> replicatedStore =
             kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
@@ -220,7 +220,7 @@ public class GlobalKTableIntegrationTest {
         Assert.Equal(replicatedStoreWithTimestamp.get(5L), (ValueAndTimestamp.make("J", firstTimestamp + 4L)));
 
         firstTimestamp = mockTime.milliseconds();
-        produceTopicValues(streamTopic);
+        ProduceTopicValues(streamTopic);
 
         expected.put("a", ValueAndTimestamp.make("1+F", firstTimestamp));
         expected.put("b", ValueAndTimestamp.make("2+G", firstTimestamp + 1L));
@@ -243,16 +243,16 @@ public class GlobalKTableIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreGlobalInMemoryKTableOnRestart() {// throws Exception
+    public void ShouldRestoreGlobalInMemoryKTableOnRestart() {// throws Exception
         builder = new StreamsBuilder();
         globalTable = builder.globalTable(
             globalTableTopic,
             Consumed.with(Serdes.Long(), Serdes.String()),
             Materialized.As(Stores.inMemoryKeyValueStore(globalStore)));
 
-        produceInitialGlobalTableValues();
+        ProduceInitialGlobalTableValues();
 
-        startStreams();
+        StartStreams();
         ReadOnlyKeyValueStore<long, string> store = kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
         Assert.Equal(store.approximateNumEntries(), (4L));
         ReadOnlyKeyValueStore<long, ValueAndTimestamp<string>> timestampedStore =
@@ -260,26 +260,26 @@ public class GlobalKTableIntegrationTest {
         Assert.Equal(timestampedStore.approximateNumEntries(), (4L));
         kafkaStreams.close();
 
-        startStreams();
+        StartStreams();
         store = kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
         Assert.Equal(store.approximateNumEntries(), (4L));
         timestampedStore = kafkaStreams.store(globalStore, QueryableStoreTypes.timestampedKeyValueStore());
         Assert.Equal(timestampedStore.approximateNumEntries(), (4L));
     }
 
-    private void createTopics() {// throws Exception
+    private void CreateTopics() {// throws Exception
         streamTopic = "stream-" + testNo;
         globalTableTopic = "globalTable-" + testNo;
         CLUSTER.createTopics(streamTopic);
         CLUSTER.createTopic(globalTableTopic, 2, 1);
     }
     
-    private void startStreams() {
+    private void StartStreams() {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
     }
 
-    private void produceTopicValues(string topic) {// throws Exception
+    private void ProduceTopicValues(string topic) {// throws Exception
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 topic,
                 Array.asList(
@@ -296,7 +296,7 @@ public class GlobalKTableIntegrationTest {
                 mockTime);
     }
 
-    private void produceInitialGlobalTableValues() {// throws Exception
+    private void ProduceInitialGlobalTableValues() {// throws Exception
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 globalTableTopic,
                 Array.asList(
@@ -313,7 +313,7 @@ public class GlobalKTableIntegrationTest {
                 mockTime);
     }
 
-    private void produceGlobalTableValues() {// throws Exception
+    private void ProduceGlobalTableValues() {// throws Exception
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 globalTableTopic,
                 Array.asList(

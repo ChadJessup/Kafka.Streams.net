@@ -30,7 +30,7 @@ namespace Kafka.Streams.Processors
          * This method does nothing by default; if desired, sues should override it with custom functionality.
          *
          */
-        public virtual void onRestoreStart(
+        public virtual void OnRestoreStart(
             TopicPartition topicPartition,
             string storeName,
             long startingOffset,
@@ -44,7 +44,7 @@ namespace Kafka.Streams.Processors
          * This method does nothing by default; if desired, sues should override it with custom functionality.
          *
          */
-        public virtual void onBatchRestored(
+        public virtual void OnBatchRestored(
             TopicPartition topicPartition,
             string storeName,
             long batchEndOffset,
@@ -58,7 +58,7 @@ namespace Kafka.Streams.Processors
          * This method does nothing by default; if desired, sues should override it with custom functionality.
          *
          */
-        public virtual void onRestoreEnd(
+        public virtual void OnRestoreEnd(
             TopicPartition topicPartition,
             string storeName,
             long totalRestored)

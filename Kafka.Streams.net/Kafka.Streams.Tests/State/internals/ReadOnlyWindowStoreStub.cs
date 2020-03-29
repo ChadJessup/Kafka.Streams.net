@@ -53,7 +53,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
     }
 
     
-    public V fetch(K key, long time) {
+    public V Fetch(K key, long time) {
         Dictionary<K, V> kvMap = data.get(time);
         if (kvMap != null) {
             return kvMap.get(key);
@@ -64,7 +64,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
 
     
     
-    public WindowStoreIterator<V> fetch(K key, long timeFrom, long timeTo) {
+    public WindowStoreIterator<V> Fetch(K key, long timeFrom, long timeTo) {
         if (!open) {
             throw new InvalidStateStoreException("Store is not open");
         }
@@ -79,7 +79,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
     }
 
     
-    public WindowStoreIterator<V> fetch(K key, Instant from, Instant to) {// throws IllegalArgumentException
+    public WindowStoreIterator<V> Fetch(K key, Instant from, Instant to) {// throws IllegalArgumentException
         return fetch(
             key, 
             ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),
@@ -87,7 +87,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
     }
 
     
-    public KeyValueIterator<Windowed<K>, V> all() {
+    public KeyValueIterator<Windowed<K>, V> All() {
         if (!open) {
             throw new InvalidStateStoreException("Store is not open");
         }
@@ -131,7 +131,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
 
     
     
-    public KeyValueIterator<Windowed<K>, V> fetchAll(long timeFrom, long timeTo) {
+    public KeyValueIterator<Windowed<K>, V> FetchAll(long timeFrom, long timeTo) {
         if (!open) {
             throw new InvalidStateStoreException("Store is not open");
         }
@@ -177,7 +177,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
     }
 
     
-    public KeyValueIterator<Windowed<K>, V> fetchAll(Instant from, Instant to) {// throws IllegalArgumentException
+    public KeyValueIterator<Windowed<K>, V> FetchAll(Instant from, Instant to) {// throws IllegalArgumentException
         return fetchAll(
             ApiUtils.validateMillisecondInstant(from, prepareMillisCheckFailMsgPrefix(from, "from")),
             ApiUtils.validateMillisecondInstant(to, prepareMillisCheckFailMsgPrefix(to, "to")));
@@ -185,7 +185,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
 
     
     
-    public KeyValueIterator<Windowed<K>, V> fetch(K from, K to, long timeFrom, long timeTo) {
+    public KeyValueIterator<Windowed<K>, V> Fetch(K from, K to, long timeFrom, long timeTo) {
         if (!open) {
             throw new InvalidStateStoreException("Store is not open");
         }
@@ -227,7 +227,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
         };
     }
 
-     public KeyValueIterator<Windowed<K>, V> fetch(K from,
+     public KeyValueIterator<Windowed<K>, V> Fetch(K from,
                                                             K to,
                                                             Instant fromTime,
                                                             Instant toTime) {// throws IllegalArgumentException
@@ -238,7 +238,7 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
             ApiUtils.validateMillisecondInstant(toTime, prepareMillisCheckFailMsgPrefix(toTime, "toTime")));
     }
 
-    public void put(K key, V value, long timestamp) {
+    public void Put(K key, V value, long timestamp) {
         if (!data.containsKey(timestamp)) {
             data.put(timestamp, new TreeMap<>());
         }
@@ -246,30 +246,30 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
     }
 
     
-    public string name() {
+    public string Name() {
         return null;
     }
 
     
-    public void init(ProcessorContext context, StateStore root) {}
+    public void Init(ProcessorContext context, StateStore root) {}
 
     
-    public void flush() {}
+    public void Flush() {}
 
     
-    public void close() {}
+    public void Close() {}
 
     
-    public bool persistent() {
+    public bool Persistent() {
         return false;
     }
 
     
-    public bool isOpen() {
+    public bool IsOpen() {
         return open;
     }
 
-    void setOpen(bool open) {
+    void SetOpen(bool open) {
         this.open = open;
     }
 
@@ -282,25 +282,25 @@ public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateSto
         }
 
         
-        public void close() {}
+        public void Close() {}
 
         
-        public long peekNextKey() {
+        public long PeekNextKey() {
             throw new UnsupportedOperationException("peekNextKey() not supported in " + getClass().getName());
         }
 
         
-        public bool hasNext() {
+        public bool HasNext() {
             return underlying.hasNext();
         }
 
         
-        public KeyValuePair<long, E> next() {
+        public KeyValuePair<long, E> Next() {
             return underlying.next();
         }
 
         
-        public void remove() {
+        public void Remove() {
             throw new UnsupportedOperationException("remove() not supported in " + getClass().getName());
         }
     }

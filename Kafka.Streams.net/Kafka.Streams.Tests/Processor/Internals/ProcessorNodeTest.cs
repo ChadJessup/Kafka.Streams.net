@@ -40,54 +40,54 @@ public class ProcessorNodeTest {
 
     
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowStreamsExceptionIfExceptionCaughtDuringInit() {
+    public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringInit() {
         ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
         node.init(null);
     }
 
     
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowStreamsExceptionIfExceptionCaughtDuringClose() {
+    public void ShouldThrowStreamsExceptionIfExceptionCaughtDuringClose() {
         ProcessorNode node = new ProcessorNode("name", new ExceptionalProcessor(), Collections.emptySet());
         node.close();
     }
 
     private static class ExceptionalProcessor : Processor {
         
-        public void init(ProcessorContext context) {
+        public void Init(ProcessorContext context) {
             throw new RuntimeException();
         }
 
         
-        public void process(object key, object value) {
+        public void Process(object key, object value) {
             throw new RuntimeException();
         }
 
         
-        public void close() {
+        public void Close() {
             throw new RuntimeException();
         }
     }
 
     private static class NoOpProcessor : Processor<object, object> {
         
-        public void init(ProcessorContext context) {
+        public void Init(ProcessorContext context) {
 
         }
 
         
-        public void process(object key, object value) {
+        public void Process(object key, object value) {
 
         }
 
         
-        public void close() {
+        public void Close() {
 
         }
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
+    public void TestMetrics() {
         StateSerdes anyStateSerde = StateSerdes.withBuiltinTypes("anyName", Bytes, Bytes);
 
         Metrics metrics = new Metrics();

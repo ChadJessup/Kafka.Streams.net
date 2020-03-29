@@ -42,7 +42,7 @@ public class SegmentedCacheFunctionTest {
     private SegmentedCacheFunction cacheFunction = new SegmentedCacheFunction(new WindowKeySchema(), SEGMENT_INTERVAL);
 
     [Xunit.Fact]
-    public void key() {
+    public void Key() {
         Assert.Equal(
             cacheFunction.key(THE_CACHE_KEY),
             equalTo(THE_KEY)
@@ -50,7 +50,7 @@ public class SegmentedCacheFunctionTest {
     }
 
     [Xunit.Fact]
-    public void cacheKey() {
+    public void CacheKey() {
         long segmentId = TIMESTAMP / SEGMENT_INTERVAL;
 
         Bytes actualCacheKey = cacheFunction.cacheKey(THE_KEY);
@@ -64,7 +64,7 @@ public class SegmentedCacheFunctionTest {
     }
 
     [Xunit.Fact]
-    public void testRoundTripping() {
+    public void TestRoundTripping() {
         Assert.Equal(
             cacheFunction.key(cacheFunction.cacheKey(THE_KEY)),
             equalTo(THE_KEY)
@@ -77,7 +77,7 @@ public class SegmentedCacheFunctionTest {
     }
 
     [Xunit.Fact]
-    public void compareSegmentedKeys() {
+    public void CompareSegmentedKeys() {
         Assert.Equal(
             "same key in same segment should be ranked the same",
             cacheFunction.compareSegmentedKeys(

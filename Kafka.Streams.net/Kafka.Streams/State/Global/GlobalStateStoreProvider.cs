@@ -23,7 +23,7 @@ namespace Kafka.Streams.State.Internals
             {
                 return new List<T>();
             }
-            if (!store.isOpen())
+            if (!store.IsOpen())
             {
                 throw new InvalidStateStoreException("the state store, " + storeName + ", is not open.");
             }

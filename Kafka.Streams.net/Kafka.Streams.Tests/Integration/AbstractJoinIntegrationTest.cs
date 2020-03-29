@@ -20,7 +20,7 @@ namespace Kafka.Streams.Tests.Integration
         public TemporaryFolder testFolder = new TemporaryFolder(TestUtils.tempDirectory());
 
         // @Parameterized.Parameters(name = "caching enabled = {0}")
-        public static Collection<object[]> data()
+        public static Collection<object[]> Data()
         {
             List<object[]> values = new ArrayList<>();
             foreach (bool cacheEnabled in Array.asList(true, false))
@@ -77,7 +77,7 @@ namespace Kafka.Streams.Tests.Integration
         }
 
 
-        public static void setupConfigsAndUtils()
+        public static void SetupConfigsAndUtils()
         {
             PRODUCER_CONFIG.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
             PRODUCER_CONFIG.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -98,7 +98,7 @@ namespace Kafka.Streams.Tests.Integration
             STREAMS_CONFIG.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, COMMIT_INTERVAL);
         }
 
-        void prepareEnvironment()
+        void PrepareEnvironment()
         {// throws InterruptedException
             CLUSTER.createTopics(INPUT_TOPIC_LEFT, INPUT_TOPIC_RIGHT, OUTPUT_TOPIC);
 
@@ -113,18 +113,18 @@ namespace Kafka.Streams.Tests.Integration
         }
 
 
-        public void cleanup()
+        public void Cleanup()
         {// throws InterruptedException
             producer.close(Duration.ofMillis(0));
             CLUSTER.deleteAllTopicsAndWait(120000);
         }
 
-        private void checkResult(string outputTopic, List<KeyValueTimestamp<long, string>> expectedResult)
+        private void CheckResult(string outputTopic, List<KeyValueTimestamp<long, string>> expectedResult)
         {// throws InterruptedException
             IntegrationTestUtils.verifyKeyValueTimestamps(RESULT_CONSUMER_CONFIG, outputTopic, expectedResult);
         }
 
-        private void checkResult(string outputTopic, KeyValueTimestamp<long, string> expectedFinalResult, int expectedTotalNumRecords)
+        private void CheckResult(string outputTopic, KeyValueTimestamp<long, string> expectedFinalResult, int expectedTotalNumRecords)
         {// throws InterruptedException
             List<KeyValueTimestamp<long, string>> result =
                 IntegrationTestUtils.waitUntilMinKeyValueWithTimestampRecordsReceived(RESULT_CONSUMER_CONFIG, outputTopic, expectedTotalNumRecords, 30 * 1000L);
@@ -135,9 +135,9 @@ namespace Kafka.Streams.Tests.Integration
          * Runs the actual test. Checks the result after each input record to ensure fixed processing order.
          * If an input tuple does not trigger any result, "expectedResult" should contain a "null" entry
          */
-        void runTest(List<List<KeyValueTimestamp<long, string>>> expectedResult)
+        void RunTest(List<List<KeyValueTimestamp<long, string>>> expectedResult)
         {// throws Exception
-            runTest(expectedResult, null);
+            RunTest(expectedResult, null);
         }
 
 
@@ -145,7 +145,7 @@ namespace Kafka.Streams.Tests.Integration
          * Runs the actual test. Checks the result after each input record to ensure fixed processing order.
          * If an input tuple does not trigger any result, "expectedResult" should contain a "null" entry
          */
-        void runTest(List<List<KeyValueTimestamp<long, string>>> expectedResult, string storeName)
+        void RunTest(List<List<KeyValueTimestamp<long, string>>> expectedResult, string storeName)
         {// throws Exception
             assert expectedResult.Count == input.Count;
 
@@ -176,14 +176,14 @@ namespace Kafka.Streams.Tests.Integration
                             updatedExpected.add(new KeyValueTimestamp<>(record.Key, record.Value, firstTimestamp + record.Timestamp));
                         }
 
-                        checkResult(OUTPUT_TOPIC, updatedExpected);
+                        CheckResult(OUTPUT_TOPIC, updatedExpected);
                         expectedFinalResult = updatedExpected.get(expected.Count - 1);
                     }
                 }
 
                 if (storeName != null)
                 {
-                    checkQueryableStore(storeName, expectedFinalResult);
+                    CheckQueryableStore(storeName, expectedFinalResult);
                 }
             }
             finally
@@ -195,15 +195,15 @@ namespace Kafka.Streams.Tests.Integration
         /*
          * Runs the actual test. Checks the result only after expected number of records have been consumed.
          */
-        void runTest(KeyValueTimestamp<long, string> expectedFinalResult)
+        void RunTest(KeyValueTimestamp<long, string> expectedFinalResult)
         {// throws Exception
-            runTest(expectedFinalResult, null);
+            RunTest(expectedFinalResult, null);
         }
 
         /*
          * Runs the actual test. Checks the result only after expected number of records have been consumed.
          */
-        void runTest(KeyValueTimestamp<long, string> expectedFinalResult, string storeName)
+        void RunTest(KeyValueTimestamp<long, string> expectedFinalResult, string storeName)
         {// throws Exception
             IntegrationTestUtils.purgeLocalStreamsState(STREAMS_CONFIG);
             streams = new KafkaStreams(builder.build(), STREAMS_CONFIG);
@@ -227,11 +227,11 @@ namespace Kafka.Streams.Tests.Integration
                         expectedFinalResult.Key,
                         expectedFinalResult.Value,
                         firstTimestamp + expectedFinalResult.Timestamp);
-                checkResult(OUTPUT_TOPIC, updatedExpectedFinalResult, numRecordsExpected);
+                CheckResult(OUTPUT_TOPIC, updatedExpectedFinalResult, numRecordsExpected);
 
                 if (storeName != null)
                 {
-                    checkQueryableStore(storeName, updatedExpectedFinalResult);
+                    CheckQueryableStore(storeName, updatedExpectedFinalResult);
                 }
             }
             finally
@@ -243,7 +243,7 @@ namespace Kafka.Streams.Tests.Integration
         /*
          * Checks the embedded queryable state store snapshot
          */
-        private void checkQueryableStore(string queryableName, KeyValueTimestamp<long, string> expectedFinalResult)
+        private void CheckQueryableStore(string queryableName, KeyValueTimestamp<long, string> expectedFinalResult)
         {
             ReadOnlyKeyValueStore<long, ValueAndTimestamp<string>> store = streams.store(queryableName, QueryableStoreTypes.timestampedKeyValueStore());
 

@@ -27,12 +27,12 @@
 public class UsePreviousTimeOnInvalidTimestampTest : TimestampExtractorTest {
 
     [Xunit.Fact]
-    public void extractMetadataTimestamp() {
-        testExtractMetadataTimestamp(new UsePreviousTimeOnInvalidTimestamp());
+    public void ExtractMetadataTimestamp() {
+        TestExtractMetadataTimestamp(new UsePreviousTimeOnInvalidTimestamp());
     }
 
     [Xunit.Fact]
-    public void usePreviousTimeOnInvalidTimestamp() {
+    public void UsePreviousTimeOnInvalidTimestamp() {
         long previousTime = 42;
 
         TimestampExtractor extractor = new UsePreviousTimeOnInvalidTimestamp();
@@ -45,7 +45,7 @@ public class UsePreviousTimeOnInvalidTimestampTest : TimestampExtractorTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsException() {
+    public void ShouldThrowStreamsException() {
         TimestampExtractor extractor = new UsePreviousTimeOnInvalidTimestamp();
         ConsumeResult<object, object> record = new ConsumeResult<>("anyTopic", 0, 0, null, null);
         try {

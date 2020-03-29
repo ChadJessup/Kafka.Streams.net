@@ -7,7 +7,7 @@ namespace Kafka.Streams.Tests.Tools
     {
 
 
-        public static void main(string[] args)
+        public static void Main(string[] args)
         {// throws Exception
             if (args.Length < 1)
             {
@@ -109,7 +109,7 @@ namespace Kafka.Streams.Tests.Tools
 
     }
 
-    private static int getCountOfRepartitionTopicsFound(string topologyString,
+    private static int GetCountOfRepartitionTopicsFound(string topologyString,
                                                         Pattern repartitionTopicPattern)
     {
         Matcher matcher = repartitionTopicPattern.matcher(topologyString);

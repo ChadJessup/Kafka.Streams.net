@@ -33,29 +33,29 @@ public class ForwardingDisabledProcessorContextTest {
     private ForwardingDisabledProcessorContext context;
 
     
-    public void setUp() {
+    public void SetUp() {
         context = new ForwardingDisabledProcessorContext(delegate);
     }
 
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowOnForward() {
+    public void ShouldThrowOnForward() {
         context.forward("key", "value");
     }
 
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowOnForwardWithTo() {
+    public void ShouldThrowOnForwardWithTo() {
         context.forward("key", "value", To.all());
     }
 
      // need to test deprecated code until removed
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowOnForwardWithChildIndex() {
+    public void ShouldThrowOnForwardWithChildIndex() {
         context.forward("key", "value", 1);
     }
 
      // need to test deprecated code until removed
     [Xunit.Fact]// (expected = StreamsException)
-    public void shouldThrowOnForwardWithChildName() {
+    public void ShouldThrowOnForwardWithChildName() {
         context.forward("key", "value", "child1");
     }
 }

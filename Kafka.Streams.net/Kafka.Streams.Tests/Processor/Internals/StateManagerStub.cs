@@ -29,23 +29,23 @@
 public class StateManagerStub : StateManager {
 
     
-    public File baseDir() {
+    public File BaseDir() {
         return null;
     }
 
     
-    public void register(StateStore store,
+    public void Register(StateStore store,
                          StateRestoreCallback stateRestoreCallback) {}
 
     
-    public void reinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
+    public void ReinitializeStateStoresForPartitions(Collection<TopicPartition> partitions,
                                                      InternalProcessorContext processorContext) {}
 
     
-    public void flush() {}
+    public void Flush() {}
 
     
-    public void close(bool clean){ //throws IOException}
+    public void Close(bool clean){ //throws IOException}
 
     
     public StateStore getGlobalStore(string name) {

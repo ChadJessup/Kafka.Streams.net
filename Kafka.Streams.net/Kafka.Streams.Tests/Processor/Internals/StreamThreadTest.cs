@@ -128,7 +128,7 @@ public class StreamThreadTest {
     private StreamsMetadataState streamsMetadataState;
 
     
-    public void setUp() {
+    public void SetUp() {
         processId = UUID.randomUUID();
 
         internalTopologyBuilder = InternalStreamsBuilderTest.internalTopologyBuilder(internalStreamsBuilder);
@@ -148,7 +148,7 @@ public class StreamThreadTest {
     private TaskId task2 = new TaskId(0, 2);
     private TaskId task3 = new TaskId(1, 1);
 
-    private Properties configProps(bool enableEoS) {
+    private Properties ConfigProps(bool enableEoS) {
         return mkProperties(mkMap(
             mkEntry(StreamsConfig.APPLICATION_ID_CONFIG, applicationId),
             mkEntry(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:2171"),
@@ -160,10 +160,10 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void testPartitionAssignmentChangeForSingleGroup() {
+    public void TestPartitionAssignmentChangeForSingleGroup() {
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
 
-        StreamThread thread = createStreamThread(clientId, config, false);
+        StreamThread thread = CreateStreamThread(clientId, config, false);
 
         StateListenerStub stateListener = new StateListenerStub();
         thread.setStateListener(stateListener);
@@ -199,8 +199,8 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void testStateChangeStartClose() {// throws Exception
-        StreamThread thread = createStreamThread(clientId, config, false);
+    public void TestStateChangeStartClose() {// throws Exception
+        StreamThread thread = CreateStreamThread(clientId, config, false);
 
         StateListenerStub stateListener = new StateListenerStub();
         thread.setStateListener(stateListener);
@@ -221,7 +221,7 @@ public class StreamThreadTest {
         Assert.Equal(thread.state(), StreamThread.State.DEAD);
     }
 
-    private Cluster createCluster() {
+    private Cluster CreateCluster() {
         Node node = new Node(0, "localhost", 8121);
         return new Cluster(
             "mockClusterId",
@@ -233,14 +233,14 @@ public class StreamThreadTest {
         );
     }
 
-    private StreamThread createStreamThread( string clientId,
+    private StreamThread CreateStreamThread( string clientId,
                                             StreamsConfig config,
                                             bool eosEnabled) {
         if (eosEnabled) {
             clientSupplier.setApplicationIdForProducer(applicationId);
         }
 
-        clientSupplier.setClusterForAdminClient(createCluster());
+        clientSupplier.setClusterForAdminClient(CreateCluster());
 
         return StreamThread.create(
             internalTopologyBuilder,
@@ -259,8 +259,8 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void testMetricsCreatedAtStartup() {
-        StreamThread thread = createStreamThread(clientId, config, false);
+    public void TestMetricsCreatedAtStartup() {
+        StreamThread thread = CreateStreamThread(clientId, config, false);
         string defaultGroupName = "stream-metrics";
         Dictionary<string, string> defaultTags = Collections.singletonMap("client-id", thread.getName());
         string descriptionIsNotVerified = "";
@@ -330,15 +330,15 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCommitBeforeTheCommitInterval() {
+    public void ShouldNotCommitBeforeTheCommitInterval() {
         long commitInterval = 1000L;
-        Properties props = configProps(false);
+        Properties props = ConfigProps(false);
         props.setProperty(StreamsConfig.STATE_DIR_CONFIG, stateDir);
         props.setProperty(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.toString(commitInterval));
 
         StreamsConfig config = new StreamsConfig(props);
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        TaskManager taskManager = mockTaskManagerCommit(consumer, 1, 1);
+        TaskManager taskManager = MockTaskManagerCommit(consumer, 1, 1);
 
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         StreamThread thread = new StreamThread(
@@ -365,7 +365,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldRespectNumIterationsInMainLoop() {
+    public void ShouldRespectNumIterationsInMainLoop() {
         MockProcessor mockProcessor = new MockProcessor(PunctuationType.WALL_CLOCK_TIME, 10L);
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
         internalTopologyBuilder.addProcessor("processor1", () => mockProcessor, "source1");
@@ -378,7 +378,7 @@ public class StreamThreadTest {
             Serdes.ByteArraySerde.getName(),
             Serdes.ByteArraySerde.getName(),
             properties));
-        StreamThread thread = createStreamThread(clientId, config, false);
+        StreamThread thread = CreateStreamThread(clientId, config, false);
 
         thread.setState(StreamThread.State.STARTING);
         thread.setState(StreamThread.State.PARTITIONS_REVOKED);
@@ -456,15 +456,15 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCauseExceptionIfNothingCommitted() {
+    public void ShouldNotCauseExceptionIfNothingCommitted() {
         long commitInterval = 1000L;
-        Properties props = configProps(false);
+        Properties props = ConfigProps(false);
         props.setProperty(StreamsConfig.STATE_DIR_CONFIG, stateDir);
         props.setProperty(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.toString(commitInterval));
 
         StreamsConfig config = new StreamsConfig(props);
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        TaskManager taskManager = mockTaskManagerCommit(consumer, 1, 0);
+        TaskManager taskManager = MockTaskManagerCommit(consumer, 1, 0);
 
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         StreamThread thread = new StreamThread(
@@ -491,15 +491,15 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCommitAfterTheCommitInterval() {
+    public void ShouldCommitAfterTheCommitInterval() {
         long commitInterval = 1000L;
-        Properties props = configProps(false);
+        Properties props = ConfigProps(false);
         props.setProperty(StreamsConfig.STATE_DIR_CONFIG, stateDir);
         props.setProperty(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, long.toString(commitInterval));
 
         StreamsConfig config = new StreamsConfig(props);
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
-        TaskManager taskManager = mockTaskManagerCommit(consumer, 2, 1);
+        TaskManager taskManager = MockTaskManagerCommit(consumer, 2, 1);
 
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         StreamThread thread = new StreamThread(
@@ -525,7 +525,7 @@ public class StreamThreadTest {
         EasyMock.verify(taskManager);
     }
 
-    private TaskManager mockTaskManagerCommit(Consumer<byte[], byte[]> consumer,
+    private TaskManager MockTaskManagerCommit(Consumer<byte[], byte[]> consumer,
                                               int numberOfCommits,
                                               int commits) {
         TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
@@ -535,11 +535,11 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldInjectSharedProducerForAllTasksUsingClientSupplierOnCreateIfEosDisabled() {
+    public void ShouldInjectSharedProducerForAllTasksUsingClientSupplierOnCreateIfEosDisabled() {
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
         internalStreamsBuilder.buildAndOptimizeTopology();
 
-        StreamThread thread = createStreamThread(clientId, config, false);
+        StreamThread thread = CreateStreamThread(clientId, config, false);
 
         thread.setState(StreamThread.State.STARTING);
         thread.rebalanceListener.onPartitionsRevoked(Collections.emptyList());
@@ -573,10 +573,10 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldInjectProducerPerTaskUsingClientSupplierOnCreateIfEosEnable() {
+    public void ShouldInjectProducerPerTaskUsingClientSupplierOnCreateIfEosEnable() {
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
 
-        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
+        StreamThread thread = CreateStreamThread(clientId, new StreamsConfig(ConfigProps(true)), true);
 
         thread.setState(StreamThread.State.STARTING);
         thread.rebalanceListener.onPartitionsRevoked(Collections.emptyList());
@@ -608,10 +608,10 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseAllTaskProducersOnCloseIfEosEnabled() {
+    public void ShouldCloseAllTaskProducersOnCloseIfEosEnabled() {
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
 
-        StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
+        StreamThread thread = CreateStreamThread(clientId, new StreamsConfig(ConfigProps(true)), true);
 
         thread.setState(StreamThread.State.STARTING);
         thread.rebalanceListener.onPartitionsRevoked(Collections.emptyList());
@@ -644,7 +644,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldShutdownTaskManagerOnClose() {
+    public void ShouldShutdownTaskManagerOnClose() {
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
         TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
         taskManager.shutdown(true);
@@ -677,7 +677,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldShutdownTaskManagerOnCloseWithoutStart() {
+    public void ShouldShutdownTaskManagerOnCloseWithoutStart() {
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
         TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
         taskManager.shutdown(true);
@@ -704,18 +704,18 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowWhenPendingShutdownInRunOnce() {
-        mockRunOnce(true);
+    public void ShouldNotThrowWhenPendingShutdownInRunOnce() {
+        MockRunOnce(true);
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowWithoutPendingShutdownInRunOnce() {
+    public void ShouldNotThrowWithoutPendingShutdownInRunOnce() {
         // A reference test to verify that without intermediate shutdown the runOnce should pass
         // without any exception.
-        mockRunOnce(false);
+        MockRunOnce(false);
     }
 
-    private void mockRunOnce(bool shutdownOnPoll) {
+    private void MockRunOnce(bool shutdownOnPoll) {
         Collection<TopicPartition> assignedPartitions = Collections.singletonList(t1p1);
         class MockStreamThreadConsumer<K, V> : MockConsumer<K, V> {
 
@@ -735,7 +735,7 @@ public class StreamThreadTest {
                 return base.poll(timeout);
             }
 
-            private void setStreamThread(StreamThread streamThread) {
+            private void SetStreamThread(StreamThread streamThread) {
                 this.streamThread = streamThread;
             }
         }
@@ -783,7 +783,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldOnlyShutdownOnce() {
+    public void ShouldOnlyShutdownOnce() {
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
         TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
         taskManager.shutdown(true);
@@ -812,7 +812,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology() {
+    public void ShouldNotNullPointerWhenStandbyTasksAssignedAndNoStateStoresForTopology() {
         internalTopologyBuilder.addSource(null, "name", null, null, null, "topic");
         internalTopologyBuilder.addSink("out", "output", null, null, null, "name");
 
@@ -833,7 +833,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerWasFencedWhileProcessing() {// throws Exception
+    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerWasFencedWhileProcessing() {// throws Exception
         internalTopologyBuilder.addSource(null, "source", null, null, null, topic1);
         internalTopologyBuilder.addSink("sink", "dummyTopic", null, null, null, "source");
 
@@ -895,7 +895,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCommitTransactionWhenSuspendingTaks() {
+    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCommitTransactionWhenSuspendingTaks() {
         StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
         internalTopologyBuilder.addSource(null, "name", null, null, null, topic1);
@@ -931,7 +931,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCloseTransactionWhenSuspendingTasks() {
+    public void ShouldCloseTaskAsZombieAndRemoveFromActiveTasksIfProducerGotFencedInCloseTransactionWhenSuspendingTasks() {
         StreamThread thread = createStreamThread(clientId, new StreamsConfig(configProps(true)), true);
 
         internalTopologyBuilder.addSource(null, "name", null, null, null, topic1);
@@ -973,7 +973,7 @@ public class StreamThreadTest {
         ThreadStateTransitionValidator newState = null;
 
         
-        public void onChange(Thread thread,
+        public void OnChange(Thread thread,
                              ThreadStateTransitionValidator newState,
                              ThreadStateTransitionValidator oldState) {
             ++numChanges;
@@ -988,7 +988,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnActiveTaskMetadataWhileRunningState() {
+    public void ShouldReturnActiveTaskMetadataWhileRunningState() {
         internalTopologyBuilder.addSource(null, "source", null, null, null, topic1);
 
         StreamThread thread = createStreamThread(clientId, config, false);
@@ -1019,7 +1019,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnStandbyTaskMetadataWhileRunningState() {
+    public void ShouldReturnStandbyTaskMetadataWhileRunningState() {
         internalStreamsBuilder.stream(Collections.singleton(topic1), consumed)
             .groupByKey().count(Materialized.As("count-one"));
 
@@ -1064,7 +1064,7 @@ public class StreamThreadTest {
 
     
     [Xunit.Fact]
-    public void shouldUpdateStandbyTask() {// throws Exception
+    public void ShouldUpdateStandbyTask() {// throws Exception
         string storeName1 = "count-one";
         string storeName2 = "table-two";
         string changelogName1 = applicationId + "-" + storeName1 + "-changelog";
@@ -1145,7 +1145,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateStandbyTask() {
+    public void ShouldCreateStandbyTask() {
         setupInternalTopologyWithoutState();
         internalTopologyBuilder.addStateStore(new MockKeyValueStoreBuilder("myStore", true), "processor1");
 
@@ -1155,7 +1155,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCreateStandbyTaskWithoutStateStores() {
+    public void ShouldNotCreateStandbyTaskWithoutStateStores() {
         setupInternalTopologyWithoutState();
 
         StandbyTask standbyTask = createStandbyTask();
@@ -1164,7 +1164,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCreateStandbyTaskIfStateStoresHaveLoggingDisabled() {
+    public void ShouldNotCreateStandbyTaskIfStateStoresHaveLoggingDisabled() {
         setupInternalTopologyWithoutState();
         StoreBuilder storeBuilder = new MockKeyValueStoreBuilder("myStore", true);
         storeBuilder.withLoggingDisabled();
@@ -1175,13 +1175,13 @@ public class StreamThreadTest {
         Assert.Equal(standbyTask, nullValue());
     }
 
-    private void setupInternalTopologyWithoutState() {
+    private void SetupInternalTopologyWithoutState() {
         MockProcessor mockProcessor = new MockProcessor();
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
         internalTopologyBuilder.addProcessor("processor1", () => mockProcessor, "source1");
     }
 
-    private StandbyTask createStandbyTask() {
+    private StandbyTask CreateStandbyTask() {
         LogContext logContext = new LogContext("test");
         Logger log = logContext.logger(StreamThreadTest);
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -1200,7 +1200,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldPunctuateActiveTask() {
+    public void ShouldPunctuateActiveTask() {
         List<long> punctuatedStreamTime = new ArrayList<>();
         List<long> punctuatedWallClockTime = new ArrayList<>();
         ProcessorSupplier<object, object> punctuateProcessor = () => new Processor<object, object>() {
@@ -1274,7 +1274,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldAlwaysUpdateTasksMetadataAfterChangingState() {
+    public void ShouldAlwaysUpdateTasksMetadataAfterChangingState() {
         StreamThread thread = createStreamThread(clientId, config, false);
         ThreadMetadata metadata = thread.threadMetadata();
         Assert.Equal(StreamThread.State.CREATED.name(), metadata.threadState());
@@ -1288,7 +1288,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldAlwaysReturnEmptyTasksMetadataWhileRebalancingStateAndTasksNotRunning() {
+    public void ShouldAlwaysReturnEmptyTasksMetadataWhileRebalancingStateAndTasksNotRunning() {
         internalStreamsBuilder.stream(Collections.singleton(topic1), consumed)
             .groupByKey().count(Materialized.As("count-one"));
         internalStreamsBuilder.buildAndOptimizeTopology();
@@ -1338,7 +1338,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecoverFromInvalidOffsetExceptionOnRestoreAndFinishRestore() {// throws Exception
+    public void ShouldRecoverFromInvalidOffsetExceptionOnRestoreAndFinishRestore() {// throws Exception
         internalStreamsBuilder.stream(Collections.singleton("topic"), consumed)
             .groupByKey().count(Materialized.As("count"));
         internalStreamsBuilder.buildAndOptimizeTopology();
@@ -1442,8 +1442,8 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordSkippedMetricForDeserializationException() {
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+    public void ShouldRecordSkippedMetricForDeserializationException() {
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
 
@@ -1507,15 +1507,15 @@ public class StreamThreadTest {
         Assert.Equal(2.0, metrics.metric(skippedTotalMetric).metricValue());
         Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
         List<string> strings = appender.getMessages();
         Assert.True(strings.Contains("task [0_1] Skipping record due to deserialization error. topic=[topic1] partition=[1] offset=[0]"));
         Assert.True(strings.Contains("task [0_1] Skipping record due to deserialization error. topic=[topic1] partition=[1] offset=[1]"));
     }
 
     [Xunit.Fact]
-    public void shouldReportSkippedRecordsForInvalidTimestamps() {
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+    public void ShouldReportSkippedRecordsForInvalidTimestamps() {
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         internalTopologyBuilder.addSource(null, "source1", null, null, null, topic1);
 
@@ -1573,7 +1573,7 @@ public class StreamThreadTest {
         Assert.Equal(6.0, metrics.metric(skippedTotalMetric).metricValue());
         Assert.NotEqual(0.0, metrics.metric(skippedRateMetric).metricValue());
 
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
         List<string> strings = appender.getMessages();
         Assert.True(strings.Contains(
             "task [0_1] Skipping record due to negative extracted timestamp. " +
@@ -1607,7 +1607,7 @@ public class StreamThreadTest {
         ));
     }
 
-    private void assertThreadMetadataHasEmptyTasksWithState(ThreadMetadata metadata,
+    private void AssertThreadMetadataHasEmptyTasksWithState(ThreadMetadata metadata,
                                                             StreamThread.State state) {
         Assert.Equal(state.name(), metadata.threadState());
         Assert.True(metadata.activeTasks().isEmpty());
@@ -1616,7 +1616,7 @@ public class StreamThreadTest {
 
     [Xunit.Fact]
     // TODO: Need to add a test case covering EOS when we create a mock taskManager class
-    public void producerMetricsVerificationWithoutEOS() {
+    public void ProducerMetricsVerificationWithoutEOS() {
         MockProducer<byte[], byte[]> producer = new MockProducer<>();
         Consumer<byte[], byte[]> consumer = EasyMock.createNiceMock(Consumer);
         TaskManager taskManager = mockTaskManagerCommit(consumer, 1, 0);
@@ -1649,7 +1649,7 @@ public class StreamThreadTest {
     }
 
     [Xunit.Fact]
-    public void adminClientMetricsVerification() {
+    public void AdminClientMetricsVerification() {
         Node broker1 = new Node(0, "dummyHost-1", 1234);
         Node broker2 = new Node(1, "dummyHost-2", 1234);
         List<Node> cluster = asList(broker1, broker2);
@@ -1692,12 +1692,12 @@ public class StreamThreadTest {
         Assert.Equal(testMetricName, adminClientMetrics.get(testMetricName).metricName());
     }
 
-    private void addRecord(MockConsumer<byte[], byte[]> mockConsumer,
+    private void AddRecord(MockConsumer<byte[], byte[]> mockConsumer,
                            long offset) {
         addRecord(mockConsumer, offset, -1L);
     }
 
-    private void addRecord(MockConsumer<byte[], byte[]> mockConsumer,
+    private void AddRecord(MockConsumer<byte[], byte[]> mockConsumer,
                            long offset,
                            long timestamp) {
         mockConsumer.addRecord(new ConsumeResult<>(

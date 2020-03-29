@@ -87,17 +87,17 @@ public abstract class WindowBytesStoreTest {
         Serdes.ByteArray().Serializer,
         Serdes.ByteArray().Serializer);
 
-    abstract WindowStore<K, V> buildWindowStore<K, V>(long retentionPeriod,
+    abstract WindowStore<K, V> BuildWindowStore<K, V>(long retentionPeriod,
                                                                long windowSize,
                                                                bool retainDuplicates,
                                                                Serde<K> keySerde,
                                                                Serde<V> valueSerde);
 
-    abstract string getMetricsScope();
+    abstract string GetMetricsScope();
 
-    abstract void setClassLoggerToDebug();
+    abstract void SetClassLoggerToDebug();
 
-    private RecordCollectorImpl createRecordCollector(string name) {
+    private RecordCollectorImpl CreateRecordCollector(string name) {
         return new RecordCollectorImpl(name,
             new LogContext(name),
             new DefaultProductionExceptionHandler(),
@@ -120,7 +120,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     
-    public void setup() {
+    public void Setup() {
         windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, false, Serdes.Int(), Serdes.String());
 
         RecordCollector recordCollector = createRecordCollector(windowStore.name());
@@ -140,12 +140,12 @@ public abstract class WindowBytesStoreTest {
     }
 
     
-    public void after() {
+    public void After() {
         windowStore.close();
     }
 
     [Xunit.Fact]
-    public void testRangeAndSinglePointFetch() {
+    public void TestRangeAndSinglePointFetch() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -280,7 +280,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetAll() {
+    public void ShouldGetAll() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -298,7 +298,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllInTimeRange() {
+    public void ShouldFetchAllInTimeRange() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -324,7 +324,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testFetchRange() {
+    public void TestFetchRange() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -402,7 +402,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutAndFetchBefore() {
+    public void TestPutAndFetchBefore() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -553,7 +553,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutAndFetchAfter() {
+    public void TestPutAndFetchAfter() {
         long startTime = SEGMENT_INTERVAL - 4L;
 
         putFirstBatch(windowStore, startTime, context);
@@ -663,7 +663,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testPutSameKeyTimestamp() {
+    public void TestPutSameKeyTimestamp() {
         windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, true, Serdes.Int(), Serdes.String());
         windowStore.init(context, windowStore);
 
@@ -721,7 +721,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext() {
+    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext() {
         setCurrentTime(0);
         windowStore.put(1, "one", 1L);
         windowStore.put(1, "two", 2L);
@@ -735,7 +735,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAndIterateOverExactKeys() {
+    public void ShouldFetchAndIterateOverExactKeys() {
         long windowSize = 0x7a00000000000000L;
         long retentionPeriod = 0x7a00000000000000L;
         WindowStore<string, string> windowStore = buildWindowStore(retentionPeriod,
@@ -771,7 +771,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testDeleteAndUpdate() {
+    public void TestDeleteAndUpdate() {
 
         long currentTime = 0;
         setCurrentTime(currentTime);
@@ -787,32 +787,32 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullOnWindowNotFound() {
+    public void ShouldReturnNullOnWindowNotFound() {
         assertNull(windowStore.fetch(1, 0L));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
         windowStore.put(null, "anyValue");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnGetNullKey() {
+    public void ShouldThrowNullPointerExceptionOnGetNullKey() {
         windowStore.fetch(null, ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey() {
         windowStore.fetch(null, 2, ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullToKey() {
         windowStore.fetch(1, null, ofEpochMilli(1L), ofEpochMilli(2L));
     }
 
     [Xunit.Fact]
-    public void shouldFetchAndIterateOverExactBinaryKeys() {
+    public void ShouldFetchAndIterateOverExactBinaryKeys() {
         WindowStore<Bytes, string> windowStore = buildWindowStore(RETENTION_PERIOD,
                                                                         WINDOW_SIZE,
                                                                         true,
@@ -845,7 +845,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch() {
+    public void ShouldReturnSameResultsForSingleKeyFetchAndEqualKeyRangeFetch() {
         windowStore.put(1, "one", 0L);
         windowStore.put(2, "two", 1L);
         windowStore.put(2, "two", 2L);
@@ -861,9 +861,9 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
         setClassLoggerToDebug();
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         KeyValueIterator iterator = windowStore.fetch(-1, 1, 0L, 10L);
         Assert.False(iterator.hasNext());
@@ -876,9 +876,9 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogAndMeasureExpiredRecords() {
+    public void ShouldLogAndMeasureExpiredRecords() {
         setClassLoggerToDebug();
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         // Advance stream time by inserting record with large enough timestamp that records with timestamp 0 are expired
         windowStore.put(1, "initial record", 2 * RETENTION_PERIOD);
@@ -887,7 +887,7 @@ public abstract class WindowBytesStoreTest {
         windowStore.put(1, "late record", 0L);
         windowStore.put(1, "another on-time record", RETENTION_PERIOD + 1);
 
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
 
         Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
 
@@ -922,7 +922,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionWhenFetchRangeIsExpired() {
+    public void ShouldNotThrowExceptionWhenFetchRangeIsExpired() {
         windowStore.put(1, "one", 0L);
         windowStore.put(1, "two", 4 * RETENTION_PERIOD);
 
@@ -932,7 +932,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testWindowIteratorPeek() {
+    public void TestWindowIteratorPeek() {
         long currentTime = 0;
         setCurrentTime(currentTime);
         windowStore.put(1, "one");
@@ -948,7 +948,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testValueIteratorPeek() {
+    public void TestValueIteratorPeek() {
         windowStore.put(1, "one", 0L);
 
         WindowStoreIterator<string> iterator = windowStore.fetch(1, 0L, 10L);
@@ -962,7 +962,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowConcurrentModificationException() {
+    public void ShouldNotThrowConcurrentModificationException() {
         long currentTime = 0;
         setCurrentTime(currentTime);
         windowStore.put(1, "one");
@@ -990,7 +990,7 @@ public abstract class WindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void testFetchDuplicates() {
+    public void TestFetchDuplicates() {
         windowStore = buildWindowStore(RETENTION_PERIOD, WINDOW_SIZE, true, Serdes.Int(), Serdes.String());
         windowStore.init(context, windowStore);
 
@@ -1019,7 +1019,7 @@ public abstract class WindowBytesStoreTest {
     }
 
 
-    private void putFirstBatch(WindowStore<int, string> store,
+    private void PutFirstBatch(WindowStore<int, string> store,
          long startTime,
         InternalMockProcessorContext context) {
         context.setRecordContext(createRecordContext(startTime));
@@ -1034,7 +1034,7 @@ public abstract class WindowBytesStoreTest {
         store.put(5, "five");
     }
 
-    private void putSecondBatch(WindowStore<int, string> store,
+    private void PutSecondBatch(WindowStore<int, string> store,
          long startTime,
         InternalMockProcessorContext context) {
         context.setRecordContext(createRecordContext(startTime + 3L));
@@ -1051,7 +1051,7 @@ public abstract class WindowBytesStoreTest {
         store.put(2, "two+6");
     }
 
-    protected static <E> HashSet<E> toSet(WindowStoreIterator<E> iterator) {
+    protected static <E> HashSet<E> ToSet(WindowStoreIterator<E> iterator) {
         HashSet<E> set = new HashSet<>();
         while (iterator.hasNext()) {
             set.add(iterator.next().value);
@@ -1059,7 +1059,7 @@ public abstract class WindowBytesStoreTest {
         return set;
     }
 
-    protected static HashSet<KeyValuePair<K, V>> toSet<K, V>(Iterator<KeyValuePair<K, V>> iterator) {
+    protected static HashSet<KeyValuePair<K, V>> ToSet<K, V>(Iterator<KeyValuePair<K, V>> iterator) {
         HashSet<KeyValuePair<K, V>> results = new HashSet<>();
 
         while (iterator.hasNext()) {
@@ -1068,7 +1068,7 @@ public abstract class WindowBytesStoreTest {
         return results;
     }
 
-    private Dictionary<int, HashSet<string>> entriesByKey(List<KeyValuePair<byte[], byte[]>> changeLog,
+    private Dictionary<int, HashSet<string>> EntriesByKey(List<KeyValuePair<byte[], byte[]>> changeLog,
          {
         HashDictionary<int, HashSet<string>> entriesByKey = new HashMap<>();
 
@@ -1085,19 +1085,19 @@ public abstract class WindowBytesStoreTest {
         return entriesByKey;
     }
 
-    protected static KeyValuePair<Windowed<K>, V> windowedPair<K, V>(K key, V value, long timestamp) {
+    protected static KeyValuePair<Windowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp) {
         return windowedPair(key, value, timestamp, WINDOW_SIZE);
     }
 
-    private static KeyValuePair<Windowed<K>, V> windowedPair<K, V>(K key, V value, long timestamp, long windowSize) {
+    private static KeyValuePair<Windowed<K>, V> WindowedPair<K, V>(K key, V value, long timestamp, long windowSize) {
         return KeyValuePair.Create(new Windowed<>(key, WindowKeySchema.timeWindowForSize(timestamp, windowSize)), value);
     }
 
-    protected void setCurrentTime(long currentTime) {
+    protected void SetCurrentTime(long currentTime) {
         context.setRecordContext(createRecordContext(currentTime));
     }
 
-    private ProcessorRecordContext createRecordContext(long time) {
+    private ProcessorRecordContext CreateRecordContext(long time) {
         return new ProcessorRecordContext(time, 0, 0, "topic", null);
     }
 

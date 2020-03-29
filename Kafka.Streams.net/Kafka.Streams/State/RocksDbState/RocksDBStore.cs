@@ -167,7 +167,7 @@ namespace Kafka.Streams.State.RocksDbState
             }
         }
 
-        public void init(IProcessorContext context, IStateStore root)
+        public void Init(IProcessorContext context, IStateStore root)
         {
             // open the DB dir
             InternalProcessorContext = context;
@@ -185,7 +185,7 @@ namespace Kafka.Streams.State.RocksDbState
             return true;
         }
 
-        public bool isOpen()
+        public bool IsOpen()
         {
             return open;
         }
@@ -208,11 +208,11 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[] putIfAbsent(Bytes key, byte[] value)
+        public byte[] PutIfAbsent(Bytes key, byte[] value)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
-            var originalValue = get(key);
+            var originalValue = Get(key);
 
             if (originalValue == null)
             {
@@ -222,7 +222,7 @@ namespace Kafka.Streams.State.RocksDbState
             return originalValue;
         }
 
-        public void putAll(List<KeyValuePair<Bytes, byte[]>> entries)
+        public void PutAll(List<KeyValuePair<Bytes, byte[]>> entries)
         {
             try
             {
@@ -238,7 +238,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[] get(Bytes key)
+        public byte[] Get(Bytes key)
         {
             ValidateStoreOpen();
             try
@@ -253,7 +253,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public byte[] delete(Bytes key)
+        public byte[] Delete(Bytes key)
         {
             key = key ?? throw new ArgumentNullException(nameof(key));
 
@@ -273,7 +273,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IKeyValueIterator<Bytes, byte[]> range(Bytes from, Bytes to)
+        public IKeyValueIterator<Bytes, byte[]> Range(Bytes from, Bytes to)
         {
             from = from ?? throw new ArgumentNullException(nameof(from));
             to = to ?? throw new ArgumentNullException(nameof(to));
@@ -296,7 +296,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public IKeyValueIterator<Bytes, byte[]> all()
+        public IKeyValueIterator<Bytes, byte[]> All()
         {
             ValidateStoreOpen();
             IKeyValueIterator<Bytes, byte[]> rocksDbIterator = DbAccessor.all();
@@ -347,7 +347,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void flush()
+        public void Flush()
         {
             if (Db == null)
             {
@@ -379,7 +379,7 @@ namespace Kafka.Streams.State.RocksDbState
                 }
             }
 
-            close();
+            Close();
             this.prepareForBulkload = prepareForBulkload;
             OpenDB(InternalProcessorContext);
         }
@@ -396,7 +396,7 @@ namespace Kafka.Streams.State.RocksDbState
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void close()
+        public void Close()
         {
             if (!open)
             {
@@ -453,7 +453,7 @@ namespace Kafka.Streams.State.RocksDbState
             throw new NotImplementedException();
         }
 
-        public bool isPresent()
+        public bool IsPresent()
         {
             throw new NotImplementedException();
         }

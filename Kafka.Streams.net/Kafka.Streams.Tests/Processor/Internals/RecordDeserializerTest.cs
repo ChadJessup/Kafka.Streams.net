@@ -47,7 +47,7 @@ public class RecordDeserializerTest {
 
     
     [Xunit.Fact]
-    public void shouldReturnConsumerRecordWithDeserializedValueWhenNoExceptions() {
+    public void ShouldReturnConsumerRecordWithDeserializedValueWhenNoExceptions() {
         RecordDeserializer recordDeserializer = new RecordDeserializer(
             new TheSourceNode(
                 false,
@@ -88,7 +88,7 @@ public class RecordDeserializerTest {
         }
 
         
-        public object deserializeKey(string topic, Headers headers, byte[] data) {
+        public object DeserializeKey(string topic, Headers headers, byte[] data) {
             if (keyThrowsException) {
                 throw new RuntimeException();
             }
@@ -96,7 +96,7 @@ public class RecordDeserializerTest {
         }
 
         
-        public object deserializeValue(string topic, Headers headers, byte[] data) {
+        public object DeserializeValue(string topic, Headers headers, byte[] data) {
             if (valueThrowsException) {
                 throw new RuntimeException();
             }

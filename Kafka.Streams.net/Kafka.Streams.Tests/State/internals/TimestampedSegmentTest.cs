@@ -37,7 +37,7 @@
 public class TimestampedSegmentTest {
 
     [Xunit.Fact]
-    public void shouldDeleteStateDirectoryOnDestroy() {// throws Exception
+    public void ShouldDeleteStateDirectoryOnDestroy() {// throws Exception
         TimestampedSegment segment = new TimestampedSegment("segment", "window", 0L);
         string directoryPath = TestUtils.tempDirectory().getAbsolutePath();
         File directory = new File(directoryPath);
@@ -58,7 +58,7 @@ public class TimestampedSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeEqualIfIdIsEqual() {
+    public void ShouldBeEqualIfIdIsEqual() {
         TimestampedSegment segment = new TimestampedSegment("anyName", "anyName", 0L);
         TimestampedSegment segmentSameId = new TimestampedSegment("someOtherName", "someOtherName", 0L);
         TimestampedSegment segmentDifferentId = new TimestampedSegment("anyName", "anyName", 1L);
@@ -71,7 +71,7 @@ public class TimestampedSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldHashOnSegmentIdOnly() {
+    public void ShouldHashOnSegmentIdOnly() {
         TimestampedSegment segment = new TimestampedSegment("anyName", "anyName", 0L);
         TimestampedSegment segmentSameId = new TimestampedSegment("someOtherName", "someOtherName", 0L);
         TimestampedSegment segmentDifferentId = new TimestampedSegment("anyName", "anyName", 1L);
@@ -83,7 +83,7 @@ public class TimestampedSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldCompareSegmentIdOnly() {
+    public void ShouldCompareSegmentIdOnly() {
         TimestampedSegment segment1 = new TimestampedSegment("a", "C", 50L);
         TimestampedSegment segment2 = new TimestampedSegment("b", "B", 100L);
         TimestampedSegment segment3 = new TimestampedSegment("c", "A", 0L);

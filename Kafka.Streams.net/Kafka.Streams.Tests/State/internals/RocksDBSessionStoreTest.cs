@@ -36,7 +36,7 @@ public class RocksDBSessionStoreTest : SessionBytesStoreTest {
     private static string STORE_NAME = "rocksDB session store";
 
     
-    SessionStore<K, V> buildSessionStore<K, V>(long retentionPeriod,
+    SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,
                                                  Serde<K> keySerde,
                                                  Serde<V> valueSerde) {
         return Stores.sessionStoreBuilder(
@@ -48,17 +48,17 @@ public class RocksDBSessionStoreTest : SessionBytesStoreTest {
     }
 
     
-    string getMetricsScope() {
+    string GetMetricsScope() {
         return new RocksDbSessionBytesStoreSupplier(null, 0).metricsScope();
     }
 
     
-    void setClassLoggerToDebug() {
+    void SetClassLoggerToDebug() {
         LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);
     }
 
     [Xunit.Fact]
-    public void shouldRemoveExpired() {
+    public void ShouldRemoveExpired() {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, SEGMENT_INTERVAL)), 2L);
         sessionStore.put(new Windowed<>("a", new SessionWindow(10, SEGMENT_INTERVAL)), 3L);

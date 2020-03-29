@@ -8,25 +8,25 @@ namespace Kafka.Streams.Tests.State
     {
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfTopicNameIsNullForBuiltinTypes()
+        public void ShouldThrowIfTopicNameIsNullForBuiltinTypes()
         {
             StateSerdes.withBuiltinTypes(null, byte[], byte[]);
         }
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfKeyClassIsNullForBuiltinTypes()
+        public void ShouldThrowIfKeyClassIsNullForBuiltinTypes()
         {
             StateSerdes.withBuiltinTypes("anyName", null, byte[]);
         }
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfValueClassIsNullForBuiltinTypes()
+        public void ShouldThrowIfValueClassIsNullForBuiltinTypes()
         {
             StateSerdes.withBuiltinTypes("anyName", byte[], null);
         }
 
         [Xunit.Fact]
-        public void shouldReturnSerdesForBuiltInKeyAndValueTypesForBuiltinTypes()
+        public void ShouldReturnSerdesForBuiltInKeyAndValueTypesForBuiltinTypes()
         {
             Class[] supportedBuildInTypes = new Class[] {
             string,
@@ -50,37 +50,37 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]// (expected = IllegalArgumentException)
-        public void shouldThrowForUnknownKeyTypeForBuiltinTypes()
+        public void ShouldThrowForUnknownKeyTypeForBuiltinTypes()
         {
             StateSerdes.withBuiltinTypes("anyName", Class, byte[]);
         }
 
         [Xunit.Fact]// (expected = IllegalArgumentException)
-        public void shouldThrowForUnknownValueTypeForBuiltinTypes()
+        public void ShouldThrowForUnknownValueTypeForBuiltinTypes()
         {
             StateSerdes.withBuiltinTypes("anyName", byte[], Class);
         }
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfTopicNameIsNull()
+        public void ShouldThrowIfTopicNameIsNull()
         {
             new StateSerdes<>(null, Serdes.ByteArray(), Serdes.ByteArray());
         }
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfKeyClassIsNull()
+        public void ShouldThrowIfKeyClassIsNull()
         {
             new StateSerdes<>("anyName", null, Serdes.ByteArray());
         }
 
         [Xunit.Fact]// (expected = NullPointerException)
-        public void shouldThrowIfValueClassIsNull()
+        public void ShouldThrowIfValueClassIsNull()
         {
             new StateSerdes<>("anyName", Serdes.ByteArray(), null);
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIncompatibleSerdeForValue()
+        public void ShouldThrowIfIncompatibleSerdeForValue()
         {// throws ClassNotFoundException
             Class myClass = Class.forName("java.lang.string");
             StateSerdes<object, object> stateSerdes = new StateSerdes<object, object>("anyName", Serdes.serdeFrom(myClass), Serdes.serdeFrom(myClass));
@@ -95,7 +95,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldSkipValueAndTimestampeInformationForErrorOnTimestampAndValueSerialization()
+        public void ShouldSkipValueAndTimestampeInformationForErrorOnTimestampAndValueSerialization()
         {// throws ClassNotFoundException
             Class myClass = Class.forName("java.lang.string");
             StateSerdes<object, object> stateSerdes =
@@ -111,7 +111,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIncompatibleSerdeForKey()
+        public void ShouldThrowIfIncompatibleSerdeForKey()
         {// throws ClassNotFoundException
             Class myClass = Class.forName("java.lang.string");
             StateSerdes<object, object> stateSerdes = new StateSerdes<object, object>("anyName", Serdes.serdeFrom(myClass), Serdes.serdeFrom(myClass));

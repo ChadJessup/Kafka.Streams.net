@@ -83,7 +83,7 @@ namespace Kafka.Streams.Tests.Mocks
             }
         }
 
-        public void checkAndClearProcessResult(params KeyValueTimestamp<K, V>[] expected)
+        public void CheckAndClearProcessResult(params KeyValueTimestamp<K, V>[] expected)
         {
             Assert.Equal(expected.Length, processed.Count);
             for (var i = 0; i < expected.Length; i++)
@@ -94,18 +94,18 @@ namespace Kafka.Streams.Tests.Mocks
             processed.Clear();
         }
 
-        public void requestCommit()
+        public void RequestCommit()
         {
             commitRequested = true;
         }
 
-        public void checkEmptyAndClearProcessResult()
+        public void CheckEmptyAndClearProcessResult()
         {
             Assert.Empty(processed);
             processed.Clear();
         }
 
-        public void checkAndClearPunctuateResult(PunctuationType type, params long[] expected)
+        public void CheckAndClearPunctuateResult(PunctuationType type, params long[] expected)
         {
             var punctuated = type == PunctuationType.STREAM_TIME
                 ? punctuatedStreamTime

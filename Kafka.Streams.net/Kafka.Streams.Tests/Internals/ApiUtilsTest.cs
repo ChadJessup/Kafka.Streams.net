@@ -38,7 +38,7 @@ public class ApiUtilsTest {
     private static long MAX_ACCEPTABLE_DAYS_FOR_DURATION_TO_MILLIS = 106751991167L;
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionForNullDuration() {
+    public void ShouldThrowNullPointerExceptionForNullDuration() {
         string nullDurationPrefix = prepareMillisCheckFailMsgPrefix(null, "nullDuration");
 
         try {
@@ -50,7 +50,7 @@ public class ApiUtilsTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowArithmeticExceptionForMaxDuration() {
+    public void ShouldThrowArithmeticExceptionForMaxDuration() {
         Duration maxDurationInDays = Duration.ofDays(MAX_ACCEPTABLE_DAYS_FOR_DURATION);
         string maxDurationPrefix = prepareMillisCheckFailMsgPrefix(maxDurationInDays, "maxDuration");
 
@@ -63,7 +63,7 @@ public class ApiUtilsTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionForNullInstant() {
+    public void ShouldThrowNullPointerExceptionForNullInstant() {
         string nullInstantPrefix = prepareMillisCheckFailMsgPrefix(null, "nullInstant");
 
         try {
@@ -75,7 +75,7 @@ public class ApiUtilsTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowArithmeticExceptionForMaxInstant() {
+    public void ShouldThrowArithmeticExceptionForMaxInstant() {
         string maxInstantPrefix = prepareMillisCheckFailMsgPrefix(Instant.MAX, "maxInstant");
 
         try {
@@ -87,21 +87,21 @@ public class ApiUtilsTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnMillisecondsOnValidDuration() {
+    public void ShouldReturnMillisecondsOnValidDuration() {
         Duration sampleDuration = Duration.ofDays(MAX_ACCEPTABLE_DAYS_FOR_DURATION_TO_MILLIS);
 
         Assert.Equal(sampleDuration.toMillis(), validateMillisecondDuration(sampleDuration, "sampleDuration"));
     }
 
     [Xunit.Fact]
-    public void shouldReturnMillisecondsOnValidInstant() {
+    public void ShouldReturnMillisecondsOnValidInstant() {
         Instant sampleInstant = Instant.now();
 
         Assert.Equal(sampleInstant.toEpochMilli(), validateMillisecondInstant(sampleInstant, "sampleInstant"));
     }
 
     [Xunit.Fact]
-    public void shouldContainsNameAndValueInFailMsgPrefix() {
+    public void ShouldContainsNameAndValueInFailMsgPrefix() {
         string failMsgPrefix = prepareMillisCheckFailMsgPrefix("someValue", "variableName");
 
         Assert.Equal(failMsgPrefix, containsString("variableName"));

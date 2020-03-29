@@ -97,7 +97,7 @@ public class SuppressionDurabilityIntegrationTest {
     private bool eosEnabled;
 
     @Parameters(name = "{index}: eosEnabled={0}")
-    public static Collection<object[]> parameters() {
+    public static Collection<object[]> Parameters() {
         return asList(
             new object[] {false},
             new object[] {true}
@@ -109,7 +109,7 @@ public class SuppressionDurabilityIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecoverBufferAfterShutdown() {
+    public void ShouldRecoverBufferAfterShutdown() {
         string testId = "-shouldRecoverBufferAfterShutdown";
         string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
         string input = "input" + testId;
@@ -260,17 +260,17 @@ public class SuppressionDurabilityIntegrationTest {
         }
 
         
-        public Transformer<string, long, KeyValuePair<string, long>> get() {
+        public Transformer<string, long, KeyValuePair<string, long>> Get() {
             return new Transformer<string, long, KeyValuePair<string, long>>() {
                 private ProcessorContext context;
 
                 
-                public void init(ProcessorContext context) {
+                public void Init(ProcessorContext context) {
                     this.context = context;
                 }
 
                 
-                public KeyValuePair<string, long> transform(string key, long value) {
+                public KeyValuePair<string, long> Transform(string key, long value) {
                     try {
                         Assert.Equal(context.topic(), (topic));
                     } catch (Throwable e) {
@@ -281,13 +281,13 @@ public class SuppressionDurabilityIntegrationTest {
                 }
 
                 
-                public void close() {
+                public void Close() {
 
                 }
             };
         }
 
-        void raiseExceptionIfAny() {
+        void RaiseExceptionIfAny() {
             Throwable exception = firstException.get();
             if (exception != null) {
                 throw new AssertionError("Got an exception during run", exception);
@@ -295,7 +295,7 @@ public class SuppressionDurabilityIntegrationTest {
         }
     }
 
-    private void verifyOutput(string topic, List<KeyValueTimestamp<string, long>> keyValueTimestamps) {
+    private void VerifyOutput(string topic, List<KeyValueTimestamp<string, long>> keyValueTimestamps) {
         Properties properties = mkProperties(
             mkMap(
                 mkEntry(ConsumerConfig.GROUP_ID_CONFIG, "test-group"),
@@ -307,7 +307,7 @@ public class SuppressionDurabilityIntegrationTest {
         IntegrationTestUtils.verifyKeyValueTimestamps(properties, topic, keyValueTimestamps);
     }
 
-    private void verifyOutput(string topic, HashSet<KeyValueTimestamp<string, long>> keyValueTimestamps) {
+    private void VerifyOutput(string topic, HashSet<KeyValueTimestamp<string, long>> keyValueTimestamps) {
         Properties properties = mkProperties(
             mkMap(
                 mkEntry(ConsumerConfig.GROUP_ID_CONFIG, "test-group"),
@@ -323,11 +323,11 @@ public class SuppressionDurabilityIntegrationTest {
      * scaling to ensure that there are commits in between the various test events,
      * just to exercise that everything works properly in the presence of commits.
      */
-    private long scaledTime(long unscaledTime) {
+    private long ScaledTime(long unscaledTime) {
         return COMMIT_INTERVAL * 2 * unscaledTime;
     }
 
-    private static void produceSynchronouslyToPartitionZero(string topic, List<KeyValueTimestamp<string, string>> toProduce) {
+    private static void ProduceSynchronouslyToPartitionZero(string topic, List<KeyValueTimestamp<string, string>> toProduce) {
         Properties producerConfig = mkProperties(mkMap(
             mkEntry(ProducerConfig.CLIENT_ID_CONFIG, "anything"),
             mkEntry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ((Serializer<string>) STRING_SERIALIZER).getClass().getName()),

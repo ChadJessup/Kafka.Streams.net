@@ -50,7 +50,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     
-    public void prepareTopology() {// throws InterruptedException
+    public void PrepareTopology() {// throws InterruptedException
         base.prepareEnvironment();
 
         appID = "table-table-join-integration-test";
@@ -78,7 +78,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
         }
 
         
-        public void apply(long key, string value) {
+        public void Apply(long key, string value) {
             numRecordsExpected++;
             if (expected.Value.equals(value)) {
                 bool ret = finalResultReached.compareAndSet(false, true);
@@ -92,7 +92,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInner() {// throws Exception
+    public void TestInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
         if (cacheEnabled) {
@@ -123,7 +123,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeft() {// throws Exception
+    public void TestLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
         if (cacheEnabled) {
@@ -154,7 +154,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuter() {// throws Exception
+    public void TestOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
         if (cacheEnabled) {
@@ -185,7 +185,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInnerInner() {// throws Exception
+    public void TestInnerInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
         if (cacheEnabled) {
@@ -232,7 +232,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInnerLeft() {// throws Exception
+    public void TestInnerLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
         if (cacheEnabled) {
@@ -277,7 +277,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInnerOuter() {// throws Exception
+    public void TestInnerOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
         if (cacheEnabled) {
@@ -326,7 +326,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeftInner() {// throws Exception
+    public void TestLeftInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
         if (cacheEnabled) {
@@ -371,7 +371,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeftLeft() {// throws Exception
+    public void TestLeftLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
         if (cacheEnabled) {
@@ -420,7 +420,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeftOuter() {// throws Exception
+    public void TestLeftOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
         if (cacheEnabled) {
@@ -470,7 +470,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuterInner() {// throws Exception
+    public void TestOuterInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-inner");
 
         if (cacheEnabled) {
@@ -517,7 +517,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuterLeft() {// throws Exception
+    public void TestOuterLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-left");
 
         if (cacheEnabled) {
@@ -568,7 +568,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuterOuter() {// throws Exception
+    public void TestOuterOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-outer");
 
         if (cacheEnabled) {

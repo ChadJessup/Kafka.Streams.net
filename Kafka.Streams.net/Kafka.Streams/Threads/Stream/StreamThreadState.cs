@@ -135,7 +135,7 @@ namespace Kafka.Streams.Threads.Stream
                 }
             }
 
-            this.StateListener?.onChange(this.Thread, this.CurrentState, oldState);
+            this.StateListener?.OnChange(this.Thread, this.CurrentState, oldState);
 
             return true;
         }

@@ -42,12 +42,12 @@ public class KeyValueIteratorFacadeTest {
     private KeyValueIteratorFacade<string, string> keyValueIteratorFacade;
 
     
-    public void setup() {
+    public void Setup() {
         keyValueIteratorFacade = new KeyValueIteratorFacade<>(mockedKeyValueIterator);
     }
 
     [Xunit.Fact]
-    public void shouldForwardHasNext() {
+    public void ShouldForwardHasNext() {
         expect(mockedKeyValueIterator.hasNext()).andReturn(true).andReturn(false);
         replay(mockedKeyValueIterator);
 
@@ -57,7 +57,7 @@ public class KeyValueIteratorFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardPeekNextKey() {
+    public void ShouldForwardPeekNextKey() {
         expect(mockedKeyValueIterator.peekNextKey()).andReturn("key");
         replay(mockedKeyValueIterator);
 
@@ -66,7 +66,7 @@ public class KeyValueIteratorFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairOnGet() {
+    public void ShouldReturnPlainKeyValuePairOnGet() {
         expect(mockedKeyValueIterator.next()).andReturn(
             new KeyValuePair<>("key", ValueAndTimestamp.make("value", 42L)));
         replay(mockedKeyValueIterator);
@@ -76,7 +76,7 @@ public class KeyValueIteratorFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseInnerIterator() {
+    public void ShouldCloseInnerIterator() {
         mockedKeyValueIterator.close();
         expectLastCall();
         replay(mockedKeyValueIterator);

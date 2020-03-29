@@ -87,7 +87,7 @@ public class RepartitionOptimizingIntegrationTest {
     private MockTime mockTime = CLUSTER.time;
 
     
-    public void setUp() {// throws Exception
+    public void SetUp() {// throws Exception
         Properties props = new Properties();
         props.put(StreamsConfig.CACHE_MAX_BYTES_BUFFERING_CONFIG, 1024 * 10);
         props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 5000);
@@ -109,24 +109,24 @@ public class RepartitionOptimizingIntegrationTest {
     }
 
     
-    public void tearDown() {// throws Exception
+    public void TearDown() {// throws Exception
         CLUSTER.deleteAllTopicsAndWait(30_000L);
     }
 
     [Xunit.Fact]
-    public void shouldSendCorrectRecords_OPTIMIZED() {// throws Exception
+    public void ShouldSendCorrectRecords_OPTIMIZED() {// throws Exception
         runIntegrationTest(StreamsConfig.OPTIMIZE,
                            ONE_REPARTITION_TOPIC);
     }
 
     [Xunit.Fact]
-    public void shouldSendCorrectResults_NO_OPTIMIZATION() {// throws Exception
+    public void ShouldSendCorrectResults_NO_OPTIMIZATION() {// throws Exception
         runIntegrationTest(StreamsConfig.NO_OPTIMIZATION,
                            FOUR_REPARTITION_TOPICS);
     }
 
 
-    private void runIntegrationTest(string optimizationConfig,
+    private void RunIntegrationTest(string optimizationConfig,
                                     int expectedNumberRepartitionTopics) {// throws Exception
 
         Initializer<int> initializer = () => 0;
@@ -169,7 +169,7 @@ public class RepartitionOptimizingIntegrationTest {
 
         Properties producerConfig = TestUtils.producerConfig(CLUSTER.bootstrapServers(), StringSerializer, StringSerializer);
 
-        IntegrationTestUtils.produceKeyValuesSynchronously(INPUT_TOPIC, getKeyValues(), producerConfig, mockTime);
+        IntegrationTestUtils.produceKeyValuesSynchronously(INPUT_TOPIC, GetKeyValues(), producerConfig, mockTime);
 
         Properties consumerConfig1 = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), StringDeserializer, LongDeserializer);
         Properties consumerConfig2 = TestUtils.consumerConfig(CLUSTER.bootstrapServers(), StringDeserializer, IntegerDeserializer);
@@ -188,7 +188,7 @@ public class RepartitionOptimizingIntegrationTest {
         /*
            confirming number of expected repartition topics here
          */
-        Assert.Equal(expectedNumberRepartitionTopics, getCountOfRepartitionTopicsFound(topologyString));
+        Assert.Equal(expectedNumberRepartitionTopics, GetCountOfRepartitionTopicsFound(topologyString));
 
         KafkaStreams streams = new KafkaStreams(topology, streamsConfiguration);
         streams.start();
@@ -215,7 +215,7 @@ public class RepartitionOptimizingIntegrationTest {
     }
 
 
-    private int getCountOfRepartitionTopicsFound(string topologyString) {
+    private int GetCountOfRepartitionTopicsFound(string topologyString) {
         Matcher matcher = repartitionTopicPattern.matcher(topologyString);
         List<string> repartitionTopicsFound = new ArrayList<>();
         while (matcher.find()) {
@@ -225,7 +225,7 @@ public class RepartitionOptimizingIntegrationTest {
     }
 
 
-    private List<KeyValuePair<string, string>> getKeyValues() {
+    private List<KeyValuePair<string, string>> GetKeyValues() {
         List<KeyValuePair<string, string>> keyValueList = new ArrayList<>();
         string[] keys = new string[]{"a", "b", "c"};
         string[] values = new string[]{"foo", "bar", "baz"};
@@ -247,7 +247,7 @@ public class RepartitionOptimizingIntegrationTest {
         }
 
         
-        public void process(string key, string value) {
+        public void Process(string key, string value) {
             valueList.add(value);
         }
     }

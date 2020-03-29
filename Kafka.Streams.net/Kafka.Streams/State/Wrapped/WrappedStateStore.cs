@@ -27,13 +27,13 @@ namespace Kafka.Streams.State.Internals
 
         public abstract IStateStore GetWrappedStateStore();
         public abstract string name { get; }
-        public abstract void close();
-        public abstract void flush();
-        public abstract void init(IProcessorContext context, IStateStore root);
-        public abstract bool isOpen();
+        public abstract void Close();
+        public abstract void Flush();
+        public abstract void Init(IProcessorContext context, IStateStore root);
+        public abstract bool IsOpen();
         public abstract bool persistent();
 
-        public bool isPresent()
+        public bool IsPresent()
         {
             throw new System.NotImplementedException();
         }
@@ -51,9 +51,9 @@ namespace Kafka.Streams.State.Internals
             this.wrapped = wrapped;
         }
 
-        public override void init(IProcessorContext context, IStateStore root)
+        public override void Init(IProcessorContext context, IStateStore root)
         {
-            wrapped.init(context, root);
+            wrapped.Init(context, root);
         }
 
         public override bool setFlushListener<K, V>(ICacheFlushListener<K, V> listener, bool sendOldValues)
@@ -76,27 +76,27 @@ namespace Kafka.Streams.State.Internals
             return wrapped.persistent();
         }
 
-        public override bool isOpen()
+        public override bool IsOpen()
         {
-            return wrapped.isOpen();
+            return wrapped.IsOpen();
         }
 
         protected void validateStoreOpen()
         {
-            if (!wrapped.isOpen())
+            if (!wrapped.IsOpen())
             {
                 throw new InvalidStateStoreException("Store " + wrapped.name + " is currently closed.");
             }
         }
 
-        public override void flush()
+        public override void Flush()
         {
-            wrapped.flush();
+            wrapped.Flush();
         }
 
-        public override void close()
+        public override void Close()
         {
-            wrapped.close();
+            wrapped.Close();
         }
     }
 }

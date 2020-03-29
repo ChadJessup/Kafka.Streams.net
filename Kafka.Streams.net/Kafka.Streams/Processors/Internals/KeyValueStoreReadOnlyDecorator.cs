@@ -13,19 +13,19 @@ namespace Kafka.Streams.Processors.Internals
         {
         }
 
-        public V get(K key)
+        public V Get(K key)
         {
-            return wrapped.get(key);
+            return wrapped.Get(key);
         }
 
-        public IKeyValueIterator<K, V> range(K from, K to)
+        public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return wrapped.range(from, to);
+            return wrapped.Range(from, to);
         }
 
-        public IKeyValueIterator<K, V> all()
+        public IKeyValueIterator<K, V> All()
         {
-            return wrapped.all();
+            return wrapped.All();
         }
 
         public long approximateNumEntries
@@ -36,17 +36,17 @@ namespace Kafka.Streams.Processors.Internals
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public V putIfAbsent(K key, V value)
+        public V PutIfAbsent(K key, V value)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public void putAll(List<KeyValuePair<K, V>> entries)
+        public void PutAll(List<KeyValuePair<K, V>> entries)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }
 
-        public V delete(K key)
+        public V Delete(K key)
         {
             throw new InvalidOperationException(ERROR_MESSAGE);
         }

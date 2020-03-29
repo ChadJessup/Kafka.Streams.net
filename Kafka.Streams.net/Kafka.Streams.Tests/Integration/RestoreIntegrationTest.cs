@@ -88,13 +88,13 @@ public class RestoreIntegrationTest {
     private KafkaStreams kafkaStreams;
 
     
-    public static void createTopics() {// throws InterruptedException
+    public static void CreateTopics() {// throws InterruptedException
         CLUSTER.createTopic(INPUT_STREAM, 2, 1);
         CLUSTER.createTopic(INPUT_STREAM_2, 2, 1);
         CLUSTER.createTopic(APPID + "-store-changelog", 2, 1);
     }
 
-    private Properties props(string applicationId) {
+    private Properties Props(string applicationId) {
         Properties streamsConfiguration = new Properties();
         streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
         streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
@@ -108,14 +108,14 @@ public class RestoreIntegrationTest {
     }
 
     
-    public void shutdown() {
+    public void Shutdown() {
         if (kafkaStreams != null) {
             kafkaStreams.close(Duration.ofSeconds(30));
         }
     }
 
     [Xunit.Fact]
-    public void shouldRestoreStateFromSourceTopic() {// throws Exception
+    public void ShouldRestoreStateFromSourceTopic() {// throws Exception
         AtomicInteger numReceived = new AtomicInteger(0);
         StreamsBuilder builder = new StreamsBuilder();
 
@@ -179,7 +179,7 @@ public class RestoreIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreStateFromChangelogTopic() {// throws Exception
+    public void ShouldRestoreStateFromChangelogTopic() {// throws Exception
         AtomicInteger numReceived = new AtomicInteger(0);
         StreamsBuilder builder = new StreamsBuilder();
 
@@ -242,7 +242,7 @@ public class RestoreIntegrationTest {
 
 
     [Xunit.Fact]
-    public void shouldSuccessfullyStartWhenLoggingDisabled() {// throws InterruptedException
+    public void ShouldSuccessfullyStartWhenLoggingDisabled() {// throws InterruptedException
         StreamsBuilder builder = new StreamsBuilder();
 
         KStream<int, int> stream = builder.stream(INPUT_STREAM);
@@ -265,7 +265,7 @@ public class RestoreIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldProcessDataFromStoresWithLoggingDisabled() {// throws InterruptedException, ExecutionException
+    public void ShouldProcessDataFromStoresWithLoggingDisabled() {// throws InterruptedException, ExecutionException
 
         IntegrationTestUtils.produceKeyValuesSynchronously(INPUT_STREAM_2,
                                                            Array.asList(KeyValuePair.Create(1, 1),
@@ -325,12 +325,12 @@ public class RestoreIntegrationTest {
 
         
         
-        public void init(ProcessorContext context) {
+        public void Init(ProcessorContext context) {
             this.store = (KeyValueStore<int, int>) context.getStateStore(topic);
         }
 
         
-        public void process(int key, int value) {
+        public void Process(int key, int value) {
             if (key != null) {
                 store.put(key, value);
                 processorLatch.countDown();
@@ -338,10 +338,10 @@ public class RestoreIntegrationTest {
         }
 
         
-        public void close() { }
+        public void Close() { }
     }
 
-    private void createStateForRestoration(string changelogTopic) {
+    private void CreateStateForRestoration(string changelogTopic) {
         Properties producerConfig = new Properties();
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
 

@@ -32,7 +32,7 @@ public class InMemoryKeyValueStoreTest : AbstractKeyValueStoreTest {
 
     
     
-    protected KeyValueStore<K, V> createKeyValueStore<K, V>(ProcessorContext context) {
+    protected KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context) {
         StoreBuilder storeBuilder = Stores.keyValueStoreBuilder(
                 Stores.inMemoryKeyValueStore("my-store"),
                 (Serde<K>) context.keySerde(),
@@ -44,7 +44,7 @@ public class InMemoryKeyValueStoreTest : AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRemoveKeysWithNullValues() {
+    public void ShouldRemoveKeysWithNullValues() {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...

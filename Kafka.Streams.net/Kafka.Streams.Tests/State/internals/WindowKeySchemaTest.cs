@@ -55,7 +55,7 @@ public class WindowKeySchemaTest {
     private StateSerdes<string, byte[]> stateSerdes = new StateSerdes<>("dummy", serde, Serdes.ByteArray());
 
     [Xunit.Fact]
-    public void testHasNextConditionUsingNullKeys() {
+    public void TestHasNextConditionUsingNullKeys() {
         List<KeyValuePair<Bytes, int>> keys = Array.asList(
                 KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed<>(Bytes.wrap(new byte[]{0, 0}), new TimeWindow(0, 1)), 0), 1),
                 KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed<>(Bytes.wrap(new byte[]{0}), new TimeWindow(0, 1)), 0), 2),
@@ -74,7 +74,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testUpperBoundWithLargeTimestamps() {
+    public void TestUpperBoundWithLargeTimestamps() {
         Bytes upper = windowKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), long.MaxValue);
 
         Assert.Equal(
@@ -103,7 +103,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testUpperBoundWithKeyBytesLargerThanFirstTimestampByte() {
+    public void TestUpperBoundWithKeyBytesLargerThanFirstTimestampByte() {
         Bytes upper = windowKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, (byte) 0x8F, (byte) 0x9F}), long.MaxValue);
 
         Assert.Equal(
@@ -122,7 +122,7 @@ public class WindowKeySchemaTest {
 
 
     [Xunit.Fact]
-    public void testUpperBoundWithKeyBytesLargerAndSmallerThanFirstTimestampByte() {
+    public void TestUpperBoundWithKeyBytesLargerAndSmallerThanFirstTimestampByte() {
         Bytes upper = windowKeySchema.upperRange(Bytes.wrap(new byte[]{0xC, 0xC, 0x9}), 0x0AffffffffffffffL);
 
         Assert.Equal(
@@ -140,25 +140,25 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testUpperBoundWithZeroTimestamp() {
+    public void TestUpperBoundWithZeroTimestamp() {
         Bytes upper = windowKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), 0);
         Assert.Equal(upper, (WindowKeySchema.toStoreKeyBinary(new byte[]{0xA, 0xB, 0xC}, 0, int.MaxValue)));
     }
 
     [Xunit.Fact]
-    public void testLowerBoundWithZeroTimestamp() {
+    public void TestLowerBoundWithZeroTimestamp() {
         Bytes lower = windowKeySchema.lowerRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), 0);
         Assert.Equal(lower, (WindowKeySchema.toStoreKeyBinary(new byte[]{0xA, 0xB, 0xC}, 0, 0)));
     }
 
     [Xunit.Fact]
-    public void testLowerBoundWithMonZeroTimestamp() {
+    public void TestLowerBoundWithMonZeroTimestamp() {
         Bytes lower = windowKeySchema.lowerRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), 42);
         Assert.Equal(lower, (WindowKeySchema.toStoreKeyBinary(new byte[]{0xA, 0xB, 0xC}, 0, 0)));
     }
 
     [Xunit.Fact]
-    public void testLowerBoundMatchesTrailingZeros() {
+    public void TestLowerBoundMatchesTrailingZeros() {
         Bytes lower = windowKeySchema.lowerRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), long.MaxValue - 1);
 
         Assert.Equal(
@@ -176,7 +176,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeDeserialize() {
+    public void ShouldSerializeDeserialize() {
         byte[] bytes = keySerde.Serializer.serialize(topic, windowedKey);
         Windowed<string> result = keySerde.deserializer().deserialize(topic, bytes);
         // TODO: fix this part as last bits of KAFKA-4468
@@ -184,7 +184,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testSerializeDeserializeOverflowWindowSize() {
+    public void TestSerializeDeserializeOverflowWindowSize() {
         byte[] bytes = keySerde.Serializer.serialize(topic, windowedKey);
         Windowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), long.MaxValue - 1)
                 .deserialize(topic, bytes);
@@ -192,7 +192,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeDeserializeExpectedWindowSize() {
+    public void ShouldSerializeDeserializeExpectedWindowSize() {
         byte[] bytes = keySerde.Serializer.serialize(topic, windowedKey);
         Windowed<string> result = new TimeWindowedDeserializer<>(serde.deserializer(), endTime - startTime)
             .deserialize(topic, bytes);
@@ -200,7 +200,7 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeDeserializeExpectedChangelogWindowSize() {
+    public void ShouldSerializeDeserializeExpectedChangelogWindowSize() {
         // Key-value containing serialized store key binary and the key's window size
         List<KeyValuePair<Bytes, int>> keys = Array.asList(
             KeyValuePair.Create(WindowKeySchema.toStoreKeyBinary(new Windowed<>(Bytes.wrap(new byte[]{0}), new TimeWindow(0, 1)), 0), 1),
@@ -220,59 +220,59 @@ public class WindowKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeNullToNull() {
+    public void ShouldSerializeNullToNull() {
         assertNull(keySerde.Serializer.serialize(topic, null));
     }
 
     [Xunit.Fact]
-    public void shouldDeserializeEmptyByteArrayToNull() {
+    public void ShouldDeserializeEmptyByteArrayToNull() {
         assertNull(keySerde.deserializer().deserialize(topic, new byte[0]));
     }
 
     [Xunit.Fact]
-    public void shouldDeserializeNullToNull() {
+    public void ShouldDeserializeNullToNull() {
         assertNull(keySerde.deserializer().deserialize(topic, null));
     }
 
     [Xunit.Fact]
-    public void shouldConvertToBinaryAndBack() {
+    public void ShouldConvertToBinaryAndBack() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         Windowed<string> result = WindowKeySchema.fromStoreKey(serialized.get(), endTime - startTime, stateSerdes.keyDeserializer(), stateSerdes.topic());
         Assert.Equal(windowedKey, result);
     }
 
     [Xunit.Fact]
-    public void shouldExtractEndTimeFromBinary() {
+    public void ShouldExtractEndTimeFromBinary() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         Assert.Equal(0, WindowKeySchema.extractStoreSequence(serialized.get()));
     }
 
     [Xunit.Fact]
-    public void shouldExtractStartTimeFromBinary() {
+    public void ShouldExtractStartTimeFromBinary() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         Assert.Equal(startTime, WindowKeySchema.extractStoreTimestamp(serialized.get()));
     }
 
     [Xunit.Fact]
-    public void shouldExtractWindowFromBinary() {
+    public void ShouldExtractWindowFromBinary() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         Assert.Equal(window, WindowKeySchema.extractStoreWindow(serialized.get(), endTime - startTime));
     }
 
     [Xunit.Fact]
-    public void shouldExtractKeyBytesFromBinary() {
+    public void ShouldExtractKeyBytesFromBinary() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         assertArrayEquals(key.getBytes(), WindowKeySchema.extractStoreKeyBytes(serialized.get()));
     }
 
     [Xunit.Fact]
-    public void shouldExtractKeyFromBinary() {
+    public void ShouldExtractKeyFromBinary() {
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedKey, 0, stateSerdes);
         Assert.Equal(windowedKey, WindowKeySchema.fromStoreKey(serialized.get(), endTime - startTime, stateSerdes.keyDeserializer(), stateSerdes.topic()));
     }
 
     [Xunit.Fact]
-    public void shouldExtractBytesKeyFromBinary() {
+    public void ShouldExtractBytesKeyFromBinary() {
         Windowed<Bytes> windowedBytesKey = new Windowed<>(Bytes.wrap(key.getBytes()), window);
         Bytes serialized = WindowKeySchema.toStoreKeyBinary(windowedBytesKey, 0);
         Assert.Equal(windowedBytesKey, WindowKeySchema.fromStoreBytesKey(serialized.get(), endTime - startTime));

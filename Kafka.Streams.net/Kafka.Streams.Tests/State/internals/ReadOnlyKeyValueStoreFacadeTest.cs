@@ -43,12 +43,12 @@ public class ReadOnlyKeyValueStoreFacadeTest {
     private ReadOnlyKeyValueStoreFacade<string, string> readOnlyKeyValueStoreFacade;
 
     
-    public void setup() {
+    public void Setup() {
         readOnlyKeyValueStoreFacade = new ReadOnlyKeyValueStoreFacade<>(mockedKeyValueTimestampStore);
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainValueOnGet() {
+    public void ShouldReturnPlainValueOnGet() {
         expect(mockedKeyValueTimestampStore.get("key"))
             .andReturn(ValueAndTimestamp.make("value", 42L));
         expect(mockedKeyValueTimestampStore.get("unknownKey"))
@@ -61,7 +61,7 @@ public class ReadOnlyKeyValueStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsForRangeIterator() {
+    public void ShouldReturnPlainKeyValuePairsForRangeIterator() {
         expect(mockedKeyValueTimestampIterator.next())
             .andReturn(KeyValuePair.Create("key1", ValueAndTimestamp.make("value1", 21L)))
             .andReturn(KeyValuePair.Create("key2", ValueAndTimestamp.make("value2", 42L)));
@@ -75,7 +75,7 @@ public class ReadOnlyKeyValueStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsForAllIterator() {
+    public void ShouldReturnPlainKeyValuePairsForAllIterator() {
         expect(mockedKeyValueTimestampIterator.next())
             .andReturn(KeyValuePair.Create("key1", ValueAndTimestamp.make("value1", 21L)))
             .andReturn(KeyValuePair.Create("key2", ValueAndTimestamp.make("value2", 42L)));
@@ -89,7 +89,7 @@ public class ReadOnlyKeyValueStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldForwardApproximateNumEntries() {
+    public void ShouldForwardApproximateNumEntries() {
         expect(mockedKeyValueTimestampStore.approximateNumEntries()).andReturn(42L);
         replay(mockedKeyValueTimestampStore);
 

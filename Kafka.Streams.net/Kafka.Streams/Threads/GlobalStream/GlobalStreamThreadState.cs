@@ -83,7 +83,7 @@ namespace Kafka.Streams.Threads.GlobalStream
 
             if (this.StateListener != null)
             {
-                this.StateListener.onChange(this.Thread, this.CurrentState, oldState);
+                this.StateListener.OnChange(this.Thread, this.CurrentState, oldState);
             }
 
             return true;

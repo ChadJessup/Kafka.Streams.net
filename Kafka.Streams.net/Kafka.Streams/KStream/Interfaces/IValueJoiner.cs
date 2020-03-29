@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream
          * @param value2 the second value for joining
          * @return the joined value
          */
-        VR apply(V1 value1, V2 value2);
-        VR apply(V1 value1);
+        VR Apply(V1 value1, V2 value2);
+        VR Apply(V1 value1);
     }
 }

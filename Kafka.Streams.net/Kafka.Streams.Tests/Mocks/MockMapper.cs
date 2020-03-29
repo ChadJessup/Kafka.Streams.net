@@ -62,27 +62,27 @@ namespace Kafka.Streams.Tests.Mocks
             return new SelectKeyMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> noOpFlatKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, IEnumerable<KeyValuePair<K, V>>> NoOpFlatKeyValueMapper<K, V>()
         {
             return new NoOpFlatKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, KeyValuePair<K, V>> noOpKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, KeyValuePair<K, V>> NoOpKeyValueMapper<K, V>()
         {
             return new NoOpKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, KeyValuePair<V, V>> selectValueKeyValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, KeyValuePair<V, V>> SelectValueKeyValueMapper<K, V>()
         {
             return new SelectValueKeyValueMapper<K, V>();
         }
 
-        public static IKeyValueMapper<K, V, V> selectValueMapper<K, V>()
+        public static IKeyValueMapper<K, V, V> SelectValueMapper<K, V>()
         {
             return new SelectValueMapper<K, V>();
         }
 
-        public static IValueMapper<V, V> noOpValueMapper<K, V>()
+        public static IValueMapper<V, V> NoOpValueMapper<K, V>()
         {
             return new NoOpValueMapper<V>();
         }

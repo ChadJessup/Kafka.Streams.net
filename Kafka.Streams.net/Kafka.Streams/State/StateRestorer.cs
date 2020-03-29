@@ -66,17 +66,17 @@ namespace Kafka.Streams.Processors.Internals
 
         public void restoreStarted()
         {
-            compositeRestoreListener.onRestoreStart(partition, storeName, startingOffset, endingOffset);
+            compositeRestoreListener.OnRestoreStart(partition, storeName, startingOffset, endingOffset);
         }
 
         public void restoreDone()
         {
-            compositeRestoreListener.onRestoreEnd(partition, storeName, restoredNumRecords());
+            compositeRestoreListener.OnRestoreEnd(partition, storeName, restoredNumRecords());
         }
 
         public void restoreBatchCompleted(long currentRestoredOffset, int numRestored)
         {
-            compositeRestoreListener.onBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
+            compositeRestoreListener.OnBatchRestored(partition, storeName, currentRestoredOffset, numRestored);
         }
 
         public void restore(List<ConsumeResult<byte[], byte[]>> records)

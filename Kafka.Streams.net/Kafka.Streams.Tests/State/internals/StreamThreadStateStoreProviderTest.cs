@@ -78,7 +78,7 @@ public class StreamThreadStateStoreProviderTest {
     private Dictionary<TaskId, StreamTask> tasks;
 
     
-    public void before() {
+    public void Before() {
         TopologyWrapper topology = new TopologyWrapper();
         topology.addSource("the-source", topicName);
         topology.addProcessor("the-processor", new MockProcessorSupplier(), "the-source");
@@ -132,7 +132,7 @@ public class StreamThreadStateStoreProviderTest {
         tasks = new HashMap<>();
         stateDirectory = new StateDirectory(streamsConfig, new MockTime(), true);
 
-        taskOne = createStreamsTask(
+        taskOne = CreateStreamsTask(
             streamsConfig,
             clientSupplier,
             processorTopology,
@@ -140,7 +140,7 @@ public class StreamThreadStateStoreProviderTest {
         taskOne.initializeStateStores();
         tasks.put(new TaskId(0, 0), taskOne);
 
-        StreamTask taskTwo = createStreamsTask(
+        StreamTask taskTwo = CreateStreamsTask(
             streamsConfig,
             clientSupplier,
             processorTopology,
@@ -154,12 +154,12 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     
-    public void cleanUp(){ //throws IOException
+    public void CleanUp(){ //throws IOException
         Utils.delete(stateDir);
     }
 
     [Xunit.Fact]
-    public void shouldFindKeyValueStores() {
+    public void ShouldFindKeyValueStores() {
         mockThread(true);
         List<ReadOnlyKeyValueStore<string, string>> kvStores =
             provider.stores("kv-store", QueryableStoreTypes.keyValueStore());
@@ -171,7 +171,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindTimestampedKeyValueStores() {
+    public void ShouldFindTimestampedKeyValueStores() {
         mockThread(true);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
             provider.stores("timestamped-kv-store", QueryableStoreTypes.timestampedKeyValueStore());
@@ -183,7 +183,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotFindKeyValueStoresAsTimestampedStore() {
+    public void ShouldNotFindKeyValueStoresAsTimestampedStore() {
         mockThread(true);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
             provider.stores("kv-store", QueryableStoreTypes.timestampedKeyValueStore());
@@ -191,7 +191,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindTimestampedKeyValueStoresAsKeyValueStores() {
+    public void ShouldFindTimestampedKeyValueStoresAsKeyValueStores() {
         mockThread(true);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> tkvStores =
             provider.stores("timestamped-kv-store", QueryableStoreTypes.keyValueStore());
@@ -203,7 +203,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindWindowStores() {
+    public void ShouldFindWindowStores() {
         mockThread(true);
         List<ReadOnlyWindowStore<string, string>> windowStores =
             provider.stores("window-store", windowStore());
@@ -215,7 +215,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindTimestampedWindowStores() {
+    public void ShouldFindTimestampedWindowStores() {
         mockThread(true);
         List<ReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
             provider.stores("timestamped-window-store", timestampedWindowStore());
@@ -227,7 +227,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotFindWindowStoresAsTimestampedStore() {
+    public void ShouldNotFindWindowStoresAsTimestampedStore() {
         mockThread(true);
         List<ReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
             provider.stores("window-store", timestampedWindowStore());
@@ -235,7 +235,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindTimestampedWindowStoresAsWindowStore() {
+    public void ShouldFindTimestampedWindowStoresAsWindowStore() {
         mockThread(true);
         List<ReadOnlyWindowStore<string, ValueAndTimestamp<string>>> windowStores =
             provider.stores("timestamped-window-store", windowStore());
@@ -247,35 +247,35 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionIfKVStoreClosed() {
+    public void ShouldThrowInvalidStoreExceptionIfKVStoreClosed() {
         mockThread(true);
         taskOne.getStore("kv-store").close();
         provider.stores("kv-store", QueryableStoreTypes.keyValueStore());
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionIfTsKVStoreClosed() {
+    public void ShouldThrowInvalidStoreExceptionIfTsKVStoreClosed() {
         mockThread(true);
         taskOne.getStore("timestamped-kv-store").close();
         provider.stores("timestamped-kv-store", QueryableStoreTypes.timestampedKeyValueStore());
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionIfWindowStoreClosed() {
+    public void ShouldThrowInvalidStoreExceptionIfWindowStoreClosed() {
         mockThread(true);
         taskOne.getStore("window-store").close();
         provider.stores("window-store", QueryableStoreTypes.windowStore());
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionIfTsWindowStoreClosed() {
+    public void ShouldThrowInvalidStoreExceptionIfTsWindowStoreClosed() {
         mockThread(true);
         taskOne.getStore("timestamped-window-store").close();
         provider.stores("timestamped-window-store", QueryableStoreTypes.timestampedWindowStore());
     }
 
     [Xunit.Fact]
-    public void shouldReturnEmptyListIfNoStoresFoundWithName() {
+    public void ShouldReturnEmptyListIfNoStoresFoundWithName() {
         mockThread(true);
         Assert.Equal(
             Collections.emptyList(),
@@ -283,7 +283,7 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnEmptyListIfStoreExistsButIsNotOfTypeValueStore() {
+    public void ShouldReturnEmptyListIfStoreExistsButIsNotOfTypeValueStore() {
         mockThread(true);
         Assert.Equal(
             Collections.emptyList(),
@@ -292,12 +292,12 @@ public class StreamThreadStateStoreProviderTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionIfNotAllStoresAvailable() {
+    public void ShouldThrowInvalidStoreExceptionIfNotAllStoresAvailable() {
         mockThread(false);
         provider.stores("kv-store", QueryableStoreTypes.keyValueStore());
     }
 
-    private StreamTask createStreamsTask(StreamsConfig streamsConfig,
+    private StreamTask CreateStreamsTask(StreamsConfig streamsConfig,
                                          MockClientSupplier clientSupplier,
                                          ProcessorTopology topology,
                                          TaskId taskId) {
@@ -323,13 +323,13 @@ public class StreamThreadStateStoreProviderTest {
         };
     }
 
-    private void mockThread(bool initialized) {
+    private void MockThread(bool initialized) {
         EasyMock.expect(threadMock.isRunningAndNotRebalancing()).andReturn(initialized);
         EasyMock.expect(threadMock.tasks()).andStubReturn(tasks);
         EasyMock.replay(threadMock);
     }
 
-    private void configureRestoreConsumer(MockClientSupplier clientSupplier,
+    private void ConfigureRestoreConsumer(MockClientSupplier clientSupplier,
                                           string topic) {
         List<PartitionInfo> partitions = Array.asList(
             new PartitionInfo(topic, 0, null, null, null),

@@ -57,7 +57,7 @@ public class GlobalProcessorContextImplTest {
     private ProcessorRecordContext recordContext;
 
     
-    public void setup() {
+    public void Setup() {
         StreamsConfig streamsConfig = mock(StreamsConfig);
         expect(streamsConfig.getString(StreamsConfig.APPLICATION_ID_CONFIG)).andReturn("dummy-id");
         expect(streamsConfig.defaultValueSerde()).andReturn(Serdes.ByteArray());
@@ -99,14 +99,14 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnGlobalOrNullStore() {
+    public void ShouldReturnGlobalOrNullStore() {
         Assert.Equal(globalContext.getStateStore(GLOBAL_STORE_NAME), new IsInstanceOf(StateStore));
         assertNull(globalContext.getStateStore(UNKNOWN_STORE));
     }
 
     
     [Xunit.Fact]
-    public void shouldForwardToSingleChild() {
+    public void ShouldForwardToSingleChild() {
         child.process(null, null);
         expectLastCall();
 
@@ -116,40 +116,40 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]// (expected = IllegalStateException)
-    public void shouldFailToForwardUsingToParameter() {
+    public void ShouldFailToForwardUsingToParameter() {
         globalContext.forward(null, null, To.all());
     }
 
      // need to test deprecated code until removed
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldNotSupportForwardingViaChildIndex() {
+    public void ShouldNotSupportForwardingViaChildIndex() {
         globalContext.forward(null, null, 0);
     }
 
      // need to test deprecated code until removed
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldNotSupportForwardingViaChildName() {
+    public void ShouldNotSupportForwardingViaChildName() {
         globalContext.forward(null, null, "processorName");
     }
 
     [Xunit.Fact]
-    public void shouldNotFailOnNoOpCommit() {
+    public void ShouldNotFailOnNoOpCommit() {
         globalContext.commit();
     }
 
     
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldNotAllowToSchedulePunctuationsUsingDeprecatedApi() {
+    public void ShouldNotAllowToSchedulePunctuationsUsingDeprecatedApi() {
         globalContext.schedule(0L, null, null);
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldNotAllowToSchedulePunctuations() {
+    public void ShouldNotAllowToSchedulePunctuations() {
         globalContext.schedule(null, null, null);
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowInitForKeyValueStore() {
+    public void ShouldNotAllowInitForKeyValueStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_KEY_VALUE_STORE_NAME);
         try {
             store.init(null, null);
@@ -158,7 +158,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowInitForTimestampedKeyValueStore() {
+    public void ShouldNotAllowInitForTimestampedKeyValueStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME);
         try {
             store.init(null, null);
@@ -167,7 +167,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowInitForWindowStore() {
+    public void ShouldNotAllowInitForWindowStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_WINDOW_STORE_NAME);
         try {
             store.init(null, null);
@@ -176,7 +176,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowInitForTimestampedWindowStore() {
+    public void ShouldNotAllowInitForTimestampedWindowStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME);
         try {
             store.init(null, null);
@@ -185,7 +185,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowInitForSessionStore() {
+    public void ShouldNotAllowInitForSessionStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_SESSION_STORE_NAME);
         try {
             store.init(null, null);
@@ -194,7 +194,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowCloseForKeyValueStore() {
+    public void ShouldNotAllowCloseForKeyValueStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_KEY_VALUE_STORE_NAME);
         try {
             store.close();
@@ -203,7 +203,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowCloseForTimestampedKeyValueStore() {
+    public void ShouldNotAllowCloseForTimestampedKeyValueStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME);
         try {
             store.close();
@@ -212,7 +212,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowCloseForWindowStore() {
+    public void ShouldNotAllowCloseForWindowStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_WINDOW_STORE_NAME);
         try {
             store.close();
@@ -221,7 +221,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowCloseForTimestampedWindowStore() {
+    public void ShouldNotAllowCloseForTimestampedWindowStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME);
         try {
             store.close();
@@ -230,7 +230,7 @@ public class GlobalProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowCloseForSessionStore() {
+    public void ShouldNotAllowCloseForSessionStore() {
         StateStore store = globalContext.getStateStore(GLOBAL_SESSION_STORE_NAME);
         try {
             store.close();

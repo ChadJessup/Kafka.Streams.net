@@ -50,7 +50,7 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     private static string INTERNAL_PREFIX = "internal";
 
     [Xunit.Fact]
-    public void shouldGetThreadLevelSensor() {
+    public void ShouldGetThreadLevelSensor() {
         Metrics metrics = mock(Metrics);
         string threadName = "thread1";
         string sensorName = "sensor1";
@@ -71,18 +71,18 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void testNullMetrics() {
+    public void TestNullMetrics() {
         new StreamsMetricsImpl(null, "");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void testRemoveNullSensor() {
+    public void TestRemoveNullSensor() {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
         streamsMetrics.removeSensor(null);
     }
 
     [Xunit.Fact]
-    public void testRemoveSensor() {
+    public void TestRemoveSensor() {
         string sensorName = "sensor1";
         string scope = "scope";
         string entity = "entity";
@@ -105,7 +105,7 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     }
 
     [Xunit.Fact]
-    public void testMutiLevelSensorRemoval() {
+    public void TestMutiLevelSensorRemoval() {
         Metrics registry = new Metrics();
         StreamsMetricsImpl metrics = new StreamsMetricsImpl(registry, "");
         foreach (MetricName defaultMetric in registry.metrics().keySet()) {
@@ -157,7 +157,7 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     }
 
     [Xunit.Fact]
-    public void testLatencyMetrics() {
+    public void TestLatencyMetrics() {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
         int defaultMetrics = streamsMetrics.metrics().Count;
 
@@ -177,7 +177,7 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     }
 
     [Xunit.Fact]
-    public void testThroughputMetrics() {
+    public void TestThroughputMetrics() {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), "");
         int defaultMetrics = streamsMetrics.metrics().Count;
 
@@ -196,7 +196,7 @@ public class StreamsMetricsImplTest : EasyMockSupport {
     }
 
     [Xunit.Fact]
-    public void testTotalMetricDoesntDecrease() {
+    public void TestTotalMetricDoesntDecrease() {
         MockTime time = new MockTime(1);
         MetricConfig config = new MetricConfig().timeWindow(1, TimeUnit.MILLISECONDS);
         Metrics metrics = new Metrics(config, time);

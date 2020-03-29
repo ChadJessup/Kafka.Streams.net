@@ -87,12 +87,12 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     public SegmentedBytesStore.KeySchema schema;
 
     @Parameters(name = "{0}")
-    public static object[] getKeySchemas() {
+    public static object[] GetKeySchemas() {
         return new object[] {new SessionKeySchema(), new WindowKeySchema()};
     }
 
     
-    public void before() {
+    public void Before() {
         if (schema is SessionKeySchema) {
             windows[0] = new SessionWindow(10L, 10L);
             windows[1] = new SessionWindow(500L, 1000L);
@@ -116,7 +116,7 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
             nextSegmentWindow = timeWindowForSize(segmentInterval + retention, windowSizeForTimeWindow);
         }
 
-        bytesStore = getBytesStore();
+        bytesStore = GetBytesStore();
 
         stateDir = TestUtils.tempDirectory();
         context = new InternalMockProcessorContext(
@@ -130,22 +130,22 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     
-    public void close() {
+    public void Close() {
         bytesStore.close();
     }
 
-    abstract AbstractRocksDBSegmentedBytesStore<S> getBytesStore();
+    abstract AbstractRocksDBSegmentedBytesStore<S> GetBytesStore();
 
-    abstract AbstractSegments<S> newSegments();
+    abstract AbstractSegments<S> NewSegments();
 
-    abstract Options getOptions(S segment);
+    abstract Options GetOptions(S segment);
 
     [Xunit.Fact]
-    public void shouldPutAndFetch() {
+    public void ShouldPutAndFetch() {
         string key = "a";
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(10));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), serializeValue(50));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), serializeValue(100));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(10));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(50));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(100));
 
         KeyValueIterator<Bytes, byte[]> values = bytesStore.fetch(Bytes.wrap(key.getBytes()), 0, 500);
 
@@ -154,28 +154,28 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
             KeyValuePair.Create(new Windowed<>(key, windows[1]), 50L)
         );
 
-        Assert.Equal(expected, toList(values));
+        Assert.Equal(expected, ToList(values));
     }
 
     [Xunit.Fact]
-    public void shouldFindValuesWithinRange() {
+    public void ShouldFindValuesWithinRange() {
         string key = "a";
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(10));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), serializeValue(50));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), serializeValue(100));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(10));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(50));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(100));
         KeyValueIterator<Bytes, byte[]> results = bytesStore.fetch(Bytes.wrap(key.getBytes()), 1, 999);
         List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
             KeyValuePair.Create(new Windowed<>(key, windows[0]), 10L),
             KeyValuePair.Create(new Windowed<>(key, windows[1]), 50L)
         );
 
-        Assert.Equal(expected, toList(results));
+        Assert.Equal(expected, ToList(results));
     }
 
     [Xunit.Fact]
-    public void shouldRemove() {
-        bytesStore.put(serializeKey(new Windowed<>("a", windows[0])), serializeValue(30));
-        bytesStore.put(serializeKey(new Windowed<>("a", windows[1])), serializeValue(50));
+    public void ShouldRemove() {
+        bytesStore.put(serializeKey(new Windowed<>("a", windows[0])), SerializeValue(30));
+        bytesStore.put(serializeKey(new Windowed<>("a", windows[1])), SerializeValue(50));
 
         bytesStore.remove(serializeKey(new Windowed<>("a", windows[0])));
         KeyValueIterator<Bytes, byte[]> value = bytesStore.fetch(Bytes.wrap("a".getBytes()), 0, 100);
@@ -183,18 +183,18 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldRollSegments() {
+    public void ShouldRollSegments() {
         // just to validate directories
-        AbstractSegments<S> segments = newSegments();
+        AbstractSegments<S> segments = NewSegments();
         string key = "a";
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), serializeValue(100));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), serializeValue(500));
-        Assert.Equal(Collections.singleton(segments.segmentName(0)), segmentDirs());
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(100));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[2])), SerializeValue(500));
+        Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(1000));
-        Assert.Equal(Utils.mkSet(segments.segmentName(0), segments.segmentName(1)), segmentDirs());
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(1000));
+        Assert.Equal(Utils.mkSet(segments.segmentName(0), segments.segmentName(1)), SegmentDirs());
 
         List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.fetch(Bytes.wrap(key.getBytes()), 0, 1500));
 
@@ -209,21 +209,21 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldGetAllSegments() {
+    public void ShouldGetAllSegments() {
         // just to validate directories
-        AbstractSegments<S> segments = newSegments();
+        AbstractSegments<S> segments = NewSegments();
         string key = "a";
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50L));
-        Assert.Equal(Collections.singleton(segments.segmentName(0)), segmentDirs());
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+        Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(100L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
         Assert.Equal(
             Utils.mkSet(
                 segments.segmentName(0),
                 segments.segmentName(1)
             ),
-            segmentDirs()
+            SegmentDirs()
         );
 
         List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.all());
@@ -237,21 +237,21 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllSegments() {
+    public void ShouldFetchAllSegments() {
         // just to validate directories
-        AbstractSegments<S> segments = newSegments();
+        AbstractSegments<S> segments = NewSegments();
         string key = "a";
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50L));
-        Assert.Equal(Collections.singleton(segments.segmentName(0)), segmentDirs());
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+        Assert.Equal(Collections.singleton(segments.segmentName(0)), SegmentDirs());
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(100L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
         Assert.Equal(
             Utils.mkSet(
                 segments.segmentName(0),
                 segments.segmentName(1)
             ),
-            segmentDirs()
+            SegmentDirs()
         );
 
         List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.fetchAll(0L, 60_000L));
@@ -265,12 +265,12 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldLoadSegmentsWithOldStyleDateFormattedName() {
-        AbstractSegments<S> segments = newSegments();
+    public void ShouldLoadSegmentsWithOldStyleDateFormattedName() {
+        AbstractSegments<S> segments = NewSegments();
         string key = "a";
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50L));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(100L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
         bytesStore.close();
 
         string firstSegmentName = segments.segmentName(0);
@@ -283,7 +283,7 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
         File oldStyleName = new File(parent, nameParts[0] + "-" + formatted);
         Assert.True(new File(parent, firstSegmentName).renameTo(oldStyleName));
 
-        bytesStore = getBytesStore();
+        bytesStore = GetBytesStore();
 
         bytesStore.init(context, bytesStore);
         List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.fetch(Bytes.wrap(key.getBytes()), 0L, 60_000L));
@@ -299,12 +299,12 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldLoadSegmentsWithOldStyleColonFormattedName() {
-        AbstractSegments<S> segments = newSegments();
+    public void ShouldLoadSegmentsWithOldStyleColonFormattedName() {
+        AbstractSegments<S> segments = NewSegments();
         string key = "a";
 
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50L));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(100L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
         bytesStore.close();
 
         string firstSegmentName = segments.segmentName(0);
@@ -313,7 +313,7 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
         File oldStyleName = new File(parent, nameParts[0] + ":" + long.parseLong(nameParts[1]));
         Assert.True(new File(parent, firstSegmentName).renameTo(oldStyleName));
 
-        bytesStore = getBytesStore();
+        bytesStore = GetBytesStore();
 
         bytesStore.init(context, bytesStore);
         List<KeyValuePair<Windowed<string>, long>> results = toList(bytesStore.fetch(Bytes.wrap(key.getBytes()), 0L, 60_000L));
@@ -329,21 +329,21 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldBeAbleToWriteToReInitializedStore() {
+    public void ShouldBeAbleToWriteToReInitializedStore() {
         string key = "a";
         // need to create a segment so we can attempt to write to it again.
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50));
         bytesStore.close();
         bytesStore.init(context, bytesStore);
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), serializeValue(100));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[1])), SerializeValue(100));
     }
 
     [Xunit.Fact]
-    public void shouldCreateWriteBatches() {
+    public void ShouldCreateWriteBatches() {
         string key = "a";
         Collection<KeyValuePair<byte[], byte[]>> records = new ArrayList<>();
-        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[0])).get(), serializeValue(50L)));
-        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[3])).get(), serializeValue(100L)));
+        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[0])).get(), SerializeValue(50L)));
+        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[3])).get(), SerializeValue(100L)));
         Dictionary<S, WriteBatch> writeBatchMap = bytesStore.getWriteBatches(records);
         Assert.Equal(2, writeBatchMap.Count);
         foreach (WriteBatch batch in writeBatchMap.values()) {
@@ -352,13 +352,13 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreToByteStore() {
+    public void ShouldRestoreToByteStore() {
         // 0 segments initially.
         Assert.Equal(0, bytesStore.getSegments().Count);
         string key = "a";
         Collection<KeyValuePair<byte[], byte[]>> records = new ArrayList<>();
-        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[0])).get(), serializeValue(50L)));
-        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[3])).get(), serializeValue(100L)));
+        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[0])).get(), SerializeValue(50L)));
+        records.add(new KeyValuePair<>(serializeKey(new Windowed<>(key, windows[3])).get(), SerializeValue(100L)));
         bytesStore.restoreAllInternal(records);
 
         // 2 segments are created during restoration.
@@ -366,7 +366,7 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
 
         // Bulk loading is enabled during recovery.
         foreach (S segment in bytesStore.getSegments()) {
-            Assert.Equal(getOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
+            Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
         }
 
         List<KeyValuePair<Windowed<string>, long>> expected = new ArrayList<>();
@@ -378,11 +378,11 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
     }
 
     [Xunit.Fact]
-    public void shouldRespectBulkLoadOptionsDuringInit() {
+    public void ShouldRespectBulkLoadOptionsDuringInit() {
         bytesStore.init(context, bytesStore);
         string key = "a";
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), serializeValue(50L));
-        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), serializeValue(100L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[0])), SerializeValue(50L));
+        bytesStore.put(serializeKey(new Windowed<>(key, windows[3])), SerializeValue(100L));
         Assert.Equal(2, bytesStore.getSegments().Count);
 
         StateRestoreListener restoreListener = context.getRestoreListener(bytesStore.name());
@@ -390,29 +390,29 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
         restoreListener.onRestoreStart(null, bytesStore.name(), 0L, 0L);
 
         foreach (S segment in bytesStore.getSegments()) {
-            Assert.Equal(getOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
+            Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (1 << 30));
         }
 
         restoreListener.onRestoreEnd(null, bytesStore.name(), 0L);
         foreach (S segment in bytesStore.getSegments()) {
-            Assert.Equal(getOptions(segment).level0FileNumCompactionTrigger(), (4));
+            Assert.Equal(GetOptions(segment).level0FileNumCompactionTrigger(), (4));
         }
     }
 
     [Xunit.Fact]
-    public void shouldLogAndMeasureExpiredRecords() {
+    public void ShouldLogAndMeasureExpiredRecords() {
         LogCaptureAppender.setClassLoggerToDebug(AbstractRocksDBSegmentedBytesStore);
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         // write a record to advance stream time, with a high enough timestamp
         // that the subsequent record in windows[0] will already be expired.
-        bytesStore.put(serializeKey(new Windowed<>("dummy", nextSegmentWindow)), serializeValue(0));
+        bytesStore.put(serializeKey(new Windowed<>("dummy", nextSegmentWindow)), SerializeValue(0));
 
         Bytes key = serializeKey(new Windowed<>("a", windows[0]));
-        byte[] value = serializeValue(5);
+        byte[] value = SerializeValue(5);
         bytesStore.put(key, value);
 
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
 
         Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
 
@@ -444,13 +444,13 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
         Assert.Equal(messages, hasItem("Skipping record for expired segment."));
     }
 
-    private HashSet<string> segmentDirs() {
+    private HashSet<string> SegmentDirs() {
         File windowDir = new File(stateDir, storeName);
 
         return Utils.mkSet(Objects.requireNonNull(windowDir.list()));
     }
 
-    private Bytes serializeKey(Windowed<string> key) {
+    private Bytes SerializeKey(Windowed<string> key) {
         StateSerdes<string, long> stateSerdes = StateSerdes.withBuiltinTypes("dummy", string, long);
         if (schema is SessionKeySchema) {
             return Bytes.wrap(SessionKeySchema.toBinary(key, stateSerdes.keySerializer(), "dummy"));
@@ -459,11 +459,11 @@ public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
         }
     }
 
-    private byte[] serializeValue(long value) {
+    private byte[] SerializeValue(long value) {
         return Serdes.Long().Serializer.serialize("", value);
     }
 
-    private List<KeyValuePair<Windowed<string>, long>> toList(KeyValueIterator<Bytes, byte[]> iterator) {
+    private List<KeyValuePair<Windowed<string>, long>> ToList(KeyValueIterator<Bytes, byte[]> iterator) {
         List<KeyValuePair<Windowed<string>, long>> results = new ArrayList<>();
         StateSerdes<string, long> stateSerdes = StateSerdes.withBuiltinTypes("dummy", string, long);
         while (iterator.hasNext()) {

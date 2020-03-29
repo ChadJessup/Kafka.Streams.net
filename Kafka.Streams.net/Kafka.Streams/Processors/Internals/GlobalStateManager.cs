@@ -124,7 +124,7 @@ namespace Kafka.Streams.Processors.Internals
             foreach (IStateStore stateStore in stateStores ?? Enumerable.Empty<IStateStore>())
             {
                 globalStoreNames.Add(stateStore.name);
-                stateStore.init(globalProcessorContext, stateStore);
+                stateStore.Init(globalProcessorContext, stateStore);
             }
 
             return globalStoreNames;
@@ -307,7 +307,7 @@ namespace Kafka.Streams.Processors.Internals
                 IRecordBatchingStateRestoreCallback stateRestoreAdapter =
                     StateRestoreCallbackAdapter.adapt(stateRestoreCallback);
 
-                stateRestoreListener.onRestoreStart(topicPartition, storeName, offset, highWatermark);
+                stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
                 var restoreCount = 0L;
 
                 while (offset < highWatermark)
@@ -327,7 +327,7 @@ namespace Kafka.Streams.Processors.Internals
 
                         offset = globalConsumer.Position(topicPartition);
                         stateRestoreAdapter.restoreBatch(restoreRecords);
-                        stateRestoreListener.onBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
+                        stateRestoreListener.OnBatchRestored(topicPartition, storeName, offset, restoreRecords.Count);
                         restoreCount += restoreRecords.Count;
                     }
                     catch (Exception recoverableException) //InvalidOffsetException
@@ -337,12 +337,12 @@ namespace Kafka.Streams.Processors.Internals
                             recoverableException.ToString());
                         //                        reinitializeStateStoresForPartitions(recoverableException.partitions(), globalProcessorContext);
 
-                        stateRestoreListener.onRestoreStart(topicPartition, storeName, offset, highWatermark);
+                        stateRestoreListener.OnRestoreStart(topicPartition, storeName, offset, highWatermark);
                         restoreCount = 0L;
                     }
                 }
 
-                stateRestoreListener.onRestoreEnd(topicPartition, storeName, restoreCount);
+                stateRestoreListener.OnRestoreEnd(topicPartition, storeName, restoreCount);
                 checkpointFileCache.Add(topicPartition, offset);
             }
         }
@@ -359,7 +359,7 @@ namespace Kafka.Streams.Processors.Internals
                     {
 
                         logger.LogTrace("Flushing global store={}", store.name);
-                        store.flush();
+                        store.Flush();
                     }
                     catch (Exception e)
                     {

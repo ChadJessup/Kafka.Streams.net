@@ -56,13 +56,13 @@ public class SinkNodeTest {
     private SinkNode<object, object> illTypedSink = (SinkNode) sink;
 
     
-    public void before() {
+    public void Before() {
         recordCollector.init(new MockProducer<>(true, anySerializer, anySerializer));
         sink.init(context);
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnInputRecordWithInvalidTimestamp() {
+    public void ShouldThrowStreamsExceptionOnInputRecordWithInvalidTimestamp() {
         Bytes anyKey = new Bytes("any key".getBytes());
         Bytes anyValue = new Bytes("any value".getBytes());
 
@@ -77,7 +77,7 @@ public class SinkNodeTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnKeyValueTypeSerializerMismatch() {
+    public void ShouldThrowStreamsExceptionOnKeyValueTypeSerializerMismatch() {
         string keyOfDifferentTypeThanSerializer = "key with different type";
         string valueOfDifferentTypeThanSerializer = "value with different type";
 
@@ -92,7 +92,7 @@ public class SinkNodeTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleNullKeysWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch() {
+    public void ShouldHandleNullKeysWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch() {
         string invalidValueToTriggerSerializerMismatch = "";
 
         // When/Then
@@ -107,7 +107,7 @@ public class SinkNodeTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleNullValuesWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch() {
+    public void ShouldHandleNullValuesWhenThrowingStreamsExceptionOnKeyValueTypeSerializerMismatch() {
         string invalidKeyToTriggerSerializerMismatch = "";
 
         // When/Then

@@ -8,32 +8,32 @@ public class MockChangelogReader : IChangelogReader
     private readonly List<TopicPartition> registered = new List<TopicPartition>();
     private Dictionary<TopicPartition, long> _restoredOffsets = new Dictionary<TopicPartition, long>();
 
-    public void register(StateRestorer restorer)
+    public void Register(StateRestorer restorer)
     {
         registered.Add(restorer.partition);
     }
 
-    public List<TopicPartition> restore(IRestoringTasks active)
+    public List<TopicPartition> Restore(IRestoringTasks active)
     {
         return registered;
     }
 
-    public Dictionary<TopicPartition, long> restoredOffsets()
+    public Dictionary<TopicPartition, long> RestoredOffsets()
     {
         return _restoredOffsets;
     }
 
-    void setRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
+    void SetRestoredOffsets(Dictionary<TopicPartition, long> restoredOffsets)
     {
         this._restoredOffsets = restoredOffsets;
     }
 
-    public void reset()
+    public void Reset()
     {
         registered.Clear();
     }
 
-    public bool asRegistered(TopicPartition partition)
+    public bool AsRegistered(TopicPartition partition)
     {
         return registered.Contains(partition);
     }

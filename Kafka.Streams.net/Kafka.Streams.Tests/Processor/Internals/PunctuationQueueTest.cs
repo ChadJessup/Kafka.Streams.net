@@ -32,13 +32,13 @@ public class PunctuationQueueTest {
     private PunctuationQueue queue = new PunctuationQueue();
     private Punctuator punctuator = new Punctuator() {
         
-        public void punctuate(long timestamp) {
+        public void Punctuate(long timestamp) {
             node.mockProcessor.punctuatedStreamTime.add(timestamp);
         }
     };
 
     [Xunit.Fact]
-    public void testPunctuationInterval() {
+    public void TestPunctuationInterval() {
         PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);
         long now = sched.timestamp - 100L;
 
@@ -77,7 +77,7 @@ public class PunctuationQueueTest {
     }
 
     [Xunit.Fact]
-    public void testPunctuationIntervalCustomAlignment() {
+    public void TestPunctuationIntervalCustomAlignment() {
         PunctuationSchedule sched = new PunctuationSchedule(node, 50L, 100L, punctuator);
         long now = sched.timestamp - 50L;
 
@@ -116,7 +116,7 @@ public class PunctuationQueueTest {
     }
 
     [Xunit.Fact]
-    public void testPunctuationIntervalCancelFromPunctuator() {
+    public void TestPunctuationIntervalCancelFromPunctuator() {
         PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);
         long now = sched.timestamp - 100L;
 
@@ -144,13 +144,13 @@ public class PunctuationQueueTest {
     private static class TestProcessor : AbstractProcessor<string, string> {
 
         
-        public void init(ProcessorContext context) {}
+        public void Init(ProcessorContext context) {}
 
         
-        public void process(string key, string value) {}
+        public void Process(string key, string value) {}
 
         
-        public void close() {}
+        public void Close() {}
     }
 
 }

@@ -32,7 +32,7 @@ namespace Kafka.Streams.KStream.Internals
 
         public ValueAndTimestamp<V> get(K key)
         {
-            return store.get(key);
+            return store.Get(key);
         }
 
         public void close() { }

@@ -59,17 +59,17 @@ public class StandbyTaskCreationIntegrationTest {
     private volatile bool client2IsOk = false;
 
     
-    public static void createTopics() {// throws InterruptedException
+    public static void CreateTopics() {// throws InterruptedException
         CLUSTER.createTopic(INPUT_TOPIC, 2, 1);
     }
 
     
-    public void after() {
+    public void After() {
         client1.close();
         client2.close();
     }
 
-    private Properties streamsConfiguration() {
+    private Properties StreamsConfiguration() {
         string applicationId = "testApp";
         Properties streamsConfiguration = new Properties();
         streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
@@ -82,7 +82,7 @@ public class StandbyTaskCreationIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCreateAnyStandByTasksForStateStoreWithLoggingDisabled() {// throws Exception
+    public void ShouldNotCreateAnyStandByTasksForStateStoreWithLoggingDisabled() {// throws Exception
         StreamsBuilder builder = new StreamsBuilder();
         string stateStoreName = "myTransformState";
         StoreBuilder<KeyValueStore<int, int>> keyValueStoreBuilder =
@@ -118,7 +118,7 @@ public class StandbyTaskCreationIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateStandByTasksForMaterializedAndOptimizedSourceTables() {// throws Exception
+    public void ShouldCreateStandByTasksForMaterializedAndOptimizedSourceTables() {// throws Exception
         Properties streamsConfiguration1 = streamsConfiguration();
         streamsConfiguration1.put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
         Properties streamsConfiguration2 = streamsConfiguration();
@@ -143,7 +143,7 @@ public class StandbyTaskCreationIntegrationTest {
         );
     }
 
-    private void createClients(Topology topology1,
+    private void CreateClients(Topology topology1,
                                Properties streamsConfiguration1,
                                Topology topology2,
                                Properties streamsConfiguration2) {
@@ -152,7 +152,7 @@ public class StandbyTaskCreationIntegrationTest {
         client2 = new KafkaStreams(topology2, streamsConfiguration2);
     }
 
-    private void setStateListenersForVerification(Predicate<ThreadMetadata> taskCondition) {
+    private void SetStateListenersForVerification(Predicate<ThreadMetadata> taskCondition) {
         client1.setStateListener((newState, oldState) => {
             if (newState == State.RUNNING &&
                 client1.localThreadsMetadata().stream().allMatch(taskCondition)) {
@@ -169,12 +169,12 @@ public class StandbyTaskCreationIntegrationTest {
         });
     }
 
-    private void startClients() {
+    private void StartClients() {
         client1.start();
         client2.start();
     }
 
-    private void waitUntilBothClientAreOK(string message) {// throws Exception
+    private void WaitUntilBothClientAreOK(string message) {// throws Exception
         TestUtils.waitForCondition(
             () => client1IsOk && client2IsOk,
             30 * 1000,

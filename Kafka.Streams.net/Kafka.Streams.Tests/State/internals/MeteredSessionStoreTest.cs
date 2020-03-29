@@ -81,7 +81,7 @@ public class MeteredSessionStoreTest {
     private Windowed<Bytes> windowedKeyBytes = new Windowed<>(Bytes.wrap(keyBytes), new SessionWindow(0, 0));
 
     
-    public void before() {
+    public void Before() {
         metered = new MeteredSessionStore<>(
             inner,
             "scope",
@@ -94,14 +94,14 @@ public class MeteredSessionStoreTest {
         expect(inner.name()).andReturn("metered").anyTimes();
     }
 
-    private void init() {
+    private void Init() {
         replay(inner, context);
         metered.init(context, metered);
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
-        init();
+    public void TestMetrics() {
+        Init();
         JmxReporter reporter = new JmxReporter("kafka.streams");
         metrics.addReporter(reporter);
         Assert.True(reporter.containsMbean(string.format("kafka.streams:type=stream-%s-metrics,client-id=%s,task-id=%s,%s-id=%s",
@@ -111,10 +111,10 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldWriteBytesToInnerStoreAndRecordPutMetric() {
+    public void ShouldWriteBytesToInnerStoreAndRecordPutMetric() {
         inner.put(eq(windowedKeyBytes), aryEq(keyBytes));
         expectLastCall();
-        init();
+        Init();
 
         metered.put(new Windowed<>(key, new SessionWindow(0, 0)), key);
 
@@ -124,11 +124,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindSessionsFromStoreAndRecordFetchMetric() {
+    public void ShouldFindSessionsFromStoreAndRecordFetchMetric() {
         expect(inner.findSessions(Bytes.wrap(keyBytes), 0, 0))
                 .andReturn(new KeyValueIteratorStub<>(
                         Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, 0, 0);
         Assert.Equal(iterator.next().value, (key));
@@ -141,11 +141,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindSessionRangeFromStoreAndRecordFetchMetric() {
+    public void ShouldFindSessionRangeFromStoreAndRecordFetchMetric() {
         expect(inner.findSessions(Bytes.wrap(keyBytes), Bytes.wrap(keyBytes), 0, 0))
                 .andReturn(new KeyValueIteratorStub<>(
                         Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<Windowed<string>, string> iterator = metered.findSessions(key, key, 0, 0);
         Assert.Equal(iterator.next().value, (key));
@@ -158,11 +158,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRemoveFromStoreAndRecordRemoveMetric() {
+    public void ShouldRemoveFromStoreAndRecordRemoveMetric() {
         inner.remove(windowedKeyBytes);
         expectLastCall();
 
-        init();
+        Init();
 
         metered.remove(new Windowed<>(key, new SessionWindow(0, 0)));
 
@@ -172,11 +172,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchForKeyAndRecordFetchMetric() {
+    public void ShouldFetchForKeyAndRecordFetchMetric() {
         expect(inner.fetch(Bytes.wrap(keyBytes)))
                 .andReturn(new KeyValueIteratorStub<>(
                         Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<Windowed<string>, string> iterator = metered.fetch(key);
         Assert.Equal(iterator.next().value, (key));
@@ -189,11 +189,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchRangeFromStoreAndRecordFetchMetric() {
+    public void ShouldFetchRangeFromStoreAndRecordFetchMetric() {
         expect(inner.fetch(Bytes.wrap(keyBytes), Bytes.wrap(keyBytes)))
                 .andReturn(new KeyValueIteratorStub<>(
                         Collections.singleton(KeyValuePair.Create(windowedKeyBytes, keyBytes)).iterator()));
-        init();
+        Init();
 
         KeyValueIterator<Windowed<string>, string> iterator = metered.fetch(key, key);
         Assert.Equal(iterator.next().value, (key));
@@ -206,57 +206,57 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRecordRestoreTimeOnInit() {
-        init();
+    public void ShouldRecordRestoreTimeOnInit() {
+        Init();
         KafkaMetric metric = metric("restore-rate");
         Assert.True((Double) metric.metricValue() > 0);
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerExceptionIfFetchSessionReturnsNull() {
+    public void ShouldNotThrowNullPointerExceptionIfFetchSessionReturnsNull() {
         expect(inner.fetchSession(Bytes.wrap("a".getBytes()), 0, long.MaxValue)).andReturn(null);
 
-        init();
+        Init();
         assertNull(metered.fetchSession("a", 0, long.MaxValue));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnPutIfKeyIsNull() {
+    public void ShouldThrowNullPointerOnPutIfKeyIsNull() {
         metered.put(null, "a");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnRemoveIfKeyIsNull() {
+    public void ShouldThrowNullPointerOnRemoveIfKeyIsNull() {
         metered.remove(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFetchIfKeyIsNull() {
+    public void ShouldThrowNullPointerOnFetchIfKeyIsNull() {
         metered.fetch(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFetchRangeIfFromIsNull() {
+    public void ShouldThrowNullPointerOnFetchRangeIfFromIsNull() {
         metered.fetch(null, "to");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFetchRangeIfToIsNull() {
+    public void ShouldThrowNullPointerOnFetchRangeIfToIsNull() {
         metered.fetch("from", null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFindSessionsIfKeyIsNull() {
+    public void ShouldThrowNullPointerOnFindSessionsIfKeyIsNull() {
         metered.findSessions(null, 0, 0);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFindSessionsRangeIfFromIsNull() {
+    public void ShouldThrowNullPointerOnFindSessionsRangeIfFromIsNull() {
         metered.findSessions(null, "a", 0, 0);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerOnFindSessionsRangeIfToIsNull() {
+    public void ShouldThrowNullPointerOnFindSessionsRangeIfToIsNull() {
         metered.findSessions("a", null, 0, 0);
     }
 
@@ -264,7 +264,7 @@ public class MeteredSessionStoreTest {
 
     
     [Xunit.Fact]
-    public void shouldSetFlushListenerOnWrappedCachingStore() {
+    public void ShouldSetFlushListenerOnWrappedCachingStore() {
         CachedSessionStore cachedSessionStore = mock(CachedSessionStore);
 
         expect(cachedSessionStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
@@ -282,11 +282,11 @@ public class MeteredSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSetFlushListenerOnWrappedNoneCachingStore() {
+    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore() {
         Assert.False(metered.setFlushListener(null, false));
     }
 
-    private KafkaMetric metric(string name) {
+    private KafkaMetric Metric(string name) {
         return this.metrics.metric(new MetricName(name, "stream-scope-metrics", "", this.tags));
     }
 

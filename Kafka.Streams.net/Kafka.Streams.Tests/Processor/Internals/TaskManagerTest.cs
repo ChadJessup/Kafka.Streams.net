@@ -117,7 +117,7 @@ public class TaskManagerTest {
     public TemporaryFolder testFolder = new TemporaryFolder();
 
     
-    public void setUp() {
+    public void SetUp() {
         taskManager = new TaskManager(changeLogReader,
                                       UUID.randomUUID(),
                                       "",
@@ -131,7 +131,7 @@ public class TaskManagerTest {
         taskManager.setConsumer(consumer);
     }
 
-    private void replay() {
+    private void Replay() {
         EasyMock.replay(changeLogReader,
                         restoreConsumer,
                         consumer,
@@ -143,8 +143,8 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateSubscriptionFromAssignment() {
-        mockTopologyBuilder();
+    public void ShouldUpdateSubscriptionFromAssignment() {
+        MockTopologyBuilder();
         expect(subscriptionUpdates.getUpdates()).andReturn(Utils.mkSet(topic1));
         topologyBuilder.updateSubscribedTopics(EasyMock.eq(Utils.mkSet(topic1, topic2)), EasyMock.anyString());
         expectLastCall().once();
@@ -161,8 +161,8 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotUpdateSubscriptionFromAssignment() {
-        mockTopologyBuilder();
+    public void ShouldNotUpdateSubscriptionFromAssignment() {
+        MockTopologyBuilder();
         expect(subscriptionUpdates.getUpdates()).andReturn(Utils.mkSet(topic1, topic2));
 
         EasyMock.replay(activeTaskCreator,
@@ -177,8 +177,8 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateSubscriptionFromMetadata() {
-        mockTopologyBuilder();
+    public void ShouldUpdateSubscriptionFromMetadata() {
+        MockTopologyBuilder();
         expect(subscriptionUpdates.getUpdates()).andReturn(Utils.mkSet(topic1));
         topologyBuilder.updateSubscribedTopics(EasyMock.eq(Utils.mkSet(topic1, topic2)), EasyMock.anyString());
         expectLastCall().once();
@@ -195,8 +195,8 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotUpdateSubscriptionFromMetadata() {
-        mockTopologyBuilder();
+    public void ShouldNotUpdateSubscriptionFromMetadata() {
+        MockTopologyBuilder();
         expect(subscriptionUpdates.getUpdates()).andReturn(Utils.mkSet(topic1));
 
         EasyMock.replay(activeTaskCreator,
@@ -211,7 +211,7 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnCachedTaskIdsFromDirectory(){ //throws IOException
+    public void ShouldReturnCachedTaskIdsFromDirectory(){ //throws IOException
         File[] taskFolders = asList(testFolder.newFolder("0_1"),
                                                 testFolder.newFolder("0_2"),
                                                 testFolder.newFolder("0_3"),
@@ -235,11 +235,11 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseActiveUnAssignedSuspendedTasksWhenCreatingNewTasks() {
-        mockSingleActiveTask();
+    public void ShouldCloseActiveUnAssignedSuspendedTasksWhenCreatingNewTasks() {
+        MockSingleActiveTask();
         active.closeNonAssignedSuspendedTasks(taskId0Assignment);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(taskId0Assignment, Collections.<TaskId, HashSet<TopicPartition>>emptyMap());
         taskManager.createTasks(taskId0Partitions);
@@ -248,11 +248,11 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseStandbyUnAssignedSuspendedTasksWhenCreatingNewTasks() {
-        mockSingleActiveTask();
+    public void ShouldCloseStandbyUnAssignedSuspendedTasksWhenCreatingNewTasks() {
+        MockSingleActiveTask();
         standby.closeNonAssignedSuspendedTasks(taskId0Assignment);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(taskId0Assignment, Collections.<TaskId, HashSet<TopicPartition>>emptyMap());
         taskManager.createTasks(taskId0Partitions);
@@ -261,11 +261,11 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddNonResumedActiveTasks() {
-        mockSingleActiveTask();
+    public void ShouldAddNonResumedActiveTasks() {
+        MockSingleActiveTask();
         expect(active.maybeResumeSuspendedTask(taskId0, taskId0Partitions)).andReturn(false);
         active.addNewTask(EasyMock.same(streamTask));
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(taskId0Assignment, Collections.<TaskId, HashSet<TopicPartition>>emptyMap());
         taskManager.createTasks(taskId0Partitions);
@@ -274,10 +274,10 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAddResumedActiveTasks() {
+    public void ShouldNotAddResumedActiveTasks() {
         checkOrder(active, true);
         expect(active.maybeResumeSuspendedTask(taskId0, taskId0Partitions)).andReturn(true);
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(taskId0Assignment, Collections.<TaskId, HashSet<TopicPartition>>emptyMap());
         taskManager.createTasks(taskId0Partitions);
@@ -287,11 +287,11 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldAddNonResumedStandbyTasks() {
-        mockStandbyTaskExpectations();
+    public void ShouldAddNonResumedStandbyTasks() {
+        MockStandbyTaskExpectations();
         expect(standby.maybeResumeSuspendedTask(taskId0, taskId0Partitions)).andReturn(false);
         standby.addNewTask(EasyMock.same(standbyTask));
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(Collections.<TaskId, HashSet<TopicPartition>>emptyMap(), taskId0Assignment);
         taskManager.createTasks(taskId0Partitions);
@@ -300,10 +300,10 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAddResumedStandbyTasks() {
+    public void ShouldNotAddResumedStandbyTasks() {
         checkOrder(active, true);
         expect(standby.maybeResumeSuspendedTask(taskId0, taskId0Partitions)).andReturn(true);
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(Collections.<TaskId, HashSet<TopicPartition>>emptyMap(), taskId0Assignment);
         taskManager.createTasks(taskId0Partitions);
@@ -313,11 +313,11 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldPauseActivePartitions() {
-        mockSingleActiveTask();
+    public void ShouldPauseActivePartitions() {
+        MockSingleActiveTask();
         consumer.pause(taskId0Partitions);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.setAssignmentMetadata(taskId0Assignment, Collections.<TaskId, HashSet<TopicPartition>>emptyMap());
         taskManager.createTasks(taskId0Partitions);
@@ -325,41 +325,41 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldSuspendActiveTasks() {
+    public void ShouldSuspendActiveTasks() {
         expect(active.suspend()).andReturn(null);
-        replay();
+        Replay();
 
         taskManager.suspendTasksAndState();
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldSuspendStandbyTasks() {
+    public void ShouldSuspendStandbyTasks() {
         expect(standby.suspend()).andReturn(null);
-        replay();
+        Replay();
 
         taskManager.suspendTasksAndState();
         verify(standby);
     }
 
     [Xunit.Fact]
-    public void shouldUnassignChangelogPartitionsOnSuspend() {
+    public void ShouldUnassignChangelogPartitionsOnSuspend() {
         restoreConsumer.unsubscribe();
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.suspendTasksAndState();
         verify(restoreConsumer);
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionAtEndIfExceptionDuringSuspend() {
+    public void ShouldThrowStreamsExceptionAtEndIfExceptionDuringSuspend() {
         expect(active.suspend()).andReturn(new RuntimeException(""));
         expect(standby.suspend()).andReturn(new RuntimeException(""));
         expectLastCall();
         restoreConsumer.unsubscribe();
 
-        replay();
+        Replay();
         try {
             taskManager.suspendTasksAndState();
             Assert.True(false, "Should have thrown streams exception");
@@ -370,68 +370,68 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseActiveTasksOnShutdown() {
+    public void ShouldCloseActiveTasksOnShutdown() {
         active.close(true);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.shutdown(true);
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldCloseStandbyTasksOnShutdown() {
+    public void ShouldCloseStandbyTasksOnShutdown() {
         standby.close(false);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.shutdown(false);
         verify(standby);
     }
 
     [Xunit.Fact]
-    public void shouldUnassignChangelogPartitionsOnShutdown() {
+    public void ShouldUnassignChangelogPartitionsOnShutdown() {
         restoreConsumer.unsubscribe();
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.shutdown(true);
         verify(restoreConsumer);
     }
 
     [Xunit.Fact]
-    public void shouldInitializeNewActiveTasks() {
+    public void ShouldInitializeNewActiveTasks() {
         active.updateRestored(EasyMock.<Collection<TopicPartition>>anyObject());
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldInitializeNewStandbyTasks() {
+    public void ShouldInitializeNewStandbyTasks() {
         active.updateRestored(EasyMock.<Collection<TopicPartition>>anyObject());
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(standby);
     }
 
     [Xunit.Fact]
-    public void shouldRestoreStateFromChangeLogReader() {
+    public void ShouldRestoreStateFromChangeLogReader() {
         expect(changeLogReader.restore(active)).andReturn(taskId0Partitions);
         active.updateRestored(taskId0Partitions);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(changeLogReader, active);
     }
 
     [Xunit.Fact]
-    public void shouldResumeRestoredPartitions() {
+    public void ShouldResumeRestoredPartitions() {
         expect(changeLogReader.restore(active)).andReturn(taskId0Partitions);
         expect(active.allTasksRunning()).andReturn(true);
         expect(consumer.assignment()).andReturn(taskId0Partitions);
@@ -439,87 +439,87 @@ public class TaskManagerTest {
 
         consumer.resume(taskId0Partitions);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(consumer);
     }
 
     [Xunit.Fact]
-    public void shouldAssignStandbyPartitionsWhenAllActiveTasksAreRunning() {
-        mockAssignStandbyPartitions(1L);
-        replay();
+    public void ShouldAssignStandbyPartitionsWhenAllActiveTasksAreRunning() {
+        MockAssignStandbyPartitions(1L);
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(restoreConsumer);
     }
 
     [Xunit.Fact]
-    public void shouldReturnTrueWhenActiveAndStandbyTasksAreRunning() {
-        mockAssignStandbyPartitions(1L);
+    public void ShouldReturnTrueWhenActiveAndStandbyTasksAreRunning() {
+        MockAssignStandbyPartitions(1L);
         expect(standby.allTasksRunning()).andReturn(true);
-        replay();
+        Replay();
 
         Assert.True(taskManager.updateNewAndRestoringTasks());
     }
 
     [Xunit.Fact]
-    public void shouldReturnFalseWhenOnlyActiveTasksAreRunning() {
-        mockAssignStandbyPartitions(1L);
+    public void ShouldReturnFalseWhenOnlyActiveTasksAreRunning() {
+        MockAssignStandbyPartitions(1L);
         expect(standby.allTasksRunning()).andReturn(false);
-        replay();
+        Replay();
 
         Assert.False(taskManager.updateNewAndRestoringTasks());
     }
 
     [Xunit.Fact]
-    public void shouldReturnFalseWhenThereAreStillNonRunningTasks() {
+    public void ShouldReturnFalseWhenThereAreStillNonRunningTasks() {
         expect(active.allTasksRunning()).andReturn(false);
-        replay();
+        Replay();
 
         Assert.False(taskManager.updateNewAndRestoringTasks());
     }
 
     [Xunit.Fact]
-    public void shouldSeekToCheckpointedOffsetOnStandbyPartitionsWhenOffsetGreaterThanEqualTo0() {
-        mockAssignStandbyPartitions(1L);
+    public void ShouldSeekToCheckpointedOffsetOnStandbyPartitionsWhenOffsetGreaterThanEqualTo0() {
+        MockAssignStandbyPartitions(1L);
         restoreConsumer.seek(t1p0, 1L);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(restoreConsumer);
     }
 
     [Xunit.Fact]
-    public void shouldSeekToBeginningIfOffsetIsLessThan0() {
-        mockAssignStandbyPartitions(-1L);
+    public void ShouldSeekToBeginningIfOffsetIsLessThan0() {
+        MockAssignStandbyPartitions(-1L);
         restoreConsumer.seekToBeginning(taskId0Partitions);
         expectLastCall();
-        replay();
+        Replay();
 
         taskManager.updateNewAndRestoringTasks();
         verify(restoreConsumer);
     }
 
     [Xunit.Fact]
-    public void shouldCommitActiveAndStandbyTasks() {
+    public void ShouldCommitActiveAndStandbyTasks() {
         expect(active.commit()).andReturn(1);
         expect(standby.commit()).andReturn(2);
 
-        replay();
+        Replay();
 
         Assert.Equal(taskManager.commitAll(), (3));
         verify(active, standby);
     }
 
     [Xunit.Fact]
-    public void shouldPropagateExceptionFromActiveCommit() {
+    public void ShouldPropagateExceptionFromActiveCommit() {
         // upgrade to strict mock to ensure no calls
         checkOrder(standby, true);
         active.commit();
         expectLastCall().andThrow(new RuntimeException(""));
-        replay();
+        Replay();
 
         try {
             taskManager.commitAll();
@@ -531,9 +531,9 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldPropagateExceptionFromStandbyCommit() {
+    public void ShouldPropagateExceptionFromStandbyCommit() {
         expect(standby.commit()).andThrow(new RuntimeException(""));
-        replay();
+        Replay();
 
         try {
             taskManager.commitAll();
@@ -545,7 +545,7 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldSendPurgeData() {
+    public void ShouldSendPurgeData() {
         KafkaFutureImpl<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
         Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = Collections.singletonMap(t1p1, RecordsToDelete.beforeOffset(5L));
         DeleteRecordsResult deleteRecordsResult = new DeleteRecordsResult(Collections.singletonMap(t1p1, (KafkaFuture<DeletedRecords>) futureDeletedRecords));
@@ -554,7 +554,7 @@ public class TaskManagerTest {
 
         expect(active.recordsToDelete()).andReturn(Collections.singletonMap(t1p1, 5L)).times(2);
         expect(adminClient.deleteRecords(recordsToDelete)).andReturn(deleteRecordsResult).times(2);
-        replay();
+        Replay();
 
         taskManager.maybePurgeCommitedRecords();
         taskManager.maybePurgeCommitedRecords();
@@ -562,14 +562,14 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSendPurgeDataIfPreviousNotDone() {
+    public void ShouldNotSendPurgeDataIfPreviousNotDone() {
         KafkaFuture<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
         Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = Collections.singletonMap(t1p1, RecordsToDelete.beforeOffset(5L));
         DeleteRecordsResult deleteRecordsResult = new DeleteRecordsResult(Collections.singletonMap(t1p1, futureDeletedRecords));
 
         expect(active.recordsToDelete()).andReturn(Collections.singletonMap(t1p1, 5L)).once();
         expect(adminClient.deleteRecords(recordsToDelete)).andReturn(deleteRecordsResult).once();
-        replay();
+        Replay();
 
         taskManager.maybePurgeCommitedRecords();
         // second call should be no-op as the previous one is not done yet
@@ -578,7 +578,7 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldIgnorePurgeDataErrors() {
+    public void ShouldIgnorePurgeDataErrors() {
         KafkaFutureImpl<DeletedRecords> futureDeletedRecords = new KafkaFutureImpl<>();
         Dictionary<TopicPartition, RecordsToDelete> recordsToDelete = Collections.singletonMap(t1p1, RecordsToDelete.beforeOffset(5L));
         DeleteRecordsResult deleteRecordsResult = new DeleteRecordsResult(Collections.singletonMap(t1p1, (KafkaFuture<DeletedRecords>) futureDeletedRecords));
@@ -587,7 +587,7 @@ public class TaskManagerTest {
 
         expect(active.recordsToDelete()).andReturn(Collections.singletonMap(t1p1, 5L)).times(2);
         expect(adminClient.deleteRecords(recordsToDelete)).andReturn(deleteRecordsResult).times(2);
-        replay();
+        Replay();
 
         taskManager.maybePurgeCommitedRecords();
         taskManager.maybePurgeCommitedRecords();
@@ -595,34 +595,34 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldMaybeCommitActiveTasks() {
+    public void ShouldMaybeCommitActiveTasks() {
         expect(active.maybeCommitPerUserRequested()).andReturn(5);
-        replay();
+        Replay();
 
         Assert.Equal(taskManager.maybeCommitActiveTasksPerUserRequested(), (5));
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldProcessActiveTasks() {
+    public void ShouldProcessActiveTasks() {
         expect(active.process(0L)).andReturn(10);
-        replay();
+        Replay();
 
         Assert.Equal(taskManager.process(0L), (10));
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldPunctuateActiveTasks() {
+    public void ShouldPunctuateActiveTasks() {
         expect(active.punctuate()).andReturn(20);
-        replay();
+        Replay();
 
         Assert.Equal(taskManager.punctuate(), (20));
         verify(active);
     }
 
     [Xunit.Fact]
-    public void shouldNotResumeConsumptionUntilAllStoresRestored() {
+    public void ShouldNotResumeConsumptionUntilAllStoresRestored() {
         expect(active.allTasksRunning()).andReturn(false);
         Consumer<byte[], byte[]> consumer = EasyMock.createStrictMock(Consumer);
         taskManager.setConsumer(consumer);
@@ -634,7 +634,7 @@ public class TaskManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateTasksFromPartitionAssignment() {
+    public void ShouldUpdateTasksFromPartitionAssignment() {
         Dictionary<TaskId, HashSet<TopicPartition>> activeTasks = new HashMap<>();
         Dictionary<TaskId, HashSet<TopicPartition>> standbyTasks = new HashMap<>();
 
@@ -653,7 +653,7 @@ public class TaskManagerTest {
         Assert.Equal(taskManager.assignedStandbyTasks(), (standbyTasks));
     }
 
-    private void mockAssignStandbyPartitions(long offset) {
+    private void MockAssignStandbyPartitions(long offset) {
         StandbyTask task = EasyMock.createNiceMock(StandbyTask);
         expect(active.allTasksRunning()).andReturn(true);
         expect(standby.running()).andReturn(Collections.singletonList(task));
@@ -664,21 +664,21 @@ public class TaskManagerTest {
         EasyMock.replay(task);
     }
 
-    private void mockStandbyTaskExpectations() {
+    private void MockStandbyTaskExpectations() {
         expect(standbyTaskCreator.createTasks(EasyMock.<Consumer<byte[], byte[]>>anyObject(),
                                                    EasyMock.eq(taskId0Assignment)))
                 .andReturn(Collections.singletonList(standbyTask));
 
     }
 
-    private void mockSingleActiveTask() {
+    private void MockSingleActiveTask() {
         expect(activeTaskCreator.createTasks(EasyMock.<Consumer<byte[], byte[]>>anyObject(),
                                                   EasyMock.eq(taskId0Assignment)))
                 .andReturn(Collections.singletonList(streamTask));
 
     }
 
-    private void mockTopologyBuilder() {
+    private void MockTopologyBuilder() {
         expect(activeTaskCreator.builder()).andReturn(topologyBuilder).anyTimes();
         expect(topologyBuilder.sourceTopicPattern()).andReturn(new Regex("abc", RegexOptions.Compiled));
         expect(topologyBuilder.subscriptionUpdates()).andReturn(subscriptionUpdates);

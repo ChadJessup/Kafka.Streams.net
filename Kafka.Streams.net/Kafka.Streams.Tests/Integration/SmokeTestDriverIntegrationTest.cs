@@ -56,7 +56,7 @@ public class SmokeTestDriverIntegrationTest {
         }
 
         
-        public void run() {
+        public void Run() {
             try {
                 Dictionary<string, HashSet<int>> allData =
                     generate(bootstrapServers, numKeys, maxRecordsPerKey, Duration.ofSeconds(20));
@@ -67,18 +67,18 @@ public class SmokeTestDriverIntegrationTest {
             }
         }
 
-        public Exception exception() {
+        public Exception Exception() {
             return exception;
         }
 
-        SmokeTestDriver.VerificationResult result() {
+        SmokeTestDriver.VerificationResult Result() {
             return result;
         }
 
     }
 
     [Xunit.Fact]
-    public void shouldWorkWithRebalance() {// throws InterruptedException
+    public void ShouldWorkWithRebalance() {// throws InterruptedException
         int numClientsCreated = 0;
         ArrayList<SmokeTestClient> clients = new ArrayList<>();
 
@@ -130,9 +130,9 @@ public class SmokeTestDriverIntegrationTest {
         }
 
         // check to make sure that it actually succeeded
-        if (driver.exception() != null) {
-            driver.exception().printStackTrace();
-            throw new AssertionError(driver.exception());
+        if (driver.Exception() != null) {
+            driver.Exception().printStackTrace();
+            throw new AssertionError(driver.Exception());
         }
         Assert.True(driver.result().result(), driver.result().passed());
     }

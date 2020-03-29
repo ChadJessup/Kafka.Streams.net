@@ -84,7 +84,7 @@ public class SuppressionIntegrationTest {
     private static Serde<string> STRING_SERDE = Serdes.String();
     private static int COMMIT_INTERVAL = 100;
 
-    private static KTable<string, long> buildCountsTable(string input, StreamsBuilder builder) {
+    private static KTable<string, long> BuildCountsTable(string input, StreamsBuilder builder) {
         return builder
             .table(
                 input,
@@ -98,7 +98,7 @@ public class SuppressionIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldUseDefaultSerdes() {
+    public void ShouldUseDefaultSerdes() {
         string testId = "-shouldInheritSerdes";
         string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
         string input = "input" + testId;
@@ -124,7 +124,7 @@ public class SuppressionIntegrationTest {
             .toStream()
             .to(outputRaw);
 
-        Properties streamsConfig = getStreamsConfig(appId);
+        Properties streamsConfig = GetStreamsConfig(appId);
         streamsConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
         streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
 
@@ -133,14 +133,14 @@ public class SuppressionIntegrationTest {
             produceSynchronously(
                 input,
                 asList(
-                    new KeyValueTimestamp<>("k1", "v1", scaledTime(0L)),
-                    new KeyValueTimestamp<>("k1", "v2", scaledTime(1L)),
-                    new KeyValueTimestamp<>("k2", "v1", scaledTime(2L)),
-                    new KeyValueTimestamp<>("x", "x", scaledTime(3L))
+                    new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
+                    new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
+                    new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
+                    new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
                 )
             );
-            bool rawRecords = waitForAnyRecord(outputRaw);
-            bool suppressedRecords = waitForAnyRecord(outputSuppressed);
+            bool rawRecords = WaitForAnyRecord(outputRaw);
+            bool suppressedRecords = WaitForAnyRecord(outputSuppressed);
             Assert.Equal(rawRecords, Matchers.is(true));
             Assert.Equal(suppressedRecords, is(true));
         } finally {
@@ -150,7 +150,7 @@ public class SuppressionIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldInheritSerdes() {
+    public void ShouldInheritSerdes() {
         string testId = "-shouldInheritSerdes";
         string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
         string input = "input" + testId;
@@ -177,7 +177,7 @@ public class SuppressionIntegrationTest {
             .toStream()
             .to(outputRaw);
 
-        Properties streamsConfig = getStreamsConfig(appId);
+        Properties streamsConfig = GetStreamsConfig(appId);
         streamsConfig.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.StringSerde);
         streamsConfig.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.StringSerde);
 
@@ -186,14 +186,14 @@ public class SuppressionIntegrationTest {
             produceSynchronously(
                 input,
                 asList(
-                    new KeyValueTimestamp<>("k1", "v1", scaledTime(0L)),
-                    new KeyValueTimestamp<>("k1", "v2", scaledTime(1L)),
-                    new KeyValueTimestamp<>("k2", "v1", scaledTime(2L)),
-                    new KeyValueTimestamp<>("x", "x", scaledTime(3L))
+                    new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
+                    new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
+                    new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
+                    new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
                 )
             );
-            bool rawRecords = waitForAnyRecord(outputRaw);
-            bool suppressedRecords = waitForAnyRecord(outputSuppressed);
+            bool rawRecords = WaitForAnyRecord(outputRaw);
+            bool suppressedRecords = WaitForAnyRecord(outputSuppressed);
             Assert.Equal(rawRecords, Matchers.is(true));
             Assert.Equal(suppressedRecords, is(true));
         } finally {
@@ -202,7 +202,7 @@ public class SuppressionIntegrationTest {
         }
     }
 
-    private static bool waitForAnyRecord(string topic) {
+    private static bool WaitForAnyRecord(string topic) {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer);
@@ -232,7 +232,7 @@ public class SuppressionIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldShutdownWhenRecordConstraintIsViolated() {// throws InterruptedException
+    public void ShouldShutdownWhenRecordConstraintIsViolated() {// throws InterruptedException
         string testId = "-shouldShutdownWhenRecordConstraintIsViolated";
         string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
         string input = "input" + testId;
@@ -242,7 +242,7 @@ public class SuppressionIntegrationTest {
         cleanStateBeforeTest(CLUSTER, input, outputRaw, outputSuppressed);
 
         StreamsBuilder builder = new StreamsBuilder();
-        KTable<string, long> valueCounts = buildCountsTable(input, builder);
+        KTable<string, long> valueCounts = BuildCountsTable(input, builder);
 
         valueCounts
             .suppress(untilTimeLimit(ofMillis(MAX_VALUE), maxRecords(1L).shutDownWhenFull()))
@@ -253,19 +253,19 @@ public class SuppressionIntegrationTest {
             .toStream()
             .to(outputRaw, Produced.with(STRING_SERDE, Serdes.Long()));
 
-        Properties streamsConfig = getStreamsConfig(appId);
+        Properties streamsConfig = GetStreamsConfig(appId);
         KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
         try {
             produceSynchronously(
                 input,
                 asList(
-                    new KeyValueTimestamp<>("k1", "v1", scaledTime(0L)),
-                    new KeyValueTimestamp<>("k1", "v2", scaledTime(1L)),
-                    new KeyValueTimestamp<>("k2", "v1", scaledTime(2L)),
-                    new KeyValueTimestamp<>("x", "x", scaledTime(3L))
+                    new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
+                    new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
+                    new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
+                    new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
                 )
             );
-            verifyErrorShutdown(driver);
+            VerifyErrorShutdown(driver);
         } finally {
             driver.close();
             cleanStateAfterTest(CLUSTER, driver);
@@ -273,7 +273,7 @@ public class SuppressionIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldShutdownWhenBytesConstraintIsViolated() {// throws InterruptedException
+    public void ShouldShutdownWhenBytesConstraintIsViolated() {// throws InterruptedException
         string testId = "-shouldShutdownWhenBytesConstraintIsViolated";
         string appId = getClass().getSimpleName().toLowerCase(Locale.getDefault()) + testId;
         string input = "input" + testId;
@@ -283,7 +283,7 @@ public class SuppressionIntegrationTest {
         cleanStateBeforeTest(CLUSTER, input, outputRaw, outputSuppressed);
 
         StreamsBuilder builder = new StreamsBuilder();
-        KTable<string, long> valueCounts = buildCountsTable(input, builder);
+        KTable<string, long> valueCounts = BuildCountsTable(input, builder);
 
         valueCounts
             // this is a bit brittle, but I happen to know that the entries are a little over 100 bytes in size.
@@ -295,26 +295,26 @@ public class SuppressionIntegrationTest {
             .toStream()
             .to(outputRaw, Produced.with(STRING_SERDE, Serdes.Long()));
 
-        Properties streamsConfig = getStreamsConfig(appId);
+        Properties streamsConfig = GetStreamsConfig(appId);
         KafkaStreams driver = IntegrationTestUtils.getStartedStreams(streamsConfig, builder, true);
         try {
             produceSynchronously(
                 input,
                 asList(
-                    new KeyValueTimestamp<>("k1", "v1", scaledTime(0L)),
-                    new KeyValueTimestamp<>("k1", "v2", scaledTime(1L)),
-                    new KeyValueTimestamp<>("k2", "v1", scaledTime(2L)),
-                    new KeyValueTimestamp<>("x", "x", scaledTime(3L))
+                    new KeyValueTimestamp<>("k1", "v1", ScaledTime(0L)),
+                    new KeyValueTimestamp<>("k1", "v2", ScaledTime(1L)),
+                    new KeyValueTimestamp<>("k2", "v1", ScaledTime(2L)),
+                    new KeyValueTimestamp<>("x", "x", ScaledTime(3L))
                 )
             );
-            verifyErrorShutdown(driver);
+            VerifyErrorShutdown(driver);
         } finally {
             driver.close();
             cleanStateAfterTest(CLUSTER, driver);
         }
     }
 
-    private static Properties getStreamsConfig(string appId) {
+    private static Properties GetStreamsConfig(string appId) {
         return mkProperties(mkMap(
             mkEntry(StreamsConfig.APPLICATION_ID_CONFIG, appId),
             mkEntry(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers()),
@@ -329,11 +329,11 @@ public class SuppressionIntegrationTest {
      * scaling to ensure that there are commits in between the various test events,
      * just to exercise that everything works properly in the presence of commits.
      */
-    private static long scaledTime(long unscaledTime) {
+    private static long ScaledTime(long unscaledTime) {
         return COMMIT_INTERVAL * 2 * unscaledTime;
     }
 
-    private static void produceSynchronously(string topic, List<KeyValueTimestamp<string, string>> toProduce) {
+    private static void ProduceSynchronously(string topic, List<KeyValueTimestamp<string, string>> toProduce) {
         Properties producerConfig = mkProperties(mkMap(
             mkEntry(ProducerConfig.CLIENT_ID_CONFIG, "anything"),
             mkEntry(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ((Serializer<string>) STRING_SERIALIZER).getClass().getName()),
@@ -343,7 +343,7 @@ public class SuppressionIntegrationTest {
         IntegrationTestUtils.produceSynchronously(producerConfig, false, topic, Optional.empty(), toProduce);
     }
 
-    private static void verifyErrorShutdown(KafkaStreams driver) {// throws InterruptedException
+    private static void VerifyErrorShutdown(KafkaStreams driver) {// throws InterruptedException
         waitForCondition(() => !driver.state().isRunning(), DEFAULT_TIMEOUT, "Streams didn't shut down.");
         Assert.Equal(driver.state(), is(KafkaStreams.State.ERROR));
     }

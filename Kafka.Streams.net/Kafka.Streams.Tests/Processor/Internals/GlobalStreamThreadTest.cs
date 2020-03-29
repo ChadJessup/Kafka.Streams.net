@@ -24,7 +24,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 
 
-        public void before()
+        public void Before()
         {
             MaterializedInternal<object, object, KeyValueStore<Bytes, byte[]>> materialized =
                 new MaterializedInternal<>(Materialized.with(null, null),
@@ -76,7 +76,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     }
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnStartupIfThereIsAStreamsException()
+    public void ShouldThrowStreamsExceptionOnStartupIfThereIsAStreamsException()
     {
         // should throw as the MockConsumer hasn't been configured and there are no
         // partitions available
@@ -94,7 +94,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
 
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionOnStartupIfExceptionOccurred()
+    public void ShouldThrowStreamsExceptionOnStartupIfExceptionOccurred()
     {
         MockConsumer<byte[], byte[]> mockConsumer = new MockConsumer(OffsetResetStrategy.EARLIEST)
         {
@@ -126,7 +126,7 @@ Assert.Equal(e.getCause().getMessage(), ("KABOOM!"));
     }
 
     [Xunit.Fact]
-public void shouldBeRunningAfterSuccessfulStart()
+public void ShouldBeRunningAfterSuccessfulStart()
 {
     initializeConsumer();
     globalStreamThread.start();
@@ -134,7 +134,7 @@ public void shouldBeRunningAfterSuccessfulStart()
 }
 
 [Xunit.Fact(Timeout = 30000)
-    public void shouldStopRunningWhenClosedByUser()
+    public void ShouldStopRunningWhenClosedByUser()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -144,7 +144,7 @@ public void shouldBeRunningAfterSuccessfulStart()
 }
 
 [Xunit.Fact]
-public void shouldCloseStateStoresOnClose()
+public void ShouldCloseStateStoresOnClose()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -157,7 +157,7 @@ public void shouldCloseStateStoresOnClose()
 
 
 [Xunit.Fact]
-public void shouldTransitionToDeadOnClose()
+public void ShouldTransitionToDeadOnClose()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -169,7 +169,7 @@ public void shouldTransitionToDeadOnClose()
 
 
 [Xunit.Fact]
-public void shouldStayDeadAfterTwoCloses()
+public void ShouldStayDeadAfterTwoCloses()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -182,7 +182,7 @@ public void shouldStayDeadAfterTwoCloses()
 
 
 [Xunit.Fact]
-public void shouldTransitionToRunningOnStart()
+public void ShouldTransitionToRunningOnStart()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -196,7 +196,7 @@ public void shouldTransitionToRunningOnStart()
 }
 
 [Xunit.Fact]
-public void shouldDieOnInvalidOffsetException()
+public void ShouldDieOnInvalidOffsetException()
 {// throws Exception
     initializeConsumer();
     globalStreamThread.start();
@@ -232,7 +232,7 @@ public void shouldDieOnInvalidOffsetException()
             "GlobalStreamThread should have died.");
     }
 
-    private void initializeConsumer()
+    private void InitializeConsumer()
 {
     mockConsumer.updatePartitions(
         GLOBAL_STORE_TOPIC_NAME,

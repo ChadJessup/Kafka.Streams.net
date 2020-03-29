@@ -102,12 +102,12 @@ public class StreamTaskTest {
     private MockSourceNode<int, int> source2 = new MockSourceNode<>(new string[]{topic2}, intDeserializer, intDeserializer);
     private MockSourceNode<int, int> source3 = new MockSourceNode<int, int>(new string[]{topic2}, intDeserializer, intDeserializer) {
         
-        public void process(int key, int value) {
+        public void Process(int key, int value) {
             throw new RuntimeException("KABOOM!");
         }
 
         
-        public void close() {
+        public void Close() {
             throw new RuntimeException("KABOOM!");
         }
     };
@@ -130,7 +130,7 @@ public class StreamTaskTest {
     private StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
     private StoreChangelogReader changelogReader = new StoreChangelogReader(restoreStateConsumer, Duration.ZERO, stateRestoreListener, new LogContext("stream-task-test ")) {
         
-        public Dictionary<TopicPartition, long> restoredOffsets() {
+        public Dictionary<TopicPartition, long> RestoredOffsets() {
             return Collections.singletonMap(changelogPartition, offset);
         }
     };
@@ -147,12 +147,12 @@ public class StreamTaskTest {
 
     private Punctuator punctuator = new Punctuator() {
         
-        public void punctuate(long timestamp) {
+        public void Punctuate(long timestamp) {
             punctuatedAt = timestamp;
         }
     };
 
-    static ProcessorTopology withRepartitionTopics(List<ProcessorNode> processorNodes,
+    static ProcessorTopology WithRepartitionTopics(List<ProcessorNode> processorNodes,
                                                    Dictionary<string, SourceNode> sourcesByTopic,
                                                    HashSet<string> repartitionTopics) {
         return new ProcessorTopology(processorNodes,
@@ -164,7 +164,7 @@ public class StreamTaskTest {
                                      repartitionTopics);
     }
 
-    static ProcessorTopology withSources(List<ProcessorNode> processorNodes,
+    static ProcessorTopology WithSources(List<ProcessorNode> processorNodes,
                                          Dictionary<string, SourceNode> sourcesByTopic) {
         return new ProcessorTopology(processorNodes,
                                      sourcesByTopic,
@@ -175,7 +175,7 @@ public class StreamTaskTest {
                                      Collections.emptySet());
     }
 
-    private StreamsConfig createConfig(bool enableEoS) {
+    private StreamsConfig CreateConfig(bool enableEoS) {
         string canonicalPath;
         try {
             canonicalPath = baseDir.getCanonicalPath();
@@ -194,13 +194,13 @@ public class StreamTaskTest {
     }
 
     
-    public void setup() {
+    public void Setup() {
         consumer.assign(asList(partition1, partition2));
         stateDirectory = new StateDirectory(createConfig(false), new MockTime(), true);
     }
 
     
-    public void cleanup(){ //throws IOException
+    public void Cleanup(){ //throws IOException
         try {
             if (task != null) {
                 try {
@@ -215,8 +215,8 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleInitTransactionsTimeoutExceptionOnCreation() {
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+    public void ShouldHandleInitTransactionsTimeoutExceptionOnCreation() {
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
@@ -264,8 +264,8 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleInitTransactionsTimeoutExceptionOnResume() {
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+    public void ShouldHandleInitTransactionsTimeoutExceptionOnResume() {
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
@@ -322,7 +322,7 @@ public class StreamTaskTest {
         LogCaptureAppender.unregister(appender);
     }
 
-    private void assertTimeoutErrorLog(LogCaptureAppender appender) {
+    private void AssertTimeoutErrorLog(LogCaptureAppender appender) {
 
         string expectedErrorLogMessage =
             "task [0_0] Timeout exception caught when initializing transactions for task 0_0. " +
@@ -342,7 +342,7 @@ public class StreamTaskTest {
 
     
     [Xunit.Fact]
-    public void testProcessOrder() {
+    public void TestProcessOrder() {
         task = createStatelessTask(createConfig(false));
 
         task.addRecords(partition1, asList(
@@ -390,7 +390,7 @@ public class StreamTaskTest {
 
 
     [Xunit.Fact]
-    public void testMetrics() {
+    public void TestMetrics() {
         task = createStatelessTask(createConfig(false));
 
         assertNotNull(getMetric("%s-latency-avg", "The average latency of %s operation.", task.id().toString()));
@@ -407,7 +407,7 @@ public class StreamTaskTest {
         Assert.True(reporter.containsMbean("kafka.streams:type=stream-task-metrics,client-id=test,task-id=all"));
     }
 
-    private KafkaMetric getMetric(string nameFormat, string descriptionFormat, string taskId) {
+    private KafkaMetric GetMetric(string nameFormat, string descriptionFormat, string taskId) {
         return metrics.metrics().get(metrics.metricName(
             string.format(nameFormat, "commit"),
             "stream-task-metrics",
@@ -418,7 +418,7 @@ public class StreamTaskTest {
 
     
     [Xunit.Fact]
-    public void testPauseResume() {
+    public void TestPauseResume() {
         task = createStatelessTask(createConfig(false));
 
         task.addRecords(partition1, asList(
@@ -473,7 +473,7 @@ public class StreamTaskTest {
 
     
     [Xunit.Fact]
-    public void shouldPunctuateOnceStreamTimeAfterGap() {
+    public void ShouldPunctuateOnceStreamTimeAfterGap() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -558,7 +558,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldRespectPunctuateCancellationStreamTime() {
+    public void ShouldRespectPunctuateCancellationStreamTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -598,7 +598,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldRespectPunctuateCancellationSystemTime() {
+    public void ShouldRespectPunctuateCancellationSystemTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -612,7 +612,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldRespectCommitNeeded() {
+    public void ShouldRespectCommitNeeded() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -641,7 +641,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldRespectCommitRequested() {
+    public void ShouldRespectCommitRequested() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -651,7 +651,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeProcessableIfAllPartitionsBuffered() {
+    public void ShouldBeProcessableIfAllPartitionsBuffered() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -670,7 +670,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeProcessableIfWaitedForTooLong() {
+    public void ShouldBeProcessableIfWaitedForTooLong() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -715,7 +715,7 @@ public class StreamTaskTest {
 
 
     [Xunit.Fact]
-    public void shouldPunctuateSystemTimeWhenIntervalElapsed() {
+    public void ShouldPunctuateSystemTimeWhenIntervalElapsed() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -735,7 +735,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotPunctuateSystemTimeWhenIntervalNotElapsed() {
+    public void ShouldNotPunctuateSystemTimeWhenIntervalNotElapsed() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -746,7 +746,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldPunctuateOnceSystemTimeAfterGap() {
+    public void ShouldPunctuateOnceSystemTimeAfterGap() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -772,7 +772,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContext() {
+    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContext() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
         task.initializeTopology();
@@ -787,7 +787,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingStreamTime() {
+    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingStreamTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -808,7 +808,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingWallClockTimeTime() {
+    public void ShouldWrapKafkaExceptionsWithStreamsExceptionAndAddContextWhenPunctuatingWallClockTimeTime() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -829,7 +829,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushRecordCollectorOnFlushState() {
+    public void ShouldFlushRecordCollectorOnFlushState() {
         AtomicBoolean flushed = new AtomicBoolean(false);
         StreamsMetricsImpl streamsMetrics = new MockStreamsMetrics(new Metrics());
         StreamTask streamTask = new StreamTask(
@@ -855,7 +855,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCheckpointOffsetsOnCommit(){ //throws IOException
+    public void ShouldCheckpointOffsetsOnCommit(){ //throws IOException
         task = createStatefulTask(createConfig(false), true);
         task.initializeStateStores();
         task.initializeTopology();
@@ -868,7 +868,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCheckpointOffsetsOnCommitIfEosIsEnabled() {
+    public void ShouldNotCheckpointOffsetsOnCommitIfEosIsEnabled() {
         task = createStatefulTask(createConfig(true), true);
         task.initializeStateStores();
         task.initializeTopology();
@@ -882,7 +882,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowIllegalStateExceptionIfCurrentNodeIsNotNullWhenPunctuateCalled() {
+    public void ShouldThrowIllegalStateExceptionIfCurrentNodeIsNotNullWhenPunctuateCalled() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -896,7 +896,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCallPunctuateOnPassedInProcessorNode() {
+    public void ShouldCallPunctuateOnPassedInProcessorNode() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -907,7 +907,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldSetProcessorNodeOnContextBackToNullAfterSuccessfulPunctuate() {
+    public void ShouldSetProcessorNodeOnContextBackToNullAfterSuccessfulPunctuate() {
         task = createStatelessTask(createConfig(false));
         task.initializeStateStores();
         task.initializeTopology();
@@ -916,7 +916,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]// (expected = IllegalStateException)
-    public void shouldThrowIllegalStateExceptionOnScheduleIfCurrentNodeIsNull() {
+    public void ShouldThrowIllegalStateExceptionOnScheduleIfCurrentNodeIsNull() {
         task = createStatelessTask(createConfig(false));
         task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator() {
             
@@ -927,7 +927,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionOnScheduleIfCurrentNodeIsNotNull() {
+    public void ShouldNotThrowExceptionOnScheduleIfCurrentNodeIsNotNull() {
         task = createStatelessTask(createConfig(false));
         task.processorContext.setCurrentNode(processorStreamTime);
         task.schedule(1, PunctuationType.STREAM_TIME, new Punctuator() {
@@ -939,7 +939,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseProducerOnCleanCloseWithEosDisabled() {
+    public void ShouldNotCloseProducerOnCleanCloseWithEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(true, false);
         task = null;
@@ -948,7 +948,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseProducerOnUncleanCloseWithEosDisabled() {
+    public void ShouldNotCloseProducerOnUncleanCloseWithEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(false, false);
         task = null;
@@ -957,7 +957,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseProducerOnErrorDuringCleanCloseWithEosDisabled() {
+    public void ShouldNotCloseProducerOnErrorDuringCleanCloseWithEosDisabled() {
         task = createTaskThatThrowsException(false);
 
         try {
@@ -971,7 +971,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseProducerOnErrorDuringUncleanCloseWithEosDisabled() {
+    public void ShouldNotCloseProducerOnErrorDuringUncleanCloseWithEosDisabled() {
         task = createTaskThatThrowsException(false);
 
         task.close(false, false);
@@ -981,7 +981,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCommitTransactionAndCloseProducerOnCleanCloseWithEosEnabled() {
+    public void ShouldCommitTransactionAndCloseProducerOnCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -994,7 +994,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAbortTransactionAndNotCloseProducerOnErrorDuringCleanCloseWithEosEnabled() {
+    public void ShouldNotAbortTransactionAndNotCloseProducerOnErrorDuringCleanCloseWithEosEnabled() {
         task = createTaskThatThrowsException(true);
         task.initializeTopology();
 
@@ -1010,7 +1010,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldOnlyCloseProducerIfFencedOnCommitDuringCleanCloseWithEosEnabled() {
+    public void ShouldOnlyCloseProducerIfFencedOnCommitDuringCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         producer.fenceProducer();
@@ -1031,7 +1031,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseProducerIfFencedOnCloseDuringCleanCloseWithEosEnabled() {
+    public void ShouldNotCloseProducerIfFencedOnCloseDuringCleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         producer.fenceProducerOnClose();
@@ -1050,7 +1050,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldAbortTransactionAndCloseProducerOnUncleanCloseWithEosEnabled() {
+    public void ShouldAbortTransactionAndCloseProducerOnUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1063,7 +1063,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldAbortTransactionAndCloseProducerOnErrorDuringUncleanCloseWithEosEnabled() {
+    public void ShouldAbortTransactionAndCloseProducerOnErrorDuringUncleanCloseWithEosEnabled() {
         task = createTaskThatThrowsException(true);
         task.initializeTopology();
 
@@ -1074,7 +1074,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldOnlyCloseProducerIfFencedOnAbortDuringUncleanCloseWithEosEnabled() {
+    public void ShouldOnlyCloseProducerIfFencedOnAbortDuringUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         producer.fenceProducer();
@@ -1089,7 +1089,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldOnlyCloseFencedProducerOnUncleanClosedWithEosEnabled() {
+    public void ShouldOnlyCloseFencedProducerOnUncleanClosedWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         producer.fenceProducer();
@@ -1102,7 +1102,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldAbortTransactionButNotCloseProducerIfFencedOnCloseDuringUncleanCloseWithEosEnabled() {
+    public void ShouldAbortTransactionButNotCloseProducerIfFencedOnCloseDuringUncleanCloseWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         producer.fenceProducerOnClose();
@@ -1115,7 +1115,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionIfAnyExceptionsRaisedDuringCloseButStillCloseAllProcessorNodesTopology() {
+    public void ShouldThrowExceptionIfAnyExceptionsRaisedDuringCloseButStillCloseAllProcessorNodesTopology() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
         task.initializeTopology();
@@ -1131,7 +1131,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldInitAndBeginTransactionOnCreateIfEosEnabled() {
+    public void ShouldInitAndBeginTransactionOnCreateIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1140,7 +1140,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapProducerFencedExceptionWithTaskMigratedExceptionForBeginTransaction() {
+    public void ShouldWrapProducerFencedExceptionWithTaskMigratedExceptionForBeginTransaction() {
         task = createStatelessTask(createConfig(true));
         producer.fenceProducer();
 
@@ -1153,7 +1153,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowOnCloseIfTaskWasNotInitializedWithEosEnabled() {
+    public void ShouldNotThrowOnCloseIfTaskWasNotInitializedWithEosEnabled() {
         task = createStatelessTask(createConfig(true));
 
         Assert.False(producer.transactionInFlight());
@@ -1161,7 +1161,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotInitOrBeginTransactionOnCreateIfEosDisabled() {
+    public void ShouldNotInitOrBeginTransactionOnCreateIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
         Assert.False(producer.transactionInitialized());
@@ -1169,7 +1169,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldSendOffsetsAndCommitTransactionButNotStartNewTransactionOnSuspendIfEosEnabled() {
+    public void ShouldSendOffsetsAndCommitTransactionButNotStartNewTransactionOnSuspendIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1183,7 +1183,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCommitTransactionOnSuspendEvenIfTransactionIsEmptyIfEosEnabled() {
+    public void ShouldCommitTransactionOnSuspendEvenIfTransactionIsEmptyIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.suspend();
@@ -1193,7 +1193,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSendOffsetsAndCommitTransactionNorStartNewTransactionOnSuspendIfEosDisabled() {
+    public void ShouldNotSendOffsetsAndCommitTransactionNorStartNewTransactionOnSuspendIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 0)));
         task.process();
@@ -1205,7 +1205,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenCommitting() {
+    public void ShouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenCommitting() {
         task = createStatelessTask(createConfig(true));
         producer.fenceProducer();
 
@@ -1221,7 +1221,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenClosingProducer() {
+    public void ShouldWrapProducerFencedExceptionWithTaskMigragedExceptionInSuspendWhenClosingProducer() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1237,7 +1237,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldStartNewTransactionOnResumeIfEosEnabled() {
+    public void ShouldStartNewTransactionOnResumeIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1251,7 +1251,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotStartNewTransactionOnResumeIfEosDisabled() {
+    public void ShouldNotStartNewTransactionOnResumeIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 0)));
@@ -1263,7 +1263,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldStartNewTransactionOnCommitIfEosEnabled() {
+    public void ShouldStartNewTransactionOnCommitIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
 
@@ -1275,7 +1275,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotStartNewTransactionOnCommitIfEosDisabled() {
+    public void ShouldNotStartNewTransactionOnCommitIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
 
         task.addRecords(partition1, singletonList(getConsumerRecord(partition1, 0)));
@@ -1286,7 +1286,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAbortTransactionOnZombieClosedIfEosEnabled() {
+    public void ShouldNotAbortTransactionOnZombieClosedIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.close(false, true);
         task = null;
@@ -1295,7 +1295,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAbortTransactionOnDirtyClosedIfEosDisabled() {
+    public void ShouldNotAbortTransactionOnDirtyClosedIfEosDisabled() {
         task = createStatelessTask(createConfig(false));
         task.close(false, false);
         task = null;
@@ -1304,7 +1304,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseProducerOnCloseWhenEosEnabled() {
+    public void ShouldCloseProducerOnCloseWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(true, false);
@@ -1314,7 +1314,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseProducerOnUncleanCloseNotZombieWhenEosEnabled() {
+    public void ShouldCloseProducerOnUncleanCloseNotZombieWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(false, false);
@@ -1324,7 +1324,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseProducerOnUncleanCloseIsZombieWhenEosEnabled() {
+    public void ShouldCloseProducerOnUncleanCloseIsZombieWhenEosEnabled() {
         task = createStatelessTask(createConfig(true));
         task.initializeTopology();
         task.close(false, true);
@@ -1334,7 +1334,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotViolateAtLeastOnceWhenExceptionOccursDuringFlushing() {
+    public void ShouldNotViolateAtLeastOnceWhenExceptionOccursDuringFlushing() {
         task = createTaskThatThrowsException(false);
         task.initializeStateStores();
         task.initializeTopology();
@@ -1348,7 +1348,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotViolateAtLeastOnceWhenExceptionOccursDuringTaskSuspension() {
+    public void ShouldNotViolateAtLeastOnceWhenExceptionOccursDuringTaskSuspension() {
         StreamTask task = createTaskThatThrowsException(false);
 
         task.initializeStateStores();
@@ -1362,7 +1362,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseStateManagerIfFailureOnTaskClose() {
+    public void ShouldCloseStateManagerIfFailureOnTaskClose() {
         task = createStatefulTaskThatThrowsExceptionOnClose();
         task.initializeStateStores();
         task.initializeTopology();
@@ -1379,7 +1379,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCloseTopologyProcessorNodesIfNotInitialized() {
+    public void ShouldNotCloseTopologyProcessorNodesIfNotInitialized() {
         StreamTask task = createTaskThatThrowsException(false);
         try {
             task.close(false, false);
@@ -1389,21 +1389,21 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeInitializedIfChangelogPartitionsIsEmpty() {
+    public void ShouldBeInitializedIfChangelogPartitionsIsEmpty() {
         StreamTask task = createStatefulTask(createConfig(false), false);
 
         Assert.True(task.initializeStateStores());
     }
 
     [Xunit.Fact]
-    public void shouldNotBeInitializedIfChangelogPartitionsIsNonEmpty() {
+    public void ShouldNotBeInitializedIfChangelogPartitionsIsNonEmpty() {
         StreamTask task = createStatefulTask(createConfig(false), true);
 
         Assert.False(task.initializeStateStores());
     }
 
     [Xunit.Fact]
-    public void shouldReturnOffsetsForRepartitionTopicsForPurging() {
+    public void ShouldReturnOffsetsForRepartitionTopicsForPurging() {
         TopicPartition repartition = new TopicPartition("repartition", 1);
 
         ProcessorTopology topology = withRepartitionTopics(
@@ -1442,7 +1442,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowOnCleanCloseTaskWhenEosEnabledIfTransactionInFlight() {
+    public void ShouldThrowOnCleanCloseTaskWhenEosEnabledIfTransactionInFlight() {
         task = createStatelessTask(createConfig(true));
         try {
             task.close(true, false);
@@ -1456,7 +1456,7 @@ public class StreamTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldAlwaysCommitIfEosEnabled() {
+    public void ShouldAlwaysCommitIfEosEnabled() {
         task = createStatelessTask(createConfig(true));
 
         RecordCollectorImpl recordCollector =  new RecordCollectorImpl("StreamTask",
@@ -1476,7 +1476,7 @@ public class StreamTaskTest {
         Assert.Equal(1, producer.history().Count);
     }
 
-    private StreamTask createStatefulTask(StreamsConfig config, bool logged) {
+    private StreamTask CreateStatefulTask(StreamsConfig config, bool logged) {
         StateStore stateStore = new MockKeyValueStore(storeName, logged);
 
         ProcessorTopology topology = ProcessorTopologyFactories.with(
@@ -1499,7 +1499,7 @@ public class StreamTaskTest {
             () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
     }
 
-    private StreamTask createStatefulTaskThatThrowsExceptionOnClose() {
+    private StreamTask CreateStatefulTaskThatThrowsExceptionOnClose() {
         ProcessorTopology topology = ProcessorTopologyFactories.with(
             asList(source1, source3),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source3)),
@@ -1520,7 +1520,7 @@ public class StreamTaskTest {
             () => producer = new MockProducer<>(false, bytesSerializer, bytesSerializer));
     }
 
-    private StreamTask createStatelessTask(StreamsConfig streamsConfig) {
+    private StreamTask CreateStatelessTask(StreamsConfig streamsConfig) {
         ProcessorTopology topology = withSources(
             asList(source1, source2, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source2))
@@ -1546,7 +1546,7 @@ public class StreamTaskTest {
     }
 
     // this task will throw exception when processing (on partition2), flushing, suspending and closing
-    private StreamTask createTaskThatThrowsException(bool enableEos) {
+    private StreamTask CreateTaskThatThrowsException(bool enableEos) {
         ProcessorTopology topology = withSources(
             asList(source1, source3, processorStreamTime, processorSystemTime),
             mkMap(mkEntry(topic1, source1), mkEntry(topic2, source3))
@@ -1576,7 +1576,7 @@ public class StreamTaskTest {
         };
     }
 
-    private ConsumeResult<byte[], byte[]> getConsumerRecord(TopicPartition topicPartition, long offset) {
+    private ConsumeResult<byte[], byte[]> GetConsumerRecord(TopicPartition topicPartition, long offset) {
         return new ConsumeResult<>(
             topicPartition.topic(),
             topicPartition.partition(),

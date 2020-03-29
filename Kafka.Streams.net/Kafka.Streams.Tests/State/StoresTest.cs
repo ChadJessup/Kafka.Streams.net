@@ -8,63 +8,63 @@ namespace Kafka.Streams.Tests.State
     {
 
         [Xunit.Fact]
-        public void shouldThrowIfPersistentKeyValueStoreStoreNameIsNull()
+        public void ShouldThrowIfPersistentKeyValueStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.persistentKeyValueStore(null));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfPersistentTimestampedKeyValueStoreStoreNameIsNull()
+        public void ShouldThrowIfPersistentTimestampedKeyValueStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.persistentTimestampedKeyValueStore(null));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIMemoryKeyValueStoreStoreNameIsNull()
+        public void ShouldThrowIfIMemoryKeyValueStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.inMemoryKeyValueStore(null));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfILruMapStoreNameIsNull()
+        public void ShouldThrowIfILruMapStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.lruMap(null, 0));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfILruMapStoreCapacityIsNegative()
+        public void ShouldThrowIfILruMapStoreCapacityIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.lruMap("anyName", -1));
             Assert.Equal("maxCacheSize cannot be negative", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentWindowStoreStoreNameIsNull()
+        public void ShouldThrowIfIPersistentWindowStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.persistentWindowStore(null, ZERO, ZERO, false));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentTimestampedWindowStoreStoreNameIsNull()
+        public void ShouldThrowIfIPersistentTimestampedWindowStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.persistentTimestampedWindowStore(null, ZERO, ZERO, false));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentWindowStoreRetentionPeriodIsNegative()
+        public void ShouldThrowIfIPersistentWindowStoreRetentionPeriodIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentWindowStore("anyName", ofMillis(-1L), ZERO, false));
             Assert.Equal("retentionPeriod cannot be negative", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentTimestampedWindowStoreRetentionPeriodIsNegative()
+        public void ShouldThrowIfIPersistentTimestampedWindowStoreRetentionPeriodIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentTimestampedWindowStore("anyName", ofMillis(-1L), ZERO, false));
             Assert.Equal("retentionPeriod cannot be negative", e.getMessage());
@@ -72,75 +72,75 @@ namespace Kafka.Streams.Tests.State
 
         @Deprecated
         [Xunit.Fact]
-    public void shouldThrowIfIPersistentWindowStoreIfNumberOfSegmentsSmallerThanOne()
+    public void ShouldThrowIfIPersistentWindowStoreIfNumberOfSegmentsSmallerThanOne()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentWindowStore("anyName", 0L, 1, 0L, false));
             Assert.Equal("numSegments cannot be smaller than 2", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentWindowStoreIfWindowSizeIsNegative()
+        public void ShouldThrowIfIPersistentWindowStoreIfWindowSizeIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentWindowStore("anyName", ofMillis(0L), ofMillis(-1L), false));
             Assert.Equal("windowSize cannot be negative", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentTimestampedWindowStoreIfWindowSizeIsNegative()
+        public void ShouldThrowIfIPersistentTimestampedWindowStoreIfWindowSizeIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentTimestampedWindowStore("anyName", ofMillis(0L), ofMillis(-1L), false));
             Assert.Equal("windowSize cannot be negative", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentSessionStoreStoreNameIsNull()
+        public void ShouldThrowIfIPersistentSessionStoreStoreNameIsNull()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.persistentSessionStore(null, ofMillis(0)));
             Assert.Equal("name cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfIPersistentSessionStoreRetentionPeriodIsNegative()
+        public void ShouldThrowIfIPersistentSessionStoreRetentionPeriodIsNegative()
         {
             Exception e = assertThrows(IllegalArgumentException, () => Stores.persistentSessionStore("anyName", ofMillis(-1)));
             Assert.Equal("retentionPeriod cannot be negative", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfSupplierIsNullForWindowStoreBuilder()
+        public void ShouldThrowIfSupplierIsNullForWindowStoreBuilder()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.windowStoreBuilder(null, Serdes.ByteArray(), Serdes.ByteArray()));
             Assert.Equal("supplier cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfSupplierIsNullForKeyValueStoreBuilder()
+        public void ShouldThrowIfSupplierIsNullForKeyValueStoreBuilder()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.keyValueStoreBuilder(null, Serdes.ByteArray(), Serdes.ByteArray()));
             Assert.Equal("supplier cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldThrowIfSupplierIsNullForSessionStoreBuilder()
+        public void ShouldThrowIfSupplierIsNullForSessionStoreBuilder()
         {
             Exception e = assertThrows(NullPointerException, () => Stores.sessionStoreBuilder(null, Serdes.ByteArray(), Serdes.ByteArray()));
             Assert.Equal("supplier cannot be null", e.getMessage());
         }
 
         [Xunit.Fact]
-        public void shouldCreateInMemoryKeyValueStore()
+        public void ShouldCreateInMemoryKeyValueStore()
         {
             Assert.Equal(Stores.inMemoryKeyValueStore("memory").get(), instanceOf(InMemoryKeyValueStore));
         }
 
         [Xunit.Fact]
-        public void shouldCreateMemoryNavigableCache()
+        public void ShouldCreateMemoryNavigableCache()
         {
             Assert.Equal(Stores.lruMap("map", 10).get(), instanceOf(MemoryNavigableLRUCache));
         }
 
         [Xunit.Fact]
-        public void shouldCreateRocksDbStore()
+        public void ShouldCreateRocksDbStore()
         {
             Assert.Equal(
                 Stores.persistentKeyValueStore("store").get(),
@@ -148,13 +148,13 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldCreateRocksDbTimestampedStore()
+        public void ShouldCreateRocksDbTimestampedStore()
         {
             Assert.Equal(Stores.persistentTimestampedKeyValueStore("store").get(), instanceOf(RocksDBTimestampedStore));
         }
 
         [Xunit.Fact]
-        public void shouldCreateRocksDbWindowStore()
+        public void ShouldCreateRocksDbWindowStore()
         {
             WindowStore store = Stores.persistentWindowStore("store", ofMillis(1L), ofMillis(1L), false).get();
             StateStore wrapped = ((WrappedStateStore)store).wrapped();
@@ -163,7 +163,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldCreateRocksDbTimestampedWindowStore()
+        public void ShouldCreateRocksDbTimestampedWindowStore()
         {
             WindowStore store = Stores.persistentTimestampedWindowStore("store", ofMillis(1L), ofMillis(1L), false).get();
             StateStore wrapped = ((WrappedStateStore)store).wrapped();
@@ -172,13 +172,13 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldCreateRocksDbSessionStore()
+        public void ShouldCreateRocksDbSessionStore()
         {
             Assert.Equal(Stores.persistentSessionStore("store", ofMillis(1)).get(), instanceOf(RocksDBSessionStore));
         }
 
         [Xunit.Fact]
-        public void shouldBuildKeyValueStore()
+        public void ShouldBuildKeyValueStore()
         {
             KeyValueStore<string, string> store = Stores.keyValueStoreBuilder(
                 Stores.persistentKeyValueStore("name"),
@@ -189,7 +189,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedKeyValueStore()
+        public void ShouldBuildTimestampedKeyValueStore()
         {
             TimestampedKeyValueStore<string, string> store = Stores.timestampedKeyValueStoreBuilder(
                 Stores.persistentTimestampedKeyValueStore("name"),
@@ -200,7 +200,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedKeyValueStoreThatWrapsKeyValueStore()
+        public void ShouldBuildTimestampedKeyValueStoreThatWrapsKeyValueStore()
         {
             TimestampedKeyValueStore<string, string> store = Stores.timestampedKeyValueStoreBuilder(
                 Stores.persistentKeyValueStore("name"),
@@ -211,7 +211,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedKeyValueStoreThatWrapsInMemoryKeyValueStore()
+        public void ShouldBuildTimestampedKeyValueStoreThatWrapsInMemoryKeyValueStore()
         {
             TimestampedKeyValueStore<string, string> store = Stores.timestampedKeyValueStoreBuilder(
                 Stores.inMemoryKeyValueStore("name"),
@@ -223,7 +223,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildWindowStore()
+        public void ShouldBuildWindowStore()
         {
             WindowStore<string, string> store = Stores.windowStoreBuilder(
                 Stores.persistentWindowStore("store", ofMillis(3L), ofMillis(3L), true),
@@ -234,7 +234,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedWindowStore()
+        public void ShouldBuildTimestampedWindowStore()
         {
             TimestampedWindowStore<string, string> store = Stores.timestampedWindowStoreBuilder(
                 Stores.persistentTimestampedWindowStore("store", ofMillis(3L), ofMillis(3L), true),
@@ -245,7 +245,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedWindowStoreThatWrapsWindowStore()
+        public void ShouldBuildTimestampedWindowStoreThatWrapsWindowStore()
         {
             TimestampedWindowStore<string, string> store = Stores.timestampedWindowStoreBuilder(
                 Stores.persistentWindowStore("store", ofMillis(3L), ofMillis(3L), true),
@@ -256,7 +256,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildTimestampedWindowStoreThatWrapsInMemroyWindowStore()
+        public void ShouldBuildTimestampedWindowStoreThatWrapsInMemroyWindowStore()
         {
             TimestampedWindowStore<string, string> store = Stores.timestampedWindowStoreBuilder(
                 Stores.inMemoryWindowStore("store", ofMillis(3L), ofMillis(3L), true),
@@ -268,7 +268,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldBuildSessionStore()
+        public void ShouldBuildSessionStore()
         {
             SessionStore<string, string> store = Stores.sessionStoreBuilder(
                 Stores.persistentSessionStore("name", ofMillis(10)),

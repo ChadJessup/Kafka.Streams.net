@@ -161,7 +161,7 @@ namespace Kafka.Streams.Processors.Internals
                         recordConverter
                     );
 
-                    changelogReader.register(restorer);
+                    changelogReader.Register(restorer);
                 }
 
                 changelogPartitions.Add(storePartition);
@@ -278,14 +278,14 @@ namespace Kafka.Streams.Processors.Internals
                 logger.LogDebug("Flushing all stores registered in the state manager");
                 foreach (KeyValuePair<string, IStateStore?> entry in registeredStores)
                 {
-                    if (entry.Value.isPresent())
+                    if (entry.Value.IsPresent())
                     {
                         IStateStore store = entry.Value;
                         logger.LogTrace("Flushing store {}", store.name);
                         try
                         {
 
-                            store.flush();
+                            store.Flush();
                         }
                         catch (RuntimeException e)
                         {
@@ -327,14 +327,14 @@ namespace Kafka.Streams.Processors.Internals
                 logger.LogDebug("Closing its state manager and all the registered state stores");
                 foreach (var entry in registeredStores)
                 {
-                    if (entry.Value.isPresent())
+                    if (entry.Value.IsPresent())
                     {
                         IStateStore store = entry.Value;
                         logger.LogDebug("Closing storage engine {}", store.name);
                         try
                         {
 
-                            store.close();
+                            store.Close();
                             registeredStores.Add(store.name, null);
                         }
                         catch (RuntimeException e)
@@ -471,7 +471,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             foreach (var entry in registeredStores)
             {
-                if (!entry.Value.isPresent())
+                if (!entry.Value.IsPresent())
                 {
                     throw new InvalidOperationException(
                         "store [" + entry.Key + "] has not been correctly registered. This is a bug in Kafka Streams."
@@ -489,7 +489,7 @@ namespace Kafka.Streams.Processors.Internals
             {
                 var storeName = storeToChangelog.Key;
                 if (registeredStores.ContainsKey(storeName)
-                    && registeredStores[storeName].isPresent()
+                    && registeredStores[storeName].IsPresent()
                     && registeredStores[storeName].persistent())
                 {
 

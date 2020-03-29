@@ -36,17 +36,17 @@
 
 public class StateRestoreCallbackAdapterTest {
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldThrowOnRestoreAll() {
+    public void ShouldThrowOnRestoreAll() {
         adapt(mock(StateRestoreCallback)).restoreAll(null);
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldThrowOnRestore() {
+    public void ShouldThrowOnRestore() {
         adapt(mock(StateRestoreCallback)).restore(null, null);
     }
 
     [Xunit.Fact]
-    public void shouldPassRecordsThrough() {
+    public void ShouldPassRecordsThrough() {
         ArrayList<ConsumeResult<byte[], byte[]>> actual = new ArrayList<>();
         RecordBatchingStateRestoreCallback callback = actual::addAll;
 
@@ -68,7 +68,7 @@ public class StateRestoreCallbackAdapterTest {
     }
 
     [Xunit.Fact]
-    public void shouldConvertToKeyValueBatches() {
+    public void ShouldConvertToKeyValueBatches() {
         ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
         BatchingStateRestoreCallback callback = new BatchingStateRestoreCallback() {
             
@@ -103,7 +103,7 @@ public class StateRestoreCallbackAdapterTest {
     }
 
     [Xunit.Fact]
-    public void shouldConvertToKeyValue() {
+    public void ShouldConvertToKeyValue() {
         ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
         StateRestoreCallback callback = (key, value) => actual.add(new KeyValuePair<>(key, value));
 
@@ -127,7 +127,7 @@ public class StateRestoreCallbackAdapterTest {
         );
     }
 
-    private void validate(List<ConsumeResult<byte[], byte[]>> actual,
+    private void Validate(List<ConsumeResult<byte[], byte[]>> actual,
                           List<ConsumeResult<byte[], byte[]>> expected) {
         Assert.Equal(actual.Count, is(expected.Count));
         for (int i = 0; i < actual.Count; i++) {

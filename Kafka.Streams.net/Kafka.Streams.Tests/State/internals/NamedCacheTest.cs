@@ -54,14 +54,14 @@ public class NamedCacheTest {
     private string underlyingStoreName = "storeName";
 
     
-    public void setUp() {
+    public void SetUp() {
         innerMetrics = new Metrics();
         metrics = new MockStreamsMetrics(innerMetrics);
         cache = new NamedCache(taskIDString + "-" + underlyingStoreName, metrics);
     }
 
     [Xunit.Fact]
-    public void shouldKeepTrackOfMostRecentlyAndLeastRecentlyUsed(){ //throws IOException
+    public void ShouldKeepTrackOfMostRecentlyAndLeastRecentlyUsed(){ //throws IOException
         List<KeyValuePair<string, string>> toInsert = Array.asList(
                 new KeyValuePair<>("K1", "V1"),
                 new KeyValuePair<>("K2", "V2"),
@@ -84,7 +84,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void testMetrics() {
+    public void TestMetrics() {
         Dictionary<string, string> metricTags = new LinkedHashMap<>();
         metricTags.put("record-cache-id", underlyingStoreName);
         metricTags.put("task-id", taskIDString);
@@ -109,7 +109,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldKeepTrackOfSize() {
+    public void ShouldKeepTrackOfSize() {
         LRUCacheEntry value = new LRUCacheEntry(new byte[]{0});
         cache.put(Bytes.wrap(new byte[]{0}), value);
         cache.put(Bytes.wrap(new byte[]{1}), value);
@@ -120,7 +120,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutGet() {
+    public void ShouldPutGet() {
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}));
         cache.put(Bytes.wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{11}));
         cache.put(Bytes.wrap(new byte[]{2}), new LRUCacheEntry(new byte[]{12}));
@@ -132,7 +132,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutIfAbsent() {
+    public void ShouldPutIfAbsent() {
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}));
         cache.putIfAbsent(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{20}));
         cache.putIfAbsent(Bytes.wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{30}));
@@ -142,7 +142,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteAndUpdateSize() {
+    public void ShouldDeleteAndUpdateSize() {
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}));
         LRUCacheEntry deleted = cache.delete(Bytes.wrap(new byte[]{0}));
         assertArrayEquals(new byte[] {10}, deleted.Value);
@@ -150,7 +150,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutAll() {
+    public void ShouldPutAll() {
         cache.putAll(Array.asList(KeyValuePair.Create(new byte[] {0}, new LRUCacheEntry(new byte[]{0})),
                                    KeyValuePair.Create(new byte[] {1}, new LRUCacheEntry(new byte[]{1})),
                                    KeyValuePair.Create(new byte[] {2}, new LRUCacheEntry(new byte[]{2}))));
@@ -161,7 +161,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldOverwriteAll() {
+    public void ShouldOverwriteAll() {
         cache.putAll(Array.asList(KeyValuePair.Create(new byte[] {0}, new LRUCacheEntry(new byte[]{0})),
             KeyValuePair.Create(new byte[] {0}, new LRUCacheEntry(new byte[]{1})),
             KeyValuePair.Create(new byte[] {0}, new LRUCacheEntry(new byte[]{2}))));
@@ -171,7 +171,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldEvictEldestEntry() {
+    public void ShouldEvictEldestEntry() {
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}));
         cache.put(Bytes.wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{20}));
         cache.put(Bytes.wrap(new byte[]{2}), new LRUCacheEntry(new byte[]{30}));
@@ -182,7 +182,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushDirtEntriesOnEviction() {
+    public void ShouldFlushDirtEntriesOnEviction() {
         List<ThreadCache.DirtyEntry> flushed = new ArrayList<>();
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}, headers, true, 0, 0, 0, ""));
         cache.put(Bytes.wrap(new byte[]{1}), new LRUCacheEntry(new byte[]{20}));
@@ -207,18 +207,18 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowNullPointerWhenCacheIsEmptyAndEvictionCalled() {
+    public void ShouldNotThrowNullPointerWhenCacheIsEmptyAndEvictionCalled() {
         cache.evict();
     }
 
     [Xunit.Fact]// (expected = IllegalStateException)
-    public void shouldThrowIllegalStateExceptionWhenTryingToOverwriteDirtyEntryWithCleanEntry() {
+    public void ShouldThrowIllegalStateExceptionWhenTryingToOverwriteDirtyEntryWithCleanEntry() {
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}, headers, true, 0, 0, 0, ""));
         cache.put(Bytes.wrap(new byte[]{0}), new LRUCacheEntry(new byte[]{10}, null, false, 0, 0, 0, ""));
     }
 
     [Xunit.Fact]
-    public void shouldRemoveDeletedValuesOnFlush() {
+    public void ShouldRemoveDeletedValuesOnFlush() {
         cache.setListener(new ThreadCache.DirtyEntryFlushListener() {
             
             public void apply(List<ThreadCache.DirtyEntry> dirty) {
@@ -233,7 +233,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeReentrantAndNotBreakLRU() {
+    public void ShouldBeReentrantAndNotBreakLRU() {
         LRUCacheEntry dirty = new LRUCacheEntry(new byte[]{3}, null, true, 0, 0, 0, "");
         LRUCacheEntry clean = new LRUCacheEntry(new byte[]{3});
         cache.put(Bytes.wrap(new byte[]{0}), dirty);
@@ -251,7 +251,7 @@ public class NamedCacheTest {
             }
         });
 
-        Assert.Equal(3 * cache.head().Count, cache.sizeInBytes());
+        Assert.Equal(3 * cache.Head().Count, cache.sizeInBytes());
         // Evict key 0
         cache.evict();
         Bytes entryFour = Bytes.wrap(new byte[]{4});
@@ -279,7 +279,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowIllegalArgumentAfterEvictingDirtyRecordAndThenPuttingNewRecordWithSameKey() {
+    public void ShouldNotThrowIllegalArgumentAfterEvictingDirtyRecordAndThenPuttingNewRecordWithSameKey() {
         LRUCacheEntry dirty = new LRUCacheEntry(new byte[]{3}, null, true, 0, 0, 0, "");
         LRUCacheEntry clean = new LRUCacheEntry(new byte[]{3});
         Bytes key = Bytes.wrap(new byte[] {3});
@@ -294,7 +294,7 @@ public class NamedCacheTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullIfKeyIsNull() {
+    public void ShouldReturnNullIfKeyIsNull() {
         assertNull(cache.get(null));
     }
 }

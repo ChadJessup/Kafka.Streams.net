@@ -47,7 +47,7 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     private Dictionary<object, ValueAndTimestamp<object>> sent = new HashMap<>();
     private NoOpRecordCollector collector = new NoOpRecordCollector() {
         
-        public void send<K, V>(string topic,
+        public void Send<K, V>(string topic,
                                 K key,
                                 V value,
                                 Headers headers,
@@ -71,11 +71,11 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
 
 
     
-    public void setUp() {
+    public void SetUp() {
         store = new ChangeLoggingTimestampedWindowBytesStore(inner, false);
     }
 
-    private void init() {
+    private void Init() {
         EasyMock.expect(context.taskId()).andReturn(taskId);
         EasyMock.expect(context.recordCollector()).andReturn(collector);
         inner.init(context, store);
@@ -86,7 +86,7 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogPuts() {
+    public void ShouldLogPuts() {
         inner.put(bytesKey, valueAndTimestamp, 0);
         EasyMock.expectLastCall();
 
@@ -104,7 +104,7 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFetching() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetching() {
         EasyMock
             .expect(inner.fetch(bytesKey, 0, 10))
             .andReturn(KeyValueIterators.emptyWindowStoreIterator());
@@ -116,7 +116,7 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFetchingRange() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange() {
         EasyMock
             .expect(inner.fetch(bytesKey, bytesKey, 0, 1))
             .andReturn(KeyValueIterators.emptyIterator());
@@ -128,7 +128,7 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRetainDuplicatesWhenSet() {
+    public void ShouldRetainDuplicatesWhenSet() {
         store = new ChangeLoggingTimestampedWindowBytesStore(inner, true);
         inner.put(bytesKey, valueAndTimestamp, 0);
         EasyMock.expectLastCall().times(2);

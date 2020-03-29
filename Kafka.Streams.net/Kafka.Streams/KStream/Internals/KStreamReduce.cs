@@ -13,7 +13,7 @@ namespace Kafka.Streams.KStream.Internals
 
         private bool sendOldValues = false;
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return null;// new KStreamReduceProcessor();
         }

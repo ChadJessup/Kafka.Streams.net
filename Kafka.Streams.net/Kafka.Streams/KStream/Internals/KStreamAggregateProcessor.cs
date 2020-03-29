@@ -51,7 +51,7 @@ namespace Kafka.Streams.KStream.Internals
                 return;
             }
 
-            ValueAndTimestamp<T> oldAggAndTimestamp = store.get(key);
+            ValueAndTimestamp<T> oldAggAndTimestamp = store.Get(key);
             T oldAgg = ValueAndTimestamp.GetValueOrNull(oldAggAndTimestamp);
 
             T newAgg;

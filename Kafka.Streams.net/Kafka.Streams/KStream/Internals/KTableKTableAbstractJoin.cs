@@ -36,6 +36,6 @@ namespace Kafka.Streams.KStream.Internals
         }
 
         public abstract IKTableValueGetterSupplier<K, R> view();
-        public abstract IKeyValueProcessor<K, Change<V1>> get();
+        public abstract IKeyValueProcessor<K, Change<V1>> Get();
     }
 }

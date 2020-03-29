@@ -28,7 +28,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param startingOffset the starting offset of the entire restoration process for this TopicPartition
          * @param endingOffset   the exclusive ending offset of the entire restoration process for this TopicPartition
          */
-        void onRestoreStart(
+        void OnRestoreStart(
             TopicPartition topicPartition,
             string storeName,
             long startingOffset,
@@ -49,7 +49,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param batchEndOffset the inclusive ending offset for the current restored batch for this TopicPartition
          * @param numRestored the total number of records restored in this batch for this TopicPartition
          */
-        void onBatchRestored(
+        void OnBatchRestored(
             TopicPartition topicPartition,
             string storeName,
             long batchEndOffset,
@@ -62,7 +62,7 @@ namespace Kafka.Streams.State.Interfaces
          * @param storeName the name of the store just restored
          * @param totalRestored the total number of records restored for this TopicPartition
          */
-        void onRestoreEnd(
+        void OnRestoreEnd(
             TopicPartition topicPartition,
             string storeName,
             long totalRestored);

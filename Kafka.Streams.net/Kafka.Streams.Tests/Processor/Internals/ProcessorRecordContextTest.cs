@@ -27,7 +27,7 @@ public class ProcessorRecordContextTest {
     private static long MIN_SIZE = 20L;
 
     [Xunit.Fact]
-    public void shouldEstimateNullTopicAndNullHeadersAsZeroLength() {
+    public void ShouldEstimateNullTopicAndNullHeadersAsZeroLength() {
         Headers headers = new Headers();
         ProcessorRecordContext context = new ProcessorRecordContext(
             42L,
@@ -41,7 +41,7 @@ public class ProcessorRecordContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldEstimateEmptyHeaderAsZeroLength() {
+    public void ShouldEstimateEmptyHeaderAsZeroLength() {
         ProcessorRecordContext context = new ProcessorRecordContext(
             42L,
             73L,
@@ -54,7 +54,7 @@ public class ProcessorRecordContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldEstimateTopicLength() {
+    public void ShouldEstimateTopicLength() {
         ProcessorRecordContext context = new ProcessorRecordContext(
             42L,
             73L,
@@ -67,7 +67,7 @@ public class ProcessorRecordContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldEstimateHeadersLength() {
+    public void ShouldEstimateHeadersLength() {
         Headers headers = new Headers();
         headers.add("header-key", "header-value".getBytes());
         ProcessorRecordContext context = new ProcessorRecordContext(
@@ -82,7 +82,7 @@ public class ProcessorRecordContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldEstimateNullValueInHeaderAsZero() {
+    public void ShouldEstimateNullValueInHeaderAsZero() {
         Headers headers = new Headers();
         headers.add("header-key", null);
         ProcessorRecordContext context = new ProcessorRecordContext(

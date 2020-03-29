@@ -138,13 +138,13 @@ namespace Kafka.Streams.Tests
             thread.SetStateListener(stateListener);
 
             thread.Start();
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => thread.State.CurrentState == StreamThreadStates.STARTING,
                 TimeSpan.FromSeconds(10),
                 "Thread never started.");
 
             thread.Shutdown();
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => thread.State.CurrentState == StreamThreadStates.DEAD,
                 TimeSpan.FromSeconds(10),
                 "Thread never shut down.");

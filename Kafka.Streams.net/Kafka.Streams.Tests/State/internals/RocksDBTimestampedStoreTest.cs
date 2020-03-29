@@ -42,20 +42,20 @@
 
 public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
 
-    RocksDBStore getRocksDBStore() {
+    RocksDBStore GetRocksDBStore() {
         return new RocksDBTimestampedStore(DB_NAME);
     }
 
     [Xunit.Fact]
-    public void shouldMigrateDataFromDefaultToTimestampColumnFamily() {// throws Exception
-        prepareOldStore();
+    public void ShouldMigrateDataFromDefaultToTimestampColumnFamily() {// throws Exception
+        PrepareOldStore();
 
         LogCaptureAppender.setClassLoggerToDebug(RocksDBTimestampedStore);
 
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
         rocksDBStore.init(context, rocksDBStore);
         Assert.Equal(appender.getMessages(), hasItem("Opening store " + DB_NAME + " in upgrade mode"));
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
 
         // approx: 7 entries on old CF, 0 in new CF
         Assert.Equal(rocksDBStore.approximateNumEntries(), is(7L));
@@ -129,15 +129,15 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         Assert.Equal(rocksDBStore.approximateNumEntries(), is(3L));
 
 
-        iteratorsShouldNotMigrateData();
+        IteratorsShouldNotMigrateData();
         Assert.Equal(rocksDBStore.approximateNumEntries(), is(3L));
 
         rocksDBStore.close();
 
-        verifyOldAndNewColumnFamily();
+        VerifyOldAndNewColumnFamily();
     }
 
-    private void iteratorsShouldNotMigrateData() {
+    private void IteratorsShouldNotMigrateData() {
         // iterating should not migrate any data, but return all key over both CF (plus surrogate timestamps for old CF)
         KeyValueIterator<Bytes, byte[]> itAll = rocksDBStore.all();
         {
@@ -205,7 +205,7 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         it.close();
     }
 
-    private void verifyOldAndNewColumnFamily() {// throws Exception
+    private void VerifyOldAndNewColumnFamily() {// throws Exception
         DBOptions dbOptions = new DBOptions();
         ColumnFamilyOptions columnFamilyOptions = new ColumnFamilyOptions();
 
@@ -250,10 +250,10 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         db.close();
 
         // check that still in upgrade mode
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
         rocksDBStore.init(context, rocksDBStore);
         Assert.Equal(appender.getMessages(), hasItem("Opening store " + DB_NAME + " in upgrade mode"));
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
         rocksDBStore.close();
 
         // clear old CF
@@ -269,13 +269,13 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         db.close();
 
         // check that still in regular mode
-        appender = LogCaptureAppender.createAndRegister();
+        appender = LogCaptureAppender.CreateAndRegister();
         rocksDBStore.init(context, rocksDBStore);
         Assert.Equal(appender.getMessages(), hasItem("Opening store " + DB_NAME + " in regular mode"));
-        LogCaptureAppender.unregister(appender);
+        LogCaptureAppender.Unregister(appender);
     }
 
-    private void prepareOldStore() {
+    private void PrepareOldStore() {
         RocksDBStore keyValueStore = new RocksDBStore(DB_NAME);
         keyValueStore.init(context, keyValueStore);
 

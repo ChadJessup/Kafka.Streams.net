@@ -55,7 +55,7 @@ public class SessionKeySchemaTest {
     private DelegatingPeekingKeyValueIterator<Bytes, int> iterator;
 
     
-    public void before() {
+    public void Before() {
         List<KeyValuePair<Bytes, int>> keys = Array.asList(KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.wrap(new byte[]{0, 0}), new SessionWindow(0, 0))), 1),
                                                                   KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.wrap(new byte[]{0}), new SessionWindow(0, 0))), 2),
                                                                   KeyValuePair.Create(SessionKeySchema.toBinary(new Windowed<>(Bytes.wrap(new byte[]{0, 0, 0}), new SessionWindow(0, 0))), 3),
@@ -66,29 +66,29 @@ public class SessionKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchExactKeysSkippingLongerKeys() {
+    public void ShouldFetchExactKeysSkippingLongerKeys() {
         Bytes key = Bytes.wrap(new byte[]{0});
         List<int> result = getValues(sessionKeySchema.hasNextCondition(key, key, 0, long.MaxValue));
         Assert.Equal(result, (Array.asList(2, 4)));
     }
 
     [Xunit.Fact]
-    public void shouldFetchExactKeySkippingShorterKeys() {
+    public void ShouldFetchExactKeySkippingShorterKeys() {
         Bytes key = Bytes.wrap(new byte[]{0, 0});
         HasNextCondition hasNextCondition = sessionKeySchema.hasNextCondition(key, key, 0, long.MaxValue);
-        List<int> results = getValues(hasNextCondition);
+        List<int> results = GetValues(hasNextCondition);
         Assert.Equal(results, (Array.asList(1, 5)));
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllKeysUsingNullKeys() {
+    public void ShouldFetchAllKeysUsingNullKeys() {
         HasNextCondition hasNextCondition = sessionKeySchema.hasNextCondition(null, null, 0, long.MaxValue);
-        List<int> results = getValues(hasNextCondition);
+        List<int> results = GetValues(hasNextCondition);
         Assert.Equal(results, (Array.asList(1, 2, 3, 4, 5, 6)));
     }
     
     [Xunit.Fact]
-    public void testUpperBoundWithLargeTimestamps() {
+    public void TestUpperBoundWithLargeTimestamps() {
         Bytes upper = sessionKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), long.MaxValue);
 
         Assert.Equal(
@@ -116,7 +116,7 @@ public class SessionKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testUpperBoundWithKeyBytesLargerThanFirstTimestampByte() {
+    public void TestUpperBoundWithKeyBytesLargerThanFirstTimestampByte() {
         Bytes upper = sessionKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, (byte) 0x8F, (byte) 0x9F}), long.MaxValue);
 
         Assert.Equal(
@@ -135,7 +135,7 @@ public class SessionKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testUpperBoundWithZeroTimestamp() {
+    public void TestUpperBoundWithZeroTimestamp() {
         Bytes upper = sessionKeySchema.upperRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), 0);
 
         Assert.Equal(upper, (SessionKeySchema.toBinary(
@@ -144,13 +144,13 @@ public class SessionKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void testLowerBoundWithZeroTimestamp() {
+    public void TestLowerBoundWithZeroTimestamp() {
         Bytes lower = sessionKeySchema.lowerRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), 0);
         Assert.Equal(lower, (SessionKeySchema.toBinary(new Windowed<>(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), new SessionWindow(0, 0)))));
     }
 
     [Xunit.Fact]
-    public void testLowerBoundMatchesTrailingZeros() {
+    public void TestLowerBoundMatchesTrailingZeros() {
         Bytes lower = sessionKeySchema.lowerRange(Bytes.wrap(new byte[]{0xA, 0xB, 0xC}), long.MaxValue);
 
         Assert.Equal(
@@ -166,73 +166,73 @@ public class SessionKeySchemaTest {
     }
 
     [Xunit.Fact]
-    public void shouldSerializeDeserialize() {
+    public void ShouldSerializeDeserialize() {
         byte[] bytes = keySerde.Serializer.serialize(topic, windowedKey);
         Windowed<string> result = keySerde.deserializer().deserialize(topic, bytes);
         Assert.Equal(windowedKey, result);
     }
 
     [Xunit.Fact]
-    public void shouldSerializeNullToNull() {
+    public void ShouldSerializeNullToNull() {
         assertNull(keySerde.Serializer.serialize(topic, null));
     }
 
     [Xunit.Fact]
-    public void shouldDeSerializeEmtpyByteArrayToNull() {
+    public void ShouldDeSerializeEmtpyByteArrayToNull() {
         assertNull(keySerde.deserializer().deserialize(topic, new byte[0]));
     }
 
     [Xunit.Fact]
-    public void shouldDeSerializeNullToNull() {
+    public void ShouldDeSerializeNullToNull() {
         assertNull(keySerde.deserializer().deserialize(topic, null));
     }
 
     [Xunit.Fact]
-    public void shouldConvertToBinaryAndBack() {
+    public void ShouldConvertToBinaryAndBack() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         Windowed<string> result = SessionKeySchema.from(serialized, Serdes.String().deserializer(), "dummy");
         Assert.Equal(windowedKey, result);
     }
 
     [Xunit.Fact]
-    public void shouldExtractEndTimeFromBinary() {
+    public void ShouldExtractEndTimeFromBinary() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         Assert.Equal(endTime, SessionKeySchema.extractEndTimestamp(serialized));
     }
 
     [Xunit.Fact]
-    public void shouldExtractStartTimeFromBinary() {
+    public void ShouldExtractStartTimeFromBinary() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         Assert.Equal(startTime, SessionKeySchema.extractStartTimestamp(serialized));
     }
 
     [Xunit.Fact]
-    public void shouldExtractWindowFromBindary() {
+    public void ShouldExtractWindowFromBindary() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         Assert.Equal(window, SessionKeySchema.extractWindow(serialized));
     }
 
     [Xunit.Fact]
-    public void shouldExtractKeyBytesFromBinary() {
+    public void ShouldExtractKeyBytesFromBinary() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         assertArrayEquals(key.getBytes(), SessionKeySchema.extractKeyBytes(serialized));
     }
 
     [Xunit.Fact]
-    public void shouldExtractKeyFromBinary() {
+    public void ShouldExtractKeyFromBinary() {
         byte[] serialized = SessionKeySchema.toBinary(windowedKey, serde.Serializer, "dummy");
         Assert.Equal(windowedKey, SessionKeySchema.from(serialized, serde.deserializer(), "dummy"));
     }
 
     [Xunit.Fact]
-    public void shouldExtractBytesKeyFromBinary() {
+    public void ShouldExtractBytesKeyFromBinary() {
         Bytes bytesKey = Bytes.wrap(key.getBytes());
         Windowed<Bytes> windowedBytesKey = new Windowed<>(bytesKey, window);
         Bytes serialized = SessionKeySchema.toBinary(windowedBytesKey);
         Assert.Equal(windowedBytesKey, SessionKeySchema.from(serialized));
     }
 
-    private List<int> getValues(HasNextCondition hasNextCondition) {
+    private List<int> GetValues(HasNextCondition hasNextCondition) {
         List<int> results = new ArrayList<>();
         while (hasNextCondition.hasNext(iterator)) {
             results.add(iterator.next().value);

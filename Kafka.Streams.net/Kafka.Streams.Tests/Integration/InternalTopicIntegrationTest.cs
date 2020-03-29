@@ -79,12 +79,12 @@ public class InternalTopicIntegrationTest {
     private Properties streamsProp;
 
     
-    public static void startKafkaCluster() {// throws InterruptedException
+    public static void StartKafkaCluster() {// throws InterruptedException
         CLUSTER.createTopics(DEFAULT_INPUT_TOPIC);
     }
 
     
-    public void before() {
+    public void Before() {
         streamsProp = new Properties();
         streamsProp.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
         streamsProp.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
@@ -96,12 +96,12 @@ public class InternalTopicIntegrationTest {
     }
 
     
-    public void after(){ //throws IOException
+    public void After(){ //throws IOException
         // Remove any state from previous test runs
         IntegrationTestUtils.purgeLocalStreamsState(streamsProp);
     }
 
-    private void produceData(List<string> inputValues) {// throws Exception
+    private void ProduceData(List<string> inputValues) {// throws Exception
         Properties producerProp = new Properties();
         producerProp.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
         producerProp.put(ProducerConfig.ACKS_CONFIG, "all");
@@ -112,7 +112,7 @@ public class InternalTopicIntegrationTest {
         IntegrationTestUtils.produceValuesSynchronously(DEFAULT_INPUT_TOPIC, inputValues, producerProp, mockTime);
     }
 
-    private Properties getTopicProperties(string changelog) {
+    private Properties GetTopicProperties(string changelog) {
         try { 
  (Admin adminClient = createAdminClient());
             ConfigResource configResource = new ConfigResource(ConfigResource.Type.TOPIC, changelog);
@@ -138,7 +138,7 @@ public class InternalTopicIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void shouldCompactTopicsForKeyValueStoreChangelogs() {// throws Exception
+    public void ShouldCompactTopicsForKeyValueStoreChangelogs() {// throws Exception
         string appID = APP_ID + "-compact";
         streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
@@ -169,13 +169,13 @@ public class InternalTopicIntegrationTest {
         Properties changelogProps = getTopicProperties(ProcessorStateManager.storeChangelogTopic(appID, "Counts"));
         Assert.Equal(LogConfig.Compact(), changelogProps.getProperty(LogConfig.CleanupPolicyProp()));
 
-        Properties repartitionProps = getTopicProperties(appID + "-Counts-repartition");
+        Properties repartitionProps = GetTopicProperties(appID + "-Counts-repartition");
         Assert.Equal(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
         Assert.Equal(3, repartitionProps.Count);
     }
 
     [Xunit.Fact]
-    public void shouldCompactAndDeleteTopicsForWindowStoreChangelogs() {// throws Exception
+    public void ShouldCompactAndDeleteTopicsForWindowStoreChangelogs() {// throws Exception
         string appID = APP_ID + "-compact-delete";
         streamsProp.put(StreamsConfig.APPLICATION_ID_CONFIG, appID);
 
@@ -214,7 +214,7 @@ public class InternalTopicIntegrationTest {
         long retention = TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS) + durationMs;
         Assert.Equal(retention, long.parseLong(properties.getProperty(LogConfig.RetentionMsProp())));
 
-        Properties repartitionProps = getTopicProperties(appID + "-CountWindows-repartition");
+        Properties repartitionProps = GetTopicProperties(appID + "-CountWindows-repartition");
         Assert.Equal(LogConfig.Delete(), repartitionProps.getProperty(LogConfig.CleanupPolicyProp()));
         Assert.Equal(3, repartitionProps.Count);
     }

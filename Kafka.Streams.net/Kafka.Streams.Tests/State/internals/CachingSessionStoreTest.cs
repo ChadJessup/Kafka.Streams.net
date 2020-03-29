@@ -87,12 +87,12 @@ public class CachingSessionStoreTest {
     }
 
     
-    public void close() {
+    public void Close() {
         cachingStore.close();
     }
 
     [Xunit.Fact]
-    public void shouldPutFetchFromCache() {
+    public void ShouldPutFetchFromCache() {
         cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
@@ -109,7 +109,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutFetchAllKeysFromCache() {
+    public void ShouldPutFetchAllKeysFromCache() {
         cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
@@ -124,7 +124,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutFetchRangeFromCache() {
+    public void ShouldPutFetchRangeFromCache() {
         cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyAA, new SessionWindow(0, 0)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyB, new SessionWindow(0, 0)), "1".getBytes());
@@ -138,7 +138,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchAllSessionsWithSameRecordKey() {
+    public void ShouldFetchAllSessionsWithSameRecordKey() {
         List<KeyValuePair<Windowed<Bytes>, byte[]>> expected = asList(
             KeyValuePair.Create(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes()),
             KeyValuePair.Create(new Windowed<>(keyA, new SessionWindow(10, 10)), "2".getBytes()),
@@ -157,7 +157,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushItemsToStoreOnEviction() {
+    public void ShouldFlushItemsToStoreOnEviction() {
         List<KeyValuePair<Windowed<Bytes>, byte[]>> added = addSessionsUntilOverflow("a", "b", "c", "d");
         Assert.Equal(added.Count - 1, cache.Count);
         KeyValueIterator<Windowed<Bytes>, byte[]> iterator = cachingStore.findSessions(added.get(0).key.Key, 0, 0);
@@ -167,7 +167,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldQueryItemsInCacheAndStore() {
+    public void ShouldQueryItemsInCacheAndStore() {
         List<KeyValuePair<Windowed<Bytes>, byte[]>> added = addSessionsUntilOverflow("a");
         KeyValueIterator<Windowed<Bytes>, byte[]> iterator = cachingStore.findSessions(
             Bytes.wrap("a".getBytes(StandardCharsets.UTF_8)),
@@ -178,7 +178,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRemove() {
+    public void ShouldRemove() {
         Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
         Windowed<Bytes> b = new Windowed<>(keyB, new SessionWindow(0, 0));
         cachingStore.put(a, "2".getBytes());
@@ -195,7 +195,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchCorrectlyAcrossSegments() {
+    public void ShouldFetchCorrectlyAcrossSegments() {
         Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
         Windowed<Bytes> a2 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
         Windowed<Bytes> a3 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 2, SEGMENT_INTERVAL * 2));
@@ -212,7 +212,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFetchRangeCorrectlyAcrossSegments() {
+    public void ShouldFetchRangeCorrectlyAcrossSegments() {
         Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
         Windowed<Bytes> aa1 = new Windowed<>(keyAA, new SessionWindow(SEGMENT_INTERVAL * 0, SEGMENT_INTERVAL * 0));
         Windowed<Bytes> a2 = new Windowed<>(keyA, new SessionWindow(SEGMENT_INTERVAL * 1, SEGMENT_INTERVAL * 1));
@@ -235,13 +235,13 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSetFlushListener() {
+    public void ShouldSetFlushListener() {
         Assert.True(cachingStore.setFlushListener(null, true));
         Assert.True(cachingStore.setFlushListener(null, false));
     }
 
     [Xunit.Fact]
-    public void shouldForwardChangedValuesDuringFlush() {
+    public void ShouldForwardChangedValuesDuringFlush() {
         Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(2, 4));
         Windowed<Bytes> b = new Windowed<>(keyA, new SessionWindow(1, 2));
         Windowed<string> aDeserialized = new Windowed<>("a", new SessionWindow(2, 4));
@@ -317,7 +317,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotForwardChangedValuesDuringFlushWhenSendOldValuesDisabled() {
+    public void ShouldNotForwardChangedValuesDuringFlushWhenSendOldValuesDisabled() {
         Windowed<Bytes> a = new Windowed<>(keyA, new SessionWindow(0, 0));
         Windowed<string> aDeserialized = new Windowed<>("a", new SessionWindow(0, 0));
         CacheFlushListenerStub<Windowed<string>, string> flushListener =
@@ -365,7 +365,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions() {
+    public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions() {
         cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 1)), "1".getBytes());
         cachingStore.put(new Windowed<>(keyAA, new SessionWindow(2, 3)), "2".getBytes());
         cachingStore.put(new Windowed<>(keyAA, new SessionWindow(4, 5)), "3".getBytes());
@@ -381,7 +381,7 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldClearNamespaceCacheOnClose() {
+    public void ShouldClearNamespaceCacheOnClose() {
         Windowed<Bytes> a1 = new Windowed<>(keyA, new SessionWindow(0, 0));
         cachingStore.put(a1, "1".getBytes());
         Assert.Equal(1, cache.Count);
@@ -390,73 +390,73 @@ public class CachingSessionStoreTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToFetchFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToFetchFromClosedCachingStore() {
         cachingStore.close();
         cachingStore.fetch(keyA);
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToFindMergeSessionFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToFindMergeSessionFromClosedCachingStore() {
         cachingStore.close();
         cachingStore.findSessions(keyA, 0, long.MaxValue);
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToRemoveFromClosedCachingStore() {
+    public void ShouldThrowIfTryingToRemoveFromClosedCachingStore() {
         cachingStore.close();
         cachingStore.remove(new Windowed<>(keyA, new SessionWindow(0, 0)));
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowIfTryingToPutIntoClosedCachingStore() {
+    public void ShouldThrowIfTryingToPutIntoClosedCachingStore() {
         cachingStore.close();
         cachingStore.put(new Windowed<>(keyA, new SessionWindow(0, 0)), "1".getBytes());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFindSessionsNullKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey() {
         cachingStore.findSessions(null, 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFindSessionsNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey() {
         cachingStore.findSessions(null, keyA, 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFindSessionsNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey() {
         cachingStore.findSessions(keyA, null, 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFetchNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullFromKey() {
         cachingStore.fetch(null, keyA);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFetchNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullToKey() {
         cachingStore.fetch(keyA, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnFetchNullKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullKey() {
         cachingStore.fetch(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRemoveNullKey() {
+    public void ShouldThrowNullPointerExceptionOnRemoveNullKey() {
         cachingStore.remove(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
         cachingStore.put(null, "1".getBytes());
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
         LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
         Bytes keyFrom = Bytes.wrap(Serdes.Int().Serializer.serialize("", -1));
         Bytes keyTo = Bytes.wrap(Serdes.Int().Serializer.serialize("", 1));
@@ -470,17 +470,17 @@ public class CachingSessionStoreTest {
             + "Note that the built-in numerical serdes do not follow this for negative numbers"));
     }
 
-    private List<KeyValuePair<Windowed<Bytes>, byte[]>> addSessionsUntilOverflow(string... sessionIds) {
+    private List<KeyValuePair<Windowed<Bytes>, byte[]>> AddSessionsUntilOverflow(string... sessionIds) {
         Random random = new Random();
         List<KeyValuePair<Windowed<Bytes>, byte[]>> results = new ArrayList<>();
         while (cache.Count == results.Count) {
             string sessionId = sessionIds[random.nextInt(sessionIds.Length)];
-            addSingleSession(sessionId, results);
+            AddSingleSession(sessionId, results);
         }
         return results;
     }
 
-    private void addSingleSession(string sessionId, List<KeyValuePair<Windowed<Bytes>, byte[]>> allSessions) {
+    private void AddSingleSession(string sessionId, List<KeyValuePair<Windowed<Bytes>, byte[]>> allSessions) {
         int timestamp = allSessions.Count * 10;
         Windowed<Bytes> key = new Windowed<>(Bytes.wrap(sessionId.getBytes()), new SessionWindow(timestamp, timestamp));
         byte[] value = "1".getBytes();
@@ -500,7 +500,7 @@ public class CachingSessionStoreTest {
         }
 
         
-        public void apply(byte[] key,
+        public void Apply(byte[] key,
                           byte[] newValue,
                           byte[] oldValue,
                           long timestamp) {

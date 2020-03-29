@@ -5,7 +5,7 @@ namespace Kafka.Streams
 {
     public class DelegatingStateRestoreListener : IStateRestoreListener
     {
-        public void onRestoreStart(
+        public void OnRestoreStart(
             TopicPartition topicPartition,
             string storeName,
             long startingOffset,
@@ -24,7 +24,7 @@ namespace Kafka.Streams
             //}
         }
 
-        public void onBatchRestored(
+        public void OnBatchRestored(
             TopicPartition topicPartition,
             string storeName,
             long batchEndOffset,
@@ -43,7 +43,7 @@ namespace Kafka.Streams
             //}
         }
 
-        public void onRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
+        public void OnRestoreEnd(TopicPartition topicPartition, string storeName, long totalRestored)
         {
             //if (globalStateRestoreListener != null)
             //{

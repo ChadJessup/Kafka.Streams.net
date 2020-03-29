@@ -23,7 +23,7 @@ namespace Kafka.Streams.KStream.Internals
             this.storeName = storeName;
         }
 
-        public override IKeyValueProcessor<K, Change<V1>> get()
+        public override IKeyValueProcessor<K, Change<V1>> Get()
         {
             return new KTableKTableJoinProcessor<K, R, V1, V2>(
                 valueGetterSupplier2.get(),

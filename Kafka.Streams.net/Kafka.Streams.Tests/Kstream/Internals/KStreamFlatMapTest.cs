@@ -46,10 +46,10 @@ namespace Kafka.Streams.KStream.Internals
             var driver = new TopologyTestDriver(builder.Build(), props);
             foreach (var expectedKey in expectedKeys)
             {
-                driver.PipeInput(recordFactory.create(topicName, expectedKey, "V" + expectedKey));
+                driver.PipeInput(recordFactory.Create(topicName, expectedKey, "V" + expectedKey));
             }
 
-            Assert.Equal(6, supplier.theCapturedProcessor().processed.Count);
+            Assert.Equal(6, supplier.TheCapturedProcessor().processed.Count);
 
             var expected = new KeyValueTimestamp<string, string>[]
             {
@@ -64,7 +64,7 @@ namespace Kafka.Streams.KStream.Internals
             for (var i = 0; i < expected.Length; i++)
             {
                 var expectedKvp = expected[i];
-                var actualKvp = supplier.theCapturedProcessor().processed[i];
+                var actualKvp = supplier.TheCapturedProcessor().processed[i];
                 Assert.Equal(expectedKvp, actualKvp);
             }
         }

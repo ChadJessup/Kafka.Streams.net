@@ -105,7 +105,7 @@ public class RegexSourceIntegrationTest
 
 
 
-    public static void startKafkaCluster()
+    public static void StartKafkaCluster()
     {// throws InterruptedException
         CLUSTER.createTopics(
             TOPIC_1,
@@ -121,7 +121,7 @@ public class RegexSourceIntegrationTest
     }
 
 
-    public void setUp()
+    public void SetUp()
     {// throws InterruptedException
         outputTopic = createTopic(topicSuffixGenerator.incrementAndGet());
         Properties properties = new Properties();
@@ -138,7 +138,7 @@ public class RegexSourceIntegrationTest
     }
 
 
-    public void tearDown()
+    public void TearDown()
     { //throws IOException
         if (streams != null)
         {
@@ -149,7 +149,7 @@ public class RegexSourceIntegrationTest
     }
 
     [Xunit.Fact]
-    public void testRegexMatchesTopicsAWhenCreated()
+    public void TestRegexMatchesTopicsAWhenCreated()
     {// throws Exception
 
         ISerde<string> stringSerde = Serdes.String();
@@ -192,7 +192,7 @@ public class RegexSourceIntegrationTest
 
     }
 
-    private string createTopic(int suffix)
+    private string CreateTopic(int suffix)
 {// throws InterruptedException
     string outputTopic = "outputTopic_" + suffix;
     CLUSTER.createTopic(outputTopic);
@@ -200,7 +200,7 @@ public class RegexSourceIntegrationTest
 }
 
 [Xunit.Fact]
-public void testRegexMatchesTopicsAWhenDeleted()
+public void TestRegexMatchesTopicsAWhenDeleted()
 {// throws Exception
 
     Serde<string> stringSerde = Serdes.String();
@@ -245,7 +245,7 @@ public void testRegexMatchesTopicsAWhenDeleted()
     }
 
     [Xunit.Fact]
-public void shouldAddStateStoreToRegexDefinedSource()
+public void ShouldAddStateStoreToRegexDefinedSource()
 {// throws InterruptedException
 
     ProcessorSupplier<string, string> processorSupplier = new MockProcessorSupplier<>();
@@ -280,7 +280,7 @@ public void shouldAddStateStoreToRegexDefinedSource()
 }
 
 [Xunit.Fact]
-public void testShouldReadFromRegexAndNamedTopics()
+public void TestShouldReadFromRegexAndNamedTopics()
 {// throws Exception
 
     string topic1TestMessage = "topic-1 test";
@@ -332,7 +332,7 @@ public void testShouldReadFromRegexAndNamedTopics()
 }
 
 [Xunit.Fact]
-public void testMultipleConsumersCanReadFromPartitionedTopic()
+public void TestMultipleConsumersCanReadFromPartitionedTopic()
 {// throws Exception
 
     KafkaStreams partitionedStreamsLeader = null;
@@ -405,7 +405,7 @@ public void testMultipleConsumersCanReadFromPartitionedTopic()
     }
 
     [Xunit.Fact]
-public void testNoMessagesSentExceptionFromOverlappingPatterns()
+public void TestNoMessagesSentExceptionFromOverlappingPatterns()
 {// throws Exception
 
     string fMessage = "fMessage";
@@ -464,14 +464,14 @@ private static class TheConsumerRebalanceListener : ConsumerRebalanceListener
     }
 
 
-    public void onPartitionsRevoked(Collection<TopicPartition> partitions)
+    public void OnPartitionsRevoked(Collection<TopicPartition> partitions)
     {
         assignedTopics.Clear();
         listener.onPartitionsRevoked(partitions);
     }
 
 
-    public void onPartitionsAssigned(Collection<TopicPartition> partitions)
+    public void OnPartitionsAssigned(Collection<TopicPartition> partitions)
     {
         foreach (TopicPartition partition in partitions)
         {

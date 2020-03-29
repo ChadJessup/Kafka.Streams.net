@@ -38,7 +38,7 @@ public class ProcessorContextTest {
     private ProcessorContext context;
 
     
-    public void prepare() {
+    public void Prepare() {
         StreamsConfig streamsConfig = mock(StreamsConfig);
         expect(streamsConfig.getString(StreamsConfig.APPLICATION_ID_CONFIG)).andReturn("add-id");
         expect(streamsConfig.defaultValueSerde()).andReturn(Serdes.ByteArray());
@@ -57,7 +57,7 @@ public class ProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowToScheduleZeroMillisecondPunctuation() {
+    public void ShouldNotAllowToScheduleZeroMillisecondPunctuation() {
         try {
             context.schedule(Duration.ofMillis(0L), null, null);
             Assert.True(false, "Should have thrown IllegalArgumentException");
@@ -67,7 +67,7 @@ public class ProcessorContextTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAllowToScheduleSubMillisecondPunctuation() {
+    public void ShouldNotAllowToScheduleSubMillisecondPunctuation() {
         try {
             context.schedule(Duration.ofNanos(999_999L), null, null);
             Assert.True(false, "Should have thrown IllegalArgumentException");

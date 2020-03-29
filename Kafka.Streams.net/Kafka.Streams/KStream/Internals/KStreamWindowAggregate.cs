@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
             this.aggregator = aggregator;
         }
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return new KStreamWindowAggregateProcessor<K, V, Agg, W>(
                 this.windows,

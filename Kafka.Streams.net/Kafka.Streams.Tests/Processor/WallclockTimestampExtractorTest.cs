@@ -27,7 +27,7 @@
 public class WallclockTimestampExtractorTest {
 
     [Xunit.Fact]
-    public void extractSystemTimestamp() {
+    public void ExtractSystemTimestamp() {
         TimestampExtractor extractor = new WallclockTimestampExtractor();
 
         long before = System.currentTimeMillis();
@@ -47,16 +47,16 @@ public class WallclockTimestampExtractorTest {
         }
 
         
-        public bool matches(object item) {
+        public bool Matches(object item) {
             long timestamp = (long) item;
             return before <= timestamp && timestamp <= after;
         }
 
         
-        public void describeMismatch(object item, Description mismatchDescription) {}
+        public void DescribeMismatch(object item, Description mismatchDescription) {}
 
         
-        public void describeTo(Description description) {}
+        public void DescribeTo(Description description) {}
     }
 
 }

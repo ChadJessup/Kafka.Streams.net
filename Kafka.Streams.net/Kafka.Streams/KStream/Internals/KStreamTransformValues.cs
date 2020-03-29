@@ -28,7 +28,7 @@ namespace Kafka.Streams.KStream.Internals
         }
 
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return null;// new KStreamTransformValuesProcessor<>(valueTransformerSupplier());
         }

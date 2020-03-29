@@ -10,7 +10,7 @@ namespace Kafka.Streams.Tests.State
         private WrappingStoreProvider wrappingStoreProvider;
 
 
-        public void before()
+        public void Before()
         {
             StateStoreProviderStub stubProviderOne = new StateStoreProviderStub(false);
             StateStoreProviderStub stubProviderTwo = new StateStoreProviderStub(false);
@@ -32,7 +32,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldFindKeyValueStores()
+        public void ShouldFindKeyValueStores()
         {
             List<ReadOnlyKeyValueStore<string, string>> results =
                     wrappingStoreProvider.stores("kv", QueryableStoreTypes.< string, string > keyValueStore());
@@ -40,7 +40,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]
-        public void shouldFindWindowStores()
+        public void ShouldFindWindowStores()
         {
             List<ReadOnlyWindowStore<object, object>>
                     windowStores =
@@ -49,7 +49,7 @@ namespace Kafka.Streams.Tests.State
         }
 
         [Xunit.Fact]// (expected = InvalidStateStoreException)
-        public void shouldThrowInvalidStoreExceptionIfNoStoreOfTypeFound()
+        public void ShouldThrowInvalidStoreExceptionIfNoStoreOfTypeFound()
         {
             wrappingStoreProvider.stores("doesn't exist", QueryableStoreTypes.keyValueStore());
         }

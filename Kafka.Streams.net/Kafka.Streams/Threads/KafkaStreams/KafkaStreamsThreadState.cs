@@ -113,7 +113,7 @@ namespace Kafka.Streams.Threads.KafkaStreams
             // we need to call the user customized state listener outside the state lock to avoid potential deadlocks
             if (this.StateListener != null)
             {
-                this.StateListener.onChange(this.Thread, newState, oldState);
+                this.StateListener.OnChange(this.Thread, newState, oldState);
             }
 
             this.CurrentState = newState;

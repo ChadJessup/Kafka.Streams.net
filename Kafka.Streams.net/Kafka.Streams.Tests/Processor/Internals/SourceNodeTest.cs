@@ -7,7 +7,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
     public class SourceNodeTest
     {
         [Xunit.Fact]
-        public void shouldProvideTopicHeadersAndDataToKeyDeserializer()
+        public void ShouldProvideTopicHeadersAndDataToKeyDeserializer()
         {
             SourceNode<string, string> sourceNode = new MockSourceNode<>(new string[] { "" }, new TheDeserializer(), new TheDeserializer());
             Headers headers = new Headers();
@@ -16,7 +16,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         }
 
         [Xunit.Fact]
-        public void shouldProvideTopicHeadersAndDataToValueDeserializer()
+        public void ShouldProvideTopicHeadersAndDataToValueDeserializer()
         {
             SourceNode<string, string> sourceNode = new MockSourceNode<>(new string[] { "" }, new TheDeserializer(), new TheDeserializer());
             Headers headers = new Headers();

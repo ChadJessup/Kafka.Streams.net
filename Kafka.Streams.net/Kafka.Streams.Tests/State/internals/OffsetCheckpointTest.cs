@@ -34,7 +34,7 @@ public class OffsetCheckpointTest {
     private string topic = "topic";
 
     [Xunit.Fact]
-    public void testReadWrite(){ //throws IOException
+    public void TestReadWrite(){ //throws IOException
         File f = TestUtils.tempFile();
         OffsetCheckpoint checkpoint = new OffsetCheckpoint(f);
 
@@ -59,7 +59,7 @@ public class OffsetCheckpointTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotWriteCheckpointWhenNoOffsets(){ //throws IOException
+    public void ShouldNotWriteCheckpointWhenNoOffsets(){ //throws IOException
         // we do not need to worry about file name uniqueness since this file should not be created
         File f = new File(TestUtils.tempDirectory().getAbsolutePath(), "kafka.tmp");
         OffsetCheckpoint checkpoint = new OffsetCheckpoint(f);

@@ -24,7 +24,7 @@
 
 class TimestampExtractorTest {
 
-    void testExtractMetadataTimestamp(TimestampExtractor extractor) {
+    void TestExtractMetadataTimestamp(TimestampExtractor extractor) {
         long metadataTimestamp = 42;
 
         long timestamp = extractor.extract(

@@ -13,7 +13,7 @@ namespace Kafka.Streams.Tests.Tools
         private HashSet<TopicPartition> inputTopicPartitions = new HashSet<>(Collections.singletonList(topicPartition));
 
 
-        public void setUp()
+        public void SetUp()
         {
             consumer.assign(Collections.singletonList(topicPartition));
 
@@ -25,7 +25,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetToSpecificOffsetWhenBetweenBeginningAndEndOffset()
+        public void TestResetToSpecificOffsetWhenBetweenBeginningAndEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -42,7 +42,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetToSpecificOffsetWhenBeforeBeginningOffset()
+        public void TestResetToSpecificOffsetWhenBeforeBeginningOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -59,7 +59,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetToSpecificOffsetWhenAfterEndOffset()
+        public void TestResetToSpecificOffsetWhenAfterEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 3L);
@@ -76,7 +76,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testShiftOffsetByWhenBetweenBeginningAndEndOffset()
+        public void TestShiftOffsetByWhenBetweenBeginningAndEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -93,7 +93,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testShiftOffsetByWhenBeforeBeginningOffset()
+        public void TestShiftOffsetByWhenBeforeBeginningOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -110,7 +110,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testShiftOffsetByWhenAfterEndOffset()
+        public void TestShiftOffsetByWhenAfterEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 3L);
@@ -127,7 +127,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetUsingPlanWhenBetweenBeginningAndEndOffset()
+        public void TestResetUsingPlanWhenBetweenBeginningAndEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -146,7 +146,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetUsingPlanWhenBeforeBeginningOffset()
+        public void TestResetUsingPlanWhenBeforeBeginningOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 4L);
@@ -165,7 +165,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void testResetUsingPlanWhenAfterEndOffset()
+        public void TestResetUsingPlanWhenAfterEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 3L);
@@ -184,7 +184,7 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void shouldSeekToEndOffset()
+        public void ShouldSeekToEndOffset()
         {
             Dictionary<TopicPartition, long> endOffsets = new HashMap<>();
             endOffsets.put(topicPartition, 3L);
@@ -203,9 +203,9 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]//  throws InterruptedException, ExecutionException
-        public void shouldDeleteTopic()
+        public void ShouldDeleteTopic()
         {
-            Cluster cluster = createCluster(1);
+            Cluster cluster = CreateCluster(1);
             try
             {
                 (MockAdminClient adminClient = new MockAdminClient(cluster.nodes(), cluster.nodeById(0)));
@@ -216,7 +216,7 @@ namespace Kafka.Streams.Tests.Tools
             }
             }
 
-        private Cluster createCluster(int numNodes)
+        private Cluster CreateCluster(int numNodes)
         {
             HashDictionary<int, Node> nodes = new HashMap<>();
             for (int i = 0; i < numNodes; ++i)
@@ -229,24 +229,24 @@ namespace Kafka.Streams.Tests.Tools
         }
 
         [Xunit.Fact]
-        public void shouldAcceptValidDateFormats() // throws ParseException
+        public void ShouldAcceptValidDateFormats() // throws ParseException
         {
             //check valid formats
-            invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));
-            invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-            invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"));
-            invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX"));
-            invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS"));
+            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX"));
+            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXX"));
+            InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
         }
 
         [Xunit.Fact]
-        public void shouldThrowOnInvalidDateFormat() // throws ParseException
+        public void ShouldThrowOnInvalidDateFormat() // throws ParseException
 
         {
             //check some invalid formats
             try
             {
-                invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
+                InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss"));
                 Assert.True(false, "Call to getDateTime should fail");
             }
             catch (Exception e)
@@ -256,7 +256,7 @@ namespace Kafka.Streams.Tests.Tools
 
             try
             {
-                invokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.X"));
+                InvokeGetDateTimeMethod(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.X"));
                 Assert.True(false, "Call to getDateTime should fail");
             }
             catch (Exception e)
@@ -265,7 +265,7 @@ namespace Kafka.Streams.Tests.Tools
             }
         }
 
-        private void invokeGetDateTimeMethod(SimpleDateFormat format) // throws ParseException
+        private void InvokeGetDateTimeMethod(SimpleDateFormat format) // throws ParseException
 
         {
             Date checkpoint = new Date();

@@ -41,7 +41,7 @@ namespace Kafka.Streams.State.Internals
                 IStateStore store = streamTask.getStore(storeName);
                 if (store != null && queryableStoreType.accepts(store))
                 {
-                    if (!store.isOpen())
+                    if (!store.IsOpen())
                     {
                         throw new InvalidStateStoreException("Cannot get state store " + storeName + " for task " + streamTask +
                                 " because the store is not open. The state store may have migrated to another instances.");

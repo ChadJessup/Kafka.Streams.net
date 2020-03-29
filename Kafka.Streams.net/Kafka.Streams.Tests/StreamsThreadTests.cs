@@ -126,7 +126,7 @@ namespace Kafka.Streams.Tests
         }
 
         [Fact]
-        public void testStateChangeStartClose() //// throws Exception
+        public void TestStateChangeStartClose() //// throws Exception
         {
             var streamsBuilder = TestUtils.GetStreamsBuilder(this.config);
             var thread = TestUtils.CreateStreamThread(streamsBuilder, clientId, false);
@@ -135,13 +135,13 @@ namespace Kafka.Streams.Tests
             thread.SetStateListener(stateListener);
 
             thread.Start();
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => thread.State.CurrentState == StreamThreadStates.STARTING,
                 10 * 1000,
                 "Thread never started.");
 
             thread.Shutdown();
-            TestUtils.waitForCondition(
+            TestUtils.WaitForCondition(
                 () => thread.State.CurrentState == StreamThreadStates.DEAD,
                 TimeSpan.FromMilliseconds(10 * 1000),
                 "Thread never shut down.");

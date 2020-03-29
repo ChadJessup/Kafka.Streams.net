@@ -68,33 +68,33 @@ public class AbstractTaskTest {
         Utils.mkSet(storeTopicPartition1, storeTopicPartition2, storeTopicPartition3, storeTopicPartition4);
 
     
-    public void before() {
+    public void Before() {
         expect(stateDirectory.directoryForTask(id)).andReturn(TestUtils.tempDirectory());
     }
 
     [Xunit.Fact]// (expected = ProcessorStateException)
-    public void shouldThrowProcessorStateExceptionOnInitializeOffsetsWhenAuthorizationException() {
+    public void ShouldThrowProcessorStateExceptionOnInitializeOffsetsWhenAuthorizationException() {
         Consumer consumer = mockConsumer(new AuthorizationException("blah"));
         AbstractTask task = createTask(consumer, Collections.<StateStore, string>emptyMap());
         task.updateOffsetLimits();
     }
 
     [Xunit.Fact]// (expected = ProcessorStateException)
-    public void shouldThrowProcessorStateExceptionOnInitializeOffsetsWhenKafkaException() {
+    public void ShouldThrowProcessorStateExceptionOnInitializeOffsetsWhenKafkaException() {
         Consumer consumer = mockConsumer(new KafkaException("blah"));
         AbstractTask task = createTask(consumer, Collections.<StateStore, string>emptyMap());
         task.updateOffsetLimits();
     }
 
     [Xunit.Fact]// (expected = WakeupException)
-    public void shouldThrowWakeupExceptionOnInitializeOffsetsWhenWakeupException() {
+    public void ShouldThrowWakeupExceptionOnInitializeOffsetsWhenWakeupException() {
         Consumer consumer = mockConsumer(new WakeupException());
         AbstractTask task = createTask(consumer, Collections.<StateStore, string>emptyMap());
         task.updateOffsetLimits();
     }
 
     [Xunit.Fact]
-    public void shouldThrowLockExceptionIfFailedToLockStateDirectoryWhenTopologyHasStores(){ //throws IOException
+    public void ShouldThrowLockExceptionIfFailedToLockStateDirectoryWhenTopologyHasStores(){ //throws IOException
         Consumer consumer = EasyMock.createNiceMock(Consumer);
         StateStore store = EasyMock.createNiceMock(StateStore);
         expect(store.name()).andReturn("dummy-store-name").anyTimes();
@@ -114,7 +114,7 @@ public class AbstractTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotAttemptToLockIfNoStores() {
+    public void ShouldNotAttemptToLockIfNoStores() {
         Consumer consumer = EasyMock.createNiceMock(Consumer);
         EasyMock.replay(stateDirectory);
 
@@ -127,7 +127,7 @@ public class AbstractTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldDeleteAndRecreateStoreDirectoryOnReinitialize(){ //throws IOException
+    public void ShouldDeleteAndRecreateStoreDirectoryOnReinitialize(){ //throws IOException
         StreamsConfig streamsConfig = new StreamsConfig(new Properties() {
             {
                 put(StreamsConfig.APPLICATION_ID_CONFIG, "app-id");
@@ -214,13 +214,13 @@ public class AbstractTaskTest {
         Assert.True(testFile4.exists());
     }
 
-    private AbstractTask createTask(Consumer consumer,
+    private AbstractTask CreateTask(Consumer consumer,
                                     Dictionary<StateStore, string> stateStoresToChangelogTopics) {
         return createTask(consumer, stateStoresToChangelogTopics, stateDirectory);
     }
 
     
-    private AbstractTask createTask(Consumer consumer,
+    private AbstractTask CreateTask(Consumer consumer,
                                     Dictionary<StateStore, string> stateStoresToChangelogTopics,
                                     StateDirectory stateDirectory) {
         Properties properties = new Properties();
@@ -271,7 +271,7 @@ public class AbstractTaskTest {
         };
     }
 
-    private Consumer mockConsumer(RuntimeException toThrow) {
+    private Consumer MockConsumer(RuntimeException toThrow) {
         return new MockConsumer(OffsetResetStrategy.EARLIEST) {
             
             public OffsetAndMetadata committed(TopicPartition partition) {

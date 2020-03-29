@@ -51,26 +51,26 @@ public class AssignedStreamsTasksTest {
     private AssignedStreamsTasks assignedTasks;
 
     
-    public void before() {
+    public void Before() {
         assignedTasks = new AssignedStreamsTasks(new LogContext("log "));
         EasyMock.expect(t1.id()).andReturn(taskId1).anyTimes();
         EasyMock.expect(t2.id()).andReturn(taskId2).anyTimes();
     }
 
     [Xunit.Fact]
-    public void shouldInitializeNewTasks() {
+    public void ShouldInitializeNewTasks() {
         EasyMock.expect(t1.initializeStateStores()).andReturn(false);
         EasyMock.expect(t1.partitions()).andReturn(Collections.singleton(tp1));
         EasyMock.expect(t1.changelogPartitions()).andReturn(Collections.emptySet());
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldMoveInitializedTasksNeedingRestoreToRestoring() {
+    public void ShouldMoveInitializedTasksNeedingRestoreToRestoring() {
         EasyMock.expect(t1.initializeStateStores()).andReturn(false);
         t1.initializeTopology();
         EasyMock.expectLastCall().once();
@@ -96,7 +96,7 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldMoveInitializedTasksThatDontNeedRestoringToRunning() {
+    public void ShouldMoveInitializedTasksThatDontNeedRestoringToRunning() {
         EasyMock.expect(t2.initializeStateStores()).andReturn(true);
         t2.initializeTopology();
         EasyMock.expectLastCall().once();
@@ -112,7 +112,7 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldTransitionFullyRestoredTasksToRunning() {
+    public void ShouldTransitionFullyRestoredTasksToRunning() {
         HashSet<TopicPartition> task1Partitions = Utils.mkSet(tp1);
         EasyMock.expect(t1.initializeStateStores()).andReturn(false);
         EasyMock.expect(t1.partitions()).andReturn(task1Partitions).anyTimes();
@@ -122,7 +122,7 @@ public class AssignedStreamsTasksTest {
         EasyMock.expectLastCall().once();
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         assignedTasks.updateRestored(Utils.mkSet(changeLog1));
         Assert.Equal(assignedTasks.runningTaskIds(), (Collections.<TaskId>emptySet()));
@@ -131,18 +131,18 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldSuspendRunningTasks() {
-        mockRunningTaskSuspension();
+    public void ShouldSuspendRunningTasks() {
+        MockRunningTaskSuspension();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), nullValue());
+        Assert.Equal(SuspendTask(), nullValue());
 
         Assert.Equal(assignedTasks.previousTaskIds(), (Collections.singleton(taskId1)));
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldCloseRestoringTasks() {
+    public void ShouldCloseRestoringTasks() {
         EasyMock.expect(t1.initializeStateStores()).andReturn(false);
         EasyMock.expect(t1.partitions()).andReturn(Collections.singleton(tp1));
         EasyMock.expect(t1.changelogPartitions()).andReturn(Collections.emptySet());
@@ -150,14 +150,14 @@ public class AssignedStreamsTasksTest {
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
         Assert.Equal(assignedTasks.closeAllRestoringTasks(), nullValue());
 
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldClosedUnInitializedTasksOnSuspend() {
+    public void ShouldClosedUnInitializedTasksOnSuspend() {
         t1.close(false, false);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
@@ -169,54 +169,54 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotSuspendSuspendedTasks() {
-        mockRunningTaskSuspension();
+    public void ShouldNotSuspendSuspendedTasks() {
+        MockRunningTaskSuspension();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), nullValue());
+        Assert.Equal(SuspendTask(), nullValue());
         Assert.Equal(assignedTasks.suspend(), nullValue());
         EasyMock.verify(t1);
     }
 
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnSuspendWhenRuntimeException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnSuspendWhenRuntimeException() {
+        MockTaskInitialization();
         t1.suspend();
         EasyMock.expectLastCall().andThrow(new RuntimeException("KABOOM!"));
         t1.close(false, false);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), not(nullValue()));
+        Assert.Equal(SuspendTask(), not(nullValue()));
         Assert.Equal(assignedTasks.previousTaskIds(), (Collections.singleton(taskId1)));
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnSuspendIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnSuspendIfTaskMigratedException() {
+        MockTaskInitialization();
         t1.suspend();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), nullValue());
+        Assert.Equal(SuspendTask(), nullValue());
         Assert.True(assignedTasks.previousTaskIds().isEmpty());
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldResumeMatchingSuspendedTasks() {
-        mockRunningTaskSuspension();
+    public void ShouldResumeMatchingSuspendedTasks() {
+        MockRunningTaskSuspension();
         t1.resume();
         EasyMock.expectLastCall();
         t1.initializeTopology();
         EasyMock.expectLastCall().once();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), nullValue());
+        Assert.Equal(SuspendTask(), nullValue());
 
         Assert.True(assignedTasks.maybeResumeSuspendedTask(taskId1, Collections.singleton(tp1)));
         Assert.Equal(assignedTasks.runningTaskIds(), (Collections.singleton(taskId1)));
@@ -224,8 +224,8 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnResumeSuspendedIfTaskMigratedException() {
-        mockRunningTaskSuspension();
+    public void ShouldCloseTaskOnResumeSuspendedIfTaskMigratedException() {
+        MockRunningTaskSuspension();
         t1.resume();
         t1.initializeTopology();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
@@ -233,7 +233,7 @@ public class AssignedStreamsTasksTest {
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        Assert.Equal(suspendTask(), nullValue());
+        Assert.Equal(SuspendTask(), nullValue());
 
         try {
             assignedTasks.maybeResumeSuspendedTask(taskId1, Collections.singleton(tp1));
@@ -244,7 +244,7 @@ public class AssignedStreamsTasksTest {
         EasyMock.verify(t1);
     }
 
-    private void mockTaskInitialization() {
+    private void MockTaskInitialization() {
         EasyMock.expect(t1.initializeStateStores()).andReturn(true);
         t1.initializeTopology();
         EasyMock.expectLastCall().once();
@@ -253,29 +253,29 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldCommitRunningTasks() {
-        mockTaskInitialization();
+    public void ShouldCommitRunningTasks() {
+        MockTaskInitialization();
         EasyMock.expect(t1.commitNeeded()).andReturn(true);
         t1.commit();
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         assignedTasks.commit();
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnCommitIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnCommitIfTaskMigratedException() {
+        MockTaskInitialization();
         EasyMock.expect(t1.commitNeeded()).andReturn(true);
         t1.commit();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.commit();
@@ -287,13 +287,13 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowExceptionOnCommitWhenNotCommitFailedOrProducerFenced() {
-        mockTaskInitialization();
+    public void ShouldThrowExceptionOnCommitWhenNotCommitFailedOrProducerFenced() {
+        MockTaskInitialization();
         EasyMock.expect(t1.commitNeeded()).andReturn(true);
         t1.commit();
         EasyMock.expectLastCall().andThrow(new RuntimeException(""));
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.commit();
@@ -306,23 +306,23 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldCommitRunningTasksIfNeeded() {
-        mockTaskInitialization();
+    public void ShouldCommitRunningTasksIfNeeded() {
+        MockTaskInitialization();
         EasyMock.expect(t1.commitRequested()).andReturn(true);
         EasyMock.expect(t1.commitNeeded()).andReturn(true);
         t1.commit();
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         Assert.Equal(assignedTasks.maybeCommitPerUserRequested(), (1));
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnMaybeCommitIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnMaybeCommitIfTaskMigratedException() {
+        MockTaskInitialization();
         EasyMock.expect(t1.commitRequested()).andReturn(true);
         EasyMock.expect(t1.commitNeeded()).andReturn(true);
         t1.commit();
@@ -330,7 +330,7 @@ public class AssignedStreamsTasksTest {
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.maybeCommitPerUserRequested();
@@ -342,15 +342,15 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnProcessesIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnProcessesIfTaskMigratedException() {
+        MockTaskInitialization();
         EasyMock.expect(t1.isProcessable(0L)).andReturn(true);
         t1.process();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.process(0L);
@@ -362,11 +362,11 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotProcessUnprocessableTasks() {
-        mockTaskInitialization();
+    public void ShouldNotProcessUnprocessableTasks() {
+        MockTaskInitialization();
         EasyMock.expect(t1.isProcessable(0L)).andReturn(false);
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         Assert.Equal(assignedTasks.process(0L), (0));
 
@@ -374,14 +374,14 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldAlwaysProcessProcessableTasks() {
-        mockTaskInitialization();
+    public void ShouldAlwaysProcessProcessableTasks() {
+        MockTaskInitialization();
         EasyMock.expect(t1.isProcessable(0L)).andReturn(true);
         EasyMock.expect(t1.process()).andReturn(true).once();
 
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         Assert.Equal(assignedTasks.process(0L), (1));
 
@@ -389,27 +389,27 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldPunctuateRunningTasks() {
-        mockTaskInitialization();
+    public void ShouldPunctuateRunningTasks() {
+        MockTaskInitialization();
         EasyMock.expect(t1.maybePunctuateStreamTime()).andReturn(true);
         EasyMock.expect(t1.maybePunctuateSystemTime()).andReturn(true);
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         Assert.Equal(assignedTasks.punctuate(), (2));
         EasyMock.verify(t1);
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnMaybePunctuateStreamTimeIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnMaybePunctuateStreamTimeIfTaskMigratedException() {
+        MockTaskInitialization();
         t1.maybePunctuateStreamTime();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.punctuate();
@@ -421,15 +421,15 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseTaskOnMaybePunctuateSystemTimeIfTaskMigratedException() {
-        mockTaskInitialization();
+    public void ShouldCloseTaskOnMaybePunctuateSystemTimeIfTaskMigratedException() {
+        MockTaskInitialization();
         EasyMock.expect(t1.maybePunctuateStreamTime()).andReturn(true);
         t1.maybePunctuateSystemTime();
         EasyMock.expectLastCall().andThrow(new TaskMigratedException());
         t1.close(false, true);
         EasyMock.expectLastCall();
         EasyMock.replay(t1);
-        addAndInitTask();
+        AddAndInitTask();
 
         try {
             assignedTasks.punctuate();
@@ -439,29 +439,29 @@ public class AssignedStreamsTasksTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnNumberOfPunctuations() {
-        mockTaskInitialization();
+    public void ShouldReturnNumberOfPunctuations() {
+        MockTaskInitialization();
         EasyMock.expect(t1.maybePunctuateStreamTime()).andReturn(true);
         EasyMock.expect(t1.maybePunctuateSystemTime()).andReturn(false);
         EasyMock.replay(t1);
 
-        addAndInitTask();
+        AddAndInitTask();
 
         Assert.Equal(assignedTasks.punctuate(), (1));
         EasyMock.verify(t1);
     }
 
-    private void addAndInitTask() {
+    private void AddAndInitTask() {
         assignedTasks.addNewTask(t1);
         assignedTasks.initializeNewTasks();
     }
 
-    private RuntimeException suspendTask() {
-        addAndInitTask();
+    private RuntimeException SuspendTask() {
+        AddAndInitTask();
         return assignedTasks.suspend();
     }
 
-    private void mockRunningTaskSuspension() {
+    private void MockRunningTaskSuspension() {
         EasyMock.expect(t1.initializeStateStores()).andReturn(true);
         t1.initializeTopology();
         EasyMock.expectLastCall().once();

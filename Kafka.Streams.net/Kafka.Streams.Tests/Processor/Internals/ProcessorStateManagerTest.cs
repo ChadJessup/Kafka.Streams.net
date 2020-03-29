@@ -105,7 +105,7 @@ public class ProcessorStateManagerTest
     private StateDirectory stateDirectory;
 
 
-    public void setup()
+    public void Setup()
     {
         baseDir = TestUtils.tempDirectory();
 
@@ -121,13 +121,13 @@ checkpoint = new OffsetCheckpoint(checkpointFile);
     }
 
     
-    public void cleanup()
+    public void Cleanup()
 { //throws IOException
     Utils.delete(baseDir);
 }
 
 [Xunit.Fact]
-public void shouldRestoreStoreWithBatchingRestoreSpecification()
+public void ShouldRestoreStoreWithBatchingRestoreSpecification()
 {// throws Exception
     TaskId taskId = new TaskId(0, 2);
     MockBatchingStateRestoreListener batchingRestoreCallback = new MockBatchingStateRestoreListener();
@@ -155,7 +155,7 @@ public void shouldRestoreStoreWithBatchingRestoreSpecification()
 }
 
 [Xunit.Fact]
-public void shouldRestoreStoreWithSinglePutRestoreSpecification()
+public void ShouldRestoreStoreWithSinglePutRestoreSpecification()
 {// throws Exception
     TaskId taskId = new TaskId(0, 2);
     int intKey = 1;
@@ -182,7 +182,7 @@ public void shouldRestoreStoreWithSinglePutRestoreSpecification()
 }
 
 [Xunit.Fact]
-public void shouldConvertDataOnRestoreIfStoreImplementsTimestampedBytesStore()
+public void ShouldConvertDataOnRestoreIfStoreImplementsTimestampedBytesStore()
 {// throws Exception
     TaskId taskId = new TaskId(0, 2);
     int intKey = 1;
@@ -209,7 +209,7 @@ public void shouldConvertDataOnRestoreIfStoreImplementsTimestampedBytesStore()
 }
 
 [Xunit.Fact]
-public void testRegisterPersistentStore()
+public void TestRegisterPersistentStore()
 { //throws IOException
     TaskId taskId = new TaskId(0, 2);
 
@@ -239,7 +239,7 @@ public void testRegisterPersistentStore()
 }
 
 [Xunit.Fact]
-public void testRegisterNonPersistentStore()
+public void TestRegisterNonPersistentStore()
 { //throws IOException
     MockKeyValueStore nonPersistentStore =
         new MockKeyValueStore(nonPersistentStoreName, false); // non persistent store
@@ -268,7 +268,7 @@ public void testRegisterNonPersistentStore()
 }
 
 [Xunit.Fact]
-public void testChangeLogOffsets()
+public void TestChangeLogOffsets()
 { //throws IOException
     TaskId taskId = new TaskId(0, 0);
     long storeTopic1LoadedCheckpoint = 10L;
@@ -335,7 +335,7 @@ public void testChangeLogOffsets()
 }
 
 [Xunit.Fact]
-public void testGetStore()
+public void TestGetStore()
 { //throws IOException
     MockKeyValueStore mockKeyValueStore = new MockKeyValueStore(nonPersistentStoreName, false);
     ProcessorStateManager stateMgr = new ProcessorStateManager(
@@ -362,7 +362,7 @@ public void testGetStore()
 }
 
 [Xunit.Fact]
-public void testFlushAndClose()
+public void TestFlushAndClose()
 { //throws IOException
     checkpoint.write(emptyMap());
 
@@ -413,7 +413,7 @@ public void testFlushAndClose()
 }
 
 [Xunit.Fact]
-public void shouldMaintainRegistrationOrderWhenReregistered()
+public void ShouldMaintainRegistrationOrderWhenReregistered()
 { //throws IOException
     checkpoint.write(emptyMap());
 
@@ -450,7 +450,7 @@ public void shouldMaintainRegistrationOrderWhenReregistered()
 }
 
 [Xunit.Fact]
-public void shouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic()
+public void ShouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic()
 { //throws IOException
     ProcessorStateManager stateMgr = new ProcessorStateManager(
         new TaskId(0, 1),
@@ -466,7 +466,7 @@ public void shouldRegisterStoreWithoutLoggingEnabledAndNotBackedByATopic()
 }
 
 [Xunit.Fact]
-public void shouldNotChangeOffsetsIfAckedOffsetsIsNull()
+public void ShouldNotChangeOffsetsIfAckedOffsetsIsNull()
 { //throws IOException
     Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
     checkpoint.write(offsets);
@@ -488,7 +488,7 @@ public void shouldNotChangeOffsetsIfAckedOffsetsIsNull()
 }
 
 [Xunit.Fact]
-public void shouldIgnoreIrrelevantLoadedCheckpoints()
+public void ShouldIgnoreIrrelevantLoadedCheckpoints()
 { //throws IOException
     Dictionary<TopicPartition, long> offsets = mkMap(
         mkEntry(persistentStorePartition, 99L),
@@ -517,7 +517,7 @@ public void shouldIgnoreIrrelevantLoadedCheckpoints()
 }
 
 [Xunit.Fact]
-public void shouldOverrideLoadedCheckpointsWithRestoredCheckpoints()
+public void ShouldOverrideLoadedCheckpointsWithRestoredCheckpoints()
 { //throws IOException
     Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
     checkpoint.write(offsets);
@@ -543,7 +543,7 @@ public void shouldOverrideLoadedCheckpointsWithRestoredCheckpoints()
 }
 
 [Xunit.Fact]
-public void shouldIgnoreIrrelevantRestoredCheckpoints()
+public void ShouldIgnoreIrrelevantRestoredCheckpoints()
 { //throws IOException
     Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
     checkpoint.write(offsets);
@@ -573,7 +573,7 @@ public void shouldIgnoreIrrelevantRestoredCheckpoints()
 }
 
 [Xunit.Fact]
-public void shouldOverrideRestoredOffsetsWithProcessedOffsets()
+public void ShouldOverrideRestoredOffsetsWithProcessedOffsets()
 { //throws IOException
     Dictionary<TopicPartition, long> offsets = singletonMap(persistentStorePartition, 99L);
     checkpoint.write(offsets);
@@ -609,7 +609,7 @@ public void shouldOverrideRestoredOffsetsWithProcessedOffsets()
 }
 
 [Xunit.Fact]
-public void shouldWriteCheckpointForPersistentLogEnabledStore()
+public void ShouldWriteCheckpointForPersistentLogEnabledStore()
 { //throws IOException
     ProcessorStateManager stateMgr = new ProcessorStateManager(
         taskId,
@@ -628,7 +628,7 @@ public void shouldWriteCheckpointForPersistentLogEnabledStore()
 }
 
 [Xunit.Fact]
-public void shouldWriteCheckpointForStandbyReplica()
+public void ShouldWriteCheckpointForStandbyReplica()
 { //throws IOException
     ProcessorStateManager stateMgr = new ProcessorStateManager(
         taskId,
@@ -656,7 +656,7 @@ public void shouldWriteCheckpointForStandbyReplica()
 }
 
 [Xunit.Fact]
-public void shouldNotWriteCheckpointForNonPersistent()
+public void ShouldNotWriteCheckpointForNonPersistent()
 { //throws IOException
     TopicPartition topicPartition = new TopicPartition(nonPersistentStoreTopicName, 1);
 
@@ -678,7 +678,7 @@ public void shouldNotWriteCheckpointForNonPersistent()
 }
 
 [Xunit.Fact]
-public void shouldNotWriteCheckpointForStoresWithoutChangelogTopic()
+public void ShouldNotWriteCheckpointForStoresWithoutChangelogTopic()
 { //throws IOException
     ProcessorStateManager stateMgr = new ProcessorStateManager(
         taskId,
@@ -699,7 +699,7 @@ public void shouldNotWriteCheckpointForStoresWithoutChangelogTopic()
 }
 
 [Xunit.Fact]
-public void shouldThrowIllegalArgumentExceptionIfStoreNameIsSameAsCheckpointFileName()
+public void ShouldThrowIllegalArgumentExceptionIfStoreNameIsSameAsCheckpointFileName()
 { //throws IOException
     ProcessorStateManager stateManager = new ProcessorStateManager(
         taskId,
@@ -723,7 +723,7 @@ public void shouldThrowIllegalArgumentExceptionIfStoreNameIsSameAsCheckpointFile
 }
 
 [Xunit.Fact]
-public void shouldThrowIllegalArgumentExceptionOnRegisterWhenStoreHasAlreadyBeenRegistered()
+public void ShouldThrowIllegalArgumentExceptionOnRegisterWhenStoreHasAlreadyBeenRegistered()
 { //throws IOException
     ProcessorStateManager stateManager = new ProcessorStateManager(
         taskId,
@@ -750,7 +750,7 @@ public void shouldThrowIllegalArgumentExceptionOnRegisterWhenStoreHasAlreadyBeen
 }
 
 [Xunit.Fact]
-public void shouldThrowProcessorStateExceptionOnFlushIfStoreThrowsAnException()
+public void ShouldThrowProcessorStateExceptionOnFlushIfStoreThrowsAnException()
 { //throws IOException
 
     ProcessorStateManager stateManager = new ProcessorStateManager(
@@ -783,7 +783,7 @@ stateManager.register(stateStore, stateStore.stateRestoreCallback);
     }
 
     [Xunit.Fact]
-public void shouldThrowProcessorStateExceptionOnCloseIfStoreThrowsAnException()
+public void ShouldThrowProcessorStateExceptionOnCloseIfStoreThrowsAnException()
 { //throws IOException
 
     ProcessorStateManager stateManager = new ProcessorStateManager(
@@ -818,9 +818,9 @@ stateManager.register(stateStore, stateStore.stateRestoreCallback);
     // if the optional is absent, it'll throw an exception and fail the test.
     
     [Xunit.Fact]
-public void shouldLogAWarningIfCheckpointThrowsAnIOException()
+public void ShouldLogAWarningIfCheckpointThrowsAnIOException()
 {
-    LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+    LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
     ProcessorStateManager stateMgr;
     try
@@ -844,15 +844,15 @@ public void shouldLogAWarningIfCheckpointThrowsAnIOException()
 
     stateDirectory.clean();
     stateMgr.checkpoint(singletonMap(persistentStorePartition, 10L));
-    LogCaptureAppender.unregister(appender);
+    LogCaptureAppender.Unregister(appender);
 
     bool foundExpectedLogMessage = false;
     foreach (LogCaptureAppender.Event logEvent in appender.getEvents())
     {
-        if ("WARN".equals(logEvent.getLevel())
-            && logEvent.getMessage().startsWith("process-state-manager-test Failed to write offset checkpoint file to [")
-            && logEvent.getMessage().endsWith(".checkpoint]")
-            && logEvent.getThrowableInfo().get().startsWith("java.io.FileNotFoundException: "))
+        if ("WARN".equals(logEvent.GetLevel())
+            && logEvent.GetMessage().startsWith("process-state-manager-test Failed to write offset checkpoint file to [")
+            && logEvent.GetMessage().endsWith(".checkpoint]")
+            && logEvent.GetThrowableInfo().get().startsWith("java.io.FileNotFoundException: "))
         {
 
             foundExpectedLogMessage = true;
@@ -863,7 +863,7 @@ public void shouldLogAWarningIfCheckpointThrowsAnIOException()
 }
 
 [Xunit.Fact]
-public void shouldFlushAllStoresEvenIfStoreThrowsException()
+public void ShouldFlushAllStoresEvenIfStoreThrowsException()
 { //throws IOException
     AtomicBoolean flushedStore = new AtomicBoolean(false);
 
@@ -880,7 +880,7 @@ MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
 {
 
 
-            public void flush()
+            public void Flush()
 {
     flushedStore.set(true);
 }
@@ -905,7 +905,7 @@ stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
     }
 
     [Xunit.Fact]
-public void shouldCloseAllStoresEvenIfStoreThrowsExcepiton()
+public void ShouldCloseAllStoresEvenIfStoreThrowsExcepiton()
 { //throws IOException
 
     AtomicBoolean closedStore = new AtomicBoolean(false);
@@ -923,7 +923,7 @@ MockKeyValueStore stateStore2 = new MockKeyValueStore(storeName + "2", true)
 {
 
 
-            public void close()
+            public void Close()
 {
     closedStore.set(true);
 }
@@ -948,7 +948,7 @@ stateManager.register(stateStore1, stateStore1.stateRestoreCallback);
     }
 
     [Xunit.Fact]
-public void shouldDeleteCheckpointFileOnCreationIfEosEnabled()
+public void ShouldDeleteCheckpointFileOnCreationIfEosEnabled()
 { //throws IOException
     checkpoint.write(singletonMap(new TopicPartition(persistentStoreTopicName, 1), 123L));
     Assert.True(checkpointFile.exists());
@@ -978,18 +978,18 @@ public void shouldDeleteCheckpointFileOnCreationIfEosEnabled()
 }
 
 [Xunit.Fact]
-public void shouldSuccessfullyReInitializeStateStoresWithEosDisable()
+public void ShouldSuccessfullyReInitializeStateStoresWithEosDisable()
 {// throws Exception
     shouldSuccessfullyReInitializeStateStores(false);
 }
 
 [Xunit.Fact]
-public void shouldSuccessfullyReInitializeStateStoresWithEosEnable()
+public void ShouldSuccessfullyReInitializeStateStoresWithEosEnable()
 {// throws Exception
     shouldSuccessfullyReInitializeStateStores(true);
 }
 
-private void shouldSuccessfullyReInitializeStateStores(bool eosEnabled)
+private void ShouldSuccessfullyReInitializeStateStores(bool eosEnabled)
 {// throws Exception
     string store2Name = "store2";
     string store2Changelog = "store2-changelog";
@@ -1033,7 +1033,7 @@ private void shouldSuccessfullyReInitializeStateStores(bool eosEnabled)
         Assert.True(stateStore2.initialized);
     }
 
-    private ProcessorStateManager getStandByStateManager(TaskId taskId)
+    private ProcessorStateManager GetStandByStateManager(TaskId taskId)
 { //throws IOException
     return new ProcessorStateManager(
         taskId,
@@ -1046,12 +1046,12 @@ private void shouldSuccessfullyReInitializeStateStores(bool eosEnabled)
         logContext);
 }
 
-private MockKeyValueStore getPersistentStore()
+private MockKeyValueStore GetPersistentStore()
 {
     return new MockKeyValueStore("persistentStore", true);
 }
 
-private MockKeyValueStore getConverterStore()
+private MockKeyValueStore GetConverterStore()
 {
     return new ConverterStore("persistentStore", true);
 }

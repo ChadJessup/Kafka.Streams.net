@@ -53,7 +53,7 @@ public class TimestampedKeyValueStoreMaterializerTest {
     private InternalNameProvider nameProvider;
 
     [Xunit.Fact]
-    public void shouldCreateBuilderThatBuildsMeteredStoreWithCachingAndLoggingEnabled() {
+    public void ShouldCreateBuilderThatBuildsMeteredStoreWithCachingAndLoggingEnabled() {
         MaterializedInternal<string, string, KeyValueStore<Bytes, byte[]>> materialized =
             new MaterializedInternal<>(Materialized.As("store"), nameProvider, storePrefix);
 
@@ -68,7 +68,7 @@ public class TimestampedKeyValueStoreMaterializerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateBuilderThatBuildsStoreWithCachingDisabled() {
+    public void ShouldCreateBuilderThatBuildsStoreWithCachingDisabled() {
         MaterializedInternal<string, string, KeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
             Materialized<string, string, KeyValueStore<Bytes, byte[]>>.As("store").withCachingDisabled(), nameProvider, storePrefix
         );
@@ -80,7 +80,7 @@ public class TimestampedKeyValueStoreMaterializerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateBuilderThatBuildsStoreWithLoggingDisabled() {
+    public void ShouldCreateBuilderThatBuildsStoreWithLoggingDisabled() {
         MaterializedInternal<string, string, KeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
             Materialized<string, string, KeyValueStore<Bytes, byte[]>>.As("store").withLoggingDisabled(), nameProvider, storePrefix
         );
@@ -93,7 +93,7 @@ public class TimestampedKeyValueStoreMaterializerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateBuilderThatBuildsStoreWithCachingAndLoggingDisabled() {
+    public void ShouldCreateBuilderThatBuildsStoreWithCachingAndLoggingDisabled() {
         MaterializedInternal<string, string, KeyValueStore<Bytes, byte[]>> materialized = new MaterializedInternal<>(
             Materialized<string, string, KeyValueStore<Bytes, byte[]>>.As("store").withCachingDisabled().withLoggingDisabled(), nameProvider, storePrefix
         );
@@ -106,7 +106,7 @@ public class TimestampedKeyValueStoreMaterializerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateKeyValueStoreWithTheProvidedInnerStore() {
+    public void ShouldCreateKeyValueStoreWithTheProvidedInnerStore() {
         KeyValueBytesStoreSupplier supplier = EasyMock.createNiceMock(KeyValueBytesStoreSupplier);
         InMemoryKeyValueStore store = new InMemoryKeyValueStore("name");
         EasyMock.expect(supplier.name()).andReturn("name").anyTimes();

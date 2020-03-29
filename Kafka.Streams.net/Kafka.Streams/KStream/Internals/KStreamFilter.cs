@@ -30,7 +30,7 @@ namespace Kafka.Streams.KStream.Internals
             this.filterNot = filterNot;
         }
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return new KStreamFilterProcessor<K, V>();
         }

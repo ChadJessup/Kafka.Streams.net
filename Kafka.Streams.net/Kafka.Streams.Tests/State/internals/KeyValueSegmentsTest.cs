@@ -52,7 +52,7 @@ public class KeyValueSegmentsTest {
     private string storeName = "test";
 
     
-    public void createContext() {
+    public void CreateContext() {
         stateDirectory = TestUtils.tempDirectory();
         context = new InternalMockProcessorContext(
             stateDirectory,
@@ -65,12 +65,12 @@ public class KeyValueSegmentsTest {
     }
 
     
-    public void close() {
+    public void Close() {
         segments.close();
     }
 
     [Xunit.Fact]
-    public void shouldGetSegmentIdsFromTimestamp() {
+    public void ShouldGetSegmentIdsFromTimestamp() {
         Assert.Equal(0, segments.segmentId(0));
         Assert.Equal(1, segments.segmentId(SEGMENT_INTERVAL));
         Assert.Equal(2, segments.segmentId(2 * SEGMENT_INTERVAL));
@@ -78,7 +78,7 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldBaseSegmentIntervalOnRetentionAndNumSegments() {
+    public void ShouldBaseSegmentIntervalOnRetentionAndNumSegments() {
         KeyValueSegments segments = new KeyValueSegments("test", 8 * SEGMENT_INTERVAL, 2 * SEGMENT_INTERVAL);
         Assert.Equal(0, segments.segmentId(0));
         Assert.Equal(0, segments.segmentId(SEGMENT_INTERVAL));
@@ -86,14 +86,14 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSegmentNameFromId() {
+    public void ShouldGetSegmentNameFromId() {
         Assert.Equal("test.0", segments.segmentName(0));
         Assert.Equal("test." + SEGMENT_INTERVAL, segments.segmentName(1));
         Assert.Equal("test." + 2 * SEGMENT_INTERVAL, segments.segmentName(2));
     }
 
     [Xunit.Fact]
-    public void shouldCreateSegments() {
+    public void ShouldCreateSegments() {
         KeyValueSegment segment1 = segments.getOrCreateSegmentIfLive(0, context, -1L);
         KeyValueSegment segment2 = segments.getOrCreateSegmentIfLive(1, context, -1L);
         KeyValueSegment segment3 = segments.getOrCreateSegmentIfLive(2, context, -1L);
@@ -106,14 +106,14 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCreateSegmentThatIsAlreadyExpired() {
-        long streamTime = updateStreamTimeAndCreateSegment(7);
+    public void ShouldNotCreateSegmentThatIsAlreadyExpired() {
+        long streamTime = UpdateStreamTimeAndCreateSegment(7);
         assertNull(segments.getOrCreateSegmentIfLive(0, context, streamTime));
         Assert.False(new File(context.stateDir(), "test/test.0").exists());
     }
 
     [Xunit.Fact]
-    public void shouldCleanupSegmentsThatHaveExpired() {
+    public void ShouldCleanupSegmentsThatHaveExpired() {
         KeyValueSegment segment1 = segments.getOrCreateSegmentIfLive(0, context, -1L);
         KeyValueSegment segment2 = segments.getOrCreateSegmentIfLive(1, context, -1L);
         KeyValueSegment segment3 = segments.getOrCreateSegmentIfLive(7, context, SEGMENT_INTERVAL * 7L);
@@ -126,20 +126,20 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSegmentForTimestamp() {
+    public void ShouldGetSegmentForTimestamp() {
         KeyValueSegment segment = segments.getOrCreateSegmentIfLive(0, context, -1L);
         segments.getOrCreateSegmentIfLive(1, context, -1L);
         Assert.Equal(segment, segments.getSegmentForTimestamp(0L));
     }
 
     [Xunit.Fact]
-    public void shouldGetCorrectSegmentString() {
+    public void ShouldGetCorrectSegmentString() {
         KeyValueSegment segment = segments.getOrCreateSegmentIfLive(0, context, -1L);
         Assert.Equal("KeyValueSegment(id=0, name=test.0)", segment.toString());
     }
 
     [Xunit.Fact]
-    public void shouldCloseAllOpenSegments() {
+    public void ShouldCloseAllOpenSegments() {
         KeyValueSegment first = segments.getOrCreateSegmentIfLive(0, context, -1L);
         KeyValueSegment second = segments.getOrCreateSegmentIfLive(1, context, -1L);
         KeyValueSegment third = segments.getOrCreateSegmentIfLive(2, context, -1L);
@@ -151,7 +151,7 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldOpenExistingSegments() {
+    public void ShouldOpenExistingSegments() {
         segments = new KeyValueSegments("test", 4, 1);
         segments.getOrCreateSegmentIfLive(0, context, -1L);
         segments.getOrCreateSegmentIfLive(1, context, -1L);
@@ -172,12 +172,12 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSegmentsWithinTimeRange() {
-        updateStreamTimeAndCreateSegment(0);
-        updateStreamTimeAndCreateSegment(1);
-        updateStreamTimeAndCreateSegment(2);
-        updateStreamTimeAndCreateSegment(3);
-        long streamTime = updateStreamTimeAndCreateSegment(4);
+    public void ShouldGetSegmentsWithinTimeRange() {
+        UpdateStreamTimeAndCreateSegment(0);
+        UpdateStreamTimeAndCreateSegment(1);
+        UpdateStreamTimeAndCreateSegment(2);
+        UpdateStreamTimeAndCreateSegment(3);
+        long streamTime = UpdateStreamTimeAndCreateSegment(4);
         segments.getOrCreateSegmentIfLive(0, context, streamTime);
         segments.getOrCreateSegmentIfLive(1, context, streamTime);
         segments.getOrCreateSegmentIfLive(2, context, streamTime);
@@ -192,12 +192,12 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSegmentsWithinTimeRangeOutOfOrder() {
-        updateStreamTimeAndCreateSegment(4);
-        updateStreamTimeAndCreateSegment(2);
-        updateStreamTimeAndCreateSegment(0);
-        updateStreamTimeAndCreateSegment(1);
-        updateStreamTimeAndCreateSegment(3);
+    public void ShouldGetSegmentsWithinTimeRangeOutOfOrder() {
+        UpdateStreamTimeAndCreateSegment(4);
+        UpdateStreamTimeAndCreateSegment(2);
+        UpdateStreamTimeAndCreateSegment(0);
+        UpdateStreamTimeAndCreateSegment(1);
+        UpdateStreamTimeAndCreateSegment(3);
 
         List<KeyValueSegment> segments = this.segments.segments(0, 2 * SEGMENT_INTERVAL);
         Assert.Equal(3, segments.Count);
@@ -207,49 +207,49 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldRollSegments() {
-        updateStreamTimeAndCreateSegment(0);
-        verifyCorrectSegments(0, 1);
-        updateStreamTimeAndCreateSegment(1);
-        verifyCorrectSegments(0, 2);
-        updateStreamTimeAndCreateSegment(2);
-        verifyCorrectSegments(0, 3);
-        updateStreamTimeAndCreateSegment(3);
-        verifyCorrectSegments(0, 4);
-        updateStreamTimeAndCreateSegment(4);
-        verifyCorrectSegments(0, 5);
-        updateStreamTimeAndCreateSegment(5);
-        verifyCorrectSegments(1, 5);
-        updateStreamTimeAndCreateSegment(6);
-        verifyCorrectSegments(2, 5);
+    public void ShouldRollSegments() {
+        UpdateStreamTimeAndCreateSegment(0);
+        VerifyCorrectSegments(0, 1);
+        UpdateStreamTimeAndCreateSegment(1);
+        VerifyCorrectSegments(0, 2);
+        UpdateStreamTimeAndCreateSegment(2);
+        VerifyCorrectSegments(0, 3);
+        UpdateStreamTimeAndCreateSegment(3);
+        VerifyCorrectSegments(0, 4);
+        UpdateStreamTimeAndCreateSegment(4);
+        VerifyCorrectSegments(0, 5);
+        UpdateStreamTimeAndCreateSegment(5);
+        VerifyCorrectSegments(1, 5);
+        UpdateStreamTimeAndCreateSegment(6);
+        VerifyCorrectSegments(2, 5);
     }
 
     [Xunit.Fact]
-    public void futureEventsShouldNotCauseSegmentRoll() {
-        updateStreamTimeAndCreateSegment(0);
-        verifyCorrectSegments(0, 1);
-        updateStreamTimeAndCreateSegment(1);
-        verifyCorrectSegments(0, 2);
-        updateStreamTimeAndCreateSegment(2);
-        verifyCorrectSegments(0, 3);
-        updateStreamTimeAndCreateSegment(3);
-        verifyCorrectSegments(0, 4);
-        long streamTime = updateStreamTimeAndCreateSegment(4);
-        verifyCorrectSegments(0, 5);
+    public void FutureEventsShouldNotCauseSegmentRoll() {
+        UpdateStreamTimeAndCreateSegment(0);
+        VerifyCorrectSegments(0, 1);
+        UpdateStreamTimeAndCreateSegment(1);
+        VerifyCorrectSegments(0, 2);
+        UpdateStreamTimeAndCreateSegment(2);
+        VerifyCorrectSegments(0, 3);
+        UpdateStreamTimeAndCreateSegment(3);
+        VerifyCorrectSegments(0, 4);
+        long streamTime = UpdateStreamTimeAndCreateSegment(4);
+        VerifyCorrectSegments(0, 5);
         segments.getOrCreateSegmentIfLive(5, context, streamTime);
-        verifyCorrectSegments(0, 6);
+        VerifyCorrectSegments(0, 6);
         segments.getOrCreateSegmentIfLive(6, context, streamTime);
-        verifyCorrectSegments(0, 7);
+        VerifyCorrectSegments(0, 7);
     }
 
-    private long updateStreamTimeAndCreateSegment(int segment) {
+    private long UpdateStreamTimeAndCreateSegment(int segment) {
         long streamTime = SEGMENT_INTERVAL * segment;
         segments.getOrCreateSegmentIfLive(segment, context, streamTime);
         return streamTime;
     }
 
     [Xunit.Fact]
-    public void shouldUpdateSegmentFileNameFromOldDateFormatToNewFormat() {// throws Exception
+    public void ShouldUpdateSegmentFileNameFromOldDateFormatToNewFormat() {// throws Exception
         long segmentInterval = 60_000L; // the old segment file's naming system maxes out at 1 minute granularity.
 
         segments = new KeyValueSegments(storeName, NUM_SEGMENTS * segmentInterval, segmentInterval);
@@ -278,7 +278,7 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldUpdateSegmentFileNameFromOldColonFormatToNewFormat() {// throws Exception
+    public void ShouldUpdateSegmentFileNameFromOldColonFormatToNewFormat() {// throws Exception
         string storeDirectoryPath = stateDirectory.getAbsolutePath() + File.separator + storeName;
         File storeDirectory = new File(storeDirectoryPath);
         //noinspection ResultOfMethodCallIgnored
@@ -299,13 +299,13 @@ public class KeyValueSegmentsTest {
     }
 
     [Xunit.Fact]
-    public void shouldClearSegmentsOnClose() {
+    public void ShouldClearSegmentsOnClose() {
         segments.getOrCreateSegmentIfLive(0, context, -1L);
         segments.close();
         Assert.Equal(segments.getSegmentForTimestamp(0), is(nullValue()));
     }
 
-    private void verifyCorrectSegments(long first, int numSegments) {
+    private void VerifyCorrectSegments(long first, int numSegments) {
         List<KeyValueSegment> result = this.segments.segments(0, long.MaxValue);
         Assert.Equal(numSegments, result.Count);
         for (int i = 0; i < numSegments; i++) {

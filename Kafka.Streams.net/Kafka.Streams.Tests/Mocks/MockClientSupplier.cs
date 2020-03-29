@@ -28,7 +28,7 @@ namespace Kafka.Streams.Tests
             throw new System.NotImplementedException();
         }
 
-        public IProducer<byte[], byte[]> getProducer(ProducerConfig config)
+        public IProducer<byte[], byte[]> GetProducer(ProducerConfig config)
         {
             throw new System.NotImplementedException();
         }

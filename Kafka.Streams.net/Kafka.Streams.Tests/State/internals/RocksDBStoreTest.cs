@@ -72,10 +72,10 @@ public class RocksDBStoreTest {
     RocksDBStore rocksDBStore;
 
     
-    public void setUp() {
+    public void SetUp() {
         Properties props = StreamsTestUtils.getStreamsConfig();
         props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, MockRocksDbConfigSetter);
-        rocksDBStore = getRocksDBStore();
+        rocksDBStore = GetRocksDBStore();
         dir = TestUtils.tempDirectory();
         context = new InternalMockProcessorContext(dir,
             Serdes.String(),
@@ -83,17 +83,17 @@ public class RocksDBStoreTest {
             new StreamsConfig(props));
     }
 
-    RocksDBStore getRocksDBStore() {
+    RocksDBStore GetRocksDBStore() {
         return new RocksDBStore(DB_NAME);
     }
 
     
-    public void tearDown() {
+    public void TearDown() {
         rocksDBStore.close();
     }
 
     [Xunit.Fact]
-    public void shouldRespectBulkloadOptionsDuringInit() {
+    public void ShouldRespectBulkloadOptionsDuringInit() {
         rocksDBStore.init(context, rocksDBStore);
 
         StateRestoreListener restoreListener = context.getRestoreListener(rocksDBStore.name());
@@ -112,7 +112,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionOnRestoreWhenThereIsPreExistingRocksDbFiles() {
+    public void ShouldNotThrowExceptionOnRestoreWhenThereIsPreExistingRocksDbFiles() {
         rocksDBStore.init(context, rocksDBStore);
 
         string message = "how can a 4 ounce bird carry a 2lb coconut";
@@ -138,7 +138,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCallRocksDbConfigSetter() {
+    public void ShouldCallRocksDbConfigSetter() {
         MockRocksDbConfigSetter.called = false;
 
         rocksDBStore.openDB(context);
@@ -147,7 +147,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowProcessorStateExceptionOnOpeningReadOnlyDir() {
+    public void ShouldThrowProcessorStateExceptionOnOpeningReadOnlyDir() {
         File tmpDir = TestUtils.tempDirectory();
         InternalMockProcessorContext tmpContext = new InternalMockProcessorContext(tmpDir, new StreamsConfig(StreamsTestUtils.getStreamsConfig()));
 
@@ -162,7 +162,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutAll() {
+    public void ShouldPutAll() {
         List<KeyValuePair<Bytes, byte[]>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>(
             new Bytes(stringSerializer.serialize(null, "1")),
@@ -196,7 +196,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldTogglePrepareForBulkloadSetting() {
+    public void ShouldTogglePrepareForBulkloadSetting() {
         rocksDBStore.init(context, rocksDBStore);
         RocksDBStore.RocksDBBatchingRestoreCallback restoreListener =
             (RocksDBStore.RocksDBBatchingRestoreCallback) rocksDBStore.batchingStateRestoreCallback;
@@ -209,8 +209,8 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldTogglePrepareForBulkloadSettingWhenPrexistingSstFiles() {
-        List<KeyValuePair<byte[], byte[]>> entries = getKeyValueEntries();
+    public void ShouldTogglePrepareForBulkloadSettingWhenPrexistingSstFiles() {
+        List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
 
         rocksDBStore.init(context, rocksDBStore);
         context.restore(rocksDBStore.name(), entries);
@@ -226,8 +226,8 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreAll() {
-        List<KeyValuePair<byte[], byte[]>> entries = getKeyValueEntries();
+    public void ShouldRestoreAll() {
+        List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
 
         rocksDBStore.init(context, rocksDBStore);
         context.restore(rocksDBStore.name(), entries);
@@ -250,7 +250,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldPutOnlyIfAbsentValue() {
+    public void ShouldPutOnlyIfAbsentValue() {
         rocksDBStore.init(context, rocksDBStore);
         Bytes keyBytes = new Bytes(stringSerializer.serialize(null, "one"));
         byte[] valueBytes = stringSerializer.serialize(null, "A");
@@ -264,8 +264,8 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleDeletesOnRestoreAll() {
-        List<KeyValuePair<byte[], byte[]>> entries = getKeyValueEntries();
+    public void ShouldHandleDeletesOnRestoreAll() {
+        List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
         entries.add(new KeyValuePair<>("1".getBytes(UTF_8), null));
 
         rocksDBStore.init(context, rocksDBStore);
@@ -282,7 +282,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleDeletesAndPutbackOnRestoreAll() {
+    public void ShouldHandleDeletesAndPutbackOnRestoreAll() {
         List<KeyValuePair<byte[], byte[]>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>("1".getBytes(UTF_8), "a".getBytes(UTF_8)));
         entries.add(new KeyValuePair<>("2".getBytes(UTF_8), "b".getBytes(UTF_8)));
@@ -322,8 +322,8 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldRestoreThenDeleteOnRestoreAll() {
-        List<KeyValuePair<byte[], byte[]>> entries = getKeyValueEntries();
+    public void ShouldRestoreThenDeleteOnRestoreAll() {
+        List<KeyValuePair<byte[], byte[]>> entries = GetKeyValueEntries();
 
         rocksDBStore.init(context, rocksDBStore);
 
@@ -364,7 +364,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnNullPut() {
+    public void ShouldThrowNullPointerExceptionOnNullPut() {
         rocksDBStore.init(context, rocksDBStore);
         try {
             rocksDBStore.put(null, stringSerializer.serialize(null, "someVal"));
@@ -375,7 +375,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnNullPutAll() {
+    public void ShouldThrowNullPointerExceptionOnNullPutAll() {
         rocksDBStore.init(context, rocksDBStore);
         try {
             rocksDBStore.put(null, stringSerializer.serialize(null, "someVal"));
@@ -386,7 +386,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnNullGet() {
+    public void ShouldThrowNullPointerExceptionOnNullGet() {
         rocksDBStore.init(context, rocksDBStore);
         try {
             rocksDBStore.get(null);
@@ -397,7 +397,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnDelete() {
+    public void ShouldThrowNullPointerExceptionOnDelete() {
         rocksDBStore.init(context, rocksDBStore);
         try {
             rocksDBStore.delete(null);
@@ -408,7 +408,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNullPointerExceptionOnRange() {
+    public void ShouldThrowNullPointerExceptionOnRange() {
         rocksDBStore.init(context, rocksDBStore);
         try {
             rocksDBStore.range(null, new Bytes(stringSerializer.serialize(null, "2")));
@@ -419,7 +419,7 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]// (expected = ProcessorStateException)
-    public void shouldThrowProcessorStateExceptionOnPutDeletedDir(){ //throws IOException
+    public void ShouldThrowProcessorStateExceptionOnPutDeletedDir(){ //throws IOException
         rocksDBStore.init(context, rocksDBStore);
         Utils.delete(dir);
         rocksDBStore.put(
@@ -429,11 +429,11 @@ public class RocksDBStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldHandleToggleOfEnablingBloomFilters() {
+    public void ShouldHandleToggleOfEnablingBloomFilters() {
 
         Properties props = StreamsTestUtils.getStreamsConfig();
         props.put(StreamsConfig.ROCKSDB_CONFIG_SETTER_CLASS_CONFIG, TestingBloomFilterRocksDBConfigSetter);
-        rocksDBStore = getRocksDBStore();
+        rocksDBStore = GetRocksDBStore();
         dir = TestUtils.tempDirectory();
         context = new InternalMockProcessorContext(dir,
             Serdes.String(),
@@ -448,7 +448,7 @@ public class RocksDBStoreTest {
         expectedValues.add("b");
         expectedValues.add("c");
 
-        List<KeyValuePair<byte[], byte[]>> keyValues = getKeyValueEntries();
+        List<KeyValuePair<byte[], byte[]>> keyValues = GetKeyValueEntries();
         foreach (KeyValuePair<byte[], byte[]> keyValue in keyValues) {
             rocksDBStore.put(new Bytes(keyValue.key), keyValue.value);
         }
@@ -480,7 +480,7 @@ public class RocksDBStoreTest {
         static bool called;
 
         
-        public void setConfig(string storeName, Options options, Dictionary<string, object> configs) {
+        public void SetConfig(string storeName, Options options, Dictionary<string, object> configs) {
             called = true;
 
             options.setLevel0FileNumCompactionTrigger(10);
@@ -494,7 +494,7 @@ public class RocksDBStoreTest {
         static Cache cache;
 
         
-        public void setConfig(string storeName, Options options, Dictionary<string, object> configs) {
+        public void SetConfig(string storeName, Options options, Dictionary<string, object> configs) {
             BlockBasedTableConfig tableConfig = new BlockBasedTableConfig();
             cache = new LRUCache(50 * 1024 * 1024L);
             tableConfig.setBlockCache(cache);
@@ -513,7 +513,7 @@ public class RocksDBStoreTest {
         }
 
         
-        public void close(string storeName, Options options) {
+        public void Close(string storeName, Options options) {
             if (filter != null) {
                 filter.close();
             }
@@ -521,7 +521,7 @@ public class RocksDBStoreTest {
         }
     }
 
-    private List<KeyValuePair<byte[], byte[]>> getKeyValueEntries() {
+    private List<KeyValuePair<byte[], byte[]>> GetKeyValueEntries() {
         List<KeyValuePair<byte[], byte[]>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>("1".getBytes(UTF_8), "a".getBytes(UTF_8)));
         entries.add(new KeyValuePair<>("2".getBytes(UTF_8), "b".getBytes(UTF_8)));

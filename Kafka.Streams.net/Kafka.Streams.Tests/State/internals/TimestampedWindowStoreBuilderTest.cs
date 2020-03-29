@@ -48,7 +48,7 @@ public class TimestampedWindowStoreBuilderTest {
     private TimestampedWindowStoreBuilder<string, string> builder;
 
     
-    public void setUp() {
+    public void SetUp() {
         expect(supplier.get()).andReturn(inner);
         expect(supplier.name()).andReturn("name");
         expect(inner.persistent()).andReturn(true).anyTimes();
@@ -62,27 +62,27 @@ public class TimestampedWindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveMeteredStoreAsOuterStore() {
+    public void ShouldHaveMeteredStoreAsOuterStore() {
         TimestampedWindowStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredTimestampedWindowStore));
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreByDefault() {
+    public void ShouldHaveChangeLoggingStoreByDefault() {
         TimestampedWindowStore<string, string> store = builder.build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, instanceOf(ChangeLoggingTimestampedWindowBytesStore));
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveChangeLoggingStoreWhenDisabled() {
+    public void ShouldNotHaveChangeLoggingStoreWhenDisabled() {
         TimestampedWindowStore<string, string> store = builder.withLoggingDisabled().build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, CoreMatchers.equalTo(inner));
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingStoreWhenEnabled() {
+    public void ShouldHaveCachingStoreWhenEnabled() {
         TimestampedWindowStore<string, string> store = builder.withCachingEnabled().build();
         StateStore wrapped = ((WrappedStateStore) store).wrapped();
         Assert.Equal(store, instanceOf(MeteredTimestampedWindowStore));
@@ -90,7 +90,7 @@ public class TimestampedWindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreWhenLoggingEnabled() {
+    public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled() {
         TimestampedWindowStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .build();
@@ -101,7 +101,7 @@ public class TimestampedWindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingAndChangeLoggingWhenBothEnabled() {
+    public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled() {
         TimestampedWindowStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .withCachingEnabled()
@@ -115,7 +115,7 @@ public class TimestampedWindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotWrapTimestampedByteStore() {
+    public void ShouldNotWrapTimestampedByteStore() {
         reset(supplier);
         expect(supplier.get()).andReturn(new RocksDBTimestampedWindowStore(
             new RocksDBTimestampedSegmentedBytesStore(
@@ -137,7 +137,7 @@ public class TimestampedWindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldWrapPlainKeyValueStoreAsTimestampStore() {
+    public void ShouldWrapPlainKeyValueStoreAsTimestampStore() {
         reset(supplier);
         expect(supplier.get()).andReturn(new RocksDBWindowStore(
             new RocksDBSegmentedBytesStore(
@@ -160,22 +160,22 @@ public class TimestampedWindowStoreBuilderTest {
 
     
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfInnerIsNull() {
+    public void ShouldThrowNullPointerIfInnerIsNull() {
         new TimestampedWindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfKeySerdeIsNull() {
+    public void ShouldThrowNullPointerIfKeySerdeIsNull() {
         new TimestampedWindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfValueSerdeIsNull() {
+    public void ShouldThrowNullPointerIfValueSerdeIsNull() {
         new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfTimeIsNull() {
+    public void ShouldThrowNullPointerIfTimeIsNull() {
         new TimestampedWindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
     }
 

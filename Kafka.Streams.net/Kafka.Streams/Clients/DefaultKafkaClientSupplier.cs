@@ -32,7 +32,7 @@ namespace Kafka.Streams.Clients
                 .Build();
         }
 
-        public IProducer<byte[], byte[]> getProducer(ProducerConfig config)
+        public IProducer<byte[], byte[]> GetProducer(ProducerConfig config)
         {
             //var convertedConfig = config.ToDictionary(k => k.Key, v => v.Value.ToString());
 

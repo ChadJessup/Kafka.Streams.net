@@ -70,14 +70,14 @@ public class KafkaEmbedded {
         tmpFolder = new TemporaryFolder();
         tmpFolder.create();
         logDir = tmpFolder.newFolder();
-        effectiveConfig = effectiveConfigFrom(config);
+        effectiveConfig = EffectiveConfigFrom(config);
         bool loggingEnabled = true;
         KafkaConfig kafkaConfig = new KafkaConfig(effectiveConfig, loggingEnabled);
         log.debug("Starting embedded Kafka broker (with log.dirs={} and ZK ensemble at {}) ...",
-            logDir, zookeeperConnect());
+            logDir, ZookeeperConnect());
         kafka = TestUtils.createServer(kafkaConfig, time);
         log.debug("Startup of embedded Kafka broker at {} completed (with ZK ensemble at {}) ...",
-            brokerList(), zookeeperConnect());
+            BrokerList(), ZookeeperConnect());
     }
 
     /**
@@ -86,7 +86,7 @@ public class KafkaEmbedded {
      *
      * @param initialConfig Broker configuration settings that override the default config.
      */
-    private Properties effectiveConfigFrom(Properties initialConfig) {
+    private Properties EffectiveConfigFrom(Properties initialConfig) {
         Properties effectiveConfig = new Properties();
         effectiveConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), 0);
         effectiveConfig.put(KafkaConfig$.MODULE$.HostNameProp(), "localhost");
@@ -108,7 +108,7 @@ public class KafkaEmbedded {
      * You can use this to tell Kafka producers and consumers how to connect to this instance.
      */
     
-    public string brokerList() {
+    public string BrokerList() {
         object listenerConfig = effectiveConfig.get(KafkaConfig$.MODULE$.InterBrokerListenerNameProp());
         return kafka.config().hostName() + ":" + kafka.boundPort(
             new ListenerName(listenerConfig != null ? listenerConfig.toString() : "PLAINTEXT"));
@@ -119,7 +119,7 @@ public class KafkaEmbedded {
      * The ZooKeeper connection string aka `zookeeper.connect`.
      */
     
-    public string zookeeperConnect() {
+    public string ZookeeperConnect() {
         return effectiveConfig.getProperty("zookeeper.connect", DEFAULT_ZK_CONNECT);
     }
 
@@ -127,9 +127,9 @@ public class KafkaEmbedded {
      * Stop the broker.
      */
     
-    public void stop() {
+    public void Stop() {
         log.debug("Shutting down embedded Kafka broker at {} (with ZK ensemble at {}) ...",
-            brokerList(), zookeeperConnect());
+            BrokerList(), ZookeeperConnect());
         kafka.shutdown();
         kafka.awaitShutdown();
         log.debug("Removing log dir at {} ...", logDir);
@@ -140,7 +140,7 @@ public class KafkaEmbedded {
         }
         tmpFolder.delete();
         log.debug("Shutdown of embedded Kafka broker at {} completed (with ZK ensemble at {}) ...",
-            brokerList(), zookeeperConnect());
+            BrokerList(), ZookeeperConnect());
     }
 
     /**
@@ -148,7 +148,7 @@ public class KafkaEmbedded {
      *
      * @param topic The name of the topic.
      */
-    public void createTopic(string topic) {
+    public void CreateTopic(string topic) {
         createTopic(topic, 1, 1, Collections.emptyMap());
     }
 
@@ -159,7 +159,7 @@ public class KafkaEmbedded {
      * @param partitions  The number of partitions for this topic.
      * @param replication The replication factor for (the partitions of) this topic.
      */
-    public void createTopic(string topic, int partitions, int replication) {
+    public void CreateTopic(string topic, int partitions, int replication) {
         createTopic(topic, partitions, replication, Collections.emptyMap());
     }
 
@@ -171,7 +171,7 @@ public class KafkaEmbedded {
      * @param replication The replication factor for (partitions of) this topic.
      * @param topicConfig Additional topic-level configuration settings.
      */
-    public void createTopic(string topic,
+    public void CreateTopic(string topic,
                             int partitions,
                             int replication,
                             Dictionary<string, string> topicConfig) {
@@ -191,7 +191,7 @@ public class KafkaEmbedded {
     
     public Admin createAdminClient() {
         Properties adminClientConfig = new Properties();
-        adminClientConfig.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, brokerList());
+        adminClientConfig.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, BrokerList());
         object listeners = effectiveConfig.get(KafkaConfig$.MODULE$.ListenersProp());
         if (listeners != null && listeners.toString().Contains("SSL")) {
             adminClientConfig.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, effectiveConfig.get(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG));
@@ -215,7 +215,7 @@ public class KafkaEmbedded {
     }
 
     
-    public KafkaServer kafkaServer() {
+    public KafkaServer KafkaServer() {
         return kafka;
     }
 }

@@ -50,12 +50,12 @@ public class ReadOnlyWindowStoreFacadeTest {
     private ReadOnlyWindowStoreFacade<string, string> readOnlyWindowStoreFacade;
 
     
-    public void setup() {
+    public void Setup() {
         readOnlyWindowStoreFacade = new ReadOnlyWindowStoreFacade<>(mockedWindowTimestampStore);
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnSingleKeyFetch() {
+    public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetch() {
         expect(mockedWindowTimestampStore.fetch("key1", 21L))
             .andReturn(ValueAndTimestamp.make("value1", 42L));
         expect(mockedWindowTimestampStore.fetch("unknownKey", 21L))
@@ -69,7 +69,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnSingleKeyFetchLongParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetchLongParameters() {
         expect(mockedWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(21L, ValueAndTimestamp.make("value1", 22L)))
             .andReturn(KeyValuePair.Create(42L, ValueAndTimestamp.make("value2", 23L)));
@@ -86,7 +86,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnSingleKeyFetchInstantParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnSingleKeyFetchInstantParameters() {
         expect(mockedWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(21L, ValueAndTimestamp.make("value1", 22L)))
             .andReturn(KeyValuePair.Create(42L, ValueAndTimestamp.make("value2", 23L)));
@@ -103,7 +103,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnRangeFetchLongParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnRangeFetchLongParameters() {
         expect(mockedKeyValueWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(
                 new Windowed<>("key1", new TimeWindow(21L, 22L)),
@@ -124,7 +124,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnRangeFetchInstantParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnRangeFetchInstantParameters() {
         expect(mockedKeyValueWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(
                 new Windowed<>("key1", new TimeWindow(21L, 22L)),
@@ -145,7 +145,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnFetchAllLongParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnFetchAllLongParameters() {
         expect(mockedKeyValueWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(
                 new Windowed<>("key1", new TimeWindow(21L, 22L)),
@@ -166,7 +166,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnFetchAllInstantParameters() {
+    public void ShouldReturnPlainKeyValuePairsOnFetchAllInstantParameters() {
         expect(mockedKeyValueWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(
                 new Windowed<>("key1", new TimeWindow(21L, 22L)),
@@ -187,7 +187,7 @@ public class ReadOnlyWindowStoreFacadeTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnPlainKeyValuePairsOnAll() {
+    public void ShouldReturnPlainKeyValuePairsOnAll() {
         expect(mockedKeyValueWindowTimestampIterator.next())
             .andReturn(KeyValuePair.Create(
                 new Windowed<>("key1", new TimeWindow(21L, 22L)),

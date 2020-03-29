@@ -32,41 +32,41 @@ namespace Kafka.Streams.Processors.Internals
          * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
          * {@link StateRestoreListener#onRestoreStart(TopicPartition, string, long, long)}
          */
-        public void onRestoreStart(
+        public void OnRestoreStart(
             TopicPartition topicPartition,
             string storeName,
             long startingOffset,
             long endingOffset)
         {
-            userRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
-            storeRestoreListener.onRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            userRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
+            storeRestoreListener.OnRestoreStart(topicPartition, storeName, startingOffset, endingOffset);
         }
 
         /**
          * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
          * {@link StateRestoreListener#onBatchRestored(TopicPartition, string, long, long)}
          */
-        public void onBatchRestored(
+        public void OnBatchRestored(
             TopicPartition topicPartition,
             string storeName,
             long batchEndOffset,
             long numRestored)
         {
-            userRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
-            storeRestoreListener.onBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            userRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
+            storeRestoreListener.OnBatchRestored(topicPartition, storeName, batchEndOffset, numRestored);
         }
 
         /**
          * @throws StreamsException if user provided {@link StateRestoreListener} raises an exception in
          * {@link StateRestoreListener#onRestoreEnd(TopicPartition, string, long)}
          */
-        public void onRestoreEnd(
+        public void OnRestoreEnd(
             TopicPartition topicPartition,
             string storeName,
             long totalRestored)
         {
-            userRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
-            storeRestoreListener.onRestoreEnd(topicPartition, storeName, totalRestored);
+            userRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
+            storeRestoreListener.OnRestoreEnd(topicPartition, storeName, totalRestored);
         }
 
 

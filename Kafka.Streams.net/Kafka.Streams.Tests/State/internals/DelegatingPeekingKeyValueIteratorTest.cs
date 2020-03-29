@@ -33,12 +33,12 @@ public class DelegatingPeekingKeyValueIteratorTest {
     private KeyValueStore<string, string> store;
 
     
-    public void setUp() {
+    public void SetUp() {
         store = new GenericInMemoryKeyValueStore<>(name);
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextKey() {
+    public void ShouldPeekNextKey() {
         store.put("A", "A");
         DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         Assert.Equal("A", peekingIterator.peekNextKey());
@@ -48,7 +48,7 @@ public class DelegatingPeekingKeyValueIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekNext() {
+    public void ShouldPeekNext() {
         store.put("A", "A");
         DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         Assert.Equal(KeyValuePair.Create("A", "A"), peekingIterator.peekNext());
@@ -58,7 +58,7 @@ public class DelegatingPeekingKeyValueIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekAndIterate() {
+    public void ShouldPeekAndIterate() {
         string[] kvs = {"a", "b", "c", "d", "e", "f"};
         foreach (string kv in kvs) {
             store.put(kv, kv);
@@ -78,14 +78,14 @@ public class DelegatingPeekingKeyValueIteratorTest {
     }
 
     [Xunit.Fact]// (expected = NoSuchElementException)
-    public void shouldThrowNoSuchElementWhenNoMoreItemsLeftAndNextCalled() {
+    public void ShouldThrowNoSuchElementWhenNoMoreItemsLeftAndNextCalled() {
         DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         peekingIterator.next();
         peekingIterator.close();
     }
 
     [Xunit.Fact]// (expected = NoSuchElementException)
-    public void shouldThrowNoSuchElementWhenNoMoreItemsLeftAndPeekNextCalled() {
+    public void ShouldThrowNoSuchElementWhenNoMoreItemsLeftAndPeekNextCalled() {
         DelegatingPeekingKeyValueIterator<string, string> peekingIterator = new DelegatingPeekingKeyValueIterator<>(name, store.all());
         peekingIterator.peekNextKey();
         peekingIterator.close();

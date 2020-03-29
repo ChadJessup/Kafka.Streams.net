@@ -52,7 +52,7 @@ public class ThreadMetricsTest {
     private Dictionary<string, string> dummyTagMap = Collections.singletonMap("hello", "world");
 
     [Xunit.Fact]
-    public void shouldGetCreateTaskSensor() {
+    public void ShouldGetCreateTaskSensor() {
         string operation = "task-created";
         string totalDescription = "The total number of newly created tasks";
         string rateDescription = "The average per-second number of newly created tasks";
@@ -74,7 +74,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetCloseTaskSensor() {
+    public void ShouldGetCloseTaskSensor() {
         string operation = "task-closed";
         string totalDescription = "The total number of closed tasks";
         string rateDescription = "The average per-second number of closed tasks";
@@ -96,7 +96,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetCommitSensor() {
+    public void ShouldGetCommitSensor() {
         string operation = "commit";
         string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
         string totalDescription = "The total number of commit calls";
@@ -121,7 +121,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetPollSensor() {
+    public void ShouldGetPollSensor() {
         string operation = "poll";
         string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
         string totalDescription = "The total number of poll calls";
@@ -146,7 +146,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetProcessSensor() {
+    public void ShouldGetProcessSensor() {
         string operation = "process";
         string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
         string totalDescription = "The total number of process calls";
@@ -171,7 +171,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetPunctuateSensor() {
+    public void ShouldGetPunctuateSensor() {
         string operation = "punctuate";
         string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
         string totalDescription = "The total number of punctuate calls";
@@ -196,7 +196,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetSkipRecordSensor() {
+    public void ShouldGetSkipRecordSensor() {
         string operation = "skipped-records";
         string totalDescription = "The total number of skipped records";
         string rateDescription = "The average per-second number of skipped records";
@@ -218,7 +218,7 @@ public class ThreadMetricsTest {
     }
 
     [Xunit.Fact]
-    public void shouldGetCommitOverTasksSensor() {
+    public void ShouldGetCommitOverTasksSensor() {
         string operation = "commit";
         string operationLatency = operation + StreamsMetricsImpl.LATENCY_SUFFIX;
         string totalDescription = "The total number of commit calls over all tasks";

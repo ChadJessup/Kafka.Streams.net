@@ -37,7 +37,7 @@ namespace Kafka.Streams.Tests.Integration
         private int testNumber = 0;
 
 
-        public void createTopics()
+        public void CreateTopics()
         {// throws Exception
             applicationId = "appId-" + ++testNumber;
             CLUSTER.deleteTopicsAndWait(
@@ -52,42 +52,42 @@ namespace Kafka.Streams.Tests.Integration
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToRunWithEosEnabled()
+        public void ShouldBeAbleToRunWithEosEnabled()
         {// throws Exception
-            runSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToRestartAfterClose()
+        public void ShouldBeAbleToRestartAfterClose()
         {// throws Exception
-            runSimpleCopyTest(2, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(2, SINGLE_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToCommitToMultiplePartitions()
+        public void ShouldBeAbleToCommitToMultiplePartitions()
         {// throws Exception
-            runSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, MULTI_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, null, MULTI_PARTITION_OUTPUT_TOPIC);
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToCommitMultiplePartitionOffsets()
+        public void ShouldBeAbleToCommitMultiplePartitionOffsets()
         {// throws Exception
-            runSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, null, SINGLE_PARTITION_OUTPUT_TOPIC);
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToRunWithTwoSubtopologies()
+        public void ShouldBeAbleToRunWithTwoSubtopologies()
         {// throws Exception
-            runSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(1, SINGLE_PARTITION_INPUT_TOPIC, SINGLE_PARTITION_THROUGH_TOPIC, SINGLE_PARTITION_OUTPUT_TOPIC);
         }
 
         [Xunit.Fact]
-        public void shouldBeAbleToRunWithTwoSubtopologiesAndMultiplePartitions()
+        public void ShouldBeAbleToRunWithTwoSubtopologiesAndMultiplePartitions()
         {// throws Exception
-            runSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, MULTI_PARTITION_THROUGH_TOPIC, MULTI_PARTITION_OUTPUT_TOPIC);
+            RunSimpleCopyTest(1, MULTI_PARTITION_INPUT_TOPIC, MULTI_PARTITION_THROUGH_TOPIC, MULTI_PARTITION_OUTPUT_TOPIC);
         }
 
-        private void runSimpleCopyTest(int numberOfRestarts,
+        private void RunSimpleCopyTest(int numberOfRestarts,
                                        string inputTopic,
                                        string throughTopic,
                                        string outputTopic)
@@ -152,7 +152,7 @@ namespace Kafka.Streams.Tests.Integration
     }
 }
 
-private void checkResultPerKey(List<KeyValuePair<long, long>> result,
+private void CheckResultPerKey(List<KeyValuePair<long, long>> result,
                                List<KeyValuePair<long, long>> expectedResult)
 {
     HashSet<long> allKeys = new HashSet<>();
@@ -166,7 +166,7 @@ private void checkResultPerKey(List<KeyValuePair<long, long>> result,
 
 }
 
-private void addAllKeys(HashSet<long> allKeys,
+private void AddAllKeys(HashSet<long> allKeys,
                         List<KeyValuePair<long, long>> records)
 {
     foreach (KeyValuePair<long, long> record in records)
@@ -175,7 +175,7 @@ private void addAllKeys(HashSet<long> allKeys,
     }
 }
 
-private List<KeyValuePair<long, long>> getAllRecordPerKey(long key,
+private List<KeyValuePair<long, long>> GetAllRecordPerKey(long key,
                                                       List<KeyValuePair<long, long>> records)
 {
     List<KeyValuePair<long, long>> recordsPerKey = new ArrayList<>(records.Count);
@@ -192,7 +192,7 @@ private List<KeyValuePair<long, long>> getAllRecordPerKey(long key,
 }
 
 [Xunit.Fact]
-public void shouldBeAbleToPerformMultipleTransactions()
+public void ShouldBeAbleToPerformMultipleTransactions()
 {// throws Exception
     StreamsBuilder builder = new StreamsBuilder();
     builder.stream(SINGLE_PARTITION_INPUT_TOPIC).to(SINGLE_PARTITION_OUTPUT_TOPIC);
@@ -270,7 +270,7 @@ public void shouldBeAbleToPerformMultipleTransactions()
     }
 
 [Xunit.Fact]
-public void shouldNotViolateEosIfOneTaskFails()
+public void ShouldNotViolateEosIfOneTaskFails()
 {// throws Exception
  // this test writes 10 + 5 + 5 records per partition (running with 2 partitions)
  // the app is supposed to copy all 40 records into the output topic
@@ -338,7 +338,7 @@ public void shouldNotViolateEosIfOneTaskFails()
     }
 
 [Xunit.Fact]
-public void shouldNotViolateEosIfOneTaskFailsWithState()
+public void ShouldNotViolateEosIfOneTaskFailsWithState()
 {// throws Exception
  // this test updates a store with 10 + 5 + 5 records per partition (running with 2 partitions)
  // the app is supposed to emit all 40 update records into the output topic
@@ -413,7 +413,7 @@ public void shouldNotViolateEosIfOneTaskFailsWithState()
     }
 
 [Xunit.Fact]
-public void shouldNotViolateEosIfOneTaskGetsFencedUsingIsolatedAppInstances()
+public void ShouldNotViolateEosIfOneTaskGetsFencedUsingIsolatedAppInstances()
 {// throws Exception
  // this test writes 10 + 5 + 5 + 10 records per partition (running with 2 partitions)
  // the app is supposed to copy all 60 records into the output topic
@@ -661,7 +661,7 @@ streams.setUncaughtExceptionHandler((t, e) => {
         return streams;
     }
 
-    private void writeInputData(List<KeyValuePair<long, long>> records)
+    private void WriteInputData(List<KeyValuePair<long, long>> records)
 {// throws Exception
     IntegrationTestUtils.produceKeyValuesSynchronously(
         MULTI_PARTITION_INPUT_TOPIC,
@@ -671,7 +671,7 @@ streams.setUncaughtExceptionHandler((t, e) => {
     );
 }
 
-private List<KeyValuePair<long, long>> readResult(int numberOfRecords,
+private List<KeyValuePair<long, long>> ReadResult(int numberOfRecords,
                                               string groupId)
 {// throws Exception
     if (groupId != null)
@@ -698,7 +698,7 @@ private List<KeyValuePair<long, long>> readResult(int numberOfRecords,
     );
 }
 
-private List<KeyValuePair<long, long>> computeExpectedResult(List<KeyValuePair<long, long>> input)
+private List<KeyValuePair<long, long>> ComputeExpectedResult(List<KeyValuePair<long, long>> input)
 {
     List<KeyValuePair<long, long>> expectedResult = new ArrayList<>(input.Count);
 
@@ -722,7 +722,7 @@ private List<KeyValuePair<long, long>> computeExpectedResult(List<KeyValuePair<l
     return expectedResult;
 }
 
-private HashSet<KeyValuePair<long, long>> getMaxPerKey(List<KeyValuePair<long, long>> input)
+private HashSet<KeyValuePair<long, long>> GetMaxPerKey(List<KeyValuePair<long, long>> input)
 {
     HashSet<KeyValuePair<long, long>> expectedResult = new HashSet<>(input.Count);
 
@@ -746,7 +746,7 @@ private HashSet<KeyValuePair<long, long>> getMaxPerKey(List<KeyValuePair<long, l
     return expectedResult;
 }
 
-private void verifyStateStore(KafkaStreams streams,
+private void VerifyStateStore(KafkaStreams streams,
                               HashSet<KeyValuePair<long, long>> expectedStoreContent)
 {
     ReadOnlyKeyValueStore<long, long> store = null;

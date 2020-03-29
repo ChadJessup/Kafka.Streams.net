@@ -37,7 +37,7 @@ namespace Kafka.Streams.Processors.Internals
             this.userStateRestoreListener = userStateRestoreListener;
         }
 
-        public void register(StateRestorer restorer)
+        public void Register(StateRestorer restorer)
         {
             restorer = restorer ?? throw new ArgumentNullException(nameof(restorer));
 
@@ -52,7 +52,7 @@ namespace Kafka.Streams.Processors.Internals
             needsInitializing.Add(restorer.partition);
         }
 
-        public List<TopicPartition> restore(IRestoringTasks active)
+        public List<TopicPartition> Restore(IRestoringTasks active)
         {
             if (needsInitializing.Any())
             {
@@ -286,7 +286,7 @@ namespace Kafka.Streams.Processors.Internals
             }
         }
 
-        public Dictionary<TopicPartition, long> restoredOffsets()
+        public Dictionary<TopicPartition, long> RestoredOffsets()
         {
             var restoredOffsets = new Dictionary<TopicPartition, long>();
 
@@ -302,7 +302,7 @@ namespace Kafka.Streams.Processors.Internals
             return restoredOffsets;
         }
 
-        public void reset()
+        public void Reset()
         {
             partitionInfo.Clear();
             stateRestorers.Clear();

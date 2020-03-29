@@ -47,7 +47,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     private Dictionary<object, object> sent = new HashMap<>();
     private NoOpRecordCollector collector = new NoOpRecordCollector() {
         
-        public void send<K, V>(string topic,
+        public void Send<K, V>(string topic,
                                 K key,
                                 V value,
                                 Headers headers,
@@ -70,11 +70,11 @@ public class ChangeLoggingSessionBytesStoreTest {
     private Windowed<Bytes> key1 = new Windowed<>(bytesKey, new SessionWindow(0, 0));
 
     
-    public void setUp() {
+    public void SetUp() {
         store = new ChangeLoggingSessionBytesStore(inner);
     }
 
-    private void init() {
+    private void Init() {
         EasyMock.expect(context.taskId()).andReturn(taskId);
         EasyMock.expect(context.recordCollector()).andReturn(collector);
         inner.init(context, store);
@@ -85,7 +85,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogPuts() {
+    public void ShouldLogPuts() {
         inner.put(key1, value1);
         EasyMock.expectLastCall();
 
@@ -98,7 +98,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogRemoves() {
+    public void ShouldLogRemoves() {
         inner.remove(key1);
         EasyMock.expectLastCall();
 
@@ -112,7 +112,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFetching() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetching() {
         EasyMock.expect(inner.fetch(bytesKey)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
 
         init();
@@ -122,7 +122,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFetchingRange() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange() {
         EasyMock.expect(inner.fetch(bytesKey, bytesKey)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
 
         init();
@@ -132,7 +132,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFindingSessions() {
+    public void ShouldDelegateToUnderlyingStoreWhenFindingSessions() {
         EasyMock.expect(inner.findSessions(bytesKey, 0, 1)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
 
         init();
@@ -142,7 +142,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldDelegateToUnderlyingStoreWhenFindingSessionRange() {
+    public void ShouldDelegateToUnderlyingStoreWhenFindingSessionRange() {
         EasyMock.expect(inner.findSessions(bytesKey, bytesKey, 0, 1)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
 
         init();
@@ -152,7 +152,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFlushUnderlyingStore() {
+    public void ShouldFlushUnderlyingStore() {
         inner.flush();
         EasyMock.expectLastCall();
 
@@ -163,7 +163,7 @@ public class ChangeLoggingSessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldCloseUnderlyingStore() {
+    public void ShouldCloseUnderlyingStore() {
         inner.close();
         EasyMock.expectLastCall();
 

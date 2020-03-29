@@ -63,7 +63,7 @@ namespace Kafka.Streams.KStream.Internals
 
                 if (leftJoin || value2 != null)
                 {
-                    context.forward(key, joiner.apply(value, value2));
+                    context.forward(key, joiner.Apply(value, value2));
                 }
             }
         }

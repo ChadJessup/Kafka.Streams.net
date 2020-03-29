@@ -48,7 +48,7 @@ public class WindowStoreBuilderTest {
     private WindowStoreBuilder<string, string> builder;
 
     
-    public void setUp() {
+    public void SetUp() {
         expect(supplier.get()).andReturn(inner);
         expect(supplier.name()).andReturn("name");
         replay(supplier);
@@ -61,27 +61,27 @@ public class WindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveMeteredStoreAsOuterStore() {
+    public void ShouldHaveMeteredStoreAsOuterStore() {
         WindowStore<string, string> store = builder.build();
         Assert.Equal(store, instanceOf(MeteredWindowStore));
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreByDefault() {
+    public void ShouldHaveChangeLoggingStoreByDefault() {
         WindowStore<string, string> store = builder.build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, instanceOf(ChangeLoggingWindowBytesStore));
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveChangeLoggingStoreWhenDisabled() {
+    public void ShouldNotHaveChangeLoggingStoreWhenDisabled() {
         WindowStore<string, string> store = builder.withLoggingDisabled().build();
         StateStore next = ((WrappedStateStore) store).wrapped();
         Assert.Equal(next, CoreMatchers.equalTo(inner));
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingStoreWhenEnabled() {
+    public void ShouldHaveCachingStoreWhenEnabled() {
         WindowStore<string, string> store = builder.withCachingEnabled().build();
         StateStore wrapped = ((WrappedStateStore) store).wrapped();
         Assert.Equal(store, instanceOf(MeteredWindowStore));
@@ -89,7 +89,7 @@ public class WindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveChangeLoggingStoreWhenLoggingEnabled() {
+    public void ShouldHaveChangeLoggingStoreWhenLoggingEnabled() {
         WindowStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .build();
@@ -100,7 +100,7 @@ public class WindowStoreBuilderTest {
     }
 
     [Xunit.Fact]
-    public void shouldHaveCachingAndChangeLoggingWhenBothEnabled() {
+    public void ShouldHaveCachingAndChangeLoggingWhenBothEnabled() {
         WindowStore<string, string> store = builder
                 .withLoggingEnabled(Collections.emptyMap())
                 .withCachingEnabled()
@@ -115,22 +115,22 @@ public class WindowStoreBuilderTest {
 
     
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfInnerIsNull() {
+    public void ShouldThrowNullPointerIfInnerIsNull() {
         new WindowStoreBuilder<>(null, Serdes.String(), Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfKeySerdeIsNull() {
+    public void ShouldThrowNullPointerIfKeySerdeIsNull() {
         new WindowStoreBuilder<>(supplier, null, Serdes.String(), new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfValueSerdeIsNull() {
+    public void ShouldThrowNullPointerIfValueSerdeIsNull() {
         new WindowStoreBuilder<>(supplier, Serdes.String(), null, new MockTime());
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerIfTimeIsNull() {
+    public void ShouldThrowNullPointerIfTimeIsNull() {
         new WindowStoreBuilder<>(supplier, Serdes.String(), Serdes.String(), null);
     }
 

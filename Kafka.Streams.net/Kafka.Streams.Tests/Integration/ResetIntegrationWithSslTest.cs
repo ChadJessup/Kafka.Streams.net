@@ -65,29 +65,29 @@ public class ResetIntegrationWithSslTest : AbstractResetIntegrationTest {
     }
 
     
-    Dictionary<string, object> getClientSslConfig() {
+    Dictionary<string, object> GetClientSslConfig() {
         return sslConfig;
     }
 
     
-    public void before() {// throws Exception
+    public void Before() {// throws Exception
         testId = TEST_ID;
         cluster = CLUSTER;
         prepareTest();
     }
 
     
-    public void after() {// throws Exception
+    public void After() {// throws Exception
         cleanupTest();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromScratchAfterResetWithoutIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromScratchAfterResetWithoutIntermediateUserTopic();
     }
 
     [Xunit.Fact]
-    public void testReprocessingFromScratchAfterResetWithIntermediateUserTopic() {// throws Exception
+    public void TestReprocessingFromScratchAfterResetWithIntermediateUserTopic() {// throws Exception
         base.testReprocessingFromScratchAfterResetWithIntermediateUserTopic();
     }
 }

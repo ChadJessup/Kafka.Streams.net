@@ -92,7 +92,7 @@ namespace Kafka.Streams.Processors.Internals
 
                 try
                 {
-                    stateStore?.close();
+                    stateStore?.Close();
                 }
                 catch (RuntimeException ignoreAndSwallow)
                 {
@@ -129,7 +129,7 @@ namespace Kafka.Streams.Processors.Internals
                     throw new StreamsException(string.Format("Failed to reinitialize store %s.", storeName), fatalException);
                 }
 
-                stateStore?.init(processorContext, stateStore);
+                stateStore?.Init(processorContext, stateStore);
             }
         }
 

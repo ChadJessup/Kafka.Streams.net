@@ -43,7 +43,7 @@ namespace Kafka.Streams.KStream.Internals
             sendOldValues = true;
         }
 
-        public IKeyValueProcessor<K, Change<V>> get()
+        public IKeyValueProcessor<K, Change<V>> Get()
         {
             return null;// new KTableReduceProcessor<K, V>();
         }

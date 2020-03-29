@@ -12,19 +12,19 @@ namespace Kafka.Streams.State.ReadOnly
             inner = store;
         }
 
-        public V get(K key)
+        public V Get(K key)
         {
-            return ValueAndTimestamp.GetValueOrNull(inner.get(key));
+            return ValueAndTimestamp.GetValueOrNull(inner.Get(key));
         }
 
-        public IKeyValueIterator<K, V> range(K from, K to)
+        public IKeyValueIterator<K, V> Range(K from, K to)
         {
-            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)inner.range(from, to));
+            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)inner.Range(from, to));
         }
 
-        public IKeyValueIterator<K, V> all()
+        public IKeyValueIterator<K, V> All()
         {
-            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)inner.all());
+            return new KeyValueIteratorFacade<K, V>((IKeyValueIterator<K, V>)inner.All());
         }
 
         public long approximateNumEntries

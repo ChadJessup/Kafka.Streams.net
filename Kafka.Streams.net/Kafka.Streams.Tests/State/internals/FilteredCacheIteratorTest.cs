@@ -38,12 +38,12 @@ public class FilteredCacheIteratorTest {
 
     private static CacheFunction IDENTITY_FUNCTION = new CacheFunction() {
         
-        public Bytes key(Bytes cacheKey) {
+        public Bytes Key(Bytes cacheKey) {
             return cacheKey;
         }
 
         
-        public Bytes cacheKey(Bytes key) {
+        public Bytes CacheKey(Bytes key) {
             return key;
         }
     };
@@ -63,7 +63,7 @@ public class FilteredCacheIteratorTest {
     private FilteredCacheIterator firstEntryIterator;
 
     
-    public void before() {
+    public void Before() {
         store.putAll(entries);
         HasNextCondition allCondition = new HasNextCondition() {
             
@@ -77,7 +77,7 @@ public class FilteredCacheIteratorTest {
 
         HasNextCondition firstEntryCondition = new HasNextCondition() {
             
-            public bool hasNext(KeyValueIterator<Bytes, ?> iterator) {
+            public bool HasNext(KeyValueIterator<Bytes, ?> iterator) {
                 return iterator.hasNext() && iterator.peekNextKey().equals(firstEntry.key);
             }
         };
@@ -88,13 +88,13 @@ public class FilteredCacheIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldAllowEntryMatchingHasNextCondition() {
+    public void ShouldAllowEntryMatchingHasNextCondition() {
         List<KeyValuePair<Bytes, LRUCacheEntry>> keyValues = toList(allIterator);
         Assert.Equal(keyValues, (entries));
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextKey() {
+    public void ShouldPeekNextKey() {
         while (allIterator.hasNext()) {
             Bytes nextKey = allIterator.peekNextKey();
             KeyValuePair<Bytes, LRUCacheEntry> next = allIterator.next();
@@ -103,7 +103,7 @@ public class FilteredCacheIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldPeekNext() {
+    public void ShouldPeekNext() {
         while (allIterator.hasNext()) {
             KeyValuePair<Bytes, LRUCacheEntry> peeked = allIterator.peekNext();
             KeyValuePair<Bytes, LRUCacheEntry> next = allIterator.next();
@@ -112,20 +112,20 @@ public class FilteredCacheIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotHaveNextIfHasNextConditionNotMet() {
+    public void ShouldNotHaveNextIfHasNextConditionNotMet() {
         Assert.True(firstEntryIterator.hasNext());
         firstEntryIterator.next();
         Assert.False(firstEntryIterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldFilterEntriesNotMatchingHasNextCondition() {
+    public void ShouldFilterEntriesNotMatchingHasNextCondition() {
         List<KeyValuePair<Bytes, LRUCacheEntry>> keyValues = toList(firstEntryIterator);
         Assert.Equal(keyValues, (asList(firstEntry)));
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void shouldThrowUnsupportedOperationExeceptionOnRemove() {
+    public void ShouldThrowUnsupportedOperationExeceptionOnRemove() {
         allIterator.remove();
     }
 

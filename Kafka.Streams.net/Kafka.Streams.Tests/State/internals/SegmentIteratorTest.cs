@@ -47,7 +47,7 @@ public class SegmentIteratorTest {
     private SegmentIterator<KeyValueSegment> iterator = null;
 
     
-    public void before() {
+    public void Before() {
         InternalMockProcessorContext context = new InternalMockProcessorContext(
                 TestUtils.tempDirectory(),
                 Serdes.String(),
@@ -66,7 +66,7 @@ public class SegmentIteratorTest {
     }
 
     
-    public void closeSegments() {
+    public void CloseSegments() {
         if (iterator != null) {
             iterator.close();
             iterator = null;
@@ -76,7 +76,7 @@ public class SegmentIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldIterateOverAllSegments() {
+    public void ShouldIterateOverAllSegments() {
         iterator = new SegmentIterator<>(
             Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
@@ -103,7 +103,7 @@ public class SegmentIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionOnHasNextWhenStoreClosed() {
+    public void ShouldNotThrowExceptionOnHasNextWhenStoreClosed() {
         iterator = new SegmentIterator<>(
             Collections.singletonList(segmentOne).iterator(),
             hasNextCondition,
@@ -116,7 +116,7 @@ public class SegmentIteratorTest {
     }
 
     [Xunit.Fact]
-    public void shouldOnlyIterateOverSegmentsInRange() {
+    public void ShouldOnlyIterateOverSegmentsInRange() {
         iterator = new SegmentIterator<>(
             Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
@@ -135,7 +135,7 @@ public class SegmentIteratorTest {
     }
 
     [Xunit.Fact]// (expected = NoSuchElementException)
-    public void shouldThrowNoSuchElementOnPeekNextKeyIfNoNext() {
+    public void ShouldThrowNoSuchElementOnPeekNextKeyIfNoNext() {
         iterator = new SegmentIterator<>(
             Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
@@ -146,7 +146,7 @@ public class SegmentIteratorTest {
     }
 
     [Xunit.Fact]// (expected = NoSuchElementException)
-    public void shouldThrowNoSuchElementOnNextIfNoNext() {
+    public void ShouldThrowNoSuchElementOnNextIfNoNext() {
         iterator = new SegmentIterator<>(
             Array.asList(segmentOne, segmentTwo).iterator(),
             hasNextCondition,
@@ -156,7 +156,7 @@ public class SegmentIteratorTest {
         iterator.next();
     }
 
-    private KeyValuePair<string, string> toStringKeyValue(KeyValuePair<Bytes, byte[]> binaryKv) {
+    private KeyValuePair<string, string> ToStringKeyValue(KeyValuePair<Bytes, byte[]> binaryKv) {
         return KeyValuePair.Create(new string(binaryKv.key.get()), new string(binaryKv.value));
     }
 }

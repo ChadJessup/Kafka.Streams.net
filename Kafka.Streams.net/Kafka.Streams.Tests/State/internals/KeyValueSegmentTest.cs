@@ -37,7 +37,7 @@
 public class KeyValueSegmentTest {
 
     [Xunit.Fact]
-    public void shouldDeleteStateDirectoryOnDestroy() {// throws Exception
+    public void ShouldDeleteStateDirectoryOnDestroy() {// throws Exception
         KeyValueSegment segment = new KeyValueSegment("segment", "window", 0L);
         string directoryPath = TestUtils.tempDirectory().getAbsolutePath();
         File directory = new File(directoryPath);
@@ -58,7 +58,7 @@ public class KeyValueSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldBeEqualIfIdIsEqual() {
+    public void ShouldBeEqualIfIdIsEqual() {
         KeyValueSegment segment = new KeyValueSegment("anyName", "anyName", 0L);
         KeyValueSegment segmentSameId = new KeyValueSegment("someOtherName", "someOtherName", 0L);
         KeyValueSegment segmentDifferentId = new KeyValueSegment("anyName", "anyName", 1L);
@@ -71,7 +71,7 @@ public class KeyValueSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldHashOnSegmentIdOnly() {
+    public void ShouldHashOnSegmentIdOnly() {
         KeyValueSegment segment = new KeyValueSegment("anyName", "anyName", 0L);
         KeyValueSegment segmentSameId = new KeyValueSegment("someOtherName", "someOtherName", 0L);
         KeyValueSegment segmentDifferentId = new KeyValueSegment("anyName", "anyName", 1L);
@@ -83,7 +83,7 @@ public class KeyValueSegmentTest {
     }
 
     [Xunit.Fact]
-    public void shouldCompareSegmentIdOnly() {
+    public void ShouldCompareSegmentIdOnly() {
         KeyValueSegment segment1 = new KeyValueSegment("a", "C", 50L);
         KeyValueSegment segment2 = new KeyValueSegment("b", "B", 100L);
         KeyValueSegment segment3 = new KeyValueSegment("c", "A", 0L);

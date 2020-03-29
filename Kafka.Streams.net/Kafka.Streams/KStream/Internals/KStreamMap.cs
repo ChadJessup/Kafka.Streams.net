@@ -20,7 +20,7 @@ namespace Kafka.Streams.KStream.Internals
             this.mapper = new KeyValueMapper<K, V, KeyValuePair<K1, V1>>(mapper);
         }
 
-        public IKeyValueProcessor<K, V> get()
+        public IKeyValueProcessor<K, V> Get()
         {
             return new KStreamMapProcessor<K, V>();
         }

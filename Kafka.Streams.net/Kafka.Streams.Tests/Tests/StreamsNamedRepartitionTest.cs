@@ -6,7 +6,7 @@ namespace Kafka.Streams.Tests.Tools
     public class StreamsNamedRepartitionTest
     {
 
-        public static void main(string[] args)
+        public static void Main(string[] args)
         {// throws Exception
             if (args.Length < 1)
             {

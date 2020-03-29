@@ -30,7 +30,7 @@ namespace Kafka.Streams.State.KeyValues
          * @return The old value or {@code null} if there is no such key.
          * @throws ArgumentNullException If {@code null} is used for key.
          */
-        V putIfAbsent(K key, V value);
+        V PutIfAbsent(K key, V value);
 
         /**
          * Update all the given key/value pairs.
@@ -39,7 +39,7 @@ namespace Kafka.Streams.State.KeyValues
          *                if the serialized bytes are also {@code null} it is interpreted as deletes
          * @throws ArgumentNullException If {@code null} is used for key.
          */
-        void putAll(List<KeyValuePair<K, V>> entries);
+        void PutAll(List<KeyValuePair<K, V>> entries);
 
         /**
          * Delete the value from the store (if there is one).
@@ -48,7 +48,7 @@ namespace Kafka.Streams.State.KeyValues
          * @return The old value or {@code null} if there is no such key.
          * @throws ArgumentNullException If {@code null} is used for key.
          */
-        V delete(K key);
+        V Delete(K key);
     }
 
     public interface IKeyValueStore

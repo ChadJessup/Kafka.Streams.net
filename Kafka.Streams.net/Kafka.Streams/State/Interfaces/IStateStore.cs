@@ -45,12 +45,12 @@ namespace Kafka.Streams.State
          * @throws InvalidOperationException If store gets registered after initialized is already finished
          * @throws StreamsException if the store's change log does not contain the partition
          */
-        void init(IProcessorContext context, IStateStore root);
+        void Init(IProcessorContext context, IStateStore root);
 
         /**
          * Flush any cached data
          */
-        void flush();
+        void Flush();
 
         /**
          * Close the storage engine.
@@ -60,7 +60,7 @@ namespace Kafka.Streams.State
          * Users only need to implement this function but should NEVER need to call this api explicitly
          * as it will be called by the library automatically when necessary
          */
-        void close();
+        void Close();
 
         /**
          * Return if the storage is persistent or not.
@@ -73,7 +73,7 @@ namespace Kafka.Streams.State
          * Is this store open for reading and writing
          * @return {@code true} if the store is open
          */
-        bool isOpen();
-        bool isPresent();
+        bool IsOpen();
+        bool IsPresent();
     }
 }

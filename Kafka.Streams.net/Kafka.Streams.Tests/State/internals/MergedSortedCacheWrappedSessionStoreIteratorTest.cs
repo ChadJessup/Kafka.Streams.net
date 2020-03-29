@@ -35,7 +35,7 @@ public class MergedSortedCacheWrappedSessionStoreIteratorTest {
 
     private static SegmentedCacheFunction SINGLE_SEGMENT_CACHE_FUNCTION = new SegmentedCacheFunction(null, -1) {
         
-        public long segmentId(Bytes key) {
+        public long SegmentId(Bytes key) {
             return 0;
         }
     };
@@ -54,50 +54,50 @@ public class MergedSortedCacheWrappedSessionStoreIteratorTest {
         )).iterator();
 
     [Xunit.Fact]
-    public void shouldHaveNextFromStore() {
+    public void ShouldHaveNextFromStore() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.True(mergeIterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldGetNextFromStore() {
+    public void ShouldGetNextFromStore() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.Equal(mergeIterator.next(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.get())));
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextKeyFromStore() {
+    public void ShouldPeekNextKeyFromStore() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(storeKey, storeWindow)));
     }
 
     [Xunit.Fact]
-    public void shouldHaveNextFromCache() {
+    public void ShouldHaveNextFromCache() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.True(mergeIterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void shouldGetNextFromCache() {
+    public void ShouldGetNextFromCache() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.Equal(mergeIterator.next(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.get())));
     }
 
     [Xunit.Fact]
-    public void shouldPeekNextKeyFromCache() {
+    public void ShouldPeekNextKeyFromCache() {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(cacheKey, cacheWindow)));
     }
 
     [Xunit.Fact]
-    public void shouldIterateBothStoreAndCache() {
+    public void ShouldIterateBothStoreAndCache() {
         MergedSortedCacheSessionStoreIterator iterator = createIterator(storeKvs, cacheKvs);
         Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.get())));
         Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.get())));
         Assert.False(iterator.hasNext());
     }
 
-    private MergedSortedCacheSessionStoreIterator createIterator(Iterator<KeyValuePair<Windowed<Bytes>, byte[]>> storeKvs,
+    private MergedSortedCacheSessionStoreIterator CreateIterator(Iterator<KeyValuePair<Windowed<Bytes>, byte[]>> storeKvs,
                                                                  Iterator<KeyValuePair<Bytes, LRUCacheEntry>> cacheKvs) {
         DelegatingPeekingKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator =
             new DelegatingPeekingKeyValueIterator<>("store", new KeyValueIteratorStub<>(storeKvs));

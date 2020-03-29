@@ -21,7 +21,7 @@
 public class RocksDBTimestampedSegmentedBytesStoreTest
     : AbstractRocksDBSegmentedBytesStoreTest<TimestampedSegment> {
 
-    RocksDBTimestampedSegmentedBytesStore getBytesStore() {
+    RocksDBTimestampedSegmentedBytesStore GetBytesStore() {
         return new RocksDBTimestampedSegmentedBytesStore(
             storeName,
             "metrics-scope",
@@ -32,12 +32,12 @@ public class RocksDBTimestampedSegmentedBytesStoreTest
     }
 
     
-    TimestampedSegments newSegments() {
+    TimestampedSegments NewSegments() {
         return new TimestampedSegments(storeName, retention, segmentInterval);
     }
 
     
-    Options getOptions(TimestampedSegment segment) {
+    Options GetOptions(TimestampedSegment segment) {
         return segment.getOptions();
     }
 }

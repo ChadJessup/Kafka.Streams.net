@@ -54,7 +54,7 @@ public class GlobalStateStoreProviderTest {
     private Dictionary<string, StateStore> stores = new HashMap<>();
 
     
-    public void before() {
+    public void Before() {
         stores.put(
             "kv-store",
             Stores.keyValueStoreBuilder(
@@ -100,7 +100,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnSingleItemListIfStoreExists() {
+    public void ShouldReturnSingleItemListIfStoreExists() {
         GlobalStateStoreProvider provider =
             new GlobalStateStoreProvider(Collections.singletonMap("global", new NoOpReadOnlyStore<>()));
         List<ReadOnlyKeyValueStore<object, object>> stores =
@@ -109,7 +109,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnEmptyItemListIfStoreDoesntExist() {
+    public void ShouldReturnEmptyItemListIfStoreDoesntExist() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(Collections.emptyMap());
         List<ReadOnlyKeyValueStore<object, object>> stores =
             provider.stores("global", QueryableStoreTypes.keyValueStore());
@@ -117,7 +117,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowExceptionIfStoreIsntOpen() {
+    public void ShouldThrowExceptionIfStoreIsntOpen() {
         NoOpReadOnlyStore<object, object> store = new NoOpReadOnlyStore<>();
         store.close();
         GlobalStateStoreProvider provider =
@@ -126,7 +126,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnKeyValueStore() {
+    public void ShouldReturnKeyValueStore() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
         List<ReadOnlyKeyValueStore<string, string>> stores =
             provider.stores("kv-store", QueryableStoreTypes.keyValueStore());
@@ -138,7 +138,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnTimestampedKeyValueStore() {
+    public void ShouldReturnTimestampedKeyValueStore() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-kv-store", QueryableStoreTypes.timestampedKeyValueStore());
@@ -150,7 +150,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotReturnKeyValueStoreAsTimestampedStore() {
+    public void ShouldNotReturnKeyValueStoreAsTimestampedStore() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("kv-store", QueryableStoreTypes.timestampedKeyValueStore());
@@ -158,7 +158,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnTimestampedKeyValueStoreAsKeyValueStore() {
+    public void ShouldReturnTimestampedKeyValueStoreAsKeyValueStore() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
         List<ReadOnlyKeyValueStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-kv-store", QueryableStoreTypes.keyValueStore());
@@ -170,7 +170,7 @@ public class GlobalStateStoreProviderTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnTimestampedWindowStoreAsWindowStore() {
+    public void ShouldReturnTimestampedWindowStoreAsWindowStore() {
         GlobalStateStoreProvider provider = new GlobalStateStoreProvider(stores);
         List<ReadOnlyWindowStore<string, ValueAndTimestamp<string>>> stores =
             provider.stores("ts-w-store", QueryableStoreTypes.windowStore());

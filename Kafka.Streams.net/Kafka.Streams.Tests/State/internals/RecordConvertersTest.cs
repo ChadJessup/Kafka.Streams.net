@@ -31,13 +31,13 @@ public class RecordConvertersTest {
     private RecordConverter timestampedValueConverter = rawValueToTimestampedValue();
 
     [Xunit.Fact]
-    public void shouldPreserveNullValueOnConversion() {
+    public void ShouldPreserveNullValueOnConversion() {
         ConsumeResult<byte[], byte[]> nullValueRecord = new ConsumeResult<>("", 0, 0L, new byte[0], null);
         assertNull(timestampedValueConverter.convert(nullValueRecord).Value);
     }
 
     [Xunit.Fact]
-    public void shouldAddTimestampToValueOnConversionWhenValueIsNotNull() {
+    public void ShouldAddTimestampToValueOnConversionWhenValueIsNotNull() {
         long timestamp = 10L;
         byte[] value = new byte[1];
         ConsumeResult<byte[], byte[]> inputRecord = new ConsumeResult<>(

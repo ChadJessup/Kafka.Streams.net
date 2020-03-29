@@ -15,7 +15,7 @@ namespace Kafka.Streams.Tests
         {
         }
 
-        public ConsumerRecords<K, V> poll(Duration timeout)
+        public ConsumerRecords<K, V> Poll(Duration timeout)
         {
             Assert.NotNull(streamThread);
             //if (shutdownOnPoll)
@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests
             return null;// base.Poll(timeout);
         }
 
-        private void setStreamThread(StreamThread streamThread)
+        private void SetStreamThread(StreamThread streamThread)
         {
             this.streamThread = streamThread;
         }

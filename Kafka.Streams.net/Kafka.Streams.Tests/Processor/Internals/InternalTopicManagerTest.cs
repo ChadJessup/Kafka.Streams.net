@@ -76,7 +76,7 @@ public class InternalTopicManagerTest {
     };
 
     
-    public void init() {
+    public void Init() {
         mockAdminClient = new MockAdminClient(cluster, broker1);
         internalTopicManager = new InternalTopicManager(
             mockAdminClient,
@@ -84,12 +84,12 @@ public class InternalTopicManagerTest {
     }
 
     
-    public void shutdown() {
+    public void Shutdown() {
         mockAdminClient.close();
     }
 
     [Xunit.Fact]
-    public void shouldReturnCorrectPartitionCounts() {
+    public void ShouldReturnCorrectPartitionCounts() {
         mockAdminClient.addTopic(
             false,
             topic,
@@ -99,7 +99,7 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldCreateRequiredTopics() {// throws Exception
+    public void ShouldCreateRequiredTopics() {// throws Exception
         InternalTopicConfig topicConfig = new RepartitionTopicConfig(topic, Collections.<string, string>emptyMap());
         topicConfig.setNumberOfPartitions(1);
         InternalTopicConfig topicConfig2 = new UnwindowedChangelogTopicConfig(topic2, Collections.<string, string>emptyMap());
@@ -139,7 +139,7 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotCreateTopicIfExistsWithDifferentPartitions() {
+    public void ShouldNotCreateTopicIfExistsWithDifferentPartitions() {
         mockAdminClient.addTopic(
             false,
             topic,
@@ -160,7 +160,7 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionIfExistsWithDifferentReplication() {
+    public void ShouldNotThrowExceptionIfExistsWithDifferentReplication() {
         mockAdminClient.addTopic(
             false,
             topic,
@@ -178,12 +178,12 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowExceptionForEmptyTopicMap() {
+    public void ShouldNotThrowExceptionForEmptyTopicMap() {
         internalTopicManager.makeReady(Collections.emptyMap());
     }
 
     [Xunit.Fact]
-    public void shouldExhaustRetriesOnTimeoutExceptionForMakeReady() {
+    public void ShouldExhaustRetriesOnTimeoutExceptionForMakeReady() {
         mockAdminClient.timeoutNextRequest(1);
 
         InternalTopicConfig internalTopicConfig = new RepartitionTopicConfig(topic, Collections.emptyMap());
@@ -197,9 +197,9 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldLogWhenTopicNotFoundAndNotThrowException() {
+    public void ShouldLogWhenTopicNotFoundAndNotThrowException() {
         LogCaptureAppender.setClassLoggerToDebug(InternalTopicManager);
-        LogCaptureAppender appender = LogCaptureAppender.createAndRegister();
+        LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
         mockAdminClient.addTopic(
             false,
             topic,
@@ -227,7 +227,7 @@ public class InternalTopicManagerTest {
     }
 
     [Xunit.Fact]
-    public void shouldExhaustRetriesOnMarkedForDeletionTopic() {
+    public void ShouldExhaustRetriesOnMarkedForDeletionTopic() {
         mockAdminClient.addTopic(
             false,
             topic,

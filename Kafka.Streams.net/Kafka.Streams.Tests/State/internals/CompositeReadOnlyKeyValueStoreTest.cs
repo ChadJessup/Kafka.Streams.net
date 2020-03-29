@@ -53,13 +53,13 @@ public class CompositeReadOnlyKeyValueStoreTest {
     private CompositeReadOnlyKeyValueStore<string, string> theStore;
 
     
-    public void before() {
+    public void Before() {
         StateStoreProviderStub stubProviderOne = new StateStoreProviderStub(false);
         stubProviderTwo = new StateStoreProviderStub(false);
 
-        stubOneUnderlying = newStoreInstance();
+        stubOneUnderlying = NewStoreInstance();
         stubProviderOne.addStore(storeName, stubOneUnderlying);
-        otherUnderlyingStore = newStoreInstance();
+        otherUnderlyingStore = NewStoreInstance();
         stubProviderOne.addStore("other-store", otherUnderlyingStore);
 
         theStore = new CompositeReadOnlyKeyValueStore<>(
@@ -68,7 +68,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
                                         storeName);
     }
 
-    private KeyValueStore<string, string> newStoreInstance() {
+    private KeyValueStore<string, string> NewStoreInstance() {
         KeyValueStore<string, string> store = Stores.keyValueStoreBuilder(Stores.inMemoryKeyValueStore(storeName),
                 Serdes.String(),
                 Serdes.String())
@@ -82,39 +82,39 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnNullIfKeyDoesntExist() {
+    public void ShouldReturnNullIfKeyDoesntExist() {
         assertNull(theStore.get("whatever"));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnGetNullKey() {
+    public void ShouldThrowNullPointerExceptionOnGetNullKey() {
         theStore.get(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey() {
         theStore.range(null, "to");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void shouldThrowNullPointerExceptionOnRangeNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullToKey() {
         theStore.range("from", null);
     }
 
     [Xunit.Fact]
-    public void shouldReturnValueIfExists() {
+    public void ShouldReturnValueIfExists() {
         stubOneUnderlying.put("key", "value");
         Assert.Equal("value", theStore.get("key"));
     }
 
     [Xunit.Fact]
-    public void shouldNotGetValuesFromOtherStores() {
+    public void ShouldNotGetValuesFromOtherStores() {
         otherUnderlyingStore.put("otherKey", "otherValue");
         assertNull(theStore.get("otherKey"));
     }
 
     [Xunit.Fact]
-    public void shouldThrowNoSuchElementExceptionWhileNext() {
+    public void ShouldThrowNoSuchElementExceptionWhileNext() {
         stubOneUnderlying.put("a", "1");
         KeyValueIterator<string, string> keyValueIterator = theStore.range("a", "b");
         keyValueIterator.next();
@@ -125,7 +125,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowNoSuchElementExceptionWhilePeekNext() {
+    public void ShouldThrowNoSuchElementExceptionWhilePeekNext() {
         stubOneUnderlying.put("a", "1");
         KeyValueIterator<string, string> keyValueIterator = theStore.range("a", "b");
         keyValueIterator.next();
@@ -136,7 +136,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowUnsupportedOperationExceptionWhileRemove() {
+    public void ShouldThrowUnsupportedOperationExceptionWhileRemove() {
         KeyValueIterator<string, string> keyValueIterator = theStore.all();
         try {
             keyValueIterator.remove();
@@ -145,7 +145,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldThrowUnsupportedOperationExceptionWhileRange() {
+    public void ShouldThrowUnsupportedOperationExceptionWhileRange() {
         stubOneUnderlying.put("a", "1");
         stubOneUnderlying.put("b", "1");
         KeyValueIterator<string, string> keyValueIterator = theStore.range("a", "b");
@@ -156,8 +156,8 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldFindValueForKeyWhenMultiStores() {
-        KeyValueStore<string, string> cache = newStoreInstance();
+    public void ShouldFindValueForKeyWhenMultiStores() {
+        KeyValueStore<string, string> cache = NewStoreInstance();
         stubProviderTwo.addStore(storeName, cache);
 
         cache.put("key-two", "key-two-value");
@@ -168,7 +168,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSupportRange() {
+    public void ShouldSupportRange() {
         stubOneUnderlying.put("a", "a");
         stubOneUnderlying.put("b", "b");
         stubOneUnderlying.put("c", "c");
@@ -180,8 +180,8 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSupportRangeAcrossMultipleKVStores() {
-        KeyValueStore<string, string> cache = newStoreInstance();
+    public void ShouldSupportRangeAcrossMultipleKVStores() {
+        KeyValueStore<string, string> cache = NewStoreInstance();
         stubProviderTwo.addStore(storeName, cache);
 
         stubOneUnderlying.put("a", "a");
@@ -201,8 +201,8 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldSupportAllAcrossMultipleStores() {
-        KeyValueStore<string, string> cache = newStoreInstance();
+    public void ShouldSupportAllAcrossMultipleStores() {
+        KeyValueStore<string, string> cache = NewStoreInstance();
         stubProviderTwo.addStore(storeName, cache);
 
         stubOneUnderlying.put("a", "a");
@@ -224,28 +224,28 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionDuringRebalance() {
+    public void ShouldThrowInvalidStoreExceptionDuringRebalance() {
         rebalancing().get("anything");
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionOnApproximateNumEntriesDuringRebalance() {
+    public void ShouldThrowInvalidStoreExceptionOnApproximateNumEntriesDuringRebalance() {
         rebalancing().approximateNumEntries();
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionOnRangeDuringRebalance() {
+    public void ShouldThrowInvalidStoreExceptionOnRangeDuringRebalance() {
         rebalancing().range("anything", "something");
     }
 
     [Xunit.Fact]// (expected = InvalidStateStoreException)
-    public void shouldThrowInvalidStoreExceptionOnAllDuringRebalance() {
+    public void ShouldThrowInvalidStoreExceptionOnAllDuringRebalance() {
         rebalancing().all();
     }
 
     [Xunit.Fact]
-    public void shouldGetApproximateEntriesAcrossAllStores() {
-        KeyValueStore<string, string> cache = newStoreInstance();
+    public void ShouldGetApproximateEntriesAcrossAllStores() {
+        KeyValueStore<string, string> cache = NewStoreInstance();
         stubProviderTwo.addStore(storeName, cache);
 
         stubOneUnderlying.put("a", "a");
@@ -260,7 +260,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnLongMaxValueOnOverflow() {
+    public void ShouldReturnLongMaxValueOnOverflow() {
         stubProviderTwo.addStore(storeName, new NoOpReadOnlyStore<object, object>() {
             
             public long approximateNumEntries() {
@@ -273,7 +273,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void shouldReturnLongMaxValueOnUnderflow() {
+    public void ShouldReturnLongMaxValueOnUnderflow() {
         stubProviderTwo.addStore(storeName, new NoOpReadOnlyStore<object, object>() {
             
             public long approximateNumEntries() {
@@ -282,7 +282,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
         });
         stubProviderTwo.addStore(storeNameA, new NoOpReadOnlyStore<object, object>() {
             
-            public long approximateNumEntries() {
+            public long ApproximateNumEntries() {
                 return long.MaxValue;
             }
         });
@@ -290,7 +290,7 @@ public class CompositeReadOnlyKeyValueStoreTest {
         Assert.Equal(long.MaxValue, theStore.approximateNumEntries());
     }
 
-    private CompositeReadOnlyKeyValueStore<object, object> rebalancing() {
+    private CompositeReadOnlyKeyValueStore<object, object> Rebalancing() {
         return new CompositeReadOnlyKeyValueStore<>(new WrappingStoreProvider(Collections.<StateStoreProvider>singletonList(new StateStoreProviderStub(true))),
                 QueryableStoreTypes.keyValueStore(), storeName);
     }

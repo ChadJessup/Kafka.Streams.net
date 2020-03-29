@@ -80,7 +80,7 @@ public class ProcessorContextImplTest {
     private WindowStoreIterator windowStoreIter;
 
     
-    public void setup() {
+    public void Setup() {
         flushExecuted = false;
         putExecuted = false;
         putIfAbsentExecuted = false;
@@ -107,18 +107,18 @@ public class ProcessorContextImplTest {
 
         ProcessorStateManager stateManager = mock(ProcessorStateManager);
 
-        expect(stateManager.getGlobalStore("GlobalKeyValueStore")).andReturn(keyValueStoreMock());
-        expect(stateManager.getGlobalStore("GlobalTimestampedKeyValueStore")).andReturn(timestampedKeyValueStoreMock());
-        expect(stateManager.getGlobalStore("GlobalWindowStore")).andReturn(windowStoreMock());
-        expect(stateManager.getGlobalStore("GlobalTimestampedWindowStore")).andReturn(timestampedWindowStoreMock());
-        expect(stateManager.getGlobalStore("GlobalSessionStore")).andReturn(sessionStoreMock());
+        expect(stateManager.getGlobalStore("GlobalKeyValueStore")).andReturn(KeyValueStoreMock());
+        expect(stateManager.getGlobalStore("GlobalTimestampedKeyValueStore")).andReturn(TimestampedKeyValueStoreMock());
+        expect(stateManager.getGlobalStore("GlobalWindowStore")).andReturn(WindowStoreMock());
+        expect(stateManager.getGlobalStore("GlobalTimestampedWindowStore")).andReturn(TimestampedWindowStoreMock());
+        expect(stateManager.getGlobalStore("GlobalSessionStore")).andReturn(SessionStoreMock());
         expect(stateManager.getGlobalStore(anyString())).andReturn(null);
 
-        expect(stateManager.getStore("LocalKeyValueStore")).andReturn(keyValueStoreMock());
-        expect(stateManager.getStore("LocalTimestampedKeyValueStore")).andReturn(timestampedKeyValueStoreMock());
-        expect(stateManager.getStore("LocalWindowStore")).andReturn(windowStoreMock());
-        expect(stateManager.getStore("LocalTimestampedWindowStore")).andReturn(timestampedWindowStoreMock());
-        expect(stateManager.getStore("LocalSessionStore")).andReturn(sessionStoreMock());
+        expect(stateManager.getStore("LocalKeyValueStore")).andReturn(KeyValueStoreMock());
+        expect(stateManager.getStore("LocalTimestampedKeyValueStore")).andReturn(TimestampedKeyValueStoreMock());
+        expect(stateManager.getStore("LocalWindowStore")).andReturn(WindowStoreMock());
+        expect(stateManager.getStore("LocalTimestampedWindowStore")).andReturn(TimestampedWindowStoreMock());
+        expect(stateManager.getStore("LocalSessionStore")).andReturn(SessionStoreMock());
 
         replay(stateManager);
 
@@ -142,7 +142,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void globalKeyValueStoreShouldBeReadOnly() {
+    public void GlobalKeyValueStoreShouldBeReadOnly() {
         doTest("GlobalKeyValueStore", (Consumer<KeyValueStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -160,7 +160,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void globalTimestampedKeyValueStoreShouldBeReadOnly() {
+    public void GlobalTimestampedKeyValueStoreShouldBeReadOnly() {
         doTest("GlobalTimestampedKeyValueStore", (Consumer<TimestampedKeyValueStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -178,7 +178,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void globalWindowStoreShouldBeReadOnly() {
+    public void GlobalWindowStoreShouldBeReadOnly() {
         doTest("GlobalWindowStore", (Consumer<WindowStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -195,7 +195,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void globalTimestampedWindowStoreShouldBeReadOnly() {
+    public void GlobalTimestampedWindowStoreShouldBeReadOnly() {
         doTest("GlobalTimestampedWindowStore", (Consumer<TimestampedWindowStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -212,7 +212,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void globalSessionStoreShouldBeReadOnly() {
+    public void GlobalSessionStoreShouldBeReadOnly() {
         doTest("GlobalSessionStore", (Consumer<SessionStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -228,7 +228,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void localKeyValueStoreShouldNotAllowInitOrClose() {
+    public void LocalKeyValueStoreShouldNotAllowInitOrClose() {
         doTest("LocalKeyValueStore", (Consumer<KeyValueStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -255,7 +255,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void localTimestampedKeyValueStoreShouldNotAllowInitOrClose() {
+    public void LocalTimestampedKeyValueStoreShouldNotAllowInitOrClose() {
         doTest("LocalTimestampedKeyValueStore", (Consumer<TimestampedKeyValueStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -282,7 +282,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void localWindowStoreShouldNotAllowInitOrClose() {
+    public void LocalWindowStoreShouldNotAllowInitOrClose() {
         doTest("LocalWindowStore", (Consumer<WindowStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -301,7 +301,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void localTimestampedWindowStoreShouldNotAllowInitOrClose() {
+    public void LocalTimestampedWindowStoreShouldNotAllowInitOrClose() {
         doTest("LocalTimestampedWindowStore", (Consumer<TimestampedWindowStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -323,7 +323,7 @@ public class ProcessorContextImplTest {
     }
 
     [Xunit.Fact]
-    public void localSessionStoreShouldNotAllowInitOrClose() {
+    public void LocalSessionStoreShouldNotAllowInitOrClose() {
         doTest("LocalSessionStore", (Consumer<SessionStore<string, long>>) store => {
             verifyStoreCannotBeInitializedOrClosed(store);
 
@@ -344,7 +344,7 @@ public class ProcessorContextImplTest {
     }
 
     
-    private KeyValueStore<string, long> keyValueStoreMock() {
+    private KeyValueStore<string, long> KeyValueStoreMock() {
         KeyValueStore<string, long> keyValueStoreMock = mock(KeyValueStore);
 
         initStateStoreMock(keyValueStoreMock);
@@ -386,7 +386,7 @@ public class ProcessorContextImplTest {
     }
 
     
-    private TimestampedKeyValueStore<string, long> timestampedKeyValueStoreMock() {
+    private TimestampedKeyValueStore<string, long> TimestampedKeyValueStoreMock() {
         TimestampedKeyValueStore<string, long> timestampedKeyValueStoreMock = mock(TimestampedKeyValueStore);
 
         initStateStoreMock(timestampedKeyValueStoreMock);
@@ -428,7 +428,7 @@ public class ProcessorContextImplTest {
     }
 
     
-    private WindowStore<string, long> windowStoreMock() {
+    private WindowStore<string, long> WindowStoreMock() {
         WindowStore<string, long> windowStore = mock(WindowStore);
 
         initStateStoreMock(windowStore);
@@ -451,7 +451,7 @@ public class ProcessorContextImplTest {
     }
 
     
-    private TimestampedWindowStore<string, long> timestampedWindowStoreMock() {
+    private TimestampedWindowStore<string, long> TimestampedWindowStoreMock() {
         TimestampedWindowStore<string, long> windowStore = mock(TimestampedWindowStore);
 
         initStateStoreMock(windowStore);
@@ -480,7 +480,7 @@ public class ProcessorContextImplTest {
     }
 
     
-    private SessionStore<string, long> sessionStoreMock() {
+    private SessionStore<string, long> SessionStoreMock() {
         SessionStore<string, long> sessionStore = mock(SessionStore);
 
         initStateStoreMock(sessionStore);
@@ -507,7 +507,7 @@ public class ProcessorContextImplTest {
         return sessionStore;
     }
 
-    private void initStateStoreMock(StateStore stateStore) {
+    private void InitStateStoreMock(StateStore stateStore) {
         expect(stateStore.name()).andReturn(STORE_NAME);
         expect(stateStore.persistent()).andReturn(true);
         expect(stateStore.isOpen()).andReturn(true);
@@ -519,7 +519,7 @@ public class ProcessorContextImplTest {
         });
     }
 
-    private <T : StateStore> void doTest(string name, Consumer<T> checker) {
+    private <T : StateStore> void DoTest(string name, Consumer<T> checker) {
         Processor processor = new Processor<string, long>() {
             
             
@@ -542,7 +542,7 @@ public class ProcessorContextImplTest {
         processor.init(context);
     }
 
-    private void verifyStoreCannotBeInitializedOrClosed(StateStore store) {
+    private void VerifyStoreCannotBeInitializedOrClosed(StateStore store) {
         Assert.Equal(STORE_NAME, store.name());
         Assert.True(store.persistent());
         Assert.True(store.isOpen());
@@ -551,7 +551,7 @@ public class ProcessorContextImplTest {
         checkThrowsUnsupportedOperation(store::close, "close()");
     }
 
-    private void checkThrowsUnsupportedOperation(Runnable check, string name) {
+    private void CheckThrowsUnsupportedOperation(Runnable check, string name) {
         try {
             check.run();
             Assert.True(false, name + " should throw exception");

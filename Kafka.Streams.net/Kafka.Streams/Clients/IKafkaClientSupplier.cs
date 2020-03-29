@@ -28,7 +28,7 @@ namespace Kafka.Streams.Clients
          *               {@link java.util.Properties} given to the {@link KafkaStreams} instance
          * @return an instance of Kafka producer
          */
-        IProducer<byte[], byte[]> getProducer(ProducerConfig config);
+        IProducer<byte[], byte[]> GetProducer(ProducerConfig config);
 
         /**
          * Create a {@link Consumer} which is used to read records of source topics.

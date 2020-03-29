@@ -80,7 +80,7 @@ namespace Kafka.Streams.Threads.Stream
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void onChange<States>(
+        public void OnChange<States>(
             IThread<States> thread,
             States abstractNewState,
             States abstractOldState)

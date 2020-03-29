@@ -10,7 +10,7 @@ namespace Kafka.Streams.Tests.Tools
          *  args ::= kafka propFileName command
          *  command := "run" | "process" | "verify"
          */
-        public static void main(string[] args)
+        public static void Main(string[] args)
         {// throws IOException
             if (args.Length < 2)
             {

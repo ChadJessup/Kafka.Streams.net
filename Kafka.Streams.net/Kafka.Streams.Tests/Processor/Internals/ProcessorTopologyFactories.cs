@@ -26,7 +26,7 @@ public class ProcessorTopologyFactories {
     private ProcessorTopologyFactories() {}
 
 
-    public static ProcessorTopology with(List<ProcessorNode> processorNodes,
+    public static ProcessorTopology With(List<ProcessorNode> processorNodes,
                                          Dictionary<string, SourceNode> sourcesByTopic,
                                          List<StateStore> stateStoresByName,
                                          Dictionary<string, string> storeToChangelogTopic) {
@@ -39,7 +39,7 @@ public class ProcessorTopologyFactories {
                                      Collections.emptySet());
     }
 
-    static ProcessorTopology withLocalStores(List<StateStore> stateStores,
+    static ProcessorTopology WithLocalStores(List<StateStore> stateStores,
                                              Dictionary<string, string> storeToChangelogTopic) {
         return new ProcessorTopology(Collections.emptyList(),
                                      Collections.emptyMap(),

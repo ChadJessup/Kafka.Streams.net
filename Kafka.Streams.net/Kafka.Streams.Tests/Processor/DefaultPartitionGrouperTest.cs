@@ -50,7 +50,7 @@ public class DefaultPartitionGrouperTest {
         Collections.<string>emptySet());
 
     [Xunit.Fact]
-    public void shouldComputeGroupingForTwoGroups() {
+    public void ShouldComputeGroupingForTwoGroups() {
         PartitionGrouper grouper = new DefaultPartitionGrouper();
         Dictionary<TaskId, HashSet<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
         Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
@@ -70,7 +70,7 @@ public class DefaultPartitionGrouperTest {
     }
 
     [Xunit.Fact]
-    public void shouldComputeGroupingForSingleGroupWithMultipleTopics() {
+    public void ShouldComputeGroupingForSingleGroupWithMultipleTopics() {
         PartitionGrouper grouper = new DefaultPartitionGrouper();
         Dictionary<TaskId, HashSet<TopicPartition>> expectedPartitionsForTask = new HashMap<>();
         Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
@@ -92,7 +92,7 @@ public class DefaultPartitionGrouperTest {
     }
 
     [Xunit.Fact]// (expected = RuntimeException)
-    public void shouldNotCreateAnyTasksBecauseOneTopicHasUnknownPartitions() {
+    public void ShouldNotCreateAnyTasksBecauseOneTopicHasUnknownPartitions() {
         PartitionGrouper grouper = new DefaultPartitionGrouper();
         Dictionary<int, HashSet<string>> topicGroups = new HashMap<>();
     

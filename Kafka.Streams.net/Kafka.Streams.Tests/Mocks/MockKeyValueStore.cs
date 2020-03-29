@@ -23,57 +23,57 @@ internal class MockKeyValueStore : IKeyValueStore<int, byte[]>
         throw new System.NotImplementedException();
     }
 
-    public IKeyValueIterator<int, byte[]> all()
+    public IKeyValueIterator<int, byte[]> All()
     {
         throw new System.NotImplementedException();
     }
 
-    public void close()
+    public void Close()
     {
         throw new System.NotImplementedException();
     }
 
-    public byte[] delete(int key)
+    public byte[] Delete(int key)
     {
         throw new System.NotImplementedException();
     }
 
-    public void flush()
+    public void Flush()
     {
         throw new System.NotImplementedException();
     }
 
-    public byte[] get(int key)
+    public byte[] Get(int key)
     {
         throw new System.NotImplementedException();
     }
 
-    public void init(IProcessorContext context, IStateStore root)
+    public void Init(IProcessorContext context, IStateStore root)
     {
         throw new System.NotImplementedException();
     }
 
-    public bool isOpen()
+    public bool IsOpen()
     {
         throw new System.NotImplementedException();
     }
 
-    public bool isPresent()
+    public bool IsPresent()
     {
         throw new System.NotImplementedException();
     }
 
-    public void putAll(List<KeyValuePair<int, byte[]>> entries)
+    public void PutAll(List<KeyValuePair<int, byte[]>> entries)
     {
         throw new System.NotImplementedException();
     }
 
-    public byte[] putIfAbsent(int key, byte[] value)
+    public byte[] PutIfAbsent(int key, byte[] value)
     {
         throw new System.NotImplementedException();
     }
 
-    public IKeyValueIterator<int, byte[]> range(int from, int to)
+    public IKeyValueIterator<int, byte[]> Range(int from, int to)
     {
         throw new System.NotImplementedException();
     }

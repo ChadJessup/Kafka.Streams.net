@@ -33,7 +33,7 @@ public class SingleGroupPartitionGrouperStub : PartitionGrouper {
     private PartitionGrouper defaultPartitionGrouper = new DefaultPartitionGrouper();
 
     
-    public Dictionary<TaskId, HashSet<TopicPartition>> partitionGroups(Map<int, HashSet<string>> topicGroups, Cluster metadata) {
+    public Dictionary<TaskId, HashSet<TopicPartition>> PartitionGroups(Map<int, HashSet<string>> topicGroups, Cluster metadata) {
         Dictionary<int, HashSet<string>> includedTopicGroups = new HashMap<>();
 
         foreach (Map.Entry<int, HashSet<string>> entry in topicGroups.entrySet()) {

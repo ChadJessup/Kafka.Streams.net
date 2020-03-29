@@ -185,7 +185,7 @@ namespace Kafka.Streams.Threads.Stream
                 var producerConfigs = config.GetProducerConfigs(StreamsBuilder.GetThreadProducerClientId(threadClientId));
                 this.logger.LogInformation("Creating shared producer client");
 
-                threadProducer = clientSupplier.getProducer(producerConfigs);
+                threadProducer = clientSupplier.GetProducer(producerConfigs);
             }
 
             return threadProducer;

@@ -49,7 +49,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     
-    public void prepareTopology() {// throws InterruptedException
+    public void PrepareTopology() {// throws InterruptedException
         base.prepareEnvironment();
 
         appID = "stream-stream-join-integration-test";
@@ -60,7 +60,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInner() {// throws Exception
+    public void TestInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -101,7 +101,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testInnerRepartitioned() {// throws Exception
+    public void TestInnerRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-inner-repartitioned");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -145,7 +145,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeft() {// throws Exception
+    public void TestLeft() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -186,7 +186,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testLeftRepartitioned() {// throws Exception
+    public void TestLeftRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-left-repartitioned");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -230,7 +230,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuter() {// throws Exception
+    public void TestOuter() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -271,7 +271,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testOuterRepartitioned() {// throws Exception
+    public void TestOuterRepartitioned() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-outer");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(
@@ -315,7 +315,7 @@ public class StreamStreamJoinIntegrationTest : AbstractJoinIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void testMultiInner() {// throws Exception
+    public void TestMultiInner() {// throws Exception
         STREAMS_CONFIG.put(StreamsConfig.APPLICATION_ID_CONFIG, appID + "-multi-inner");
 
         List<List<KeyValueTimestamp<long, string>>> expectedResult = Array.asList(

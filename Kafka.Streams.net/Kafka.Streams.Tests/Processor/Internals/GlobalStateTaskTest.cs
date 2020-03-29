@@ -76,7 +76,7 @@ public class GlobalStateTaskTest {
     private GlobalStateUpdateTask globalStateTask;
 
     
-    public void before() {
+    public void Before() {
         HashSet<string> storeNames = Utils.mkSet("t1-store", "t2-store");
         Dictionary<string, SourceNode> sourceByTopics = new HashMap<>();
         sourceByTopics.put(topic1, sourceOne);
@@ -97,20 +97,20 @@ public class GlobalStateTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldInitializeStateManager() {
+    public void ShouldInitializeStateManager() {
         Dictionary<TopicPartition, long> startingOffsets = globalStateTask.initialize();
         Assert.True(stateMgr.initialized);
         Assert.Equal(offsets, startingOffsets);
     }
 
     [Xunit.Fact]
-    public void shouldInitializeContext() {
+    public void ShouldInitializeContext() {
         globalStateTask.initialize();
         Assert.True(context.initialized);
     }
 
     [Xunit.Fact]
-    public void shouldInitializeProcessorTopology() {
+    public void ShouldInitializeProcessorTopology() {
         globalStateTask.initialize();
         Assert.True(sourceOne.initialized);
         Assert.True(sourceTwo.initialized);
@@ -119,7 +119,7 @@ public class GlobalStateTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldProcessRecordsForTopic() {
+    public void ShouldProcessRecordsForTopic() {
         globalStateTask.initialize();
         globalStateTask.update(new ConsumeResult<>(topic1, 1, 1, "foo".getBytes(), "bar".getBytes()));
         Assert.Equal(1, sourceOne.numReceived);
@@ -127,7 +127,7 @@ public class GlobalStateTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldProcessRecordsForOtherTopic() {
+    public void ShouldProcessRecordsForOtherTopic() {
         byte[] integerBytes = new IntegerSerializer().serialize("foo", 1);
         globalStateTask.initialize();
         globalStateTask.update(new ConsumeResult<>(topic2, 1, 1, integerBytes, integerBytes));
@@ -135,7 +135,7 @@ public class GlobalStateTaskTest {
         Assert.Equal(0, sourceOne.numReceived);
     }
 
-    private void maybeDeserialize(GlobalStateUpdateTask globalStateTask,
+    private void MaybeDeserialize(GlobalStateUpdateTask globalStateTask,
                                   byte[] key,
                                   byte[] recordValue,
                                   bool failExpected) {
@@ -158,22 +158,22 @@ public class GlobalStateTaskTest {
 
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionWhenKeyDeserializationFails() {
+    public void ShouldThrowStreamsExceptionWhenKeyDeserializationFails() {
         byte[] key = new LongSerializer().serialize(topic2, 1L);
         byte[] recordValue = new IntegerSerializer().serialize(topic2, 10);
-        maybeDeserialize(globalStateTask, key, recordValue, true);
+        MaybeDeserialize(globalStateTask, key, recordValue, true);
     }
 
 
     [Xunit.Fact]
-    public void shouldThrowStreamsExceptionWhenValueDeserializationFails() {
+    public void ShouldThrowStreamsExceptionWhenValueDeserializationFails() {
         byte[] key = new IntegerSerializer().serialize(topic2, 1);
         byte[] recordValue = new LongSerializer().serialize(topic2, 10L);
-        maybeDeserialize(globalStateTask, key, recordValue, true);
+        MaybeDeserialize(globalStateTask, key, recordValue, true);
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler() {
+    public void ShouldNotThrowStreamsExceptionWhenKeyDeserializationFailsWithSkipHandler() {
         GlobalStateUpdateTask globalStateTask2 = new GlobalStateUpdateTask(
             topology,
             context,
@@ -184,11 +184,11 @@ public class GlobalStateTaskTest {
         byte[] key = new LongSerializer().serialize(topic2, 1L);
         byte[] recordValue = new IntegerSerializer().serialize(topic2, 10);
 
-        maybeDeserialize(globalStateTask2, key, recordValue, false);
+        MaybeDeserialize(globalStateTask2, key, recordValue, false);
     }
 
     [Xunit.Fact]
-    public void shouldNotThrowStreamsExceptionWhenValueDeserializationFails() {
+    public void ShouldNotThrowStreamsExceptionWhenValueDeserializationFails() {
         GlobalStateUpdateTask globalStateTask2 = new GlobalStateUpdateTask(
             topology,
             context,
@@ -199,12 +199,12 @@ public class GlobalStateTaskTest {
         byte[] key = new IntegerSerializer().serialize(topic2, 1);
         byte[] recordValue = new LongSerializer().serialize(topic2, 10L);
 
-        maybeDeserialize(globalStateTask2, key, recordValue, false);
+        MaybeDeserialize(globalStateTask2, key, recordValue, false);
     }
 
 
     [Xunit.Fact]
-    public void shouldFlushStateManagerWithOffsets(){ //throws IOException
+    public void ShouldFlushStateManagerWithOffsets(){ //throws IOException
         Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
         expectedOffsets.put(t1, 52L);
         expectedOffsets.put(t2, 100L);
@@ -215,7 +215,7 @@ public class GlobalStateTaskTest {
     }
 
     [Xunit.Fact]
-    public void shouldCheckpointOffsetsWhenStateIsFlushed() {
+    public void ShouldCheckpointOffsetsWhenStateIsFlushed() {
         Dictionary<TopicPartition, long> expectedOffsets = new HashMap<>();
         expectedOffsets.put(t1, 102L);
         expectedOffsets.put(t2, 100L);

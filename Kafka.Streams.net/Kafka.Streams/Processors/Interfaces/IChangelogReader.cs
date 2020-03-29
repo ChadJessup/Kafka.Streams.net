@@ -15,19 +15,19 @@ namespace Kafka.Streams.Processors.Internals
          * Register a state store and it's partition for later restoration.
          * @param restorer the state restorer to register
          */
-        void register(StateRestorer restorer);
+        void Register(StateRestorer restorer);
 
         /**
          * Restore all registered state stores by reading from their changelogs.
          * @return all topic partitions that have been restored
          */
-        List<TopicPartition> restore(IRestoringTasks active);
+        List<TopicPartition> Restore(IRestoringTasks active);
 
         /**
          * @return the restored offsets for all persistent stores.
          */
-        Dictionary<TopicPartition, long> RestoredOffsets { get; }
+        Dictionary<TopicPartition, long> RestoredOffsets();
 
-        void reset();
+        void Reset();
     }
 }
