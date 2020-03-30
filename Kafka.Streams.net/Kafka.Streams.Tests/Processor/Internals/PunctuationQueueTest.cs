@@ -1,21 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
+    *
 
 
 
- */
 
 
+    */
 
 
 
@@ -26,32 +26,42 @@
 
 
 
-public class PunctuationQueueTest {
 
-    private MockProcessorNode<string, string> node = new MockProcessorNode<>();
-    private PunctuationQueue queue = new PunctuationQueue();
-    private Punctuator punctuator = new Punctuator() {
-        
-        public void Punctuate(long timestamp) {
+
+    public class PunctuationQueueTest
+    {
+
+        private MockProcessorNode<string, string> node = new MockProcessorNode<>();
+        private PunctuationQueue queue = new PunctuationQueue();
+        private Punctuator punctuator = new Punctuator()
+        {
+
+
+        public void Punctuate(long timestamp)
+        {
             node.mockProcessor.punctuatedStreamTime.add(timestamp);
         }
     };
 
     [Xunit.Fact]
-    public void TestPunctuationInterval() {
+    public void TestPunctuationInterval()
+    {
         PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);
         long now = sched.timestamp - 100L;
 
         queue.schedule(sched);
 
-        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator() {
-            
-            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator) {
-                punctuator.punctuate(time);
-            }
-        };
+        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator()
+        {
 
-        queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+
+            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator)
+        {
+            punctuator.punctuate(time);
+        }
+    };
+
+    queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
         Assert.Equal(0, node.mockProcessor.punctuatedStreamTime.Count);
 
         queue.mayPunctuate(now + 99L, PunctuationType.STREAM_TIME, processorNodePunctuator);
@@ -77,20 +87,24 @@ public class PunctuationQueueTest {
     }
 
     [Xunit.Fact]
-    public void TestPunctuationIntervalCustomAlignment() {
+    public void TestPunctuationIntervalCustomAlignment()
+    {
         PunctuationSchedule sched = new PunctuationSchedule(node, 50L, 100L, punctuator);
         long now = sched.timestamp - 50L;
 
         queue.schedule(sched);
 
-        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator() {
-            
-            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator) {
-                punctuator.punctuate(time);
-            }
-        };
+        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator()
+        {
 
-        queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+
+            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator)
+        {
+            punctuator.punctuate(time);
+        }
+    };
+
+    queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
         Assert.Equal(0, node.mockProcessor.punctuatedStreamTime.Count);
 
         queue.mayPunctuate(now + 49L, PunctuationType.STREAM_TIME, processorNodePunctuator);
@@ -116,22 +130,26 @@ public class PunctuationQueueTest {
     }
 
     [Xunit.Fact]
-    public void TestPunctuationIntervalCancelFromPunctuator() {
+    public void TestPunctuationIntervalCancelFromPunctuator()
+    {
         PunctuationSchedule sched = new PunctuationSchedule(node, 0L, 100L, punctuator);
         long now = sched.timestamp - 100L;
 
         Cancellable cancellable = queue.schedule(sched);
 
-        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator() {
-            
-            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator) {
-                punctuator.punctuate(time);
-                // simulate scheduler cancelled from within punctuator
-                cancellable.cancel();
-            }
-        };
+        ProcessorNodePunctuator processorNodePunctuator = new ProcessorNodePunctuator()
+        {
 
-        queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
+
+            public void punctuate(ProcessorNode node, long time, PunctuationType type, Punctuator punctuator)
+        {
+            punctuator.punctuate(time);
+            // simulate scheduler cancelled from within punctuator
+            cancellable.cancel();
+        }
+    };
+
+    queue.mayPunctuate(now, PunctuationType.STREAM_TIME, processorNodePunctuator);
         Assert.Equal(0, node.mockProcessor.punctuatedStreamTime.Count);
 
         queue.mayPunctuate(now + 100L, PunctuationType.STREAM_TIME, processorNodePunctuator);
@@ -141,16 +159,69 @@ public class PunctuationQueueTest {
         Assert.Equal(1, node.mockProcessor.punctuatedStreamTime.Count);
     }
 
-    private static class TestProcessor : AbstractProcessor<string, string> {
+    private static class TestProcessor : AbstractProcessor<string, string>
+    {
 
-        
-        public void Init(ProcessorContext context) {}
 
-        
-        public void Process(string key, string value) {}
+        public void Init(ProcessorContext context) { }
 
-        
-        public void Close() {}
+
+        public void Process(string key, string value) { }
+
+
+        public void Close() { }
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

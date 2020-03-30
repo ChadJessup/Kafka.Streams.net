@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Tests
+{
+}
 //using Confluent.Kafka;
 //using Xunit;
 
@@ -55,7 +58,7 @@
 
 //                streams = createKafkaStreams(properties);
 //        streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                    
+
 //                    public void uncaughtException(Thread t, Throwable e)
 //        {
 //            System.Console.Out.WriteLine(System.currentTimeMillis());
@@ -66,7 +69,7 @@
 //        }
 //    });
 //                streams.setStateListener(new KafkaStreams.StateListener() {
-                    
+
 //                    public void onChange(KafkaStreams.State newState, KafkaStreams.State oldState)
 //    {
 //        // don't remove this -- it's required test output
@@ -120,7 +123,7 @@
 //    }
 //},
 //                new Aggregator<string, int, int>() {
-                    
+
 //                    public int apply(string aggKey,
 //                                         int value,
 //                                         int aggregate)
@@ -135,14 +138,14 @@
 //// sum
 //groupedData.aggregate(
 //            new Initializer<long>() {
-                
+
 //                public long apply()
 //{
 //    return 0L;
 //}
 //            },
 //            new Aggregator<string, int, long>() {
-                
+
 //                public long apply(string aggKey,
 //                                  int value,
 //                                  long aggregate)
@@ -164,14 +167,14 @@
 //groupedDataAfterRepartitioning
 //    .aggregate(
 //                    new Initializer<int>() {
-                        
+
 //                        public int apply()
 //{
 //    return int.MIN_VALUE;
 //}
 //                    },
 //                    new Aggregator<string, int, int>() {
-                        
+
 //                        public int apply(string aggKey,
 //                                             int value,
 //                                             int aggregate)

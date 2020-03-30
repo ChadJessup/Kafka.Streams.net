@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -34,84 +27,105 @@
 
 
 
-public class StateRestoreCallbackAdapterTest {
-    [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void ShouldThrowOnRestoreAll() {
-        adapt(mock(StateRestoreCallback)).restoreAll(null);
-    }
 
-    [Xunit.Fact]// (expected = UnsupportedOperationException)
-    public void ShouldThrowOnRestore() {
-        adapt(mock(StateRestoreCallback)).restore(null, null);
-    }
 
-    [Xunit.Fact]
-    public void ShouldPassRecordsThrough() {
-        ArrayList<ConsumeResult<byte[], byte[]>> actual = new ArrayList<>();
-        RecordBatchingStateRestoreCallback callback = actual::addAll;
 
-        RecordBatchingStateRestoreCallback adapted = adapt(callback);
 
-        byte[] key1 = {1};
-        byte[] value1 = {2};
-        byte[] key2 = {3};
-        byte[] value2 = {4};
 
-        List<ConsumeResult<byte[], byte[]>> recordList = asList(
-            new ConsumeResult<>("topic1", 0, 0L, key1, value1),
-            new ConsumeResult<>("topic2", 1, 1L, key2, value2)
-        );
 
-        adapted.restoreBatch(recordList);
 
-        validate(actual, recordList);
-    }
 
-    [Xunit.Fact]
-    public void ShouldConvertToKeyValueBatches() {
-        ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
-        BatchingStateRestoreCallback callback = new BatchingStateRestoreCallback() {
-            
-            public void restoreAll(Collection<KeyValuePair<byte[], byte[]>> records) {
+
+    public class StateRestoreCallbackAdapterTest
+    {
+        [Xunit.Fact]// (expected = UnsupportedOperationException)
+        public void ShouldThrowOnRestoreAll()
+        {
+            adapt(mock(StateRestoreCallback)).restoreAll(null);
+        }
+
+        [Xunit.Fact]// (expected = UnsupportedOperationException)
+        public void ShouldThrowOnRestore()
+        {
+            adapt(mock(StateRestoreCallback)).restore(null, null);
+        }
+
+        [Xunit.Fact]
+        public void ShouldPassRecordsThrough()
+        {
+            ArrayList<ConsumeResult<byte[], byte[]>> actual = new ArrayList<>();
+            RecordBatchingStateRestoreCallback callback = actual::addAll;
+
+            RecordBatchingStateRestoreCallback adapted = adapt(callback);
+
+            byte[] key1 = { 1 };
+            byte[] value1 = { 2 };
+            byte[] key2 = { 3 };
+            byte[] value2 = { 4 };
+
+            List<ConsumeResult<byte[], byte[]>> recordList = asList(
+                new ConsumeResult<>("topic1", 0, 0L, key1, value1),
+                new ConsumeResult<>("topic2", 1, 1L, key2, value2)
+            );
+
+            adapted.restoreBatch(recordList);
+
+            validate(actual, recordList);
+        }
+
+        [Xunit.Fact]
+        public void ShouldConvertToKeyValueBatches()
+        {
+            ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
+            BatchingStateRestoreCallback callback = new BatchingStateRestoreCallback()
+            {
+
+
+            public void restoreAll(Collection<KeyValuePair<byte[], byte[]>> records)
+            {
                 actual.addAll(records);
             }
 
-            
-            public void restore(byte[] key, byte[] value) {
+
+            public void restore(byte[] key, byte[] value)
+            {
                 // unreachable
             }
         };
 
         RecordBatchingStateRestoreCallback adapted = adapt(callback);
-    readonly byte[] key1 = {1};
-    readonly byte[] value1 = {2};
-    readonly byte[] key2 = {3};
-    readonly byte[] value2 = {4};
+        readonly byte[] key1 = { 1 };
+        readonly byte[] value1 = { 2 };
+        readonly byte[] key2 = { 3 };
+        readonly byte[] value2 = { 4 };
         adapted.restoreBatch(asList(
-            new ConsumeResult<>("topic1", 0, 0L, key1, value1),
+    
+                new ConsumeResult<>("topic1", 0, 0L, key1, value1),
             new ConsumeResult<>("topic2", 1, 1L, key2, value2)
         ));
 
         Assert.Equal(
             actual,
             (asList(
-                new KeyValuePair<>(key1, value1),
+    
+                    new KeyValuePair<>(key1, value1),
                 new KeyValuePair<>(key2, value2)
             ))
         );
     }
 
     [Xunit.Fact]
-    public void ShouldConvertToKeyValue() {
+    public void ShouldConvertToKeyValue()
+    {
         ArrayList<KeyValuePair<byte[], byte[]>> actual = new ArrayList<>();
         StateRestoreCallback callback = (key, value) => actual.add(new KeyValuePair<>(key, value));
 
         RecordBatchingStateRestoreCallback adapted = adapt(callback);
 
-        byte[] key1 = {1};
-        byte[] value1 = {2};
-        byte[] key2 = {3};
-        byte[] value2 = {4};
+        byte[] key1 = { 1 };
+        byte[] value1 = { 2 };
+        byte[] key2 = { 3 };
+        byte[] value2 = { 4 };
         adapted.restoreBatch(asList(
             new ConsumeResult<>("topic1", 0, 0L, key1, value1),
             new ConsumeResult<>("topic2", 1, 1L, key2, value2)
@@ -127,9 +141,11 @@ public class StateRestoreCallbackAdapterTest {
     }
 
     private void Validate(List<ConsumeResult<byte[], byte[]>> actual,
-                          List<ConsumeResult<byte[], byte[]>> expected) {
+                          List<ConsumeResult<byte[], byte[]>> expected)
+    {
         Assert.Equal(actual.Count, (expected.Count));
-        for (int i = 0; i < actual.Count; i++) {
+        for (int i = 0; i < actual.Count; i++)
+        {
             ConsumeResult<byte[], byte[]> actual1 = actual.get(i);
             ConsumeResult<byte[], byte[]> expected1 = expected.get(i);
             Assert.Equal(actual1.topic(), (expected1.topic()));
@@ -143,4 +159,42 @@ public class StateRestoreCallbackAdapterTest {
     }
 
 
-}
+}}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

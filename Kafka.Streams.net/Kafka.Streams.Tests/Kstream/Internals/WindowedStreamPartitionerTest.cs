@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals
+{
+}
 //using Kafka.Common;
 //using System;
 //using System.Collections.Generic;

@@ -2,19 +2,22 @@
 using Kafka.Streams.State.Internals;
 using Kafka.Streams.State.KeyValues;
 
-public class MockKeyValueStoreBuilder : AbstractStoreBuilder<int, byte[], IKeyValueStore<int, byte[]>>
+namespace Kafka.Streams.Tests.Mocks
 {
-    private readonly bool persistent;
-
-    public MockKeyValueStoreBuilder(string storeName, bool persistent)
-        : base(storeName, Serdes.Int(), Serdes.ByteArray(), null)//new MockTime())
+    public class MockKeyValueStoreBuilder : AbstractStoreBuilder<int, byte[], IKeyValueStore<int, byte[]>>
     {
+        private readonly bool persistent;
 
-        this.persistent = persistent;
-    }
+        public MockKeyValueStoreBuilder(string storeName, bool persistent)
+            : base(storeName, Serdes.Int(), Serdes.ByteArray(), null)//new MockTime())
+        {
 
-    public override IKeyValueStore<int, byte[]> Build()
-    {
-        return new MockKeyValueStore(name, persistent);
+            this.persistent = persistent;
+        }
+
+        public override IKeyValueStore<int, byte[]> Build()
+        {
+            return new MockKeyValueStore(name, persistent);
+        }
     }
 }

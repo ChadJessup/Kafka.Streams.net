@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+}
 ///*
 
 
@@ -103,7 +106,7 @@
 //                                     Collections.emptySet());
 //    }
 
-    
+
 //    public void before() {
 //        Dictionary<string, string> storeToTopic = new HashMap<>();
 
@@ -140,7 +143,7 @@
 //        checkpointFile = new File(stateManager.baseDir(), StateManagerUtil.CHECKPOINT_FILE_NAME);
 //    }
 
-    
+
 //    public void after(){ //throws IOException
 //        stateDirectory.unlockGlobalState();
 //    }
@@ -365,7 +368,7 @@
 //        // register the stores
 //        initializeConsumer(1, 0, t1);
 //        stateManager.register(new NoOpReadOnlyStore(store1.name()) {
-            
+
 //            public void flush() {
 //                throw new RuntimeException("KABOOM!");
 //            }
@@ -393,7 +396,7 @@
 //        stateManager.initialize();
 //        initializeConsumer(1, 0, t1);
 //        stateManager.register(new NoOpReadOnlyStore(store1.name()) {
-            
+
 //            public void close() {
 //                throw new RuntimeException("KABOOM!");
 //            }
@@ -431,7 +434,7 @@
 //        stateManager.initialize();
 //        initializeConsumer(1, 0, t1);
 //        stateManager.register(new NoOpReadOnlyStore("t1-store") {
-            
+
 //            public void close() {
 //                if (!isOpen()) {
 //                    throw new RuntimeException("store already closed");
@@ -449,7 +452,7 @@
 //        stateManager.initialize();
 //        initializeConsumer(1, 0, t1);
 //        NoOpReadOnlyStore store = new NoOpReadOnlyStore("t1-store") {
-            
+
 //            public void close() {
 //                base.close();
 //                throw new RuntimeException("KABOOM!");
@@ -571,7 +574,7 @@
 //            topology,
 //            consumer,
 //            new StateDirectory(streamsConfig, time, true) {
-                
+
 //                public bool lockGlobalState(){ //throws IOException
 //                    throw new IOException("KABOOM!");
 //                }
@@ -593,7 +596,7 @@
 //        int retries = 2;
 //        AtomicInteger numberOfCalls = new AtomicInteger(0);
 //        consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST) {
-            
+
 //            public synchronized Dictionary<TopicPartition, long> endOffsets(Collection<org.apache.kafka.common.TopicPartition> partitions) {
 //                numberOfCalls.incrementAndGet();
 //                throw new TimeoutException();
@@ -626,7 +629,7 @@
 //        int retries = 2;
 //        AtomicInteger numberOfCalls = new AtomicInteger(0);
 //        consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST) {
-            
+
 //            public synchronized List<PartitionInfo> partitionsFor(string topic) {
 //                numberOfCalls.incrementAndGet();
 //                throw new TimeoutException();
@@ -749,7 +752,7 @@
 //    private static class TheStateRestoreCallback : StateRestoreCallback {
 //        private List<KeyValuePair<byte[], byte[]>> restored = new ArrayList<>();
 
-        
+
 //        public void restore(byte[] key, byte[] value) {
 //            restored.add(KeyValuePair.Create(key, value));
 //        }

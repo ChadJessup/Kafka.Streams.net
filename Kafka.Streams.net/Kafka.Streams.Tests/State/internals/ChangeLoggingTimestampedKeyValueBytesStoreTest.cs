@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -41,24 +34,37 @@
 
 
 
-public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
 
-    private InMemoryKeyValueStore root = new InMemoryKeyValueStore("kv");
-    private ChangeLoggingTimestampedKeyValueBytesStore store = new ChangeLoggingTimestampedKeyValueBytesStore(root);
-    private Dictionary<object, ValueAndTimestamp<byte[]>> sent = new HashMap<>();
-    private Bytes hi = Bytes.wrap("hi".getBytes());
-    private Bytes hello = Bytes.wrap("hello".getBytes());
-    private ValueAndTimestamp<byte[]> there = ValueAndTimestamp.make("there".getBytes(), 97L);
-    // timestamp is 97 what is ASCII of 'a'
-    private readonly byte[] rawThere = "\0\0\0\0\0\0\0athere".getBytes();
-    private ValueAndTimestamp<byte[]> world = ValueAndTimestamp.make("world".getBytes(), 98L);
-    // timestamp is 98 what is ASCII of 'b'
-    private readonly byte[] rawWorld = "\0\0\0\0\0\0\0bworld".getBytes();
 
-    
-    public void Before() {
-        NoOpRecordCollector collector = new NoOpRecordCollector() {
-            
+
+
+
+
+
+
+
+    public class ChangeLoggingTimestampedKeyValueBytesStoreTest
+    {
+
+        private InMemoryKeyValueStore root = new InMemoryKeyValueStore("kv");
+        private ChangeLoggingTimestampedKeyValueBytesStore store = new ChangeLoggingTimestampedKeyValueBytesStore(root);
+        private Dictionary<object, ValueAndTimestamp<byte[]>> sent = new HashMap<>();
+        private Bytes hi = Bytes.wrap("hi".getBytes());
+        private Bytes hello = Bytes.wrap("hello".getBytes());
+        private ValueAndTimestamp<byte[]> there = ValueAndTimestamp.make("there".getBytes(), 97L);
+        // timestamp is 97 what is ASCII of 'a'
+        private readonly byte[] rawThere = "\0\0\0\0\0\0\0athere".getBytes();
+        private ValueAndTimestamp<byte[]> world = ValueAndTimestamp.make("world".getBytes(), 98L);
+        // timestamp is 98 what is ASCII of 'b'
+        private readonly byte[] rawWorld = "\0\0\0\0\0\0\0bworld".getBytes();
+
+
+        public void Before()
+        {
+            NoOpRecordCollector collector = new NoOpRecordCollector()
+            {
+
+
             public void send<K, V>(string topic,
                                     K key,
                                     V value,
@@ -66,8 +72,9 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
                                     int partition,
                                     long timestamp,
                                     Serializer<K> keySerializer,
-                                    Serializer<V> valueSerializer) {
-                sent.put(key, ValueAndTimestamp.make((byte[]) value, timestamp));
+                                    Serializer<V> valueSerializer)
+            {
+                sent.put(key, ValueAndTimestamp.make((byte[])value, timestamp));
             }
         };
         InternalMockProcessorContext context = new InternalMockProcessorContext(
@@ -80,19 +87,22 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
         store.init(context, store);
     }
 
-    
-    public void After() {
+
+    public void After()
+    {
         store.close();
     }
 
     [Xunit.Fact]
-    public void ShouldWriteKeyValueBytesToInnerStoreOnPut() {
+    public void ShouldWriteKeyValueBytesToInnerStoreOnPut()
+    {
         store.put(hi, rawThere);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void ShouldLogChangeOnPut() {
+    public void ShouldLogChangeOnPut()
+    {
         store.put(hi, rawThere);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
         Assert.Equal(logged.Value, (there.Value));
@@ -100,7 +110,8 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll() {
+    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll()
+    {
         store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
                                    KeyValuePair.Create(hello, rawWorld)));
         Assert.Equal(root.get(hi), (rawThere));
@@ -108,7 +119,8 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldLogChangesOnPutAll() {
+    public void ShouldLogChangesOnPutAll()
+    {
         store.putAll(Array.asList(KeyValuePair.Create(hi, rawThere),
                                    KeyValuePair.Create(hello, rawWorld)));
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
@@ -120,7 +132,8 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldPropagateDelete() {
+    public void ShouldPropagateDelete()
+    {
         store.put(hi, rawThere);
         store.delete(hi);
         Assert.Equal(root.approximateNumEntries(), (0L));
@@ -128,13 +141,15 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnOldValueOnDelete() {
+    public void ShouldReturnOldValueOnDelete()
+    {
         store.put(hi, rawThere);
         Assert.Equal(store.delete(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void ShouldLogKeyNullOnDelete() {
+    public void ShouldLogKeyNullOnDelete()
+    {
         store.put(hi, rawThere);
         store.delete(hi);
         Assert.Equal(sent.containsKey(hi), (true));
@@ -142,20 +157,23 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue() {
+    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue()
+    {
         store.putIfAbsent(hi, rawThere);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists()
+    {
         store.put(hi, rawThere);
         store.putIfAbsent(hi, rawWorld);
         Assert.Equal(root.get(hi), (rawThere));
     }
 
     [Xunit.Fact]
-    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue()
+    {
         store.putIfAbsent(hi, rawThere);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
         Assert.Equal(logged.Value, (there.Value));
@@ -163,7 +181,8 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists()
+    {
         store.put(hi, rawThere);
         store.putIfAbsent(hi, rawWorld);
         ValueAndTimestamp<byte[]> logged = sent.get(hi);
@@ -172,24 +191,89 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnCurrentValueOnPutIfAbsent() {
+    public void ShouldReturnCurrentValueOnPutIfAbsent()
+    {
         store.put(hi, rawThere);
         Assert.Equal(store.putIfAbsent(hi, rawWorld), (rawThere));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue()
+    {
         Assert.Equal(store.putIfAbsent(hi, rawThere), (nullValue()));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnValueOnGetWhenExists() {
+    public void ShouldReturnValueOnGetWhenExists()
+    {
         store.put(hello, rawWorld);
         Assert.Equal(store.get(hello), (rawWorld));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnNullOnGetWhenDoesntExist() {
+    public void ShouldReturnNullOnGetWhenDoesntExist()
+    {
         Assert.Equal(store.get(hello), (nullValue()));
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

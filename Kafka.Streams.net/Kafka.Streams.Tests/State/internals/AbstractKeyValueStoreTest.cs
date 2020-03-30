@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -48,58 +41,76 @@
 
 
 
-public abstract class AbstractKeyValueStoreTest {
 
-    protected abstract KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context);
 
-    protected InternalMockProcessorContext context;
-    protected KeyValueStore<int, string> store;
-    protected KeyValueStoreTestDriver<int, string> driver;
 
-    
-    public void Before() {
-        driver = KeyValueStoreTestDriver.create(int, string);
-        context = (InternalMockProcessorContext) driver.context();
-        context.setTime(10);
-        store = createKeyValueStore(context);
-    }
 
-    
-    public void After() {
-        store.close();
-        driver.Clear();
-    }
 
-    private static Dictionary<int, string> GetContents(KeyValueIterator<int, string> iter) {
-        HashDictionary<int, string> result = new HashMap<>();
-        while (iter.hasNext()) {
-            KeyValuePair<int, string> entry = iter.next();
-            result.put(entry.key, entry.value);
+
+
+
+
+    public abstract class AbstractKeyValueStoreTest
+    {
+
+        protected abstract KeyValueStore<K, V> CreateKeyValueStore<K, V>(ProcessorContext context);
+
+        protected InternalMockProcessorContext context;
+        protected KeyValueStore<int, string> store;
+        protected KeyValueStoreTestDriver<int, string> driver;
+
+
+        public void Before()
+        {
+            driver = KeyValueStoreTestDriver.create(int, string);
+            context = (InternalMockProcessorContext)driver.context();
+            context.setTime(10);
+            store = createKeyValueStore(context);
         }
-        return result;
-    }
 
-    [Xunit.Fact]
-    public void ShouldNotIncludeDeletedFromRangeResult() {
-        store.close();
 
-        Serializer<string> serializer = new StringSerializer() {
+        public void After()
+        {
+            store.close();
+            driver.Clear();
+        }
+
+        private static Dictionary<int, string> GetContents(KeyValueIterator<int, string> iter)
+        {
+            HashDictionary<int, string> result = new HashMap<>();
+            while (iter.hasNext())
+            {
+                KeyValuePair<int, string> entry = iter.next();
+                result.put(entry.key, entry.value);
+            }
+            return result;
+        }
+
+        [Xunit.Fact]
+        public void ShouldNotIncludeDeletedFromRangeResult()
+        {
+            store.close();
+
+            Serializer<string> serializer = new StringSerializer()
+            {
             private int numCalls = 0;
 
-            
-            public byte[] Serialize(string topic, string data) {
-                if (++numCalls > 3) {
-                    Assert.True(false, "Value serializer is called; it should never happen");
-                }
 
-                return base.serialize(topic, data);
+        public byte[] Serialize(string topic, string data)
+        {
+            if (++numCalls > 3)
+            {
+                Assert.True(false, "Value serializer is called; it should never happen");
             }
-        };
 
-        context.setValueSerde(Serdes.serdeFrom(serializer, new StringDeserializer()));
+            return base.serialize(topic, data);
+        }
+    };
+
+    context.setValueSerde(Serdes.serdeFrom(serializer, new StringDeserializer()));
         store = createKeyValueStore(driver.context());
 
-        store.put(0, "zero");
+    store.put(0, "zero");
         store.put(1, "one");
         store.put(2, "two");
         store.delete(0);
@@ -107,28 +118,33 @@ public abstract class AbstractKeyValueStoreTest {
 
         // should not include deleted records in iterator
         Dictionary<int, string> expectedContents = Collections.singletonMap(2, "two");
-        Assert.Equal(expectedContents, getContents(store.all()));
+    Assert.Equal(expectedContents, getContents(store.all()));
     }
 
     [Xunit.Fact]
-    public void ShouldDeleteIfSerializedValueIsNull() {
+    public void ShouldDeleteIfSerializedValueIsNull()
+    {
         store.close();
 
-        Serializer<string> serializer = new StringSerializer() {
-            
-            public byte[] serialize(string topic, string data) {
-                if (data.equals("null")) {
-                    // will be serialized to null bytes, indicating deletes
-                    return null;
-                }
-                return base.serialize(topic, data);
-            }
-        };
+        Serializer<string> serializer = new StringSerializer()
+        {
 
-        context.setValueSerde(Serdes.serdeFrom(serializer, new StringDeserializer()));
+
+            public byte[] serialize(string topic, string data)
+        {
+            if (data.equals("null"))
+            {
+                // will be serialized to null bytes, indicating deletes
+                return null;
+            }
+            return base.serialize(topic, data);
+        }
+    };
+
+    context.setValueSerde(Serdes.serdeFrom(serializer, new StringDeserializer()));
         store = createKeyValueStore(driver.context());
 
-        store.put(0, "zero");
+    store.put(0, "zero");
         store.put(1, "one");
         store.put(2, "two");
         store.put(0, "null");
@@ -136,11 +152,12 @@ public abstract class AbstractKeyValueStoreTest {
 
         // should not include deleted records in iterator
         Dictionary<int, string> expectedContents = Collections.singletonMap(2, "two");
-        Assert.Equal(expectedContents, getContents(store.all()));
+    Assert.Equal(expectedContents, getContents(store.all()));
     }
 
     [Xunit.Fact]
-    public void TestPutGetRange() {
+    public void TestPutGetRange()
+    {
         // Verify that the store reads and writes correctly ...
         store.put(0, "zero");
         store.put(1, "one");
@@ -188,7 +205,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestPutGetRangeWithDefaultSerdes() {
+    public void TestPutGetRangeWithDefaultSerdes()
+    {
         // Verify that the store reads and writes correctly ...
         store.put(0, "zero");
         store.put(1, "one");
@@ -221,7 +239,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestRestore() {
+    public void TestRestore()
+    {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...
@@ -243,7 +262,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestRestoreWithDefaultSerdes() {
+    public void TestRestoreWithDefaultSerdes()
+    {
         store.close();
         // Add any entries that will be restored to any store
         // that uses the driver's context ...
@@ -264,7 +284,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestPutIfAbsent() {
+    public void TestPutIfAbsent()
+    {
         // Verify that the store reads and writes correctly ...
         assertNull(store.putIfAbsent(0, "zero"));
         assertNull(store.putIfAbsent(1, "one"));
@@ -292,57 +313,68 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey()
+    {
         store.put(null, "anyValue");
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowNullPointerExceptionOnPutNullValue() {
+    public void ShouldNotThrowNullPointerExceptionOnPutNullValue()
+    {
         store.put(1, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutIfAbsentNullKey()
+    {
         store.putIfAbsent(null, "anyValue");
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue() {
+    public void ShouldNotThrowNullPointerExceptionOnPutIfAbsentNullValue()
+    {
         store.putIfAbsent(1, null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnPutAllNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutAllNullKey()
+    {
         store.putAll(Collections.singletonList(new KeyValuePair<>(null, "anyValue")));
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowNullPointerExceptionOnPutAllNullKey() {
+    public void ShouldNotThrowNullPointerExceptionOnPutAllNullKey()
+    {
         store.putAll(Collections.singletonList(new KeyValuePair<>(1, null)));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnDeleteNullKey() {
+    public void ShouldThrowNullPointerExceptionOnDeleteNullKey()
+    {
         store.delete(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnGetNullKey() {
+    public void ShouldThrowNullPointerExceptionOnGetNullKey()
+    {
         store.get(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullFromKey()
+    {
         store.range(null, 2);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnRangeNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnRangeNullToKey()
+    {
         store.range(2, null);
     }
 
     [Xunit.Fact]
-    public void TestSize() {
+    public void TestSize()
+    {
         Assert.Equal("A newly created store should have no entries", 0, store.approximateNumEntries());
 
         store.put(0, "zero");
@@ -355,7 +387,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldPutAll() {
+    public void ShouldPutAll()
+    {
         List<KeyValuePair<int, string>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>(1, "one"));
         entries.add(new KeyValuePair<>(2, "two"));
@@ -366,7 +399,8 @@ public abstract class AbstractKeyValueStoreTest {
         List<KeyValuePair<int, string>> expectedReturned = Array.asList(KeyValuePair.Create(1, "one"), KeyValuePair.Create(2, "two"));
         Iterator<KeyValuePair<int, string>> iterator = store.all();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             allReturned.add(iterator.next());
         }
         Assert.Equal(allReturned, (expectedReturned));
@@ -374,7 +408,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldDeleteFromStore() {
+    public void ShouldDeleteFromStore()
+    {
         store.put(1, "one");
         store.put(2, "two");
         store.delete(2);
@@ -382,7 +417,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnSameResultsForGetAndRangeWithEqualKeys() {
+    public void ShouldReturnSameResultsForGetAndRangeWithEqualKeys()
+    {
         List<KeyValuePair<int, string>> entries = new ArrayList<>();
         entries.add(new KeyValuePair<>(1, "one"));
         entries.add(new KeyValuePair<>(2, "two"));
@@ -397,7 +433,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowConcurrentModificationException() {
+    public void ShouldNotThrowConcurrentModificationException()
+    {
         store.put(0, "zero");
 
         KeyValueIterator<int, string> results = store.range(0, 2);
@@ -408,7 +445,8 @@ public abstract class AbstractKeyValueStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
+    {
         LogCaptureAppender.setClassLoggerToDebug(InMemoryWindowStore);
         LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
@@ -421,3 +459,84 @@ public abstract class AbstractKeyValueStoreTest {
             + "Note that the built-in numerical serdes do not follow this for negative numbers"));
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// should not include deleted records in iterator
+
+
+
+
+// should not include deleted records in iterator
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

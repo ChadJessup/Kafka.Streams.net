@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals
+{
+}
 //using Kafka.Streams;
 //using Kafka.Streams.Configs;
 //using Kafka.Streams.Kafka.Streams;

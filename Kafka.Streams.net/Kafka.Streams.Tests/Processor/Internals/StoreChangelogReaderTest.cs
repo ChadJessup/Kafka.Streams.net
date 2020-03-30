@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -61,36 +54,51 @@
 
 
 
-public class StoreChangelogReaderTest {
 
-    (type = MockType.NICE)
+
+
+
+
+
+
+
+
+    public class StoreChangelogReaderTest
+    {
+
+        (type = MockType.NICE)
     private RestoringTasks active;
-    (type = MockType.NICE)
+        (type = MockType.NICE)
     private StreamTask task;
 
-    private MockStateRestoreListener callback = new MockStateRestoreListener();
-    private CompositeRestoreListener restoreListener = new CompositeRestoreListener(callback);
-    private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
-    private StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
-    private TopicPartition topicPartition = new TopicPartition("topic", 0);
-    private LogContext logContext = new LogContext("test-reader ");
-    private StoreChangelogReader changelogReader = new StoreChangelogReader(
-        consumer,
-        Duration.ZERO,
-        stateRestoreListener,
-        logContext);
+        private MockStateRestoreListener callback = new MockStateRestoreListener();
+        private CompositeRestoreListener restoreListener = new CompositeRestoreListener(callback);
+        private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+        private StateRestoreListener stateRestoreListener = new MockStateRestoreListener();
+        private TopicPartition topicPartition = new TopicPartition("topic", 0);
+        private LogContext logContext = new LogContext("test-reader ");
+        private StoreChangelogReader changelogReader = new StoreChangelogReader(
+            consumer,
+            Duration.ZERO,
+            stateRestoreListener,
+            logContext);
 
-    
-    public void SetUp() {
-        restoreListener.setUserRestoreListener(stateRestoreListener);
-    }
 
-    [Xunit.Fact]
-    public void ShouldRequestTopicsAndHandleTimeoutException() {
-        AtomicBoolean functionCalled = new AtomicBoolean(false);
-        MockConsumer<byte[], byte[]> consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST) {
-            
-            public Dictionary<string, List<PartitionInfo>> listTopics() {
+        public void SetUp()
+        {
+            restoreListener.setUserRestoreListener(stateRestoreListener);
+        }
+
+        [Xunit.Fact]
+        public void ShouldRequestTopicsAndHandleTimeoutException()
+        {
+            AtomicBoolean functionCalled = new AtomicBoolean(false);
+            MockConsumer<byte[], byte[]> consumer = new MockConsumer<byte[], byte[]>(OffsetResetStrategy.EARLIEST)
+            {
+
+
+            public Dictionary<string, List<PartitionInfo>> listTopics()
+            {
                 functionCalled.set(true);
                 throw new TimeoutException("KABOOM!");
             }
@@ -114,7 +122,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldThrowExceptionIfConsumerHasCurrentSubscription() {
+    public void ShouldThrowExceptionIfConsumerHasCurrentSubscription()
+    {
         StateRestorer mockRestorer = EasyMock.mock(StateRestorer);
         mockRestorer.setUserRestoreListener(stateRestoreListener);
         expect(mockRestorer.partition())
@@ -127,16 +136,20 @@ public class StoreChangelogReaderTest {
 
         consumer.subscribe(Collections.singleton("sometopic"));
 
-        try {
+        try
+        {
             changelogReader.restore(active);
             Assert.True(false, "Should have thrown IllegalStateException");
-        } catch (StreamsException expected) {
+        }
+        catch (StreamsException expected)
+        {
             // ok
         }
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreAllMessagesFromBeginningWhenCheckpointNull() {
+    public void ShouldRestoreAllMessagesFromBeginningWhenCheckpointNull()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
         changelogReader.register(new StateRestorer(
@@ -155,15 +168,19 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRecoverFromInvalidOffsetExceptionAndFinishRestore() {
+    public void ShouldRecoverFromInvalidOffsetExceptionAndFinishRestore()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
-        consumer.setException(new InvalidOffsetException("Try Again!") {
-            
-            public HashSet<TopicPartition> partitions() {
-                return Collections.singleton(topicPartition);
-            }
-        });
+        consumer.setException(new InvalidOffsetException("Try Again!")
+        {
+
+
+            public HashSet<TopicPartition> partitions()
+        {
+            return Collections.singleton(topicPartition);
+        }
+    });
         changelogReader.register(new StateRestorer(
             topicPartition,
             restoreListener,
@@ -174,7 +191,7 @@ public class StoreChangelogReaderTest {
             identity()));
 
         EasyMock.expect(active.restoringTaskFor(topicPartition)).andStubReturn(task);
-        EasyMock.replay(active, task);
+    EasyMock.replay(active, task);
 
         // first restore call "fails" but we should not die with an exception
         Assert.Equal(0, changelogReader.restore(active).Count);
@@ -193,13 +210,14 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRecoverFromOffsetOutOfRangeExceptionAndRestoreFromStart() {
+    public void ShouldRecoverFromOffsetOutOfRangeExceptionAndRestoreFromStart()
+    {
         int messages = 10;
         int startOffset = 5;
         long expiredCheckpoint = 1L;
         assignPartition(messages, topicPartition);
-        consumer.updateBeginningOffsets(Collections.singletonMap(topicPartition, (long) startOffset));
-        consumer.updateEndOffsets(Collections.singletonMap(topicPartition, (long) (messages + startOffset)));
+        consumer.updateBeginningOffsets(Collections.singletonMap(topicPartition, (long)startOffset));
+        consumer.updateEndOffsets(Collections.singletonMap(topicPartition, (long)(messages + startOffset)));
 
         addRecords(messages, topicPartition, startOffset);
         consumer.assign(Collections.emptyList());
@@ -231,7 +249,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreMessagesFromCheckpoint() {
+    public void ShouldRestoreMessagesFromCheckpoint()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
         changelogReader.register(new StateRestorer(
@@ -248,7 +267,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldClearAssignmentAtEndOfRestore() {
+    public void ShouldClearAssignmentAtEndOfRestore()
+    {
         int messages = 1;
         setupConsumer(messages, topicPartition);
         changelogReader.register(new StateRestorer(
@@ -262,11 +282,12 @@ public class StoreChangelogReaderTest {
         expect(active.restoringTaskFor(topicPartition)).andStubReturn(task);
         replay(active, task);
         changelogReader.restore(active);
-        Assert.Equal(consumer.assignment(), (Collections.<TopicPartition>emptySet()));
+        Assert.Equal(consumer.assignment(), (Collections.< TopicPartition > emptySet()));
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreToLimitWhenSupplied() {
+    public void ShouldRestoreToLimitWhenSupplied()
+    {
         setupConsumer(10, topicPartition);
         StateRestorer restorer = new StateRestorer(
             topicPartition,
@@ -285,7 +306,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreMultipleStores() {
+    public void ShouldRestoreMultipleStores()
+    {
         TopicPartition one = new TopicPartition("one", 0);
         TopicPartition two = new TopicPartition("two", 0);
         MockRestoreCallback callbackOne = new MockRestoreCallback();
@@ -333,7 +355,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreAndNotifyMultipleStores() {
+    public void ShouldRestoreAndNotifyMultipleStores()
+    {
         TopicPartition one = new TopicPartition("one", 0);
         TopicPartition two = new TopicPartition("two", 0);
         MockStateRestoreListener callbackOne = new MockStateRestoreListener();
@@ -393,7 +416,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldOnlyReportTheLastRestoredOffset() {
+    public void ShouldOnlyReportTheLastRestoredOffset()
+    {
         setupConsumer(10, topicPartition);
         changelogReader.register(new StateRestorer(
             topicPartition,
@@ -413,7 +437,8 @@ public class StoreChangelogReaderTest {
     }
 
     private void AssertAllCallbackStatesExecuted(MockStateRestoreListener restoreListener,
-                                                 string storeName) {
+                                                 string storeName)
+    {
         Assert.Equal(restoreListener.storeNameCalledStates.get(RESTORE_START), (storeName));
         Assert.Equal(restoreListener.storeNameCalledStates.get(RESTORE_BATCH), (storeName));
         Assert.Equal(restoreListener.storeNameCalledStates.get(RESTORE_END), (storeName));
@@ -422,7 +447,8 @@ public class StoreChangelogReaderTest {
     private void AssertCorrectOffsetsReportedByListener(MockStateRestoreListener restoreListener,
                                                         long startOffset,
                                                         long batchOffset,
-                                                        long totalRestored) {
+                                                        long totalRestored)
+    {
 
         Assert.Equal(restoreListener.restoreStartOffset, (startOffset));
         Assert.Equal(restoreListener.restoredBatchOffset, (batchOffset));
@@ -430,7 +456,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotRestoreAnythingWhenPartitionIsEmpty() {
+    public void ShouldNotRestoreAnythingWhenPartitionIsEmpty()
+    {
         StateRestorer restorer = new StateRestorer(
             topicPartition,
             restoreListener,
@@ -448,7 +475,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotRestoreAnythingWhenCheckpointAtEndOffset() {
+    public void ShouldNotRestoreAnythingWhenCheckpointAtEndOffset()
+    {
         long endOffset = 10L;
         setupConsumer(endOffset, topicPartition);
         StateRestorer restorer = new StateRestorer(
@@ -468,7 +496,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnRestoredOffsetsForPersistentStores() {
+    public void ShouldReturnRestoredOffsetsForPersistentStores()
+    {
         setupConsumer(10, topicPartition);
         changelogReader.register(new StateRestorer(
             topicPartition,
@@ -487,7 +516,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotReturnRestoredOffsetsForNonPersistentStore() {
+    public void ShouldNotReturnRestoredOffsetsForNonPersistentStore()
+    {
         setupConsumer(10, topicPartition);
         changelogReader.register(new StateRestorer(
             topicPartition,
@@ -505,7 +535,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldIgnoreNullKeysWhenRestoring() {
+    public void ShouldIgnoreNullKeysWhenRestoring()
+    {
         assignPartition(3, topicPartition);
         byte[] bytes = new byte[0];
         consumer.addRecord(new ConsumeResult<>(topicPartition.topic(), topicPartition.partition(), 0, bytes, bytes));
@@ -528,7 +559,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldCompleteImmediatelyWhenEndOffsetIs0() {
+    public void ShouldCompleteImmediatelyWhenEndOffsetIs0()
+    {
         Collection<TopicPartition> expected = Collections.singleton(topicPartition);
         setupConsumer(0, topicPartition);
         changelogReader.register(new StateRestorer(
@@ -547,7 +579,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestorePartitionsRegisteredPostInitialization() {
+    public void ShouldRestorePartitionsRegisteredPostInitialization()
+    {
         MockRestoreCallback callbackTwo = new MockRestoreCallback();
         CompositeRestoreListener restoreListener2 = new CompositeRestoreListener(callbackTwo);
 
@@ -593,7 +626,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionIfSourceTopicUpdatedDuringRestoreProcess() {
+    public void ShouldNotThrowTaskMigratedExceptionIfSourceTopicUpdatedDuringRestoreProcess()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
         // in this case first call to endOffsets returns correct value, but a second thread has updated the source topic
@@ -615,7 +649,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSEnabled() {
+    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSEnabled()
+    {
         int totalMessages = 10;
         setupConsumer(totalMessages, topicPartition);
         // records have offsets of 0..9 10 is commit marker so 11 is end offset
@@ -638,7 +673,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSDisabled() {
+    public void ShouldNotThrowTaskMigratedExceptionDuringRestoreForChangelogTopicWhenEndOffsetNotExceededEOSDisabled()
+    {
         int totalMessages = 10;
         setupConsumer(totalMessages, topicPartition);
 
@@ -659,7 +695,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopic() {
+    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopic()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
         changelogReader.register(new StateRestorer(
@@ -679,7 +716,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopic() {
+    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopic()
+    {
         int messages = 10;
         setupConsumer(messages, topicPartition);
 
@@ -700,7 +738,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopicEOSEnabled() {
+    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetGetsExceededDuringRestoreForSourceTopicEOSEnabled()
+    {
         int totalMessages = 10;
         assignPartition(totalMessages, topicPartition);
         // records 0..4 last offset before commit is 4
@@ -728,7 +767,8 @@ public class StoreChangelogReaderTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopicEOSEnabled() {
+    public void ShouldNotThrowTaskMigratedExceptionIfEndOffsetNotExceededDuringRestoreForSourceTopicEOSEnabled()
+    {
         int totalMessages = 10;
         setupConsumer(totalMessages, topicPartition);
         // records have offsets 0..9 10 is commit marker so 11 is ending offset
@@ -751,7 +791,8 @@ public class StoreChangelogReaderTest {
     }
 
     private void SetupConsumer(long messages,
-                               TopicPartition topicPartition) {
+                               TopicPartition topicPartition)
+    {
         assignPartition(messages, topicPartition);
         addRecords(messages, topicPartition, 0);
         consumer.assign(Collections.emptyList());
@@ -759,8 +800,10 @@ public class StoreChangelogReaderTest {
 
     private void AddRecords(long messages,
                             TopicPartition topicPartition,
-                            int startingOffset) {
-        for (int i = 0; i < messages; i++) {
+                            int startingOffset)
+    {
+        for (int i = 0; i < messages; i++)
+        {
             consumer.addRecord(new ConsumeResult<>(
                 topicPartition.topic(),
                 topicPartition.partition(),
@@ -771,7 +814,8 @@ public class StoreChangelogReaderTest {
     }
 
     private void AssignPartition(long messages,
-                                 TopicPartition topicPartition) {
+                                 TopicPartition topicPartition)
+    {
         consumer.updatePartitions(
             topicPartition.topic(),
             Collections.singletonList(new PartitionInfo(
@@ -786,3 +830,101 @@ public class StoreChangelogReaderTest {
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// first restore call "fails" but we should not die with an exception
+
+// retry restore should succeed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

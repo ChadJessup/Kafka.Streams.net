@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Integration.utils
+{
+}
 ///*
 
 
@@ -141,12 +144,12 @@
 //        return brokers[0].brokerList();
 //    }
 
-    
+
 //    protected void before() {// throws Throwable
 //        start();
 //    }
 
-    
+
 //    protected void after() {
 //        stop();
 //    }
@@ -309,7 +312,7 @@
 //            deletedTopics.addAll(topics);
 //        }
 
-        
+
 //        public bool conditionMet() {
 //            HashSet<string> allTopics = new HashSet<>(
 //                    JavaConverters.setAsJavaSetConverter(brokers[0].kafkaServer().zkClient().getAllTopicsInCluster()).asJava());
@@ -324,7 +327,7 @@
 //            Collections.addAll(remainingTopics, topics);
 //        }
 
-        
+
 //        public bool conditionMet() {
 //            HashSet<string> allTopics = JavaConverters.setAsJavaSetConverter(brokers[0].kafkaServer().zkClient().getAllTopicsInCluster()).asJava();
 //            return allTopics.equals(remainingTopics);

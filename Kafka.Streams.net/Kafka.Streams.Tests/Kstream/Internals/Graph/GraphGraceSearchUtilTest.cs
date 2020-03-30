@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals.Graph
+{
+}
 //using Kafka.Streams.Errors;
 //using Kafka.Streams.KStream.Internals;
 //using Kafka.Streams.KStream.Internals.Graph;

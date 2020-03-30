@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Tests
+{
+}
 //using Confluent.Kafka;
 //using Xunit;
 
@@ -33,7 +36,7 @@
 //        });
 //        KafkaStreams streams = new KafkaStreams(builder.build(), props);
 //        streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            
+
 //            public void uncaughtException(Thread t, Throwable e)
 //        {
 //            Exit.exit(1);

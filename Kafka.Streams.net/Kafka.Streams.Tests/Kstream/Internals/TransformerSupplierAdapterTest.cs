@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals
+{
+}
 //using Kafka.Streams.Processors.Interfaces;
 
 //namespace Kafka.Streams.KStream.Internals

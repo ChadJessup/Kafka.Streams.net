@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream
+{
+}
 //using Kafka.Streams.Interfaces;
 //using Kafka.Streams.Temp;
 //using Xunit;

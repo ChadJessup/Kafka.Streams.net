@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
+{
+}
 //using Kafka.Streams.KStream;
 //using NodaTime;
 //using System.Collections.ObjectModel;

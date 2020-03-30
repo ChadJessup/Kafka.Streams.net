@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Integration
+{
+}
 //using Confluent.Kafka;
 //using Kafka.Streams.KStream;
 //using Kafka.Streams.KStream.Internals;

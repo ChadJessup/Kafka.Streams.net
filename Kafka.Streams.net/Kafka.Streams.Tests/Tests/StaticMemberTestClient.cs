@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Tests
+{
+}
 //using Confluent.Kafka;
 //using Xunit;
 
@@ -7,7 +10,7 @@
 
 //    private static string testName = "StaticMemberTestClient";
 
-    
+
 //    public static void main(string[] args) {// throws Exception
 //        if (args.Length < 1) {
 //            System.Console.Error.println(testName + " requires one argument (properties-file) but none provided: ");
@@ -48,7 +51,7 @@
 //        streams.start();
 
 //        Runtime.getRuntime().addShutdownHook(new Thread() {
-            
+
 //            public void run() {
 //                System.Console.Out.WriteLine("closing Kafka Streams instance");
 //                System.Console.Out.flush();

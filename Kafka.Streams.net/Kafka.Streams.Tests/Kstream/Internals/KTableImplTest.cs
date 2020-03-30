@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals
+{
+}
 ///*
 //
 //
@@ -80,7 +83,7 @@
 
 //    private IKTable<string, string> table;
 
-    
+
 //    public void setUp() {
 //        table = new StreamsBuilder().Table("test");
 //    }
@@ -155,15 +158,15 @@
 //        ValueJoiner<string, string, string> joiner = (value1, value2) => value1;
 //        ValueTransformerWithKeySupplier<string, string, string> valueTransformerWithKeySupplier =
 //            () => new ValueTransformerWithKey<string, string, string>() {
-                
+
 //                public void init(IProcessorContext context) {}
 
-                
+
 //                public string transform(string key, string value) {
 //                    return value;
 //                }
 
-                
+
 //                public void close() {}
 //            };
 
@@ -474,7 +477,7 @@
 //        table.transformValues((ValueTransformerWithKeySupplier) null);
 //    }
 
-    
+
 //    [Fact](typeof(expected = NullPointerException))
 //    public void shouldThrowNullPointerOnTransformValuesWithKeyWhenMaterializedIsNull() {
 //        ValueTransformerWithKeySupplier<string, string, ?> valueTransformerSupplier =
@@ -482,7 +485,7 @@
 //        table.transformValues(valueTransformerSupplier, (Materialized) null);
 //    }
 
-    
+
 //    [Fact](typeof(expected = NullPointerException))
 //    public void shouldThrowNullPointerOnTransformValuesWithKeyWhenStoreNamesNull() {
 //        ValueTransformerWithKeySupplier<string, string, ?> valueTransformerSupplier =

@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -55,26 +48,37 @@
 
 
 
-public class MeteredWindowStoreTest {
-    private InternalMockProcessorContext context;
-    
-    private WindowStore<Bytes, byte[]> innerStoreMock = createNiceMock(WindowStore);
-    private MeteredWindowStore<string, string> store = new MeteredWindowStore<>(
-        innerStoreMock,
-        10L, // any size
-        "scope",
-        new MockTime(),
-        Serdes.String(),
-        new SerdeThatDoesntHandleNull()
-    );
-    private Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
+
+
+
+
+
+
+
+
+
+    public class MeteredWindowStoreTest
+    {
+        private InternalMockProcessorContext context;
+
+        private WindowStore<Bytes, byte[]> innerStoreMock = createNiceMock(WindowStore);
+        private MeteredWindowStore<string, string> store = new MeteredWindowStore<>(
+            innerStoreMock,
+            10L, // any size
+            "scope",
+            new MockTime(),
+            Serdes.String(),
+            new SerdeThatDoesntHandleNull()
+        );
+        private Metrics metrics = new Metrics(new MetricConfig().recordLevel(Sensor.RecordingLevel.DEBUG));
 
     {
         expect(innerStoreMock.name()).andReturn("mocked-store").anyTimes();
     }
 
-    
-    public void SetUp() {
+
+    public void SetUp()
+    {
         StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, "test");
 
         context = new InternalMockProcessorContext(
@@ -89,7 +93,8 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestMetrics() {
+    public void TestMetrics()
+    {
         replay(innerStoreMock);
         store.init(context, store);
         JmxReporter reporter = new JmxReporter("kafka.streams");
@@ -101,18 +106,20 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRecordRestoreLatencyOnInit() {
+    public void ShouldRecordRestoreLatencyOnInit()
+    {
         innerStoreMock.init(context, store);
         expectLastCall();
         replay(innerStoreMock);
         store.init(context, store);
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "restore-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
     }
 
     [Xunit.Fact]
-    public void ShouldRecordPutLatency() {
+    public void ShouldRecordPutLatency()
+    {
         byte[] bytes = "a".getBytes();
         innerStoreMock.put(eq(Bytes.wrap(bytes)), anyObject(), eq(context.Timestamp));
         expectLastCall();
@@ -120,54 +127,58 @@ public class MeteredWindowStoreTest {
 
         store.init(context, store);
         store.put("a", "a");
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "put-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "put-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
         verify(innerStoreMock);
     }
 
     [Xunit.Fact]
-    public void ShouldRecordFetchLatency() {
-        expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 1, 1)).andReturn(KeyValueIterators.<byte[]>emptyWindowStoreIterator());
+    public void ShouldRecordFetchLatency()
+    {
+        expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 1, 1)).andReturn(KeyValueIterators.< byte[] > emptyWindowStoreIterator());
         replay(innerStoreMock);
 
         store.init(context, store);
         store.fetch("a", ofEpochMilli(1), ofEpochMilli(1)).close(); // recorded on close;
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
         verify(innerStoreMock);
     }
 
     [Xunit.Fact]
-    public void ShouldRecordFetchRangeLatency() {
-        expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), Bytes.wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.<Windowed<Bytes>, byte[]>emptyIterator());
+    public void ShouldRecordFetchRangeLatency()
+    {
+        expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), Bytes.wrap("b".getBytes()), 1, 1)).andReturn(KeyValueIterators.< Windowed<Bytes>, byte[] > emptyIterator());
         replay(innerStoreMock);
 
         store.init(context, store);
         store.fetch("a", "b", ofEpochMilli(1), ofEpochMilli(1)).close(); // recorded on close;
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "fetch-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
         verify(innerStoreMock);
     }
 
     [Xunit.Fact]
-    public void ShouldRecordFlushLatency() {
+    public void ShouldRecordFlushLatency()
+    {
         innerStoreMock.flush();
         expectLastCall();
         replay(innerStoreMock);
 
         store.init(context, store);
         store.flush();
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "flush-total", "stream-scope-metrics", singletonMap("scope-id", "all")).metricValue());
         Assert.Equal(1.0, getMetricByNameFilterByTags(metrics, "flush-total", "stream-scope-metrics", singletonMap("scope-id", "mocked-store")).metricValue());
         verify(innerStoreMock);
     }
 
     [Xunit.Fact]
-    public void ShouldCloseUnderlyingStore() {
+    public void ShouldCloseUnderlyingStore()
+    {
         innerStoreMock.close();
         expectLastCall();
         replay(innerStoreMock);
@@ -178,7 +189,8 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowNullPointerExceptionIfFetchReturnsNull() {
+    public void ShouldNotThrowNullPointerExceptionIfFetchReturnsNull()
+    {
         expect(innerStoreMock.fetch(Bytes.wrap("a".getBytes()), 0)).andReturn(null);
         replay(innerStoreMock);
 
@@ -188,9 +200,10 @@ public class MeteredWindowStoreTest {
 
     private interface CachedWindowStore : WindowStore<Bytes, byte[]>, CachedStateStore<byte[], byte[]> { }
 
-    
+
     [Xunit.Fact]
-    public void ShouldSetFlushListenerOnWrappedCachingStore() {
+    public void ShouldSetFlushListenerOnWrappedCachingStore()
+    {
         CachedWindowStore cachedWindowStore = mock(CachedWindowStore);
 
         expect(cachedWindowStore.setFlushListener(anyObject(CacheFlushListener), eq(false))).andReturn(true);
@@ -210,8 +223,81 @@ public class MeteredWindowStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore() {
+    public void ShouldNotSetFlushListenerOnWrappedNoneCachingStore()
+    {
         Assert.False(store.setFlushListener(null, false));
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

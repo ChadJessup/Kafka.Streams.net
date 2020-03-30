@@ -4,82 +4,85 @@ using Kafka.Streams.Processors.Interfaces;
 using Kafka.Streams.State;
 using System.Collections.Generic;
 
-internal class MockKeyValueStore : IKeyValueStore<int, byte[]>
+namespace Kafka.Streams.Tests.Mocks
 {
-    private readonly string name;
-    private readonly bool persistent;
-
-    public MockKeyValueStore(string name, bool persistent)
+    internal class MockKeyValueStore : IKeyValueStore<int, byte[]>
     {
-        this.name = name;
-        this.persistent = persistent;
-    }
+        private readonly string name;
+        private readonly bool persistent;
 
-    public long approximateNumEntries { get; }
-    string IStateStore.name { get; }
+        public MockKeyValueStore(string name, bool persistent)
+        {
+            this.name = name;
+            this.persistent = persistent;
+        }
 
-    public void Add(int key, byte[] value)
-    {
-        throw new System.NotImplementedException();
-    }
+        public long approximateNumEntries { get; }
+        string IStateStore.name { get; }
 
-    public IKeyValueIterator<int, byte[]> All()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void Add(int key, byte[] value)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void Close()
-    {
-        throw new System.NotImplementedException();
-    }
+        public IKeyValueIterator<int, byte[]> All()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public byte[] Delete(int key)
-    {
-        throw new System.NotImplementedException();
-    }
+        public void Close()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void Flush()
-    {
-        throw new System.NotImplementedException();
-    }
+        public byte[] Delete(int key)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public byte[] Get(int key)
-    {
-        throw new System.NotImplementedException();
-    }
+        public void Flush()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void Init(IProcessorContext context, IStateStore root)
-    {
-        throw new System.NotImplementedException();
-    }
+        public byte[] Get(int key)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public bool IsOpen()
-    {
-        throw new System.NotImplementedException();
-    }
+        public void Init(IProcessorContext context, IStateStore root)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public bool IsPresent()
-    {
-        throw new System.NotImplementedException();
-    }
+        public bool IsOpen()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public void PutAll(List<KeyValuePair<int, byte[]>> entries)
-    {
-        throw new System.NotImplementedException();
-    }
+        public bool IsPresent()
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public byte[] PutIfAbsent(int key, byte[] value)
-    {
-        throw new System.NotImplementedException();
-    }
+        public void PutAll(List<KeyValuePair<int, byte[]>> entries)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    public IKeyValueIterator<int, byte[]> Range(int from, int to)
-    {
-        throw new System.NotImplementedException();
-    }
+        public byte[] PutIfAbsent(int key, byte[] value)
+        {
+            throw new System.NotImplementedException();
+        }
 
-    bool IStateStore.persistent()
-    {
-        throw new System.NotImplementedException();
+        public IKeyValueIterator<int, byte[]> Range(int from, int to)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        bool IStateStore.persistent()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -31,11 +24,24 @@
 
 
 
-public class MergedSortedCacheWrappedSessionStoreIteratorTest {
 
-    private static SegmentedCacheFunction SINGLE_SEGMENT_CACHE_FUNCTION = new SegmentedCacheFunction(null, -1) {
-        
-        public long SegmentId(Bytes key) {
+
+
+
+
+
+
+
+
+    public class MergedSortedCacheWrappedSessionStoreIteratorTest
+    {
+
+        private static SegmentedCacheFunction SINGLE_SEGMENT_CACHE_FUNCTION = new SegmentedCacheFunction(null, -1)
+        {
+
+
+        public long SegmentId(Bytes key)
+        {
             return 0;
         }
     };
@@ -54,43 +60,50 @@ public class MergedSortedCacheWrappedSessionStoreIteratorTest {
         )).iterator();
 
     [Xunit.Fact]
-    public void ShouldHaveNextFromStore() {
+    public void ShouldHaveNextFromStore()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.True(mergeIterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void ShouldGetNextFromStore() {
+    public void ShouldGetNextFromStore()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.Equal(mergeIterator.next(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.get())));
     }
 
     [Xunit.Fact]
-    public void ShouldPeekNextKeyFromStore() {
+    public void ShouldPeekNextKeyFromStore()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(storeKvs, Collections.emptyIterator());
         Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(storeKey, storeWindow)));
     }
 
     [Xunit.Fact]
-    public void ShouldHaveNextFromCache() {
+    public void ShouldHaveNextFromCache()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.True(mergeIterator.hasNext());
     }
 
     [Xunit.Fact]
-    public void ShouldGetNextFromCache() {
+    public void ShouldGetNextFromCache()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.Equal(mergeIterator.next(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.get())));
     }
 
     [Xunit.Fact]
-    public void ShouldPeekNextKeyFromCache() {
+    public void ShouldPeekNextKeyFromCache()
+    {
         MergedSortedCacheSessionStoreIterator mergeIterator = createIterator(Collections.emptyIterator(), cacheKvs);
         Assert.Equal(mergeIterator.peekNextKey(), (new Windowed<>(cacheKey, cacheWindow)));
     }
 
     [Xunit.Fact]
-    public void ShouldIterateBothStoreAndCache() {
+    public void ShouldIterateBothStoreAndCache()
+    {
         MergedSortedCacheSessionStoreIterator iterator = createIterator(storeKvs, cacheKvs);
         Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>(storeKey, storeWindow), storeKey.get())));
         Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>(cacheKey, cacheWindow), cacheKey.get())));
@@ -98,7 +111,8 @@ public class MergedSortedCacheWrappedSessionStoreIteratorTest {
     }
 
     private MergedSortedCacheSessionStoreIterator CreateIterator(Iterator<KeyValuePair<Windowed<Bytes>, byte[]>> storeKvs,
-                                                                 Iterator<KeyValuePair<Bytes, LRUCacheEntry>> cacheKvs) {
+                                                                 Iterator<KeyValuePair<Bytes, LRUCacheEntry>> cacheKvs)
+    {
         DelegatingPeekingKeyValueIterator<Windowed<Bytes>, byte[]> storeIterator =
             new DelegatingPeekingKeyValueIterator<>("store", new KeyValueIteratorStub<>(storeKvs));
 
@@ -108,3 +122,47 @@ public class MergedSortedCacheWrappedSessionStoreIteratorTest {
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

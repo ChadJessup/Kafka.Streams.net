@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream
+{
+}
 //namespace Kafka.Streams.Tests
 //{
 //    public class SuppressedTest

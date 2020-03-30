@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+}
 ///*
 
 
@@ -160,7 +163,7 @@
 //    private string threadName = "threadName";
 //    private StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(new Metrics(), threadName);
 
-    
+
 //    public void setup() {// throws Exception
 //        restoreStateConsumer.reset();
 //        restoreStateConsumer.updatePartitions(storeChangelogTopicName1, asList(
@@ -178,7 +181,7 @@
 //        stateDirectory = new StateDirectory(createConfig(baseDir), new MockTime(), true);
 //    }
 
-    
+
 //    public void cleanup(){ //throws IOException
 //        if (task != null && !task.isClosed()) {
 //            task.close(true, false);
@@ -202,7 +205,7 @@
 //        Assert.Equal(Utils.mkSet(partition2, partition1), new HashSet<>(task.checkpointedOffsets().keySet()));
 //    }
 
-    
+
 //    [Xunit.Fact]
 //    public void testUpdateNonInitializedStore(){ //throws IOException
 //        StreamsConfig config = createConfig(baseDir);
@@ -450,7 +453,7 @@
 //        Assert.Equal(new long(11L), offsets.get(topicPartition));
 //    }
 
-    
+
 //    private List<KeyValuePair<Windowed<int>, ValueAndTimestamp<long>>> getWindowedStoreContents(string storeName,
 //                                                                                                StandbyTask task) {
 //        StandbyContextImpl context = (StandbyContextImpl) task.context();
@@ -668,12 +671,12 @@
 //            streamsMetrics,
 //            stateDirectory
 //        ) {
-            
+
 //            public void commit() {
 //                throw new RuntimeException("KABOOM!");
 //            }
 
-            
+
 //            void closeStateManager(bool clean) {// throws ProcessorStateException
 //                closedStateManager.set(true);
 //            }

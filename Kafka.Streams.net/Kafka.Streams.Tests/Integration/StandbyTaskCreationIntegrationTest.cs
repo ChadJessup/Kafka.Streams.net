@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Integration
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -44,66 +37,83 @@
 
 
 
-public class StandbyTaskCreationIntegrationTest {
 
-    private static readonly int NUM_BROKERS = 1;
 
+
+
+
+
+
+
+
+    public class StandbyTaskCreationIntegrationTest
+    {
+
+        private static readonly int NUM_BROKERS = 1;
+
+
+        public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
+
+        private static readonly string INPUT_TOPIC = "input-topic";
+
+        private KafkaStreams client1;
+        private KafkaStreams client2;
+        private readonly bool client1IsOk = false;
+        private readonly bool client2IsOk = false;
+
+
+        public static void CreateTopics()
+        {// throws InterruptedException
+            CLUSTER.createTopic(INPUT_TOPIC, 2, 1);
+        }
+
+
+        public void After()
+        {
+            client1.close();
+            client2.close();
+        }
+
+        private Properties StreamsConfiguration()
+        {
+            string applicationId = "testApp";
+            Properties streamsConfiguration = new Properties();
+            streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
+            streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
+            streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory(applicationId).getPath());
+            streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+            streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
+            streamsConfiguration.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
+            return streamsConfiguration;
+        }
+
+        [Xunit.Fact]
+        public void ShouldNotCreateAnyStandByTasksForStateStoreWithLoggingDisabled()
+        {// throws Exception
+            StreamsBuilder builder = new StreamsBuilder();
+            string stateStoreName = "myTransformState";
+            StoreBuilder<KeyValueStore<int, int>> keyValueStoreBuilder =
+                Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(stateStoreName),
+                                            Serdes.Int(),
+                                            Serdes.Int()).withLoggingDisabled();
+            builder.addStateStore(keyValueStoreBuilder);
+            builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Int(), Serdes.Int()))
+                .transform(() => new Transformer<int, int, KeyValuePair<int, int>>()
+                {
     
-    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
-    private static readonly string INPUT_TOPIC = "input-topic";
 
-    private KafkaStreams client1;
-    private KafkaStreams client2;
-    private readonly bool client1IsOk = false;
-    private readonly bool client2IsOk = false;
+                public void init(ProcessorContext context) { }
 
-    
-    public static void CreateTopics() {// throws InterruptedException
-        CLUSTER.createTopic(INPUT_TOPIC, 2, 1);
-    }
 
-    
-    public void After() {
-        client1.close();
-        client2.close();
-    }
+            public KeyValuePair<int, int> transform(int key, int value)
+            {
+                return null;
+            }
 
-    private Properties StreamsConfiguration() {
-        string applicationId = "testApp";
-        Properties streamsConfiguration = new Properties();
-        streamsConfiguration.put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-        streamsConfiguration.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
-        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory(applicationId).getPath());
-        streamsConfiguration.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-        streamsConfiguration.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.Int().getClass());
-        streamsConfiguration.put(StreamsConfig.NUM_STANDBY_REPLICAS_CONFIG, 1);
-        return streamsConfiguration;
-    }
 
-    [Xunit.Fact]
-    public void ShouldNotCreateAnyStandByTasksForStateStoreWithLoggingDisabled() {// throws Exception
-        StreamsBuilder builder = new StreamsBuilder();
-        string stateStoreName = "myTransformState";
-        StoreBuilder<KeyValueStore<int, int>> keyValueStoreBuilder =
-            Stores.keyValueStoreBuilder(Stores.persistentKeyValueStore(stateStoreName),
-                                        Serdes.Int(),
-                                        Serdes.Int()).withLoggingDisabled();
-        builder.addStateStore(keyValueStoreBuilder);
-        builder.stream(INPUT_TOPIC, Consumed.with(Serdes.Int(), Serdes.Int()))
-            .transform(() => new Transformer<int, int, KeyValuePair<int, int>>() {
-                
-                
-                public void init(ProcessorContext context) {}
-
-                
-                public KeyValuePair<int, int> transform(int key, int value) {
-                    return null;
-                }
-
-                
-                public void close() {}
-            }, stateStoreName);
+            public void close() { }
+        }, stateStoreName);
 
         Topology topology = builder.build();
         createClients(topology, streamsConfiguration(), topology, streamsConfiguration());
@@ -118,7 +128,8 @@ public class StandbyTaskCreationIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void ShouldCreateStandByTasksForMaterializedAndOptimizedSourceTables() {// throws Exception
+    public void ShouldCreateStandByTasksForMaterializedAndOptimizedSourceTables()
+    {// throws Exception
         Properties streamsConfiguration1 = streamsConfiguration();
         streamsConfiguration1.put(StreamsConfig.TOPOLOGY_OPTIMIZATION, StreamsConfig.OPTIMIZE);
         Properties streamsConfiguration2 = streamsConfiguration();
@@ -146,35 +157,43 @@ public class StandbyTaskCreationIntegrationTest {
     private void CreateClients(Topology topology1,
                                Properties streamsConfiguration1,
                                Topology topology2,
-                               Properties streamsConfiguration2) {
+                               Properties streamsConfiguration2)
+    {
 
         client1 = new KafkaStreams(topology1, streamsConfiguration1);
         client2 = new KafkaStreams(topology2, streamsConfiguration2);
     }
 
-    private void SetStateListenersForVerification(Predicate<ThreadMetadata> taskCondition) {
-        client1.setStateListener((newState, oldState) => {
+    private void SetStateListenersForVerification(Predicate<ThreadMetadata> taskCondition)
+    {
+        client1.setStateListener((newState, oldState) =>
+        {
             if (newState == State.RUNNING &&
-                client1.localThreadsMetadata().stream().allMatch(taskCondition)) {
+                client1.localThreadsMetadata().stream().allMatch(taskCondition))
+            {
 
                 client1IsOk = true;
             }
         });
-        client2.setStateListener((newState, oldState) => {
+        client2.setStateListener((newState, oldState) =>
+        {
             if (newState == State.RUNNING &&
-                client2.localThreadsMetadata().stream().allMatch(taskCondition)) {
+                client2.localThreadsMetadata().stream().allMatch(taskCondition))
+            {
 
                 client2IsOk = true;
             }
         });
     }
 
-    private void StartClients() {
+    private void StartClients()
+    {
         client1.start();
         client2.start();
     }
 
-    private void WaitUntilBothClientAreOK(string message) {// throws Exception
+    private void WaitUntilBothClientAreOK(string message)
+    {// throws Exception
         TestUtils.waitForCondition(
             () => client1IsOk && client2IsOk,
             30 * 1000,
@@ -184,3 +203,55 @@ public class StandbyTaskCreationIntegrationTest {
         );
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

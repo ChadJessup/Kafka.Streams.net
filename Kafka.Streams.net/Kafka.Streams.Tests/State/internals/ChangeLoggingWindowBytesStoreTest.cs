@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -39,12 +32,24 @@
 
 
 
-public class ChangeLoggingWindowBytesStoreTest {
 
-    private TaskId taskId = new TaskId(0, 0);
-    private Dictionary<object, object> sent = new HashMap<>();
-    private NoOpRecordCollector collector = new NoOpRecordCollector() {
-        
+
+
+
+
+
+
+
+
+    public class ChangeLoggingWindowBytesStoreTest
+    {
+
+        private TaskId taskId = new TaskId(0, 0);
+        private Dictionary<object, object> sent = new HashMap<>();
+        private NoOpRecordCollector collector = new NoOpRecordCollector()
+        {
+
+
         public void Send<K, V>(string topic,
                                 K key,
                                 V value,
@@ -52,12 +57,13 @@ public class ChangeLoggingWindowBytesStoreTest {
                                 int partition,
                                 long timestamp,
                                 Serializer<K> keySerializer,
-                                Serializer<V> valueSerializer) {
+                                Serializer<V> valueSerializer)
+        {
             sent.put(key, value);
         }
     };
 
-    private byte[] value = {0};
+    private byte[] value = { 0 };
     private Bytes bytesKey = Bytes.wrap(value);
 
     (type = MockType.NICE)
@@ -67,12 +73,14 @@ public class ChangeLoggingWindowBytesStoreTest {
     private ChangeLoggingWindowBytesStore store;
 
 
-    
-    public void SetUp() {
+
+    public void SetUp()
+    {
         store = new ChangeLoggingWindowBytesStore(inner, false);
     }
 
-    private void Init() {
+    private void Init()
+    {
         EasyMock.expect(context.taskId()).andReturn(taskId);
         EasyMock.expect(context.recordCollector()).andReturn(collector);
         inner.init(context, store);
@@ -83,7 +91,8 @@ public class ChangeLoggingWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldLogPuts() {
+    public void ShouldLogPuts()
+    {
         inner.put(bytesKey, value, 0);
         EasyMock.expectLastCall();
 
@@ -93,12 +102,13 @@ public class ChangeLoggingWindowBytesStoreTest {
 
         assertArrayEquals(
             value,
-            (byte[]) sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 0)));
+            (byte[])sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 0)));
         EasyMock.verify(inner);
     }
 
     [Xunit.Fact]
-    public void ShouldDelegateToUnderlyingStoreWhenFetching() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetching()
+    {
         EasyMock
             .expect(inner.fetch(bytesKey, 0, 10))
             .andReturn(KeyValueIterators.emptyWindowStoreIterator());
@@ -110,7 +120,8 @@ public class ChangeLoggingWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange() {
+    public void ShouldDelegateToUnderlyingStoreWhenFetchingRange()
+    {
         EasyMock
             .expect(inner.fetch(bytesKey, bytesKey, 0, 1))
             .andReturn(KeyValueIterators.emptyIterator());
@@ -122,7 +133,8 @@ public class ChangeLoggingWindowBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRetainDuplicatesWhenSet() {
+    public void ShouldRetainDuplicatesWhenSet()
+    {
         store = new ChangeLoggingWindowBytesStore(inner, true);
         inner.put(bytesKey, value, 0);
         EasyMock.expectLastCall().times(2);
@@ -131,10 +143,62 @@ public class ChangeLoggingWindowBytesStoreTest {
         store.put(bytesKey, value);
         store.put(bytesKey, value);
 
-        assertArrayEquals(value, (byte[]) sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 1)));
-        assertArrayEquals(value, (byte[]) sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 2)));
+        assertArrayEquals(value, (byte[])sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 1)));
+        assertArrayEquals(value, (byte[])sent.get(WindowKeySchema.toStoreKeyBinary(bytesKey, 0, 2)));
 
         EasyMock.verify(inner);
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream.Internals.Suppress
+{
+}
 ///*
 //
 //

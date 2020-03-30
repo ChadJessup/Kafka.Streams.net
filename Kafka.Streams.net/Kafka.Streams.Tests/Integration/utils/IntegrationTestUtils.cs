@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Integration.utils
+{
+}
 ///*
 
 
@@ -81,7 +84,7 @@
 //    public static class StateListenerStub : StreamThread.StateListener {
 //        bool startingToRevokedSeen = false;
 //        bool revokedToPendingShutdownSeen = false;
-        
+
 //        public void onChange(Thread thread,
 //                             ThreadStateTransitionValidator newState,
 //                             ThreadStateTransitionValidator oldState) {
@@ -241,7 +244,7 @@
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-    
+
 //    public static void produceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
 //                                                                         Properties producerConfig,
@@ -262,7 +265,7 @@
 //     * @param <K>                 Key type of the data records
 //     * @param <V>                 Value type of the data records
 //     */
-    
+
 //    public static void produceKeyValuesSynchronouslyWithTimestamp<K, V>(string topic,
 //                                                                         Collection<KeyValuePair<K, V>> records,
 //                                                                         Properties producerConfig,
@@ -376,7 +379,7 @@
 //     * @param enableTransactions  Send messages in a transaction
 //     * @param <V>                 Value type of the data records
 //     */
-    
+
 //    public static <V> void produceValuesSynchronously(string topic,
 //                                                      Collection<V> records,
 //                                                      Properties producerConfig,
@@ -435,7 +438,7 @@
 //     * @param <V>                 Value type of the data records
 //     * @return All the records consumed, or null if no records are consumed
 //     */
-    
+
 //    public static List<ConsumeResult<K, V>> waitUntilMinRecordsReceived<K, V>(Properties consumerConfig,
 //                                                                                string topic,
 //                                                                                int expectedNumRecords) {// throws InterruptedException
@@ -453,7 +456,7 @@
 //     * @param <V>                 Value type of the data records
 //     * @return All the records consumed, or null if no records are consumed
 //     */
-    
+
 //    public static List<ConsumeResult<K, V>> waitUntilMinRecordsReceived<K, V>(Properties consumerConfig,
 //                                                                                string topic,
 //                                                                                int expectedNumRecords,
@@ -593,7 +596,7 @@
 //     * @param <V>                Value type of the data records
 //     * @return All the mappings consumed, or null if no records are consumed
 //     */
-    
+
 //    public static List<KeyValuePair<K, V>> waitUntilFinalKeyValueRecordsReceived<K, V>(Properties consumerConfig,
 //                                                                                    string topic,
 //                                                                                    List<KeyValuePair<K, V>> expectedRecords,
@@ -608,7 +611,7 @@
 //        return waitUntilFinalKeyValueRecordsReceived(consumerConfig, topic, expectedRecords, waitTime, true);
 //    }
 
-    
+
 //    private static List<T> waitUntilFinalKeyValueRecordsReceived<K, V, T>(Properties consumerConfig,
 //                                                                           string topic,
 //                                                                           List<T> expectedRecords,
@@ -699,7 +702,7 @@
 //        return accumData;
 //    }
 
-    
+
 //    public static void waitForTopicPartitions(List<KafkaServer> servers,
 //                                              List<TopicPartition> partitions,
 //                                              long timeout) {// throws InterruptedException

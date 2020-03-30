@@ -1,19 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
+    *
 
 
 
 
 
- */
+    */
 
 
 
@@ -63,34 +65,38 @@
 
 
 
-public abstract class SessionBytesStoreTest {
+    public abstract class SessionBytesStoreTest
+    {
 
-    protected static long SEGMENT_INTERVAL = 60_000L;
-    protected static long RETENTION_PERIOD = 10_000L;
+        protected static long SEGMENT_INTERVAL = 60_000L;
+        protected static long RETENTION_PERIOD = 10_000L;
 
-    protected SessionStore<string, long> sessionStore;
-    protected InternalMockProcessorContext context;
+        protected SessionStore<string, long> sessionStore;
+        protected InternalMockProcessorContext context;
 
-    private List<KeyValuePair<byte[], byte[]>> changeLog = new ArrayList<>();
+        private List<KeyValuePair<byte[], byte[]>> changeLog = new ArrayList<>();
 
-    private Producer<byte[], byte[]> producer = new MockProducer<>(true,
-        Serdes.ByteArray().Serializer,
-        Serdes.ByteArray().Serializer);
+        private Producer<byte[], byte[]> producer = new MockProducer<>(true,
+            Serdes.ByteArray().Serializer,
+            Serdes.ByteArray().Serializer);
 
-    abstract SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,
-                                                          Serde<K> keySerde,
-                                                          Serde<V> valueSerde);
+        abstract SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,
+                                                              Serde<K> keySerde,
+                                                              Serde<V> valueSerde);
 
-    abstract string GetMetricsScope();
+        abstract string GetMetricsScope();
 
-    abstract void SetClassLoggerToDebug();
+        abstract void SetClassLoggerToDebug();
 
-    private RecordCollectorImpl CreateRecordCollector(string name) {
-        return new RecordCollectorImpl(name,
-            new LogContext(name),
-            new DefaultProductionExceptionHandler(),
-            new Metrics().sensor("skipped-records")) {
-            
+        private RecordCollectorImpl CreateRecordCollector(string name)
+        {
+            return new RecordCollectorImpl(name,
+                new LogContext(name),
+                new DefaultProductionExceptionHandler(),
+                new Metrics().sensor("skipped-records"))
+            {
+
+
             public void send<K1, V1>(string topic,
                 K1 key,
                 V1 value,
@@ -98,7 +104,8 @@ public abstract class SessionBytesStoreTest {
                 int partition,
                 long timestamp,
                 Serializer<K1> keySerializer,
-                Serializer<V1> valueSerializer) {
+                Serializer<V1> valueSerializer)
+            {
                 changeLog.add(new KeyValuePair<>(
                     keySerializer.serialize(topic, headers, key),
                     valueSerializer.serialize(topic, headers, value))
@@ -107,8 +114,9 @@ public abstract class SessionBytesStoreTest {
         };
     }
 
-    
-    public void SetUp() {
+
+    public void SetUp()
+    {
         sessionStore = buildSessionStore(RETENTION_PERIOD, Serdes.String(), Serdes.Long());
 
         RecordCollector recordCollector = createRecordCollector(sessionStore.name());
@@ -127,13 +135,15 @@ public abstract class SessionBytesStoreTest {
         sessionStore.init(context, sessionStore);
     }
 
-    
-    public void After() {
+
+    public void After()
+    {
         sessionStore.close();
     }
 
     [Xunit.Fact]
-    public void ShouldPutAndFindSessionsInRange() {
+    public void ShouldPutAndFindSessionsInRange()
+    {
         string key = "a";
         Windowed<string> a1 = new Windowed<>(key, new SessionWindow(10, 10L));
         Windowed<string> a2 = new Windowed<>(key, new SessionWindow(500L, 1000L));
@@ -157,31 +167,35 @@ public abstract class SessionBytesStoreTest {
         ) {
             Assert.Equal(new HashSet<>(expected2), toSet(values2));
         }
-    }
+        }
 
     [Xunit.Fact]
-    public void ShouldFetchAllSessionsWithSameRecordKey() {
+    public void ShouldFetchAllSessionsWithSameRecordKey()
+    {
         List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(10, 10)), 2L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(100, 100)), 3L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(1000, 1000)), 4L));
 
-        foreach (KeyValuePair<Windowed<string>, long> kv in expected) {
+        foreach (KeyValuePair<Windowed<string>, long> kv in expected)
+        {
             sessionStore.put(kv.key, kv.value);
         }
 
         // add one that shouldn't appear in the results
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 0)), 5L);
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
             Assert.Equal(new HashSet<>(expected), toSet(values));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldFetchAllSessionsWithinKeyRange() {
+    public void ShouldFetchAllSessionsWithinKeyRange()
+    {
         List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
             KeyValuePair.Create(new Windowed<>("aa", new SessionWindow(10, 10)), 2L),
             KeyValuePair.Create(new Windowed<>("b", new SessionWindow(1000, 1000)), 4L),
@@ -189,7 +203,8 @@ public abstract class SessionBytesStoreTest {
             KeyValuePair.Create(new Windowed<>("aaa", new SessionWindow(100, 100)), 3L),
             KeyValuePair.Create(new Windowed<>("bb", new SessionWindow(1500, 2000)), 5L));
 
-        foreach (KeyValuePair<Windowed<string>, long> kv in expected) {
+        foreach (KeyValuePair<Windowed<string>, long> kv in expected)
+        {
             sessionStore.put(kv.key, kv.value);
         }
 
@@ -197,14 +212,16 @@ public abstract class SessionBytesStoreTest {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("bbb", new SessionWindow(2500, 3000)), 6L);
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("aa", "bb"));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("aa", "bb"));
             Assert.Equal(new HashSet<>(expected), toSet(values));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldFetchExactSession() {
+    public void ShouldFetchExactSession()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 4)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 3)), 2L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 4)), 3L);
@@ -216,12 +233,14 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnNullOnSessionNotFound() {
+    public void ShouldReturnNullOnSessionNotFound()
+    {
         assertNull(sessionStore.fetchSession("any key", 0L, 5L));
     }
 
     [Xunit.Fact]
-    public void ShouldFindValuesWithinMergingSessionWindowRange() {
+    public void ShouldFindValuesWithinMergingSessionWindowRange()
+    {
         string key = "a";
         sessionStore.put(new Windowed<>(key, new SessionWindow(0L, 0L)), 1L);
         sessionStore.put(new Windowed<>(key, new SessionWindow(1000L, 1000L)), 2L);
@@ -230,50 +249,58 @@ public abstract class SessionBytesStoreTest {
             KeyValuePair.Create(new Windowed<>(key, new SessionWindow(0L, 0L)), 1L),
             KeyValuePair.Create(new Windowed<>(key, new SessionWindow(1000L, 1000L)), 2L));
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions(key, -1, 1000L));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions(key, -1, 1000L));
             Assert.Equal(new HashSet<>(expected), toSet(results));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldRemove() {
+    public void ShouldRemove()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 1000)), 1L);
         sessionStore.put(new Windowed<>("a", new SessionWindow(1500, 2500)), 2L);
 
         sessionStore.remove(new Windowed<>("a", new SessionWindow(0, 1000)));
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L));
             Assert.False(results.hasNext());
         }
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L));
             Assert.True(results.hasNext());
         }
     }
 
     [Xunit.Fact]
-    public void ShouldRemoveOnNullAggValue() {
+    public void ShouldRemoveOnNullAggValue()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 1000)), 1L);
         sessionStore.put(new Windowed<>("a", new SessionWindow(1500, 2500)), 2L);
 
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 1000)), null);
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 0L, 1000L));
             Assert.False(results.hasNext());
         }
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 1500L, 2500L));
             Assert.True(results.hasNext());
         }
     }
 
     [Xunit.Fact]
-    public void ShouldFindSessionsToMerge() {
+    public void ShouldFindSessionsToMerge()
+    {
         Windowed<string> session1 = new Windowed<>("a", new SessionWindow(0, 100));
         Windowed<string> session2 = new Windowed<>("a", new SessionWindow(101, 200));
         Windowed<string> session3 = new Windowed<>("a", new SessionWindow(201, 300));
@@ -288,14 +315,16 @@ public abstract class SessionBytesStoreTest {
         List<KeyValuePair<Windowed<string>, long>> expected =
             Array.asList(KeyValuePair.Create(session2, 2L), KeyValuePair.Create(session3, 3L));
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 150, 300));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> results = sessionStore.findSessions("a", 150, 300));
             Assert.Equal(new HashSet<>(expected), toSet(results));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldFetchExactKeys() {
+    public void ShouldFetchExactKeys()
+    {
         sessionStore = buildSessionStore(0x7a00000000000000L, Serdes.String(), Serdes.Long());
         sessionStore.init(context, sessionStore);
 
@@ -329,18 +358,19 @@ public abstract class SessionBytesStoreTest {
         ) {
             Assert.Equal(valuesToSet(iterator), (new HashSet<>(Collections.singletonList(2L))));
         }
-    }
+        }
 
     [Xunit.Fact]
-    public void ShouldFetchAndIterateOverExactBinaryKeys() {
+    public void ShouldFetchAndIterateOverExactBinaryKeys()
+    {
         SessionStore<Bytes, string> sessionStore =
             buildSessionStore(RETENTION_PERIOD, Serdes.Bytes(), Serdes.String());
 
         sessionStore.init(context, sessionStore);
 
-        Bytes key1 = Bytes.wrap(new byte[]{0});
-        Bytes key2 = Bytes.wrap(new byte[]{0, 0});
-        Bytes key3 = Bytes.wrap(new byte[]{0, 0, 0});
+        Bytes key1 = Bytes.wrap(new byte[] { 0 });
+        Bytes key2 = Bytes.wrap(new byte[] { 0, 0 });
+        Bytes key3 = Bytes.wrap(new byte[] { 0, 0, 0 });
 
         sessionStore.put(new Windowed<>(key1, new SessionWindow(1, 100)), "1");
         sessionStore.put(new Windowed<>(key2, new SessionWindow(2, 100)), "2");
@@ -361,7 +391,8 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void TestIteratorPeek() {
+    public void TestIteratorPeek()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(0, 10)), 2L);
         sessionStore.put(new Windowed<>("a", new SessionWindow(10, 20)), 3L);
@@ -376,39 +407,45 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestore() {
+    public void ShouldRestore()
+    {
         List<KeyValuePair<Windowed<string>, long>> expected = Array.asList(
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(0, 0)), 1L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(10, 10)), 2L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(100, 100)), 3L),
             KeyValuePair.Create(new Windowed<>("a", new SessionWindow(1000, 1000)), 4L));
 
-        foreach (KeyValuePair<Windowed<string>, long> kv in expected) {
+        foreach (KeyValuePair<Windowed<string>, long> kv in expected)
+        {
             sessionStore.put(kv.key, kv.value);
         }
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
             Assert.Equal(new HashSet<>(expected), toSet(values));
         }
 
         sessionStore.close();
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
             Assert.Equal(Collections.emptySet(), toSet(values));
         }
 
         context.restore(sessionStore.name(), changeLog);
 
-        try { 
- (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
+        try
+        {
+            (KeyValueIterator<Windowed<string>, long> values = sessionStore.fetch("a"));
             Assert.Equal(new HashSet<>(expected), toSet(values));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext() {
+    public void ShouldCloseOpenIteratorsWhenStoreIsClosedAndNotThrowInvalidStateStoreExceptionOnHasNext()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 0)), 1L);
         sessionStore.put(new Windowed<>("b", new SessionWindow(10, 50)), 2L);
         sessionStore.put(new Windowed<>("c", new SessionWindow(100, 500)), 3L);
@@ -421,7 +458,8 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions() {
+    public void ShouldReturnSameResultsForSingleKeyFindSessionsAndEqualKeyRangeFindSessions()
+    {
         sessionStore.put(new Windowed<>("a", new SessionWindow(0, 1)), 0L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(2, 3)), 1L);
         sessionStore.put(new Windowed<>("aa", new SessionWindow(4, 5)), 2L);
@@ -437,7 +475,8 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldLogAndMeasureExpiredRecords() {
+    public void ShouldLogAndMeasureExpiredRecords()
+    {
         setClassLoggerToDebug();
         LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
@@ -451,7 +490,7 @@ public abstract class SessionBytesStoreTest {
 
         LogCaptureAppender.Unregister(appender);
 
-        Dictionary<MetricName, ? : Metric> metrics = context.metrics().metrics();
+        Dictionary < MetricName, ? : Metric > metrics = context.metrics().metrics();
 
         string metricScope = getMetricsScope();
 
@@ -484,52 +523,62 @@ public abstract class SessionBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowExceptionRemovingNonexistentKey() {
+    public void ShouldNotThrowExceptionRemovingNonexistentKey()
+    {
         sessionStore.remove(new Windowed<>("a", new SessionWindow(0, 1)));
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullKey()
+    {
         sessionStore.findSessions(null, 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullFromKey()
+    {
         sessionStore.findSessions(null, "anyKeyTo", 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnFindSessionsNullToKey()
+    {
         sessionStore.findSessions("anyKeyFrom", null, 1L, 2L);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFetchNullFromKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullFromKey()
+    {
         sessionStore.fetch(null, "anyToKey");
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFetchNullToKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullToKey()
+    {
         sessionStore.fetch("anyFromKey", null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnFetchNullKey() {
+    public void ShouldThrowNullPointerExceptionOnFetchNullKey()
+    {
         sessionStore.fetch(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnRemoveNullKey() {
+    public void ShouldThrowNullPointerExceptionOnRemoveNullKey()
+    {
         sessionStore.remove(null);
     }
 
     [Xunit.Fact]// (expected = NullPointerException)
-    public void ShouldThrowNullPointerExceptionOnPutNullKey() {
+    public void ShouldThrowNullPointerExceptionOnPutNullKey()
+    {
         sessionStore.put(null, 1L);
     }
 
     [Xunit.Fact]
-    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey() {
+    public void ShouldNotThrowInvalidRangeExceptionWithNegativeFromKey()
+    {
         setClassLoggerToDebug();
         LogCaptureAppender appender = LogCaptureAppender.CreateAndRegister();
 
@@ -548,22 +597,124 @@ public abstract class SessionBytesStoreTest {
                 + "Note that the built-in numerical serdes do not follow this for negative numbers"));
     }
 
-    protected static HashSet<V> ValuesToSet<K, V>(Iterator<KeyValuePair<K, V>> iterator) {
+    protected static HashSet<V> ValuesToSet<K, V>(Iterator<KeyValuePair<K, V>> iterator)
+    {
         HashSet<V> results = new HashSet<>();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             results.add(iterator.next().value);
         }
         return results;
     }
 
-    protected static HashSet<KeyValuePair<K, V>> ToSet<K, V>(Iterator<KeyValuePair<K, V>> iterator) {
+    protected static HashSet<KeyValuePair<K, V>> ToSet<K, V>(Iterator<KeyValuePair<K, V>> iterator)
+    {
         HashSet<KeyValuePair<K, V>> results = new HashSet<>();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             results.add(iterator.next());
         }
         return results;
     }
 
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

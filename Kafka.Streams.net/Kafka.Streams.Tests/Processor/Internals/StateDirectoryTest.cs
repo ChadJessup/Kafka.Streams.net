@@ -4,43 +4,51 @@ using System.IO;
 using System.Threading;
 using Xunit;
 
-public class StateDirectoryTest {
+namespace Kafka.Streams.Tests.Processor.Internals
+{
+    public class StateDirectoryTest
+    {
 
-    private MockTime time = new MockTime();
-    private File stateDir;
-    private readonly string applicationId = "applicationId";
-    private StateDirectory directory;
-    private readonly File appDir;
+        private MockTime time = new MockTime();
+        private File stateDir;
+        private readonly string applicationId = "applicationId";
+        private StateDirectory directory;
+        private readonly File appDir;
 
-    private void InitializeStateDirectory(bool createStateDirectory) {// throws Exception
-        stateDir = new File(TestUtils.IO_TMP_DIR, "kafka-" + TestUtils.randomString(5));
-        if (!createStateDirectory) {
-            cleanup();
-        }
-        directory = new StateDirectory(
-            new StreamsConfig(new Properties() {
+        private void InitializeStateDirectory(bool createStateDirectory)
+        {// throws Exception
+            stateDir = new File(TestUtils.IO_TMP_DIR, "kafka-" + TestUtils.randomString(5));
+            if (!createStateDirectory)
+            {
+                cleanup();
+            }
+            directory = new StateDirectory(
+                new StreamsConfig(new Properties() {
                 {
                     put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-                    put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-                    put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
-                }
-            }),
+            put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+            put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
+        }
+    }),
             time, createStateDirectory);
         appDir = new File(stateDir, applicationId);
     }
 
     
-    public void Before() {// throws Exception
+    public void Before()
+    {// throws Exception
         initializeStateDirectory(true);
     }
 
-    
-    public void Cleanup() {// throws Exception
+
+    public void Cleanup()
+    {// throws Exception
         Utils.delete(stateDir);
     }
 
     [Xunit.Fact]
-    public void ShouldCreateBaseDirectory() {
+    public void ShouldCreateBaseDirectory()
+    {
         Assert.True(stateDir.exists());
         Assert.True(stateDir.isDirectory());
         Assert.True(appDir.exists());
@@ -48,7 +56,8 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldCreateTaskStateDirectory() {
+    public void ShouldCreateTaskStateDirectory()
+    {
         TaskId taskId = new TaskId(0, 0);
         File taskDirectory = directory.directoryForTask(taskId);
         Assert.True(taskDirectory.exists());
@@ -56,7 +65,8 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldLockTaskStateDirectory() {// throws Exception
+    public void ShouldLockTaskStateDirectory()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         File taskDirectory = directory.directoryForTask(taskId);
 
@@ -69,49 +79,62 @@ public class StateDirectoryTest {
         ) {
             channel.tryLock();
             Assert.True(false, "shouldn't be able to lock already locked directory");
-        } catch (OverlappingFileLockException e) {
+        } catch (OverlappingFileLockException e)
+        {
             // swallow
-        } finally {
+        }
+        finally
+        {
             directory.unlock(taskId);
         }
     }
 
     [Xunit.Fact]
-    public void ShouldBeTrueIfAlreadyHoldsLock() {// throws Exception
+    public void ShouldBeTrueIfAlreadyHoldsLock()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         directory.directoryForTask(taskId);
         directory.Lock(taskId);
-        try {
+        try
+        {
             Assert.True(directory.Lock(taskId));
-        } finally {
+        }
+        finally
+        {
             directory.unlock(taskId);
         }
     }
 
     [Xunit.Fact]
-    public void ShouldThrowProcessorStateException() {// throws Exception
+    public void ShouldThrowProcessorStateException()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
 
         Utils.delete(stateDir);
 
-        try {
+        try
+        {
             directory.directoryForTask(taskId);
             Assert.True(false, "Should have thrown ProcessorStateException");
-        } catch (ProcessorStateException expected) {
+        }
+        catch (ProcessorStateException expected)
+        {
             // swallow
         }
     }
 
     [Xunit.Fact]
-    public void ShouldNotLockDeletedDirectory() {// throws Exception
+    public void ShouldNotLockDeletedDirectory()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
 
         Utils.delete(stateDir);
         Assert.False(directory.Lock(taskId));
     }
-    
+
     [Xunit.Fact]
-    public void ShouldLockMultipleTaskDirectories() {// throws Exception
+    public void ShouldLockMultipleTaskDirectories()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         File task1Dir = directory.directoryForTask(taskId);
         TaskId taskId2 = new TaskId(1, 0);
@@ -123,9 +146,9 @@ public class StateDirectoryTest {
                 new File(task1Dir, StateDirectory.LOCK_FILE_NAME).toPath(),
                 StandardOpenOption.CREATE,
                 StandardOpenOption.WRITE);
-            FileChannel channel2 = FileChannel.open(new File(task2Dir, StateDirectory.LOCK_FILE_NAME).toPath(),
-                StandardOpenOption.CREATE,
-                StandardOpenOption.WRITE)
+        FileChannel channel2 = FileChannel.open(new File(task2Dir, StateDirectory.LOCK_FILE_NAME).toPath(),
+            StandardOpenOption.CREATE,
+            StandardOpenOption.WRITE)
         ) {
             directory.Lock(taskId);
             directory.Lock(taskId2);
@@ -133,16 +156,20 @@ public class StateDirectoryTest {
             channel1.tryLock();
             channel2.tryLock();
             Assert.True(false, "shouldn't be able to lock already locked directory");
-        } catch (OverlappingFileLockException e) {
+        } catch (OverlappingFileLockException e)
+        {
             // swallow
-        } finally {
+        }
+        finally
+        {
             directory.unlock(taskId);
             directory.unlock(taskId2);
         }
     }
 
     [Xunit.Fact]
-    public void ShouldReleaseTaskStateDirectoryLock() {// throws Exception
+    public void ShouldReleaseTaskStateDirectoryLock()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         File taskDirectory = directory.directoryForTask(taskId);
 
@@ -157,13 +184,15 @@ public class StateDirectoryTest {
         ) {
             channel.tryLock();
         }
-    }
+        }
 
     [Xunit.Fact]
-    public void ShouldCleanUpTaskStateDirectoriesThatAreNotCurrentlyLocked() {// throws Exception
+    public void ShouldCleanUpTaskStateDirectoriesThatAreNotCurrentlyLocked()
+    {// throws Exception
         TaskId task0 = new TaskId(0, 0);
         TaskId task1 = new TaskId(1, 0);
-        try {
+        try
+        {
             directory.Lock(task0);
             directory.Lock(task1);
             directory.directoryForTask(new TaskId(2, 0));
@@ -178,14 +207,17 @@ public class StateDirectoryTest {
             Assert.Equal(2, files.Count);
             Assert.True(files.Contains(new File(appDir, task0.toString())));
             Assert.True(files.Contains(new File(appDir, task1.toString())));
-        } finally {
+        }
+        finally
+        {
             directory.unlock(task0);
             directory.unlock(task1);
         }
     }
 
     [Xunit.Fact]
-    public void ShouldCleanupStateDirectoriesWhenLastModifiedIsLessThanNowMinusCleanupDelay() {
+    public void ShouldCleanupStateDirectoriesWhenLastModifiedIsLessThanNowMinusCleanupDelay()
+    {
         File dir = directory.directoryForTask(new TaskId(2, 0));
         int cleanupDelayMs = 60000;
         directory.cleanRemovedTasks(cleanupDelayMs);
@@ -197,14 +229,16 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotRemoveNonTaskDirectoriesAndFiles() {
+    public void ShouldNotRemoveNonTaskDirectoriesAndFiles()
+    {
         File otherDir = TestUtils.tempDirectory(stateDir.toPath(), "foo");
         directory.cleanRemovedTasks(0);
         Assert.True(otherDir.exists());
     }
 
     [Xunit.Fact]
-    public void ShouldListAllTaskDirectories() {
+    public void ShouldListAllTaskDirectories()
+    {
         TestUtils.tempDirectory(stateDir.toPath(), "foo");
         File taskDir1 = directory.directoryForTask(new TaskId(0, 0));
         File taskDir2 = directory.directoryForTask(new TaskId(0, 1));
@@ -216,25 +250,27 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldCreateDirectoriesIfParentDoesntExist() {
+    public void ShouldCreateDirectoriesIfParentDoesntExist()
+    {
         File tempDir = TestUtils.tempDirectory();
         File stateDir = new File(new File(tempDir, "foo"), "state-dir");
         StateDirectory stateDirectory = new StateDirectory(
             new StreamsConfig(new Properties() {
                 {
                     put(StreamsConfig.APPLICATION_ID_CONFIG, applicationId);
-                    put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
-                    put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
-                }
+        put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "dummy:1234");
+        put(StreamsConfig.STATE_DIR_CONFIG, stateDir.getPath());
+    }
             }),
             time, true);
         File taskDir = stateDirectory.directoryForTask(new TaskId(0, 0));
-        Assert.True(stateDir.exists());
+    Assert.True(stateDir.exists());
         Assert.True(taskDir.exists());
     }
 
     [Xunit.Fact]
-    public void ShouldLockGlobalStateDirectory() {// throws Exception
+    public void ShouldLockGlobalStateDirectory()
+    {// throws Exception
         directory.lockGlobalState();
 
         try (
@@ -245,15 +281,19 @@ public class StateDirectoryTest {
         ) {
             channel.Lock();
             Assert.True(false, "Should have thrown OverlappingFileLockException");
-        } catch (OverlappingFileLockException expcted) {
+        } catch (OverlappingFileLockException expcted)
+        {
             // swallow
-        } finally {
+        }
+        finally
+        {
             directory.unlockGlobalState();
         }
     }
 
     [Xunit.Fact]
-    public void ShouldUnlockGlobalStateDirectory() {// throws Exception
+    public void ShouldUnlockGlobalStateDirectory()
+    {// throws Exception
         directory.lockGlobalState();
         directory.unlockGlobalState();
 
@@ -266,16 +306,21 @@ public class StateDirectoryTest {
             // should lock without any exceptions
             channel.Lock();
         }
-    }
+        }
 
     [Xunit.Fact]
-    public void ShouldNotLockStateDirLockedByAnotherThread() {// throws Exception
+    public void ShouldNotLockStateDirLockedByAnotherThread()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         AtomicReference<IOException> exceptionOnThread = new AtomicReference<>();
-        Thread thread = new Thread(() => {
-            try {
+        Thread thread = new Thread(() =>
+        {
+            try
+            {
                 directory.Lock(taskId);
-            } catch (IOException e) {
+            }
+            catch (IOException e)
+            {
                 exceptionOnThread.set(e);
             }
         });
@@ -286,18 +331,23 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotUnLockStateDirLockedByAnotherThread() {// throws Exception
+    public void ShouldNotUnLockStateDirLockedByAnotherThread()
+    {// throws Exception
         TaskId taskId = new TaskId(0, 0);
         CountDownLatch lockLatch = new CountDownLatch(1);
         CountDownLatch unlockLatch = new CountDownLatch(1);
         AtomicReference<Exception> exceptionOnThread = new AtomicReference<>();
-        Thread thread = new Thread(() => {
-            try {
+        Thread thread = new Thread(() =>
+        {
+            try
+            {
                 directory.Lock(taskId);
                 lockLatch.countDown();
                 unlockLatch.await();
                 directory.unlock(taskId);
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 exceptionOnThread.set(e);
             }
         });
@@ -316,7 +366,8 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldCleanupAllTaskDirectoriesIncludingGlobalOne() {
+    public void ShouldCleanupAllTaskDirectoriesIncludingGlobalOne()
+    {
         directory.directoryForTask(new TaskId(1, 0));
         directory.globalStateDir();
 
@@ -330,14 +381,16 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotCreateBaseDirectory() {// throws Exception
+    public void ShouldNotCreateBaseDirectory()
+    {// throws Exception
         initializeStateDirectory(false);
         Assert.False(stateDir.exists());
         Assert.False(appDir.exists());
     }
 
     [Xunit.Fact]
-    public void ShouldNotCreateTaskStateDirectory() {// throws Exception
+    public void ShouldNotCreateTaskStateDirectory()
+    {// throws Exception
         initializeStateDirectory(false);
         TaskId taskId = new TaskId(0, 0);
         File taskDirectory = directory.directoryForTask(taskId);
@@ -345,22 +398,25 @@ public class StateDirectoryTest {
     }
 
     [Xunit.Fact]
-    public void ShouldNotCreateGlobalStateDirectory() {// throws Exception
+    public void ShouldNotCreateGlobalStateDirectory()
+    {// throws Exception
         initializeStateDirectory(false);
         File globalStateDir = directory.globalStateDir();
         Assert.False(globalStateDir.exists());
     }
 
     [Xunit.Fact]
-    public void ShouldLockTaskStateDirectoryWhenDirectoryCreationDisabled() {// throws Exception
+    public void ShouldLockTaskStateDirectoryWhenDirectoryCreationDisabled()
+    {// throws Exception
         initializeStateDirectory(false);
         TaskId taskId = new TaskId(0, 0);
         Assert.True(directory.Lock(taskId));
     }
 
     [Xunit.Fact]
-    public void ShouldLockGlobalStateDirectoryWhenDirectoryCreationDisabled() {// throws Exception
+    public void ShouldLockGlobalStateDirectoryWhenDirectoryCreationDisabled()
+    {// throws Exception
         initializeStateDirectory(false);
         Assert.True(directory.lockGlobalState());
     }
-}
+}}

@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Integration
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -52,43 +45,60 @@
 
 
 
-public class PurgeRepartitionTopicIntegrationTest {
 
-    private static readonly int NUM_BROKERS = 1;
 
-    private static readonly string INPUT_TOPIC = "input-stream";
-    private static readonly string APPLICATION_ID = "restore-test";
-    private static readonly string REPARTITION_TOPIC = APPLICATION_ID + "-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition";
 
-    private static Admin adminClient;
-    private static KafkaStreams kafkaStreams;
-    private static readonly int PURGE_INTERVAL_MS = 10;
-    private static readonly int PURGE_SEGMENT_BYTES = 2000;
 
-    
-    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS, new Properties() {
+
+
+
+
+
+    public class PurgeRepartitionTopicIntegrationTest
+    {
+
+        private static readonly int NUM_BROKERS = 1;
+
+        private static readonly string INPUT_TOPIC = "input-stream";
+        private static readonly string APPLICATION_ID = "restore-test";
+        private static readonly string REPARTITION_TOPIC = APPLICATION_ID + "-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition";
+
+        private static Admin adminClient;
+        private static KafkaStreams kafkaStreams;
+        private static readonly int PURGE_INTERVAL_MS = 10;
+        private static readonly int PURGE_SEGMENT_BYTES = 2000;
+
+
+        public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS, new Properties() {
         {
             put("log.retention.check.interval.ms", PURGE_INTERVAL_MS);
-            put(TopicConfig.FILE_DELETE_DELAY_MS_CONFIG, 0);
-        }
+        put(TopicConfig.FILE_DELETE_DELAY_MS_CONFIG, 0);
+    }
     });
 
     private Time time = CLUSTER.time;
 
-    private class RepartitionTopicCreatedWithExpectedConfigs : TestCondition {
-        
-        public bool ConditionMet() {
-            try {
+    private class RepartitionTopicCreatedWithExpectedConfigs : TestCondition
+    {
+
+        public bool ConditionMet()
+        {
+            try
+            {
                 HashSet<string> topics = adminClient.listTopics().names().get();
 
-                if (!topics.Contains(REPARTITION_TOPIC)) {
+                if (!topics.Contains(REPARTITION_TOPIC))
+                {
                     return false;
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return false;
             }
 
-            try {
+            try
+            {
                 ConfigResource resource = new ConfigResource(ConfigResource.Type.TOPIC, REPARTITION_TOPIC);
                 Config config = adminClient
                     .describeConfigs(Collections.singleton(resource))
@@ -98,39 +108,50 @@ public class PurgeRepartitionTopicIntegrationTest {
                 return config.get(TopicConfig.CLEANUP_POLICY_CONFIG).Value.equals(TopicConfig.CLEANUP_POLICY_DELETE)
                         && config.get(TopicConfig.SEGMENT_MS_CONFIG).Value.equals(PURGE_INTERVAL_MS.toString())
                         && config.get(TopicConfig.SEGMENT_BYTES_CONFIG).Value.equals(PURGE_SEGMENT_BYTES.toString());
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return false;
             }
         }
     }
 
-    private interface TopicSizeVerifier {
+    private interface TopicSizeVerifier
+    {
         bool Verify(long currentSize);
     }
 
-    private class RepartitionTopicVerified : TestCondition {
+    private class RepartitionTopicVerified : TestCondition
+    {
         private TopicSizeVerifier verifier;
 
-        RepartitionTopicVerified(TopicSizeVerifier verifier) {
+        RepartitionTopicVerified(TopicSizeVerifier verifier)
+        {
             this.verifier = verifier;
         }
 
-        
-        public bool ConditionMet() {
+
+        public bool ConditionMet()
+        {
             time.sleep(PURGE_INTERVAL_MS);
 
-            try {
+            try
+            {
                 Collection<DescribeLogDirsResponse.LogDirInfo> logDirInfo =
                     adminClient.describeLogDirs(Collections.singleton(0)).values().get(0).get().values();
 
-                foreach (DescribeLogDirsResponse.LogDirInfo partitionInfo in logDirInfo) {
+                foreach (DescribeLogDirsResponse.LogDirInfo partitionInfo in logDirInfo)
+                {
                     DescribeLogDirsResponse.ReplicaInfo replicaInfo =
                         partitionInfo.replicaInfos.get(new TopicPartition(REPARTITION_TOPIC, 0));
-                    if (replicaInfo != null && verifier.Verify(replicaInfo.size)) {
+                    if (replicaInfo != null && verifier.Verify(replicaInfo.size))
+                    {
                         return true;
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 // swallow
             }
 
@@ -138,13 +159,15 @@ public class PurgeRepartitionTopicIntegrationTest {
         }
     }
 
-    
-    public static void CreateTopics() {// throws Exception
+
+    public static void CreateTopics()
+    {// throws Exception
         CLUSTER.createTopic(INPUT_TOPIC, 1, 1);
     }
 
-    
-    public void Setup() {
+
+    public void Setup()
+    {
         // create admin client for verification
         Properties adminConfig = new Properties();
         adminConfig.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.bootstrapServers());
@@ -169,18 +192,22 @@ public class PurgeRepartitionTopicIntegrationTest {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration, time);
     }
 
-    
-    public void Shutdown() {
-        if (kafkaStreams != null) {
+
+    public void Shutdown()
+    {
+        if (kafkaStreams != null)
+        {
             kafkaStreams.close(Duration.ofSeconds(30));
         }
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreState() {// throws Exception
+    public void ShouldRestoreState()
+    {// throws Exception
         // produce some data to input topic
         List<KeyValuePair<int, int>> messages = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 1000; i++)
+        {
             messages.add(new KeyValuePair<>(i, i));
         }
         IntegrationTestUtils.produceKeyValuesSynchronouslyWithTimestamp(INPUT_TOPIC,
@@ -209,3 +236,69 @@ public class PurgeRepartitionTopicIntegrationTest {
         );
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

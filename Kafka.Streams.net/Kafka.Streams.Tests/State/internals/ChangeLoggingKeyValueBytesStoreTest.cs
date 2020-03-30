@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.State.Internals
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -40,20 +33,33 @@
 
 
 
-public class ChangeLoggingKeyValueBytesStoreTest {
 
-    private InMemoryKeyValueStore inner = new InMemoryKeyValueStore("kv");
-    private ChangeLoggingKeyValueBytesStore store = new ChangeLoggingKeyValueBytesStore(inner);
-    private Dictionary<object, object> sent = new HashMap<>();
-    private Bytes hi = Bytes.wrap("hi".getBytes());
-    private Bytes hello = Bytes.wrap("hello".getBytes());
-    private readonly byte[] there = "there".getBytes();
-    private readonly byte[] world = "world".getBytes();
 
-    
-    public void Before() {
-        NoOpRecordCollector collector = new NoOpRecordCollector() {
-            
+
+
+
+
+
+
+
+    public class ChangeLoggingKeyValueBytesStoreTest
+    {
+
+        private InMemoryKeyValueStore inner = new InMemoryKeyValueStore("kv");
+        private ChangeLoggingKeyValueBytesStore store = new ChangeLoggingKeyValueBytesStore(inner);
+        private Dictionary<object, object> sent = new HashMap<>();
+        private Bytes hi = Bytes.wrap("hi".getBytes());
+        private Bytes hello = Bytes.wrap("hello".getBytes());
+        private readonly byte[] there = "there".getBytes();
+        private readonly byte[] world = "world".getBytes();
+
+
+        public void Before()
+        {
+            NoOpRecordCollector collector = new NoOpRecordCollector()
+            {
+
+
             public void send<K, V>(string topic,
                                     K key,
                                     V value,
@@ -61,7 +67,8 @@ public class ChangeLoggingKeyValueBytesStoreTest {
                                     int partition,
                                     long timestamp,
                                     Serializer<K> keySerializer,
-                                    Serializer<V> valueSerializer) {
+                                    Serializer<V> valueSerializer)
+            {
                 sent.put(key, value);
             }
         };
@@ -75,25 +82,29 @@ public class ChangeLoggingKeyValueBytesStoreTest {
         store.init(context, store);
     }
 
-    
-    public void After() {
+
+    public void After()
+    {
         store.close();
     }
 
     [Xunit.Fact]
-    public void ShouldWriteKeyValueBytesToInnerStoreOnPut() {
+    public void ShouldWriteKeyValueBytesToInnerStoreOnPut()
+    {
         store.put(hi, there);
         Assert.Equal(inner.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldLogChangeOnPut() {
+    public void ShouldLogChangeOnPut()
+    {
         store.put(hi, there);
         Assert.Equal(sent.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll() {
+    public void ShouldWriteAllKeyValueToInnerStoreOnPutAll()
+    {
         store.putAll(Array.asList(KeyValuePair.Create(hi, there),
                                    KeyValuePair.Create(hello, world)));
         Assert.Equal(inner.get(hi), (there));
@@ -101,7 +112,8 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldLogChangesOnPutAll() {
+    public void ShouldLogChangesOnPutAll()
+    {
         store.putAll(Array.asList(KeyValuePair.Create(hi, there),
                                    KeyValuePair.Create(hello, world)));
         Assert.Equal(sent.get(hi), (there));
@@ -109,7 +121,8 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldPropagateDelete() {
+    public void ShouldPropagateDelete()
+    {
         store.put(hi, there);
         store.delete(hi);
         Assert.Equal(inner.approximateNumEntries(), (0L));
@@ -117,13 +130,15 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldReturnOldValueOnDelete() {
+    public void ShouldReturnOldValueOnDelete()
+    {
         store.put(hi, there);
         Assert.Equal(store.delete(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldLogKeyNullOnDelete() {
+    public void ShouldLogKeyNullOnDelete()
+    {
         store.put(hi, there);
         store.delete(hi);
         Assert.Equal(sent.containsKey(hi), (true));
@@ -131,50 +146,118 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     }
 
     [Xunit.Fact]
-    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue() {
+    public void ShouldWriteToInnerOnPutIfAbsentNoPreviousValue()
+    {
         store.putIfAbsent(hi, there);
         Assert.Equal(inner.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToInnerOnPutIfAbsentWhenValueForKeyExists()
+    {
         store.put(hi, there);
         store.putIfAbsent(hi, world);
         Assert.Equal(inner.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldWriteToChangelogOnPutIfAbsentWhenNoPreviousValue()
+    {
         store.putIfAbsent(hi, there);
         Assert.Equal(sent.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists() {
+    public void ShouldNotWriteToChangeLogOnPutIfAbsentWhenValueForKeyExists()
+    {
         store.put(hi, there);
         store.putIfAbsent(hi, world);
         Assert.Equal(sent.get(hi), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnCurrentValueOnPutIfAbsent() {
+    public void ShouldReturnCurrentValueOnPutIfAbsent()
+    {
         store.put(hi, there);
         Assert.Equal(store.putIfAbsent(hi, world), (there));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
+    public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue()
+    {
         Assert.Equal(store.putIfAbsent(hi, there), (nullValue()));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnValueOnGetWhenExists() {
+    public void ShouldReturnValueOnGetWhenExists()
+    {
         store.put(hello, world);
         Assert.Equal(store.get(hello), (world));
     }
 
     [Xunit.Fact]
-    public void ShouldReturnNullOnGetWhenDoesntExist() {
+    public void ShouldReturnNullOnGetWhenDoesntExist()
+    {
         Assert.Equal(store.get(hello), (nullValue()));
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

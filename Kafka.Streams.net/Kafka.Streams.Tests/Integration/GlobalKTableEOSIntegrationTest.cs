@@ -1,28 +1,21 @@
-/*
+namespace Kafka.Streams.Tests.Integration
+{
+    /*
 
 
 
 
 
 
- *
+    *
 
- *
-
-
-
-
-
- */
+    *
 
 
 
 
 
-
-
-
-
+    */
 
 
 
@@ -56,16 +49,26 @@
 
 
 
-public class GlobalKTableEOSIntegrationTest {
-    private static readonly int NUM_BROKERS = 1;
-    private static Properties BROKER_CONFIG;
-    static {
+
+
+
+
+
+
+
+
+
+    public class GlobalKTableEOSIntegrationTest
+    {
+        private static readonly int NUM_BROKERS = 1;
+        private static Properties BROKER_CONFIG;
+        static {
         BROKER_CONFIG = new Properties();
         BROKER_CONFIG.put("transaction.state.log.replication.factor", (short) 1);
         BROKER_CONFIG.put("transaction.state.log.min.isr", 1);
     }
 
-    
+
     public static EmbeddedKafkaCluster CLUSTER =
             new EmbeddedKafkaCluster(NUM_BROKERS, BROKER_CONFIG);
 
@@ -84,8 +87,9 @@ public class GlobalKTableEOSIntegrationTest {
     private KStream<string, long> stream;
     private ForeachAction<string, string> foreachAction;
 
-    
-    public void Before() {// throws Exception
+
+    public void Before()
+    {// throws Exception
         builder = new StreamsBuilder();
         createTopics();
         streamsConfiguration = new Properties();
@@ -106,16 +110,19 @@ public class GlobalKTableEOSIntegrationTest {
         foreachAction = results::put;
     }
 
-    
-    public void WhenShuttingDown() {// throws Exception
-        if (kafkaStreams != null) {
+
+    public void WhenShuttingDown()
+    {// throws Exception
+        if (kafkaStreams != null)
+        {
             kafkaStreams.close();
         }
         IntegrationTestUtils.purgeLocalStreamsState(streamsConfiguration);
     }
 
     [Xunit.Fact]
-    public void ShouldKStreamGlobalKTableLeftJoin() {// throws Exception
+    public void ShouldKStreamGlobalKTableLeftJoin()
+    {// throws Exception
         KStream<string, string> streamTableJoin = stream.leftJoin(globalTable, keyMapper, joiner);
         streamTableJoin.ForEach(foreachAction);
         produceInitialGlobalTableValues();
@@ -160,7 +167,8 @@ public class GlobalKTableEOSIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void ShouldKStreamGlobalKTableJoin() {// throws Exception
+    public void ShouldKStreamGlobalKTableJoin()
+    {// throws Exception
         KStream<string, string> streamTableJoin = stream.join(globalTable, keyMapper, joiner);
         streamTableJoin.ForEach(foreachAction);
         produceInitialGlobalTableValues();
@@ -204,7 +212,8 @@ public class GlobalKTableEOSIntegrationTest {
     }
 
     [Xunit.Fact]
-    public void ShouldRestoreTransactionalMessages() {// throws Exception
+    public void ShouldRestoreTransactionalMessages()
+    {// throws Exception
         produceInitialGlobalTableValues();
 
         startStreams();
@@ -216,16 +225,21 @@ public class GlobalKTableEOSIntegrationTest {
         expected.put(4L, "D");
 
         TestUtils.waitForCondition(
-            () => {
+            () =>
+            {
                 ReadOnlyKeyValueStore<long, string> store;
-                try {
+                try
+                {
                     store = kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
-                } catch (InvalidStateStoreException ex) {
+                }
+                catch (InvalidStateStoreException ex)
+                {
                     return false;
                 }
                 Dictionary<long, string> result = new HashMap<>();
                 Iterator<KeyValuePair<long, string>> it = store.all();
-                while (it.hasNext()) {
+                while (it.hasNext())
+                {
                     KeyValuePair<long, string> kv = it.next();
                     result.put(kv.key, kv.value);
                 }
@@ -234,15 +248,16 @@ public class GlobalKTableEOSIntegrationTest {
             30000L,
             "waiting for initial values");
     }
-    
+
     [Xunit.Fact]
-    public void ShouldNotRestoreAbortedMessages() {// throws Exception
+    public void ShouldNotRestoreAbortedMessages()
+    {// throws Exception
         produceAbortedMessages();
         produceInitialGlobalTableValues();
         produceAbortedMessages();
 
         startStreams();
-        
+
         Dictionary<long, string> expected = new HashMap<>();
         expected.put(1L, "A");
         expected.put(2L, "B");
@@ -250,16 +265,21 @@ public class GlobalKTableEOSIntegrationTest {
         expected.put(4L, "D");
 
         TestUtils.waitForCondition(
-            () => {
+            () =>
+            {
                 ReadOnlyKeyValueStore<long, string> store;
-                try {
+                try
+                {
                     store = kafkaStreams.store(globalStore, QueryableStoreTypes.keyValueStore());
-                } catch (InvalidStateStoreException ex) {
+                }
+                catch (InvalidStateStoreException ex)
+                {
                     return false;
                 }
                 Dictionary<long, string> result = new HashMap<>();
                 Iterator<KeyValuePair<long, string>> it = store.all();
-                while (it.hasNext()) {
+                while (it.hasNext())
+                {
                     KeyValuePair<long, string> kv = it.next();
                     result.put(kv.key, kv.value);
                 }
@@ -269,19 +289,22 @@ public class GlobalKTableEOSIntegrationTest {
             "waiting for initial values");
     }
 
-    private void CreateTopics() {// throws Exception
+    private void CreateTopics()
+    {// throws Exception
         streamTopic = "stream-" + testNo;
         globalTableTopic = "globalTable-" + testNo;
         CLUSTER.createTopics(streamTopic);
         CLUSTER.createTopic(globalTableTopic, 2, 1);
     }
-    
-    private void StartStreams() {
+
+    private void StartStreams()
+    {
         kafkaStreams = new KafkaStreams(builder.build(), streamsConfiguration);
         kafkaStreams.start();
     }
 
-    private void ProduceTopicValues(string topic) {// throws Exception
+    private void ProduceTopicValues(string topic)
+    {// throws Exception
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 topic,
                 Array.asList(
@@ -298,7 +321,8 @@ public class GlobalKTableEOSIntegrationTest {
                 mockTime);
     }
 
-    private void ProduceAbortedMessages() {// throws Exception
+    private void ProduceAbortedMessages()
+    {// throws Exception
         Properties properties = new Properties();
         properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
         properties.put(ProducerConfig.RETRIES_CONFIG, 1);
@@ -308,7 +332,7 @@ public class GlobalKTableEOSIntegrationTest {
                         new KeyValuePair<>(2L, "B"),
                         new KeyValuePair<>(3L, "C"),
                         new KeyValuePair<>(4L, "D")
-                        ), 
+                        ),
                 TestUtils.producerConfig(
                                 CLUSTER.bootstrapServers(),
                                 LongSerializer,
@@ -317,13 +341,16 @@ public class GlobalKTableEOSIntegrationTest {
                 mockTime.milliseconds());
     }
 
-    private void ProduceInitialGlobalTableValues() {// throws Exception
+    private void ProduceInitialGlobalTableValues()
+    {// throws Exception
         produceInitialGlobalTableValues(true);
     }
 
-    private void ProduceInitialGlobalTableValues(bool enableTransactions) {// throws Exception
+    private void ProduceInitialGlobalTableValues(bool enableTransactions)
+    {// throws Exception
         Properties properties = new Properties();
-        if (enableTransactions) {
+        if (enableTransactions)
+        {
             properties.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, "someid");
             properties.put(ProducerConfig.RETRIES_CONFIG, 1);
         }
@@ -344,7 +371,8 @@ public class GlobalKTableEOSIntegrationTest {
                 enableTransactions);
     }
 
-    private void ProduceGlobalTableValues() {// throws Exception
+    private void ProduceGlobalTableValues()
+    {// throws Exception
         IntegrationTestUtils.produceKeyValuesSynchronously(
                 globalTableTopic,
                 Array.asList(
@@ -361,3 +389,80 @@ public class GlobalKTableEOSIntegrationTest {
                 mockTime);
     }
 }
+}
+/*
+
+
+
+
+
+
+*
+
+*
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

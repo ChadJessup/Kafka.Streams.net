@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Tests
+{
+}
 //using Confluent.Kafka;
 //using Xunit;
 
@@ -75,7 +78,7 @@
 //KafkaStreams streams = new KafkaStreams(builder.build(), streamsProperties);
 
 //streams.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            
+
 //            public void uncaughtException(Thread t, Throwable e)
 //{
 //    System.Console.Error.println("FATAL: An unexpected exception " + e);

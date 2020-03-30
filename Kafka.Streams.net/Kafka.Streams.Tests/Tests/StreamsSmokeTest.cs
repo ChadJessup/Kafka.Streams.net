@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Tests
+{
+}
 //using Confluent.Kafka;
 //using Xunit;
 

@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Kstream
+{
+}
 //using Kafka.Streams.KStream.Internals;
 //using System.Collections.Generic;
 //using Xunit;

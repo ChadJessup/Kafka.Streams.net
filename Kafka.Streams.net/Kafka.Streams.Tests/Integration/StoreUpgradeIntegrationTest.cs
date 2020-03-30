@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Integration
+{
+}
 ///*
 
 
@@ -63,10 +66,10 @@
 //    private KafkaStreams kafkaStreams;
 //    private static int testCounter = 0;
 
-    
+
 //    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
 
-    
+
 //    public void createTopics() {// throws Exception
 //        inputStream = "input-stream-" + testCounter;
 //        CLUSTER.createTopic(inputStream);
@@ -85,7 +88,7 @@
 //        return streamsConfiguration;
 //    }
 
-    
+
 //    public void shutdown() {
 //        if (kafkaStreams != null) {
 //            kafkaStreams.close(Duration.ofSeconds(30L));
@@ -908,13 +911,13 @@
 //    private static class KeyValueProcessor : Processor<int, int> {
 //        private KeyValueStore<int, long> store;
 
-        
-        
+
+
 //        public void init(ProcessorContext context) {
 //            store = (KeyValueStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
-        
+
 //        public void process(int key, int value) {
 //            long newCount;
 
@@ -928,7 +931,7 @@
 //            store.put(key, newCount);
 //        }
 
-        
+
 //        public void close() {}
 //    }
 
@@ -936,14 +939,14 @@
 //        private ProcessorContext context;
 //        private TimestampedKeyValueStore<int, long> store;
 
-        
-        
+
+
 //        public void init(ProcessorContext context) {
 //            this.context = context;
 //            store = (TimestampedKeyValueStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
-        
+
 //        public void process(int key, int value) {
 //            long newCount;
 
@@ -961,20 +964,20 @@
 //            store.put(key, ValueAndTimestamp.make(newCount, newTimestamp));
 //        }
 
-        
+
 //        public void close() {}
 //    }
 
 //    private static class WindowedProcessor : Processor<int, int> {
 //        private WindowStore<int, long> store;
 
-        
-        
+
+
 //        public void init(ProcessorContext context) {
 //            store = (WindowStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
-        
+
 //        public void process(int key, int value) {
 //            long newCount;
 
@@ -988,7 +991,7 @@
 //            store.put(key, newCount, key < 10 ? 0L : 100000L);
 //        }
 
-        
+
 //        public void close() {}
 //    }
 
@@ -996,14 +999,14 @@
 //        private ProcessorContext context;
 //        private TimestampedWindowStore<int, long> store;
 
-        
-        
+
+
 //        public void init(ProcessorContext context) {
 //            this.context = context;
 //            store = (TimestampedWindowStore<int, long>) context.getStateStore(STORE_NAME);
 //        }
 
-        
+
 //        public void process(int key, int value) {
 //            long newCount;
 
@@ -1021,7 +1024,7 @@
 //            store.put(key, ValueAndTimestamp.make(newCount, newTimestamp), key < 10 ? 0L : 100000L);
 //        }
 
-        
+
 //        public void close() {}
 //    }
 //}
