@@ -39,7 +39,7 @@ public class ResetIntegrationTest : AbstractResetIntegrationTest {
     
     public static EmbeddedKafkaCluster CLUSTER;
 
-    private static string TEST_ID = "reset-integration-test";
+    private static readonly string TEST_ID = "reset-integration-test";
 
     static {
         Properties brokerProps = new Properties();

@@ -30,14 +30,14 @@ namespace Kafka.Streams.Tests.Integration
             return values;
         }
 
-        static string appID;
+        static readonly string appID;
 
-        private static long COMMIT_INTERVAL = 100L;
+        private static readonly long COMMIT_INTERVAL = 100L;
         static Properties STREAMS_CONFIG = new Properties();
-        static string INPUT_TOPIC_RIGHT = "inputTopicRight";
-        static string INPUT_TOPIC_LEFT = "inputTopicLeft";
-        static string OUTPUT_TOPIC = "outputTopic";
-        static long ANY_UNIQUE_KEY = 0L;
+        static readonly string INPUT_TOPIC_RIGHT = "inputTopicRight";
+        static readonly string INPUT_TOPIC_LEFT = "inputTopicLeft";
+        static readonly string OUTPUT_TOPIC = "outputTopic";
+        static readonly long ANY_UNIQUE_KEY = 0L;
 
         private static Properties PRODUCER_CONFIG = new Properties();
         private static Properties RESULT_CONSUMER_CONFIG = new Properties();
@@ -46,10 +46,10 @@ namespace Kafka.Streams.Tests.Integration
         private KafkaStreams streams;
 
         StreamsBuilder builder;
-        int numRecordsExpected = 0;
+        readonly int numRecordsExpected = 0;
         AtomicBoolean finalResultReached = new AtomicBoolean(false);
 
-        private List<Input<string>> input = Array.asList(
+        private readonly List<Input<string>> input = Array.asList(
                 new Input<>(INPUT_TOPIC_LEFT, null),
                 new Input<>(INPUT_TOPIC_RIGHT, null),
                 new Input<>(INPUT_TOPIC_LEFT, "A"),
@@ -66,10 +66,8 @@ namespace Kafka.Streams.Tests.Integration
                 new Input<>(INPUT_TOPIC_RIGHT, "d"),
                 new Input<>(INPUT_TOPIC_LEFT, "D")
         );
-
-        IValueJoiner<string, string, string> valueJoiner = (value1, value2) => value1 + "-" + value2;
-
-        bool cacheEnabled;
+        readonly IValueJoiner<string, string, string> valueJoiner = (value1, value2) => value1 + "-" + value2;
+        readonly bool cacheEnabled;
 
         AbstractJoinIntegrationTest(bool cacheEnabled)
         {
@@ -265,8 +263,8 @@ namespace Kafka.Streams.Tests.Integration
 
         private class Input<V>
         {
-            string topic;
-            KeyValuePair<long, V> record;
+            readonly string topic;
+            readonly KeyValuePair<long, V> record;
 
             Input(string topic, V value)
             {

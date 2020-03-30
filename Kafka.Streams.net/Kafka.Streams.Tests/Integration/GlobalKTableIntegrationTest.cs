@@ -59,7 +59,7 @@
 
 
 public class GlobalKTableIntegrationTest {
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
@@ -68,7 +68,7 @@ public class GlobalKTableIntegrationTest {
     private MockTime mockTime = CLUSTER.time;
     private KeyValueMapper<string, long, long> keyMapper = (key, value) => value;
     private ValueJoiner<long, string, string> joiner = (value1, value2) => value1 + "+" + value2;
-    private string globalStore = "globalStore";
+    private readonly string globalStore = "globalStore";
     private StreamsBuilder builder;
     private Properties streamsConfiguration;
     private KafkaStreams kafkaStreams;

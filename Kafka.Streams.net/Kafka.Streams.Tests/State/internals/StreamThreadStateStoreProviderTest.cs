@@ -73,7 +73,7 @@ public class StreamThreadStateStoreProviderTest {
     private StreamThreadStateStoreProvider provider;
     private StateDirectory stateDirectory;
     private File stateDir;
-    private string topicName = "topic";
+    private readonly string topicName = "topic";
     private StreamThread threadMock;
     private Dictionary<TaskId, StreamTask> tasks;
 

@@ -31,7 +31,7 @@
 
 public class OffsetCheckpointTest {
 
-    private string topic = "topic";
+    private readonly string topic = "topic";
 
     [Xunit.Fact]
     public void TestReadWrite(){ //throws IOException

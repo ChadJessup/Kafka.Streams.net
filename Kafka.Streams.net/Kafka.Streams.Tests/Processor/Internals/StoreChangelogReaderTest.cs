@@ -63,9 +63,9 @@
 
 public class StoreChangelogReaderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private RestoringTasks active;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StreamTask task;
 
     private MockStateRestoreListener callback = new MockStateRestoreListener();

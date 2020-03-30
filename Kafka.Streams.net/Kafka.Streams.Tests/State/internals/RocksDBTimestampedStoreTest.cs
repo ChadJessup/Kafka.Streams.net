@@ -58,21 +58,21 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         LogCaptureAppender.Unregister(appender);
 
         // approx: 7 entries on old CF, 0 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(7L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (7L));
 
         // get()
 
         // should be no-op on both CF
         Assert.Equal(rocksDBStore.get(new Bytes("unknown".getBytes())), new IsNull<>());
         // approx: 7 entries on old CF, 0 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(7L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (7L));
 
         // should migrate key1 from old to new CF
         // must return timestamp plus value, ie, it's not 1 byte but 9 bytes
-        Assert.Equal(rocksDBStore.get(new Bytes("key1".getBytes())).Length, is(8 + 1));
+        Assert.Equal(rocksDBStore.get(new Bytes("key1".getBytes())).Length, (8 + 1));
         // one delete on old CF, one put on new CF
         // approx: 6 entries on old CF, 1 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(7L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (7L));
 
         // put()
 
@@ -80,57 +80,57 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         rocksDBStore.put(new Bytes("key2".getBytes()), "timestamp+22".getBytes());
         // one delete on old CF, one put on new CF
         // approx: 5 entries on old CF, 2 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(7L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (7L));
 
         // should delete key3 from old and new CF
         rocksDBStore.put(new Bytes("key3".getBytes()), null);
         // count is off by one, due to two delete operations (even if one does not delete anything)
         // approx: 4 entries on old CF, 1 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(5L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (5L));
 
         // should add new key8 to new CF
         rocksDBStore.put(new Bytes("key8".getBytes()), "timestamp+88888888".getBytes());
         // one delete on old CF, one put on new CF
         // approx: 3 entries on old CF, 2 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(5L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (5L));
 
         // putIfAbsent()
 
         // should migrate key4 from old to new CF with old value
-        Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key4".getBytes()), "timestamp+4444".getBytes()).Length, is(8 + 4));
+        Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key4".getBytes()), "timestamp+4444".getBytes()).Length, (8 + 4));
         // one delete on old CF, one put on new CF
         // approx: 2 entries on old CF, 3 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(5L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (5L));
 
         // should add new key11 to new CF
         Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key11".getBytes()), "timestamp+11111111111".getBytes()), new IsNull<>());
         // one delete on old CF, one put on new CF
         // approx: 1 entries on old CF, 4 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(5L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (5L));
 
         // should not delete key5 but migrate to new CF
-        Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key5".getBytes()), null).Length, is(8 + 5));
+        Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key5".getBytes()), null).Length, (8 + 5));
         // one delete on old CF, one put on new CF
         // approx: 0 entries on old CF, 5 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(5L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (5L));
 
         // should be no-op on both CF
         Assert.Equal(rocksDBStore.putIfAbsent(new Bytes("key12".getBytes()), null), new IsNull<>());
         // two delete operation, however, only one is counted because old CF count was zero before already
         // approx: 0 entries on old CF, 4 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(4L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (4L));
 
         // delete()
 
         // should delete key6 from old and new CF
-        Assert.Equal(rocksDBStore.delete(new Bytes("key6".getBytes())).Length, is(8 + 6));
+        Assert.Equal(rocksDBStore.delete(new Bytes("key6".getBytes())).Length, (8 + 6));
         // two delete operation, however, only one is counted because old CF count was zero before already
         // approx: 0 entries on old CF, 3 in new CF
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(3L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (3L));
 
 
         IteratorsShouldNotMigrateData();
-        Assert.Equal(rocksDBStore.approximateNumEntries(), is(3L));
+        Assert.Equal(rocksDBStore.approximateNumEntries(), (3L));
 
         rocksDBStore.close();
 
@@ -230,21 +230,21 @@ public class RocksDBTimestampedStoreTest : RocksDBStoreTest {
         Assert.Equal(db.get(noTimestampColumnFamily, "key4".getBytes()), new IsNull<>());
         Assert.Equal(db.get(noTimestampColumnFamily, "key5".getBytes()), new IsNull<>());
         Assert.Equal(db.get(noTimestampColumnFamily, "key6".getBytes()), new IsNull<>());
-        Assert.Equal(db.get(noTimestampColumnFamily, "key7".getBytes()).Length, is(7));
+        Assert.Equal(db.get(noTimestampColumnFamily, "key7".getBytes()).Length, (7));
         Assert.Equal(db.get(noTimestampColumnFamily, "key8".getBytes()), new IsNull<>());
         Assert.Equal(db.get(noTimestampColumnFamily, "key11".getBytes()), new IsNull<>());
         Assert.Equal(db.get(noTimestampColumnFamily, "key12".getBytes()), new IsNull<>());
 
         Assert.Equal(db.get(withTimestampColumnFamily, "unknown".getBytes()), new IsNull<>());
-        Assert.Equal(db.get(withTimestampColumnFamily, "key1".getBytes()).Length, is(8 + 1));
-        Assert.Equal(db.get(withTimestampColumnFamily, "key2".getBytes()).Length, is(12));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key1".getBytes()).Length, (8 + 1));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key2".getBytes()).Length, (12));
         Assert.Equal(db.get(withTimestampColumnFamily, "key3".getBytes()), new IsNull<>());
-        Assert.Equal(db.get(withTimestampColumnFamily, "key4".getBytes()).Length, is(8 + 4));
-        Assert.Equal(db.get(withTimestampColumnFamily, "key5".getBytes()).Length, is(8 + 5));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key4".getBytes()).Length, (8 + 4));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key5".getBytes()).Length, (8 + 5));
         Assert.Equal(db.get(withTimestampColumnFamily, "key6".getBytes()), new IsNull<>());
         Assert.Equal(db.get(withTimestampColumnFamily, "key7".getBytes()), new IsNull<>());
-        Assert.Equal(db.get(withTimestampColumnFamily, "key8".getBytes()).Length, is(18));
-        Assert.Equal(db.get(withTimestampColumnFamily, "key11".getBytes()).Length, is(21));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key8".getBytes()).Length, (18));
+        Assert.Equal(db.get(withTimestampColumnFamily, "key11".getBytes()).Length, (21));
         Assert.Equal(db.get(withTimestampColumnFamily, "key12".getBytes()), new IsNull<>());
 
         db.close();

@@ -6,10 +6,10 @@ namespace Kafka.Streams.Tests.Tools
     public class StreamsResetterTest
     {
 
-        private static string TOPIC = "topic1";
+        private static readonly string TOPIC = "topic1";
         private StreamsResetter streamsResetter = new StreamsResetter();
-        private MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
-        private TopicPartition topicPartition = new TopicPartition(TOPIC, 0);
+        private readonly MockConsumer<byte[], byte[]> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
+        private readonly TopicPartition topicPartition = new TopicPartition(TOPIC, 0);
         private HashSet<TopicPartition> inputTopicPartitions = new HashSet<>(Collections.singletonList(topicPartition));
 
 

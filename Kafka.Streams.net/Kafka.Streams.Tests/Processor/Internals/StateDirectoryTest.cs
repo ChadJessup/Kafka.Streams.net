@@ -8,9 +8,9 @@ public class StateDirectoryTest {
 
     private MockTime time = new MockTime();
     private File stateDir;
-    private string applicationId = "applicationId";
+    private readonly string applicationId = "applicationId";
     private StateDirectory directory;
-    private File appDir;
+    private readonly File appDir;
 
     private void InitializeStateDirectory(bool createStateDirectory) {// throws Exception
         stateDir = new File(TestUtils.IO_TMP_DIR, "kafka-" + TestUtils.randomString(5));

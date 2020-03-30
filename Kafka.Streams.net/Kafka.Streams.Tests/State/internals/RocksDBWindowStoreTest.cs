@@ -43,7 +43,7 @@
 
 public class RocksDBWindowStoreTest : WindowBytesStoreTest {
 
-    private static string STORE_NAME = "rocksDB window store";
+    private static readonly string STORE_NAME = "rocksDB window store";
 
     private KeyValueSegments segments = new KeyValueSegments(STORE_NAME, RETENTION_PERIOD, SEGMENT_INTERVAL);
 

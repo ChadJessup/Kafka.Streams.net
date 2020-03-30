@@ -41,7 +41,7 @@
 
 public class CompositeReadOnlySessionStoreTest {
 
-    private string storeName = "session-store";
+    private readonly string storeName = "session-store";
     private StateStoreProviderStub stubProviderOne = new StateStoreProviderStub(false);
     private StateStoreProviderStub stubProviderTwo = new StateStoreProviderStub(false);
     private ReadOnlySessionStoreStub<string, long> underlyingSessionStore = new ReadOnlySessionStoreStub<>();

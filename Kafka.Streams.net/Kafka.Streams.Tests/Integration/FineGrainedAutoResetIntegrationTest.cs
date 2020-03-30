@@ -15,46 +15,46 @@ namespace Kafka.Streams.Tests.Integration
     public class FineGrainedAutoResetIntegrationTest
     {
 
-        private static int NUM_BROKERS = 1;
-        private static string DEFAULT_OUTPUT_TOPIC = "outputTopic";
-        private static string OUTPUT_TOPIC_0 = "outputTopic_0";
-        private static string OUTPUT_TOPIC_1 = "outputTopic_1";
-        private static string OUTPUT_TOPIC_2 = "outputTopic_2";
+        private static readonly int NUM_BROKERS = 1;
+        private static readonly string DEFAULT_OUTPUT_TOPIC = "outputTopic";
+        private static readonly string OUTPUT_TOPIC_0 = "outputTopic_0";
+        private static readonly string OUTPUT_TOPIC_1 = "outputTopic_1";
+        private static readonly string OUTPUT_TOPIC_2 = "outputTopic_2";
 
 
         public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
-        private MockTime mockTime = CLUSTER.time;
+        private readonly MockTime mockTime = CLUSTER.time;
 
-        private static string TOPIC_1_0 = "topic-1_0";
-        private static string TOPIC_2_0 = "topic-2_0";
-        private static string TOPIC_A_0 = "topic-A_0";
-        private static string TOPIC_C_0 = "topic-C_0";
-        private static string TOPIC_Y_0 = "topic-Y_0";
-        private static string TOPIC_Z_0 = "topic-Z_0";
-        private static string TOPIC_1_1 = "topic-1_1";
-        private static string TOPIC_2_1 = "topic-2_1";
-        private static string TOPIC_A_1 = "topic-A_1";
-        private static string TOPIC_C_1 = "topic-C_1";
-        private static string TOPIC_Y_1 = "topic-Y_1";
-        private static string TOPIC_Z_1 = "topic-Z_1";
-        private static string TOPIC_1_2 = "topic-1_2";
-        private static string TOPIC_2_2 = "topic-2_2";
-        private static string TOPIC_A_2 = "topic-A_2";
-        private static string TOPIC_C_2 = "topic-C_2";
-        private static string TOPIC_Y_2 = "topic-Y_2";
-        private static string TOPIC_Z_2 = "topic-Z_2";
-        private static string NOOP = "noop";
-        private ISerde<string> stringSerde = Serdes.String();
+        private static readonly string TOPIC_1_0 = "topic-1_0";
+        private static readonly string TOPIC_2_0 = "topic-2_0";
+        private static readonly string TOPIC_A_0 = "topic-A_0";
+        private static readonly string TOPIC_C_0 = "topic-C_0";
+        private static readonly string TOPIC_Y_0 = "topic-Y_0";
+        private static readonly string TOPIC_Z_0 = "topic-Z_0";
+        private static readonly string TOPIC_1_1 = "topic-1_1";
+        private static readonly string TOPIC_2_1 = "topic-2_1";
+        private static readonly string TOPIC_A_1 = "topic-A_1";
+        private static readonly string TOPIC_C_1 = "topic-C_1";
+        private static readonly string TOPIC_Y_1 = "topic-Y_1";
+        private static readonly string TOPIC_Z_1 = "topic-Z_1";
+        private static readonly string TOPIC_1_2 = "topic-1_2";
+        private static readonly string TOPIC_2_2 = "topic-2_2";
+        private static readonly string TOPIC_A_2 = "topic-A_2";
+        private static readonly string TOPIC_C_2 = "topic-C_2";
+        private static readonly string TOPIC_Y_2 = "topic-Y_2";
+        private static readonly string TOPIC_Z_2 = "topic-Z_2";
+        private static readonly string NOOP = "noop";
+        private readonly ISerde<string> stringSerde = Serdes.String();
 
-        private static string STRING_SERDE_CLASSNAME = Serdes.String().getClass().getName();
+        private static readonly string STRING_SERDE_CLASSNAME = Serdes.String().getClass().getName();
         private Properties streamsConfiguration;
 
-        private string topic1TestMessage = "topic-1 test";
-        private string topic2TestMessage = "topic-2 test";
-        private string topicATestMessage = "topic-A test";
-        private string topicCTestMessage = "topic-C test";
-        private string topicYTestMessage = "topic-Y test";
-        private string topicZTestMessage = "topic-Z test";
+        private readonly string topic1TestMessage = "topic-1 test";
+        private readonly string topic2TestMessage = "topic-2 test";
+        private readonly string topicATestMessage = "topic-A test";
+        private readonly string topicCTestMessage = "topic-C test";
+        private readonly string topicYTestMessage = "topic-Y test";
+        private readonly string topicZTestMessage = "topic-Z test";
 
 
 

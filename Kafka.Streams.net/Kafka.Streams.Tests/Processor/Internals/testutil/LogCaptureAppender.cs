@@ -31,8 +31,8 @@ public class LogCaptureAppender : AppenderSkeleton {
 
     
     public static class Event {
-        private string level;
-        private string message;
+        private readonly string level;
+        private readonly string message;
         private Optional<string> throwableInfo;
 
         Event(string level, string message, Optional<string> throwableInfo) {

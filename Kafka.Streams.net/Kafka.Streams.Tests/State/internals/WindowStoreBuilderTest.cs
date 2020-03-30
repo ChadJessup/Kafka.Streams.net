@@ -41,9 +41,9 @@
 
 public class WindowStoreBuilderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private WindowBytesStoreSupplier supplier;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private WindowStore<Bytes, byte[]> inner;
     private WindowStoreBuilder<string, string> builder;
 

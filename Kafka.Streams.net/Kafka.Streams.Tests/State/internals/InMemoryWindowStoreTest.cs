@@ -37,7 +37,7 @@
 
 public class InMemoryWindowStoreTest : WindowBytesStoreTest {
 
-    private static string STORE_NAME = "InMemoryWindowStore";
+    private static readonly string STORE_NAME = "InMemoryWindowStore";
 
     
     WindowStore<K, V> BuildWindowStore<K, V>(long retentionPeriod,

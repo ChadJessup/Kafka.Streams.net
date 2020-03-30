@@ -66,11 +66,11 @@ public class ProcessorTopologyTest {
     private static Serializer<string> STRING_SERIALIZER = new StringSerializer();
     private static Deserializer<string> STRING_DESERIALIZER = new StringDeserializer();
 
-    private static string INPUT_TOPIC_1 = "input-topic-1";
-    private static string INPUT_TOPIC_2 = "input-topic-2";
-    private static string OUTPUT_TOPIC_1 = "output-topic-1";
-    private static string OUTPUT_TOPIC_2 = "output-topic-2";
-    private static string THROUGH_TOPIC_1 = "through-topic-1";
+    private static readonly string INPUT_TOPIC_1 = "input-topic-1";
+    private static readonly string INPUT_TOPIC_2 = "input-topic-2";
+    private static readonly string OUTPUT_TOPIC_1 = "output-topic-1";
+    private static readonly string OUTPUT_TOPIC_2 = "output-topic-2";
+    private static readonly string THROUGH_TOPIC_1 = "through-topic-1";
 
     private static Header HEADER = new RecordHeader("key", "value".getBytes());
     private static Headers HEADERS = new Headers(new Header[]{HEADER});
@@ -619,8 +619,8 @@ public class ProcessorTopologyTest {
     }
 
     protected static class FanOutTimestampProcessor : AbstractProcessor<string, string> {
-        private string firstChild;
-        private string secondChild;
+        private readonly string firstChild;
+        private readonly string secondChild;
 
         FanOutTimestampProcessor(string firstChild,
                                  string secondChild) {
@@ -660,7 +660,7 @@ public class ProcessorTopologyTest {
      * A processor that forwards slightly-modified messages to each child.
      */
     protected static class MultiplexingProcessor : AbstractProcessor<string, string> {
-        private int numChildren;
+        private readonly int numChildren;
 
         MultiplexingProcessor(int numChildren) {
             this.numChildren = numChildren;
@@ -680,7 +680,7 @@ public class ProcessorTopologyTest {
      * Note: the children are assumed to be named "sink{child number}", e.g., sink1, or sink2, etc.
      */
     protected static class MultiplexByNameProcessor : AbstractProcessor<string, string> {
-        private int numChildren;
+        private readonly int numChildren;
 
         MultiplexByNameProcessor(int numChildren) {
             this.numChildren = numChildren;
@@ -700,7 +700,7 @@ public class ProcessorTopologyTest {
      */
     protected static class StatefulProcessor : AbstractProcessor<string, string> {
         private KeyValueStore<string, string> store;
-        private string storeName;
+        private readonly string storeName;
 
         StatefulProcessor(string storeName) {
             this.storeName = storeName;
@@ -728,7 +728,7 @@ public class ProcessorTopologyTest {
      * format. Otherwise, it returns the record's timestamp or the default timestamp if the record's timestamp is negative.
     */
     public static class CustomTimestampExtractor : TimestampExtractor {
-        private static long DEFAULT_TIMESTAMP = 1000L;
+        private static readonly long DEFAULT_TIMESTAMP = 1000L;
 
         
         public long Extract(ConsumeResult<object, object> record, long partitionTime) {

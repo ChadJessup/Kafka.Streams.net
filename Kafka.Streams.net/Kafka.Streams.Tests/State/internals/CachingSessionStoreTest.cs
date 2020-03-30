@@ -64,9 +64,9 @@
 
 public class CachingSessionStoreTest {
 
-    private static int MAX_CACHE_SIZE_BYTES = 600;
-    private static long DEFAULT_TIMESTAMP = 10L;
-    private static long SEGMENT_INTERVAL = 100L;
+    private static readonly int MAX_CACHE_SIZE_BYTES = 600;
+    private static readonly long DEFAULT_TIMESTAMP = 10L;
+    private static readonly long SEGMENT_INTERVAL = 100L;
     private Bytes keyA = Bytes.wrap("a".getBytes());
     private Bytes keyAA = Bytes.wrap("aa".getBytes());
     private Bytes keyB = Bytes.wrap("b".getBytes());

@@ -29,7 +29,7 @@
 
 public class DelegatingPeekingKeyValueIteratorTest {
 
-    private string name = "name";
+    private readonly string name = "name";
     private KeyValueStore<string, string> store;
 
     

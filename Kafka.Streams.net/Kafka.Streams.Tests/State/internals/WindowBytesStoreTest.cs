@@ -71,9 +71,9 @@
 
 public abstract class WindowBytesStoreTest {
 
-    static long WINDOW_SIZE = 3L;
-    static long SEGMENT_INTERVAL = 60_000L;
-    static long RETENTION_PERIOD = 2 * SEGMENT_INTERVAL;
+    static readonly long WINDOW_SIZE = 3L;
+    static readonly long SEGMENT_INTERVAL = 60_000L;
+    static readonly long RETENTION_PERIOD = 2 * SEGMENT_INTERVAL;
 
     WindowStore<int, string> windowStore;
     InternalMockProcessorContext context;

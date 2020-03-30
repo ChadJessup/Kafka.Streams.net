@@ -14,17 +14,17 @@ namespace Kafka.Streams.Tests
     public class StreamsBuilderTest
     {
 
-        private static string STREAM_TOPIC = "stream-topic";
+        private static readonly string STREAM_TOPIC = "stream-topic";
 
-        private static string STREAM_OPERATION_NAME = "stream-operation";
+        private static readonly string STREAM_OPERATION_NAME = "stream-operation";
 
-        private static string STREAM_TOPIC_TWO = "stream-topic-two";
+        private static readonly string STREAM_TOPIC_TWO = "stream-topic-two";
 
-        private static string TABLE_TOPIC = "table-topic";
+        private static readonly string TABLE_TOPIC = "table-topic";
 
-        private StreamsBuilder builder = new StreamsBuilder();
+        private readonly StreamsBuilder builder = new StreamsBuilder();
 
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.String(), Serdes.String());
 
         [Fact]
         public void ShouldNotThrowNullPointerIfOptimizationsNotSpecified()

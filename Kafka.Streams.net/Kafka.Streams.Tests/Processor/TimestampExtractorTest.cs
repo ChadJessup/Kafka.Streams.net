@@ -42,7 +42,7 @@ class TimestampExtractorTest {
             0
         );
 
-        Assert.Equal(timestamp, is(metadataTimestamp));
+        Assert.Equal(timestamp, (metadataTimestamp));
     }
 
 }

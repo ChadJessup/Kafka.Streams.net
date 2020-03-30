@@ -44,9 +44,9 @@
 
 public class SessionStoreBuilderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private SessionBytesStoreSupplier supplier;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private SessionStore<Bytes, byte[]> inner;
     private SessionStoreBuilder<string, string> builder;
 

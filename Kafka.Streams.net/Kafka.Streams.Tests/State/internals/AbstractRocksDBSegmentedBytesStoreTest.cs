@@ -72,16 +72,15 @@
 
 public abstract class AbstractRocksDBSegmentedBytesStoreTest<S : Segment> {
 
-    private long windowSizeForTimeWindow = 500;
+    private readonly long windowSizeForTimeWindow = 500;
     private InternalMockProcessorContext context;
     private AbstractRocksDBSegmentedBytesStore<S> bytesStore;
     private File stateDir;
-    private Window[] windows = new Window[4];
+    private readonly Window[] windows = new Window[4];
     private Window nextSegmentWindow;
-
-    long retention = 1000;
-    long segmentInterval = 60_000L;
-    string storeName = "bytes-store";
+    readonly long retention = 1000;
+    readonly long segmentInterval = 60_000L;
+    readonly string storeName = "bytes-store";
 
     @Parameter
     public SegmentedBytesStore.KeySchema schema;

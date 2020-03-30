@@ -57,7 +57,7 @@
 
 
 public class GlobalKTableEOSIntegrationTest {
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
     private static Properties BROKER_CONFIG;
     static {
         BROKER_CONFIG = new Properties();
@@ -117,7 +117,7 @@ public class GlobalKTableEOSIntegrationTest {
     [Xunit.Fact]
     public void ShouldKStreamGlobalKTableLeftJoin() {// throws Exception
         KStream<string, string> streamTableJoin = stream.leftJoin(globalTable, keyMapper, joiner);
-        streamTableJoin.foreach(foreachAction);
+        streamTableJoin.ForEach(foreachAction);
         produceInitialGlobalTableValues();
         startStreams();
         produceTopicValues(streamTopic);
@@ -162,7 +162,7 @@ public class GlobalKTableEOSIntegrationTest {
     [Xunit.Fact]
     public void ShouldKStreamGlobalKTableJoin() {// throws Exception
         KStream<string, string> streamTableJoin = stream.join(globalTable, keyMapper, joiner);
-        streamTableJoin.foreach(foreachAction);
+        streamTableJoin.ForEach(foreachAction);
         produceInitialGlobalTableValues();
         startStreams();
         produceTopicValues(streamTopic);

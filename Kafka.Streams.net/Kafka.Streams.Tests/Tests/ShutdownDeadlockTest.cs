@@ -22,7 +22,7 @@
 //            StreamsBuilder builder = new StreamsBuilder();
 //            KStream<string, string> source = builder.stream(topic, Consumed.with(Serdes.String(), Serdes.String()));
 
-//            source.foreach (new ForeachAction<string, string>()
+//            source.ForEach (new ForeachAction<string, string>()
 //            {
 
 

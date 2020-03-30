@@ -41,9 +41,9 @@
 
 public class TimestampedKeyValueStoreBuilderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private KeyValueBytesStoreSupplier supplier;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private RocksDBTimestampedStore inner;
     private TimestampedKeyValueStoreBuilder<string, string> builder;
 

@@ -55,18 +55,18 @@
  * https://databricks.com/blog/2017/06/06/simple-super-fast-streaming-engine-apache-spark.html
  */
 public class YahooBenchmark {
-    private SimpleBenchmark parent;
-    private string campaignsTopic;
-    private string eventsTopic;
+    private readonly SimpleBenchmark parent;
+    private readonly string campaignsTopic;
+    private readonly string eventsTopic;
 
     static class ProjectedEvent {
         /* attributes need to be public for serializer to work */
         /* main attributes */
-        string eventType;
-        string adID;
+        readonly string eventType;
+        readonly string adID;
 
         /* other attributes */
-        long eventTime;
+        readonly long eventTime;
         /* not used
         public string userID = UUID.randomUUID().toString();
         public string pageID = UUID.randomUUID().toString();
@@ -77,8 +77,8 @@ public class YahooBenchmark {
 
     static class CampaignAd {
         /* attributes need to be public for serializer to work */
-        string adID;
-        string campaignID;
+        readonly string adID;
+        readonly string campaignID;
     }
 
     
@@ -152,7 +152,7 @@ public class YahooBenchmark {
                 event.eventType = eventTypes[rand.nextInt(eventTypes.Length - 1)];
                 event.adID = ads.get(rand.nextInt(ads.Count - 1));
                 event.eventTime = System.currentTimeMillis();
-                byte[] value = projectedEventSerializer.serialize(topic, event);
+                readonly byte[] value = projectedEventSerializer.serialize(topic, event);
                 producer.send(new ProducerRecord<>(topic, event.adID, value));
                 parent.processedRecords++;
                 parent.processedBytes += value.Length + event.adID.Length();

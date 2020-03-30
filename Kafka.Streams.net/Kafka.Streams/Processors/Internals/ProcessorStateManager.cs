@@ -406,7 +406,7 @@ namespace Kafka.Streams.Processors.Internals
         {
             HashSet<TopicPartition> _validCheckpointableTopics = validCheckpointableTopics();
             var restoredOffsets = validCheckpointableOffsets(
-                changelogReader.restoredOffsets(),
+                changelogReader.RestoredOffsets(),
                 validCheckpointableTopics());
 
             logger.LogTrace("Checkpointable offsets updated with restored offsets: {}", checkpointFileCache);

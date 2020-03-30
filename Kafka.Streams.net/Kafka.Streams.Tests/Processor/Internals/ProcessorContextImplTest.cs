@@ -57,10 +57,10 @@
 public class ProcessorContextImplTest {
     private ProcessorContextImpl context;
 
-    private static string KEY = "key";
-    private static long VALUE = 42L;
+    private static readonly string KEY = "key";
+    private static readonly long VALUE = 42L;
     private static ValueAndTimestamp<long> VALUE_AND_TIMESTAMP = ValueAndTimestamp.make(42L, 21L);
-    private static string STORE_NAME = "underlying-store";
+    private static readonly string STORE_NAME = "underlying-store";
 
     private bool flushExecuted;
     private bool putExecuted;

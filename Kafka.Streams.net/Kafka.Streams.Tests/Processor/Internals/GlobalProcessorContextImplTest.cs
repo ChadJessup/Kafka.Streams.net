@@ -42,14 +42,14 @@
 
 
 public class GlobalProcessorContextImplTest {
-    private static string GLOBAL_STORE_NAME = "global-store";
-    private static string GLOBAL_KEY_VALUE_STORE_NAME = "global-key-value-store";
-    private static string GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME = "global-timestamped-key-value-store";
-    private static string GLOBAL_WINDOW_STORE_NAME = "global-window-store";
-    private static string GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME = "global-timestamped-window-store";
-    private static string GLOBAL_SESSION_STORE_NAME = "global-session-store";
-    private static string UNKNOWN_STORE = "unknown-store";
-    private static string CHILD_PROCESSOR = "child";
+    private static readonly string GLOBAL_STORE_NAME = "global-store";
+    private static readonly string GLOBAL_KEY_VALUE_STORE_NAME = "global-key-value-store";
+    private static readonly string GLOBAL_TIMESTAMPED_KEY_VALUE_STORE_NAME = "global-timestamped-key-value-store";
+    private static readonly string GLOBAL_WINDOW_STORE_NAME = "global-window-store";
+    private static readonly string GLOBAL_TIMESTAMPED_WINDOW_STORE_NAME = "global-timestamped-window-store";
+    private static readonly string GLOBAL_SESSION_STORE_NAME = "global-session-store";
+    private static readonly string UNKNOWN_STORE = "unknown-store";
+    private static readonly string CHILD_PROCESSOR = "child";
 
     private GlobalProcessorContextImpl globalContext;
 

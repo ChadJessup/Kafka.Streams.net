@@ -10,10 +10,10 @@ namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class RecordQueueTest
     {
-        private ISerializer<int> intSerializer = Serializers.Int32;
-        private IDeserializer<int> intDeserializer = Deserializers.Int32;
-        private ITimestampExtractor timestampExtractor = new MockTimestampExtractor();
-        private string[] topics = { "topic" };
+        private readonly ISerializer<int> intSerializer = Serializers.Int32;
+        private readonly IDeserializer<int> intDeserializer = Deserializers.Int32;
+        private readonly ITimestampExtractor timestampExtractor = new MockTimestampExtractor();
+        private readonly string[] topics = { "topic" };
 
         // private Sensor skippedRecordsSensor = new Metrics().sensor("skipped-records");
 
@@ -27,14 +27,14 @@ namespace Kafka.Streams.Tests.Processor.Internals
             )
         );
         private MockSourceNode mockSourceNodeWithMetrics = new MockSourceNode<>(topics, intDeserializer, intDeserializer);
-        private RecordQueue queue = new RecordQueue(
+        private readonly RecordQueue queue = new RecordQueue(
             new TopicPartition(topics[0], 1),
             mockSourceNodeWithMetrics,
             timestampExtractor,
             new LogAndFailExceptionHandler(),
             context,
             new LogContext());
-        private RecordQueue queueThatSkipsDeserializeErrors = new RecordQueue(
+        private readonly RecordQueue queueThatSkipsDeserializeErrors = new RecordQueue(
             new TopicPartition(topics[0], 1),
             mockSourceNodeWithMetrics,
             timestampExtractor,
@@ -42,8 +42,8 @@ namespace Kafka.Streams.Tests.Processor.Internals
             context,
             new LogContext());
 
-        private byte[] recordValue = intSerializer.serialize(null, 10);
-        private byte[] recordKey = intSerializer.serialize(null, 1);
+        private readonly byte[] recordValue = intSerializer.serialize(null, 10);
+        private readonly byte[] recordKey = intSerializer.serialize(null, 1);
 
 
         public void Before()

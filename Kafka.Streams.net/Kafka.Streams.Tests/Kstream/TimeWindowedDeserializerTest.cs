@@ -9,10 +9,10 @@ namespace Kafka.Streams.Tests
 {
     public class TimeWindowedDeserializerTest
     {
-        private long windowSize = 5000000;
-        private TimeWindowedDeserializer<string> timeWindowedKeyDeserializer;
-        private TimeWindowedDeserializer<byte[]> timeWindowedValueDeserializer;
-        private Dictionary<string, string?> props = new Dictionary<string, string?>();
+        private readonly long windowSize = 5000000;
+        private readonly TimeWindowedDeserializer<string> timeWindowedKeyDeserializer;
+        private readonly TimeWindowedDeserializer<byte[]> timeWindowedValueDeserializer;
+        private readonly Dictionary<string, string?> props = new Dictionary<string, string?>();
 
         public TimeWindowedDeserializerTest()
         {

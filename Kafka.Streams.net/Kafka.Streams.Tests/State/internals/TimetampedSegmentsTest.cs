@@ -43,13 +43,13 @@
 
 public class TimetampedSegmentsTest {
 
-    private static int NUM_SEGMENTS = 5;
-    private static long SEGMENT_INTERVAL = 100L;
-    private static long RETENTION_PERIOD = 4 * SEGMENT_INTERVAL;
+    private static readonly int NUM_SEGMENTS = 5;
+    private static readonly long SEGMENT_INTERVAL = 100L;
+    private static readonly long RETENTION_PERIOD = 4 * SEGMENT_INTERVAL;
     private InternalMockProcessorContext context;
     private TimestampedSegments segments;
     private File stateDirectory;
-    private string storeName = "test";
+    private readonly string storeName = "test";
 
     
     public void CreateContext() {
@@ -302,7 +302,7 @@ public class TimetampedSegmentsTest {
     public void ShouldClearSegmentsOnClose() {
         segments.getOrCreateSegmentIfLive(0, context, -1L);
         segments.close();
-        Assert.Equal(segments.getSegmentForTimestamp(0), is(nullValue()));
+        Assert.Equal(segments.getSegmentForTimestamp(0), (nullValue()));
     }
 
     private void VerifyCorrectSegments(long first, int numSegments) {

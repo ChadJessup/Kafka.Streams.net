@@ -40,11 +40,11 @@
 
 
 public class ReadOnlyWindowStoreFacadeTest {
-    @Mock
+    
     private TimestampedWindowStore<string, string> mockedWindowTimestampStore;
-    @Mock
+    
     private WindowStoreIterator<ValueAndTimestamp<string>> mockedWindowTimestampIterator;
-    @Mock
+    
     private KeyValueIterator<Windowed<string>, ValueAndTimestamp<string>> mockedKeyValueWindowTimestampIterator;
 
     private ReadOnlyWindowStoreFacade<string, string> readOnlyWindowStoreFacade;
@@ -62,7 +62,7 @@ public class ReadOnlyWindowStoreFacadeTest {
             .andReturn(null);
         replay(mockedWindowTimestampStore);
 
-        Assert.Equal(readOnlyWindowStoreFacade.fetch("key1", 21L), is("value1"));
+        Assert.Equal(readOnlyWindowStoreFacade.fetch("key1", 21L), ("value1"));
         assertNull(readOnlyWindowStoreFacade.fetch("unknownKey", 21L));
 
         verify(mockedWindowTimestampStore);
@@ -80,8 +80,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         WindowStoreIterator<string> iterator =
             readOnlyWindowStoreFacade.fetch("key1", 21L, 42L);
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(21L, "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(42L, "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(21L, "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(42L, "value2")));
         verify(mockedWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -97,8 +97,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         WindowStoreIterator<string> iterator =
             readOnlyWindowStoreFacade.fetch("key1", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(21L, "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(42L, "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(21L, "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(42L, "value2")));
         verify(mockedWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -118,8 +118,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         KeyValueIterator<Windowed<string>, string> iterator =
             readOnlyWindowStoreFacade.fetch("key1", "key2", 21L, 42L);
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
         verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -139,8 +139,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         KeyValueIterator<Windowed<string>, string> iterator =
             readOnlyWindowStoreFacade.fetch("key1", "key2", Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
         verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -160,8 +160,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         KeyValueIterator<Windowed<string>, string> iterator =
             readOnlyWindowStoreFacade.fetchAll(21L, 42L);
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
         verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -181,8 +181,8 @@ public class ReadOnlyWindowStoreFacadeTest {
         KeyValueIterator<Windowed<string>, string> iterator =
             readOnlyWindowStoreFacade.fetchAll(Instant.ofEpochMilli(21L), Instant.ofEpochMilli(42L));
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
         verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
     }
 
@@ -200,8 +200,8 @@ public class ReadOnlyWindowStoreFacadeTest {
 
         KeyValueIterator<Windowed<string>, string> iterator = readOnlyWindowStoreFacade.all();
 
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key1", new TimeWindow(21L, 22L)), "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create(new Windowed<>("key2", new TimeWindow(42L, 43L)), "value2")));
         verify(mockedKeyValueWindowTimestampIterator, mockedWindowTimestampStore);
     }
 }

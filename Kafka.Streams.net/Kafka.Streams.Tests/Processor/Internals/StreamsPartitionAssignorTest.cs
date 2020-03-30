@@ -116,8 +116,8 @@ public class StreamsPartitionAssignorTest {
     private MockClientSupplier mockClientSupplier = new MockClientSupplier();
     private InternalTopologyBuilder builder = new InternalTopologyBuilder();
     private StreamsConfig streamsConfig = new StreamsConfig(configProps());
-    private string userEndPoint = "localhost:8080";
-    private string applicationId = "stream-partition-assignor-test";
+    private readonly string userEndPoint = "localhost:8080";
+    private readonly string applicationId = "stream-partition-assignor-test";
 
     private TaskManager taskManager = EasyMock.createNiceMock(TaskManager);
 

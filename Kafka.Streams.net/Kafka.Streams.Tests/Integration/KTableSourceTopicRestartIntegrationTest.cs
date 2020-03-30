@@ -52,9 +52,11 @@
 
 
 
+using System.Collections.Generic;
+
 public class KTableSourceTopicRestartIntegrationTest {
-    private static int NUM_BROKERS = 3;
-    private static string SOURCE_TOPIC = "source-topic";
+    private static readonly int NUM_BROKERS = 3;
+    private static readonly string SOURCE_TOPIC = "source-topic";
 
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
@@ -91,7 +93,7 @@ public class KTableSourceTopicRestartIntegrationTest {
     
     public void Before() {
         KTable<string, string> kTable = streamsBuilder.table(SOURCE_TOPIC, Materialized.As("store"));
-        kTable.toStream().foreach(readKeyValues::put);
+        kTable.toStream().ForEach();
 
         expectedInitialResultsMap = createExpectedResultsMap("a", "b", "c");
         expectedResultsWithDataWrittenDuringRestoreMap = createExpectedResultsMap("a", "b", "c", "d", "f", "g", "h");

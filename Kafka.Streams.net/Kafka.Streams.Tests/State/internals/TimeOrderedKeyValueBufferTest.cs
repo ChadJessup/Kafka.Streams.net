@@ -63,9 +63,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
     private static Headers V_2_CHANGELOG_HEADERS =
         new Headers(new Header[] {new RecordHeader("v", new byte[] {(byte) 2})});
 
-    private static string APP_ID = "test-app";
+    private static readonly string APP_ID = "test-app";
     private Function<string, B> bufferSupplier;
-    private string testName;
+    private readonly string testName;
 
     // As we add more buffer implementations/configurations, we can add them here
     // @Parameterized.Parameters(name = "{index}: test={0}")
@@ -146,9 +146,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
         PutRecord(buffer, context, 0L, 0L, "asdf", "qwer");
-        Assert.Equal(buffer.numRecords(), is(1));
+        Assert.Equal(buffer.numRecords(), (1));
         buffer.evictWhile(() => true, kv => { });
-        Assert.Equal(buffer.numRecords(), is(0));
+        Assert.Equal(buffer.numRecords(), (0));
         Cleanup(context, buffer);
     }
 
@@ -159,11 +159,11 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         buffer.init(context, buffer);
         PutRecord(buffer, context, 0L, 0L, "asdf", "eyt");
         PutRecord(buffer, context, 1L, 0L, "zxcv", "rtg");
-        Assert.Equal(buffer.numRecords(), is(2));
+        Assert.Equal(buffer.numRecords(), (2));
         List<Eviction<string, string>> evicted = new LinkedList<>();
         buffer.evictWhile(() => buffer.numRecords() > 1, evicted::add);
-        Assert.Equal(buffer.numRecords(), is(1));
-        Assert.Equal(evicted, is(singletonList(
+        Assert.Equal(buffer.numRecords(), (1));
+        Assert.Equal(evicted, (singletonList(
             new Eviction<>("asdf", new Change<>("eyt", null), GetContext(0L))
         )));
         Cleanup(context, buffer);
@@ -175,11 +175,11 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
         PutRecord(buffer, context, 0L, 0L, "asdf", "oin");
-        Assert.Equal(buffer.numRecords(), is(1));
+        Assert.Equal(buffer.numRecords(), (1));
         PutRecord(buffer, context, 1L, 0L, "asdf", "wekjn");
-        Assert.Equal(buffer.numRecords(), is(1));
+        Assert.Equal(buffer.numRecords(), (1));
         PutRecord(buffer, context, 0L, 0L, "zxcv", "24inf");
-        Assert.Equal(buffer.numRecords(), is(2));
+        Assert.Equal(buffer.numRecords(), (2));
         Cleanup(context, buffer);
     }
 
@@ -189,11 +189,11 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
         PutRecord(buffer, context, 0L, 0L, "asdf", "23roni");
-        Assert.Equal(buffer.bufferSize(), is(43L));
+        Assert.Equal(buffer.bufferSize(), (43L));
         PutRecord(buffer, context, 1L, 0L, "asdf", "3l");
-        Assert.Equal(buffer.bufferSize(), is(39L));
+        Assert.Equal(buffer.bufferSize(), (39L));
         PutRecord(buffer, context, 0L, 0L, "zxcv", "qfowin");
-        Assert.Equal(buffer.bufferSize(), is(82L));
+        Assert.Equal(buffer.bufferSize(), (82L));
         Cleanup(context, buffer);
     }
 
@@ -203,9 +203,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
         PutRecord(buffer, context, 1L, 0L, "asdf", "2093j");
-        Assert.Equal(buffer.minTimestamp(), is(1L));
+        Assert.Equal(buffer.minTimestamp(), (1L));
         PutRecord(buffer, context, 0L, 0L, "zxcv", "3gon4i");
-        Assert.Equal(buffer.minTimestamp(), is(0L));
+        Assert.Equal(buffer.minTimestamp(), (0L));
         Cleanup(context, buffer);
     }
 
@@ -216,30 +216,30 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         buffer.init(context, buffer);
 
         PutRecord(buffer, context, 1L, 0L, "zxcv", "o23i4");
-        Assert.Equal(buffer.numRecords(), is(1));
-        Assert.Equal(buffer.bufferSize(), is(42L));
-        Assert.Equal(buffer.minTimestamp(), is(1L));
+        Assert.Equal(buffer.numRecords(), (1));
+        Assert.Equal(buffer.bufferSize(), (42L));
+        Assert.Equal(buffer.minTimestamp(), (1L));
 
         PutRecord(buffer, context, 0L, 0L, "asdf", "3ng");
-        Assert.Equal(buffer.numRecords(), is(2));
-        Assert.Equal(buffer.bufferSize(), is(82L));
-        Assert.Equal(buffer.minTimestamp(), is(0L));
+        Assert.Equal(buffer.numRecords(), (2));
+        Assert.Equal(buffer.bufferSize(), (82L));
+        Assert.Equal(buffer.minTimestamp(), (0L));
 
         AtomicInteger callbackCount = new AtomicInteger(0);
         buffer.evictWhile(() => true, kv => {
             switch (callbackCount.incrementAndGet()) {
                 case 1: {
-                    Assert.Equal(kv.Key, is("asdf"));
-                    Assert.Equal(buffer.numRecords(), is(2));
-                    Assert.Equal(buffer.bufferSize(), is(82L));
-                    Assert.Equal(buffer.minTimestamp(), is(0L));
+                    Assert.Equal(kv.Key, ("asdf"));
+                    Assert.Equal(buffer.numRecords(), (2));
+                    Assert.Equal(buffer.bufferSize(), (82L));
+                    Assert.Equal(buffer.minTimestamp(), (0L));
                     break;
                 }
                 case 2: {
-                    Assert.Equal(kv.Key, is("zxcv"));
-                    Assert.Equal(buffer.numRecords(), is(1));
-                    Assert.Equal(buffer.bufferSize(), is(42L));
-                    Assert.Equal(buffer.minTimestamp(), is(1L));
+                    Assert.Equal(kv.Key, ("zxcv"));
+                    Assert.Equal(buffer.numRecords(), (1));
+                    Assert.Equal(buffer.bufferSize(), (42L));
+                    Assert.Equal(buffer.minTimestamp(), (1L));
                     break;
                 }
                 default: {
@@ -248,10 +248,10 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                 }
             }
         });
-        Assert.Equal(callbackCount.get(), is(2));
-        Assert.Equal(buffer.numRecords(), is(0));
-        Assert.Equal(buffer.bufferSize(), is(0L));
-        Assert.Equal(buffer.minTimestamp(), is(long.MaxValue));
+        Assert.Equal(callbackCount.get(), (2));
+        Assert.Equal(buffer.numRecords(), (0));
+        Assert.Equal(buffer.bufferSize(), (0L));
+        Assert.Equal(buffer.minTimestamp(), (long.MaxValue));
         Cleanup(context, buffer);
     }
 
@@ -261,7 +261,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         MockInternalProcessorContext context = MakeContext();
         buffer.init(context, buffer);
 
-        Assert.Equal(buffer.priorValueForBuffered("ASDF"), is(Maybe.undefined()));
+        Assert.Equal(buffer.priorValueForBuffered("ASDF"), (Maybe.undefined()));
     }
 
     [Xunit.Fact]
@@ -274,8 +274,8 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         context.setRecordContext(recordContext);
         buffer.put(1L, "A", new Change<>("new-value", "old-value"), recordContext);
         buffer.put(1L, "B", new Change<>("new-value", null), recordContext);
-        Assert.Equal(buffer.priorValueForBuffered("A"), is(Maybe.defined(ValueAndTimestamp.make("old-value", -1))));
-        Assert.Equal(buffer.priorValueForBuffered("B"), is(Maybe.defined(null)));
+        Assert.Equal(buffer.priorValueForBuffered("A"), (Maybe.defined(ValueAndTimestamp.make("old-value", -1))));
+        Assert.Equal(buffer.priorValueForBuffered("B"), (Maybe.defined(null)));
     }
 
     [Xunit.Fact]
@@ -322,7 +322,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                 })
                 .collect(Collectors.toList());
 
-        Assert.Equal(collected, is(asList(
+        Assert.Equal(collected, (asList(
             new ProducerRecord<>(APP_ID + "-" + testName + "-changelog",
                                  0,   // Producer will assign
                                  null,
@@ -409,9 +409,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  ByteBuffer.allocate(long.BYTES + zxcvValue2.Length).putLong(1L).put(zxcvValue2).array())
         ));
 
-        Assert.Equal(buffer.numRecords(), is(3));
-        Assert.Equal(buffer.minTimestamp(), is(0L));
-        Assert.Equal(buffer.bufferSize(), is(172L));
+        Assert.Equal(buffer.numRecords(), (3));
+        Assert.Equal(buffer.minTimestamp(), (0L));
+        Assert.Equal(buffer.bufferSize(), (172L));
 
         stateRestoreCallback.restoreBatch(singletonList(
             new ConsumeResult<>("changelog-topic",
@@ -426,13 +426,13 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  null)
         ));
 
-        Assert.Equal(buffer.numRecords(), is(2));
-        Assert.Equal(buffer.minTimestamp(), is(1L));
-        Assert.Equal(buffer.bufferSize(), is(115L));
+        Assert.Equal(buffer.numRecords(), (2));
+        Assert.Equal(buffer.minTimestamp(), (1L));
+        Assert.Equal(buffer.bufferSize(), (115L));
 
-        Assert.Equal(buffer.priorValueForBuffered("todelete"), is(Maybe.undefined()));
-        Assert.Equal(buffer.priorValueForBuffered("asdf"), is(Maybe.defined(null)));
-        Assert.Equal(buffer.priorValueForBuffered("zxcv"), is(Maybe.defined(ValueAndTimestamp.make("previous", -1))));
+        Assert.Equal(buffer.priorValueForBuffered("todelete"), (Maybe.undefined()));
+        Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
+        Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.make("previous", -1))));
 
         // flush the buffer into a list in buffer order so we can make assertions about the contents.
 
@@ -447,7 +447,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         //   which is fixed in changelog format v1. But upgraded applications still need to be able to handle the
         //   original format.
 
-        Assert.Equal(evicted, is(asList(
+        Assert.Equal(evicted, (asList(
             new Eviction<>(
                 "zxcv",
                 new Change<>("next", "eo4im"),
@@ -532,9 +532,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  v1FlagHeaders)
         ));
 
-        Assert.Equal(buffer.numRecords(), is(3));
-        Assert.Equal(buffer.minTimestamp(), is(0L));
-        Assert.Equal(buffer.bufferSize(), is(142L));
+        Assert.Equal(buffer.numRecords(), (3));
+        Assert.Equal(buffer.minTimestamp(), (0L));
+        Assert.Equal(buffer.bufferSize(), (142L));
 
         stateRestoreCallback.restoreBatch(singletonList(
             new ConsumeResult<>("changelog-topic",
@@ -549,13 +549,13 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  null)
         ));
 
-        Assert.Equal(buffer.numRecords(), is(2));
-        Assert.Equal(buffer.minTimestamp(), is(1L));
-        Assert.Equal(buffer.bufferSize(), is(95L));
+        Assert.Equal(buffer.numRecords(), (2));
+        Assert.Equal(buffer.minTimestamp(), (1L));
+        Assert.Equal(buffer.bufferSize(), (95L));
 
-        Assert.Equal(buffer.priorValueForBuffered("todelete"), is(Maybe.undefined()));
-        Assert.Equal(buffer.priorValueForBuffered("asdf"), is(Maybe.defined(null)));
-        Assert.Equal(buffer.priorValueForBuffered("zxcv"), is(Maybe.defined(ValueAndTimestamp.make("previous", -1))));
+        Assert.Equal(buffer.priorValueForBuffered("todelete"), (Maybe.undefined()));
+        Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
+        Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.make("previous", -1))));
 
         // flush the buffer into a list in buffer order so we can make assertions about the contents.
 
@@ -570,7 +570,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         // * The record offset preserves the original input record's offset, *not* the offset of the changelog record
 
 
-        Assert.Equal(evicted, is(asList(
+        Assert.Equal(evicted, (asList(
             new Eviction<>(
                 "zxcv",
                 new Change<>("next", "3o4im"),
@@ -662,9 +662,9 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  v2FlagHeaders)
         ));
 
-        Assert.Equal(buffer.numRecords(), is(3));
-        Assert.Equal(buffer.minTimestamp(), is(0L));
-        Assert.Equal(buffer.bufferSize(), is(142L));
+        Assert.Equal(buffer.numRecords(), (3));
+        Assert.Equal(buffer.minTimestamp(), (0L));
+        Assert.Equal(buffer.bufferSize(), (142L));
 
         stateRestoreCallback.restoreBatch(singletonList(
             new ConsumeResult<>("changelog-topic",
@@ -679,13 +679,13 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
                                  null)
         ));
 
-        Assert.Equal(buffer.numRecords(), is(2));
-        Assert.Equal(buffer.minTimestamp(), is(1L));
-        Assert.Equal(buffer.bufferSize(), is(95L));
+        Assert.Equal(buffer.numRecords(), (2));
+        Assert.Equal(buffer.minTimestamp(), (1L));
+        Assert.Equal(buffer.bufferSize(), (95L));
 
-        Assert.Equal(buffer.priorValueForBuffered("todelete"), is(Maybe.undefined()));
-        Assert.Equal(buffer.priorValueForBuffered("asdf"), is(Maybe.defined(null)));
-        Assert.Equal(buffer.priorValueForBuffered("zxcv"), is(Maybe.defined(ValueAndTimestamp.make("previous", -1))));
+        Assert.Equal(buffer.priorValueForBuffered("todelete"), (Maybe.undefined()));
+        Assert.Equal(buffer.priorValueForBuffered("asdf"), (Maybe.defined(null)));
+        Assert.Equal(buffer.priorValueForBuffered("zxcv"), (Maybe.defined(ValueAndTimestamp.make("previous", -1))));
 
         // flush the buffer into a list in buffer order so we can make assertions about the contents.
 
@@ -700,7 +700,7 @@ public class TimeOrderedKeyValueBufferTest<B : TimeOrderedKeyValueBuffer<string,
         // * The record offset preserves the original input record's offset, *not* the offset of the changelog record
 
 
-        Assert.Equal(evicted, is(asList(
+        Assert.Equal(evicted, (asList(
             new Eviction<>(
                 "zxcv",
                 new Change<>("next", "3o4im"),

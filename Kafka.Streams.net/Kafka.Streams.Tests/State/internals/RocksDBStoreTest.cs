@@ -62,7 +62,7 @@
 
 public class RocksDBStoreTest {
     private static bool enableBloomFilters = false;
-    static string DB_NAME = "db-name";
+    static readonly string DB_NAME = "db-name";
 
     private File dir;
     private Serializer<string> stringSerializer = new StringSerializer();
@@ -456,7 +456,7 @@ public class RocksDBStoreTest {
         int expectedIndex = 0;
         foreach (KeyValuePair<byte[], byte[]> keyValue in keyValues) {
             byte[] valBytes = rocksDBStore.get(new Bytes(keyValue.key));
-            Assert.Equal(new string(valBytes, UTF_8), is(expectedValues.get(expectedIndex++)));
+            Assert.Equal(new string(valBytes, UTF_8), (expectedValues.get(expectedIndex++)));
         }
         Assert.False(TestingBloomFilterRocksDBConfigSetter.bloomFiltersSet);
 
@@ -470,7 +470,7 @@ public class RocksDBStoreTest {
 
         foreach (KeyValuePair<byte[], byte[]> keyValue in keyValues) {
             byte[] valBytes = rocksDBStore.get(new Bytes(keyValue.key));
-            Assert.Equal(new string(valBytes, UTF_8), is(expectedValues.get(expectedIndex++)));
+            Assert.Equal(new string(valBytes, UTF_8), (expectedValues.get(expectedIndex++)));
         }
 
         Assert.True(TestingBloomFilterRocksDBConfigSetter.bloomFiltersSet);

@@ -92,8 +92,8 @@ public class StreamTaskTest {
     private Serializer<int> intSerializer = Serdes.Int().Serializer;
     private Serializer<byte[]> bytesSerializer = Serdes.ByteArray().Serializer;
     private Deserializer<int> intDeserializer = Serdes.Int().deserializer();
-    private string topic1 = "topic1";
-    private string topic2 = "topic2";
+    private readonly string topic1 = "topic1";
+    private readonly string topic2 = "topic2";
     private TopicPartition partition1 = new TopicPartition(topic1, 1);
     private TopicPartition partition2 = new TopicPartition(topic2, 1);
     private HashSet<TopicPartition> partitions = Utils.mkSet(partition1, partition2);
@@ -254,11 +254,11 @@ public class StreamTaskTest {
             assertTimeoutErrorLog(appender);
 
             // make sure we report the correct message
-            Assert.Equal(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
+            Assert.Equal(expected.getMessage(), ("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
             // make sure we preserve the cause
             Assert.Equal(expected.getCause().getClass(), TimeoutException);
-            Assert.Equal(expected.getCause().getMessage(), is("test"));
+            Assert.Equal(expected.getCause().getMessage(), ("test"));
         }
         LogCaptureAppender.unregister(appender);
     }
@@ -313,11 +313,11 @@ public class StreamTaskTest {
             assertTimeoutErrorLog(appender);
 
             // make sure we report the correct message
-            Assert.Equal(expected.getMessage(), is("task [0_0] Failed to initialize task 0_0 due to timeout."));
+            Assert.Equal(expected.getMessage(), ("task [0_0] Failed to initialize task 0_0 due to timeout."));
 
             // make sure we preserve the cause
             Assert.Equal(expected.getCause().getClass(), TimeoutException);
-            Assert.Equal(expected.getCause().getMessage(), is("test"));
+            Assert.Equal(expected.getCause().getMessage(), ("test"));
         }
         LogCaptureAppender.unregister(appender);
     }
@@ -337,7 +337,7 @@ public class StreamTaskTest {
                 .filter(event => event.getMessage().equals(expectedErrorLogMessage))
                 .map(LogCaptureAppender.Event::getLevel)
                 .collect(Collectors.toList());
-        Assert.Equal(expectedError, is(singletonList("ERROR")));
+        Assert.Equal(expectedError, (singletonList("ERROR")));
     }
 
     

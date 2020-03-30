@@ -60,9 +60,9 @@ public class ChangeLoggingWindowBytesStoreTest {
     private byte[] value = {0};
     private Bytes bytesKey = Bytes.wrap(value);
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private WindowStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContextImpl context;
     private ChangeLoggingWindowBytesStore store;
 

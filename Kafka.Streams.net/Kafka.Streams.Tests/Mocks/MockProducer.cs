@@ -15,25 +15,25 @@ namespace Kafka.Streams.Tests.Mocks
      */
     public class MockProducer<K, V> : IProducer<K, V>
     {
-        private Partitioner? partitioner;
-        private List<Message<K, V>> sent;
-        private List<Message<K, V>> uncommittedSends;
+        private readonly Partitioner? partitioner;
+        private readonly List<Message<K, V>> sent;
+        private readonly List<Message<K, V>> uncommittedSends;
         //private Deque<Completion> completions;
-        private Dictionary<TopicPartition, long> offsets;
-        private List<Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsets;
-        private Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>> uncommittedConsumerGroupOffsets;
-        private ISerializer<K>? keySerializer;
-        private ISerializer<V>? valueSerializer;
-        private bool autoComplete;
-        private bool closed;
+        private readonly Dictionary<TopicPartition, long> offsets;
+        private readonly List<Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>>> consumerGroupOffsets;
+        private readonly Dictionary<string, Dictionary<TopicPartition, OffsetAndMetadata>> uncommittedConsumerGroupOffsets;
+        private readonly ISerializer<K>? keySerializer;
+        private readonly ISerializer<V>? valueSerializer;
+        private readonly bool autoComplete;
+        private readonly bool closed;
         private bool transactionInitialized;
-        private bool transactionInFlight;
-        private bool transactionCommitted;
-        private bool transactionAborted;
-        private bool producerFenced;
-        private bool producerFencedOnClose;
-        private bool sentOffsets;
-        private long commitCount = 0L;
+        private readonly bool transactionInFlight;
+        private readonly bool transactionCommitted;
+        private readonly bool transactionAborted;
+        private readonly bool producerFenced;
+        private readonly bool producerFencedOnClose;
+        private readonly bool sentOffsets;
+        private readonly long commitCount = 0L;
 
         /**
          * Create a mock producer

@@ -83,11 +83,10 @@ public class StateRestoreCallbackAdapterTest {
         };
 
         RecordBatchingStateRestoreCallback adapted = adapt(callback);
-
-        byte[] key1 = {1};
-        byte[] value1 = {2};
-        byte[] key2 = {3};
-        byte[] value2 = {4};
+    readonly byte[] key1 = {1};
+    readonly byte[] value1 = {2};
+    readonly byte[] key2 = {3};
+    readonly byte[] value2 = {4};
         adapted.restoreBatch(asList(
             new ConsumeResult<>("topic1", 0, 0L, key1, value1),
             new ConsumeResult<>("topic2", 1, 1L, key2, value2)
@@ -95,7 +94,7 @@ public class StateRestoreCallbackAdapterTest {
 
         Assert.Equal(
             actual,
-            is(asList(
+            (asList(
                 new KeyValuePair<>(key1, value1),
                 new KeyValuePair<>(key2, value2)
             ))
@@ -120,7 +119,7 @@ public class StateRestoreCallbackAdapterTest {
 
         Assert.Equal(
             actual,
-            is(asList(
+            (asList(
                 new KeyValuePair<>(key1, value1),
                 new KeyValuePair<>(key2, value2)
             ))
@@ -129,17 +128,17 @@ public class StateRestoreCallbackAdapterTest {
 
     private void Validate(List<ConsumeResult<byte[], byte[]>> actual,
                           List<ConsumeResult<byte[], byte[]>> expected) {
-        Assert.Equal(actual.Count, is(expected.Count));
+        Assert.Equal(actual.Count, (expected.Count));
         for (int i = 0; i < actual.Count; i++) {
             ConsumeResult<byte[], byte[]> actual1 = actual.get(i);
             ConsumeResult<byte[], byte[]> expected1 = expected.get(i);
-            Assert.Equal(actual1.topic(), is(expected1.topic()));
-            Assert.Equal(actual1.partition(), is(expected1.partition()));
-            Assert.Equal(actual1.Offset, is(expected1.Offset));
-            Assert.Equal(actual1.Key, is(expected1.Key));
-            Assert.Equal(actual1.Value, is(expected1.Value));
-            Assert.Equal(actual1.Timestamp, is(expected1.Timestamp));
-            Assert.Equal(actual1.headers(), is(expected1.headers()));
+            Assert.Equal(actual1.topic(), (expected1.topic()));
+            Assert.Equal(actual1.partition(), (expected1.partition()));
+            Assert.Equal(actual1.Offset, (expected1.Offset));
+            Assert.Equal(actual1.Key, (expected1.Key));
+            Assert.Equal(actual1.Value, (expected1.Value));
+            Assert.Equal(actual1.Timestamp, (expected1.Timestamp));
+            Assert.Equal(actual1.headers(), (expected1.headers()));
         }
     }
 

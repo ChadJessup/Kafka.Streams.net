@@ -41,10 +41,10 @@
 //    public class MaterializedInternalTest
 //    {
 
-//        @Mock(type = MockType.NICE)
+//        (type = MockType.NICE)
 //        private InternalNameProvider nameProvider;
 
-//        @Mock(type = MockType.NICE)
+//        (type = MockType.NICE)
 //        private KeyValueBytesStoreSupplier supplier;
 //        private string prefix = "prefix";
 

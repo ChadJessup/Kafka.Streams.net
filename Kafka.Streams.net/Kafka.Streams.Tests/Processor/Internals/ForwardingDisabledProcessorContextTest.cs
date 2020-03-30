@@ -28,7 +28,7 @@
 
 
 public class ForwardingDisabledProcessorContextTest {
-    @Mock(MockType.NICE)
+    (MockType.NICE)
     private ProcessorContext delegate;
     private ForwardingDisabledProcessorContext context;
 

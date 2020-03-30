@@ -11,9 +11,9 @@ namespace Kafka.Streams.Tests
 {
     public class TimeWindowedSerializerTest
     {
-        private TimeWindowedSerializer<string> timeWindowedKeySerializer;
-        private TimeWindowedSerializer<byte[]> timeWindowedValueSerializer;
-        private Dictionary<string, string?> props = new Dictionary<string, string?>();
+        private readonly TimeWindowedSerializer<string> timeWindowedKeySerializer;
+        private readonly TimeWindowedSerializer<byte[]> timeWindowedValueSerializer;
+        private readonly Dictionary<string, string?> props = new Dictionary<string, string?>();
 
         public TimeWindowedSerializerTest()
         {

@@ -10,8 +10,8 @@ namespace Kafka.Streams.Tests.Tools
 
     public class SystemTestUtil {
 
-        private static int KEY = 0;
-        private static int VALUE = 1;
+        private static readonly int KEY = 0;
+        private static readonly int VALUE = 1;
 
         /**
          * Takes a string with keys and values separated by '=' and each key value pair

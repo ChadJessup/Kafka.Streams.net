@@ -82,9 +82,9 @@ public class RocksDBGenericOptionsToDbOptionsColumnFamilyOptionsAdapterTest {
         }
     };
 
-    @Mock
+    
     private DBOptions dbOptions;
-    @Mock
+    
     private ColumnFamilyOptions columnFamilyOptions;
 
     [Xunit.Fact]

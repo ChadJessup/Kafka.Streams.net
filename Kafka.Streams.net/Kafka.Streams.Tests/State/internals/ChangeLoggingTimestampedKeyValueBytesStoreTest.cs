@@ -50,10 +50,10 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     private Bytes hello = Bytes.wrap("hello".getBytes());
     private ValueAndTimestamp<byte[]> there = ValueAndTimestamp.make("there".getBytes(), 97L);
     // timestamp is 97 what is ASCII of 'a'
-    private byte[] rawThere = "\0\0\0\0\0\0\0athere".getBytes();
+    private readonly byte[] rawThere = "\0\0\0\0\0\0\0athere".getBytes();
     private ValueAndTimestamp<byte[]> world = ValueAndTimestamp.make("world".getBytes(), 98L);
     // timestamp is 98 what is ASCII of 'b'
-    private byte[] rawWorld = "\0\0\0\0\0\0\0bworld".getBytes();
+    private readonly byte[] rawWorld = "\0\0\0\0\0\0\0bworld".getBytes();
 
     
     public void Before() {
@@ -137,7 +137,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
     public void ShouldLogKeyNullOnDelete() {
         store.put(hi, rawThere);
         store.delete(hi);
-        Assert.Equal(sent.containsKey(hi), is(true));
+        Assert.Equal(sent.containsKey(hi), (true));
         Assert.Equal(sent.get(hi), nullValue());
     }
 
@@ -179,7 +179,7 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
 
     [Xunit.Fact]
     public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
-        Assert.Equal(store.putIfAbsent(hi, rawThere), is(nullValue()));
+        Assert.Equal(store.putIfAbsent(hi, rawThere), (nullValue()));
     }
 
     [Xunit.Fact]
@@ -190,6 +190,6 @@ public class ChangeLoggingTimestampedKeyValueBytesStoreTest {
 
     [Xunit.Fact]
     public void ShouldReturnNullOnGetWhenDoesntExist() {
-        Assert.Equal(store.get(hello), is(nullValue()));
+        Assert.Equal(store.get(hello), (nullValue()));
     }
 }

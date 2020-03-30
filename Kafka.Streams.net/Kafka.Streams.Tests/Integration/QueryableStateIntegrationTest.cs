@@ -97,11 +97,11 @@
 public class QueryableStateIntegrationTest {
     private static Logger log = LoggerFactory.getLogger(QueryableStateIntegrationTest);
 
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
-    private static int STREAM_THREE_PARTITIONS = 4;
+    private static readonly int STREAM_THREE_PARTITIONS = 4;
     private MockTime mockTime = CLUSTER.time;
     private string streamOne = "stream-one";
     private string streamTwo = "stream-two";
@@ -112,9 +112,9 @@ public class QueryableStateIntegrationTest {
     private string outputTopicConcurrentWindowed = "output-concurrent-windowed";
     private string outputTopicThree = "output-three";
     // sufficiently large window size such that everything falls into 1 window
-    private static long WINDOW_SIZE = TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS);
-    private static int STREAM_TWO_PARTITIONS = 2;
-    private static int NUM_REPLICAS = NUM_BROKERS;
+    private static readonly long WINDOW_SIZE = TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS);
+    private static readonly int STREAM_TWO_PARTITIONS = 2;
+    private static readonly int NUM_REPLICAS = NUM_BROKERS;
     private Properties streamsConfiguration;
     private List<string> inputValues;
     private int numberOfWordsPerIteration = 0;
@@ -769,7 +769,7 @@ public class QueryableStateIntegrationTest {
     }
 
     private class WaitForStore : TestCondition {
-        private string storeName;
+        private readonly string storeName;
 
         WaitForStore(string storeName) {
             this.storeName = storeName;
@@ -1032,9 +1032,9 @@ public class QueryableStateIntegrationTest {
      * A class that periodically produces records in a separate thread
      */
     private class ProducerRunnable : Runnable {
-        private string topic;
+        private readonly string topic;
         private List<string> inputValues;
-        private int numIterations;
+        private readonly int numIterations;
         private int currIteration = 0;
         bool shutdown = false;
 

@@ -68,39 +68,39 @@ public class TaskManagerTest {
     private HashSet<TopicPartition> taskId0Partitions = Utils.mkSet(t1p0);
     private Dictionary<TaskId, HashSet<TopicPartition>> taskId0Assignment = Collections.singletonMap(taskId0, taskId0Partitions);
 
-    @Mock(type = MockType.STRICT)
+    (type = MockType.STRICT)
     private InternalTopologyBuilder.SubscriptionUpdates subscriptionUpdates;
-    @Mock(type = MockType.STRICT)
+    (type = MockType.STRICT)
     private InternalTopologyBuilder topologyBuilder;
-    @Mock(type = MockType.STRICT)
+    (type = MockType.STRICT)
     private StateDirectory stateDirectory;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ChangelogReader changeLogReader;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StreamsMetadataState streamsMetadataState;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private Consumer<byte[], byte[]> restoreConsumer;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private Consumer<byte[], byte[]> consumer;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StreamThread.AbstractTaskCreator<StreamTask> activeTaskCreator;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StreamThread.AbstractTaskCreator<StandbyTask> standbyTaskCreator;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private Admin adminClient;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StreamTask streamTask;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private StandbyTask standbyTask;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private AssignedStreamsTasks active;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private AssignedStandbyTasks standby;
 
     private TaskManager taskManager;
 
-    private string topic1 = "topic1";
-    private string topic2 = "topic2";
+    private readonly string topic1 = "topic1";
+    private readonly string topic2 = "topic2";
     private TopicPartition t1p1 = new TopicPartition(topic1, 1);
     private TopicPartition t1p2 = new TopicPartition(topic1, 2);
     private TopicPartition t1p3 = new TopicPartition(topic1, 3);

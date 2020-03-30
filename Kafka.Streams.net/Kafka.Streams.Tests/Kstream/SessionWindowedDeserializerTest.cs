@@ -9,9 +9,9 @@ namespace Kafka.Streams.Tests
 {
     public class SessionWindowedDeserializerTest
     {
-        private SessionWindowedDeserializer<string> sessionWindowedKeyDeserializer;
-        private SessionWindowedDeserializer<byte[]> sessionWindowedValueDeserializer;
-        private Dictionary<string, string?> props = new Dictionary<string, string?>();
+        private readonly SessionWindowedDeserializer<string> sessionWindowedKeyDeserializer;
+        private readonly SessionWindowedDeserializer<byte[]> sessionWindowedValueDeserializer;
+        private readonly Dictionary<string, string?> props = new Dictionary<string, string?>();
 
         public SessionWindowedDeserializerTest()
         {

@@ -35,9 +35,9 @@
 
 
 public class ReadOnlyKeyValueStoreFacadeTest {
-    @Mock
+    
     private TimestampedKeyValueStore<string, string> mockedKeyValueTimestampStore;
-    @Mock
+    
     private KeyValueIterator<string, ValueAndTimestamp<string>> mockedKeyValueTimestampIterator;
 
     private ReadOnlyKeyValueStoreFacade<string, string> readOnlyKeyValueStoreFacade;
@@ -55,7 +55,7 @@ public class ReadOnlyKeyValueStoreFacadeTest {
             .andReturn(null);
         replay(mockedKeyValueTimestampStore);
 
-        Assert.Equal(readOnlyKeyValueStoreFacade.get("key"), is("value"));
+        Assert.Equal(readOnlyKeyValueStoreFacade.get("key"), ("value"));
         assertNull(readOnlyKeyValueStoreFacade.get("unknownKey"));
         verify(mockedKeyValueTimestampStore);
     }
@@ -69,8 +69,8 @@ public class ReadOnlyKeyValueStoreFacadeTest {
         replay(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
 
         KeyValueIterator<string, string> iterator = readOnlyKeyValueStoreFacade.range("key1", "key2");
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create("key1", "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create("key2", "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create("key1", "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create("key2", "value2")));
         verify(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
     }
 
@@ -83,8 +83,8 @@ public class ReadOnlyKeyValueStoreFacadeTest {
         replay(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
 
         KeyValueIterator<string, string> iterator = readOnlyKeyValueStoreFacade.all();
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create("key1", "value1")));
-        Assert.Equal(iterator.next(), is(KeyValuePair.Create("key2", "value2")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create("key1", "value1")));
+        Assert.Equal(iterator.next(), (KeyValuePair.Create("key2", "value2")));
         verify(mockedKeyValueTimestampIterator, mockedKeyValueTimestampStore);
     }
 
@@ -93,7 +93,7 @@ public class ReadOnlyKeyValueStoreFacadeTest {
         expect(mockedKeyValueTimestampStore.approximateNumEntries()).andReturn(42L);
         replay(mockedKeyValueTimestampStore);
 
-        Assert.Equal(readOnlyKeyValueStoreFacade.approximateNumEntries(), is(42L));
+        Assert.Equal(readOnlyKeyValueStoreFacade.approximateNumEntries(), (42L));
         verify(mockedKeyValueTimestampStore);
     }
 }

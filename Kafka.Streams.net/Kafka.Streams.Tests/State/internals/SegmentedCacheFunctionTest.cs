@@ -29,8 +29,8 @@
 // TODO: this test coverage does not consider session serde yet
 public class SegmentedCacheFunctionTest {
 
-    private static int SEGMENT_INTERVAL = 17;
-    private static int TIMESTAMP = 736213517;
+    private static readonly int SEGMENT_INTERVAL = 17;
+    private static readonly int TIMESTAMP = 736213517;
 
     private static Bytes THE_KEY = WindowKeySchema.toStoreKeyBinary(new byte[]{0xA, 0xB, 0xC}, TIMESTAMP, 42);
     private static Bytes THE_CACHE_KEY = Bytes.wrap(

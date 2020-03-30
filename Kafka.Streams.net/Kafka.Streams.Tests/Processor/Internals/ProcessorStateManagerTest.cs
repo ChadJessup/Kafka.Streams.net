@@ -79,24 +79,24 @@ using Xunit;
 public class ProcessorStateManagerTest
 {
 
-    private HashSet<TopicPartition> noPartitions = Collections.emptySet();
-    private string applicationId = "test-application";
-    private string persistentStoreName = "persistentStore";
-    private string nonPersistentStoreName = "nonPersistentStore";
-    private string persistentStoreTopicName = ProcessorStateManager.storeChangelogTopic(applicationId, persistentStoreName);
-    private string nonPersistentStoreTopicName = ProcessorStateManager.storeChangelogTopic(applicationId, nonPersistentStoreName);
-    private MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
-    private MockKeyValueStore nonPersistentStore = new MockKeyValueStore(nonPersistentStoreName, false);
-    private TopicPartition persistentStorePartition = new TopicPartition(persistentStoreTopicName, 1);
-    private string storeName = "mockKeyValueStore";
-    private string changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, storeName);
-    private TopicPartition changelogTopicPartition = new TopicPartition(changelogTopic, 0);
-    private TaskId taskId = new TaskId(0, 1);
-    private MockChangelogReader changelogReader = new MockChangelogReader();
-    private MockKeyValueStore mockKeyValueStore = new MockKeyValueStore(storeName, true);
-    private byte[] key = new byte[] { 0x0, 0x0, 0x0, 0x1 };
-    private byte[] value = "the-value".getBytes(StandardCharsets.UTF_8);
-    private ConsumeResult<byte[], byte[]> consumerRecord = new ConsumeResult<>(changelogTopic, 0, 0, key, value);
+    private readonly HashSet<TopicPartition> noPartitions = Collections.emptySet();
+    private readonly string applicationId = "test-application";
+    private readonly string persistentStoreName = "persistentStore";
+    private readonly string nonPersistentStoreName = "nonPersistentStore";
+    private readonly string persistentStoreTopicName = ProcessorStateManager.storeChangelogTopic(applicationId, persistentStoreName);
+    private readonly string nonPersistentStoreTopicName = ProcessorStateManager.storeChangelogTopic(applicationId, nonPersistentStoreName);
+    private readonly MockKeyValueStore persistentStore = new MockKeyValueStore(persistentStoreName, true);
+    private readonly MockKeyValueStore nonPersistentStore = new MockKeyValueStore(nonPersistentStoreName, false);
+    private readonly TopicPartition persistentStorePartition = new TopicPartition(persistentStoreTopicName, 1);
+    private readonly string storeName = "mockKeyValueStore";
+    private readonly string changelogTopic = ProcessorStateManager.storeChangelogTopic(applicationId, storeName);
+    private readonly TopicPartition changelogTopicPartition = new TopicPartition(changelogTopic, 0);
+    private readonly TaskId taskId = new TaskId(0, 1);
+    private readonly MockChangelogReader changelogReader = new MockChangelogReader();
+    private readonly MockKeyValueStore mockKeyValueStore = new MockKeyValueStore(storeName, true);
+    private readonly byte[] key = new byte[] { 0x0, 0x0, 0x0, 0x1 };
+    private readonly byte[] value = "the-value".getBytes(StandardCharsets.UTF_8);
+    private readonly ConsumeResult<byte[], byte[]> consumerRecord = new ConsumeResult<>(changelogTopic, 0, 0, key, value);
     private LogContext logContext = new LogContext("process-state-manager-test ");
 
     private File baseDir;

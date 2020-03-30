@@ -53,8 +53,8 @@ public class GlobalStateTaskTest {
 
     private LogContext logContext = new LogContext();
 
-    private string topic1 = "t1";
-    private string topic2 = "t2";
+    private readonly string topic1 = "t1";
+    private readonly string topic2 = "t2";
     private TopicPartition t1 = new TopicPartition(topic1, 1);
     private TopicPartition t2 = new TopicPartition(topic2, 1);
     private MockSourceNode sourceOne = new MockSourceNode<>(

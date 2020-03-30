@@ -57,10 +57,10 @@ public class StickyTaskAssignorTest {
     private List<int> expectedTopicGroupIds = Array.asList(1, 2);
 
     private Dictionary<int, ClientState> clients = new TreeMap<>();
-    private int p1 = 1;
-    private int p2 = 2;
-    private int p3 = 3;
-    private int p4 = 4;
+    private readonly int p1 = 1;
+    private readonly int p2 = 2;
+    private readonly int p3 = 3;
+    private readonly int p4 = 4;
 
     [Xunit.Fact]
     public void ShouldAssignOneActiveTaskToEachProcessWhenTaskCountSameAsProcessCount() {

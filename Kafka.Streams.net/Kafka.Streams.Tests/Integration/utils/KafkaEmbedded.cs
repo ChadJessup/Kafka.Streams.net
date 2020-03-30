@@ -51,7 +51,7 @@ public class KafkaEmbedded {
 
     private static Logger log = LoggerFactory.getLogger(KafkaEmbedded);
 
-    private static string DEFAULT_ZK_CONNECT = "127.0.0.1:2181";
+    private static readonly string DEFAULT_ZK_CONNECT = "127.0.0.1:2181";
 
     private Properties effectiveConfig;
     private File logDir;

@@ -41,7 +41,7 @@ public class UsePreviousTimeOnInvalidTimestampTest : TimestampExtractorTest {
             previousTime
         );
 
-        Assert.Equal(timestamp, is(previousTime));
+        Assert.Equal(timestamp, (previousTime));
     }
 
     [Xunit.Fact]

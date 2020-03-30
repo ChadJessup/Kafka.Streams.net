@@ -71,10 +71,10 @@ public class RecordDeserializerTest {
     }
 
     static class TheSourceNode : SourceNode<object, object> {
-        private bool keyThrowsException;
-        private bool valueThrowsException;
-        private object key;
-        private object value;
+        private readonly bool keyThrowsException;
+        private readonly bool valueThrowsException;
+        private readonly object key;
+        private readonly object value;
 
         TheSourceNode(bool keyThrowsException,
                       bool valueThrowsException,

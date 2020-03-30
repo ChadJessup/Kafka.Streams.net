@@ -4,9 +4,9 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class UnlimitedWindowTest
     {
-        private long start = 50;
-        private UnlimitedWindow window;
-        private SessionWindow sessionWindow;
+        private readonly long start = 50;
+        private readonly UnlimitedWindow window;
+        private readonly SessionWindow sessionWindow;
 
         public UnlimitedWindowTest()
         {

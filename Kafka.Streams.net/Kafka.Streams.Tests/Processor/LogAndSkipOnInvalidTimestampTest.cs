@@ -50,7 +50,7 @@ public class LogAndSkipOnInvalidTimestampTest : TimestampExtractorTest {
             0
         );
 
-        Assert.Equal(timestamp, is(invalidMetadataTimestamp));
+        Assert.Equal(timestamp, (invalidMetadataTimestamp));
     }
 
 }

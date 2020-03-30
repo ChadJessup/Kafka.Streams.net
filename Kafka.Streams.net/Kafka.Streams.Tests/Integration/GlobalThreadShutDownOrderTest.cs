@@ -56,14 +56,14 @@
 public class GlobalThreadShutDownOrderTest
 {
 
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
     private static Properties BROKER_CONFIG;
 
-    static {
-        BROKER_CONFIG = new Properties();
-    BROKER_CONFIG.put("transaction.state.log.replication.factor", (short) 1);
-        BROKER_CONFIG.put("transaction.state.log.min.isr", 1);
-    }
+    //static {
+    //    BROKER_CONFIG = new Properties();
+    //BROKER_CONFIG.put("transaction.state.log.replication.factor", (short) 1);
+    //    BROKER_CONFIG.put("transaction.state.log.min.isr", 1);
+    //}
 
 
 public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS, BROKER_CONFIG);
@@ -175,7 +175,7 @@ private class GlobalStoreProcessor : AbstractProcessor<string, long>
 {
 
     private KeyValueStore<string, long> store;
-    private string storeName;
+    private readonly string storeName;
 
     GlobalStoreProcessor(string storeName)
     {

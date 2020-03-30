@@ -47,8 +47,8 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     private Dictionary<object, object> sent = new HashMap<>();
     private Bytes hi = Bytes.wrap("hi".getBytes());
     private Bytes hello = Bytes.wrap("hello".getBytes());
-    private byte[] there = "there".getBytes();
-    private byte[] world = "world".getBytes();
+    private readonly byte[] there = "there".getBytes();
+    private readonly byte[] world = "world".getBytes();
 
     
     public void Before() {
@@ -126,7 +126,7 @@ public class ChangeLoggingKeyValueBytesStoreTest {
     public void ShouldLogKeyNullOnDelete() {
         store.put(hi, there);
         store.delete(hi);
-        Assert.Equal(sent.containsKey(hi), is(true));
+        Assert.Equal(sent.containsKey(hi), (true));
         Assert.Equal(sent.get(hi), nullValue());
     }
 
@@ -164,7 +164,7 @@ public class ChangeLoggingKeyValueBytesStoreTest {
 
     [Xunit.Fact]
     public void ShouldReturnNullOnPutIfAbsentWhenNoPreviousValue() {
-        Assert.Equal(store.putIfAbsent(hi, there), is(nullValue()));
+        Assert.Equal(store.putIfAbsent(hi, there), (nullValue()));
     }
 
     [Xunit.Fact]
@@ -175,6 +175,6 @@ public class ChangeLoggingKeyValueBytesStoreTest {
 
     [Xunit.Fact]
     public void ShouldReturnNullOnGetWhenDoesntExist() {
-        Assert.Equal(store.get(hello), is(nullValue()));
+        Assert.Equal(store.get(hello), (nullValue()));
     }
 }

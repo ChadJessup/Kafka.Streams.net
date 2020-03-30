@@ -33,8 +33,8 @@
 
 public class QueryableStoreProviderTest {
 
-    private string keyValueStore = "key-value";
-    private string windowStore = "window-store";
+    private readonly string keyValueStore = "key-value";
+    private readonly string windowStore = "window-store";
     private QueryableStoreProvider storeProvider;
     private HashDictionary<string, StateStore> globalStateStores;
 

@@ -7,9 +7,9 @@ namespace Kafka.Streams.Tests.Integration
 {
     public class EosIntegrationTest
     {
-        private static int NUM_BROKERS = 3;
-        private static int MAX_POLL_INTERVAL_MS = 5 * 1000;
-        private static int MAX_WAIT_TIME_MS = 60 * 1000;
+        private static readonly int NUM_BROKERS = 3;
+        private static readonly int MAX_POLL_INTERVAL_MS = 5 * 1000;
+        private static readonly int MAX_WAIT_TIME_MS = 60 * 1000;
 
 
         public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(
@@ -18,19 +18,19 @@ namespace Kafka.Streams.Tests.Integration
         );
 
         private static string applicationId;
-        private static int NUM_TOPIC_PARTITIONS = 2;
-        private static string CONSUMER_GROUP_ID = "readCommitted";
-        private static string SINGLE_PARTITION_INPUT_TOPIC = "singlePartitionInputTopic";
-        private static string SINGLE_PARTITION_THROUGH_TOPIC = "singlePartitionThroughTopic";
-        private static string SINGLE_PARTITION_OUTPUT_TOPIC = "singlePartitionOutputTopic";
-        private static string MULTI_PARTITION_INPUT_TOPIC = "multiPartitionInputTopic";
-        private static string MULTI_PARTITION_THROUGH_TOPIC = "multiPartitionThroughTopic";
-        private static string MULTI_PARTITION_OUTPUT_TOPIC = "multiPartitionOutputTopic";
-        private string storeName = "store";
+        private static readonly int NUM_TOPIC_PARTITIONS = 2;
+        private static readonly string CONSUMER_GROUP_ID = "readCommitted";
+        private static readonly string SINGLE_PARTITION_INPUT_TOPIC = "singlePartitionInputTopic";
+        private static readonly string SINGLE_PARTITION_THROUGH_TOPIC = "singlePartitionThroughTopic";
+        private static readonly string SINGLE_PARTITION_OUTPUT_TOPIC = "singlePartitionOutputTopic";
+        private static readonly string MULTI_PARTITION_INPUT_TOPIC = "multiPartitionInputTopic";
+        private static readonly string MULTI_PARTITION_THROUGH_TOPIC = "multiPartitionThroughTopic";
+        private static readonly string MULTI_PARTITION_OUTPUT_TOPIC = "multiPartitionOutputTopic";
+        private readonly string storeName = "store";
 
         private AtomicBoolean errorInjected;
         private AtomicBoolean gcInjected;
-        private volatile bool doGC = true;
+        private readonly bool doGC = true;
         private AtomicInteger commitRequested;
         private Throwable uncaughtException;
 

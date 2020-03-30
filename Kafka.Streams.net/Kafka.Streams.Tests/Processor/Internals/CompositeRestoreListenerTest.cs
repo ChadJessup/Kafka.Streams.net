@@ -40,23 +40,23 @@
 
 public class CompositeRestoreListenerTest {
 
-    private MockStateRestoreCallback stateRestoreCallback = new MockStateRestoreCallback();
+    private readonly MockStateRestoreCallback stateRestoreCallback = new MockStateRestoreCallback();
     private MockBatchingStateRestoreListener batchingStateRestoreCallback = new MockBatchingStateRestoreListener();
-    private MockNoListenBatchingStateRestoreCallback
+    private readonly MockNoListenBatchingStateRestoreCallback
         noListenBatchingStateRestoreCallback =
         new MockNoListenBatchingStateRestoreCallback();
     private MockStateRestoreListener reportingStoreListener = new MockStateRestoreListener();
-    private byte[] key = "key".getBytes(StandardCharsets.UTF_8);
-    private byte[] value = "value".getBytes(StandardCharsets.UTF_8);
+    private readonly byte[] key = "key".getBytes(StandardCharsets.UTF_8);
+    private readonly byte[] value = "value".getBytes(StandardCharsets.UTF_8);
     private Collection<KeyValuePair<byte[], byte[]>> records = Collections.singletonList(KeyValuePair.Create(key, value));
     private Collection<ConsumeResult<byte[], byte[]>> consumerRecords = Collections.singletonList(
         new ConsumeResult<>("", 0, 0L, key, value)
     );
-    private string storeName = "test_store";
-    private long startOffset = 0L;
-    private long endOffset = 1L;
-    private long batchOffset = 1L;
-    private long numberRestored = 1L;
+    private readonly string storeName = "test_store";
+    private readonly long startOffset = 0L;
+    private readonly long endOffset = 1L;
+    private readonly long batchOffset = 1L;
+    private readonly long numberRestored = 1L;
     private TopicPartition topicPartition = new TopicPartition("testTopic", 1);
 
     private CompositeRestoreListener compositeRestoreListener;
@@ -66,15 +66,15 @@ public class CompositeRestoreListenerTest {
     public void ShouldRestoreInNonBatchMode() {
         setUpCompositeRestoreListener(stateRestoreCallback);
         compositeRestoreListener.restoreBatch(consumerRecords);
-        Assert.Equal(stateRestoreCallback.restoredKey, is(key));
-        Assert.Equal(stateRestoreCallback.restoredValue, is(value));
+        Assert.Equal(stateRestoreCallback.restoredKey, (key));
+        Assert.Equal(stateRestoreCallback.restoredValue, (value));
     }
 
     [Xunit.Fact]
     public void ShouldRestoreInBatchMode() {
         setUpCompositeRestoreListener(batchingStateRestoreCallback);
         compositeRestoreListener.restoreBatch(consumerRecords);
-        Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), is(records));
+        Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), (records));
     }
 
     [Xunit.Fact]
@@ -135,7 +135,7 @@ public class CompositeRestoreListenerTest {
         compositeRestoreListener.onBatchRestored(topicPartition, storeName, batchOffset, numberRestored);
         compositeRestoreListener.onRestoreEnd(topicPartition, storeName, numberRestored);
 
-        Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), is(records));
+        Assert.Equal(batchingStateRestoreCallback.getRestoredRecords(), (records));
         assertStateRestoreOnEndNotification(batchingStateRestoreCallback);
     }
 
@@ -149,7 +149,7 @@ public class CompositeRestoreListenerTest {
         compositeRestoreListener.onBatchRestored(topicPartition, storeName, batchOffset, numberRestored);
         compositeRestoreListener.onRestoreEnd(topicPartition, storeName, numberRestored);
 
-        Assert.Equal(noListenBatchingStateRestoreCallback.restoredRecords, is(records));
+        Assert.Equal(noListenBatchingStateRestoreCallback.restoredRecords, (records));
     }
 
     [Xunit.Fact]// (expected = UnsupportedOperationException)
@@ -166,22 +166,22 @@ public class CompositeRestoreListenerTest {
 
     private void AssertStateRestoreListenerOnStartNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_START));
-        Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
-        Assert.Equal(restoreListener.restoreStartOffset, is(startOffset));
-        Assert.Equal(restoreListener.restoreEndOffset, is(endOffset));
+        Assert.Equal(restoreListener.restoreTopicPartition, (topicPartition));
+        Assert.Equal(restoreListener.restoreStartOffset, (startOffset));
+        Assert.Equal(restoreListener.restoreEndOffset, (endOffset));
     }
 
     private void AssertStateRestoreListenerOnBatchCompleteNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_BATCH));
-        Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
-        Assert.Equal(restoreListener.restoredBatchOffset, is(batchOffset));
-        Assert.Equal(restoreListener.numBatchRestored, is(numberRestored));
+        Assert.Equal(restoreListener.restoreTopicPartition, (topicPartition));
+        Assert.Equal(restoreListener.restoredBatchOffset, (batchOffset));
+        Assert.Equal(restoreListener.numBatchRestored, (numberRestored));
     }
 
     private void AssertStateRestoreOnEndNotification(MockStateRestoreListener restoreListener) {
         Assert.True(restoreListener.storeNameCalledStates.containsKey(RESTORE_END));
-        Assert.Equal(restoreListener.restoreTopicPartition, is(topicPartition));
-        Assert.Equal(restoreListener.totalNumRestored, is(numberRestored));
+        Assert.Equal(restoreListener.restoreTopicPartition, (topicPartition));
+        Assert.Equal(restoreListener.totalNumRestored, (numberRestored));
     }
 
 

@@ -45,8 +45,8 @@
 
 public class CompositeReadOnlyKeyValueStoreTest {
 
-    private string storeName = "my-store";
-    private string storeNameA = "my-storeA";
+    private readonly string storeName = "my-store";
+    private readonly string storeNameA = "my-storeA";
     private StateStoreProviderStub stubProviderTwo;
     private KeyValueStore<string, string> stubOneUnderlying;
     private KeyValueStore<string, string> otherUnderlyingStore;

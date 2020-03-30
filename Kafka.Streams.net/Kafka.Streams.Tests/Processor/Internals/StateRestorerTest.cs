@@ -32,7 +32,7 @@
 
 public class StateRestorerTest {
 
-    private static long OFFSET_LIMIT = 50;
+    private static readonly long OFFSET_LIMIT = 50;
     private MockRestoreCallback callback = new MockRestoreCallback();
     private MockStateRestoreListener reportingListener = new MockStateRestoreListener();
     private CompositeRestoreListener compositeRestoreListener = new CompositeRestoreListener(callback);

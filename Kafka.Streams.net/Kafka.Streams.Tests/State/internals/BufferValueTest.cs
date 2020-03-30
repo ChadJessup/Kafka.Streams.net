@@ -99,7 +99,7 @@ public class BufferValueTest {
         byte[] bytes = new BufferValue(null, null, null, context).serialize(0).array();
         byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-        Assert.Equal(withoutContext, is(ByteBuffer.allocate(int.BYTES * 3).putInt(-1).putInt(-1).putInt(-1).array()));
+        Assert.Equal(withoutContext, (ByteBuffer.allocate(int.BYTES * 3).putInt(-1).putInt(-1).putInt(-1).array()));
     }
 
     [Xunit.Fact]
@@ -110,7 +110,7 @@ public class BufferValueTest {
         byte[] bytes = new BufferValue(priorValue, null, null, context).serialize(0).array();
         byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-        Assert.Equal(withoutContext, is(ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(1).put(priorValue).putInt(-1).putInt(-1).array()));
+        Assert.Equal(withoutContext, (ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(1).put(priorValue).putInt(-1).putInt(-1).array()));
     }
 
     [Xunit.Fact]
@@ -121,7 +121,7 @@ public class BufferValueTest {
         byte[] bytes = new BufferValue(null, oldValue, null, context).serialize(0).array();
         byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-        Assert.Equal(withoutContext, is(ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(-1).putInt(1).put(oldValue).putInt(-1).array()));
+        Assert.Equal(withoutContext, (ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(-1).putInt(1).put(oldValue).putInt(-1).array()));
     }
 
     [Xunit.Fact]
@@ -132,7 +132,7 @@ public class BufferValueTest {
         byte[] bytes = new BufferValue(null, null, newValue, context).serialize(0).array();
         byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-        Assert.Equal(withoutContext, is(ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(-1).putInt(-1).putInt(1).put(newValue).array()));
+        Assert.Equal(withoutContext, (ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(-1).putInt(-1).putInt(1).put(newValue).array()));
     }
 
     [Xunit.Fact]
@@ -143,7 +143,7 @@ public class BufferValueTest {
         byte[] bytes = new BufferValue(duplicate, duplicate, null, context).serialize(0).array();
         byte[] withoutContext = Array.copyOfRange(bytes, serializedContext.Length, bytes.Length);
 
-        Assert.Equal(withoutContext, is(ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(1).put(duplicate).putInt(-2).putInt(-1).array()));
+        Assert.Equal(withoutContext, (ByteBuffer.allocate(int.BYTES * 3 + 1).putInt(1).put(duplicate).putInt(-2).putInt(-1).array()));
     }
 
     [Xunit.Fact]
@@ -158,7 +158,7 @@ public class BufferValueTest {
         serialValue.position(0);
 
         BufferValue deserialize = BufferValue.deserialize(serialValue);
-        Assert.Equal(deserialize, is(new BufferValue(priorValue, null, null, context)));
+        Assert.Equal(deserialize, (new BufferValue(priorValue, null, null, context)));
     }
 
     [Xunit.Fact]
@@ -172,7 +172,7 @@ public class BufferValueTest {
                 .put(serializedContext).putInt(-1).putInt(1).put(oldValue).putInt(-1);
         serialValue.position(0);
 
-        Assert.Equal(BufferValue.deserialize(serialValue), is(new BufferValue(null, oldValue, null, context)));
+        Assert.Equal(BufferValue.deserialize(serialValue), (new BufferValue(null, oldValue, null, context)));
     }
 
     [Xunit.Fact]
@@ -186,7 +186,7 @@ public class BufferValueTest {
                 .put(serializedContext).putInt(-1).putInt(-1).putInt(1).put(newValue);
         serialValue.position(0);
 
-        Assert.Equal(BufferValue.deserialize(serialValue), is(new BufferValue(null, null, newValue, context)));
+        Assert.Equal(BufferValue.deserialize(serialValue), (new BufferValue(null, null, newValue, context)));
     }
 
     [Xunit.Fact]
@@ -201,7 +201,7 @@ public class BufferValueTest {
         serialValue.position(0);
 
         BufferValue bufferValue = BufferValue.deserialize(serialValue);
-        Assert.Equal(bufferValue, is(new BufferValue(duplicate, duplicate, null, context)));
+        Assert.Equal(bufferValue, (new BufferValue(duplicate, duplicate, null, context)));
         assertSame(bufferValue.priorValue(), bufferValue.oldValue());
     }
 }

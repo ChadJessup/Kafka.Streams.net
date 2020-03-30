@@ -45,9 +45,9 @@
 
 public class StreamsMetricsImplTest : EasyMockSupport {
 
-    private static string SENSOR_PREFIX_DELIMITER = ".";
-    private static string SENSOR_NAME_DELIMITER = ".s.";
-    private static string INTERNAL_PREFIX = "internal";
+    private static readonly string SENSOR_PREFIX_DELIMITER = ".";
+    private static readonly string SENSOR_NAME_DELIMITER = ".s.";
+    private static readonly string INTERNAL_PREFIX = "internal";
 
     [Xunit.Fact]
     public void ShouldGetThreadLevelSensor() {

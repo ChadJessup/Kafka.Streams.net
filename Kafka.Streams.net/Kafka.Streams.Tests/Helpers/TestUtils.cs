@@ -105,7 +105,7 @@ namespace Kafka.Streams.Tests.Helpers
 
         internal static ILogger<T> GetMockLogger<T>()
         {
-            return new Mock<ILogger<T>>().object;
+            return new Mock<ILogger<T>>().Object;
         }
 
         internal static T GetService<T>(ServiceProvider services)

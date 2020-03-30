@@ -63,9 +63,9 @@ public class ChangeLoggingTimestampedWindowBytesStoreTest {
     private byte[] valueAndTimestamp = {0, 0, 0, 0, 0, 0, 0, 42, 0};
     private Bytes bytesKey = Bytes.wrap(value);
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private WindowStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContextImpl context;
     private ChangeLoggingTimestampedWindowBytesStore store;
 

@@ -24,7 +24,7 @@
 
 public class ProcessorRecordContextTest {
     // timestamp + offset + partition: 8 + 8 + 4
-    private static long MIN_SIZE = 20L;
+    private static readonly long MIN_SIZE = 20L;
 
     [Xunit.Fact]
     public void ShouldEstimateNullTopicAndNullHeadersAsZeroLength() {

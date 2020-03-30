@@ -43,8 +43,8 @@
 @PrepareForTest(StreamsMetricsImpl)
 public class ThreadMetricsTest {
 
-    private static string THREAD_LEVEL_GROUP = "stream-metrics";
-    private static string TASK_LEVEL_GROUP = "stream-task-metrics";
+    private static readonly string THREAD_LEVEL_GROUP = "stream-metrics";
+    private static readonly string TASK_LEVEL_GROUP = "stream-task-metrics";
 
     private Metrics dummyMetrics = new Metrics();
     private Sensor dummySensor = dummyMetrics.sensor("dummy");
@@ -70,7 +70,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -92,7 +92,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -117,7 +117,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -142,7 +142,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -167,7 +167,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -192,7 +192,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -214,7 +214,7 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 
     [Xunit.Fact]
@@ -239,6 +239,6 @@ public class ThreadMetricsTest {
         verifyAll();
         verify(StreamsMetricsImpl);
 
-        Assert.Equal(sensor, is(dummySensor));
+        Assert.Equal(sensor, (dummySensor));
     }
 }

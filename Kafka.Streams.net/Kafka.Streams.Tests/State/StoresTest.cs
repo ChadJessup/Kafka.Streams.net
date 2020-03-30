@@ -70,7 +70,7 @@ namespace Kafka.Streams.Tests.State
             Assert.Equal("retentionPeriod cannot be negative", e.getMessage());
         }
 
-        @Deprecated
+        [Obsolete]
         [Xunit.Fact]
     public void ShouldThrowIfIPersistentWindowStoreIfNumberOfSegmentsSmallerThanOne()
         {

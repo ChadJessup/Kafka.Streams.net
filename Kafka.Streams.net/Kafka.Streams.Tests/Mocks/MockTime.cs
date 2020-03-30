@@ -6,7 +6,7 @@ namespace Kafka.Streams.Tests
     public class MockTime : IClock
     {
         private Instant currentInstant;
-        private long autoTickMs;
+        private readonly long autoTickMs;
 
         public MockTime()
             : this(0)

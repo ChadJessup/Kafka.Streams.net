@@ -46,17 +46,17 @@
 
 public class StandbyTaskCreationIntegrationTest {
 
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
-    private static string INPUT_TOPIC = "input-topic";
+    private static readonly string INPUT_TOPIC = "input-topic";
 
     private KafkaStreams client1;
     private KafkaStreams client2;
-    private volatile bool client1IsOk = false;
-    private volatile bool client2IsOk = false;
+    private readonly bool client1IsOk = false;
+    private readonly bool client2IsOk = false;
 
     
     public static void CreateTopics() {// throws InterruptedException

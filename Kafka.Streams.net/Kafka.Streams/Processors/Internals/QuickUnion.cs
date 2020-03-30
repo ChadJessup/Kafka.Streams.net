@@ -51,7 +51,7 @@ namespace Kafka.Streams.Processors.Internals
         public void Unite(T id, T singleId)
             => this.Unite(id, new[] { singleId });
 
-        public void Unite(T id1, T[] idList)
+        public void Unite(T id1, params T[] idList)
         {
             foreach (T id2 in idList ?? Array.Empty<T>())
             {

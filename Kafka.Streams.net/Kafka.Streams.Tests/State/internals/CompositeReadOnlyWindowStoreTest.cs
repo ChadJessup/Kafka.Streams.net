@@ -42,9 +42,9 @@
 
 public class CompositeReadOnlyWindowStoreTest {
 
-    private static long WINDOW_SIZE = 30_000;
+    private static readonly long WINDOW_SIZE = 30_000;
 
-    private string storeName = "window-store";
+    private readonly string storeName = "window-store";
     private StateStoreProviderStub stubProviderOne;
     private StateStoreProviderStub stubProviderTwo;
     private CompositeReadOnlyWindowStore<string, string> windowStore;

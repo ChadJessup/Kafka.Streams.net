@@ -59,9 +59,9 @@ public class ChangeLoggingSessionBytesStoreTest {
         }
     };
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private SessionStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContextImpl context;
 
     private ChangeLoggingSessionBytesStore store;

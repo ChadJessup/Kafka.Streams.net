@@ -52,8 +52,8 @@
 public class KStreamTransformIntegrationTest {
 
     private StreamsBuilder builder;
-    private string topic = "stream";
-    private string stateStoreName = "myTransformState";
+    private readonly string topic = "stream";
+    private readonly string stateStoreName = "myTransformState";
     private List<KeyValuePair<int, int>> results = new ArrayList<>();
     private ForeachAction<int, int> action = (key, value) => results.add(KeyValuePair.Create(key, value));
     private KStream<int, int> stream;
@@ -110,7 +110,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(2, 1),
@@ -150,7 +150,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(1, 1),
@@ -198,7 +198,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(1, 1),
@@ -233,7 +233,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(1, 1),
@@ -272,7 +272,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(1, 1),
@@ -323,7 +323,7 @@ public class KStreamTransformIntegrationTest {
                 public void Close() {
                 }
             }, "myTransformState")
-            .foreach(action);
+            .ForEach(action);
 
         List<KeyValuePair<int, int>> expected = Array.asList(
             KeyValuePair.Create(1, 1),

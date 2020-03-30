@@ -71,13 +71,13 @@ public class MeteredSessionStoreTest {
     );
     private Metrics metrics = new Metrics();
     private MeteredSessionStore<string, string> metered;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private SessionStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContext context;
 
-    private string key = "a";
-    private byte[] keyBytes = key.getBytes();
+    private readonly string key = "a";
+    private readonly byte[] keyBytes = key.getBytes();
     private Windowed<Bytes> windowedKeyBytes = new Windowed<>(Bytes.wrap(keyBytes), new SessionWindow(0, 0));
 
     

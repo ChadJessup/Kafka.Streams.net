@@ -16,8 +16,8 @@ namespace Kafka.Streams.Tests.Mocks
         public List<long> punctuatedSystemTime = new List<long>();
 
 
-        private PunctuationType punctuationType;
-        private long scheduleInterval;
+        private readonly PunctuationType punctuationType;
+        private readonly long scheduleInterval;
 
         private bool commitRequested = false;
         private ICancellable scheduleCancellable;

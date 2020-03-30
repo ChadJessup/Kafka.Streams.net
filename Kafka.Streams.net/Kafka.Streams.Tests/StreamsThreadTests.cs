@@ -19,17 +19,17 @@ namespace Kafka.Streams.Tests
 {
     public class StreamThreadTests
     {
-        private string clientId = "clientId";
-        private string applicationId = "stream-thread-test";
-        private int threadIdx = 1;
-        private MockTime mockTime = new MockTime();
+        private readonly string clientId = "clientId";
+        private readonly string applicationId = "stream-thread-test";
+        private readonly int threadIdx = 1;
+        private readonly MockTime mockTime = new MockTime();
         //private  Metrics metrics = new Metrics();
-        private MockClientSupplier clientSupplier = new MockClientSupplier();
-        private InternalStreamsBuilder internalStreamsBuilder = null;
-        private StreamsConfig config = null;
-        private string stateDir = TestUtils.GetTempDirectory();
-        private StateDirectory stateDirectory = null;
-        private ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
+        private readonly MockClientSupplier clientSupplier = new MockClientSupplier();
+        private readonly InternalStreamsBuilder internalStreamsBuilder = null;
+        private readonly StreamsConfig config = null;
+        private readonly string stateDir = TestUtils.GetTempDirectory();
+        private readonly StateDirectory stateDirectory = null;
+        private readonly ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
 
         private Guid processId = Guid.NewGuid();
         //private StreamsBuilder streamsBuilder;
@@ -51,14 +51,14 @@ namespace Kafka.Streams.Tests
         private const string topic1 = "topic1";
         private const string topic2 = "topic2";
 
-        private TopicPartition t1p1 = new TopicPartition(topic1, 1);
-        private TopicPartition t1p2 = new TopicPartition(topic1, 2);
-        private TopicPartition t2p1 = new TopicPartition(topic2, 1);
+        private readonly TopicPartition t1p1 = new TopicPartition(topic1, 1);
+        private readonly TopicPartition t1p2 = new TopicPartition(topic1, 2);
+        private readonly TopicPartition t2p1 = new TopicPartition(topic2, 1);
 
         // Task0 is unused
-        private TaskId Task1 = new TaskId(0, 1);
-        private TaskId Task2 = new TaskId(0, 2);
-        private TaskId Task3 = new TaskId(1, 1);
+        private readonly TaskId Task1 = new TaskId(0, 1);
+        private readonly TaskId Task2 = new TaskId(0, 2);
+        private readonly TaskId Task3 = new TaskId(1, 1);
 
         [Fact]
         public void TestPartitionAssignmentChangeForSingleGroup()
@@ -71,14 +71,14 @@ namespace Kafka.Streams.Tests
             var mockClientSupplier = new Mock<IKafkaClientSupplier>();
             mockClientSupplier
                 .Setup(cs => cs.GetConsumer(It.IsAny<ConsumerConfig>(), It.IsAny<IConsumerRebalanceListener>()))
-                    .Returns(new MockConsumer<byte[], byte[]>(mockMockConsumer.object));
+                    .Returns(new MockConsumer<byte[], byte[]>(mockMockConsumer.Object));
             mockClientSupplier
                 .Setup(cs => cs.GetRestoreConsumer(It.IsAny<RestoreConsumerConfig>()))
-                    .Returns(new MockRestoreConsumer(mockMockConsumer.object));
+                    .Returns(new MockRestoreConsumer(mockMockConsumer.Object));
 
             mockClientSupplier.SetupAllProperties();
 
-            sp.AddSingleton(mockClientSupplier.object);
+            sp.AddSingleton(mockClientSupplier.Object);
             var streamsBuilder = new StreamsBuilder(sp);
 
             streamsBuilder.InternalTopologyBuilder.AddSource<string, string>(
@@ -249,7 +249,7 @@ namespace Kafka.Streams.Tests
             var consumer = new Mock<IConsumer<byte[], byte[]>>();
             var mockTaskManager = TestUtils.GetMockTaskManagerCommit(1);
 
-            sc.AddSingleton(mockTaskManager.object);
+            sc.AddSingleton(mockTaskManager.Object);
 
             var sb = TestUtils.GetStreamsBuilder(sc);
 

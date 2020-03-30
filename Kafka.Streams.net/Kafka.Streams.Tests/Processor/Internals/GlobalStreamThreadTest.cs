@@ -11,16 +11,16 @@ namespace Kafka.Streams.Tests.Processor.Internals
 {
     public class GlobalStreamThreadTest
     {
-        private InternalTopologyBuilder builder = new InternalTopologyBuilder();
-        private MockConsumer<byte[], byte[]> mockConsumer = new MockConsumer<>(OffsetResetStrategy.NONE);
-        private MockTime time = new MockTime();
-        private MockStateRestoreListener stateRestoreListener = new MockStateRestoreListener();
-        private GlobalStreamThread globalStreamThread;
-        private StreamsConfig config;
+        private readonly InternalTopologyBuilder builder = new InternalTopologyBuilder();
+        private readonly MockConsumer<byte[], byte[]> mockConsumer = new MockConsumer<>(OffsetResetStrategy.NONE);
+        private readonly MockTime time = new MockTime();
+        private readonly MockStateRestoreListener stateRestoreListener = new MockStateRestoreListener();
+        private readonly GlobalStreamThread globalStreamThread;
+        private readonly StreamsConfig config;
 
-        private static string GLOBAL_STORE_TOPIC_NAME = "foo";
-        private static string GLOBAL_STORE_NAME = "bar";
-        private TopicPartition topicPartition = new TopicPartition(GLOBAL_STORE_TOPIC_NAME, 0);
+        private static readonly string GLOBAL_STORE_TOPIC_NAME = "foo";
+        private static readonly string GLOBAL_STORE_NAME = "bar";
+        private readonly TopicPartition topicPartition = new TopicPartition(GLOBAL_STORE_TOPIC_NAME, 0);
 
 
 

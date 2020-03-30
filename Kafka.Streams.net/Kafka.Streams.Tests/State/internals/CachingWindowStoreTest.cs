@@ -72,10 +72,10 @@
 
 public class CachingWindowStoreTest {
 
-    private static int MAX_CACHE_SIZE_BYTES = 150;
-    private static long DEFAULT_TIMESTAMP = 10L;
-    private static long WINDOW_SIZE = 10L;
-    private static long SEGMENT_INTERVAL = 100L;
+    private static readonly int MAX_CACHE_SIZE_BYTES = 150;
+    private static readonly long DEFAULT_TIMESTAMP = 10L;
+    private static readonly long WINDOW_SIZE = 10L;
+    private static readonly long SEGMENT_INTERVAL = 100L;
     private InternalMockProcessorContext context;
     private RocksDBSegmentedBytesStore underlying;
     private CachingWindowStore cachingStore;

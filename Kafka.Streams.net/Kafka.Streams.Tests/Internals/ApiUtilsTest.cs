@@ -33,9 +33,9 @@
 public class ApiUtilsTest {
 
     // This is the maximum limit that Duration accepts but fails when it converts to milliseconds.
-    private static long MAX_ACCEPTABLE_DAYS_FOR_DURATION = 106751991167300L;
+    private static readonly long MAX_ACCEPTABLE_DAYS_FOR_DURATION = 106751991167300L;
     // This is the maximum limit that Duration accepts and converts to milliseconds with out fail.
-    private static long MAX_ACCEPTABLE_DAYS_FOR_DURATION_TO_MILLIS = 106751991167L;
+    private static readonly long MAX_ACCEPTABLE_DAYS_FOR_DURATION_TO_MILLIS = 106751991167L;
 
     [Xunit.Fact]
     public void ShouldThrowNullPointerExceptionForNullDuration() {

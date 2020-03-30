@@ -36,7 +36,7 @@
 
 public class InMemorySessionStoreTest : SessionBytesStoreTest {
 
-    private static string STORE_NAME = "in-memory session store";
+    private static readonly string STORE_NAME = "in-memory session store";
 
     
     SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,

@@ -77,7 +77,7 @@ using Xunit;
 
 public abstract class AbstractResetIntegrationTest
 {
-    static string testId;
+    static readonly string testId;
     static EmbeddedKafkaCluster cluster;
 
     private static MockTime mockTime;
@@ -177,16 +177,16 @@ public abstract class AbstractResetIntegrationTest
 
     public TemporaryFolder testFolder = new TemporaryFolder(TestUtils.tempDirectory());
 
-    private static string INPUT_TOPIC = "inputTopic";
-    private static string OUTPUT_TOPIC = "outputTopic";
-    private static string OUTPUT_TOPIC_2 = "outputTopic2";
-    private static string OUTPUT_TOPIC_2_RERUN = "outputTopic2_rerun";
-    private static string INTERMEDIATE_USER_TOPIC = "userTopic";
-    private static string NON_EXISTING_TOPIC = "nonExistingTopic";
+    private static readonly string INPUT_TOPIC = "inputTopic";
+    private static readonly string OUTPUT_TOPIC = "outputTopic";
+    private static readonly string OUTPUT_TOPIC_2 = "outputTopic2";
+    private static readonly string OUTPUT_TOPIC_2_RERUN = "outputTopic2_rerun";
+    private static readonly string INTERMEDIATE_USER_TOPIC = "userTopic";
+    private static readonly string NON_EXISTING_TOPIC = "nonExistingTopic";
 
-    private static long STREAMS_CONSUMER_TIMEOUT = 2000L;
-    private static long CLEANUP_CONSUMER_TIMEOUT = 2000L;
-    private static int TIMEOUT_MULTIPLIER = 15;
+    private static readonly long STREAMS_CONSUMER_TIMEOUT = 2000L;
+    private static readonly long CLEANUP_CONSUMER_TIMEOUT = 2000L;
+    private static readonly int TIMEOUT_MULTIPLIER = 15;
 
     private class ConsumerGroupInactiveCondition : TestCondition
     {

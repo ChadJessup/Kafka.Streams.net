@@ -14,9 +14,9 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class KStreamFlatMapTest
     {
-        private ConsumerRecordFactory<int, string> recordFactory =
+        private readonly ConsumerRecordFactory<int, string> recordFactory =
             new ConsumerRecordFactory<int, string>(Serializers.Int32, Serializers.Utf8, 0L);
-        private StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
+        private readonly StreamsConfig props = StreamsTestConfigs.GetStandardConfig(Serdes.Int(), Serdes.String());
 
         [Fact]
         public void TestFlatMap()

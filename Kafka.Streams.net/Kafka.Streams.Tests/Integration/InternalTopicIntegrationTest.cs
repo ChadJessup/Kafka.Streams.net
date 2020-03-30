@@ -71,8 +71,8 @@ public class InternalTopicIntegrationTest {
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(1);
 
-    private static string APP_ID = "internal-topics-integration-test";
-    private static string DEFAULT_INPUT_TOPIC = "inputTopic";
+    private static readonly string APP_ID = "internal-topics-integration-test";
+    private static readonly string DEFAULT_INPUT_TOPIC = "inputTopic";
 
     private MockTime mockTime = CLUSTER.time;
 

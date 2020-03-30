@@ -56,7 +56,7 @@
 
 public class CachingKeyValueStoreTest : AbstractKeyValueStoreTest {
 
-    private int maxCacheSizeBytes = 150;
+    private readonly int maxCacheSizeBytes = 150;
     private InternalMockProcessorContext context;
     private CachingKeyValueStore store;
     private InMemoryKeyValueStore underlyingStore;

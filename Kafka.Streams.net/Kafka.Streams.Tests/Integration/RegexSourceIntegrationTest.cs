@@ -80,25 +80,25 @@ using System.Collections.Generic;
 */
 public class RegexSourceIntegrationTest
 {
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
     private MockTime mockTime = CLUSTER.time;
 
-    private static string TOPIC_1 = "topic-1";
-    private static string TOPIC_2 = "topic-2";
-    private static string TOPIC_A = "topic-A";
-    private static string TOPIC_C = "topic-C";
-    private static string TOPIC_Y = "topic-Y";
-    private static string TOPIC_Z = "topic-Z";
-    private static string FA_TOPIC = "fa";
-    private static string FOO_TOPIC = "foo";
-    private static string PARTITIONED_TOPIC_1 = "partitioned-1";
-    private static string PARTITIONED_TOPIC_2 = "partitioned-2";
+    private static readonly string TOPIC_1 = "topic-1";
+    private static readonly string TOPIC_2 = "topic-2";
+    private static readonly string TOPIC_A = "topic-A";
+    private static readonly string TOPIC_C = "topic-C";
+    private static readonly string TOPIC_Y = "topic-Y";
+    private static readonly string TOPIC_Z = "topic-Z";
+    private static readonly string FA_TOPIC = "fa";
+    private static readonly string FOO_TOPIC = "foo";
+    private static readonly string PARTITIONED_TOPIC_1 = "partitioned-1";
+    private static readonly string PARTITIONED_TOPIC_2 = "partitioned-2";
 
-    private static string STRING_SERDE_CLASSNAME = Serdes.String().getClass().getName();
+    private static readonly string STRING_SERDE_CLASSNAME = Serdes.String().getClass().getName();
     private Properties streamsConfiguration;
-    private static string STREAM_TASKS_NOT_UPDATED = "Stream tasks not updated";
+    private static readonly string STREAM_TASKS_NOT_UPDATED = "Stream tasks not updated";
     private KafkaStreams streams;
     private static volatile AtomicInteger topicSuffixGenerator = new AtomicInteger(0);
     private string outputTopic;
@@ -454,7 +454,7 @@ public void TestNoMessagesSentExceptionFromOverlappingPatterns()
 
 private static class TheConsumerRebalanceListener : ConsumerRebalanceListener
 {
-    private List<string> assignedTopics;
+    private readonly List<string> assignedTopics;
     private ConsumerRebalanceListener listener;
 
     TheConsumerRebalanceListener(List<string> assignedTopics, ConsumerRebalanceListener listener)

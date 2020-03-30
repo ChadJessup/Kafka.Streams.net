@@ -37,7 +37,7 @@ public class SubscriptionInfoTest {
         new TaskId(1, 1),
         new TaskId(2, 0)));
 
-    private static string IGNORED_USER_ENDPOINT = "ignoredUserEndpoint:80";
+    private static readonly string IGNORED_USER_ENDPOINT = "ignoredUserEndpoint:80";
 
     [Xunit.Fact]
     public void ShouldUseLatestSupportedVersionByDefault() {

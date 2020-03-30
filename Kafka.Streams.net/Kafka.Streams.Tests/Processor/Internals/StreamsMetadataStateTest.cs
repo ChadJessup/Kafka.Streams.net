@@ -66,7 +66,7 @@ public class StreamsMetadataStateTest {
     private TopicPartition topic2P1;
     private TopicPartition topic4P0;
     private Cluster cluster;
-    private string globalTable = "global-table";
+    private readonly string globalTable = "global-table";
     private StreamPartitioner<string, object> partitioner;
 
     

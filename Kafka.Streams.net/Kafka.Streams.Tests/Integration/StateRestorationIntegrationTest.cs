@@ -48,10 +48,10 @@
 public class StateRestorationIntegrationTest {
     private StreamsBuilder builder = new StreamsBuilder();
 
-    private static string APPLICATION_ID = "restoration-test-app";
-    private static string STATE_STORE_NAME = "stateStore";
-    private static string INPUT_TOPIC = "input";
-    private static string OUTPUT_TOPIC = "output";
+    private static readonly string APPLICATION_ID = "restoration-test-app";
+    private static readonly string STATE_STORE_NAME = "stateStore";
+    private static readonly string INPUT_TOPIC = "input";
+    private static readonly string OUTPUT_TOPIC = "output";
 
     private Properties streamsConfiguration;
 

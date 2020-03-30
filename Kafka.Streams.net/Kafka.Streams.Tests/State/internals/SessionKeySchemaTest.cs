@@ -41,10 +41,10 @@
 
 public class SessionKeySchemaTest {
 
-    private string key = "key";
-    private string topic = "topic";
-    private long startTime = 50L;
-    private long endTime = 100L;
+    private readonly string key = "key";
+    private readonly string topic = "topic";
+    private readonly long startTime = 50L;
+    private readonly long endTime = 100L;
     private Serde<string> serde = Serdes.String();
 
     private Window window = new SessionWindow(startTime, endTime);

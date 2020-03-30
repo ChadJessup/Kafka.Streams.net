@@ -38,7 +38,7 @@
 
 public class StoreChangeLoggerTest {
 
-    private string topic = "topic";
+    private readonly string topic = "topic";
 
     private Dictionary<int, ValueAndTimestamp<string>> logged = new HashMap<>();
     private Dictionary<int, Headers> loggedHeaders = new HashMap<>();

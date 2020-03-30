@@ -111,15 +111,15 @@
 
 public class StreamThreadTest {
 
-    private string clientId = "clientId";
-    private string applicationId = "stream-thread-test";
-    private int threadIdx = 1;
+    private readonly string clientId = "clientId";
+    private readonly string applicationId = "stream-thread-test";
+    private readonly int threadIdx = 1;
     private MockTime mockTime = new MockTime();
     private Metrics metrics = new Metrics();
     private MockClientSupplier clientSupplier = new MockClientSupplier();
     private InternalStreamsBuilder internalStreamsBuilder = new InternalStreamsBuilder(new InternalTopologyBuilder());
     private StreamsConfig config = new StreamsConfig(configProps(false));
-    private string stateDir = TestUtils.tempDirectory().getPath();
+    private readonly string stateDir = TestUtils.tempDirectory().getPath();
     private StateDirectory stateDirectory = new StateDirectory(config, mockTime, true);
     private ConsumedInternal<object, object> consumed = new ConsumedInternal<>();
 
@@ -136,8 +136,8 @@ public class StreamThreadTest {
         streamsMetadataState = new StreamsMetadataState(internalTopologyBuilder, StreamsMetadataState.UNKNOWN_HOST);
     }
 
-    private string topic1 = "topic1";
-    private string topic2 = "topic2";
+    private readonly string topic1 = "topic1";
+    private readonly string topic2 = "topic2";
 
     private TopicPartition t1p1 = new TopicPartition(topic1, 1);
     private TopicPartition t1p2 = new TopicPartition(topic1, 2);
@@ -740,7 +740,7 @@ public class StreamThreadTest {
             }
         }
 
-        MockStreamThreadConsumer<byte[], byte[]> mockStreamThreadConsumer =
+    readonly MockStreamThreadConsumer<byte[], byte[]> mockStreamThreadConsumer =
             new MockStreamThreadConsumer<>(OffsetResetStrategy.EARLIEST);
 
         TaskManager taskManager = new TaskManager(new MockChangelogReader(),

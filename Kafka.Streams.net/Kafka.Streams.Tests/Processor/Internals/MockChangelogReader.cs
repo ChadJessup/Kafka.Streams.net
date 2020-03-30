@@ -9,7 +9,7 @@ namespace Kafka.Streams.Tests.Internal
 {
     public class MockChangelogReader : IChangelogReader
     {
-        private List<TopicPartition> registered = new List<TopicPartition>();
+        private readonly List<TopicPartition> registered = new List<TopicPartition>();
         public Dictionary<TopicPartition, long> RestoredOffsets { get; private set; } = new Dictionary<TopicPartition, long>();
 
         public void Register(StateRestorer restorer)

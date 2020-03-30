@@ -62,7 +62,7 @@ public class TableTableJoinIntegrationTest : AbstractJoinIntegrationTest {
 
     private KeyValueTimestamp<long, string> expectedFinalJoinResult = new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d", 15L);
     private KeyValueTimestamp<long, string> expectedFinalMultiJoinResult = new KeyValueTimestamp<>(ANY_UNIQUE_KEY, "D-d-d", 15L);
-    private string storeName = appID + "-store";
+    private readonly string storeName = appID + "-store";
 
     private Materialized<long, string, KeyValueStore<Bytes, byte[]>> materialized = Materialized<long, string, KeyValueStore<Bytes, byte[]>>.As(storeName)
             .withKeySerde(Serdes.Long())

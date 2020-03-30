@@ -82,14 +82,14 @@
  * is still running "consume"
  */
 public class SimpleBenchmark {
-    private static string LOADING_PRODUCER_CLIENT_ID = "simple-benchmark-loading-producer";
+    private static readonly string LOADING_PRODUCER_CLIENT_ID = "simple-benchmark-loading-producer";
 
-    private static string SOURCE_TOPIC_ONE = "simpleBenchmarkSourceTopic1";
-    private static string SOURCE_TOPIC_TWO = "simpleBenchmarkSourceTopic2";
-    private static string SINK_TOPIC = "simpleBenchmarkSinkTopic";
+    private static readonly string SOURCE_TOPIC_ONE = "simpleBenchmarkSourceTopic1";
+    private static readonly string SOURCE_TOPIC_TWO = "simpleBenchmarkSourceTopic2";
+    private static readonly string SINK_TOPIC = "simpleBenchmarkSinkTopic";
 
-    private static string YAHOO_CAMPAIGNS_TOPIC = "yahooCampaigns";
-    private static string YAHOO_EVENTS_TOPIC = "yahooEvents";
+    private static readonly string YAHOO_CAMPAIGNS_TOPIC = "yahooCampaigns";
+    private static readonly string YAHOO_EVENTS_TOPIC = "yahooEvents";
 
     private static ValueJoiner<byte[], byte[], byte[]> VALUE_JOINER = new ValueJoiner<byte[], byte[], byte[]>() {
         
@@ -575,7 +575,7 @@ public class SimpleBenchmark {
         KStream<int, byte[]> input1 = builder.stream(kStreamTopic);
         KTable<int, byte[]> input2 = builder.table(kTableTopic);
 
-        input1.leftJoin(input2, VALUE_JOINER).foreach(new CountDownAction(latch));
+        input1.leftJoin(input2, VALUE_JOINER).ForEach(new CountDownAction(latch));
 
         KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -597,7 +597,7 @@ public class SimpleBenchmark {
         KStream<int, byte[]> input1 = builder.stream(kStreamTopic1);
         KStream<int, byte[]> input2 = builder.stream(kStreamTopic2);
 
-        input1.leftJoin(input2, VALUE_JOINER, JoinWindows.of(ofMillis(STREAM_STREAM_JOIN_WINDOW))).foreach(new CountDownAction(latch));
+        input1.leftJoin(input2, VALUE_JOINER, JoinWindows.of(ofMillis(STREAM_STREAM_JOIN_WINDOW))).ForEach(new CountDownAction(latch));
 
         KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -620,7 +620,7 @@ public class SimpleBenchmark {
         KTable<int, byte[]> input1 = builder.table(kTableTopic1);
         KTable<int, byte[]> input2 = builder.table(kTableTopic2);
 
-        input1.leftJoin(input2, VALUE_JOINER).toStream().foreach(new CountDownAction(latch));
+        input1.leftJoin(input2, VALUE_JOINER).toStream().ForEach(new CountDownAction(latch));
 
         KafkaStreams streams = createKafkaStreamsWithExceptionHandler(builder, props);
 
@@ -715,10 +715,10 @@ public class SimpleBenchmark {
 
     private class ZipfGenerator {
         private Random rand = new Random(System.currentTimeMillis());
-        private int size;
-        private double skew;
+        private readonly int size;
+        private readonly double skew;
 
-        private double bottom = 0.0d;
+        private readonly double bottom = 0.0d;
 
         ZipfGenerator(int size, double skew) {
             this.size = size;

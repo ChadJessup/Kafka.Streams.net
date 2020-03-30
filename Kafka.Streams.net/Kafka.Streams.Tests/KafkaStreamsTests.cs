@@ -18,8 +18,8 @@ namespace Kafka.Streams.Tests
         private static readonly int NUM_BROKERS = 1;
         private static readonly int NUM_THREADS = 1;
 
-        private IKafkaStreamsThread globalStreams;
-        private StreamsConfig props;
+        private readonly IKafkaStreamsThread globalStreams;
+        private readonly StreamsConfig props;
 
         public KafkaStreamsTest()
         {

@@ -122,11 +122,11 @@ namespace Kafka.Streams.Tests
     */
     public class TopologyTestDriver
     {
-        private IClock mockWallClockTime;
+        private readonly IClock mockWallClockTime;
         private InternalTopologyBuilder internalTopologyBuilder;
 
-        private static int PARTITION_ID = 0;
-        private static TaskId TASK_ID = new TaskId(0, PARTITION_ID);
+        private static readonly int PARTITION_ID = 0;
+        private static readonly TaskId TASK_ID = new TaskId(0, PARTITION_ID);
         private StreamTask? task;
         private GlobalStateUpdateTask? globalStateTask;
         private GlobalStateManager? globalStateManager;
@@ -136,16 +136,16 @@ namespace Kafka.Streams.Tests
         ProcessorTopology processorTopology;
         ProcessorTopology globalTopology;
 
-        private MockProducer<byte[], byte[]> producer;
+        private readonly MockProducer<byte[], byte[]> producer;
 
-        private Dictionary<string, TopicPartition> partitionsByInputTopic = new Dictionary<string, TopicPartition>();
-        private Dictionary<string, TopicPartition> globalPartitionsByInputTopic = new Dictionary<string, TopicPartition>();
-        private Dictionary<TopicPartition, long> offsetsByTopicOrPatternPartition = new Dictionary<TopicPartition, long>();
+        private readonly Dictionary<string, TopicPartition> partitionsByInputTopic = new Dictionary<string, TopicPartition>();
+        private readonly Dictionary<string, TopicPartition> globalPartitionsByInputTopic = new Dictionary<string, TopicPartition>();
+        private readonly Dictionary<TopicPartition, long> offsetsByTopicOrPatternPartition = new Dictionary<TopicPartition, long>();
 
-        private Dictionary<string, Queue<Message<byte[], byte[]>>> outputRecordsByTopic = new Dictionary<string, Queue<Message<byte[], byte[]>>>();
-        private bool eosEnabled;
+        private readonly Dictionary<string, Queue<Message<byte[], byte[]>>> outputRecordsByTopic = new Dictionary<string, Queue<Message<byte[], byte[]>>>();
+        private readonly bool eosEnabled;
 
-        private IStateRestoreListener stateRestoreListener = new NoOpStateRestoreListener();
+        private readonly IStateRestoreListener stateRestoreListener = new NoOpStateRestoreListener();
 
         /**
          * Create a new test diver instance.
@@ -1163,8 +1163,8 @@ namespace Kafka.Streams.Tests
 
         internal class MockTime : IClock
         {
-            private long timeMs;
-            private long highResTimeNs;
+            private readonly long timeMs;
+            private readonly long highResTimeNs;
 
             public MockTime(long startTimestampMs)
             {

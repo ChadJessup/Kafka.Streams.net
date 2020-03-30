@@ -67,16 +67,16 @@ public class MeteredKeyValueStoreTest {
         mkEntry("task-id", taskId.toString()),
         mkEntry("scope-id", "metered")
     );
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private KeyValueStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContext context;
 
     private MeteredKeyValueStore<string, string> metered;
-    private string key = "key";
+    private readonly string key = "key";
     private Bytes keyBytes = Bytes.wrap(key.getBytes());
-    private string value = "value";
-    private byte[] valueBytes = value.getBytes();
+    private readonly string value = "value";
+    private readonly byte[] valueBytes = value.getBytes();
     private KeyValuePair<Bytes, byte[]> byteKeyValuePair = KeyValuePair.Create(keyBytes, valueBytes);
     private Metrics metrics = new Metrics();
 

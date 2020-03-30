@@ -12,13 +12,13 @@ namespace Kafka.Streams.Tests.Integration
 */
     public class KStreamAggregationDedupIntegrationTest
     {
-        private static int NUM_BROKERS = 1;
-        private static long COMMIT_INTERVAL_MS = 300L;
+        private static readonly int NUM_BROKERS = 1;
+        private static readonly long COMMIT_INTERVAL_MS = 300L;
 
 
         public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
-        private MockTime mockTime = CLUSTER.time;
+        private readonly MockTime mockTime = CLUSTER.time;
         private static volatile AtomicInteger testNo = new AtomicInteger(0);
         private StreamsBuilder builder;
         private Properties streamsConfiguration;

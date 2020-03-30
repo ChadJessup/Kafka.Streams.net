@@ -1,3 +1,6 @@
+namespace Kafka.Streams.Tests.Integration
+{
+}
 ///*
 
 
@@ -64,7 +67,7 @@
 
 //    private static int NUM_BROKERS = 1;
 
-    
+
 //    public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS);
 
 //    // Metric group
@@ -170,7 +173,7 @@
 //    private Properties streamsConfiguration;
 //    private KafkaStreams kafkaStreams;
 
-    
+
 //    public void before() {// throws InterruptedException
 //        builder = new StreamsBuilder();
 //        CLUSTER.createTopics(STREAM_INPUT, STREAM_OUTPUT_1, STREAM_OUTPUT_2, STREAM_OUTPUT_3, STREAM_OUTPUT_4);
@@ -184,7 +187,7 @@
 //        streamsConfiguration.put(StreamsConfig.STATE_DIR_CONFIG, TestUtils.tempDirectory().getPath());
 //    }
 
-    
+
 //    public void after() {// throws InterruptedException
 //        CLUSTER.deleteTopics(STREAM_INPUT, STREAM_OUTPUT_1, STREAM_OUTPUT_2, STREAM_OUTPUT_3, STREAM_OUTPUT_4);
 //    }
@@ -386,7 +389,7 @@
 //        List<Metric> listMetricAfterClosingApp = new ArrayList<Metric>(kafkaStreams.metrics().values()).stream()
 //            .filter(m => m.metricName().group().Contains(STREAM_STRING))
 //            .collect(Collectors.toList());
-//        Assert.Equal(listMetricAfterClosingApp.Count, is(0));
+//        Assert.Equal(listMetricAfterClosingApp.Count, (0));
 //    }
 
 //    private void checkCacheMetrics() {

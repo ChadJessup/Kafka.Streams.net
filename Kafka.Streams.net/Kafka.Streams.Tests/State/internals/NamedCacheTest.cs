@@ -50,8 +50,8 @@ public class NamedCacheTest {
     private NamedCache cache;
     private Metrics innerMetrics;
     private StreamsMetricsImpl metrics;
-    private string taskIDString = "0.0";
-    private string underlyingStoreName = "storeName";
+    private readonly string taskIDString = "0.0";
+    private readonly string underlyingStoreName = "storeName";
 
     
     public void SetUp() {

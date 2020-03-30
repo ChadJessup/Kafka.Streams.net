@@ -40,7 +40,7 @@ public class ResetIntegrationWithSslTest : AbstractResetIntegrationTest {
     
     public static EmbeddedKafkaCluster CLUSTER;
 
-    private static string TEST_ID = "reset-with-ssl-integration-test";
+    private static readonly string TEST_ID = "reset-with-ssl-integration-test";
 
     private static Dictionary<string, object> sslConfig;
 

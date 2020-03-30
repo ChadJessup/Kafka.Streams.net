@@ -46,7 +46,7 @@ public class PartitionGroupTest {
     private Serializer<int> intSerializer = new IntegerSerializer();
     private Deserializer<int> intDeserializer = Serializers.Int32;
     private TimestampExtractor timestampExtractor = new MockTimestampExtractor();
-    private string[] topics = {"topic"};
+    private readonly string[] topics = {"topic"};
     private TopicPartition partition1 = new TopicPartition(topics[0], 1);
     private TopicPartition partition2 = new TopicPartition(topics[0], 2);
     private RecordQueue queue1 = new RecordQueue(
@@ -66,8 +66,8 @@ public class PartitionGroupTest {
         logContext
     );
 
-    private byte[] recordValue = intSerializer.serialize(null, 10);
-    private byte[] recordKey = intSerializer.serialize(null, 1);
+    private readonly byte[] recordValue = intSerializer.serialize(null, 10);
+    private readonly byte[] recordKey = intSerializer.serialize(null, 1);
 
     private Metrics metrics = new Metrics();
     private MetricName lastLatenessValue = new MetricName("record-lateness-last-value", "", "", mkMap());

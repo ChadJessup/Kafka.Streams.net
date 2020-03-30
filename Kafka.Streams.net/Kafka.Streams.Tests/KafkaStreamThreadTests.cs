@@ -27,7 +27,7 @@ namespace Kafka.Streams.Tests
         private readonly MockClientSupplier clientSupplier = new MockClientSupplier();
         private readonly InternalStreamsBuilder internalStreamsBuilder;
 
-        private StreamsConfig config;
+        private readonly StreamsConfig config;
         private readonly string stateDir = TestUtils.GetTempDirectory();
         private readonly StateDirectory stateDirectory;
         private readonly ConsumedInternal<object, object> consumed = new ConsumedInternal<object, object>();
@@ -73,7 +73,7 @@ namespace Kafka.Streams.Tests
             var sp = new ServiceCollection();
             sp.AddSingleton(this.config);
 
-            var mockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties().object;
+            var mockConsumer = new Mock<IConsumer<byte[], byte[]>>().SetupAllProperties().Object;
 
             Mock<IKafkaClientSupplier> mockClientSupplier = TestUtils.GetMockClientSupplier(
                 mockConsumer: new MockConsumer<byte[], byte[]>(mockConsumer),
@@ -248,7 +248,7 @@ namespace Kafka.Streams.Tests
 
         //    StreamsConfig config = new StreamsConfig(props);
         //    var consumer = new Mock<IConsumer<byte[], byte[]>>();
-        //    TaskManager TaskManager = mockTaskManagerCommit(consumer.object, 1, 1);
+        //    TaskManager TaskManager = mockTaskManagerCommit(consumer.Object, 1, 1);
 
         //    //var streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
         //    var thread = new KafkaStreamThread(
@@ -576,7 +576,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.object.Shutdown(true);
+                    TaskManager.Object.Shutdown(true);
                     // EasyMock.expect.AstCall();
                     // EasyMock.replay(TaskManager, consumer);
 
@@ -614,7 +614,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.object.Shutdown(true);
+                    TaskManager.Object.Shutdown(true);
                     TaskManager.VerifyNoOtherCalls();
 
                     StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);
@@ -705,7 +705,7 @@ namespace Kafka.Streams.Tests
                 {
                     var consumer = new Mock<IConsumer<byte[], byte[]>>();
                     var TaskManager = new Mock<TaskManager>();
-                    TaskManager.object.Shutdown(clean: true);
+                    TaskManager.Object.Shutdown(clean: true);
                     TaskManager.VerifyNoOtherCalls();
 
                     StreamsMetricsImpl streamsMetrics = new StreamsMetricsImpl(metrics, clientId);

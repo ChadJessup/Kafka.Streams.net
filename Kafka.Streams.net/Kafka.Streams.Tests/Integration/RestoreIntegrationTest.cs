@@ -75,16 +75,16 @@
 
 
 public class RestoreIntegrationTest {
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
-    private static string APPID = "restore-test";
+    private static readonly string APPID = "restore-test";
 
     
     public static EmbeddedKafkaCluster CLUSTER =
             new EmbeddedKafkaCluster(NUM_BROKERS);
-    private static string INPUT_STREAM = "input-stream";
-    private static string INPUT_STREAM_2 = "input-stream-2";
-    private int numberOfKeys = 10000;
+    private static readonly string INPUT_STREAM = "input-stream";
+    private static readonly string INPUT_STREAM_2 = "input-stream-2";
+    private readonly int numberOfKeys = 10000;
     private KafkaStreams kafkaStreams;
 
     
@@ -139,7 +139,7 @@ public class RestoreIntegrationTest {
 
         builder.table(INPUT_STREAM, Materialized<int, int, KeyValueStore<Bytes, byte[]>>.As("store").withKeySerde(Serdes.Int()).withValueSerde(Serdes.Int()))
                 .toStream()
-                .foreach((key, value) => {
+                .ForEach((key, value) => {
                     if (numReceived.incrementAndGet() == 2 * offsetLimitDelta) {
                         shutdownLatch.countDown();
                     }
@@ -201,7 +201,7 @@ public class RestoreIntegrationTest {
 
         builder.table(INPUT_STREAM, Consumed.with(Serdes.Int(), Serdes.Int()), Materialized.As("store"))
                 .toStream()
-                .foreach((key, value) => {
+                .ForEach((key, value) => {
                     if (numReceived.incrementAndGet() == numberOfKeys) {
                         shutdownLatch.countDown();
                     }
@@ -313,7 +313,7 @@ public class RestoreIntegrationTest {
 
     public static class KeyValueStoreProcessor : Processor<int, int> {
 
-        private string topic;
+        private readonly string topic;
         private CountDownLatch processorLatch;
 
         private KeyValueStore<int, int> store;

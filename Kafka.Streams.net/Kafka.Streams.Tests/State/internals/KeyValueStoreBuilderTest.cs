@@ -40,9 +40,9 @@
 
 public class KeyValueStoreBuilderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private KeyValueBytesStoreSupplier supplier;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private KeyValueStore<Bytes, byte[]> inner;
     private KeyValueStoreBuilder<string, string> builder;
 

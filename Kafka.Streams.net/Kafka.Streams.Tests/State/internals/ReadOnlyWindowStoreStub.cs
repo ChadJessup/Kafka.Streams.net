@@ -44,9 +44,9 @@
  */
 public class ReadOnlyWindowStoreStub<K, V> : ReadOnlyWindowStore<K, V>, StateStore {
 
-    private long windowSize;
+    private readonly long windowSize;
     private Dictionary<long, NavigableMap<K, V>> data = new HashMap<>();
-    private bool open  = true;
+    private readonly bool open  = true;
 
     ReadOnlyWindowStoreStub(long windowSize) {
         this.windowSize = windowSize;

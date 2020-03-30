@@ -19,11 +19,11 @@ namespace Kafka.Streams.Tests.Helpers
      */
     public class ConsumerRecordFactory<K, V>
     {
-        private string topicName;
-        private ISerializer<K> keySerializer;
-        private ISerializer<V> valueSerializer;
+        private readonly string topicName;
+        private readonly ISerializer<K> keySerializer;
+        private readonly ISerializer<V> valueSerializer;
         private long timeMs;
-        private long advanceMs;
+        private readonly long advanceMs;
 
         /**
          * Create a new factory for the given topic.

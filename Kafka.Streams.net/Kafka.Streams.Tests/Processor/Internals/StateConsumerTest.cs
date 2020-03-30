@@ -38,7 +38,7 @@
 
 public class StateConsumerTest {
 
-    private static long FLUSH_INTERVAL = 1000L;
+    private static readonly long FLUSH_INTERVAL = 1000L;
     private TopicPartition topicOne = new TopicPartition("topic-one", 1);
     private TopicPartition topicTwo = new TopicPartition("topic-two", 1);
     private MockTime time = new MockTime();

@@ -54,16 +54,16 @@
 
 public class PurgeRepartitionTopicIntegrationTest {
 
-    private static int NUM_BROKERS = 1;
+    private static readonly int NUM_BROKERS = 1;
 
-    private static string INPUT_TOPIC = "input-stream";
-    private static string APPLICATION_ID = "restore-test";
-    private static string REPARTITION_TOPIC = APPLICATION_ID + "-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition";
+    private static readonly string INPUT_TOPIC = "input-stream";
+    private static readonly string APPLICATION_ID = "restore-test";
+    private static readonly string REPARTITION_TOPIC = APPLICATION_ID + "-KSTREAM-AGGREGATE-STATE-STORE-0000000002-repartition";
 
     private static Admin adminClient;
     private static KafkaStreams kafkaStreams;
-    private static int PURGE_INTERVAL_MS = 10;
-    private static int PURGE_SEGMENT_BYTES = 2000;
+    private static readonly int PURGE_INTERVAL_MS = 10;
+    private static readonly int PURGE_SEGMENT_BYTES = 2000;
 
     
     public static EmbeddedKafkaCluster CLUSTER = new EmbeddedKafkaCluster(NUM_BROKERS, new Properties() {

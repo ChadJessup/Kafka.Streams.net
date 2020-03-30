@@ -36,7 +36,7 @@
 
 
 public class KeyValueIteratorFacadeTest {
-    @Mock
+    
     private KeyValueIterator<string, ValueAndTimestamp<string>> mockedKeyValueIterator;
 
     private KeyValueIteratorFacade<string, string> keyValueIteratorFacade;
@@ -61,7 +61,7 @@ public class KeyValueIteratorFacadeTest {
         expect(mockedKeyValueIterator.peekNextKey()).andReturn("key");
         replay(mockedKeyValueIterator);
 
-        Assert.Equal(keyValueIteratorFacade.peekNextKey(), is("key"));
+        Assert.Equal(keyValueIteratorFacade.peekNextKey(), ("key"));
         verify(mockedKeyValueIterator);
     }
 
@@ -71,7 +71,7 @@ public class KeyValueIteratorFacadeTest {
             new KeyValuePair<>("key", ValueAndTimestamp.make("value", 42L)));
         replay(mockedKeyValueIterator);
 
-        Assert.Equal(keyValueIteratorFacade.next(), is(KeyValuePair.Create("key", "value")));
+        Assert.Equal(keyValueIteratorFacade.next(), (KeyValuePair.Create("key", "value")));
         verify(mockedKeyValueIterator);
     }
 

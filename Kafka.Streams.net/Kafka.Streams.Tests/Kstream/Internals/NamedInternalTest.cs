@@ -5,9 +5,9 @@ namespace Kafka.Streams.KStream.Internals
 {
     public class NamedInternalTest
     {
-        private static string TEST_PREFIX = "prefix-";
-        private static string TEST_VALUE = "default-value";
-        private static string TEST_SUFFIX = "-suffix";
+        private static readonly string TEST_PREFIX = "prefix-";
+        private static readonly string TEST_VALUE = "default-value";
+        private static readonly string TEST_SUFFIX = "-suffix";
 
         private class TestNameProvider : IInternalNameProvider
         {

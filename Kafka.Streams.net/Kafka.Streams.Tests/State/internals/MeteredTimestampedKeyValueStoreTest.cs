@@ -70,18 +70,18 @@ public class MeteredTimestampedKeyValueStoreTest {
         mkEntry("task-id", taskId.toString()),
         mkEntry("scope-id", "metered")
     );
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private KeyValueStore<Bytes, byte[]> inner;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private ProcessorContext context;
 
     private MeteredTimestampedKeyValueStore<string, string> metered;
-    private string key = "key";
+    private readonly string key = "key";
     private Bytes keyBytes = Bytes.wrap(key.getBytes());
-    private string value = "value";
+    private readonly string value = "value";
     private ValueAndTimestamp<string> valueAndTimestamp = ValueAndTimestamp.make("value", 97L);
     // timestamp is 97 what is ASCII of 'a'
-    private byte[] valueAndTimestampBytes = "\0\0\0\0\0\0\0avalue".getBytes();
+    private readonly byte[] valueAndTimestampBytes = "\0\0\0\0\0\0\0avalue".getBytes();
     private KeyValuePair<Bytes, byte[]> byteKeyValueTimestampPair = KeyValuePair.Create(keyBytes, valueAndTimestampBytes);
     private Metrics metrics = new Metrics();
 

@@ -33,7 +33,7 @@
 
 public class RocksDBSessionStoreTest : SessionBytesStoreTest {
 
-    private static string STORE_NAME = "rocksDB session store";
+    private static readonly string STORE_NAME = "rocksDB session store";
 
     
     SessionStore<K, V> BuildSessionStore<K, V>(long retentionPeriod,

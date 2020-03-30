@@ -67,15 +67,15 @@
 
 public class RepartitionOptimizingIntegrationTest {
 
-    private static int NUM_BROKERS = 1;
-    private static string INPUT_TOPIC = "input";
-    private static string COUNT_TOPIC = "outputTopic_0";
-    private static string AGGREGATION_TOPIC = "outputTopic_1";
-    private static string REDUCE_TOPIC = "outputTopic_2";
-    private static string JOINED_TOPIC = "joinedOutputTopic";
+    private static readonly int NUM_BROKERS = 1;
+    private static readonly string INPUT_TOPIC = "input";
+    private static readonly string COUNT_TOPIC = "outputTopic_0";
+    private static readonly string AGGREGATION_TOPIC = "outputTopic_1";
+    private static readonly string REDUCE_TOPIC = "outputTopic_2";
+    private static readonly string JOINED_TOPIC = "joinedOutputTopic";
 
-    private static int ONE_REPARTITION_TOPIC = 1;
-    private static int FOUR_REPARTITION_TOPICS = 4;
+    private static readonly int ONE_REPARTITION_TOPIC = 1;
+    private static readonly int FOUR_REPARTITION_TOPICS = 4;
 
     private Pattern repartitionTopicPattern = new Regex("Sink: .*-repartition", RegexOptions.Compiled);
 
@@ -253,7 +253,7 @@ public class RepartitionOptimizingIntegrationTest {
     }
 
 
-    private static string EXPECTED_OPTIMIZED_TOPOLOGY = "Topologies:\n"
+    private static readonly string EXPECTED_OPTIMIZED_TOPOLOGY = "Topologies:\n"
                                                               + "   Sub-topology: 0\n"
                                                               + "    Source: KSTREAM-SOURCE-0000000000 (topics: [input])\n"
                                                               + "      -=> KSTREAM-MAP-0000000001\n"
@@ -330,7 +330,7 @@ public class RepartitionOptimizingIntegrationTest {
                                                               + "      <-- KSTREAM-MERGE-0000000037\n\n";
 
 
-    private static string EXPECTED_UNOPTIMIZED_TOPOLOGY = "Topologies:\n"
+    private static readonly string EXPECTED_UNOPTIMIZED_TOPOLOGY = "Topologies:\n"
                                                                 + "   Sub-topology: 0\n"
                                                                 + "    Source: KSTREAM-SOURCE-0000000000 (topics: [input])\n"
                                                                 + "      -=> KSTREAM-MAP-0000000001\n"

@@ -48,8 +48,8 @@
 
 public class TimestampedKeyValueStoreMaterializerTest {
 
-    private string storePrefix = "prefix";
-    @Mock(type = MockType.NICE)
+    private readonly string storePrefix = "prefix";
+    (type = MockType.NICE)
     private InternalNameProvider nameProvider;
 
     [Xunit.Fact]

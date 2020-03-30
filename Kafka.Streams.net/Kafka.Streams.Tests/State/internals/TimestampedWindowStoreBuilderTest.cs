@@ -41,9 +41,9 @@
 
 public class TimestampedWindowStoreBuilderTest {
 
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private WindowBytesStoreSupplier supplier;
-    @Mock(type = MockType.NICE)
+    (type = MockType.NICE)
     private RocksDBTimestampedWindowStore inner;
     private TimestampedWindowStoreBuilder<string, string> builder;
 
