@@ -1,45 +1,12 @@
+using Confluent.Kafka;
+using Kafka.Streams.Processors.Internals;
+using Kafka.Streams.State.Interfaces;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Xunit;
+
 namespace Kafka.Streams.Tests.Processor.Internals
 {
-    /*
-
-
-
-
-
-
-    *
-
-    *
-
-
-
-
-
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public class CompositeRestoreListenerTest
     {
 
@@ -53,7 +20,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private readonly byte[] value = "value".getBytes(StandardCharsets.UTF_8);
         private Collection<KeyValuePair<byte[], byte[]>> records = Collections.singletonList(KeyValuePair.Create(key, value));
         private Collection<ConsumeResult<byte[], byte[]>> consumerRecords = Collections.singletonList(
-            new ConsumeResult<>("", 0, 0L, key, value)
+            new ConsumeResult<byte[], byte[]>("", 0, 0L, key, value)
         );
         private readonly string storeName = "test_store";
         private readonly long startOffset = 0L;
@@ -202,8 +169,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
             Assert.Equal(restoreListener.totalNumRestored, (numberRestored));
         }
 
-
-        private void SetUpCompositeRestoreListener(StateRestoreCallback stateRestoreCallback)
+        private void SetUpCompositeRestoreListener(IStateRestoreCallback stateRestoreCallback)
         {
             compositeRestoreListener = new CompositeRestoreListener(stateRestoreCallback);
             compositeRestoreListener.setUserRestoreListener(reportingStoreListener);
@@ -235,53 +201,11 @@ namespace Kafka.Streams.Tests.Processor.Internals
                 restoredRecords = records;
             }
 
-
             public void Restore(byte[] key, byte[] value)
             {
                 throw new IllegalStateException("Should not be called");
 
             }
         }
-
     }
 }
-/*
-
-
-
-
-
-
-*
-
-*
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

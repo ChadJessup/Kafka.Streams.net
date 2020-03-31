@@ -69,10 +69,14 @@
 
 
 
+using Kafka.Streams.Kafka.Streams;
 using Kafka.Streams.KStream;
+using Kafka.Streams.KStream.Interfaces;
+using Kafka.Streams.KStream.Internals;
 using Kafka.Streams.Tests.Helpers;
 using Kafka.Streams.Topologies;
 using System.Collections.Generic;
+using System.IO;
 using Xunit;
 
 namespace Kafka.Streams.Tests.Integration
@@ -517,13 +521,10 @@ namespace Kafka.Streams.Tests.Integration
 
                 // RESET
                 File resetFile = File.createTempFile("reset", ".csv");
-                try
-                {
-                    (BufferedWriter writer = new BufferedWriter(new FileWriter(resetFile)));
-                    writer.write(INPUT_TOPIC + ",0,1");
-                }
+                BufferedWriter writer = new BufferedWriter(new FileWriter(resetFile));
+                writer.write(INPUT_TOPIC + ",0,1");
 
-        streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
+                streams = new KafkaStreams(SetupTopologyWithoutIntermediateUserTopic(), streamsConfig);
                 streams.cleanUp();
                 CleanGlobal(false, "--by-duration", "PT1M");
 
@@ -550,7 +551,7 @@ namespace Kafka.Streams.Tests.Integration
             {
                 StreamsBuilder builder = new StreamsBuilder();
 
-                KStream<long, string> input = builder.stream(INPUT_TOPIC);
+                IKStream<long, string> input = builder.Stream<long, string>(INPUT_TOPIC);
 
                 // use map to trigger internal re-partitioning before groupByKey
                 input.map(KeyValuePair)
@@ -560,8 +561,8 @@ namespace Kafka.Streams.Tests.Integration
                     .to(OUTPUT_TOPIC, Produced.with(Serdes.Long(), Serdes.Long()));
 
                 input.through(INTERMEDIATE_USER_TOPIC)
-                    .groupByKey()
-                    .windowedBy(TimeWindows.of(ofMillis(35)).advanceBy(ofMillis(10)))
+                    .GroupByKey()
+                    .WindowedBy(TimeWindow.Of(ofMillis(35)).advanceBy(ofMillis(10)))
                     .count()
                     .toStream()
                     .map((key, value) => new KeyValuePair<>(key.window().start() + key.window().end(), value))
@@ -574,7 +575,7 @@ namespace Kafka.Streams.Tests.Integration
             {
                 StreamsBuilder builder = new StreamsBuilder();
 
-                KStream<long, string> input = builder.stream(INPUT_TOPIC);
+                KStream<long, string> input = builder.Stream<long, string>(INPUT_TOPIC);
 
                 // use map to trigger internal re-partitioning before groupByKey
                 input.map((key, value) => new KeyValuePair<>(key, key))

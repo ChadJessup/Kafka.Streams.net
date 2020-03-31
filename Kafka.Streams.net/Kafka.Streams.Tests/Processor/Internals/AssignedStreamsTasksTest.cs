@@ -1,3 +1,6 @@
+using Confluent.Kafka;
+using Kafka.Streams.Tasks;
+
 namespace Kafka.Streams.Tests.Processor.Internals
 {
     /*
@@ -53,8 +56,7 @@ namespace Kafka.Streams.Tests.Processor.Internals
         private TaskId taskId2 = new TaskId(1, 0);
         private AssignedStreamsTasks assignedTasks;
 
-
-        public void Before()
+        void Before()
         {
             assignedTasks = new AssignedStreamsTasks(new LogContext("log "));
             EasyMock.expect(t1.id()).andReturn(taskId1).anyTimes();

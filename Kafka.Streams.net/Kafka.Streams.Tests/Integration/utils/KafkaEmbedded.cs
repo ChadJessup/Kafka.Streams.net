@@ -93,14 +93,14 @@ namespace Kafka.Streams.Tests.Integration.utils
         private Properties EffectiveConfigFrom(Properties initialConfig)
         {
             Properties effectiveConfig = new Properties();
-            effectiveConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), 0);
-            effectiveConfig.put(KafkaConfig$.MODULE$.HostNameProp(), "localhost");
-            effectiveConfig.put(KafkaConfig$.MODULE$.PortProp(), "9092");
-            effectiveConfig.put(KafkaConfig$.MODULE$.NumPartitionsProp(), 1);
-            effectiveConfig.put(KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
-            effectiveConfig.put(KafkaConfig$.MODULE$.MessageMaxBytesProp(), 1000000);
-            effectiveConfig.put(KafkaConfig$.MODULE$.ControlledShutdownEnableProp(), true);
-            effectiveConfig.put(KafkaConfig$.MODULE$.ZkSessionTimeoutMsProp(), 10000);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.BrokerIdProp(), 0);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.HostNameProp(), "localhost");
+            //effectiveConfig.put(KafkaConfig$.MODULE$.PortProp(), "9092");
+            //effectiveConfig.put(KafkaConfig$.MODULE$.NumPartitionsProp(), 1);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.AutoCreateTopicsEnableProp(), true);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.MessageMaxBytesProp(), 1000000);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.ControlledShutdownEnableProp(), true);
+            //effectiveConfig.put(KafkaConfig$.MODULE$.ZkSessionTimeoutMsProp(), 10000);
 
             effectiveConfig.putAll(initialConfig);
             effectiveConfig.setProperty(KafkaConfig$.MODULE$.LogDirProp(), logDir.getAbsolutePath());

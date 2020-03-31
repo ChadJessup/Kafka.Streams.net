@@ -68,7 +68,7 @@ namespace WordCountProcessorDemo
                 .Count(Materialized<string, long, IKeyValueStore<Bytes, byte[]>>.As("Counts"))
                 .ToStream()
                 .To("WordsWithCountsTopic",
-                    Produced<string, long>.with(
+                    Produced<string, long>.With(
                     Serdes.String(),
                     Serdes.Long()));
 

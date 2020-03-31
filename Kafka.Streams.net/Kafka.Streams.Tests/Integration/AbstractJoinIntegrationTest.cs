@@ -3,6 +3,7 @@ using Xunit;
 using System;
 using System.Collections.Generic;
 using Kafka.Streams.KStream;
+using Kafka.Streams.Tests.Helpers;
 
 namespace Kafka.Streams.Tests.Integration
 {
@@ -30,14 +31,14 @@ namespace Kafka.Streams.Tests.Integration
             return values;
         }
 
-        static readonly string appID;
+        private static readonly string appID;
 
-        private static readonly long COMMIT_INTERVAL = 100L;
-        static Properties STREAMS_CONFIG = new Properties();
-        static readonly string INPUT_TOPIC_RIGHT = "inputTopicRight";
-        static readonly string INPUT_TOPIC_LEFT = "inputTopicLeft";
-        static readonly string OUTPUT_TOPIC = "outputTopic";
-        static readonly long ANY_UNIQUE_KEY = 0L;
+        private const long COMMIT_INTERVAL = 100L;
+        private static Properties STREAMS_CONFIG = new Properties();
+        private const string INPUT_TOPIC_RIGHT = "inputTopicRight";
+        private const string INPUT_TOPIC_LEFT = "inputTopicLeft";
+        private const string OUTPUT_TOPIC = "outputTopic";
+        private const long ANY_UNIQUE_KEY = 0L;
 
         private static Properties PRODUCER_CONFIG = new Properties();
         private static Properties RESULT_CONSUMER_CONFIG = new Properties();
@@ -145,7 +146,7 @@ namespace Kafka.Streams.Tests.Integration
          */
         void RunTest(List<List<KeyValueTimestamp<long, string>>> expectedResult, string storeName)
         {// throws Exception
-            assert expectedResult.Count == input.Count;
+            Assert.True(expectedResult.Count == input.Count);
 
             IntegrationTestUtils.purgeLocalStreamsState(STREAMS_CONFIG);
             streams = new KafkaStreams(builder.build(), STREAMS_CONFIG);

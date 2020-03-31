@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JavaToCsharpAnalyzers" Version="0.0.1-alpha" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.9.8">
       <PrivateAssets>all</PrivateAssets>
